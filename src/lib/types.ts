@@ -1,0 +1,105 @@
+// Типы данных проекта «События на карте».
+// Все сущности описаны здесь — единый источник правды.
+
+/** Категория события (названия на обоих языках + маркер-эмодзи) */
+export interface Category {
+  id: string;
+  name_ru: string;
+  name_en: string;
+  emoji: string;
+}
+
+/** Статус события в базе */
+export type EventStatus = 'active' | 'past' | 'moderation' | 'rejected';
+
+/**
+ * Событие.
+ * Название и описание хранятся в двух вариантах: оригинал (на языке
+ * организатора) и перевод на второй язык. Перевод делается один раз
+ * при сохранении — посетитель видит контент на языке интерфейса,
+ * при отсутствии перевода — оригинал.
+ */
+export interface EventItem {
+  id: string;
+  /** Оригинальное название (на языке организатора) */
+  title: string;
+  /** Перевод названия на русский (если оригинал не на русском) */
+  title_ru?: string;
+  /** Перевод названия на английский (если оригинал не на английском) */
+  title_en?: string;
+  /** Оригинальное описание */
+  description: string;
+  description_ru?: string;
+  description_en?: string;
+  /** Язык оригинала: 'ru' | 'en' | иное */
+  source_lang: string;
+  /** Даты: ISO-формат (YYYY-MM-DD) */
+  start_date: string;
+  end_date?: string;
+  /** Город и адрес — единые, без перевода */
+  city: string;
+  address?: string;
+  lat: number;
+  lng: number;
+  category_id: string;
+  /** Ссылка на страницу события (внешняя) */
+  website?: string;
+  /** Контакт организатора */
+  contact?: string;
+  /** Фотографии: внешние ссылки, не больше 5 */
+  photos?: string[];
+  status: EventStatus;
+  created_at: string;
+}
+
+/** Заявка организатора (до модерации) — поля как у события + решение админа */
+export interface Application {
+  id: string;
+  title: string;
+  description: string;
+  source_lang: string;
+  start_date: string;
+  end_date?: string;
+  city: string;
+  address?: string;
+  lat?: number;
+  lng?: number;
+  category_id: string;
+  website?: string;
+  contact?: string;
+  photos?: string[];
+  status: 'new' | 'approved' | 'rejected';
+  reject_reason?: string;
+  created_at: string;
+}
+
+/** Поля формы «Разместить событие» (без id/status/created_at) */
+export type ApplicationDraft = Omit<
+  Application,
+  'id' | 'status' | 'reject_reason' | 'created_at'
+>;
+
+/** Строка для импорта из CSV/JSON */
+export interface ImportRow {
+  title: string;
+  description?: string;
+  start_date: string;
+  end_date?: string;
+  city: string;
+  address?: string;
+  lat?: number;
+  lng?: number;
+  category_id?: string;
+  website?: string;
+}
+
+/** Настройки фильтров публичной части */
+export interface Filters {
+  categoryId: string | null;
+  /** Период: 'upcoming' | 'all' | конкретный диапазон */
+  period: 'upcoming' | 'all';
+  dateFrom?: string;
+  dateTo?: string;
+  city?: string;
+  query?: string;
+}

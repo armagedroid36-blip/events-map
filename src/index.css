@@ -1,0 +1,41 @@
+/* Глобальные стили: Tailwind + стили карты Leaflet */
+@import 'tailwindcss';
+
+/* Стили карты Leaflet — подключаются явно, иначе маркеры не отображаются */
+@import 'leaflet/dist/leaflet.css';
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  background: #ffffff;
+  color: #1a1a1a;
+}
+
+/* Поправить стандартные иконки Leaflet (иначе вместо них пустые квадраты) */
+.leaflet-default-icon-path {
+  background-image: url(https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png);
+}
+
+/* Маркеры событий: круг с эмодзи категории (создаются в MapView) */
+.event-marker-wrap {
+  background: transparent;
+  border: none;
+}
+.event-marker {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+}
