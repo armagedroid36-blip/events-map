@@ -385,7 +385,7 @@ function EventEditor({ initial, categories, onCancel, onSaved }: EditorProps) {
             className="h-full w-full"
             style={{ minHeight: 190 }}
           >
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
             <ClickToMove
               onMove={(la, ln) => {
                 set('lat', la);

@@ -39,3 +39,19 @@ body {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
   cursor: pointer;
 }
+
+/* Курсор карты: обычная стрелка вместо «руки» Leaflet.
+   В Windows курсор grab рисуется белой рукой без чёрной окантовки
+   и не читается на светлой карте. */
+.leaflet-container,
+.leaflet-grab,
+.leaflet-grabbing {
+  cursor: default;
+}
+
+/* Атрибуция карты — по центру внизу, чтобы её не закрывали боковые панели */
+.leaflet-bottom.leaflet-right {
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+}

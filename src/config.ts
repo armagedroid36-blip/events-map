@@ -21,14 +21,15 @@ export const config = {
   defaultCenter: { lat: 10.2, lng: 108.5 },
   defaultZoom: 4,
 
-  // Быстрые кнопки популярных направлений (карта и поиск)
+  // Быстрые кнопки популярных направлений (карта и поиск).
+  // Названия на двух языках — переключаются вместе с языком интерфейса.
   quickLocations: [
-    { label: 'Бали', lat: -8.5, lng: 115.2, zoom: 10 },
-    { label: 'Бангкок', lat: 13.75, lng: 100.5, zoom: 11 },
-    { label: 'Сингапур', lat: 1.35, lng: 103.82, zoom: 11 },
-    { label: 'Хошимин', lat: 10.82, lng: 106.63, zoom: 11 },
-    { label: 'Куала-Лумпур', lat: 3.14, lng: 101.69, zoom: 11 },
-    { label: 'Джакарта', lat: -6.2, lng: 106.82, zoom: 11 },
+    { label: 'Бали', labelEn: 'Bali', lat: -8.5, lng: 115.2, zoom: 10 },
+    { label: 'Бангкок', labelEn: 'Bangkok', lat: 13.75, lng: 100.5, zoom: 11 },
+    { label: 'Сингапур', labelEn: 'Singapore', lat: 1.35, lng: 103.82, zoom: 11 },
+    { label: 'Хошимин', labelEn: 'Ho Chi Minh City', lat: 10.82, lng: 106.63, zoom: 11 },
+    { label: 'Куала-Лумпур', labelEn: 'Kuala Lumpur', lat: 3.14, lng: 101.69, zoom: 11 },
+    { label: 'Джакарта', labelEn: 'Jakarta', lat: -6.2, lng: 106.82, zoom: 11 },
   ],
 
   // --- Геокодинг (адрес -> координаты) ---

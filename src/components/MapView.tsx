@@ -2,7 +2,7 @@
 // Маркеры-эмодзи по категориям, кластеризация при отдалении,
 // управление центром извне (геолокация и быстрые кнопки).
 import { useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap, AttributionControl } from 'react-leaflet';
 import L from 'leaflet';
 // Плагин кластеризации маркеров (регистрируется в Leaflet при импорте)
 import 'leaflet.markercluster';
@@ -118,12 +118,18 @@ export default function MapView({ events, categories, onSelect, center, zoom }: 
       zoom={zoom ?? config.defaultZoom}
       className="h-full w-full"
       style={{ minHeight: 320 }}
+      // Кнопки зума скрыты: их перекрывают плавающие панели.
+      // Зум работает колесом мыши, двойным кликом и жестами на телефоне.
+      zoomControl={false}
     >
-      {/* Тайлы OpenStreetMap — бесплатно, без ключей */}
+      {/* Тайлы Carto Voyager — бесплатно, без ключей. Названия на латинице
+          (английский/транслит) вместо местных алфавитов */}
       <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
       />
+      {/* Атрибуция по центру внизу (центрируется CSS) — чтобы её не закрывали панели */}
+      <AttributionControl position="bottomright" prefix={false} />
       <ClusterLayer events={events} categories={categories} onSelect={onSelect} />
       <MapController center={center} zoom={zoom} />
     </MapContainer>
