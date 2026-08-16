@@ -241,10 +241,10 @@ export default function EventForm({ categories, onClose, event }: Props) {
   const err = (k: string) => (errors[k] ? <p className="mt-0.5 text-xs text-red-600">{errors[k]}</p> : null);
 
   return createPortal(
-    <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/40 p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/25 p-4" onClick={onClose}>
       <div className="flex min-h-full items-center justify-center">
         <div
-          className="glass mx-auto my-6 w-full max-w-2xl rounded-xl p-6 shadow-2xl"
+          className="glass-strong mx-auto my-6 w-full max-w-2xl rounded-xl p-6 shadow-2xl"
           onClick={(e) => e.stopPropagation()}
         >
         <div className="mb-4 flex items-center justify-between">
