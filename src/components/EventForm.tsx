@@ -360,7 +360,7 @@ export default function EventForm({ categories, onClose, event }: Props) {
           {/* Карта: отметка = точка события */}
           <div>
             <label className="mb-1 block text-sm text-gray-600">{t('form.mapHint')}</label>
-            <div className="h-80 overflow-hidden rounded-lg border border-gray-200">
+            <div className="h-96 overflow-hidden rounded-lg border border-gray-200">
               <MapContainer
                 center={[lat, lng]}
                 zoom={6}
