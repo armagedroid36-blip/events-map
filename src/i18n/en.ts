@@ -114,6 +114,8 @@ export default {
     contactPhoneField: 'Phone',
     photosUpload: 'Photos (file upload)',
     photosLimit: 'Up to 5 photos, 5 MB each (JPG, PNG, WebP)',
+    publish: 'Publish',
+    published: 'The event is published and on the map.',
     city: 'City',
     cityPlaceholder: 'e.g. Ubud, Bali',
     address: 'Address (optional)',

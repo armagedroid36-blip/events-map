@@ -291,7 +291,7 @@ export default function EventForm({ categories, onClose, event }: Props) {
       <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/40 p-4" onClick={onClose}>
         <div className="flex min-h-full items-center justify-center">
           <div className="w-full max-w-md rounded-xl bg-white p-6 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <p className="mb-4 text-gray-800">{t('form.success')}</p>
+            <p className="mb-4 text-gray-800">{isAdmin ? t('form.published') : t('form.success')}</p>
             <button
               onClick={onClose}
               className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700"
@@ -478,7 +478,7 @@ export default function EventForm({ categories, onClose, event }: Props) {
             disabled={submitting || uploading}
             className="w-full rounded-md bg-gray-900 px-3 py-2.5 text-sm font-semibold text-white hover:bg-gray-700 disabled:opacity-50"
           >
-            {submitting ? '...' : t('form.submit')}
+            {submitting ? '...' : isAdmin ? t('form.publish') : t('form.submit')}
           </button>
         </form>
         </div>

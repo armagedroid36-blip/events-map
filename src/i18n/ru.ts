@@ -114,6 +114,8 @@ export default {
     contactPhoneField: 'Телефон',
     photosUpload: 'Фотографии (загрузка файлов)',
     photosLimit: 'До 5 фото, каждое до 5 МБ (JPG, PNG, WebP)',
+    publish: 'Опубликовать',
+    published: 'Мероприятие опубликовано и появилось на карте.',
     city: 'Город',
     cityPlaceholder: 'Например: Убуд, Бали',
     address: 'Адрес (необязательно)',
