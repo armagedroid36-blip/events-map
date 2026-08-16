@@ -6,6 +6,7 @@
 import type { Category, EventItem, Application, ApplicationDraft, ImportRow } from './types';
 import { config } from '../config';
 import { DemoApi } from './demo';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 /** Единый интерфейс доступа к данным */
 export interface DataApi {
@@ -30,60 +31,104 @@ export interface DataApi {
 }
 
 /**
- * Реализация на Supabase. Код готов, но активен только когда в config.ts
- * указаны адрес и ключ базы (demoMode = false). Подключение описано в README.
+ * Реализация на Supabase.
+ * Публичная часть читает напрямую из таблиц (защита RLS),
+ * админские операции идут через SQL-функции (модерация, правка).
  */
 class SupabaseApi implements DataApi {
-  private requireDb(): never {
-    throw new Error(
-      'База данных не подключена. Заполните VITE_SUPABASE_URL и VITE_SUPABASE_ANON_KEY в .env и выключите demoMode в src/config.ts (см. README).',
-    );
+  private db: SupabaseClient;
+
+  constructor() {
+    this.db = createClient(config.supabaseUrl, config.supabaseAnonKey);
   }
 
+  // --- Публичная часть ---
+
   async listEvents(): Promise<EventItem[]> {
-    this.requireDb();
+    const { data, error } = await this.db
+      .from('events')
+      .select('*')
+      .eq('status', 'active')
+      .order('start_date', { ascending: true });
+    if (error) throw error;
+    return (data ?? []) as EventItem[];
   }
+
   async listAllEvents(): Promise<EventItem[]> {
-    this.requireDb();
+    const { data, error } = await this.db.rpc('list_all_events');
+    if (error) throw error;
+    return (data ?? []) as EventItem[];
   }
+
   async getCategories(): Promise<Category[]> {
-    this.requireDb();
+    const { data, error } = await this.db.from('categories').select('*').order('id');
+    if (error) throw error;
+    return (data ?? []) as Category[];
   }
-  async submitApplication(_draft: ApplicationDraft): Promise<void> {
-    this.requireDb();
+
+  async submitApplication(draft: ApplicationDraft): Promise<void> {
+    const { error } = await this.db.from('applications').insert(draft as never);
+    if (error) throw error;
   }
-  async adminLogin(_email: string, _password: string): Promise<boolean> {
-    this.requireDb();
+
+  // --- Админка ---
+
+  async adminLogin(_email: string, password: string): Promise<boolean> {
+    // MVP: пароль хранится в .env. Позже — полноценный вход через Supabase Auth.
+    return config.adminPassword !== '' && password === config.adminPassword;
   }
+
   async listApplications(): Promise<Application[]> {
-    this.requireDb();
+    const { data, error } = await this.db.rpc('list_all_applications');
+    if (error) throw error;
+    return (data ?? []) as Application[];
   }
-  async approveApplication(_id: string): Promise<void> {
-    this.requireDb();
+
+  async approveApplication(id: string): Promise<void> {
+    const { error } = await this.db.rpc('approve_application', { app_id: id });
+    if (error) throw error;
   }
-  async rejectApplication(_id: string, _reason: string): Promise<void> {
-    this.requireDb();
+
+  async rejectApplication(id: string, reason: string): Promise<void> {
+    const { error } = await this.db.rpc('reject_application', { app_id: id, reason });
+    if (error) throw error;
   }
-  async createEvent(_data: Partial<EventItem>): Promise<EventItem> {
-    this.requireDb();
+
+  async createEvent(data: Partial<EventItem>): Promise<EventItem> {
+    const { data: ev, error } = await this.db.rpc('create_event', { data });
+    if (error) throw error;
+    return ev as EventItem;
   }
-  async updateEvent(_id: string, _data: Partial<EventItem>): Promise<void> {
-    this.requireDb();
+
+  async updateEvent(id: string, data: Partial<EventItem>): Promise<void> {
+    const { error } = await this.db.rpc('update_event', { ev_id: id, data });
+    if (error) throw error;
   }
-  async deleteEvent(_id: string): Promise<void> {
-    this.requireDb();
+
+  async deleteEvent(id: string): Promise<void> {
+    const { error } = await this.db.rpc('delete_event', { ev_id: id });
+    if (error) throw error;
   }
-  async createCategory(_data: Omit<Category, 'id'>): Promise<void> {
-    this.requireDb();
+
+  async createCategory(data: Omit<Category, 'id'>): Promise<void> {
+    const { error } = await this.db.rpc('create_category', { data });
+    if (error) throw error;
   }
-  async updateCategory(_id: string, _data: Partial<Category>): Promise<void> {
-    this.requireDb();
+
+  async updateCategory(id: string, data: Partial<Category>): Promise<void> {
+    const { error } = await this.db.rpc('update_category', { cat_id: id, data });
+    if (error) throw error;
   }
-  async deleteCategory(_id: string): Promise<void> {
-    this.requireDb();
+
+  async deleteCategory(id: string): Promise<void> {
+    const { error } = await this.db.rpc('delete_category', { cat_id: id });
+    if (error) throw error;
   }
-  async importEvents(_rows: ImportRow[]): Promise<number> {
-    this.requireDb();
+
+  async importEvents(rows: ImportRow[]): Promise<number> {
+    const { data, error } = await this.db.rpc('import_events', { rows });
+    if (error) throw error;
+    return (data as number) ?? 0;
   }
 }
 
