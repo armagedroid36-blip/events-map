@@ -12,6 +12,7 @@ import QuickLocations from '../components/QuickLocations';
 import EventForm from '../components/EventForm';
 import { getApi } from '../lib/api';
 import { isUpcoming } from '../lib/dates';
+import { cityMatches } from '../lib/cities';
 import { useAuth } from '../lib/auth';
 import type { Category, EventItem, Filters } from '../lib/types';
 
@@ -75,11 +76,12 @@ export default function Home() {
   // Применение фильтров: категория, период, город, ключевые слова
   const visible = useMemo(() => {
     const q = (filters.query ?? '').toLowerCase();
-    const city = (filters.city ?? '').toLowerCase();
+    const city = filters.city ?? '';
     return events.filter((ev) => {
       if (filters.categoryId && ev.category_id !== filters.categoryId) return false;
       if (filters.period === 'upcoming' && !isUpcoming(ev)) return false;
-      if (city && !ev.city.toLowerCase().includes(city)) return false;
+      // Город: работает и по-русски, и по-английски («Убуд» = «Ubud»)
+      if (city && !cityMatches(ev.city, city)) return false;
       if (q) {
         const hay = `${ev.title} ${ev.description} ${ev.city}`.toLowerCase();
         if (!hay.includes(q)) return false;
