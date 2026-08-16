@@ -58,19 +58,12 @@ export default function EventForm({ categories, onClose, event }: Props) {
   const [address, setAddress] = useState(event?.address ?? '');
   const [categoryId, setCategoryId] = useState(event?.category_id ?? '');
   const [website, setWebsite] = useState(event?.website ?? '');
-  // Контакты: гость вводит текстом; организатор выбирает из профиля
+  // Контакты: поля ввода (для организатора предзаполняются из профиля)
   const [contact, setContact] = useState(event?.contact ?? '');
-  const [contactSel, setContactSel] = useState<{
-    telegram?: boolean;
-    whatsapp?: boolean;
-    email?: boolean;
-    phone?: boolean;
-  }>({
-    telegram: !!event?.contact_telegram,
-    whatsapp: !!event?.contact_whatsapp,
-    email: !!event?.contact_email,
-    phone: !!event?.contact_phone,
-  });
+  const [contactTg, setContactTg] = useState(event?.contact_telegram ?? '');
+  const [contactWa, setContactWa] = useState(event?.contact_whatsapp ?? '');
+  const [contactEmailVal, setContactEmailVal] = useState(event?.contact_email ?? '');
+  const [contactPhoneVal, setContactPhoneVal] = useState(event?.contact_phone ?? '');
   // Фото: пути загруженных файлов
   const [photos, setPhotos] = useState<string[]>(event?.photos ?? []);
   const [uploading, setUploading] = useState(false);
@@ -84,26 +77,22 @@ export default function EventForm({ categories, onClose, event }: Props) {
 
   const isOrg = user?.role === 'org';
 
-  // Контакты организатора из профиля
-  const [profile, setProfile] = useState<{ telegram?: string; whatsapp?: string; email?: string; phone?: string } | null>(null);
+  // Контакты организатора из профиля — предзаполняют поля формы
   useEffect(() => {
     if (isOrg) {
       getApi()
         .getMyProfile()
-        .then((p) =>
-          setProfile(
-            p
-              ? {
-                  telegram: p.contact_telegram,
-                  whatsapp: p.contact_whatsapp,
-                  email: p.contact_email,
-                  phone: p.contact_phone,
-                }
-              : null,
-          ),
-        )
-        .catch(() => setProfile(null));
+        .then((p) => {
+          if (p) {
+            if (!contactTg) setContactTg(p.contact_telegram ?? '');
+            if (!contactWa) setContactWa(p.contact_whatsapp ?? '');
+            if (!contactEmailVal) setContactEmailVal(p.contact_email ?? '');
+            if (!contactPhoneVal) setContactPhoneVal(p.contact_phone ?? '');
+          }
+        })
+        .catch(() => {});
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOrg]);
 
   // --- Схема валидации (zod) ---
@@ -113,15 +102,18 @@ export default function EventForm({ categories, onClose, event }: Props) {
         .object({
           title: z.string().min(2, t('form.required')),
           start_date: z.string().min(1, t('form.required')),
+          start_time: z.string().min(1, t('form.required')),
+          end_date: z.string().min(1, t('form.required')),
+          end_time: z.string().min(1, t('form.required')),
           city: z.string().min(1, t('form.required')),
           category_id: z.string().min(1, t('form.required')),
           website: z.union([z.literal(''), z.string().url(t('form.badUrl'))]),
         })
-        .refine((v) => !v.start_date || !endDate || endDate >= v.start_date, {
+        .refine((v) => !v.start_date || !v.end_date || v.end_date >= v.start_date, {
           message: t('form.badDate'),
           path: ['end_date'],
         }),
-    [t, endDate],
+    [t],
   );
 
   /** Геокодинг по адресу (при вводе адреса) */
@@ -174,6 +166,9 @@ export default function EventForm({ categories, onClose, event }: Props) {
     const res = schema.safeParse({
       title,
       start_date: startDate,
+      start_time: startTime,
+      end_date: endDate,
+      end_time: endTime,
       city,
       category_id: categoryId,
       website,
@@ -205,13 +200,13 @@ export default function EventForm({ categories, onClose, event }: Props) {
       };
       if (isOrg) {
         // Организатор: создаём/повторяем событие (на модерацию)
-        const contacts = {
-          contact_telegram: contactSel.telegram ? profile?.telegram : undefined,
-          contact_whatsapp: contactSel.whatsapp ? profile?.whatsapp : undefined,
-          contact_email: contactSel.email ? profile?.email : undefined,
-          contact_phone: contactSel.phone ? profile?.phone : undefined,
-        };
-        await getApi().createOrgEvent({ ...common, ...contacts });
+        await getApi().createOrgEvent({
+          ...common,
+          contact_telegram: contactTg.trim() || undefined,
+          contact_whatsapp: contactWa.trim() || undefined,
+          contact_email: contactEmailVal.trim() || undefined,
+          contact_phone: contactPhoneVal.trim() || undefined,
+        });
       } else {
         // Гость: заявка с контактом
         await getApi().submitApplication({ ...common, contact });
@@ -249,7 +244,7 @@ export default function EventForm({ categories, onClose, event }: Props) {
     <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/40 p-4" onClick={onClose}>
       <div className="flex min-h-full items-center justify-center">
         <div
-          className="mx-auto my-6 w-full max-w-2xl rounded-xl bg-white p-6 shadow-2xl"
+          className="glass mx-auto my-6 w-full max-w-2xl rounded-xl p-6 shadow-2xl"
           onClick={(e) => e.stopPropagation()}
         >
         <div className="mb-4 flex items-center justify-between">
@@ -284,29 +279,31 @@ export default function EventForm({ categories, onClose, event }: Props) {
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm text-gray-600">{t('form.startDate')} *</label>
-              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className={input} />
+              <label className="mb-1 block text-sm text-gray-600">{t('form.startDate')}</label>
+              <input type="date" required value={startDate} onChange={(e) => setStartDate(e.target.value)} className={input} />
               {err('start_date')}
             </div>
             <div>
+              <label className="mb-1 block text-sm text-gray-600">{t('form.startTime')}</label>
+              <input type="time" required value={startTime} onChange={(e) => setStartTime(e.target.value)} className={input} />
+              {err('start_time')}
+            </div>
+            <div>
               <label className="mb-1 block text-sm text-gray-600">{t('form.endDate')}</label>
-              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className={input} />
+              <input type="date" required value={endDate} onChange={(e) => setEndDate(e.target.value)} className={input} />
               {err('end_date')}
             </div>
             <div>
-              <label className="mb-1 block text-sm text-gray-600">{t('form.startTime')}</label>
-              <input type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} className={input} />
-            </div>
-            <div>
               <label className="mb-1 block text-sm text-gray-600">{t('form.endTime')}</label>
-              <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} className={input} />
+              <input type="time" required value={endTime} onChange={(e) => setEndTime(e.target.value)} className={input} />
+              {err('end_time')}
             </div>
           </div>
 
-          {/* Карта: тычок = точка события */}
+          {/* Карта: отметка = точка события */}
           <div>
             <label className="mb-1 block text-sm text-gray-600">{t('form.mapHint')}</label>
-            <div className="h-52 overflow-hidden rounded-lg border border-gray-200">
+            <div className="h-80 overflow-hidden rounded-lg border border-gray-200">
               <MapContainer
                 center={[lat, lng]}
                 zoom={6}
@@ -358,44 +355,43 @@ export default function EventForm({ categories, onClose, event }: Props) {
             {err('website')}
           </div>
 
-          {/* Контакты: организатор выбирает из профиля, гость вводит */}
-          {isOrg && profile ? (
+          {/* Контакты: поля ввода (организатор), для гостя — одно поле */}
+          {isOrg ? (
             <div>
               <label className="mb-1 block text-sm text-gray-600">{t('form.contactsChoice')}</label>
-              <div className="flex flex-wrap gap-2">
-                {profile.telegram && (
-                  <label className="flex items-center gap-1.5 rounded-md border border-gray-300 px-2.5 py-1.5 text-sm">
-                    <input type="checkbox" checked={!!contactSel.telegram} onChange={(e) => setContactSel((s) => ({ ...s, telegram: e.target.checked }))} />
-                    Telegram
-                  </label>
-                )}
-                {profile.whatsapp && (
-                  <label className="flex items-center gap-1.5 rounded-md border border-gray-300 px-2.5 py-1.5 text-sm">
-                    <input type="checkbox" checked={!!contactSel.whatsapp} onChange={(e) => setContactSel((s) => ({ ...s, whatsapp: e.target.checked }))} />
-                    WhatsApp
-                  </label>
-                )}
-                {profile.email && (
-                  <label className="flex items-center gap-1.5 rounded-md border border-gray-300 px-2.5 py-1.5 text-sm">
-                    <input type="checkbox" checked={!!contactSel.email} onChange={(e) => setContactSel((s) => ({ ...s, email: e.target.checked }))} />
-                    Email
-                  </label>
-                )}
-                {profile.phone && (
-                  <label className="flex items-center gap-1.5 rounded-md border border-gray-300 px-2.5 py-1.5 text-sm">
-                    <input type="checkbox" checked={!!contactSel.phone} onChange={(e) => setContactSel((s) => ({ ...s, phone: e.target.checked }))} />
-                    {t('auth.contactPhone')}
-                  </label>
-                )}
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <input
+                  value={contactTg}
+                  onChange={(e) => setContactTg(e.target.value)}
+                  placeholder={t('form.contactTelegramField')}
+                  className={input}
+                />
+                <input
+                  value={contactWa}
+                  onChange={(e) => setContactWa(e.target.value)}
+                  placeholder={t('form.contactWhatsappField')}
+                  className={input}
+                />
+                <input
+                  type="email"
+                  value={contactEmailVal}
+                  onChange={(e) => setContactEmailVal(e.target.value)}
+                  placeholder={t('form.contactEmailField')}
+                  className={input}
+                />
+                <input
+                  value={contactPhoneVal}
+                  onChange={(e) => setContactPhoneVal(e.target.value)}
+                  placeholder={t('form.contactPhoneField')}
+                  className={input}
+                />
               </div>
             </div>
           ) : (
-            !isOrg && (
-              <div>
-                <label className="mb-1 block text-sm text-gray-600">{t('form.contact')}</label>
-                <input value={contact} onChange={(e) => setContact(e.target.value)} placeholder={t('form.contactPlaceholder')} className={input} />
-              </div>
-            )
+            <div>
+              <label className="mb-1 block text-sm text-gray-600">{t('form.contact')}</label>
+              <input value={contact} onChange={(e) => setContact(e.target.value)} placeholder={t('form.contactPlaceholder')} className={input} />
+            </div>
           )}
 
           {/* Фото: загрузка файлами */}

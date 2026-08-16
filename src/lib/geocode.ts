@@ -27,7 +27,7 @@ export async function geocodeAddress(address: string): Promise<{ lat: number; ln
 
 /**
  * Обратный геокодинг: координаты -> адрес и город.
- * Нужен, когда организатор тыкает по карте — адрес заполняется сам.
+ * Нужен, когда организатор отмечает место на карте — адрес заполняется сам.
  */
 export async function reverseGeocode(
   lat: number,
@@ -38,7 +38,8 @@ export async function reverseGeocode(
   lastRequest = Date.now();
 
   try {
-    const url = `${config.nominatimUrl}?format=jsonv2&lat=${lat}&lon=${lng}`;
+    // Для обратного геокодинга используется отдельный эндпоинт /reverse
+    const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`;
     const res = await fetch(url, { headers: { Accept: 'application/json' } });
     if (!res.ok) return null;
     const d = (await res.json()) as {
