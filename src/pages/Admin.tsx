@@ -8,11 +8,13 @@ import { getApi } from '../lib/api';
 import { config } from '../config';
 import StatsTab from './admin/StatsTab';
 import ModerationTab from './admin/ModerationTab';
+import EventsModerationTab from './admin/EventsModerationTab';
 import EventsTab from './admin/EventsTab';
 import CategoriesTab from './admin/CategoriesTab';
 import ImportTab from './admin/ImportTab';
+import ArchiveTab from './admin/ArchiveTab';
 
-type Tab = 'stats' | 'moderation' | 'events' | 'categories' | 'import';
+type Tab = 'stats' | 'moderation' | 'events' | 'categories' | 'import' | 'archive';
 
 export default function Admin() {
   const { t } = useTranslation();
@@ -39,7 +41,7 @@ export default function Admin() {
   if (!authed) {
     return (
       <div className="flex min-h-screen flex-col">
-        <Header onOpenForm={() => (window.location.hash = '#/')} onOpenAdmin={() => {}} />
+        <Header onOpenForm={() => (window.location.hash = '#/')} />
         <div className="flex flex-1 items-center justify-center p-4">
           <form
             onSubmit={handleLogin}
@@ -83,13 +85,14 @@ export default function Admin() {
     { id: 'stats', label: t('admin.nav.stats') },
     { id: 'moderation', label: t('admin.nav.moderation') },
     { id: 'events', label: t('admin.nav.events') },
+    { id: 'archive', label: t('admin.nav.archive') },
     { id: 'categories', label: t('admin.nav.categories') },
     { id: 'import', label: t('admin.nav.import') },
   ];
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header onOpenForm={() => (window.location.hash = '#/')} onOpenAdmin={() => {}} />
+      <Header onOpenForm={() => (window.location.hash = '#/')} />
       <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-4">
         {/* Вкладки админки */}
         <div className="mb-4 flex flex-wrap items-center gap-1 border-b border-gray-200 pb-2">
@@ -126,8 +129,14 @@ export default function Admin() {
         </div>
 
         {tab === 'stats' && <StatsTab version={version} />}
-        {tab === 'moderation' && <ModerationTab onChanged={() => setVersion((v) => v + 1)} />}
+        {tab === 'moderation' && (
+          <>
+            <EventsModerationTab onChanged={() => setVersion((v) => v + 1)} />
+            <ModerationTab onChanged={() => setVersion((v) => v + 1)} />
+          </>
+        )}
         {tab === 'events' && <EventsTab version={version} onChanged={() => setVersion((v) => v + 1)} />}
+        {tab === 'archive' && <ArchiveTab />}
         {tab === 'categories' && <CategoriesTab onChanged={() => setVersion((v) => v + 1)} />}
         {tab === 'import' && <ImportTab onChanged={() => setVersion((v) => v + 1)} />}
       </div>

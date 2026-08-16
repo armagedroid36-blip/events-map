@@ -1,10 +1,10 @@
 // Утилиты работы с датами событий.
 
 /** ISO-дата (YYYY-MM-DD) -> человеческий вид по языку интерфейса */
-export function formatDate(iso: string, lang: 'ru' | 'en'): string {
+export function formatDate(iso: string, lang?: 'ru' | 'en'): string {
   const d = new Date(iso + 'T00:00:00');
   if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString(lang === 'ru' ? 'ru-RU' : 'en-US', {
+  return d.toLocaleDateString(lang === 'en' ? 'en-US' : 'ru-RU', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',

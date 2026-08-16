@@ -320,6 +320,65 @@ export class DemoApi {
     save(LS_EVENTS, events);
     return count;
   }
+
+  // --- Авторизация (демо: вход без проверок) ---
+
+  async signUp(
+    _email: string,
+    _password: string,
+    _role: string,
+    _contacts: Record<string, string>,
+  ): Promise<void> {}
+
+  async signIn(_email: string, _password: string) {
+    return { id: 'demo', email: _email, role: 'admin' };
+  }
+
+  async signOut(): Promise<void> {}
+
+  async getCurrentUser() {
+    return { id: 'demo', email: 'demo@demo', role: 'admin' };
+  }
+
+  async uploadPhoto(file: File): Promise<string> {
+    return URL.createObjectURL(file);
+  }
+
+  async getMyProfile() {
+    return null;
+  }
+
+  async listMyEvents(): Promise<EventItem[]> {
+    return load<EventItem[]>(LS_EVENTS, DEMO_EVENTS).filter((e) => e.status !== 'archived');
+  }
+
+  async repeatEvent(id: string, start_date: string, end_date?: string): Promise<EventItem> {
+    const src = load<EventItem[]>(LS_EVENTS, DEMO_EVENTS).find((e) => e.id === id);
+    if (!src) throw new Error('Событие не найдено');
+    return this.createEvent({ ...src, start_date, end_date, status: 'moderation' });
+  }
+
+  async approveEvent(id: string): Promise<void> {
+    this.updateEvent(id, { status: 'active' });
+  }
+
+  async rejectEvent(id: string): Promise<void> {
+    this.updateEvent(id, { status: 'rejected' });
+  }
+
+  async listArchived(): Promise<EventItem[]> {
+    return load<EventItem[]>(LS_EVENTS, DEMO_EVENTS).filter((e) => e.status === 'archived');
+  }
+
+  async addHistory(_eventId: string): Promise<void> {}
+
+  async listHistory() {
+    return [] as { id: string; event_id: string; viewed_at: string }[];
+  }
+
+  async clearHistory(): Promise<void> {}
+
+  async removeHistory(_id: string): Promise<void> {}
 }
 
 /** Категории по умолчанию (совпадают с config.defaultCategories) */

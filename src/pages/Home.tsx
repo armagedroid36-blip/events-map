@@ -1,11 +1,10 @@
 // Главная (публичная) страница: карта на ВЕСЬ экран (фон сайта),
-// поверх неё — плавающие панели: шапка, фильтры, список событий.
-// При загрузке запрашивается геолокация: разрешили — карта открывается
-// на пользователе, иначе — на Юго-Восточной Азии.
+// поверх неё — плавающие панели: шапка, фильтры, карточка события,
+// кнопка «События на карте» с списком событий видимой области.
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
-import MapView from '../components/MapView';
+import MapView, { type MapBounds } from '../components/MapView';
 import FiltersPanel from '../components/Filters';
 import EventsList from '../components/EventsList';
 import EventCard from '../components/EventCard';
@@ -13,13 +12,14 @@ import QuickLocations from '../components/QuickLocations';
 import EventForm from '../components/EventForm';
 import { getApi } from '../lib/api';
 import { isUpcoming } from '../lib/dates';
+import { useAuth } from '../lib/auth';
 import type { Category, EventItem, Filters } from '../lib/types';
 
-// Размер порции списка событий («Показать ещё»)
-const PAGE_SIZE = 30;
+const LIST_LIMIT = 50;
 
 export default function Home() {
   const { t } = useTranslation();
+  const { user } = useAuth();
 
   // --- Данные ---
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -37,15 +37,13 @@ export default function Home() {
   const [center, setCenter] = useState<{ lat: number; lng: number } | null>(null);
   const [zoom, setZoom] = useState<number | undefined>(undefined);
   const [formOpen, setFormOpen] = useState(false);
-  // Панель фильтров на мобильных (на десктопе фильтры всегда видны)
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  // Панель списка событий на мобильных: по умолчанию свёрнута,
-  // разворачивается кнопкой «События» или выбором события
-  const [mobileListOpen, setMobileListOpen] = useState(false);
-  // Сколько событий показывать в списке (порциями, чтобы панель не тормозила)
-  const [visibleLimit, setVisibleLimit] = useState(PAGE_SIZE);
+  // Кнопка «События на карте» — список событий видимой области
+  const [listOpen, setListOpen] = useState(false);
+  // Видимая область карты (юго-запад, северо-восток)
+  const [bounds, setBounds] = useState<MapBounds | null>(null);
 
-  // Загрузка данных из слоя данных (демо или Supabase — не важно)
+  // Загрузка данных из слоя данных
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -61,7 +59,7 @@ export default function Home() {
     };
   }, []);
 
-  // Геолокация: центр на посетителе; при отказе — Юго-Восточная Азия (по умолчанию)
+  // Геолокация: центр на посетителе; при отказе — Юго-Восточная Азия
   useEffect(() => {
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
@@ -69,9 +67,7 @@ export default function Home() {
         setCenter({ lat: pos.coords.latitude, lng: pos.coords.longitude });
         setZoom(10);
       },
-      () => {
-        /* отказ/ошибка — остаёмся на ЮВА */
-      },
+      () => {},
       { timeout: 5000 },
     );
   }, []);
@@ -92,10 +88,17 @@ export default function Home() {
     });
   }, [events, filters]);
 
-  // Смена фильтров возвращает список к первой порции
-  useEffect(() => {
-    setVisibleLimit(PAGE_SIZE);
-  }, [filters]);
+  // События на видимом участке карты (bounds) + фильтры
+  const onMapEvents = useMemo(() => {
+    if (!bounds) return visible.slice(0, LIST_LIMIT);
+    const [sw, ne] = bounds;
+    return visible
+      .filter(
+        (ev) =>
+          ev.lat >= sw[0] && ev.lat <= ne[0] && ev.lng >= sw[1] && ev.lng <= ne[1],
+      )
+      .slice(0, LIST_LIMIT);
+  }, [visible, bounds]);
 
   // Переход по быстрой кнопке направления
   function goTo(lat: number, lng: number, z: number) {
@@ -103,13 +106,18 @@ export default function Home() {
     setZoom(z);
   }
 
+  // Выбор события: карточка + запись в историю просмотров
+  async function selectEvent(ev: EventItem) {
+    setSelected(ev);
+    if (user) {
+      getApi().addHistory(ev.id).catch(() => {});
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex min-h-screen flex-col">
-        <Header
-          onOpenForm={() => setFormOpen(true)}
-          onOpenAdmin={() => (window.location.hash = '#/admin')}
-        />
+        <Header onOpenForm={() => setFormOpen(true)} />
         <div className="flex flex-1 items-center justify-center text-sm text-gray-500">
           {t('common.loading')}
         </div>
@@ -124,22 +132,16 @@ export default function Home() {
         <MapView
           events={visible}
           categories={categories}
-          onSelect={(ev) => {
-            setSelected(ev);
-            // На телефоне клик по маркеру открывает панель с карточкой события
-            setMobileListOpen(true);
-          }}
+          onSelect={selectEvent}
           center={center}
           zoom={zoom}
+          onBoundsChange={setBounds}
         />
       </div>
 
       {/* Шапка поверх карты */}
       <div className="absolute inset-x-0 top-0 z-[1200] border-b border-gray-200 bg-white/95 shadow-sm backdrop-blur">
-        <Header
-          onOpenForm={() => setFormOpen(true)}
-          onOpenAdmin={() => (window.location.hash = '#/admin')}
-        />
+        <Header onOpenForm={() => setFormOpen(true)} />
       </div>
 
       {/* Кнопка открытия фильтров на мобильных */}
@@ -167,8 +169,6 @@ export default function Home() {
             <QuickLocations onGoTo={goTo} />
           </div>
           <FiltersPanel categories={categories} filters={filters} onChange={setFilters} />
-          {/* Кнопка «Показать»: применяет фильтры (они применяются сразу)
-              и закрывает панель, чтобы были видны результаты */}
           <button
             onClick={() => setMobileFiltersOpen(false)}
             className="mt-3 w-full rounded-md bg-gray-900 px-3 py-2 text-sm font-semibold text-white hover:bg-gray-700"
@@ -188,50 +188,42 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Правая панель: выбранное событие + список.
-          На мобильных — сворачивается/разворачивается,
-          на десктопе — всегда видна справа */}
-      <div
-        className={`absolute inset-x-0 bottom-0 z-[1100] flex-col gap-3 overflow-y-auto bg-white/95 p-3 shadow-[0_-6px_16px_rgba(0,0,0,0.12)] lg:inset-x-auto lg:top-16 lg:bottom-3 lg:right-3 lg:w-[380px] lg:flex lg:bg-white/80 lg:p-2 lg:shadow-lg lg:backdrop-blur ${
-          mobileListOpen ? 'top-[55%] flex' : 'hidden'
-        }`}
-      >
-        {/* Кнопка «Свернуть» — только на мобильных */}
-        <button
-          onClick={() => setMobileListOpen(false)}
-          className="flex w-full items-center justify-center gap-1 rounded-md border border-gray-200 py-1.5 text-sm text-gray-500 hover:bg-gray-50 lg:hidden"
-        >
-          <span>▾</span> {t('list.collapse')}
-        </button>
-        {selected && (
-          <EventCard event={selected} categories={categories} onClose={() => setSelected(null)} />
-        )}
-        <EventsList
-          events={visible.slice(0, visibleLimit)}
-          categories={categories}
-          selectedId={selected?.id ?? null}
-          onSelect={setSelected}
-        />
-        {/* Кнопка «Показать ещё» — список показывается порциями,
-            чтобы панель оставалась лёгкой при сотнях событий */}
-        {visible.length > visibleLimit && (
-          <button
-            onClick={() => setVisibleLimit((l) => l + PAGE_SIZE)}
-            className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
-          >
-            {t('list.showMore')} ({visible.length - visibleLimit})
-          </button>
-        )}
-      </div>
+      {/* Карточка выбранного события (без списка):
+          на мобильных — снизу, на десктопе — справа */}
+      {selected && (
+        <div className="absolute inset-x-0 bottom-0 top-[45%] z-[1140] overflow-y-auto bg-white/95 p-3 shadow-[0_-6px_16px_rgba(0,0,0,0.12)] lg:inset-x-auto lg:top-16 lg:bottom-3 lg:right-3 lg:w-[380px] lg:bg-white/80 lg:backdrop-blur">
+          <EventCard
+            event={selected}
+            categories={categories}
+            onClose={() => setSelected(null)}
+          />
+        </div>
+      )}
 
-      {/* Кнопка разворачивания панели событий на мобильных (когда панель свёрнута) */}
-      {!mobileListOpen && (
-        <button
-          onClick={() => setMobileListOpen(true)}
-          className="absolute bottom-4 left-1/2 z-[1150] -translate-x-1/2 rounded-full bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-gray-700 lg:hidden"
-        >
-          {t('list.title')} ({visible.length})
-        </button>
+      {/* Кнопка «События на карте» — список событий видимой области */}
+      <button
+        onClick={() => setListOpen((v) => !v)}
+        className="absolute bottom-4 left-1/2 z-[1160] -translate-x-1/2 rounded-full bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-gray-700"
+      >
+        {listOpen
+          ? `▾ ${t('list.collapse')}`
+          : `${t('list.title')} (${onMapEvents.length})`}
+      </button>
+
+      {/* Список под кнопкой — события текущего участка карты */}
+      {listOpen && (
+        <div className="absolute inset-x-0 bottom-16 z-[1130] mx-auto max-h-[50vh] w-full max-w-xl overflow-y-auto rounded-t-xl bg-white/95 p-3 shadow-xl backdrop-blur">
+          <p className="mb-2 text-xs text-gray-500">{t('list.results', { count: onMapEvents.length })}</p>
+          {onMapEvents.length === 0 && (
+            <p className="py-4 text-center text-sm text-gray-500">{t('list.empty')}</p>
+          )}
+          <EventsList
+            events={onMapEvents}
+            categories={categories}
+            selectedId={selected?.id ?? null}
+            onSelect={selectEvent}
+          />
+        </div>
       )}
 
       {formOpen && (

@@ -10,7 +10,7 @@ export interface Category {
 }
 
 /** Статус события в базе */
-export type EventStatus = 'active' | 'past' | 'moderation' | 'rejected';
+export type EventStatus = 'active' | 'past' | 'moderation' | 'rejected' | 'archived';
 
 /**
  * Событие.
@@ -36,6 +36,9 @@ export interface EventItem {
   /** Даты: ISO-формат (YYYY-MM-DD) */
   start_date: string;
   end_date?: string;
+  /** Точное время начала/конца (HH:MM, местное) */
+  start_time?: string;
+  end_time?: string;
   /** Город и адрес — единые, без перевода */
   city: string;
   address?: string;
@@ -46,9 +49,16 @@ export interface EventItem {
   website?: string;
   /** Контакт организатора */
   contact?: string;
-  /** Фотографии: внешние ссылки, не больше 5 */
+  /** Контакты организатора для связи (видит только админ) */
+  contact_telegram?: string;
+  contact_whatsapp?: string;
+  contact_email?: string;
+  contact_phone?: string;
+  /** Фотографии: URL загруженных файлов, не больше 5 */
   photos?: string[];
   status: EventStatus;
+  /** Владелец-организатор (если событие создано через аккаунт) */
+  owner_id?: string;
   created_at: string;
 }
 
@@ -102,4 +112,31 @@ export interface Filters {
   dateTo?: string;
   city?: string;
   query?: string;
+}
+
+/** Роль пользователя */
+export type UserRole = 'admin' | 'org' | 'user';
+
+/** Профиль пользователя (роль + контакты организатора) */
+export interface Profile {
+  id: string;
+  role: UserRole;
+  contact_telegram?: string;
+  contact_whatsapp?: string;
+  contact_email?: string;
+  contact_phone?: string;
+}
+
+/** Текущий пользователь (сессия) */
+export interface CurrentUser {
+  id: string;
+  email: string;
+  role: UserRole;
+}
+
+/** Запись истории просмотров */
+export interface HistoryItem {
+  id: string;
+  event_id: string;
+  viewed_at: string;
 }

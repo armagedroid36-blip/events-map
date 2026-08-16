@@ -82,6 +82,36 @@ interface MapControllerProps {
   zoom?: number;
 }
 
+/** Границы видимой области карты: [юго-запад, северо-восток] */
+export type MapBounds = [[number, number], [number, number]];
+
+/** Сообщает наружу видимую область карты при её перемещении/зуме */
+function BoundsTracker({ onBoundsChange }: { onBoundsChange?: (b: MapBounds) => void }) {
+  const map = useMap();
+  const cbRef = useRef(onBoundsChange);
+  cbRef.current = onBoundsChange;
+
+  useEffect(() => {
+    const fire = () => {
+      if (!cbRef.current) return;
+      const b = map.getBounds();
+      cbRef.current([
+        [b.getSouth(), b.getWest()],
+        [b.getNorth(), b.getEast()],
+      ]);
+    };
+    fire();
+    map.on('moveend', fire);
+    map.on('zoomend', fire);
+    return () => {
+      map.off('moveend', fire);
+      map.off('zoomend', fire);
+    };
+  }, [map]);
+
+  return null;
+}
+
 /** Внешнее управление центром карты (геолокация, быстрые кнопки) */
 function MapController({ center, zoom }: MapControllerProps) {
   const map = useMap();
@@ -104,9 +134,18 @@ interface MapViewProps {
   onSelect: (ev: EventItem) => void;
   center?: { lat: number; lng: number } | null;
   zoom?: number;
+  /** Изменение видимой области карты (для списка «События на карте») */
+  onBoundsChange?: (b: MapBounds) => void;
 }
 
-export default function MapView({ events, categories, onSelect, center, zoom }: MapViewProps) {
+export default function MapView({
+  events,
+  categories,
+  onSelect,
+  center,
+  zoom,
+  onBoundsChange,
+}: MapViewProps) {
   const initialCenter: [number, number] = [
     center?.lat ?? config.defaultCenter.lat,
     center?.lng ?? config.defaultCenter.lng,
@@ -132,6 +171,7 @@ export default function MapView({ events, categories, onSelect, center, zoom }: 
       <AttributionControl position="bottomright" prefix={false} />
       <ClusterLayer events={events} categories={categories} onSelect={onSelect} />
       <MapController center={center} zoom={zoom} />
+      <BoundsTracker onBoundsChange={onBoundsChange} />
     </MapContainer>
   );
 }

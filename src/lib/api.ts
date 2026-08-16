@@ -3,7 +3,17 @@
 // не зная, откуда берутся данные (демо или Supabase).
 // Это позволяет подключить реальную базу и будущие модули автоматизации
 // (фиды, парсинг) без переделки остального кода.
-import type { Category, EventItem, Application, ApplicationDraft, ImportRow } from './types';
+import type {
+  Category,
+  EventItem,
+  Application,
+  ApplicationDraft,
+  ImportRow,
+  Profile,
+  CurrentUser,
+  HistoryItem,
+  UserRole,
+} from './types';
 import { config } from '../config';
 import { DemoApi } from './demo';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
@@ -16,7 +26,41 @@ export interface DataApi {
   listAllEvents(): Promise<EventItem[]>;
   getCategories(): Promise<Category[]>;
   submitApplication(draft: ApplicationDraft): Promise<void>;
-  // --- Админка ---
+
+  // --- Авторизация ---
+  signUp(
+    email: string,
+    password: string,
+    role: UserRole,
+    contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string },
+  ): Promise<void>;
+  signIn(email: string, password: string): Promise<CurrentUser | null>;
+  signOut(): Promise<void>;
+  getCurrentUser(): Promise<CurrentUser | null>;
+
+  // --- Профиль и фото ---
+  uploadPhoto(file: File): Promise<string>;
+  /** Профиль текущего пользователя (контакты организатора) */
+  getMyProfile(): Promise<Profile | null>;
+
+  // --- События организатора ---
+  listMyEvents(): Promise<EventItem[]>;
+  /** Повторить прошедшее событие с новыми датами (копия, на модерацию) */
+  repeatEvent(id: string, start_date: string, end_date?: string): Promise<EventItem>;
+
+  // --- Модерация и архив (админ) ---
+  approveEvent(id: string): Promise<void>;
+  rejectEvent(id: string): Promise<void>;
+  /** Архив: админ видит все, организатор — свои */
+  listArchived(): Promise<EventItem[]>;
+
+  // --- История просмотров ---
+  addHistory(eventId: string): Promise<void>;
+  listHistory(): Promise<HistoryItem[]>;
+  clearHistory(): Promise<void>;
+  removeHistory(id: string): Promise<void>;
+
+  // --- Админка (управление) ---
   adminLogin(email: string, password: string): Promise<boolean>;
   listApplications(): Promise<Application[]>;
   approveApplication(id: string): Promise<void>;
@@ -28,6 +72,11 @@ export interface DataApi {
   updateCategory(id: string, data: Partial<Category>): Promise<void>;
   deleteCategory(id: string): Promise<void>;
   importEvents(rows: ImportRow[]): Promise<number>;
+}
+
+/** Публичный URL файла в хранилище Supabase */
+export function photoUrl(path: string): string {
+  return `${config.supabaseUrl}/storage/v1/object/public/photos/${path}`;
 }
 
 /**
@@ -45,6 +94,12 @@ class SupabaseApi implements DataApi {
   // --- Публичная часть ---
 
   async listEvents(): Promise<EventItem[]> {
+    // Автоархив: завершившиеся события уходят с карты в архив
+    try {
+      await this.db.rpc('archive_past_events');
+    } catch {
+      /* не критично */
+    }
     const { data, error } = await this.db
       .from('events')
       .select('*')
@@ -71,10 +126,213 @@ class SupabaseApi implements DataApi {
     if (error) throw error;
   }
 
-  // --- Админка ---
+  // --- Авторизация ---
+
+  private async profileOf(userId: string): Promise<Profile | null> {
+    const { data, error } = await this.db
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .maybeSingle();
+    if (error) return null;
+    return data as Profile | null;
+  }
+
+  async signUp(
+    email: string,
+    password: string,
+    role: UserRole,
+    contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string },
+  ): Promise<void> {
+    const { data, error } = await this.db.auth.signUp({ email, password });
+    if (error) throw new Error(error.message);
+    const uid = data.user?.id;
+    if (!uid) throw new Error('Не удалось создать аккаунт');
+    // Профиль создаёт SQL-функция (обходит RLS до активации сессии)
+    const { error: pErr } = await this.db.rpc('create_profile', {
+      uid,
+      p_role: role,
+      tg: contacts.telegram ?? '',
+      wa: contacts.whatsapp ?? '',
+      em: contacts.email ?? '',
+      ph: contacts.phone ?? '',
+    });
+    if (pErr) throw new Error(pErr.message);
+  }
+
+  async signIn(email: string, password: string): Promise<CurrentUser | null> {
+    const { data, error } = await this.db.auth.signInWithPassword({ email, password });
+    if (error) return null;
+    const user = data.user;
+    if (!user) return null;
+    const profile = await this.profileOf(user.id);
+    return {
+      id: user.id,
+      email: user.email ?? email,
+      role: profile?.role ?? 'user',
+    };
+  }
+
+  async signOut(): Promise<void> {
+    await this.db.auth.signOut();
+  }
+
+  async getCurrentUser(): Promise<CurrentUser | null> {
+    const { data } = await this.db.auth.getSession();
+    const user = data.session?.user;
+    if (!user) return null;
+    const profile = await this.profileOf(user.id);
+    return {
+      id: user.id,
+      email: user.email ?? '',
+      role: profile?.role ?? 'user',
+    };
+  }
+
+  // --- Профиль и фото ---
+
+  async uploadPhoto(file: File): Promise<string> {
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${file.name.split('.').pop()}`;
+    const { error } = await this.db.storage.from('photos').upload(path, file, {
+      cacheControl: '3600',
+      upsert: false,
+    });
+    if (error) throw new Error(error.message);
+    return path;
+  }
+
+  async getMyProfile(): Promise<Profile | null> {
+    const me = await this.getCurrentUser();
+    if (!me) return null;
+    return this.profileOf(me.id);
+  }
+
+  // --- События организатора ---
+
+  async listMyEvents(): Promise<EventItem[]> {
+    const me = await this.getCurrentUser();
+    if (!me) return [];
+    const { data, error } = await this.db
+      .from('events')
+      .select('*')
+      .eq('owner_id', me.id)
+      .order('start_date', { ascending: false });
+    if (error) throw error;
+    return (data ?? []) as EventItem[];
+  }
+
+  async repeatEvent(id: string, start_date: string, end_date?: string): Promise<EventItem> {
+    const me = await this.getCurrentUser();
+    if (!me) throw new Error('Войдите как организатор');
+    const { data: src, error: gErr } = await this.db
+      .from('events')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+    if (gErr || !src) throw new Error('Событие не найдено');
+    const { data, error } = await this.db
+      .from('events')
+      .insert({
+        title: src.title,
+        title_ru: src.title_ru,
+        title_en: src.title_en,
+        description: src.description,
+        description_ru: src.description_ru,
+        description_en: src.description_en,
+        source_lang: src.source_lang,
+        start_date,
+        end_date,
+        start_time: src.start_time,
+        end_time: src.end_time,
+        city: src.city,
+        address: src.address,
+        lat: src.lat,
+        lng: src.lng,
+        category_id: src.category_id,
+        website: src.website,
+        contact: src.contact,
+        contact_telegram: src.contact_telegram,
+        contact_whatsapp: src.contact_whatsapp,
+        contact_email: src.contact_email,
+        contact_phone: src.contact_phone,
+        photos: src.photos ?? [],
+        owner_id: me.id,
+        status: 'moderation',
+      })
+      .select()
+      .single();
+    if (error) throw error;
+    return data as EventItem;
+  }
+
+  // --- Модерация и архив ---
+
+  async approveEvent(id: string): Promise<void> {
+    const { error } = await this.db
+      .from('events')
+      .update({ status: 'active' })
+      .eq('id', id);
+    if (error) throw error;
+  }
+
+  async rejectEvent(id: string): Promise<void> {
+    const { error } = await this.db.from('events').update({ status: 'rejected' }).eq('id', id);
+    if (error) throw error;
+  }
+
+  async listArchived(): Promise<EventItem[]> {
+    const me = await this.getCurrentUser();
+    if (!me) return [];
+    let q = this.db.from('events').select('*').eq('status', 'archived');
+    if (me.role !== 'admin') {
+      q = q.eq('owner_id', me.id);
+    }
+    const { data, error } = await q.order('start_date', { ascending: false });
+    if (error) throw error;
+    return (data ?? []) as EventItem[];
+  }
+
+  // --- История просмотров ---
+
+  async addHistory(eventId: string): Promise<void> {
+    const me = await this.getCurrentUser();
+    if (!me) return;
+    const { error } = await this.db.from('history').insert({ user_id: me.id, event_id: eventId });
+    if (error) {
+      // Уже было в истории — обновляем время просмотра
+      await this.db
+        .from('history')
+        .update({ viewed_at: new Date().toISOString() })
+        .eq('user_id', me.id)
+        .eq('event_id', eventId);
+    }
+  }
+
+  async listHistory(): Promise<HistoryItem[]> {
+    const me = await this.getCurrentUser();
+    if (!me) return [];
+    const { data, error } = await this.db
+      .from('history')
+      .select('id, event_id, viewed_at, events(*)')
+      .order('viewed_at', { ascending: false });
+    if (error) throw error;
+    return (data ?? []) as HistoryItem[];
+  }
+
+  async clearHistory(): Promise<void> {
+    const me = await this.getCurrentUser();
+    if (!me) return;
+    await this.db.from('history').delete().eq('user_id', me.id);
+  }
+
+  async removeHistory(id: string): Promise<void> {
+    await this.db.from('history').delete().eq('id', id);
+  }
+
+  // --- Админка (управление) ---
 
   async adminLogin(_email: string, password: string): Promise<boolean> {
-    // MVP: пароль хранится в .env. Позже — полноценный вход через Supabase Auth.
+    // Админ входит обычной авторизацией; этот метод оставлен для совместимости
     return config.adminPassword !== '' && password === config.adminPassword;
   }
 
@@ -137,7 +395,7 @@ let apiInstance: DataApi | null = null;
 /** Возвращает текущую реализацию данных (демо или Supabase) */
 export function getApi(): DataApi {
   if (!apiInstance) {
-    apiInstance = config.demoMode ? new DemoApi() : new SupabaseApi();
+    apiInstance = (config.demoMode ? new DemoApi() : new SupabaseApi()) as unknown as DataApi;
   }
-  return apiInstance;
+  return apiInstance as DataApi;
 }
