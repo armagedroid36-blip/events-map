@@ -114,3 +114,18 @@ body {
 .bottom-safe {
   bottom: max(4.5rem, calc(1.25rem + env(safe-area-inset-bottom)));
 }
+
+/* Плавное появление фото при перелистывании в карусели */
+@keyframes lightbox-fade {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.lightbox-fade {
+  animation: lightbox-fade 0.25s ease-out;
+}

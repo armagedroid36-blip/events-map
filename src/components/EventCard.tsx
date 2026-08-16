@@ -98,10 +98,11 @@ function Lightbox({
         onDoubleClick={() => setScale(scale > 1 ? 1 : 2)}
       >
         <img
+          key={idx}
           src={fullUrl(photos[idx])}
           alt=""
           draggable={false}
-          className="max-h-[85vh] max-w-[92vw] select-none object-contain"
+          className="lightbox-fade max-h-[85vh] max-w-[92vw] select-none object-contain"
           style={{
             transform: scale > 1 ? `scale(${scale})` : `translateX(${dragX}px)`,
             transition: 'transform 0.12s ease-out',
