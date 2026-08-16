@@ -2,6 +2,7 @@
 // Поля: название, даты и время, город, описание, категория, фото.
 // Фото: маленькие превью; клик по фото открывает карусель на весь экран.
 import { useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import type { Category, EventItem } from '../lib/types';
 import { localizedText } from '../lib/translate';
@@ -228,9 +229,11 @@ export default function EventCard({ event, categories, onClose }: Props) {
         </a>
       )}
 
-      {lightbox !== null && photos.length > 0 && (
-        <Lightbox photos={photos} start={lightbox} onClose={() => setLightbox(null)} />
-      )}
+      {lightbox !== null && photos.length > 0 &&
+        createPortal(
+          <Lightbox photos={photos} start={lightbox} onClose={() => setLightbox(null)} />,
+          document.body,
+        )}
     </div>
   );
 }
