@@ -33,11 +33,19 @@ function Lightbox({
   const [idx, setIdx] = useState(start);
   const [scale, setScale] = useState(1);
   const [dragX, setDragX] = useState(0);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
   const [slideW, setSlideW] = useState(0);
   const wrapRef = useRef<HTMLDivElement | null>(null);
   // Начало жеста
-  const startRef = useRef<{ dist: number; scale: number; x: number; y: number; pinch: boolean } | null>(null);
+  const startRef = useRef<{
+    dist: number;
+    scale: number;
+    x: number;
+    y: number;
+    pinch: boolean;
+    startOffset: { x: number; y: number };
+  } | null>(null);
 
   // Ширина слайда (для сдвига трека в пикселях)
   function measure() {
@@ -54,15 +62,16 @@ function Lightbox({
     setIdx((i + photos.length) % photos.length);
     setScale(1);
     setDragX(0);
+    setOffset({ x: 0, y: 0 });
   }
 
   function onTouchStart(e: React.TouchEvent) {
     const t = e.touches;
     if (t.length === 2) {
       const d = Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
-      startRef.current = { dist: d, scale, x: 0, y: 0, pinch: true };
+      startRef.current = { dist: d, scale, x: 0, y: 0, pinch: true, startOffset: offset };
     } else if (t.length === 1) {
-      startRef.current = { dist: 0, scale, x: t[0].clientX, y: t[0].clientY, pinch: false };
+      startRef.current = { dist: 0, scale, x: t[0].clientX, y: t[0].clientY, pinch: false, startOffset: offset };
       setDragging(true);
       setDragX(0);
     }
@@ -77,9 +86,19 @@ function Lightbox({
       const d = Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
       setScale(Math.min(4, Math.max(1, st.scale * (d / (st.dist || 1)))));
       setDragX(0);
-    } else if (t.length === 1 && !st.pinch && scale <= 1) {
-      // Галерея: фото следует за пальцем, соседнее пододвигается
-      setDragX(t[0].clientX - st.x);
+    } else if (t.length === 1 && !st.pinch) {
+      if (scale > 1) {
+        // Панорама: двигаем увеличенное фото, чтобы рассмотреть углы
+        const maxX = (scale - 1) * (slideW / 2) + 20;
+        const maxY = (scale - 1) * 300 + 20;
+        const nx = Math.max(-maxX, Math.min(maxX, st.startOffset.x + (t[0].clientX - st.x)));
+        const ny = Math.max(-maxY, Math.min(maxY, st.startOffset.y + (t[0].clientY - st.y)));
+        setOffset({ x: nx, y: ny });
+        setDragX(0);
+      } else {
+        // Галерея: фото следует за пальцем, соседнее пододвигается
+        setDragX(t[0].clientX - st.x);
+      }
     }
   }
 
@@ -89,10 +108,9 @@ function Lightbox({
     setDragging(false);
     if (st && !st.pinch && scale <= 1) {
       if (Math.abs(dragX) > slideW * 0.22) {
-        // Долистываем к соседнему фото
         goTo(idx + (dragX < 0 ? 1 : -1));
       } else {
-        setDragX(0); // вернулись назад плавно
+        setDragX(0);
       }
     }
   }
@@ -119,7 +137,14 @@ function Lightbox({
         ref={wrapRef}
         className="relative max-h-[85vh] w-full max-w-[92vw] overflow-hidden rounded-2xl shadow-2xl"
         onClick={(e) => e.stopPropagation()}
-        onDoubleClick={() => setScale(scale > 1 ? 1 : 2)}
+        onDoubleClick={() => {
+          if (scale > 1) {
+            setScale(1);
+            setOffset({ x: 0, y: 0 });
+          } else {
+            setScale(2);
+          }
+        }}
       >
         <div
           className="flex h-full"
@@ -139,8 +164,11 @@ function Lightbox({
                 draggable={false}
                 className="max-h-[85vh] w-full select-none object-contain"
                 style={{
-                  transform: i === idx && scale > 1 ? `scale(${scale})` : undefined,
-                  transition: 'transform 0.1s ease-out',
+                  transform:
+                    i === idx && scale > 1
+                      ? `translate(${offset.x}px, ${offset.y}px) scale(${scale})`
+                      : undefined,
+                  transition: dragging ? 'none' : 'transform 0.1s ease-out',
                 }}
               />
             </div>
