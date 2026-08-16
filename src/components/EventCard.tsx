@@ -31,7 +31,6 @@ function Lightbox({
 }) {
   const [idx, setIdx] = useState(start);
   const [scale, setScale] = useState(1);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
   // Свайп
   const touchStart = useRef<{ x: number; y: number; dist: number; pinch: boolean } | null>(null);
   const [dragging, setDragging] = useState(false);
@@ -40,7 +39,6 @@ function Lightbox({
   function goTo(i: number) {
     setIdx((i + photos.length) % photos.length);
     setScale(1);
-    setOffset({ x: 0, y: 0 });
     setDragX(0);
   }
 
@@ -67,7 +65,6 @@ function Lightbox({
       const d = Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
       const s = Math.min(4, Math.max(1, scale * (d / (st.dist || 1))));
       setScale(s);
-      setOffset({ x: 0, y: 0 });
     } else if (t.length === 1 && !st.pinch && scale === 1) {
       const dx = t[0].clientX - st.x;
       setDragX(dx);
