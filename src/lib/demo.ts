@@ -358,6 +358,10 @@ export class DemoApi {
     return this.createEvent({ ...src, start_date, end_date, status: 'moderation' });
   }
 
+  async createOrgEvent(data: Partial<EventItem>): Promise<EventItem> {
+    return this.createEvent({ ...data, status: 'moderation' });
+  }
+
   async approveEvent(id: string): Promise<void> {
     this.updateEvent(id, { status: 'active' });
   }

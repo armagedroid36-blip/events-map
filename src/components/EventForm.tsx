@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import { z } from 'zod';
-import type { Category } from '../lib/types';
+import type { Category, EventItem } from '../lib/types';
 import { getApi, photoUrl } from '../lib/api';
 import { geocodeAddress, reverseGeocode } from '../lib/geocode';
 import { detectLang } from '../lib/translate';
@@ -19,6 +19,8 @@ import { useAuth } from '../lib/auth';
 interface Props {
   categories: Category[];
   onClose: () => void;
+  /** Событие для повторения/редактирования (данные подставляются в форму) */
+  event?: EventItem;
 }
 
 /** Иконка маркера на мини-карте формы */
@@ -39,35 +41,41 @@ function ClickToMove({ onMove }: { onMove: (lat: number, lng: number) => void })
   return null;
 }
 
-export default function EventForm({ categories, onClose }: Props) {
+export default function EventForm({ categories, onClose, event }: Props) {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const isRepeat = !!event;
 
-  // --- Состояние формы ---
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
-  const [city, setCity] = useState('');
-  const [address, setAddress] = useState('');
-  const [categoryId, setCategoryId] = useState('');
-  const [website, setWebsite] = useState('');
+  // --- Состояние формы (при повторе — данные из события) ---
+  const [title, setTitle] = useState(event?.title ?? '');
+  const [description, setDescription] = useState(event?.description ?? '');
+  const [startDate, setStartDate] = useState(event?.start_date ?? '');
+  const [endDate, setEndDate] = useState(event?.end_date ?? '');
+  const [startTime, setStartTime] = useState(event?.start_time ?? '');
+  const [endTime, setEndTime] = useState(event?.end_time ?? '');
+  const [city, setCity] = useState(event?.city ?? '');
+  const [address, setAddress] = useState(event?.address ?? '');
+  const [categoryId, setCategoryId] = useState(event?.category_id ?? '');
+  const [website, setWebsite] = useState(event?.website ?? '');
   // Контакты: гость вводит текстом; организатор выбирает из профиля
-  const [contact, setContact] = useState('');
+  const [contact, setContact] = useState(event?.contact ?? '');
   const [contactSel, setContactSel] = useState<{
     telegram?: boolean;
     whatsapp?: boolean;
     email?: boolean;
     phone?: boolean;
-  }>({});
+  }>({
+    telegram: !!event?.contact_telegram,
+    whatsapp: !!event?.contact_whatsapp,
+    email: !!event?.contact_email,
+    phone: !!event?.contact_phone,
+  });
   // Фото: пути загруженных файлов
-  const [photos, setPhotos] = useState<string[]>([]);
+  const [photos, setPhotos] = useState<string[]>(event?.photos ?? []);
   const [uploading, setUploading] = useState(false);
-  // Координаты: по умолчанию центр Юго-Восточной Азии
-  const [lat, setLat] = useState<number>(config.defaultCenter.lat);
-  const [lng, setLng] = useState<number>(config.defaultCenter.lng);
+  // Координаты
+  const [lat, setLat] = useState<number>(event?.lat ?? config.defaultCenter.lat);
+  const [lng, setLng] = useState<number>(event?.lng ?? config.defaultCenter.lng);
   const [geocoding, setGeocoding] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -195,14 +203,14 @@ export default function EventForm({ categories, onClose }: Props) {
         photos,
       };
       if (isOrg) {
-        // Организатор: создаём событие напрямую (на модерацию)
+        // Организатор: создаём/повторяем событие (на модерацию)
         const contacts = {
           contact_telegram: contactSel.telegram ? profile?.telegram : undefined,
           contact_whatsapp: contactSel.whatsapp ? profile?.whatsapp : undefined,
           contact_email: contactSel.email ? profile?.email : undefined,
           contact_phone: contactSel.phone ? profile?.phone : undefined,
         };
-        await getApi().createEvent({ ...common, ...contacts, status: 'moderation' });
+        await getApi().createOrgEvent({ ...common, ...contacts });
       } else {
         // Гость: заявка с контактом
         await getApi().submitApplication({ ...common, contact });
@@ -240,12 +248,16 @@ export default function EventForm({ categories, onClose }: Props) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">{t('form.title')}</h2>
+          <h2 className="text-lg font-semibold text-gray-900">
+            {isRepeat ? t('myEvents.repeatTitle') : t('form.title')}
+          </h2>
           <button onClick={onClose} className="rounded p-1 text-gray-400 hover:bg-gray-100" aria-label="close">
             ✕
           </button>
         </div>
-        <p className="mb-4 text-sm text-gray-500">{t('form.subtitle')}</p>
+        <p className="mb-4 text-sm text-gray-500">
+          {isRepeat ? t('myEvents.repeatHint') : t('form.subtitle')}
+        </p>
 
         <form onSubmit={submit} className="space-y-3">
           <div>

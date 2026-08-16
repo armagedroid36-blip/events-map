@@ -1,11 +1,14 @@
 // «Мои мероприятия» — личный кабинет организатора.
-// Вкладки: активные (и их статус) и архив (прошедшие) с кнопкой «Повторить».
+// Вкладки: активные (и их статус) и архив (прошедшие).
+// «Повторить» открывает форму со всеми данными события — организатор
+// правит что хочет и отправляет на модерацию.
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getApi } from '../lib/api';
 import { useAuth } from '../lib/auth';
-import type { EventItem } from '../lib/types';
+import type { Category, EventItem } from '../lib/types';
 import { formatDate } from '../lib/dates';
+import EventForm from '../components/EventForm';
 
 export default function MyEvents() {
   const { t } = useTranslation();
@@ -13,15 +16,18 @@ export default function MyEvents() {
   const [tab, setTab] = useState<'active' | 'archive'>('active');
   const [events, setEvents] = useState<EventItem[]>([]);
   const [archive, setArchive] = useState<EventItem[]>([]);
-  const [repeatId, setRepeatId] = useState<string | null>(null);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [busy, setBusy] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [repeat, setRepeat] = useState<EventItem | null>(null);
 
   async function load() {
-    const [ev, ar] = await Promise.all([getApi().listMyEvents(), getApi().listArchived()]);
+    const [ev, ar, cats] = await Promise.all([
+      getApi().listMyEvents(),
+      getApi().listArchived(),
+      getApi().getCategories(),
+    ]);
     setEvents(ev);
     setArchive(ar);
+    setCategories(cats);
   }
 
   useEffect(() => {
@@ -34,20 +40,6 @@ export default function MyEvents() {
         {t('myEvents.accessDenied')}
       </div>
     );
-  }
-
-  async function doRepeat() {
-    if (!repeatId || !startDate) return;
-    setBusy(true);
-    try {
-      await getApi().repeatEvent(repeatId, startDate, endDate || undefined);
-      setRepeatId(null);
-      setStartDate('');
-      setEndDate('');
-      await load();
-    } finally {
-      setBusy(false);
-    }
   }
 
   const statusLabel: Record<string, string> = {
@@ -79,11 +71,7 @@ export default function MyEvents() {
           )}
         </div>
         <button
-          onClick={() => {
-            setRepeatId(ev.id);
-            setStartDate('');
-            setEndDate('');
-          }}
+          onClick={() => setRepeat(ev)}
           className="shrink-0 rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
         >
           {t('myEvents.repeat')}
@@ -127,34 +115,16 @@ export default function MyEvents() {
         </div>
       )}
 
-      {/* Модалка повторения */}
-      {repeatId && (
-        <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/40 p-4" onClick={() => setRepeatId(null)}>
-          <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('myEvents.repeatTitle')}</h2>
-            <label className="mb-1 block text-sm text-gray-600">{t('myEvents.startDate')}</label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="mb-3 w-full rounded-md border border-gray-300 px-2.5 py-2 text-sm"
-            />
-            <label className="mb-1 block text-sm text-gray-600">{t('myEvents.endDate')}</label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="mb-4 w-full rounded-md border border-gray-300 px-2.5 py-2 text-sm"
-            />
-            <button
-              onClick={doRepeat}
-              disabled={busy || !startDate}
-              className="w-full rounded-md bg-gray-900 px-3 py-2 text-sm font-semibold text-white hover:bg-gray-700 disabled:opacity-50"
-            >
-              {busy ? '...' : t('myEvents.repeatConfirm')}
-            </button>
-          </div>
-        </div>
+      {/* Форма повтора с данными события */}
+      {repeat && (
+        <EventForm
+          categories={categories}
+          event={repeat}
+          onClose={() => {
+            setRepeat(null);
+            load();
+          }}
+        />
       )}
     </div>
   );

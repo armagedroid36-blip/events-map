@@ -45,6 +45,8 @@ export interface DataApi {
 
   // --- События организатора ---
   listMyEvents(): Promise<EventItem[]>;
+  /** Создать/повторить событие от имени организатора (на модерацию) */
+  createOrgEvent(data: Partial<EventItem>): Promise<EventItem>;
   /** Повторить прошедшее событие с новыми датами (копия, на модерацию) */
   repeatEvent(id: string, start_date: string, end_date?: string): Promise<EventItem>;
 
@@ -219,6 +221,44 @@ class SupabaseApi implements DataApi {
       .order('start_date', { ascending: false });
     if (error) throw error;
     return (data ?? []) as EventItem[];
+  }
+
+  async createOrgEvent(data: Partial<EventItem>): Promise<EventItem> {
+    const me = await this.getCurrentUser();
+    if (!me) throw new Error('Войдите как организатор');
+    const { data: ev, error } = await this.db
+      .from('events')
+      .insert({
+        title: data.title ?? '',
+        title_ru: data.title_ru,
+        title_en: data.title_en,
+        description: data.description ?? '',
+        description_ru: data.description_ru,
+        description_en: data.description_en,
+        source_lang: data.source_lang ?? 'ru',
+        start_date: data.start_date ?? '',
+        end_date: data.end_date,
+        start_time: data.start_time,
+        end_time: data.end_time,
+        city: data.city ?? '',
+        address: data.address,
+        lat: data.lat ?? 0,
+        lng: data.lng ?? 0,
+        category_id: data.category_id ?? '',
+        website: data.website,
+        contact: data.contact,
+        contact_telegram: data.contact_telegram,
+        contact_whatsapp: data.contact_whatsapp,
+        contact_email: data.contact_email,
+        contact_phone: data.contact_phone,
+        photos: data.photos ?? [],
+        owner_id: me.id,
+        status: 'moderation',
+      })
+      .select()
+      .single();
+    if (error) throw error;
+    return ev as EventItem;
   }
 
   async repeatEvent(id: string, start_date: string, end_date?: string): Promise<EventItem> {
