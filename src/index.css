@@ -94,3 +94,8 @@ body {
 .glass-btn:active {
   transform: scale(0.97);
 }
+
+/* Нижняя кнопка: поднята над панелью браузера и безопасной зоной iPhone */
+.bottom-safe {
+  bottom: max(4.5rem, calc(1.25rem + env(safe-area-inset-bottom)));
+}

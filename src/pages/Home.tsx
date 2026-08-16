@@ -205,7 +205,7 @@ export default function Home() {
       {!selected && (
         <button
           onClick={() => setListOpen((v) => !v)}
-          className="glass-btn absolute bottom-4 left-1/2 z-[1160] -translate-x-1/2 rounded-full px-5 py-2.5 text-sm font-semibold shadow-lg"
+          className="glass-btn bottom-safe absolute left-1/2 z-[1160] -translate-x-1/2 rounded-full px-5 py-2.5 text-sm font-semibold shadow-lg"
         >
           {listOpen
             ? `▾ ${t('list.collapse')}`
@@ -215,7 +215,7 @@ export default function Home() {
 
       {/* Список под кнопкой — события текущего участка карты */}
       {listOpen && (
-        <div className="glass absolute inset-x-0 bottom-16 z-[1130] mx-auto max-h-[50vh] w-full max-w-xl overflow-y-auto rounded-t-xl p-3 shadow-xl">
+        <div className="glass absolute inset-x-0 bottom-28 z-[1130] mx-auto max-h-[50vh] w-full max-w-xl overflow-y-auto rounded-t-xl p-3 shadow-xl">
           <p className="mb-2 text-xs text-gray-500">{t('list.results', { count: onMapEvents.length })}</p>
           {onMapEvents.length === 0 && (
             <p className="py-4 text-center text-sm text-gray-500">{t('list.empty')}</p>
