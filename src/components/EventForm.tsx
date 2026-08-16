@@ -367,7 +367,10 @@ export default function EventForm({ categories, onClose, event }: Props) {
                 className="h-full w-full"
                 style={{ height: '100%', width: '100%' }}
               >
-                <TileLayer attribution="" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <TileLayer
+                  attribution="&copy; OpenStreetMap &copy; CARTO"
+                  url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+                />
                 <Marker position={[lat, lng]} icon={formIcon} />
                 <ClickToMove onMove={onMapClick} />
               </MapContainer>
