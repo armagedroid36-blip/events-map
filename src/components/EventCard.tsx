@@ -19,7 +19,7 @@ function fullUrl(src: string): string {
   return src.startsWith('http') ? src : photoUrl(src);
 }
 
-/** Карусель на весь экран: свайп для листания, щипок для зума */
+/** Карусель на весь экран: свайп для листания, щипок для плавного зума */
 function Lightbox({
   photos,
   start,
@@ -31,10 +31,9 @@ function Lightbox({
 }) {
   const [idx, setIdx] = useState(start);
   const [scale, setScale] = useState(1);
-  // Свайп
-  const touchStart = useRef<{ x: number; y: number; dist: number; pinch: boolean } | null>(null);
-  const [dragging, setDragging] = useState(false);
   const [dragX, setDragX] = useState(0);
+  // Начало жеста: расстояние между пальцами и стартовый масштаб (для плавного зума)
+  const startRef = useRef<{ dist: number; scale: number; x: number; pinch: boolean } | null>(null);
 
   function goTo(i: number) {
     setIdx((i + photos.length) % photos.length);
@@ -45,48 +44,40 @@ function Lightbox({
   function onTouchStart(e: React.TouchEvent) {
     const t = e.touches;
     if (t.length === 2) {
-      // Начало щипка
       const d = Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
-      touchStart.current = { x: (t[0].clientX + t[1].clientX) / 2, y: (t[0].clientY + t[1].clientY) / 2, dist: d, pinch: true };
+      startRef.current = { dist: d, scale, x: 0, pinch: true };
     } else if (t.length === 1) {
-      touchStart.current = { x: t[0].clientX, y: t[0].clientY, dist: 0, pinch: false };
-      setDragging(true);
-      setDragX(0);
+      startRef.current = { dist: 0, scale, x: t[0].clientX, pinch: false };
     }
   }
 
   function onTouchMove(e: React.TouchEvent) {
-    const t = e.touches;
-    const st = touchStart.current;
+    const st = startRef.current;
     if (!st) return;
+    const t = e.touches;
     if (t.length === 2 && st.pinch) {
-      // Пинч-зум: масштаб от расстояния между пальцами
-      e.preventDefault();
+      // Плавный пинч: масштаб от начального, пропорционально расстоянию пальцев
       const d = Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
-      const s = Math.min(4, Math.max(1, scale * (d / (st.dist || 1))));
-      setScale(s);
-    } else if (t.length === 1 && !st.pinch && scale === 1) {
-      const dx = t[0].clientX - st.x;
-      setDragX(dx);
+      setScale(Math.min(4, Math.max(1, st.scale * (d / (st.dist || 1)))));
+    } else if (t.length === 1 && !st.pinch && scale <= 1) {
+      setDragX(t[0].clientX - st.x);
     }
   }
 
   function onTouchEnd() {
-    const st = touchStart.current;
-    touchStart.current = null;
-    setDragging(false);
-    if (st && !st.pinch && Math.abs(dragX) > 60 && scale === 1) {
-      // Свайп — перелистываем
+    const st = startRef.current;
+    startRef.current = null;
+    if (st && !st.pinch && Math.abs(dragX) > 60 && scale <= 1) {
       goTo(idx + (dragX < 0 ? 1 : -1));
     } else {
       setDragX(0);
     }
-    // При отпускании щипка масштаб остаётся (двойной тап по фону — сброс)
   }
 
   return (
     <div
-      className="fixed inset-0 z-[3000] flex flex-col items-center justify-center bg-black/90"
+      className="fixed inset-0 z-[3000] flex items-center justify-center bg-black/90"
+      style={{ touchAction: 'none' }}
       onClick={onClose}
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
@@ -99,26 +90,32 @@ function Lightbox({
       >
         ✕
       </button>
+
+      {/* Фото по центру экрана, в окне с закруглёнными краями */}
       <div
-        className="relative max-h-[80vh] max-w-[92vw] overflow-hidden rounded-lg"
-        style={{ touchAction: 'pan-y' }}
+        className="relative max-h-[85vh] max-w-[92vw] overflow-hidden rounded-2xl shadow-2xl"
         onClick={(e) => e.stopPropagation()}
-        onDoubleClick={() => (scale > 1 ? setScale(1) : setScale(2))}
+        onDoubleClick={() => setScale(scale > 1 ? 1 : 2)}
       >
         <img
           src={fullUrl(photos[idx])}
           alt=""
           draggable={false}
-          className="max-h-[80vh] max-w-[92vw] select-none rounded-lg object-contain"
+          className="max-h-[85vh] max-w-[92vw] select-none object-contain"
           style={{
-            transform: `scale(${scale}) translate(${dragX / (scale || 1)}px, 0)`,
-            transition: dragging ? 'none' : 'transform 0.2s ease',
+            transform: scale > 1 ? `scale(${scale})` : `translateX(${dragX}px)`,
+            transition: 'transform 0.12s ease-out',
             cursor: scale > 1 ? 'grab' : 'zoom-in',
           }}
         />
       </div>
+
+      {/* Стрелки и счётчик — внизу, не влияют на центрирование фото */}
       {photos.length > 1 && (
-        <div className="mt-4 flex items-center gap-4" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 items-center gap-4"
+          onClick={(e) => e.stopPropagation()}
+        >
           <button
             onClick={() => goTo(idx - 1)}
             className="rounded-full bg-white/10 px-4 py-2 text-white hover:bg-white/20"
