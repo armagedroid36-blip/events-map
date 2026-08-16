@@ -133,10 +133,11 @@ export default function EventForm({ categories, onClose, event }: Props) {
   const [done, setDone] = useState(false);
 
   const isOrg = user?.role === 'org';
+  const isAdmin = user?.role === 'admin';
 
-  // Контакты организатора из профиля — предзаполняют поля формы
+  // Контакты из профиля — предзаполняют поля формы (для организатора и админа)
   useEffect(() => {
-    if (isOrg) {
+    if (isOrg || isAdmin) {
       getApi()
         .getMyProfile()
         .then((p) => {
@@ -150,7 +151,7 @@ export default function EventForm({ categories, onClose, event }: Props) {
         .catch(() => {});
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOrg]);
+  }, [isOrg, isAdmin]);
 
   // --- Схема валидации (zod) ---
   const schema = useMemo(
@@ -425,8 +426,8 @@ export default function EventForm({ categories, onClose, event }: Props) {
             {err('website')}
           </div>
 
-          {/* Контакты: поля ввода с иконками (организатор), для гостя — одно поле */}
-          {isOrg ? (
+          {/* Контакты: поля ввода с иконками (организатор и админ), для гостя — одно поле */}
+          {isOrg || isAdmin ? (
             <div>
               <label className="mb-1 block text-sm text-gray-600">{t('form.contactsChoice')}</label>
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
