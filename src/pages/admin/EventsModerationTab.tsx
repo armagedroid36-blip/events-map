@@ -70,6 +70,14 @@ export default function EventsModerationTab({ onChanged }: Props) {
                   {formatDate(ev.start_date)} {ev.end_date ? `— ${formatDate(ev.end_date)}` : ''} • {ev.city}
                   {cat ? ` • ${cat.emoji} ${cat.name_ru}` : ''}
                 </p>
+                {/* Контакты организатора — видны только админу */}
+                {(ev.contact_telegram || ev.contact_whatsapp || ev.contact_email || ev.contact_phone) && (
+                  <p className="mt-1 text-xs text-gray-600">
+                    {[ev.contact_telegram && `TG: ${ev.contact_telegram}`, ev.contact_whatsapp && `WA: ${ev.contact_whatsapp}`, ev.contact_email && ev.contact_email, ev.contact_phone && ev.contact_phone]
+                      .filter(Boolean)
+                      .join(' • ')}
+                  </p>
+                )}
               </div>
               <div className="flex shrink-0 gap-2">
                 <button
