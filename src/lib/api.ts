@@ -34,6 +34,13 @@ export interface DataApi {
     role: UserRole,
     contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string },
   ): Promise<void>;
+  /** Подтверждение регистрации кодом из письма + создание профиля */
+  confirmSignup(
+    email: string,
+    code: string,
+    role: UserRole,
+    contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string },
+  ): Promise<CurrentUser | null>;
   signIn(email: string, password: string): Promise<CurrentUser | null>;
   signOut(): Promise<void>;
   getCurrentUser(): Promise<CurrentUser | null>;
@@ -143,23 +150,13 @@ class SupabaseApi implements DataApi {
   async signUp(
     email: string,
     password: string,
-    role: UserRole,
-    contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string },
+    _role: UserRole,
+    _contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string },
   ): Promise<void> {
     const { data, error } = await this.db.auth.signUp({ email, password });
     if (error) throw new Error(error.message);
-    const uid = data.user?.id;
-    if (!uid) throw new Error('Не удалось создать аккаунт');
-    // Профиль создаёт SQL-функция (обходит RLS до активации сессии)
-    const { error: pErr } = await this.db.rpc('create_profile', {
-      uid,
-      p_role: role,
-      tg: contacts.telegram ?? '',
-      wa: contacts.whatsapp ?? '',
-      em: contacts.email ?? '',
-      ph: contacts.phone ?? '',
-    });
-    if (pErr) throw new Error(pErr.message);
+    if (!data.user) throw new Error('Не удалось создать аккаунт');
+    // Профиль создаётся ПОСЛЕ подтверждения почты кодом (см. confirmSignup)
   }
 
   async signIn(email: string, password: string): Promise<CurrentUser | null> {
@@ -173,6 +170,30 @@ class SupabaseApi implements DataApi {
       email: user.email ?? email,
       role: profile?.role ?? 'user',
     };
+  }
+
+  async confirmSignup(
+    email: string,
+    code: string,
+    role: UserRole,
+    contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string },
+  ): Promise<CurrentUser | null> {
+    const { data, error } = await this.db.auth.verifyOtp({
+      email,
+      token: code.trim(),
+      type: 'signup',
+    });
+    if (error || !data.user) return null;
+    const { error: pErr } = await this.db.rpc('create_profile', {
+      uid: data.user.id,
+      p_role: role,
+      tg: contacts.telegram ?? '',
+      wa: contacts.whatsapp ?? '',
+      em: contacts.email ?? '',
+      ph: contacts.phone ?? '',
+    });
+    if (pErr) return null;
+    return { id: data.user.id, email, role };
   }
 
   async signOut(): Promise<void> {

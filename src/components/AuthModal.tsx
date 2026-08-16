@@ -8,8 +8,10 @@ import { useAuth } from '../lib/auth';
 
 export default function AuthModal({ onClose }: { onClose: () => void }) {
   const { t } = useTranslation();
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, confirmSignup } = useAuth();
   const [mode, setMode] = useState<'login' | 'register'>('login');
+  const [confirm, setConfirm] = useState(false);
+  const [code, setCode] = useState('');
   const [role, setRole] = useState<'user' | 'org'>('user');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -32,13 +34,70 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
           return;
         }
       } else {
+        // Регистрация: отправляем запрос — на почту придёт код подтверждения
         await signUp(email, password, role, { telegram, whatsapp, email, phone });
+        setConfirm(true);
+        setBusy(false);
+        return;
       }
       onClose();
     } catch (ex) {
       setErr(ex instanceof Error ? ex.message : t('auth.error'));
     }
     setBusy(false);
+  }
+
+  async function confirmCode(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setErr('');
+    const ok = await confirmSignup(email, code, role, { telegram, whatsapp, email, phone });
+    setBusy(false);
+    if (ok) onClose();
+    else setErr(t('auth.wrongCode'));
+  }
+
+  // Шаг подтверждения кодом из письма
+  if (confirm) {
+    return createPortal(
+      <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/40" onClick={onClose}>
+        <div className="flex min-h-full items-center justify-center p-4">
+          <div
+            className="glass w-full max-w-md rounded-xl p-6 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900">{t('auth.confirmTitle')}</h2>
+              <button onClick={onClose} className="rounded p-1 text-gray-400 hover:bg-gray-100" aria-label="close">
+                ✕
+              </button>
+            </div>
+            <p className="mb-4 text-sm text-gray-600">{t('auth.codeSent', { email })}</p>
+            <form onSubmit={confirmCode} className="space-y-3">
+              <div>
+                <label className="mb-1 block text-sm text-gray-600">{t('auth.code')}</label>
+                <input
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  inputMode="numeric"
+                  placeholder="000000"
+                  className="w-full rounded-md border border-gray-300 px-2.5 py-2 text-center text-lg tracking-[0.5em] focus:border-gray-900 focus:outline-none"
+                />
+              </div>
+              {err && <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{err}</p>}
+              <button
+                type="submit"
+                disabled={busy || code.trim().length < 4}
+                className="w-full rounded-md bg-gray-900 px-3 py-2.5 text-sm font-semibold text-white hover:bg-gray-700 disabled:opacity-50"
+              >
+                {busy ? '...' : t('auth.confirm')}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>,
+      document.body,
+    );
   }
 
   return createPortal(

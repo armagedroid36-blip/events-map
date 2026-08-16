@@ -1,4 +1,4 @@
-// Контекст авторизации: текущий пользователь, вход, выход.
+// Контекст авторизации: текущий пользователь, вход, выход, регистрация.
 // Используется шапкой (кнопка «Войти», меню шестерёнки) и страницами.
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
@@ -15,6 +15,13 @@ interface AuthCtx {
     role: UserRole,
     contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string },
   ) => Promise<void>;
+  /** Подтверждение регистрации кодом из письма */
+  confirmSignup: (
+    email: string,
+    code: string,
+    role: UserRole,
+    contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string },
+  ) => Promise<boolean>;
   signOut: () => Promise<void>;
 }
 
@@ -23,6 +30,7 @@ const Ctx = createContext<AuthCtx>({
   ready: false,
   signIn: async () => false,
   signUp: async () => {},
+  confirmSignup: async () => false,
   signOut: async () => {},
 });
 
@@ -50,10 +58,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     role: UserRole,
     contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string },
   ) {
+    // Только отправка запроса: после signUp нужно подтвердить почту кодом
     await getApi().signUp(email, password, role, contacts);
-    // После регистрации сразу входим
-    const u = await getApi().signIn(email, password);
+  }
+
+  async function confirmSignup(
+    email: string,
+    code: string,
+    role: UserRole,
+    contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string },
+  ): Promise<boolean> {
+    const u = await getApi().confirmSignup(email, code, role, contacts);
     if (u) setUser(u);
+    return !!u;
   }
 
   async function signOut() {
@@ -62,7 +79,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <Ctx.Provider value={{ user, ready, signIn, signUp, signOut }}>{children}</Ctx.Provider>
+    <Ctx.Provider value={{ user, ready, signIn, signUp, confirmSignup, signOut }}>
+      {children}
+    </Ctx.Provider>
   );
 }
 

@@ -334,6 +334,10 @@ export class DemoApi {
     return { id: 'demo', email: _email, role: 'admin' };
   }
 
+  async confirmSignup(_email: string, _code: string, _role: string, _contacts: Record<string, string>) {
+    return { id: 'demo', email: _email, role: _role };
+  }
+
   async signOut(): Promise<void> {}
 
   async getCurrentUser() {

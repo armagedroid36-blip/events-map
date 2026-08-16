@@ -29,6 +29,11 @@ export default {
     contactPhone: 'Phone (optional)',
     wrong: 'Wrong email or password',
     error: 'Something went wrong. Try again.',
+    confirmTitle: 'Confirm registration',
+    codeSent: 'We sent a confirmation code to {{email}}. Check your inbox (and spam).',
+    code: 'Code from the email',
+    confirm: 'Confirm',
+    wrongCode: 'Wrong code. Check the email and try again.',
   },
   myEvents: {
     title: 'My events',
