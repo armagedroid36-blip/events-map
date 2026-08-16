@@ -47,7 +47,7 @@ export default function Header({ onOpenForm }: Props) {
   }
 
   return (
-    <header className="border-b border-gray-200 bg-white">
+    <header>
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
         {/* Название сайта — клик возвращает на карту */}
         <a href="#/" className="min-w-0">
