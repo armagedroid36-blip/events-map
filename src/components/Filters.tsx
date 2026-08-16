@@ -17,7 +17,7 @@ export default function FiltersPanel({ categories, filters, onChange }: Props) {
   }
 
   return (
-    <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-3">
+    <div className="space-y-3 rounded-lg p-3">
       <h2 className="text-sm font-semibold text-gray-900">{t('filters.title')}</h2>
 
       {/* Категория */}

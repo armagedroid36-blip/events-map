@@ -100,7 +100,7 @@ export default function EventCard({ event, categories, onClose }: Props) {
   const photos = (event.photos ?? []).filter((p) => p);
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+    <div className="rounded-lg p-4">
       <div className="mb-2 flex items-start justify-between gap-2">
         <h3 className="text-base font-semibold leading-snug text-gray-900">{title}</h3>
         <button

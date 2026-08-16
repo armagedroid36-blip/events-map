@@ -67,7 +67,7 @@ export default function Header({ onOpenForm }: Props) {
           {!user ? (
             <button
               onClick={() => setAuthOpen(true)}
-              className="rounded-md bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-700"
+              className="glass-btn rounded-md px-3 py-1.5 text-sm font-semibold"
             >
               {t('app.login')}
             </button>
@@ -75,7 +75,7 @@ export default function Header({ onOpenForm }: Props) {
             <div className="relative">
               <button
                 onClick={() => setMenuOpen((v) => !v)}
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-300 text-gray-700 hover:bg-gray-50"
+                className="glass-btn flex h-9 w-9 items-center justify-center rounded-full"
                 aria-label={t('menu.title')}
                 title={t('menu.title')}
               >
@@ -89,7 +89,7 @@ export default function Header({ onOpenForm }: Props) {
               {menuOpen && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
-                  <div className="absolute right-0 top-11 z-50 w-56 rounded-lg border border-gray-200 bg-white py-1 shadow-xl">
+                  <div className="glass absolute right-0 top-11 z-50 w-56 rounded-lg py-1 shadow-xl">
                     {menu.map((m) => (
                       <button
                         key={m.label}

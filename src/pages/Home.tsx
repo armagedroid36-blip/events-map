@@ -140,21 +140,21 @@ export default function Home() {
       </div>
 
       {/* Шапка поверх карты */}
-      <div className="absolute inset-x-0 top-0 z-[1200] border-b border-gray-200 bg-white/95 shadow-sm backdrop-blur">
+      <div className="glass absolute inset-x-0 top-0 z-[1200] border-b border-white/40 shadow-sm">
         <Header onOpenForm={() => setFormOpen(true)} />
       </div>
 
       {/* Кнопка открытия фильтров на мобильных */}
       <button
         onClick={() => setMobileFiltersOpen(true)}
-        className="absolute left-3 top-16 z-[1150] rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-800 shadow hover:bg-gray-50 lg:hidden"
+        className="glass-btn absolute left-3 top-16 z-[1150] rounded-md px-3 py-2 text-sm font-medium shadow hover:bg-white/75 lg:hidden"
       >
         {t('filters.title')}
       </button>
 
       {/* Оверлей фильтров на мобильных */}
       {mobileFiltersOpen && (
-        <div className="absolute inset-x-3 top-24 z-[1150] max-h-[60vh] overflow-y-auto rounded-xl bg-white p-3 shadow-xl lg:hidden">
+        <div className="glass absolute inset-x-3 top-24 z-[1150] max-h-[60vh] overflow-y-auto rounded-xl p-3 shadow-xl lg:hidden">
           <div className="mb-2 flex items-center justify-between">
             <span className="text-sm font-semibold text-gray-900">{t('filters.title')}</span>
             <button
@@ -180,10 +180,10 @@ export default function Home() {
 
       {/* Левая панель (десктоп): быстрые кнопки + фильтры */}
       <div className="absolute bottom-3 left-3 top-16 z-[1100] hidden w-72 flex-col gap-2 lg:flex">
-        <div className="rounded-lg bg-white/95 p-2 shadow">
+        <div className="glass rounded-lg p-2 shadow">
           <QuickLocations onGoTo={goTo} />
         </div>
-        <div className="min-h-0 flex-1 overflow-y-auto rounded-lg bg-white/95 shadow">
+        <div className="glass min-h-0 flex-1 overflow-y-auto rounded-lg shadow">
           <FiltersPanel categories={categories} filters={filters} onChange={setFilters} />
         </div>
       </div>
@@ -191,7 +191,7 @@ export default function Home() {
       {/* Карточка выбранного события (без списка):
           на мобильных — снизу, на десктопе — справа */}
       {selected && (
-        <div className="absolute inset-x-0 bottom-0 top-[45%] z-[1140] overflow-y-auto bg-white/95 p-3 shadow-[0_-6px_16px_rgba(0,0,0,0.12)] lg:inset-x-auto lg:top-16 lg:bottom-3 lg:right-3 lg:w-[380px] lg:bg-white/80 lg:backdrop-blur">
+        <div className="glass absolute inset-x-0 bottom-0 top-[45%] z-[1140] overflow-y-auto p-3 shadow-[0_-6px_16px_rgba(0,0,0,0.12)] lg:inset-x-auto lg:top-16 lg:bottom-3 lg:right-3 lg:w-[380px]">
           <EventCard
             event={selected}
             categories={categories}
@@ -203,7 +203,7 @@ export default function Home() {
       {/* Кнопка «События на карте» — список событий видимой области */}
       <button
         onClick={() => setListOpen((v) => !v)}
-        className="absolute bottom-4 left-1/2 z-[1160] -translate-x-1/2 rounded-full bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-gray-700"
+        className="glass-btn absolute bottom-4 left-1/2 z-[1160] -translate-x-1/2 rounded-full px-5 py-2.5 text-sm font-semibold shadow-lg"
       >
         {listOpen
           ? `▾ ${t('list.collapse')}`
@@ -212,7 +212,7 @@ export default function Home() {
 
       {/* Список под кнопкой — события текущего участка карты */}
       {listOpen && (
-        <div className="absolute inset-x-0 bottom-16 z-[1130] mx-auto max-h-[50vh] w-full max-w-xl overflow-y-auto rounded-t-xl bg-white/95 p-3 shadow-xl backdrop-blur">
+        <div className="glass absolute inset-x-0 bottom-16 z-[1130] mx-auto max-h-[50vh] w-full max-w-xl overflow-y-auto rounded-t-xl p-3 shadow-xl">
           <p className="mb-2 text-xs text-gray-500">{t('list.results', { count: onMapEvents.length })}</p>
           {onMapEvents.length === 0 && (
             <p className="py-4 text-center text-sm text-gray-500">{t('list.empty')}</p>
