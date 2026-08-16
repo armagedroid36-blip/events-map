@@ -1,7 +1,7 @@
 // Карточка выбранного события (появляется при клике на маркер или элемент списка).
 // Поля: название, даты и время, город, описание, категория, фото.
 // Фото: маленькие превью; клик по фото открывает карусель на весь экран.
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import type { Category, EventItem } from '../lib/types';
@@ -20,7 +20,7 @@ function fullUrl(src: string): string {
   return src.startsWith('http') ? src : photoUrl(src);
 }
 
-/** Карусель на весь экран: свайп для листания, щипок для плавного зума */
+/** Карусель на весь экран: галерея со слайдом, пинч-зум */
 function Lightbox({
   photos,
   start,
@@ -33,8 +33,22 @@ function Lightbox({
   const [idx, setIdx] = useState(start);
   const [scale, setScale] = useState(1);
   const [dragX, setDragX] = useState(0);
-  // Начало жеста: расстояние между пальцами и стартовый масштаб (для плавного зума)
-  const startRef = useRef<{ dist: number; scale: number; x: number; pinch: boolean } | null>(null);
+  const [dragging, setDragging] = useState(false);
+  const [slideW, setSlideW] = useState(0);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+  // Начало жеста
+  const startRef = useRef<{ dist: number; scale: number; x: number; y: number; pinch: boolean } | null>(null);
+
+  // Ширина слайда (для сдвига трека в пикселях)
+  function measure() {
+    if (wrapRef.current) setSlideW(wrapRef.current.offsetWidth);
+  }
+
+  useEffect(() => {
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, []);
 
   function goTo(i: number) {
     setIdx((i + photos.length) % photos.length);
@@ -46,9 +60,11 @@ function Lightbox({
     const t = e.touches;
     if (t.length === 2) {
       const d = Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
-      startRef.current = { dist: d, scale, x: 0, pinch: true };
+      startRef.current = { dist: d, scale, x: 0, y: 0, pinch: true };
     } else if (t.length === 1) {
-      startRef.current = { dist: 0, scale, x: t[0].clientX, pinch: false };
+      startRef.current = { dist: 0, scale, x: t[0].clientX, y: t[0].clientY, pinch: false };
+      setDragging(true);
+      setDragX(0);
     }
   }
 
@@ -57,10 +73,12 @@ function Lightbox({
     if (!st) return;
     const t = e.touches;
     if (t.length === 2 && st.pinch) {
-      // Плавный пинч: масштаб от начального, пропорционально расстоянию пальцев
+      // Плавный пинч-зум
       const d = Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
       setScale(Math.min(4, Math.max(1, st.scale * (d / (st.dist || 1)))));
+      setDragX(0);
     } else if (t.length === 1 && !st.pinch && scale <= 1) {
+      // Галерея: фото следует за пальцем, соседнее пододвигается
       setDragX(t[0].clientX - st.x);
     }
   }
@@ -68,10 +86,14 @@ function Lightbox({
   function onTouchEnd() {
     const st = startRef.current;
     startRef.current = null;
-    if (st && !st.pinch && Math.abs(dragX) > 60 && scale <= 1) {
-      goTo(idx + (dragX < 0 ? 1 : -1));
-    } else {
-      setDragX(0);
+    setDragging(false);
+    if (st && !st.pinch && scale <= 1) {
+      if (Math.abs(dragX) > slideW * 0.22) {
+        // Долистываем к соседнему фото
+        goTo(idx + (dragX < 0 ? 1 : -1));
+      } else {
+        setDragX(0); // вернулись назад плавно
+      }
     }
   }
 
@@ -92,24 +114,38 @@ function Lightbox({
         ✕
       </button>
 
-      {/* Фото по центру экрана, в окне с закруглёнными краями */}
+      {/* Окно галереи: трек со всеми фото, сдвигается как в обычной галерее */}
       <div
-        className="relative max-h-[85vh] max-w-[92vw] overflow-hidden rounded-2xl shadow-2xl"
+        ref={wrapRef}
+        className="relative max-h-[85vh] w-full max-w-[92vw] overflow-hidden rounded-2xl shadow-2xl"
         onClick={(e) => e.stopPropagation()}
         onDoubleClick={() => setScale(scale > 1 ? 1 : 2)}
       >
-        <img
-          key={idx}
-          src={fullUrl(photos[idx])}
-          alt=""
-          draggable={false}
-          className="lightbox-fade max-h-[85vh] max-w-[92vw] select-none object-contain"
+        <div
+          className="flex h-full"
           style={{
-            transform: scale > 1 ? `scale(${scale})` : `translateX(${dragX}px)`,
-            transition: 'transform 0.12s ease-out',
-            cursor: scale > 1 ? 'grab' : 'zoom-in',
+            transform:
+              scale > 1
+                ? `translateX(${-idx * slideW}px)`
+                : `translateX(${-idx * slideW + dragX}px)`,
+            transition: dragging ? 'none' : 'transform 0.3s ease-out',
           }}
-        />
+        >
+          {photos.map((p, i) => (
+            <div key={i} className="h-full w-full shrink-0">
+              <img
+                src={fullUrl(p)}
+                alt=""
+                draggable={false}
+                className="max-h-[85vh] w-full select-none object-contain"
+                style={{
+                  transform: i === idx && scale > 1 ? `scale(${scale})` : undefined,
+                  transition: 'transform 0.1s ease-out',
+                }}
+              />
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Стрелки и счётчик — внизу, не влияют на центрирование фото */}
@@ -124,7 +160,9 @@ function Lightbox({
           >
             ←
           </button>
-          <span className="text-sm text-gray-800">{idx + 1} / {photos.length}</span>
+          <span className="text-sm text-gray-800">
+            {idx + 1} / {photos.length}
+          </span>
           <button
             onClick={() => goTo(idx + 1)}
             className="rounded-full bg-white/60 px-4 py-2 text-gray-900 shadow hover:bg-white/80"
