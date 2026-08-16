@@ -2,6 +2,7 @@
 // Регистрация: выбор роли (пользователь / организатор).
 // Организатор указывает контакты для связи (видит только админ).
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../lib/auth';
 
@@ -40,7 +41,7 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
     setBusy(false);
   }
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/40" onClick={onClose}>
       <div className="flex min-h-full items-center justify-center p-4">
         <div
@@ -161,6 +162,7 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
         </form>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

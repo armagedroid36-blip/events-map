@@ -5,6 +5,7 @@
 // - Фото загружаются файлами (до 5, до 5 МБ)
 // - После сохранения событие уходит на модерацию
 import { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
@@ -223,30 +224,34 @@ export default function EventForm({ categories, onClose, event }: Props) {
   }
 
   if (done) {
-    return (
-      <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
-        <div className="w-full max-w-md rounded-xl bg-white p-6 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}>
-          <p className="mb-4 text-gray-800">{t('form.success')}</p>
-          <button
-            onClick={onClose}
-            className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700"
-          >
-            {t('common.close')}
-          </button>
+    return createPortal(
+      <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/40 p-4" onClick={onClose}>
+        <div className="flex min-h-full items-center justify-center">
+          <div className="w-full max-w-md rounded-xl bg-white p-6 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <p className="mb-4 text-gray-800">{t('form.success')}</p>
+            <button
+              onClick={onClose}
+              className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700"
+            >
+              {t('common.close')}
+            </button>
+          </div>
         </div>
-      </div>
+      </div>,
+      document.body,
     );
   }
 
   const input = 'w-full rounded-md border border-gray-300 px-2.5 py-2 text-sm focus:border-gray-900 focus:outline-none';
   const err = (k: string) => (errors[k] ? <p className="mt-0.5 text-xs text-red-600">{errors[k]}</p> : null);
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/40 p-4" onClick={onClose}>
-      <div
-        className="mx-auto my-6 w-full max-w-2xl rounded-xl bg-white p-6 shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="flex min-h-full items-center justify-center">
+        <div
+          className="mx-auto my-6 w-full max-w-2xl rounded-xl bg-white p-6 shadow-2xl"
+          onClick={(e) => e.stopPropagation()}
+        >
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-gray-900">
             {isRepeat ? t('myEvents.repeatTitle') : t('form.title')}
@@ -430,7 +435,9 @@ export default function EventForm({ categories, onClose, event }: Props) {
             {submitting ? '...' : t('form.submit')}
           </button>
         </form>
+        </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
