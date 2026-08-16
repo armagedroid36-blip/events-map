@@ -12,7 +12,8 @@ import QuickLocations from '../components/QuickLocations';
 import EventForm from '../components/EventForm';
 import { getApi } from '../lib/api';
 import { isUpcoming } from '../lib/dates';
-import { cityMatches } from '../lib/cities';
+import { cityMatches, ruToEn } from '../lib/cities';
+import { geocodeAddress } from '../lib/geocode';
 import { useAuth } from '../lib/auth';
 import type { Category, EventItem, Filters } from '../lib/types';
 
@@ -107,6 +108,21 @@ export default function Home() {
     setCenter({ lat, lng });
     setZoom(z);
   }
+
+  // Ввели город в фильтре — карта перемещается к нему (с небольшой задержкой,
+  // чтобы не дёргать карту при каждом нажатии клавиши)
+  useEffect(() => {
+    const city = filters.city?.trim();
+    if (!city) return;
+    const timer = setTimeout(async () => {
+      const coords = await geocodeAddress(ruToEn(city));
+      if (coords && filters.city?.trim() === city) {
+        setCenter(coords);
+        setZoom(11);
+      }
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [filters.city]);
 
   // Выбор события: карточка + запись в историю просмотров
   async function selectEvent(ev: EventItem) {

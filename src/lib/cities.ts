@@ -36,3 +36,9 @@ export function cityMatches(city: string, query: string): boolean {
   if (en !== q && c.includes(en)) return true;
   return false;
 }
+
+/** Переводит русское название города/страны в английское (для поиска на карте) */
+export function ruToEn(query: string): string {
+  const q = query.toLowerCase().trim();
+  return RU_TO_EN[q] ?? query;
+}
