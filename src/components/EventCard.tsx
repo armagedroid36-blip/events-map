@@ -77,7 +77,7 @@ function Lightbox({
 
   return (
     <div
-      className="fixed inset-0 z-[3000] flex items-center justify-center bg-black/90"
+      className="glass-overlay fixed inset-0 z-[3000] flex items-center justify-center"
       style={{ touchAction: 'none' }}
       onClick={onClose}
       onTouchStart={onTouchStart}
@@ -85,7 +85,7 @@ function Lightbox({
       onTouchEnd={onTouchEnd}
     >
       <button
-        className="absolute right-4 top-4 z-10 rounded-full bg-white/10 p-2 text-white hover:bg-white/20"
+        className="absolute right-4 top-4 z-10 rounded-full bg-white/60 p-2 text-gray-900 shadow hover:bg-white/80"
         onClick={onClose}
         aria-label="close"
       >
@@ -120,16 +120,14 @@ function Lightbox({
         >
           <button
             onClick={() => goTo(idx - 1)}
-            className="rounded-full bg-white/10 px-4 py-2 text-white hover:bg-white/20"
+            className="rounded-full bg-white/60 px-4 py-2 text-gray-900 shadow hover:bg-white/80"
           >
             ←
           </button>
-          <span className="text-sm text-white/70">
-            {idx + 1} / {photos.length}
-          </span>
+          <span className="text-sm text-gray-800">{idx + 1} / {photos.length}</span>
           <button
             onClick={() => goTo(idx + 1)}
-            className="rounded-full bg-white/10 px-4 py-2 text-white hover:bg-white/20"
+            className="rounded-full bg-white/60 px-4 py-2 text-gray-900 shadow hover:bg-white/80"
           >
             →
           </button>

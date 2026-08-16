@@ -129,3 +129,14 @@ body {
 .lightbox-fade {
   animation: lightbox-fade 0.25s ease-out;
 }
+
+/* Полупрозрачное стекло для фона карусели (как у остальных панелей) */
+.glass-overlay {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.3),
+    rgba(255, 255, 255, 0.12)
+  );
+  -webkit-backdrop-filter: blur(28px) saturate(170%);
+  backdrop-filter: blur(28px) saturate(170%);
+}
