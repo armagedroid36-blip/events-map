@@ -1,10 +1,11 @@
 // Админ-панель (/admin).
 // В демо-режиме вход пропускается; с реальной Supabase — вход по email/паролю
 // (Supabase Auth, роль — администратор).
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
 import { getApi } from '../lib/api';
+import { useAuth } from '../lib/auth';
 import { config } from '../config';
 import StatsTab from './admin/StatsTab';
 import ModerationTab from './admin/ModerationTab';
@@ -18,6 +19,7 @@ type Tab = 'stats' | 'moderation' | 'events' | 'categories' | 'import' | 'archiv
 
 export default function Admin() {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const [authed, setAuthed] = useState(config.demoMode);
   const [tab, setTab] = useState<Tab>('stats');
   const [email, setEmail] = useState('');
@@ -26,6 +28,11 @@ export default function Admin() {
   const [loginBusy, setLoginBusy] = useState(false);
   // Счётчик обновления данных после действий (модерация, CRUD, импорт)
   const [version, setVersion] = useState(0);
+
+  // Вошедший администратор попадает в админку сразу, без второго входа
+  useEffect(() => {
+    if (user?.role === 'admin') setAuthed(true);
+  }, [user]);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();

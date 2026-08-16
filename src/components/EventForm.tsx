@@ -264,6 +264,16 @@ export default function EventForm({ categories, onClose, event }: Props) {
           contact_email: contactEmailVal.trim() || undefined,
           contact_phone: contactPhoneVal.trim() || undefined,
         });
+      } else if (user?.role === 'admin') {
+        // Администратор: публикуется сразу, без модерации
+        await getApi().createEvent({
+          ...common,
+          contact_telegram: contactTg.trim() || undefined,
+          contact_whatsapp: contactWa.trim() || undefined,
+          contact_email: contactEmailVal.trim() || undefined,
+          contact_phone: contactPhoneVal.trim() || undefined,
+          status: 'active',
+        });
       } else {
         // Гость: заявка с контактом
         await getApi().submitApplication({ ...common, contact });
