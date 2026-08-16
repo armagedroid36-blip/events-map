@@ -45,7 +45,7 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
     <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/40" onClick={onClose}>
       <div className="flex min-h-full items-center justify-center p-4">
         <div
-          className="w-full max-w-md rounded-xl bg-white p-6 shadow-2xl"
+          className="glass w-full max-w-md rounded-xl p-6 shadow-2xl"
           onClick={(e) => e.stopPropagation()}
         >
         <div className="mb-4 flex items-center justify-between">

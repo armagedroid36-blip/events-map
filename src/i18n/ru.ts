@@ -76,7 +76,7 @@ export default {
     reset: 'Сбросить',
   },
   list: {
-    title: 'События на карте',
+    title: 'События списком',
     collapse: 'Свернуть',
     results: 'Найдено: {{count}}',
     showMore: 'Показать ещё',

@@ -200,15 +200,18 @@ export default function Home() {
         </div>
       )}
 
-      {/* Кнопка «События на карте» — список событий видимой области */}
-      <button
-        onClick={() => setListOpen((v) => !v)}
-        className="glass-btn absolute bottom-4 left-1/2 z-[1160] -translate-x-1/2 rounded-full px-5 py-2.5 text-sm font-semibold shadow-lg"
-      >
-        {listOpen
-          ? `▾ ${t('list.collapse')}`
-          : `${t('list.title')} (${onMapEvents.length})`}
-      </button>
+      {/* Кнопка «События списком» — список событий видимой области.
+          Скрыта, когда открыта карточка события */}
+      {!selected && (
+        <button
+          onClick={() => setListOpen((v) => !v)}
+          className="glass-btn absolute bottom-4 left-1/2 z-[1160] -translate-x-1/2 rounded-full px-5 py-2.5 text-sm font-semibold shadow-lg"
+        >
+          {listOpen
+            ? `▾ ${t('list.collapse')}`
+            : `${t('list.title')} (${onMapEvents.length})`}
+        </button>
+      )}
 
       {/* Список под кнопкой — события текущего участка карты */}
       {listOpen && (

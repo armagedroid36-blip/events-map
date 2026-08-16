@@ -76,7 +76,7 @@ export default {
     reset: 'Reset',
   },
   list: {
-    title: 'Events on the map',
+    title: 'Events as a list',
     collapse: 'Collapse',
     results: 'Found: {{count}}',
     showMore: 'Show more',
