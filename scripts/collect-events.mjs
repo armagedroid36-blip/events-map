@@ -63,8 +63,11 @@ async function tbDetails(url) {
       }
     }
     const addr = (s.match(/"streetAddress"\s*:\s*"([^"]+)"/) || [])[1] || null;
+    // SEO-описание события (там, где есть)
+    const descMatch = s.match(/"description"\s*:\s*"((?:[^"\\]|\\.){30,400})"/);
+    const description = descMatch ? descMatch[1] : '';
     if (!city || !lat || !lng) return null;
-    return { city, lat, lng, address: addr };
+    return { city, lat, lng, address: addr, description };
   } catch {
     return null;
   }
@@ -88,8 +91,8 @@ async function collectTicketbox(seen, limit, insertedCount) {
     const row = {
       title: ev.name,
       title_en: ev.name,
-      description: '',
-      description_en: '',
+      description: det.description || '',
+      description_en: det.description || '',
       source_lang: 'en',
       start_date: startDate,
       end_date: null,
@@ -265,7 +268,37 @@ async function main() {
   console.log('Собираю: Ticketbox (Вьетнам)...');
   inserted += await collectTicketbox(seen, MAX_EVENTS, inserted);
 
+  // Дозаполняем описания у Ticketbox-событий, собранных раньше
+  console.log('Дозаполняю описания Ticketbox...');
+  await updateTicketboxDescriptions();
+
   console.log(`Готово: добавлено ${inserted}, пропущено дублей ${skipped}.`);
+}
+
+// Обновляет пустые описания у ранее собранных событий Ticketbox
+async function updateTicketboxDescriptions() {
+  const { data, error } = await db
+    .from('events')
+    .select('id, website')
+    .like('website', '%ticketbox.vn%')
+    .or('description.is.null,description.eq.');
+  if (error || !data) return;
+  let updated = 0;
+  for (const ev of data) {
+    const urlPath = (ev.website || '').replace(/^https:\/\/ticketbox\.vn\//, '').split('?')[0];
+    if (!urlPath) continue;
+    const det = await tbDetails(urlPath);
+    if (!det?.description) continue;
+    const { error: uErr } = await db
+      .from('events')
+      .update({ description: det.description, description_en: det.description })
+      .eq('id', ev.id);
+    if (!uErr) {
+      updated++;
+      console.log(`  ~ обновлено описание: ${urlPath.slice(0, 40)}`);
+    }
+  }
+  if (updated) console.log(`Описаний дозаполнено: ${updated}.`);
 }
 
 main().catch((e) => {
