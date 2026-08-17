@@ -144,7 +144,7 @@ function Lightbox({
       onTouchEnd={onTouchEnd}
     >
       <button
-        className="absolute right-4 top-4 z-10 rounded-full bg-white/60 p-2 text-gray-900 shadow hover:bg-white/80"
+        className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/60 text-gray-900 shadow hover:bg-white/80"
         onClick={onClose}
         aria-label="close"
       >

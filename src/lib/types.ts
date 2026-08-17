@@ -112,6 +112,8 @@ export interface Filters {
   categoryId: string | null;
   /** Период: 'upcoming' | 'all' | конкретный диапазон */
   period: 'upcoming' | 'all';
+  /** Цена: любая / только бесплатные / только платные */
+  price: 'any' | 'free' | 'paid';
   dateFrom?: string;
   dateTo?: string;
   city?: string;

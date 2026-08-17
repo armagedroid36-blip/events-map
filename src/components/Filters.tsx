@@ -75,6 +75,20 @@ export default function FiltersPanel({ categories, filters, onChange }: Props) {
         />
       </div>
 
+      {/* Цена */}
+      <div>
+        <label className="mb-1 block text-xs text-gray-500">{t('filters.price')}</label>
+        <select
+          value={filters.price}
+          onChange={(e) => set('price', e.target.value as 'any' | 'free' | 'paid')}
+          className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+        >
+          <option value="any">{t('filters.anyPrice')}</option>
+          <option value="free">{t('filters.freeOnly')}</option>
+          <option value="paid">{t('filters.paidOnly')}</option>
+        </select>
+      </div>
+
       {/* Ключевые слова */}
       <div>
         <label className="mb-1 block text-xs text-gray-500">{t('filters.query')}</label>
@@ -88,7 +102,7 @@ export default function FiltersPanel({ categories, filters, onChange }: Props) {
 
       <button
         onClick={() =>
-          onChange({ categoryId: null, period: 'upcoming', city: undefined, query: undefined })
+          onChange({ categoryId: null, period: 'upcoming', price: 'any', city: undefined, query: undefined })
         }
         className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm text-gray-600 hover:bg-gray-50"
       >
