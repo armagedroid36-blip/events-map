@@ -14,14 +14,29 @@ if (!API_KEY || !SUPABASE_URL || !SERVICE_ROLE) {
 
 const db = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } });
 
-// Запросы: страна + дополнительные ключевые слова
+// Запросы: страна (страны, где Ticketmaster реально работает)
 const QUERIES = [
   { name: 'Сингапур', countryCode: 'SG' },
   { name: 'Филиппины', countryCode: 'PH' },
-  { name: 'Бали (ключевое слово)', keyword: 'bali' },
-  { name: 'Бангкок (ключевое слово)', keyword: 'bangkok' },
-  { name: 'Джакарта (ключевое слово)', keyword: 'jakarta' },
 ];
+
+// Координаты ключевых городов (если у события нет координат)
+const CITY_COORDS = {
+  Singapore: [1.35, 103.82],
+  Manila: [14.6, 120.98],
+  'Quezon City': [14.65, 121.03],
+  'Makati': [14.55, 121.03],
+  'Taguig': [14.55, 121.05],
+  'Pasay': [14.54, 120.99],
+  'Bangkok': [13.75, 100.5],
+  'Jakarta': [-6.2, 106.82],
+  'Kuala Lumpur': [3.14, 101.69],
+  'Ho Chi Minh City': [10.82, 106.63],
+  'Ubud': [-8.5, 115.26],
+  'Canggu': [-8.65, 115.13],
+  'Denpasar': [-8.65, 115.22],
+  'Phuket': [7.98, 98.34],
+};
 
 // Сегменты Ticketmaster → наши категории
 const CAT_MAP = {
@@ -54,7 +69,6 @@ async function fetchEvents(query) {
     endDateTime: `${isoDays(DAYS_AHEAD)}T23:59:59Z`,
   });
   if (query.countryCode) params.set('countryCode', query.countryCode);
-  if (query.keyword) params.set('keyword', query.keyword);
 
   const res = await fetch(
     `https://app.ticketmaster.com/discovery/v2/events.json?${params}`,
@@ -100,8 +114,16 @@ async function main() {
       }
       const venue = ev._embedded?.venues?.[0] || {};
       const city = venue.city?.name || '';
-      const lat = parseFloat(venue.location?.latitude) || null;
-      const lng = parseFloat(venue.location?.longitude) || null;
+      let lat = parseFloat(venue.location?.latitude) || null;
+      let lng = parseFloat(venue.location?.longitude) || null;
+      // У многих событий Ticketmaster нет координат — берём центр города
+      if (lat === null || lng === null) {
+        const coords = CITY_COORDS[city] || CITY_COORDS[city.split(' ')[0]];
+        if (coords) {
+          lat = coords[0];
+          lng = coords[1];
+        }
+      }
       if (!city || lat === null || lng === null) continue; // без места не берём
 
       const image = ev.images?.find((i) => i.width && i.width >= 300) || ev.images?.[0];
