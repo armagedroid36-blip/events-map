@@ -173,14 +173,14 @@ export default function Home() {
       </div>
 
       {/* Шапка поверх карты — плавающая, с закруглёнными краями */}
-      <div className="glass absolute inset-x-3 top-3 z-[1200] rounded-2xl shadow-lg">
+      <div className="glass absolute inset-x-3 top-2 z-[1200] rounded-2xl shadow-lg">
         <Header onOpenForm={() => setFormOpen(true)} />
       </div>
 
       {/* Кнопка открытия фильтров на мобильных */}
       <button
         onClick={() => setMobileFiltersOpen(true)}
-        className="glass-btn absolute left-3 top-16 z-[1150] rounded-md px-3 py-2 text-sm font-medium shadow hover:bg-white/75 lg:hidden"
+        className="glass-btn absolute left-3 top-20 z-[1150] rounded-md px-3 py-2 text-sm font-medium shadow hover:bg-white/75 lg:hidden"
       >
         {t('filters.title')}
       </button>
