@@ -79,7 +79,7 @@ export default {
     anyPrice: 'Все',
     freeOnly: 'Бесплатные',
     paidOnly: 'Платные',
-    priceFrom: 'Цена от (USD)',
+    priceFrom: 'Цена от',
     priceTo: 'до',
     currency: 'Валюта',
     anyCurrency: 'Любая',
@@ -105,6 +105,7 @@ export default {
     location: '📍 {{city}}',
     noPhoto: 'Фотографии пока нет',
     free: 'Бесплатно',
+    contacts: 'Контакты организатора',
   },
   form: {
     title: 'Разместить событие',

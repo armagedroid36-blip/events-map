@@ -327,12 +327,29 @@ export default function EventCard({ event, categories, onClose }: Props) {
 
       <p className="mb-3 text-sm leading-relaxed text-gray-700">{description}</p>
 
+      {/* Контакты организатора */}
+      {(event.contact_telegram || event.contact_whatsapp || event.contact_email || event.contact_phone) && (
+        <div className="mb-3 border-t border-gray-200 pt-2 text-xs text-gray-600">
+          <p className="mb-1 font-medium text-gray-500">{t('card.contacts')}</p>
+          <p className="break-words">
+            {[
+              event.contact_telegram && `✈️ ${event.contact_telegram}`,
+              event.contact_whatsapp && `💬 ${event.contact_whatsapp}`,
+              event.contact_email && `✉️ ${event.contact_email}`,
+              event.contact_phone && `📞 ${event.contact_phone}`,
+            ]
+              .filter(Boolean)
+              .join('  •  ')}
+          </p>
+        </div>
+      )}
+
       {event.website && (
         <a
           href={event.website}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm font-medium text-gray-900 underline underline-offset-2 hover:text-gray-500"
+          className="inline-block rounded-md bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-700"
         >
           {t('card.details')} →
         </a>

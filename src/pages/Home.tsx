@@ -44,6 +44,8 @@ export default function Home() {
   const [center, setCenter] = useState<{ lat: number; lng: number } | null>(null);
   const [zoom, setZoom] = useState<number | undefined>(undefined);
   const [formOpen, setFormOpen] = useState(false);
+  // Свёрнута ли левая панель фильтров (десктоп)
+  const [filtersCollapsed, setFiltersCollapsed] = useState(false);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   // Кнопка «События на карте» — список событий видимой области
   const [listOpen, setListOpen] = useState(false);
@@ -211,20 +213,38 @@ export default function Home() {
         </div>
       )}
 
-      {/* Левая панель (десктоп): быстрые кнопки + фильтры */}
-      <div className="absolute bottom-3 left-3 top-16 z-[1100] hidden w-72 flex-col gap-2 lg:flex">
-        <div className="glass rounded-lg p-2 shadow">
-          <QuickLocations onGoTo={goTo} />
+      {/* Левая панель (десктоп): быстрые кнопки + фильтры, со сворачиванием */}
+      {filtersCollapsed ? (
+        <button
+          onClick={() => setFiltersCollapsed(false)}
+          title={t('filters.title')}
+          className="glass absolute left-3 top-20 z-[1100] hidden h-24 w-10 flex-col items-center justify-center gap-1 rounded-lg text-lg text-gray-600 shadow transition hover:bg-white/70 lg:flex"
+        >
+          <span>☰</span>
+          <span className="text-[10px]">{t('filters.title')}</span>
+        </button>
+      ) : (
+        <div className="absolute bottom-3 left-3 top-20 z-[1100] hidden w-72 flex-col gap-2 lg:flex">
+          <div className="relative glass rounded-lg p-2 shadow">
+            <button
+              onClick={() => setFiltersCollapsed(true)}
+              className="absolute right-1 top-1 rounded px-1 text-sm text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+              aria-label={t('common.close')}
+            >
+              ✕
+            </button>
+            <QuickLocations onGoTo={goTo} />
+          </div>
+          <div className="glass min-h-0 flex-1 overflow-y-auto rounded-lg shadow thin-scroll">
+            <FiltersPanel categories={categories} filters={filters} onChange={setFilters} />
+          </div>
         </div>
-        <div className="glass min-h-0 flex-1 overflow-y-auto rounded-lg shadow">
-          <FiltersPanel categories={categories} filters={filters} onChange={setFilters} />
-        </div>
-      </div>
+      )}
 
       {/* Карточка выбранного события (без списка):
           на мобильных — снизу, на десктопе — справа */}
       {selected && (
-        <div className="glass absolute inset-x-0 bottom-0 top-[45%] z-[1140] overflow-y-auto p-3 shadow-[0_-6px_16px_rgba(0,0,0,0.12)] lg:inset-x-auto lg:top-16 lg:bottom-3 lg:right-3 lg:w-[380px]">
+        <div className="glass absolute inset-x-0 bottom-0 top-[45%] z-[1140] overflow-y-auto p-3 shadow-[0_-6px_16px_rgba(0,0,0,0.12)] lg:inset-x-auto lg:top-20 lg:bottom-3 lg:right-3 lg:w-[380px] lg:rounded-2xl lg:p-4">
           <EventCard
             event={selected}
             categories={categories}

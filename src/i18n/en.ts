@@ -79,7 +79,7 @@ export default {
     anyPrice: 'All',
     freeOnly: 'Free',
     paidOnly: 'Paid',
-    priceFrom: 'Price from (USD)',
+    priceFrom: 'Price from',
     priceTo: 'to',
     currency: 'Currency',
     anyCurrency: 'Any',
@@ -105,6 +105,7 @@ export default {
     location: '📍 {{city}}',
     noPhoto: 'No photo yet',
     free: 'Free',
+    contacts: 'Organizer contacts',
   },
   form: {
     title: 'Submit an event',

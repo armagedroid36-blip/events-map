@@ -27,11 +27,8 @@ export const config = {
   // Названия на двух языках — переключаются вместе с языком интерфейса.
   quickLocations: [
     { label: 'Бали', labelEn: 'Bali', lat: -8.5, lng: 115.2, zoom: 10 },
-    { label: 'Бангкок', labelEn: 'Bangkok', lat: 13.75, lng: 100.5, zoom: 11 },
-    { label: 'Сингапур', labelEn: 'Singapore', lat: 1.35, lng: 103.82, zoom: 11 },
-    { label: 'Хошимин', labelEn: 'Ho Chi Minh City', lat: 10.82, lng: 106.63, zoom: 11 },
-    { label: 'Куала-Лумпур', labelEn: 'Kuala Lumpur', lat: 3.14, lng: 101.69, zoom: 11 },
-    { label: 'Джакарта', labelEn: 'Jakarta', lat: -6.2, lng: 106.82, zoom: 11 },
+    { label: 'Дананг', labelEn: 'Da Nang', lat: 16.05, lng: 108.22, zoom: 11 },
+    { label: 'Нячанг', labelEn: 'Nha Trang', lat: 12.24, lng: 109.19, zoom: 11 },
   ],
 
   // --- Геокодинг (адрес -> координаты) ---

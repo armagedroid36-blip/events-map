@@ -141,6 +141,26 @@ body {
   animation: lightbox-fade 0.25s ease-out;
 }
 
+/* Тонкий полупрозрачный скроллбар (панели с прокруткой) */
+.thin-scroll::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.thin-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.thin-scroll::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.35);
+  border-radius: 9999px;
+}
+.thin-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.55);
+}
+.thin-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 116, 139, 0.35) transparent;
+}
+
 /* Полупрозрачное стекло для фона карусели (как у остальных панелей) */
 .glass-overlay {
   background: linear-gradient(
