@@ -257,6 +257,7 @@ class SupabaseApi implements DataApi {
         description_ru: data.description_ru,
         description_en: data.description_en,
         source_lang: data.source_lang ?? 'ru',
+        language: data.language ?? null,
         start_date: data.start_date ?? '',
         end_date: data.end_date,
         start_time: data.start_time,

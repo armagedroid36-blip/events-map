@@ -33,6 +33,10 @@ export default function Home() {
     categoryId: null,
     period: 'upcoming',
     price: 'any',
+    priceMin: undefined,
+    priceMax: undefined,
+    currency: null,
+    language: null,
     city: undefined,
     query: undefined,
   });
@@ -89,6 +93,9 @@ export default function Home() {
         if (filters.priceMin != null && ev.price < filters.priceMin) return false;
         if (filters.priceMax != null && ev.price > filters.priceMax) return false;
       }
+      // Валюта и язык мероприятия
+      if (filters.currency && ev.currency !== filters.currency) return false;
+      if (filters.language && ev.language !== filters.language) return false;
       // Город: работает и по-русски, и по-английски («Убуд» = «Ubud»)
       if (city && !cityMatches(ev.city, city)) return false;
       if (q) {

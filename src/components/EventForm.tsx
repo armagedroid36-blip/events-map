@@ -15,6 +15,7 @@ import type { Category, EventItem } from '../lib/types';
 import { getApi, photoUrl } from '../lib/api';
 import { geocodeAddress, reverseGeocode } from '../lib/geocode';
 import { detectLang } from '../lib/translate';
+import { LANGUAGES } from '../lib/languages';
 import { config } from '../config';
 import { useAuth } from '../lib/auth';
 
@@ -100,7 +101,8 @@ function IconInput({
 }
 
 export default function EventForm({ categories, onClose, event }: Props) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
   const { user } = useAuth();
   const isRepeat = !!event;
 
@@ -114,6 +116,7 @@ export default function EventForm({ categories, onClose, event }: Props) {
   const [city, setCity] = useState(event?.city ?? '');
   const [address, setAddress] = useState(event?.address ?? '');
   const [categoryId, setCategoryId] = useState(event?.category_id ?? '');
+  const [language, setLanguage] = useState(event?.language ?? '');
   const [website, setWebsite] = useState(event?.website ?? '');
   // Контакты: поля ввода (для организатора предзаполняются из профиля)
   const [contact, setContact] = useState(event?.contact ?? '');
@@ -258,6 +261,7 @@ export default function EventForm({ categories, onClose, event }: Props) {
         lat,
         lng,
         category_id: categoryId,
+        language: language || undefined,
         website: website || undefined,
         photos,
         price: priceVal,
@@ -425,6 +429,19 @@ export default function EventForm({ categories, onClose, event }: Props) {
               ))}
             </select>
             {err('category_id')}
+          </div>
+
+          {/* Язык мероприятия */}
+          <div>
+            <label className="mb-1 block text-sm text-gray-600">{t('form.language')}</label>
+            <select value={language} onChange={(e) => setLanguage(e.target.value)} className={input}>
+              <option value="">{t('form.selectLanguage')}</option>
+              {LANGUAGES.map((l) => (
+                <option key={l.code} value={l.code}>
+                  {lang === 'ru' ? l.name_ru : l.name_en}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Цена и валюта */}

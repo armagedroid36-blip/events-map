@@ -1,6 +1,7 @@
-// Панель фильтров: категория, период, город, ключевые слова.
+// Панель фильтров: категория, период, город, цена, валюта, язык, ключевые слова.
 import { useTranslation } from 'react-i18next';
 import type { Category, Filters } from '../lib/types';
+import { LANGUAGES } from '../lib/languages';
 
 interface Props {
   categories: Category[];
@@ -112,6 +113,41 @@ export default function FiltersPanel({ categories, filters, onChange }: Props) {
             </div>
           </div>
         )}
+        {/* Валюта */}
+        {filters.price !== 'free' && (
+          <div className="mt-2">
+            <label className="mb-0.5 block text-[11px] text-gray-400">{t('filters.currency')}</label>
+            <select
+              value={filters.currency ?? ''}
+              onChange={(e) => set('currency', e.target.value || null)}
+              className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+            >
+              <option value="">{t('filters.anyCurrency')}</option>
+              {['usd', 'idr', 'thb', 'vnd', 'sgd', 'myr', 'php'].map((code) => (
+                <option key={code} value={code}>
+                  {(t('form.currencies', { returnObjects: true }) as Record<string, string>)[code]}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+      </div>
+
+      {/* Язык мероприятия */}
+      <div>
+        <label className="mb-1 block text-xs text-gray-500">{t('filters.language')}</label>
+        <select
+          value={filters.language ?? ''}
+          onChange={(e) => set('language', e.target.value || null)}
+          className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+        >
+          <option value="">{t('filters.anyLanguage')}</option>
+          {LANGUAGES.map((l) => (
+            <option key={l.code} value={l.code}>
+              {lang === 'ru' ? l.name_ru : l.name_en}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* Ключевые слова */}
@@ -133,6 +169,8 @@ export default function FiltersPanel({ categories, filters, onChange }: Props) {
             price: 'any',
             priceMin: undefined,
             priceMax: undefined,
+            currency: null,
+            language: null,
             city: undefined,
             query: undefined,
           })

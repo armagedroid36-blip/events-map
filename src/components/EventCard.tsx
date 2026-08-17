@@ -6,6 +6,7 @@ import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import type { Category, EventItem } from '../lib/types';
 import { localizedText } from '../lib/translate';
+import { languageName } from '../lib/languages';
 import { formatDate } from '../lib/dates';
 import { photoUrl } from '../lib/api';
 
@@ -295,6 +296,12 @@ export default function EventCard({ event, categories, onClose }: Props) {
             <span>
               {cat.emoji} {lang === 'ru' ? cat.name_ru : cat.name_en}
             </span>
+          </>
+        )}
+        {event.language && (
+          <>
+            <span className="text-gray-300">•</span>
+            <span>🗣 {languageName(event.language, lang)}</span>
           </>
         )}
       </div>

@@ -33,6 +33,8 @@ export interface EventItem {
   description_en?: string;
   /** Язык оригинала: 'ru' | 'en' | иное */
   source_lang: string;
+  /** Язык мероприятия (для посетителей): 'en', 'ru' и т.д. */
+  language?: string | null;
   /** Даты: ISO-формат (YYYY-MM-DD) */
   start_date: string;
   end_date?: string;
@@ -117,6 +119,10 @@ export interface Filters {
   /** Диапазон цены (в USD) */
   priceMin?: number;
   priceMax?: number;
+  /** Валюта события */
+  currency?: string | null;
+  /** Язык мероприятия */
+  language?: string | null;
   dateFrom?: string;
   dateTo?: string;
   city?: string;
