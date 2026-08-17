@@ -224,6 +224,11 @@ export class DemoApi {
     save(LS_APPS, apps);
   }
 
+  async deleteModerationEvents(): Promise<number> {
+    // Демо: события на модерации не хранятся
+    return 0;
+  }
+
   async createEvent(data: Partial<EventItem>): Promise<EventItem> {
     const events = load<EventItem[]>(LS_EVENTS, DEMO_EVENTS);
     const ev: EventItem = {

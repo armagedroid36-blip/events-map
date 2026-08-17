@@ -210,6 +210,9 @@ export default {
       rejected: 'Заявка отклонена',
       edit: 'Редактировать',
       from: 'От: {{contact}}',
+      deleteAll: 'Удалить все',
+      deleteAllConfirm: 'Точно удалить все {{count}}?',
+      deleteAllDone: 'Удалено {{count}} событий',
     },
     events: {
       title: 'События',

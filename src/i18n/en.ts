@@ -210,6 +210,9 @@ export default {
       rejected: 'Submission rejected',
       edit: 'Edit',
       from: 'From: {{contact}}',
+      deleteAll: 'Delete all',
+      deleteAllConfirm: 'Really delete all {{count}}?',
+      deleteAllDone: 'Deleted {{count}} events',
     },
     events: {
       title: 'Events',

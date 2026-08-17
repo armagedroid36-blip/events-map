@@ -18,6 +18,9 @@ export default function EventsModerationTab({ onChanged }: Props) {
   const [busyId, setBusyId] = useState<string | null>(null);
   // Выбранное для просмотра событие
   const [selected, setSelected] = useState<EventItem | null>(null);
+  // Подтверждение «Удалить все»
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -62,6 +65,53 @@ export default function EventsModerationTab({ onChanged }: Props) {
       <h2 className="mb-2 text-sm font-semibold text-gray-900">
         {t('admin.eventsModeration.title')}
       </h2>
+      {/* Удалить все (с подтверждением) */}
+      {events.length > 0 && (
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <span className="text-sm text-gray-500">
+            {t('admin.moderation.title')}: {events.length}
+          </span>
+          {!confirmDelete ? (
+            <button
+              onClick={() => {
+                setConfirmDelete(true);
+                setTimeout(() => setConfirmDelete(false), 6000);
+              }}
+              className="rounded-md border border-red-300 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50"
+            >
+              {t('admin.moderation.deleteAll')}
+            </button>
+          ) : (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setConfirmDelete(false)}
+                className="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-600"
+              >
+                {t('common.cancel')}
+              </button>
+              <button
+                onClick={async () => {
+                  setDeleting(true);
+                  try {
+                    await getApi().deleteModerationEvents();
+                    onChanged();
+                  } catch {
+                    /* ошибка — список останется */
+                  } finally {
+                    setDeleting(false);
+                    setConfirmDelete(false);
+                  }
+                }}
+                disabled={deleting}
+                className="rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-500 disabled:opacity-50"
+              >
+                {t('admin.moderation.deleteAllConfirm', { count: events.length })}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="space-y-2">
         {events.map((ev) => {
           const cat = categories.find((c) => c.id === ev.category_id);

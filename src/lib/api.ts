@@ -74,6 +74,8 @@ export interface DataApi {
   listApplications(): Promise<Application[]>;
   approveApplication(id: string): Promise<void>;
   rejectApplication(id: string, reason: string): Promise<void>;
+  /** Удалить все события на модерации (только админ) */
+  deleteModerationEvents(): Promise<number>;
   createEvent(data: Partial<EventItem>): Promise<EventItem>;
   updateEvent(id: string, data: Partial<EventItem>): Promise<void>;
   deleteEvent(id: string): Promise<void>;
@@ -409,6 +411,12 @@ class SupabaseApi implements DataApi {
   async approveApplication(id: string): Promise<void> {
     const { error } = await this.db.rpc('approve_application', { app_id: id });
     if (error) throw error;
+  }
+
+  async deleteModerationEvents(): Promise<number> {
+    const { data, error } = await this.db.rpc('delete_moderation_events');
+    if (error) throw error;
+    return Number(data ?? 0);
   }
 
   async rejectApplication(id: string, reason: string): Promise<void> {
