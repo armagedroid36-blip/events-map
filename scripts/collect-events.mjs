@@ -18,11 +18,16 @@ const db = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: fa
 // Оставляем события, интересные приезжим: международные концерты, фестивали,
 // культурные шоу, спорт, выставки. Отсекаем локальные: иероглифы, K-pop, местные жанры.
 
-/** Название «международное»: почти все символы — латиница (нет иероглифов/тайского) */
-function isLatinName(name) {
+/** Название «международное»: латиница или кириллица (нет иероглифов/тайского/вьетнамского) */
+function isInternationalName(name) {
   if (!name) return false;
-  const ascii = [...name].filter((ch) => ch.charCodeAt(0) < 128).length;
-  return ascii / name.length >= 0.95;
+  let ok = 0;
+  for (const ch of name) {
+    const c = ch.codePointAt(0);
+    // ASCII (латиница) + кириллица
+    if (c < 128 || (c >= 0x0400 && c <= 0x04ff)) ok++;
+  }
+  return ok / name.length >= 0.95;
 }
 
 /** Локальные жанры/исполнители, которые не интересны туристам */
@@ -33,7 +38,7 @@ const LOCAL_KEYWORDS = [
 
 function isTouristFriendly(ev) {
   const name = ev.name || '';
-  if (!isLatinName(name)) return false;
+  if (!isInternationalName(name)) return false;
   const low = name.toLowerCase();
   for (const kw of LOCAL_KEYWORDS) {
     if (low.includes(kw)) return false;
@@ -116,7 +121,7 @@ async function collectSongkick(seen, limit, insertedCount) {
       const key = `${ev.name}|${ev.date}`;
       if (seen.has(key)) continue;
       // Фильтр «для туристов»
-      if (!isLatinName(ev.name)) continue;
+      if (!isInternationalName(ev.name)) continue;
       const low = ev.name.toLowerCase();
       if (LOCAL_KEYWORDS.some((kw) => low.includes(kw))) continue;
 
