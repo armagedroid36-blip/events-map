@@ -15,9 +15,9 @@ jobs:
         with:
           node-version: 20
       - run: npm ci --no-audit --no-fund || npm install --no-audit --no-fund
-      - name: Сбор событий с Eventbrite
+      - name: Сбор событий с Ticketmaster
         run: node scripts/collect-events.mjs
         env:
-          EVENTBRITE_TOKEN: ${{ secrets.EVENTBRITE_TOKEN }}
+          TICKETMASTER_API_KEY: ${{ secrets.TICKETMASTER_API_KEY }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}

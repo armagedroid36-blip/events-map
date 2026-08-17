@@ -1,79 +1,81 @@
-// Сборщик событий (этап 4): Eventbrite API → база Supabase (статус «на модерации»).
+// Сборщик событий (этап 4): Ticketmaster API → база Supabase (статус «на модерации»).
 // Запускается по расписанию в GitHub Actions (или вручную).
-// Переменные окружения: EVENTBRITE_TOKEN, SUPABASE_URL, SUPABASE_SERVICE_ROLE.
+// Переменные окружения: TICKETMASTER_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE.
 import { createClient } from '@supabase/supabase-js';
 
-const TOKEN = process.env.EVENTBRITE_TOKEN;
+const API_KEY = process.env.TICKETMASTER_API_KEY;
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
 
-if (!TOKEN || !SUPABASE_URL || !SERVICE_ROLE) {
-  console.error('Нужны переменные: EVENTBRITE_TOKEN, SUPABASE_URL, SUPABASE_SERVICE_ROLE');
+if (!API_KEY || !SUPABASE_URL || !SERVICE_ROLE) {
+  console.error('Нужны переменные: TICKETMASTER_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE');
   process.exit(1);
 }
 
 const db = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } });
 
-// Регионы сбора: Бали и ключевые города Юго-Восточной Азии
-const REGIONS = [
-  { name: 'Бали', lat: -8.5, lng: 115.2, within: 100 },
-  { name: 'Бангкок', lat: 13.75, lng: 100.5, within: 60 },
-  { name: 'Сингапур', lat: 1.35, lng: 103.82, within: 30 },
-  { name: 'Хошимин', lat: 10.82, lng: 106.63, within: 60 },
-  { name: 'Куала-Лумпур', lat: 3.14, lng: 101.69, within: 50 },
-  { name: 'Джакарта', lat: -6.2, lng: 106.82, within: 50 },
-  { name: 'Пхукет', lat: 7.98, lng: 98.34, within: 50 },
+// Запросы: страна + дополнительные ключевые слова
+const QUERIES = [
+  { name: 'Сингапур', countryCode: 'SG' },
+  { name: 'Филиппины', countryCode: 'PH' },
+  { name: 'Бали (ключевое слово)', keyword: 'bali' },
+  { name: 'Бангкок (ключевое слово)', keyword: 'bangkok' },
+  { name: 'Джакарта (ключевое слово)', keyword: 'jakarta' },
 ];
 
-// Соответствие категорий Eventbrite нашим категориям
+// Сегменты Ticketmaster → наши категории
 const CAT_MAP = {
-  103: 'concert', // Music
-  105: 'sport', // Sports & Fitness
-  102: 'conference', // Science & Technology
-  110: 'exhibition', // Arts
-  108: 'food', // Food & Drink
-  113: 'party', // Community
-  104: 'lecture', // Film, Media & Entertainment
-  106: 'festival', // Charity & Causes
-  107: 'festival', // Family & Education
-  109: 'party', // Music? нет: 109 = Health
-  101: 'conference', // Business
+  Music: 'concert',
+  Sports: 'sport',
+  'Arts & Theatre': 'exhibition',
+  Film: 'lecture',
+  'Food & Drink': 'food',
+  Community: 'festival',
+  Business: 'conference',
+  Education: 'lecture',
 };
 const DEFAULT_CAT = 'lecture';
 
-const MAX_EVENTS = 30; // лимит на один запуск, чтобы не заваливать модерацию
-const DAYS_AHEAD = 90; // собираем события на 3 месяца вперёд
+const MAX_EVENTS = 40; // лимит на один запуск
+const DAYS_AHEAD = 90;
 
-function iso(daysFromNow) {
+function isoDays(daysFromNow) {
   const d = new Date();
   d.setDate(d.getDate() + daysFromNow);
   return d.toISOString().slice(0, 10);
 }
 
-async function fetchEvents(region) {
-  const url =
-    `https://www.eventbriteapi.com/v3/events/search/?token=${TOKEN}` +
-    `&location.latitude=${region.lat}&location.longitude=${region.lng}` +
-    `&location.within=${region.within}km` +
-    `&start_date.range_start=${iso(0)}T00:00:00` +
-    `&start_date.range_end=${iso(DAYS_AHEAD)}T23:59:59` +
-    `&expand=venue,logo&page_size=50&sort_by=date`;
-  const res = await fetch(url, { headers: { Accept: 'application/json' } });
+async function fetchEvents(query) {
+  const params = new URLSearchParams({
+    apikey: API_KEY,
+    size: '50',
+    sort: 'date,asc',
+    startDateTime: `${isoDays(1)}T00:00:00Z`,
+    endDateTime: `${isoDays(DAYS_AHEAD)}T23:59:59Z`,
+  });
+  if (query.countryCode) params.set('countryCode', query.countryCode);
+  if (query.keyword) params.set('keyword', query.keyword);
+
+  const res = await fetch(
+    `https://app.ticketmaster.com/discovery/v2/events.json?${params}`,
+    { headers: { Accept: 'application/json' } },
+  );
   if (!res.ok) {
-    console.error(`  Eventbrite ${region.name}: HTTP ${res.status}`);
+    console.error(`  Ticketmaster ${query.name}: HTTP ${res.status}`);
     return [];
   }
   const data = await res.json();
-  return data.events || [];
+  return (data._embedded?.events) || [];
 }
 
 async function existingKeys() {
-  // Ключи дедупликации уже добавленных событий (название+дата)
-  const { data } = await db
-    .from('events')
-    .select('title, start_date')
-    .eq('status', 'moderation');
+  const { data } = await db.from('events').select('title, start_date').eq('status', 'moderation');
   return new Set((data || []).map((e) => `${e.title}|${e.start_date}`));
+}
+
+function categoryOf(ev) {
+  const seg = ev.classifications?.[0]?.segment?.name;
+  return CAT_MAP[seg] || DEFAULT_CAT;
 }
 
 async function main() {
@@ -81,57 +83,56 @@ async function main() {
   let inserted = 0;
   let skipped = 0;
 
-  for (const region of REGIONS) {
+  for (const query of QUERIES) {
     if (inserted >= MAX_EVENTS) break;
-    console.log(`Собираю: ${region.name}...`);
-    const events = await fetchEvents(region);
+    console.log(`Собираю: ${query.name}...`);
+    const events = await fetchEvents(query);
     for (const ev of events) {
       if (inserted >= MAX_EVENTS) break;
-      if (!ev.name?.text) continue;
-      const startLocal = ev.start?.local;
-      if (!startLocal) continue;
-      const startDate = startLocal.slice(0, 10);
-      const key = `${ev.name.text}|${startDate}`;
+      if (!ev.name) continue;
+      const start = ev.dates?.start || {};
+      const startDate = start.localDate;
+      if (!startDate) continue;
+      const key = `${ev.name}|${startDate}`;
       if (seen.has(key)) {
         skipped++;
         continue;
       }
-      const venue = ev.venue || {};
-      const addr = venue.address || {};
-      const city = addr.city || region.name;
-      const lat = parseFloat(addr.latitude) || region.lat;
-      const lng = parseFloat(addr.longitude) || region.lng;
-      const desc = (ev.description?.text || '').slice(0, 2000);
-      const logo = ev.logo?.url;
-      const categoryId = CAT_MAP[ev.category_id] || DEFAULT_CAT;
+      const venue = ev._embedded?.venues?.[0] || {};
+      const city = venue.city?.name || '';
+      const lat = parseFloat(venue.location?.latitude) || null;
+      const lng = parseFloat(venue.location?.longitude) || null;
+      if (!city || lat === null || lng === null) continue; // без места не берём
+
+      const image = ev.images?.find((i) => i.width && i.width >= 300) || ev.images?.[0];
 
       const row = {
-        title: ev.name.text,
-        title_en: ev.name.text,
-        description: desc,
-        description_en: desc,
+        title: ev.name,
+        title_en: ev.name,
+        description: '',
+        description_en: '',
         source_lang: 'en',
         start_date: startDate,
-        end_date: ev.end?.local ? ev.end.local.slice(0, 10) : null,
-        start_time: startLocal.length > 10 ? startLocal.slice(11, 16) : null,
-        end_time: ev.end?.local && ev.end.local.length > 10 ? ev.end.local.slice(11, 16) : null,
-        city,
-        address: addr.address_1 || null,
+        end_date: null,
+        start_time: start.localTime || null,
+        end_time: null,
+        city: city + (venue.country?.countryCode ? `, ${venue.country.countryCode}` : ''),
+        address: venue.address?.line1 || null,
         lat,
         lng,
-        category_id: categoryId,
+        category_id: categoryOf(ev),
         website: ev.url || null,
-        photos: logo ? [logo] : [],
+        photos: image?.url ? [image.url] : [],
         status: 'moderation',
       };
 
       const { error } = await db.from('events').insert(row);
       if (error) {
-        console.error(`  Ошибка вставки «${ev.name.text.slice(0, 40)}»: ${error.message}`);
+        console.error(`  Ошибка вставки «${ev.name.slice(0, 40)}»: ${error.message}`);
       } else {
         inserted++;
         seen.add(key);
-        console.log(`  + ${ev.name.text.slice(0, 50)} (${city}, ${startDate})`);
+        console.log(`  + ${ev.name.slice(0, 55)} (${row.city}, ${startDate})`);
       }
     }
   }
