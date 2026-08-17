@@ -172,8 +172,8 @@ export default function Home() {
         />
       </div>
 
-      {/* Шапка поверх карты */}
-      <div className="glass absolute inset-x-0 top-0 z-[1200] border-b border-white/40 shadow-sm">
+      {/* Шапка поверх карты — плавающая, с закруглёнными краями */}
+      <div className="glass absolute inset-x-3 top-3 z-[1200] rounded-2xl shadow-lg">
         <Header onOpenForm={() => setFormOpen(true)} />
       </div>
 
