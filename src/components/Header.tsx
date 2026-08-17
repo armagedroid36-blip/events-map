@@ -89,7 +89,7 @@ export default function Header({ onOpenForm }: Props) {
               {menuOpen && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
-                  <div className="glass absolute right-0 top-11 z-50 w-56 rounded-lg py-1 shadow-xl">
+                  <div className="glass-menu absolute right-0 top-[72px] z-50 w-56 rounded-lg py-1 shadow-xl">
                     {menu.map((m) => (
                       <button
                         key={m.label}
