@@ -1,0 +1,22 @@
+name: Test Eventbrite
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Проверка Eventbrite страниц
+        run: |
+          for u in \
+            "https://www.eventbrite.com/d/indonesia--bali/events/" \
+            "https://www.eventbrite.com/d/singapore/events/" \
+            "https://www.eventbrite.com/d/thailand--bangkok/events/"; do
+            code=$(curl -s -o /tmp/eb.html -w "%{http_code}" -L --max-time 25 \
+              -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36" \
+              -H "Accept: text/html" -H "Accept-Language: en-US,en;q=0.9" "$u")
+            size=$(wc -c < /tmp/eb.html)
+            events=$(grep -o 'event-card' /tmp/eb.html | wc -l)
+            echo "$u -> code=$code size=$size event-cards=$events"
+          done
