@@ -87,6 +87,31 @@ export default function FiltersPanel({ categories, filters, onChange }: Props) {
           <option value="free">{t('filters.freeOnly')}</option>
           <option value="paid">{t('filters.paidOnly')}</option>
         </select>
+        {/* Диапазон цены (применяется к платным) */}
+        {filters.price !== 'free' && (
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            <div>
+              <label className="mb-0.5 block text-[11px] text-gray-400">{t('filters.priceFrom')}</label>
+              <input
+                type="number"
+                min="0"
+                value={filters.priceMin ?? ''}
+                onChange={(e) => set('priceMin', e.target.value ? parseFloat(e.target.value) : undefined)}
+                className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+              />
+            </div>
+            <div>
+              <label className="mb-0.5 block text-[11px] text-gray-400">{t('filters.priceTo')}</label>
+              <input
+                type="number"
+                min="0"
+                value={filters.priceMax ?? ''}
+                onChange={(e) => set('priceMax', e.target.value ? parseFloat(e.target.value) : undefined)}
+                className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Ключевые слова */}
@@ -102,7 +127,15 @@ export default function FiltersPanel({ categories, filters, onChange }: Props) {
 
       <button
         onClick={() =>
-          onChange({ categoryId: null, period: 'upcoming', price: 'any', city: undefined, query: undefined })
+          onChange({
+            categoryId: null,
+            period: 'upcoming',
+            price: 'any',
+            priceMin: undefined,
+            priceMax: undefined,
+            city: undefined,
+            query: undefined,
+          })
         }
         className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm text-gray-600 hover:bg-gray-50"
       >

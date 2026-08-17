@@ -114,6 +114,9 @@ export interface Filters {
   period: 'upcoming' | 'all';
   /** Цена: любая / только бесплатные / только платные */
   price: 'any' | 'free' | 'paid';
+  /** Диапазон цены (в USD) */
+  priceMin?: number;
+  priceMax?: number;
   dateFrom?: string;
   dateTo?: string;
   city?: string;
