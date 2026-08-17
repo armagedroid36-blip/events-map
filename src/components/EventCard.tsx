@@ -13,12 +13,22 @@ import { photoUrl } from '../lib/api';
 /** Символы валют */
 const CURRENCY_SYMBOLS: Record<string, string> = {
   usd: '$',
+  eur: '€',
+  rub: '₽',
   idr: 'Rp',
   thb: '฿',
   vnd: '₫',
   sgd: 'S$',
   myr: 'RM',
   php: '₱',
+  gbp: '£',
+  aud: 'A$',
+  jpy: '¥',
+  cny: '¥',
+  krw: '₩',
+  khr: '៛',
+  lak: '₭',
+  mmk: 'K',
 };
 
 /** Цена в читаемом виде: «Бесплатно» или «$50 USD» */

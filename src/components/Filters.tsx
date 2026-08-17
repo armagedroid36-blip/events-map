@@ -123,7 +123,7 @@ export default function FiltersPanel({ categories, filters, onChange }: Props) {
               className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
             >
               <option value="">{t('filters.anyCurrency')}</option>
-              {['usd', 'idr', 'thb', 'vnd', 'sgd', 'myr', 'php'].map((code) => (
+              {Object.keys(t('form.currencies', { returnObjects: true }) as Record<string, string>).map((code) => (
                 <option key={code} value={code}>
                   {(t('form.currencies', { returnObjects: true }) as Record<string, string>)[code]}
                 </option>
