@@ -20,7 +20,7 @@ const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 const MAX_EVENTS = Number(process.env.MAX_EVENTS || 60); // лимит новых событий за один запуск
 const MAX_PAGES = 60;    // предохранитель: сколько страниц листаем максимум
 const DAYS_AHEAD = 120;  // горизонт планирования, дней
-const DESC_LIMIT = 800;  // максимум символов описания
+const DESC_LIMIT = 3000; // максимум символов описания (полные описания Балифорума длинные)
 const DRY_RUN = process.env.DRY_RUN === '1'; // тест без записи в базу
 
 // ===== Типы Балифорума → наши категории =====
