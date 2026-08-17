@@ -1,9 +1,10 @@
 // Вкладка «Модерация событий»: события организаторов, ожидающие решения.
-// Принять — событие появляется на карте; отклонить — статус rejected.
+// Клик по событию — просмотр полной карточки; принять/отклонить.
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getApi } from '../../lib/api';
 import { formatDate } from '../../lib/dates';
+import EventCard from '../../components/EventCard';
 import type { Category, EventItem } from '../../lib/types';
 
 interface Props {
@@ -15,6 +16,8 @@ export default function EventsModerationTab({ onChanged }: Props) {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [busyId, setBusyId] = useState<string | null>(null);
+  // Выбранное для просмотра событие
+  const [selected, setSelected] = useState<EventItem | null>(null);
 
   useEffect(() => {
     let alive = true;
@@ -64,8 +67,14 @@ export default function EventsModerationTab({ onChanged }: Props) {
           const cat = categories.find((c) => c.id === ev.category_id);
           return (
             <div key={ev.id} className="flex items-center justify-between gap-3 rounded-lg border border-amber-200 bg-amber-50/50 p-3">
-              <div className="min-w-0">
-                <p className="truncate font-medium text-gray-900">{ev.title_ru || ev.title_en || ev.title}</p>
+              <button
+                onClick={() => setSelected(ev)}
+                className="min-w-0 flex-1 text-left"
+                title={t('admin.moderation.view')}
+              >
+                <p className="truncate font-medium text-gray-900 hover:underline">
+                  {ev.title_ru || ev.title_en || ev.title}
+                </p>
                 <p className="text-xs text-gray-500">
                   {formatDate(ev.start_date)} {ev.end_date ? `— ${formatDate(ev.end_date)}` : ''} • {ev.city}
                   {cat ? ` • ${cat.emoji} ${cat.name_ru}` : ''}
@@ -78,7 +87,7 @@ export default function EventsModerationTab({ onChanged }: Props) {
                       .join(' • ')}
                   </p>
                 )}
-              </div>
+              </button>
               <div className="flex shrink-0 gap-2">
                 <button
                   onClick={() => approve(ev.id)}
@@ -99,6 +108,40 @@ export default function EventsModerationTab({ onChanged }: Props) {
           );
         })}
       </div>
+
+      {/* Просмотр полной карточки события */}
+      {selected && (
+        <div
+          className="fixed inset-0 z-[2000] overflow-y-auto bg-black/40 p-4"
+          onClick={() => setSelected(null)}
+        >
+          <div className="glass-strong mx-auto my-6 w-full max-w-lg rounded-xl p-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <EventCard event={selected} categories={categories} onClose={() => setSelected(null)} />
+            <div className="mt-3 flex justify-end gap-2">
+              <button
+                onClick={() => {
+                  const id = selected.id;
+                  setSelected(null);
+                  approve(id);
+                }}
+                className="rounded-md bg-green-600 px-4 py-2 text-sm text-white hover:bg-green-500"
+              >
+                {t('admin.moderation.approve')}
+              </button>
+              <button
+                onClick={() => {
+                  const id = selected.id;
+                  setSelected(null);
+                  reject(id);
+                }}
+                className="rounded-md border border-red-300 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+              >
+                {t('admin.moderation.reject')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
