@@ -5,11 +5,13 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../lib/auth';
 import AuthModal from './AuthModal';
 
-interface Props {
+interface HeaderProps {
   onOpenForm: () => void;
+  /** Шапка плавающая (поверх карты на главной) — меню опускается до уровня кнопки «Фильтры» */
+  floating?: boolean;
 }
 
-export default function Header({ onOpenForm }: Props) {
+export default function Header({ onOpenForm, floating }: HeaderProps) {
   const { t, i18n } = useTranslation();
   const { user, signOut } = useAuth();
   const [authOpen, setAuthOpen] = useState(false);
@@ -89,7 +91,11 @@ export default function Header({ onOpenForm }: Props) {
               {menuOpen && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
-                  <div className="glass-menu absolute right-0 top-[72px] z-50 w-56 rounded-lg py-1 shadow-xl">
+                  <div
+                    className={`glass-menu absolute right-0 z-50 w-56 rounded-lg py-1 shadow-xl ${
+                      floating ? 'top-[72px]' : 'top-11'
+                    }`}
+                  >
                     {menu.map((m) => (
                       <button
                         key={m.label}

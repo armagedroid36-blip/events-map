@@ -174,7 +174,7 @@ export default function Home() {
 
       {/* Шапка поверх карты — плавающая, с закруглёнными краями */}
       <div className="glass absolute inset-x-3 top-2 z-[1200] rounded-2xl shadow-lg">
-        <Header onOpenForm={() => setFormOpen(true)} />
+        <Header onOpenForm={() => setFormOpen(true)} floating />
       </div>
 
       {/* Кнопка открытия фильтров на мобильных */}
