@@ -83,17 +83,16 @@ function pickCategory(types) {
   return DEFAULT_CAT;
 }
 
-/** Текст описания из blocks + обрезка тегов */
+/** Текст описания из blocks: каждый блок — абзац, переносы строк сохраняются */
 function extractDescription(detail) {
   const blocks = detail?.content?.blocks;
   if (!Array.isArray(blocks)) return '';
   const text = blocks
     .map((b) => (b.data && b.data.text ? b.data.text : ''))
-    .join('\n')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/\s+/g, ' ')
+    .map((t) => t.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').trim())
+    .filter(Boolean)
+    .join('\n\n')
+    .replace(/[ \t]+/g, ' ')
     .trim();
   return text.slice(0, DESC_LIMIT);
 }

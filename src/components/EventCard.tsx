@@ -325,7 +325,7 @@ export default function EventCard({ event, categories, onClose }: Props) {
         )}
       </div>
 
-      <p className="mb-3 text-sm leading-relaxed text-gray-700">{description}</p>
+      <p className="mb-3 whitespace-pre-line text-sm leading-relaxed text-gray-700">{description}</p>
 
       {/* Контакты организатора */}
       {(event.contact_telegram || event.contact_whatsapp || event.contact_email || event.contact_phone) && (
