@@ -105,6 +105,8 @@ async function collectTicketbox(seen, limit, insertedCount) {
       category_id: TB_CAT[ev.categories?.[0]] || TB_DEFAULT_CAT,
       website: `https://ticketbox.vn/${urlPath}`,
       photos: ev.imageUrl ? [ev.imageUrl] : [],
+      price: ev.price ? ev.price : null,
+      currency: ev.price ? 'vnd' : null,
       status: 'moderation',
     };
     const { error } = await db.from('events').insert(row);
@@ -232,6 +234,7 @@ async function main() {
       if (!city || lat === null || lng === null) continue; // без места не берём
 
       const image = ev.images?.find((i) => i.width && i.width >= 300) || ev.images?.[0];
+      const pr = ev.priceRanges?.[0];
 
       const row = {
         title: ev.name,
@@ -250,6 +253,8 @@ async function main() {
         category_id: categoryOf(ev),
         website: ev.url || null,
         photos: image?.url ? [image.url] : [],
+        price: pr ? pr.min : null,
+        currency: pr ? (pr.currency || 'USD').toLowerCase() : null,
         status: 'moderation',
       };
 

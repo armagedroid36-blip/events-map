@@ -272,6 +272,8 @@ class SupabaseApi implements DataApi {
         contact_whatsapp: data.contact_whatsapp,
         contact_email: data.contact_email,
         contact_phone: data.contact_phone,
+        price: data.price ?? null,
+        currency: data.currency ?? null,
         photos: data.photos ?? [],
         owner_id: me.id,
         status: 'moderation',

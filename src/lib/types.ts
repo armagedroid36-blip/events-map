@@ -54,6 +54,10 @@ export interface EventItem {
   contact_whatsapp?: string;
   contact_email?: string;
   contact_phone?: string;
+  /** Цена билета (null = бесплатно) */
+  price?: number | null;
+  /** Валюта: 'usd' | код местной валюты (idr, thb, vnd, sgd, myr, php) */
+  currency?: string | null;
   /** Фотографии: URL загруженных файлов, не больше 5 */
   photos?: string[];
   status: EventStatus;

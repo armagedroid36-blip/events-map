@@ -124,6 +124,10 @@ export default function EventForm({ categories, onClose, event }: Props) {
   // Фото: пути загруженных файлов
   const [photos, setPhotos] = useState<string[]>(event?.photos ?? []);
   const [uploading, setUploading] = useState(false);
+  // Цена и валюта (null = бесплатно)
+  const [free, setFree] = useState(event ? event.price == null : false);
+  const [price, setPrice] = useState(event?.price != null ? String(event.price) : '');
+  const [currency, setCurrency] = useState(event?.currency ?? 'usd');
   // Координаты
   const [lat, setLat] = useState<number>(event?.lat ?? config.defaultCenter.lat);
   const [lng, setLng] = useState<number>(event?.lng ?? config.defaultCenter.lng);
@@ -240,6 +244,7 @@ export default function EventForm({ categories, onClose, event }: Props) {
     setSubmitting(true);
     try {
       const lang = detectLang(title);
+      const priceVal = free ? null : parseFloat(price) || null;
       const common = {
         title,
         description,
@@ -255,6 +260,8 @@ export default function EventForm({ categories, onClose, event }: Props) {
         category_id: categoryId,
         website: website || undefined,
         photos,
+        price: priceVal,
+        currency: priceVal == null ? null : currency,
       };
       if (isOrg) {
         // Организатор: создаём/повторяем событие (на модерацию)
@@ -418,6 +425,42 @@ export default function EventForm({ categories, onClose, event }: Props) {
               ))}
             </select>
             {err('category_id')}
+          </div>
+
+          {/* Цена и валюта */}
+          <div>
+            <label className="mb-1 block text-sm text-gray-600">{t('form.price')}</label>
+            <label className="mb-2 flex items-center gap-1.5 text-sm text-gray-700">
+              <input
+                type="checkbox"
+                checked={free}
+                onChange={(e) => setFree(e.target.checked)}
+                className="h-4 w-4"
+              />
+              {t('form.free')}
+            </label>
+            {!free && (
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  placeholder={t('form.pricePlaceholder')}
+                  className={input}
+                />
+                <select value={currency} onChange={(e) => setCurrency(e.target.value)} className={input}>
+                  {Object.entries(t('form.currencies', { returnObjects: true }) as Record<string, string>).map(
+                    ([code, label]) => (
+                      <option key={code} value={code}>
+                        {label}
+                      </option>
+                    ),
+                  )}
+                </select>
+              </div>
+            )}
           </div>
 
           <div>

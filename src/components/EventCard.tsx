@@ -9,6 +9,25 @@ import { localizedText } from '../lib/translate';
 import { formatDate } from '../lib/dates';
 import { photoUrl } from '../lib/api';
 
+/** Символы валют */
+const CURRENCY_SYMBOLS: Record<string, string> = {
+  usd: '$',
+  idr: 'Rp',
+  thb: '฿',
+  vnd: '₫',
+  sgd: 'S$',
+  myr: 'RM',
+  php: '₱',
+};
+
+/** Цена в читаемом виде: «Бесплатно» или «$50 USD» */
+export function formatPrice(price?: number | null, currency?: string | null): string | null {
+  if (price == null) return null;
+  const code = (currency || 'usd').toUpperCase();
+  const sym = CURRENCY_SYMBOLS[code.toLowerCase()] || '';
+  return `${sym}${Number(price).toLocaleString('en-US')} ${code}`.trim();
+}
+
 interface Props {
   event: EventItem;
   categories: Category[];
@@ -277,6 +296,15 @@ export default function EventCard({ event, categories, onClose }: Props) {
               {cat.emoji} {lang === 'ru' ? cat.name_ru : cat.name_en}
             </span>
           </>
+        )}
+      </div>
+
+      {/* Цена: «Бесплатно» или сумма с валютой */}
+      <div className="mb-2 text-sm font-semibold">
+        {event.price == null ? (
+          <span className="text-green-600">{t('card.free')}</span>
+        ) : (
+          <span className="text-gray-900">{formatPrice(event.price, event.currency)}</span>
         )}
       </div>
 
