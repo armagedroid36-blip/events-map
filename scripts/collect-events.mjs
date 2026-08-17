@@ -14,6 +14,108 @@ if (!API_KEY || !SUPABASE_URL || !SERVICE_ROLE) {
 
 const db = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } });
 
+// ===== Источник 2: Ticketbox (Вьетнам) — события с городами и координатами =====
+
+// Категории Ticketbox → наши
+const TB_CAT = { 1: 'concert', 2: 'exhibition', 3: 'sport', 4: 'lecture', 5: 'festival', 6: 'lecture' };
+const TB_DEFAULT_CAT = 'lecture';
+
+async function tbList() {
+  // События Вьетнама на ближайшие месяцы
+  const params = new URLSearchParams({
+    at: 'this-month',
+    from: isoDays(1),
+    to: isoDays(DAYS_AHEAD),
+  });
+  const res = await fetch(`https://api-v2.ticketbox.vn/search/v2/recommended-events?${params}`, {
+    headers: { Accept: 'application/json', 'User-Agent': 'Mozilla/5.0' },
+  });
+  if (!res.ok) return [];
+  const d = await res.json();
+  return d.data?.results || [];
+}
+
+async function tbDetails(url) {
+  // Страница события содержит JSON с городом и координатами
+  const res = await fetch(`https://ticketbox.vn/${url}`, {
+    headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/126.0' },
+  });
+  if (!res.ok) return null;
+  const html = await res.text();
+  const m = html.match(/<script id="__NEXT_DATA__" type="application\/json">(.*?)<\/script>/s);
+  if (!m) return null;
+  try {
+    const d = JSON.parse(m[1]);
+    const s = JSON.stringify(d);
+    const lat = parseFloat((s.match(/"latitude"\s*:\s*"([^"]+)"/) || [])[1]);
+    const lng = parseFloat((s.match(/"longitude"\s*:\s*"([^"]+)"/) || [])[1]);
+    // Город ищем по известным названиям городов Вьетнама
+    const CITY_NAMES = [
+      'Ho Chi Minh City', 'Hồ Chí Minh', 'Hanoi', 'Hà Nội', 'Da Nang', 'Đà Nẵng',
+      'Nha Trang', 'Đà Lạt', 'Dalat', 'Hue', 'Huế', 'Phu Quoc', 'Quy Nhon',
+      'Ha Long', 'Vung Tau', 'Can Tho',
+    ];
+    let city = '';
+    for (const c of CITY_NAMES) {
+      if (s.includes(c)) {
+        city = c;
+        break;
+      }
+    }
+    const addr = (s.match(/"streetAddress"\s*:\s*"([^"]+)"/) || [])[1] || null;
+    if (!city || !lat || !lng) return null;
+    return { city, lat, lng, address: addr };
+  } catch {
+    return null;
+  }
+}
+
+async function collectTicketbox(seen, limit, insertedCount) {
+  const list = await tbList();
+  let added = 0;
+  for (const ev of list) {
+    if (insertedCount + added >= limit) break;
+    if (!ev.name || !ev.day) continue;
+    const startDate = ev.day.slice(0, 10);
+    const key = `${ev.name}|${startDate}`;
+    if (seen.has(key)) continue;
+
+    const urlPath = (ev.deeplink || ev.url || '').replace(/^https:\/\/ticketbox\.vn\//, '').split('?')[0];
+    if (!urlPath) continue;
+    const det = await tbDetails(urlPath);
+    if (!det) continue;
+
+    const row = {
+      title: ev.name,
+      title_en: ev.name,
+      description: '',
+      description_en: '',
+      source_lang: 'en',
+      start_date: startDate,
+      end_date: null,
+      start_time: ev.day.length > 10 ? ev.day.slice(11, 16) : null,
+      end_time: null,
+      city: det.city,
+      address: det.address,
+      lat: det.lat,
+      lng: det.lng,
+      category_id: TB_CAT[ev.categories?.[0]] || TB_DEFAULT_CAT,
+      website: `https://ticketbox.vn/${urlPath}`,
+      photos: ev.imageUrl ? [ev.imageUrl] : [],
+      status: 'moderation',
+    };
+    const { error } = await db.from('events').insert(row);
+    if (error) {
+      console.error(`  Ошибка вставки «${ev.name.slice(0, 40)}»: ${error.message}`);
+    } else {
+      added++;
+      seen.add(key);
+      console.log(`  + ${ev.name.slice(0, 55)} (${det.city}, ${startDate})`);
+    }
+  }
+  return added;
+}
+
 // Запросы: страна (страны, где Ticketmaster реально работает)
 const QUERIES = [
   { name: 'Сингапур', countryCode: 'SG' },
@@ -158,6 +260,10 @@ async function main() {
       }
     }
   }
+
+  // Источник 2: Ticketbox (Вьетнам)
+  console.log('Собираю: Ticketbox (Вьетнам)...');
+  inserted += await collectTicketbox(seen, MAX_EVENTS, inserted);
 
   console.log(`Готово: добавлено ${inserted}, пропущено дублей ${skipped}.`);
 }
