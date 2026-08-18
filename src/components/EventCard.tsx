@@ -9,6 +9,7 @@ import { localizedText } from '../lib/translate';
 import { languageName } from '../lib/languages';
 import { formatDate } from '../lib/dates';
 import { photoUrl } from '../lib/api';
+import { nextZ } from '../lib/zindex';
 
 /** Символы валют */
 const CURRENCY_SYMBOLS: Record<string, string> = {
@@ -67,6 +68,7 @@ function Lightbox({
   const [dragging, setDragging] = useState(false);
   const [slideW, setSlideW] = useState(0);
   const wrapRef = useRef<HTMLDivElement | null>(null);
+  const winZ = useRef(nextZ()).current;
   // Начало жеста
   const startRef = useRef<{
     dist: number;
@@ -148,7 +150,7 @@ function Lightbox({
   return (
     <div
       className="glass-overlay fixed inset-0 z-[3000] flex items-center justify-center"
-      style={{ touchAction: 'none' }}
+      style={{ zIndex: winZ, touchAction: 'none' }}
       onClick={onClose}
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}

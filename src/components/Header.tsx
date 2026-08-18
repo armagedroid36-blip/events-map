@@ -1,6 +1,6 @@
 // Шапка сайта: название, переключатель языка RU/EN, вход / меню шестерёнки.
 // Войти: незарегистрированные. Шестерёнка с меню по ролям — для вошедших.
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../lib/auth';
@@ -16,22 +16,6 @@ export default function Header({ onOpenForm }: HeaderProps) {
   const { user, signOut } = useAuth();
   const [authOpen, setAuthOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  // Диагностика позиций (временная): показывается при открытом меню
-  const [diag, setDiag] = useState('');
-  useEffect(() => {
-    if (!menuOpen) return;
-    const t = setTimeout(() => {
-      const menu = document.querySelector('.w-56');
-      const filt = [...document.querySelectorAll('button')].find(
-        (b) => (b.innerText || '').trim() === 'Фильтры' || (b.innerText || '').trim() === 'Filters',
-      );
-      const menuTop = menu ? Math.round(menu.getBoundingClientRect().top) : -1;
-      const filtTop = filt ? Math.round(filt.getBoundingClientRect().top) : -1;
-      const filtText = filt ? (filt.innerText || '').trim() : 'нет';
-      setDiag(`меню:${menuTop}px фильтры(${filtText}):${filtTop}px экран:${innerWidth}x${innerHeight}`);
-    }, 400);
-    return () => clearTimeout(t);
-  }, [menuOpen]);
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
 
   function switchLang() {
@@ -136,12 +120,6 @@ export default function Header({ onOpenForm }: HeaderProps) {
                       {t('menu.logout')}
                     </button>
                   </div>
-                  {/* Диагностика позиций (временная) */}
-                  {diag && (
-                    <div className="fixed bottom-2 left-1/2 z-[3000] -translate-x-1/2 rounded bg-black/80 px-3 py-1 text-[11px] text-white">
-                      {diag}
-                    </div>
-                  )}
                   </>,
                   document.body,
                 )}

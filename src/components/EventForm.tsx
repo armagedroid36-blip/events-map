@@ -4,10 +4,11 @@
 // - Организатор выбирает контакты для связи из своего профиля
 // - Фото загружаются файлами (до 5, до 5 МБ)
 // - После сохранения событие уходит на модерацию
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
+import { nextZ } from '../lib/zindex';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import { z } from 'zod';
@@ -106,6 +107,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
   const { t, i18n } = useTranslation();
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
   const { user } = useAuth();
+  const winZ = useRef(nextZ()).current;
   // Редактирование (админ) или повтор — данные в форме одни и те же
   const event = editEvent ?? eventProp;
   const isRepeat = !!event;
@@ -314,7 +316,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
 
   if (done) {
     return createPortal(
-      <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/40 p-4" onClick={onClose}>
+      <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/40 p-4" style={{ zIndex: winZ }} onClick={onClose}>
         <div className="flex min-h-full items-center justify-center">
           <div className="w-full max-w-md rounded-xl bg-white p-6 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <p className="mb-4 text-gray-800">
@@ -337,7 +339,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
   const err = (k: string) => (errors[k] ? <p className="mt-0.5 text-xs text-red-600">{errors[k]}</p> : null);
 
   return createPortal(
-    <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/25 p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/25 p-4" style={{ zIndex: winZ }} onClick={onClose}>
       <div className="flex min-h-full items-center justify-center">
         <div
           className="glass-strong mx-auto my-6 w-full max-w-2xl rounded-xl p-6 shadow-2xl"

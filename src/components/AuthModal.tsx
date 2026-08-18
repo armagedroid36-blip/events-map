@@ -1,14 +1,16 @@
 // Окно входа / регистрации.
 // Регистрация: выбор роли (пользователь / организатор).
 // Организатор указывает контакты для связи (видит только админ).
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../lib/auth';
+import { nextZ } from '../lib/zindex';
 
 export default function AuthModal({ onClose }: { onClose: () => void }) {
   const { t } = useTranslation();
   const { signIn, signUp, confirmSignup } = useAuth();
+  const z = useRef(nextZ()).current;
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [confirm, setConfirm] = useState(false);
   const [code, setCode] = useState('');
@@ -60,7 +62,7 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
   // Шаг подтверждения кодом из письма
   if (confirm) {
     return createPortal(
-      <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/25" onClick={onClose}>
+      <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/25" style={{ zIndex: z }} onClick={onClose}>
         <div className="flex min-h-full items-center justify-center p-4">
           <div
             className="glass-strong w-full max-w-md rounded-xl p-6 shadow-2xl"
@@ -101,7 +103,7 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
   }
 
   return createPortal(
-    <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/25" onClick={onClose}>
+    <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/25" style={{ zIndex: z }} onClick={onClose}>
       <div className="flex min-h-full items-center justify-center p-4">
         <div
           className="glass-strong w-full max-w-md rounded-xl p-6 shadow-2xl"
