@@ -17,6 +17,7 @@ import { getApi, photoUrl } from '../lib/api';
 import { geocodeAddress, reverseGeocode } from '../lib/geocode';
 import { detectLang } from '../lib/translate';
 import { LANGUAGES } from '../lib/languages';
+import { detectCountry } from '../lib/countries';
 import { config } from '../config';
 import { useAuth } from '../lib/auth';
 
@@ -70,6 +71,14 @@ const IconEmail = (
 const IconPhone = (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+  </svg>
+);
+
+const IconInstagram = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+    <rect x="2" y="2" width="20" height="20" rx="5" />
+    <circle cx="12" cy="12" r="4" />
+    <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
   </svg>
 );
 
@@ -131,6 +140,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
   const [contactWa, setContactWa] = useState(event?.contact_whatsapp ?? '');
   const [contactEmailVal, setContactEmailVal] = useState(event?.contact_email ?? '');
   const [contactPhoneVal, setContactPhoneVal] = useState(event?.contact_phone ?? '');
+  const [contactIg, setContactIg] = useState(event?.contact_instagram ?? '');
   // Фото: пути загруженных файлов
   const [photos, setPhotos] = useState<string[]>(event?.photos ?? []);
   const [uploading, setUploading] = useState(false);
@@ -161,6 +171,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
             if (!contactWa) setContactWa(p.contact_whatsapp ?? '');
             if (!contactEmailVal) setContactEmailVal(p.contact_email ?? '');
             if (!contactPhoneVal) setContactPhoneVal(p.contact_phone ?? '');
+            if (!contactIg) setContactIg(p.instagram ?? '');
           }
         })
         .catch(() => {});
@@ -255,7 +266,24 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
     setSubmitting(true);
     try {
       const lang = detectLang(title);
-      const priceVal = free ? null : parseFloat(price) || null;
+      const priceVal = free ? 0 : parseFloat(price) || null;
+
+      // Валидация времени: конец не раньше начала
+      if (endDate < startDate || (endDate === startDate && endTime < startTime)) {
+        setErrors({ end_date: t('form.timeOrder'), end_time: t('form.timeOrder') });
+        setSubmitting(false);
+        return;
+      }
+      // Начало не в прошлом (для нового события или повтора)
+      if (!editEvent) {
+        const startAt = new Date(`${startDate}T${startTime || '00:00'}`);
+        if (startAt.getTime() < Date.now() - 60 * 1000) {
+          setErrors({ start_time: t('form.timePast') });
+          setSubmitting(false);
+          return;
+        }
+      }
+
       const common = {
         title,
         description,
@@ -265,6 +293,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
         start_time: startTime || undefined,
         end_time: endTime || undefined,
         city,
+        country: detectCountry(city) || undefined,
         address,
         lat,
         lng,
@@ -283,6 +312,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
           contact_whatsapp: contactWa.trim() || undefined,
           contact_email: contactEmailVal.trim() || undefined,
           contact_phone: contactPhoneVal.trim() || undefined,
+          contact_instagram: contactIg.trim() || undefined,
         };
         if (user?.role === 'org') upd.status = 'moderation';
         await getApi().updateEvent(editEvent.id, upd);
@@ -294,6 +324,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
           contact_whatsapp: contactWa.trim() || undefined,
           contact_email: contactEmailVal.trim() || undefined,
           contact_phone: contactPhoneVal.trim() || undefined,
+          contact_instagram: contactIg.trim() || undefined,
         });
       } else if (user?.role === 'admin') {
         // Администратор: публикуется сразу, без модерации
@@ -303,6 +334,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
           contact_whatsapp: contactWa.trim() || undefined,
           contact_email: contactEmailVal.trim() || undefined,
           contact_phone: contactPhoneVal.trim() || undefined,
+          contact_instagram: contactIg.trim() || undefined,
           status: 'active',
         });
       } else {
@@ -516,6 +548,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
                 <IconInput icon={IconWhatsapp} value={contactWa} onChange={setContactWa} placeholder={t('form.contactWhatsappField')} />
                 <IconInput icon={IconEmail} type="email" value={contactEmailVal} onChange={setContactEmailVal} placeholder={t('form.contactEmailField')} />
                 <IconInput icon={IconPhone} value={contactPhoneVal} onChange={setContactPhoneVal} placeholder={t('form.contactPhoneField')} />
+                <IconInput icon={IconInstagram} value={contactIg} onChange={setContactIg} placeholder={t('form.contactInstagramField')} />
               </div>
             </div>
           ) : (

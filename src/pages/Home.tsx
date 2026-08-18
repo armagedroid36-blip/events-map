@@ -14,6 +14,7 @@ import { getApi } from '../lib/api';
 import { isUpcoming } from '../lib/dates';
 import { cityMatches, ruToEn } from '../lib/cities';
 import { geocodeAddress } from '../lib/geocode';
+import { detectCountry } from '../lib/countries';
 import { useAuth } from '../lib/auth';
 import type { Category, EventItem, Filters } from '../lib/types';
 
@@ -37,6 +38,7 @@ export default function Home() {
     priceMax: undefined,
     currency: null,
     language: null,
+    country: null,
     city: undefined,
     query: undefined,
   });
@@ -49,6 +51,28 @@ export default function Home() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   // Кнопка «События на карте» — список событий видимой области
   const [listOpen, setListOpen] = useState(false);
+
+  // Аккордеон: открытие панели на главной закрывает меню шестерёнки;
+  // открытие меню шестерёнки закрывает панели главной
+  useEffect(() => {
+    const h = () => {
+      setMobileFiltersOpen(false);
+      setListOpen(false);
+    };
+    window.addEventListener('close-home-panels', h);
+    return () => window.removeEventListener('close-home-panels', h);
+  }, []);
+
+  function openFilters() {
+    setMobileFiltersOpen(true);
+    setListOpen(false);
+    window.dispatchEvent(new CustomEvent('close-gear-menu'));
+  }
+  function openList() {
+    setListOpen(true);
+    setMobileFiltersOpen(false);
+    window.dispatchEvent(new CustomEvent('close-gear-menu'));
+  }
   // Видимая область карты (юго-запад, северо-восток)
   const [bounds, setBounds] = useState<MapBounds | null>(null);
 
@@ -95,9 +119,10 @@ export default function Home() {
         if (filters.priceMin != null && ev.price < filters.priceMin) return false;
         if (filters.priceMax != null && ev.price > filters.priceMax) return false;
       }
-      // Валюта и язык мероприятия
+      // Валюта, язык и страна
       if (filters.currency && ev.currency !== filters.currency) return false;
       if (filters.language && ev.language !== filters.language) return false;
+      if (filters.country && (ev.country || detectCountry(ev.city)) !== filters.country) return false;
       // Город: работает и по-русски, и по-английски («Убуд» = «Ubud»)
       if (city && !cityMatches(ev.city, city)) return false;
       if (q) {
@@ -150,6 +175,17 @@ export default function Home() {
     getApi().incrementCounter('card_views').catch(() => {});
   }
 
+  // Города и страны из базы — для автодополнения и фильтра
+  const allCities = useMemo(
+    () => [...new Set(events.map((e) => e.city).filter(Boolean))].sort(),
+    [events],
+  );
+  const allCountries = useMemo(
+    () =>
+      [...new Set(events.map((e) => e.country || detectCountry(e.city)).filter(Boolean))].sort(),
+    [events],
+  );
+
   if (loading) {
     return (
       <div className="flex min-h-screen flex-col">
@@ -187,7 +223,7 @@ export default function Home() {
 
       {/* Кнопка открытия фильтров на мобильных */}
       <button
-        onClick={() => setMobileFiltersOpen(true)}
+        onClick={openFilters}
         className="glass-btn absolute left-3 top-20 z-[1150] rounded-md px-3 py-2 text-sm font-medium shadow hover:bg-white/75 lg:hidden"
       >
         {t('filters.title')}
@@ -211,7 +247,7 @@ export default function Home() {
           <div className="mb-3">
             {user?.role === 'admin' && <QuickLocations onGoTo={goTo} />}
           </div>
-          <FiltersPanel categories={categories} filters={filters} onChange={setFilters} />
+          <FiltersPanel categories={categories} filters={filters} onChange={setFilters} cities={allCities} countries={allCountries} />
           <button
             onClick={() => setMobileFiltersOpen(false)}
             className="mt-3 w-full rounded-md bg-gray-900 px-3 py-2 text-sm font-semibold text-white hover:bg-gray-700"
@@ -227,10 +263,10 @@ export default function Home() {
         <button
           onClick={() => setFiltersCollapsed(false)}
           title={t('filters.title')}
-          className="glass absolute left-3 top-20 z-[1100] hidden h-24 w-10 flex-col items-center justify-center gap-1 rounded-lg text-lg text-gray-600 shadow transition hover:bg-white/70 lg:flex"
+          className="glass absolute left-3 top-20 z-[1100] hidden h-10 items-center justify-center gap-1.5 rounded-lg px-3 text-sm text-gray-600 shadow transition hover:bg-white/70 lg:flex"
         >
           <span>☰</span>
-          <span className="text-[10px]">{t('filters.title')}</span>
+          <span>{t('filters.title')}</span>
         </button>
       ) : (
         <div className="absolute bottom-3 left-3 top-20 z-[1100] hidden w-72 flex-col gap-2 lg:flex">
@@ -245,7 +281,7 @@ export default function Home() {
             {user?.role === 'admin' && <QuickLocations onGoTo={goTo} />}
           </div>
           <div className="glass min-h-0 flex-1 overflow-y-auto rounded-lg shadow thin-scroll">
-            <FiltersPanel categories={categories} filters={filters} onChange={setFilters} />
+            <FiltersPanel categories={categories} filters={filters} onChange={setFilters} cities={allCities} countries={allCountries} />
           </div>
         </div>
       )}
@@ -266,7 +302,10 @@ export default function Home() {
           Скрыта, когда открыта карточка события */}
       {!selected && (
         <button
-          onClick={() => setListOpen((v) => !v)}
+          onClick={() => {
+            if (listOpen) setListOpen(false);
+            else openList();
+          }}
           className="glass-btn bottom-safe absolute left-1/2 z-[1160] -translate-x-1/2 rounded-full px-5 py-2.5 text-sm font-semibold shadow-lg"
         >
           {listOpen
@@ -277,8 +316,7 @@ export default function Home() {
 
       {/* Список под кнопкой — события текущего участка карты */}
       {listOpen && (
-        <div className="glass absolute inset-x-0 bottom-28 z-[1130] mx-auto max-h-[50vh] w-full max-w-xl overflow-y-auto rounded-t-xl p-3 shadow-xl">
-          <p className="mb-2 text-xs text-gray-500">{t('list.results', { count: onMapEvents.length })}</p>
+        <div className="glass absolute inset-x-0 bottom-28 z-[1130] mx-auto max-h-[50vh] w-full max-w-xl overflow-y-auto rounded-t-xl p-3 shadow-xl thin-scroll">
           {onMapEvents.length === 0 && (
             <p className="py-4 text-center text-sm text-gray-500">{t('list.empty')}</p>
           )}

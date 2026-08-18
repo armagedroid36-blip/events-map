@@ -2,14 +2,19 @@
 import { useTranslation } from 'react-i18next';
 import type { Category, Filters } from '../lib/types';
 import { LANGUAGES } from '../lib/languages';
+import { KNOWN_COUNTRIES } from '../lib/countries';
 
 interface Props {
   categories: Category[];
   filters: Filters;
   onChange: (f: Filters) => void;
+  /** Города из базы — для автодополнения */
+  cities?: string[];
+  /** Страны из базы — для фильтра */
+  countries?: string[];
 }
 
-export default function FiltersPanel({ categories, filters, onChange }: Props) {
+export default function FiltersPanel({ categories, filters, onChange, cities = [], countries = [] }: Props) {
   const { t, i18n } = useTranslation();
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
 
@@ -65,15 +70,38 @@ export default function FiltersPanel({ categories, filters, onChange }: Props) {
         </div>
       </div>
 
-      {/* Город */}
+      {/* Город (с автодополнением из базы) */}
       <div>
         <label className="mb-1 block text-xs text-gray-500">{t('filters.city')}</label>
         <input
+          list="city-options"
           value={filters.city ?? ''}
           onChange={(e) => set('city', e.target.value || undefined)}
           placeholder={t('filters.cityPlaceholder')}
           className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
         />
+        <datalist id="city-options">
+          {cities.map((c) => (
+            <option key={c} value={c} />
+          ))}
+        </datalist>
+      </div>
+
+      {/* Страна */}
+      <div>
+        <label className="mb-1 block text-xs text-gray-500">{t('filters.country')}</label>
+        <select
+          value={filters.country ?? ''}
+          onChange={(e) => set('country', e.target.value || null)}
+          className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+        >
+          <option value="">{t('filters.anyCountry')}</option>
+          {[...new Set([...countries, ...KNOWN_COUNTRIES])].map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* Цена */}
@@ -171,6 +199,7 @@ export default function FiltersPanel({ categories, filters, onChange }: Props) {
             priceMax: undefined,
             currency: null,
             language: null,
+            country: null,
             city: undefined,
             query: undefined,
           })

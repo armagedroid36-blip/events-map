@@ -32,14 +32,14 @@ export interface DataApi {
     email: string,
     password: string,
     role: UserRole,
-    contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string },
+    contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string; instagram?: string },
   ): Promise<void>;
   /** Подтверждение регистрации кодом из письма + создание профиля */
   confirmSignup(
     email: string,
     code: string,
     role: UserRole,
-    contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string },
+    contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string; instagram?: string },
   ): Promise<CurrentUser | null>;
   signIn(email: string, password: string): Promise<CurrentUser | null>;
   signOut(): Promise<void>;
@@ -160,7 +160,7 @@ class SupabaseApi implements DataApi {
     email: string,
     password: string,
     _role: UserRole,
-    _contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string },
+    _contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string; instagram?: string },
   ): Promise<void> {
     const { data, error } = await this.db.auth.signUp({ email, password });
     if (error) throw new Error(error.message);
@@ -185,7 +185,7 @@ class SupabaseApi implements DataApi {
     email: string,
     code: string,
     role: UserRole,
-    contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string },
+    contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string; instagram?: string },
   ): Promise<CurrentUser | null> {
     const { data, error } = await this.db.auth.verifyOtp({
       email,
@@ -200,6 +200,7 @@ class SupabaseApi implements DataApi {
       wa: contacts.whatsapp ?? '',
       em: contacts.email ?? '',
       ph: contacts.phone ?? '',
+      ig: contacts.instagram ?? '',
     });
     if (pErr) return null;
     return { id: data.user.id, email, role };

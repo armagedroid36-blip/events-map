@@ -159,6 +159,8 @@ body {
 .thin-scroll {
   scrollbar-width: thin;
   scrollbar-color: rgba(100, 116, 139, 0.35) transparent;
+  scrollbar-gutter: stable;
+  overflow-x: hidden;
 }
 
 /* Полупрозрачное стекло для фона карусели (как у остальных панелей) */

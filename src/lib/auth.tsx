@@ -13,14 +13,14 @@ interface AuthCtx {
     email: string,
     password: string,
     role: UserRole,
-    contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string },
+    contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string; instagram?: string },
   ) => Promise<void>;
   /** Подтверждение регистрации кодом из письма */
   confirmSignup: (
     email: string,
     code: string,
     role: UserRole,
-    contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string },
+    contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string; instagram?: string },
   ) => Promise<boolean>;
   signOut: () => Promise<void>;
 }
@@ -56,7 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     email: string,
     password: string,
     role: UserRole,
-    contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string },
+    contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string; instagram?: string },
   ) {
     // Только отправка запроса: после signUp нужно подтвердить почту кодом
     await getApi().signUp(email, password, role, contacts);
@@ -66,7 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     email: string,
     code: string,
     role: UserRole,
-    contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string },
+    contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string; instagram?: string },
   ): Promise<boolean> {
     const u = await getApi().confirmSignup(email, code, role, contacts);
     if (u) setUser(u);

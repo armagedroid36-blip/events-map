@@ -1,6 +1,6 @@
 // Шапка сайта: название, переключатель языка RU/EN, вход / меню шестерёнки.
 // Войти: незарегистрированные. Шестерёнка с меню по ролям — для вошедших.
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../lib/auth';
@@ -17,6 +17,17 @@ export default function Header({ onOpenForm }: HeaderProps) {
   const [authOpen, setAuthOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
+
+  // Аккордеон: открытие меню шестерёнки закрывает панели главной
+  useEffect(() => {
+    if (menuOpen) window.dispatchEvent(new CustomEvent('close-home-panels'));
+  }, [menuOpen]);
+  // Закрываем меню, если открыли панель на главной (фильтры, список)
+  useEffect(() => {
+    const h = () => setMenuOpen(false);
+    window.addEventListener('close-gear-menu', h);
+    return () => window.removeEventListener('close-gear-menu', h);
+  }, []);
 
   function switchLang() {
     const next = lang === 'ru' ? 'en' : 'ru';

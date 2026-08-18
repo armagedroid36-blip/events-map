@@ -56,6 +56,7 @@ export interface EventItem {
   contact_whatsapp?: string;
   contact_email?: string;
   contact_phone?: string;
+  contact_instagram?: string;
   /** Цена билета (null = бесплатно) */
   price?: number | null;
   /** Валюта: 'usd' | код местной валюты (idr, thb, vnd, sgd, myr, php) */
@@ -127,6 +128,8 @@ export interface Filters {
   currency?: string | null;
   /** Язык мероприятия */
   language?: string | null;
+  /** Страна события */
+  country?: string | null;
   dateFrom?: string;
   dateTo?: string;
   city?: string;
@@ -144,6 +147,7 @@ export interface Profile {
   contact_whatsapp?: string;
   contact_email?: string;
   contact_phone?: string;
+  instagram?: string;
 }
 
 /** Текущий пользователь (сессия) */

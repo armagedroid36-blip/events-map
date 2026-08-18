@@ -20,6 +20,7 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
   const [telegram, setTelegram] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
   const [phone, setPhone] = useState('');
+  const [instagram, setInstagram] = useState('');
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
 
@@ -37,7 +38,7 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
         }
       } else {
         // Регистрация: отправляем запрос — на почту придёт код подтверждения
-        await signUp(email, password, role, { telegram, whatsapp, email, phone });
+        await signUp(email, password, role, { telegram, whatsapp, email, phone, instagram });
         setConfirm(true);
         setBusy(false);
         return;
@@ -53,7 +54,7 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
     e.preventDefault();
     setBusy(true);
     setErr('');
-    const ok = await confirmSignup(email, code, role, { telegram, whatsapp, email, phone });
+    const ok = await confirmSignup(email, code, role, { telegram, whatsapp, email, phone, instagram });
     setBusy(false);
     if (ok) onClose();
     else setErr(t('auth.wrongCode'));
@@ -204,6 +205,12 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder={t('auth.contactPhone')}
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-2 text-sm focus:border-gray-900 focus:outline-none"
+                  />
+                  <input
+                    value={instagram}
+                    onChange={(e) => setInstagram(e.target.value)}
+                    placeholder={t('auth.contactInstagram')}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-2 text-sm focus:border-gray-900 focus:outline-none"
                   />
                 </div>
