@@ -8,11 +8,9 @@ import { config } from '../config';
 
 interface HeaderProps {
   onOpenForm: () => void;
-  /** Шапка плавающая (поверх карты на главной) — меню опускается до уровня кнопки «Фильтры» */
-  floating?: boolean;
 }
 
-export default function Header({ onOpenForm, floating }: HeaderProps) {
+export default function Header({ onOpenForm }: HeaderProps) {
   const { t, i18n } = useTranslation();
   const { user, signOut } = useAuth();
   const [authOpen, setAuthOpen] = useState(false);
