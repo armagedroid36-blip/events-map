@@ -1,6 +1,7 @@
 // Шапка сайта: название, переключатель языка RU/EN, вход / меню шестерёнки.
 // Войти: незарегистрированные. Шестерёнка с меню по ролям — для вошедших.
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../lib/auth';
 import AuthModal from './AuthModal';
@@ -21,10 +22,13 @@ export default function Header({ onOpenForm }: HeaderProps) {
     if (!menuOpen) return;
     const t = setTimeout(() => {
       const menu = document.querySelector('.w-56');
-      const filt = [...document.querySelectorAll('button')].find((b) => (b.innerText || '').trim() === 'Фильтры');
+      const filt = [...document.querySelectorAll('button')].find(
+        (b) => (b.innerText || '').trim() === 'Фильтры' || (b.innerText || '').trim() === 'Filters',
+      );
       const menuTop = menu ? Math.round(menu.getBoundingClientRect().top) : -1;
       const filtTop = filt ? Math.round(filt.getBoundingClientRect().top) : -1;
-      setDiag(`меню:${menuTop}px фильтры:${filtTop}px экран:${innerWidth}x${innerHeight}`);
+      const filtText = filt ? (filt.innerText || '').trim() : 'нет';
+      setDiag(`меню:${menuTop}px фильтры(${filtText}):${filtTop}px экран:${innerWidth}x${innerHeight}`);
     }, 400);
     return () => clearTimeout(t);
   }, [menuOpen]);
@@ -103,10 +107,11 @@ export default function Header({ onOpenForm }: HeaderProps) {
                 </svg>
               </button>
 
-              {menuOpen && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
-                  <div className="glass fixed right-3 top-[80px] z-50 w-56 rounded-lg py-1 shadow-xl">
+              {menuOpen &&
+                createPortal(
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
+                    <div className="glass fixed right-3 top-[80px] z-50 w-56 rounded-lg py-1 shadow-xl">
                     {menu.map((m) => (
                       <button
                         key={m.label}
@@ -137,8 +142,9 @@ export default function Header({ onOpenForm }: HeaderProps) {
                       {diag}
                     </div>
                   )}
-                </>
-              )}
+                  </>,
+                  document.body,
+                )}
             </div>
           )}
         </div>
