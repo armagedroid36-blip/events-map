@@ -147,9 +147,10 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
   const isOrg = user?.role === 'org';
   const isAdmin = user?.role === 'admin';
 
-  // Контакты из профиля — предзаполняют поля формы (для организатора и админа)
+  // Контакты из профиля — предзаполняют поля только НОВОЙ формы.
+  // При редактировании/повторе контакты берутся из самого события.
   useEffect(() => {
-    if (isOrg || isAdmin) {
+    if ((isOrg || isAdmin) && !event) {
       getApi()
         .getMyProfile()
         .then((p) => {
