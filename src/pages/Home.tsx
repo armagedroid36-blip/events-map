@@ -172,6 +172,7 @@ export default function Home() {
           zoom={zoom}
           onBoundsChange={setBounds}
           onMapClick={() => {
+            setSelected(null);
             setMobileFiltersOpen(false);
             setListOpen(false);
           }}
