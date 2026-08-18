@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: 22
       - run: npm ci --no-audit --no-fund || npm install --no-audit --no-fund
-      - name: Сбор событий с Ticketmaster
+      - name: Сбор событий с Songkick
         run: node scripts/collect-events.mjs
         env:
           TICKETMASTER_API_KEY: ${{ secrets.TICKETMASTER_API_KEY }}
