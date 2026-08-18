@@ -86,10 +86,12 @@ interface MapControllerProps {
 export type MapBounds = [[number, number], [number, number]];
 
 /** Сообщает наружу видимую область карты при её перемещении/зуме */
-function BoundsTracker({ onBoundsChange }: { onBoundsChange?: (b: MapBounds) => void }) {
+function BoundsTracker({ onBoundsChange, onMapClick }: { onBoundsChange?: (b: MapBounds) => void; onMapClick?: () => void }) {
   const map = useMap();
   const cbRef = useRef(onBoundsChange);
   cbRef.current = onBoundsChange;
+  const clickRef = useRef(onMapClick);
+  clickRef.current = onMapClick;
 
   useEffect(() => {
     const fire = () => {
@@ -100,12 +102,13 @@ function BoundsTracker({ onBoundsChange }: { onBoundsChange?: (b: MapBounds) => 
         [b.getNorth(), b.getEast()],
       ]);
     };
-    fire();
-    map.on('moveend', fire);
-    map.on('zoomend', fire);
+    // Клик по карте — сворачиваем открытые меню
+    const onClick = () => clickRef.current?.();
+    map.on('moveend zoomend click', fire);
+    map.on('click', onClick);
     return () => {
-      map.off('moveend', fire);
-      map.off('zoomend', fire);
+      map.off('moveend zoomend click', fire);
+      map.off('click', onClick);
     };
   }, [map]);
 
@@ -136,6 +139,8 @@ interface MapViewProps {
   zoom?: number;
   /** Изменение видимой области карты (для списка «События на карте») */
   onBoundsChange?: (b: MapBounds) => void;
+  /** Клик по карте (сворачивает открытые меню) */
+  onMapClick?: () => void;
 }
 
 export default function MapView({
@@ -145,6 +150,7 @@ export default function MapView({
   center,
   zoom,
   onBoundsChange,
+  onMapClick,
 }: MapViewProps) {
   const initialCenter: [number, number] = [
     center?.lat ?? config.defaultCenter.lat,
@@ -171,7 +177,7 @@ export default function MapView({
       <AttributionControl position="bottomright" prefix={false} />
       <ClusterLayer events={events} categories={categories} onSelect={onSelect} />
       <MapController center={center} zoom={zoom} />
-      <BoundsTracker onBoundsChange={onBoundsChange} />
+      <BoundsTracker onBoundsChange={onBoundsChange} onMapClick={onMapClick} />
     </MapContainer>
   );
 }

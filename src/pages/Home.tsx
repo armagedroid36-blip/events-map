@@ -171,6 +171,10 @@ export default function Home() {
           center={center}
           zoom={zoom}
           onBoundsChange={setBounds}
+          onMapClick={() => {
+            setMobileFiltersOpen(false);
+            setListOpen(false);
+          }}
         />
       </div>
 
@@ -189,7 +193,9 @@ export default function Home() {
 
       {/* Оверлей фильтров на мобильных */}
       {mobileFiltersOpen && (
-        <div className="glass absolute inset-x-3 top-24 z-[1150] max-h-[60vh] overflow-y-auto rounded-xl p-3 shadow-xl lg:hidden">
+        <>
+          <div className="fixed inset-0 z-[1145] bg-black/20 lg:hidden" onClick={() => setMobileFiltersOpen(false)} />
+          <div className="glass absolute inset-x-3 top-24 z-[1150] max-h-[60vh] overflow-y-auto rounded-xl p-3 shadow-xl lg:hidden thin-scroll">
           <div className="mb-2 flex items-center justify-between">
             <span className="text-sm font-semibold text-gray-900">{t('filters.title')}</span>
             <button
@@ -211,6 +217,7 @@ export default function Home() {
             {t('filters.apply')}
           </button>
         </div>
+        </>
       )}
 
       {/* Левая панель (десктоп): быстрые кнопки + фильтры, со сворачиванием */}
