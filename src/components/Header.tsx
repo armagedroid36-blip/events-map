@@ -95,13 +95,7 @@ export default function Header({ onOpenForm, floating }: HeaderProps) {
               {menuOpen && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
-                  <div
-                    className={`glass z-50 w-56 rounded-lg py-1 shadow-xl ${
-                      floating
-                        ? 'fixed right-3 top-[80px]'
-                        : 'absolute right-0 top-11'
-                    }`}
-                  >
+                  <div className="glass fixed right-3 top-[80px] z-50 w-56 rounded-lg py-1 shadow-xl">
                     {menu.map((m) => (
                       <button
                         key={m.label}
