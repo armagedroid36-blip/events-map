@@ -92,7 +92,7 @@ export default function Header({ onOpenForm, floating }: HeaderProps) {
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
                   <div
-                    className={`glass-menu z-50 w-56 rounded-lg py-1 shadow-xl ${
+                    className={`glass z-50 w-56 rounded-lg py-1 shadow-xl ${
                       floating
                         ? 'fixed right-3 top-[80px]'
                         : 'absolute right-0 top-11'
