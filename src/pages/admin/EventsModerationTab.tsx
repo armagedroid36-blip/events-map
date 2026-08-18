@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { getApi } from '../../lib/api';
 import { formatDate } from '../../lib/dates';
 import EventCard from '../../components/EventCard';
+import EventForm from '../../components/EventForm';
 import type { Category, EventItem } from '../../lib/types';
 
 interface Props {
@@ -18,6 +19,8 @@ export default function EventsModerationTab({ onChanged }: Props) {
   const [busyId, setBusyId] = useState<string | null>(null);
   // Выбранное для просмотра событие
   const [selected, setSelected] = useState<EventItem | null>(null);
+  // Событие в режиме редактирования
+  const [editEvent, setEditEvent] = useState<EventItem | null>(null);
   // Подтверждение «Удалить все»
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -138,7 +141,13 @@ export default function EventsModerationTab({ onChanged }: Props) {
                   </p>
                 )}
               </button>
-              <div className="flex shrink-0 gap-2">
+              <div className="flex shrink-0 flex-wrap gap-1.5">
+                <button
+                  onClick={() => setEditEvent(ev)}
+                  className="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+                >
+                  {t('admin.moderation.edit')}
+                </button>
                 <button
                   onClick={() => approve(ev.id)}
                   disabled={busyId === ev.id}
@@ -191,6 +200,18 @@ export default function EventsModerationTab({ onChanged }: Props) {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Форма редактирования события (админ) */}
+      {editEvent && (
+        <EventForm
+          categories={categories}
+          editEvent={editEvent}
+          onClose={() => {
+            setEditEvent(null);
+            onChanged();
+          }}
+        />
       )}
     </div>
   );

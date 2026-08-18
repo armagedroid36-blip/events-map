@@ -22,8 +22,10 @@ import { useAuth } from '../lib/auth';
 interface Props {
   categories: Category[];
   onClose: () => void;
-  /** Событие для повторения/редактирования (данные подставляются в форму) */
-  event?: EventItem;
+  /** Событие для повторения (данные подставляются в форму) */
+  event?: EventItem | null;
+  /** Режим редактирования существующего события (админ): сохраняет изменения */
+  editEvent?: EventItem | null;
 }
 
 /** Иконка маркера на мини-карте формы */
@@ -100,11 +102,14 @@ function IconInput({
   );
 }
 
-export default function EventForm({ categories, onClose, event }: Props) {
+export default function EventForm({ categories, onClose, event: eventProp, editEvent }: Props) {
   const { t, i18n } = useTranslation();
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
   const { user } = useAuth();
+  // Редактирование (админ) или повтор — данные в форме одни и те же
+  const event = editEvent ?? eventProp;
   const isRepeat = !!event;
+  const isEdit = !!editEvent;
 
   // --- Состояние формы (при повторе — данные из события) ---
   const [title, setTitle] = useState(event?.title ?? '');
@@ -267,7 +272,16 @@ export default function EventForm({ categories, onClose, event }: Props) {
         price: priceVal,
         currency: priceVal == null ? null : currency,
       };
-      if (isOrg) {
+      if (editEvent) {
+        // Админ редактирует событие (на модерации или опубликованное)
+        await getApi().updateEvent(editEvent.id, {
+          ...common,
+          contact_telegram: contactTg.trim() || undefined,
+          contact_whatsapp: contactWa.trim() || undefined,
+          contact_email: contactEmailVal.trim() || undefined,
+          contact_phone: contactPhoneVal.trim() || undefined,
+        });
+      } else if (isOrg) {
         // Организатор: создаём/повторяем событие (на модерацию)
         await getApi().createOrgEvent({
           ...common,
@@ -302,7 +316,9 @@ export default function EventForm({ categories, onClose, event }: Props) {
       <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/40 p-4" onClick={onClose}>
         <div className="flex min-h-full items-center justify-center">
           <div className="w-full max-w-md rounded-xl bg-white p-6 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <p className="mb-4 text-gray-800">{isAdmin ? t('form.published') : t('form.success')}</p>
+            <p className="mb-4 text-gray-800">
+              {isEdit ? t('form.saved') : isAdmin ? t('form.published') : t('form.success')}
+            </p>
             <button
               onClick={onClose}
               className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700"
@@ -328,14 +344,14 @@ export default function EventForm({ categories, onClose, event }: Props) {
         >
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-gray-900">
-            {isRepeat ? t('myEvents.repeatTitle') : t('form.title')}
+            {isEdit ? t('form.editTitle') : isRepeat ? t('myEvents.repeatTitle') : t('form.title')}
           </h2>
           <button onClick={onClose} className="rounded p-1 text-gray-400 hover:bg-gray-100" aria-label="close">
             ✕
           </button>
         </div>
         <p className="mb-4 text-sm text-gray-500">
-          {isRepeat ? t('myEvents.repeatHint') : t('form.subtitle')}
+          {isEdit ? t('form.editHint') : isRepeat ? t('myEvents.repeatHint') : t('form.subtitle')}
         </p>
 
         <form onSubmit={submit} className="space-y-3">
@@ -538,7 +554,7 @@ export default function EventForm({ categories, onClose, event }: Props) {
             disabled={submitting || uploading}
             className="w-full rounded-md bg-gray-900 px-3 py-2.5 text-sm font-semibold text-white hover:bg-gray-700 disabled:opacity-50"
           >
-            {submitting ? '...' : isAdmin ? t('form.publish') : t('form.submit')}
+            {submitting ? '...' : isEdit ? t('form.save') : isAdmin ? t('form.publish') : t('form.submit')}
           </button>
         </form>
         </div>

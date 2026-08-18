@@ -110,6 +110,10 @@ export default {
   form: {
     title: 'Submit an event',
     subtitle: 'Fill in the form — after moderation the event will appear on the map.',
+    editTitle: 'Edit event',
+    editHint: 'Change the details and save — the event stays in moderation.',
+    save: 'Save',
+    saved: 'Changes saved.',
     name: 'Event name',
     namePlaceholder: 'In any language (Russian or English)',
     description: 'Description',
