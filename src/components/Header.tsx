@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../lib/auth';
 import AuthModal from './AuthModal';
+import { config } from '../config';
 
 interface HeaderProps {
   onOpenForm: () => void;
@@ -53,7 +54,10 @@ export default function Header({ onOpenForm, floating }: HeaderProps) {
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
         {/* Название сайта — клик возвращает на карту */}
         <a href="#/" className="min-w-0">
-          <h1 className="truncate text-lg font-semibold text-gray-900">{t('app.title')}</h1>
+          <h1 className="truncate text-lg font-semibold text-gray-900">
+            {t('app.title')}{' '}
+            <span className="text-[10px] font-normal text-gray-400">{config.buildVersion}</span>
+          </h1>
         </a>
 
         <div className="flex shrink-0 items-center gap-2">
