@@ -18,6 +18,8 @@ export default function MyEvents() {
   const [archive, setArchive] = useState<EventItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [repeat, setRepeat] = useState<EventItem | null>(null);
+  // Редактирование существующей карточки (организатор)
+  const [edit, setEdit] = useState<EventItem | null>(null);
 
   async function load() {
     const [ev, ar, cats] = await Promise.all([
@@ -46,9 +48,28 @@ export default function MyEvents() {
     active: t('myEvents.statusActive'),
     moderation: t('myEvents.statusModeration'),
     rejected: t('myEvents.statusRejected'),
+    needs_changes: t('myEvents.statusNeedsChanges'),
   };
 
+  function StatusTag({ ev }: { ev: EventItem }) {
+    if (ev.status === 'active') return <span className="text-green-600">{statusLabel.active}</span>;
+    if (ev.status === 'moderation') return <span className="text-amber-600">{statusLabel.moderation}</span>;
+    if (ev.status === 'needs_changes')
+      return (
+        <span className="text-orange-600">
+          {statusLabel.needs_changes}
+          {ev.reject_reason && (
+            <span className="mt-0.5 block text-xs font-normal text-gray-500">
+              {t('myEvents.reason', { reason: ev.reject_reason })}
+            </span>
+          )}
+        </span>
+      );
+    return <span className="text-red-600">{statusLabel.rejected}</span>;
+  }
+
   function EventRow({ ev }: { ev: EventItem }) {
+    const isArchive = ev.status === 'archived';
     return (
       <div className="flex items-center justify-between gap-3 rounded-lg border border-gray-200 bg-white p-3">
         <div className="min-w-0">
@@ -58,24 +79,39 @@ export default function MyEvents() {
           <p className="text-xs text-gray-500">
             {formatDate(ev.start_date)} {ev.end_date ? `— ${formatDate(ev.end_date)}` : ''} • {ev.city}
           </p>
-          {ev.status !== 'archived' && (
+          {!isArchive && (
             <p className="mt-0.5 text-xs">
-              {ev.status === 'active' ? (
-                <span className="text-green-600">{statusLabel.active}</span>
-              ) : ev.status === 'moderation' ? (
-                <span className="text-amber-600">{statusLabel.moderation}</span>
-              ) : (
-                <span className="text-red-600">{statusLabel.rejected}</span>
-              )}
+              <StatusTag ev={ev} />
             </p>
           )}
         </div>
-        <button
-          onClick={() => setRepeat(ev)}
-          className="shrink-0 rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
-        >
-          {t('myEvents.repeat')}
-        </button>
+        <div className="flex shrink-0 gap-2">
+          {isArchive ? (
+            <button
+              onClick={() => setRepeat(ev)}
+              className="shrink-0 rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+            >
+              {t('myEvents.repeat')}
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={() => setEdit(ev)}
+                className="shrink-0 rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+              >
+                {t('myEvents.edit')}
+              </button>
+              {ev.status === 'active' && (
+                <button
+                  onClick={() => setRepeat(ev)}
+                  className="shrink-0 rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+                >
+                  {t('myEvents.repeat')}
+                </button>
+              )}
+            </>
+          )}
+        </div>
       </div>
     );
   }
@@ -122,6 +158,18 @@ export default function MyEvents() {
           event={repeat}
           onClose={() => {
             setRepeat(null);
+            load();
+          }}
+        />
+      )}
+
+      {/* Редактирование карточки организатором (сохраняется на модерацию) */}
+      {edit && (
+        <EventForm
+          categories={categories}
+          editEvent={edit}
+          onClose={() => {
+            setEdit(null);
             load();
           }}
         />

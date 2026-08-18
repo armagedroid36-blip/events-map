@@ -375,8 +375,14 @@ export class DemoApi {
     this.updateEvent(id, { status: 'active' });
   }
 
-  async rejectEvent(id: string): Promise<void> {
-    this.updateEvent(id, { status: 'rejected' });
+  async rejectEvent(id: string, reason: string): Promise<void> {
+    this.updateEvent(id, { status: 'needs_changes', reject_reason: reason });
+  }
+
+  async incrementCounter(_name: string): Promise<void> {}
+
+  async getStats(): Promise<Record<string, number>> {
+    return { visits: 0, card_views: 0 };
   }
 
   async listArchived(): Promise<EventItem[]> {

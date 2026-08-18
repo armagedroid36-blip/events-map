@@ -7,9 +7,17 @@ import Home from './pages/Home';
 import Admin from './pages/Admin';
 import MyEvents from './pages/MyEvents';
 import HistoryPage from './pages/History';
+import { getApi } from './lib/api';
 
 export default function App() {
   const [route, setRoute] = useState(window.location.hash);
+
+  // Счётчик посещений: одна загрузка страницы = одно посещение
+  useEffect(() => {
+    getApi()
+      .incrementCounter('visits')
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const onHash = () => setRoute(window.location.hash);

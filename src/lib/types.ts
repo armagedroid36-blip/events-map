@@ -10,7 +10,7 @@ export interface Category {
 }
 
 /** Статус события в базе */
-export type EventStatus = 'active' | 'past' | 'moderation' | 'rejected' | 'archived';
+export type EventStatus = 'active' | 'past' | 'moderation' | 'rejected' | 'archived' | 'needs_changes';
 
 /**
  * Событие.
@@ -60,6 +60,10 @@ export interface EventItem {
   price?: number | null;
   /** Валюта: 'usd' | код местной валюты (idr, thb, vnd, sgd, myr, php) */
   currency?: string | null;
+  /** Страна события (для фильтра) */
+  country?: string | null;
+  /** Комментарий модератора при отклонении */
+  reject_reason?: string | null;
   /** Фотографии: URL загруженных файлов, не больше 5 */
   photos?: string[];
   status: EventStatus;

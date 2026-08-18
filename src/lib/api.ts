@@ -59,9 +59,16 @@ export interface DataApi {
 
   // --- Модерация и архив (админ) ---
   approveEvent(id: string): Promise<void>;
-  rejectEvent(id: string): Promise<void>;
+  /** Отклонить событие с комментарием → статус «Требует исправлений» */
+  rejectEvent(id: string, reason: string): Promise<void>;
   /** Архив: админ видит все, организатор — свои */
   listArchived(): Promise<EventItem[]>;
+
+  // --- Статистика ---
+  /** Увеличить счётчик (посещения, просмотры карточек) */
+  incrementCounter(name: string): Promise<void>;
+  /** Текущие значения счётчиков */
+  getStats(): Promise<Record<string, number>>;
 
   // --- История просмотров ---
   addHistory(eventId: string): Promise<void>;
@@ -341,9 +348,25 @@ class SupabaseApi implements DataApi {
     if (error) throw error;
   }
 
-  async rejectEvent(id: string): Promise<void> {
-    const { error } = await this.db.from('events').update({ status: 'rejected' }).eq('id', id);
+  async rejectEvent(id: string, reason: string): Promise<void> {
+    const { error } = await this.db.rpc('reject_event', { ev_id: id, reason });
     if (error) throw error;
+  }
+
+  async incrementCounter(name: string): Promise<void> {
+    try {
+      await this.db.rpc('increment_counter', { counter_name: name });
+    } catch {
+      /* счётчик не критичен */
+    }
+  }
+
+  async getStats(): Promise<Record<string, number>> {
+    const { data, error } = await this.db.from('stats').select('name, value');
+    if (error || !data) return {};
+    const out: Record<string, number> = {};
+    for (const row of data) out[row.name] = Number(row.value) || 0;
+    return out;
   }
 
   async listArchived(): Promise<EventItem[]> {

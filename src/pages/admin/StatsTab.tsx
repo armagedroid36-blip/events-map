@@ -13,16 +13,18 @@ export default function StatsTab({ version }: Props) {
   const { t } = useTranslation();
   const [events, setEvents] = useState<EventItem[]>([]);
   const [apps, setApps] = useState<Application[]>([]);
+  const [stats, setStats] = useState<Record<string, number>>({});
 
   useEffect(() => {
     let alive = true;
     (async () => {
       const api = getApi();
-      const [evs, aps] = await Promise.all([api.listAllEvents(), api.listApplications()]);
+      const [evs, aps, st] = await Promise.all([api.listAllEvents(), api.listApplications(), api.getStats()]);
       if (!alive) return;
       // Показываем и скрытые (прошедшие) события — поэтому берём полный список
       setEvents(evs);
       setApps(aps);
+      setStats(st);
     })();
     return () => {
       alive = false;
@@ -40,6 +42,8 @@ export default function StatsTab({ version }: Props) {
     { label: t('admin.stats.active'), value: active },
     { label: t('admin.stats.past'), value: past },
     { label: t('admin.stats.newApplications'), value: newApps },
+    { label: t('admin.stats.visits'), value: stats.visits ?? 0 },
+    { label: t('admin.stats.cardViews'), value: stats.card_views ?? 0 },
   ];
 
   return (

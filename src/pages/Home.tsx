@@ -141,12 +141,13 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, [filters.city]);
 
-  // Выбор события: карточка + запись в историю просмотров
+  // Выбор события: карточка + запись в историю просмотров + счётчик просмотров
   async function selectEvent(ev: EventItem) {
     setSelected(ev);
     if (user) {
       getApi().addHistory(ev.id).catch(() => {});
     }
+    getApi().incrementCounter('card_views').catch(() => {});
   }
 
   if (loading) {
@@ -208,7 +209,7 @@ export default function Home() {
             </button>
           </div>
           <div className="mb-3">
-            <QuickLocations onGoTo={goTo} />
+            {user?.role === 'admin' && <QuickLocations onGoTo={goTo} />}
           </div>
           <FiltersPanel categories={categories} filters={filters} onChange={setFilters} />
           <button
@@ -241,7 +242,7 @@ export default function Home() {
             >
               ✕
             </button>
-            <QuickLocations onGoTo={goTo} />
+            {user?.role === 'admin' && <QuickLocations onGoTo={goTo} />}
           </div>
           <div className="glass min-h-0 flex-1 overflow-y-auto rounded-lg shadow thin-scroll">
             <FiltersPanel categories={categories} filters={filters} onChange={setFilters} />

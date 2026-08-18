@@ -276,14 +276,16 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
         currency: priceVal == null ? null : currency,
       };
       if (editEvent) {
-        // Админ редактирует событие (на модерации или опубликованное)
-        await getApi().updateEvent(editEvent.id, {
+        // Редактирование: админ — без изменения статуса, организатор — на модерацию
+        const upd: Record<string, unknown> = {
           ...common,
           contact_telegram: contactTg.trim() || undefined,
           contact_whatsapp: contactWa.trim() || undefined,
           contact_email: contactEmailVal.trim() || undefined,
           contact_phone: contactPhoneVal.trim() || undefined,
-        });
+        };
+        if (user?.role === 'org') upd.status = 'moderation';
+        await getApi().updateEvent(editEvent.id, upd);
       } else if (isOrg) {
         // Организатор: создаём/повторяем событие (на модерацию)
         await getApi().createOrgEvent({
