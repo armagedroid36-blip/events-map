@@ -110,8 +110,8 @@ export default function Header({ onOpenForm }: HeaderProps) {
               {menuOpen &&
                 createPortal(
                   <>
-                    <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
-                    <div className="glass fixed right-3 top-[80px] z-50 w-56 rounded-lg py-1 shadow-xl">
+                    <div className="fixed inset-0 z-[1290]" onClick={() => setMenuOpen(false)} />
+                    <div className="glass fixed right-3 top-[80px] z-[1300] w-56 rounded-lg py-1 shadow-xl">
                     {menu.map((m) => (
                       <button
                         key={m.label}
