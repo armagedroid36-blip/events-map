@@ -292,17 +292,19 @@ export default function Home() {
         </button>
       ) : (
         <div className="absolute bottom-3 left-3 top-20 z-[1100] hidden w-72 flex-col gap-2 lg:flex">
-          <div className="relative glass rounded-lg p-2 shadow">
+          {user?.role === 'admin' && (
+            <div className="relative glass rounded-lg p-2 shadow">
+              <QuickLocations onGoTo={goTo} />
+            </div>
+          )}
+          <div className="relative glass min-h-0 flex-1 overflow-y-auto rounded-lg shadow thin-scroll">
             <button
               onClick={() => setFiltersCollapsed(true)}
-              className="absolute right-1 top-1 rounded px-1 text-sm text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+              className="absolute right-1 top-1 z-10 rounded px-1 text-sm text-gray-400 hover:bg-gray-100 hover:text-gray-600"
               aria-label={t('common.close')}
             >
               ✕
             </button>
-            {user?.role === 'admin' && <QuickLocations onGoTo={goTo} />}
-          </div>
-          <div className="glass min-h-0 flex-1 overflow-y-auto rounded-lg shadow thin-scroll">
             <FiltersPanel categories={categories} filters={filters} onChange={setFilters} cities={allCities} countries={allCountries} />
           </div>
         </div>
