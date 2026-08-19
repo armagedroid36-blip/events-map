@@ -232,6 +232,7 @@ export default function Home() {
           onMapClick={() => {
             setSelected(null);
             setMobileFiltersOpen(false);
+            setFiltersCollapsed(true);
             setListOpen(false);
           }}
         />
