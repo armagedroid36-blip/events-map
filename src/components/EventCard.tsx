@@ -43,8 +43,11 @@ export function formatPrice(price?: number | null, currency?: string | null): st
 
 /** Нормализация ссылок контактов */
 function tgLink(v: string) {
-  const s = v.trim().replace(/^@/, '');
-  return `https://t.me/${s.replace(/[^a-zA-Z0-9_]/g, '')}`;
+  // Извлекает username из любого формата: @ник, ник, t.me/ник, https://t.me/ник
+  // (в т.ч. с параметрами ?start=... и слэшем в конце)
+  const s = v.trim().replace(/^@/, '').replace(/^https?:\/\//, '');
+  const m = s.match(/(?:t\.me\/|telegram\.me\/)?([a-zA-Z0-9_]+)/);
+  return `https://t.me/${m ? m[1] : ''}`;
 }
 function waLink(v: string) {
   const s = v.trim().replace(/[^\d]/g, '');

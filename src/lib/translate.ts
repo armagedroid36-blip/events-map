@@ -52,9 +52,9 @@ export function localizedText(
   original: string,
   ru?: string,
   en?: string,
-  sourceLang?: string,
+  _sourceLang?: string,
   uiLang: 'ru' | 'en' = 'ru',
 ): string {
-  if (uiLang === 'ru') return ru || (sourceLang === 'ru' ? original : original);
-  return en || (sourceLang === 'en' ? original : original);
+  if (uiLang === 'ru') return ru || original;
+  return en || original;
 }

@@ -347,10 +347,8 @@ class SupabaseApi implements DataApi {
   // --- Модерация и архив ---
 
   async approveEvent(id: string): Promise<void> {
-    const { error } = await this.db
-      .from('events')
-      .update({ status: 'active' })
-      .eq('id', id);
+    // Только через RPC (security definer + проверка is_admin), как rejectEvent
+    const { error } = await this.db.rpc('approve_event', { ev_id: id });
     if (error) throw error;
   }
 
