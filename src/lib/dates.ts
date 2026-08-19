@@ -11,9 +11,13 @@ export function formatDate(iso: string, lang?: 'ru' | 'en'): string {
   });
 }
 
-/** Сегодняшняя дата в формате YYYY-MM-DD (для сравнений) */
+/** Сегодняшняя дата в формате YYYY-MM-DD (в часовом поясе пользователя) */
 export function todayIso(): string {
-  return new Date().toISOString().slice(0, 10);
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
 }
 
 /** Событие ещё не закончилось (предстоящее) */

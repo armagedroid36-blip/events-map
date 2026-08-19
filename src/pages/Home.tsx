@@ -20,6 +20,25 @@ import type { Category, EventItem, Filters } from '../lib/types';
 
 const LIST_LIMIT = 50;
 
+// Примерные курсы к USD (без внешних API): цена события приводится к USD
+// для сравнения с диапазоном фильтра. Неизвестная валюта = как USD.
+const CURRENCY_TO_USD: Record<string, number> = {
+  usd: 1,
+  idr: 15500,
+  vnd: 24500,
+  thb: 34,
+  sgd: 1.34,
+  myr: 4.2,
+  php: 56,
+  eur: 0.92,
+  rub: 88,
+};
+
+function toUsd(price: number, currency?: string | null): number {
+  const rate = CURRENCY_TO_USD[(currency ?? 'usd').toLowerCase()] ?? 1;
+  return price / rate;
+}
+
 export default function Home() {
   const { t } = useTranslation();
   const { user } = useAuth();
@@ -115,9 +134,11 @@ export default function Home() {
       // Цена: бесплатные (price = null или 0) или платные (price > 0) + диапазон
       if (filters.price === 'free' && ev.price != null && ev.price > 0) return false;
       if (filters.price === 'paid' && (ev.price == null || ev.price <= 0)) return false;
-      if (filters.price !== 'free' && ev.price != null) {
-        if (filters.priceMin != null && ev.price < filters.priceMin) return false;
-        if (filters.priceMax != null && ev.price > filters.priceMax) return false;
+      // Диапазон цены считается в USD: конвертируем цену события по курсу валюты
+      if (filters.price !== 'free' && ev.price != null && ev.price > 0) {
+        const usd = toUsd(ev.price, ev.currency);
+        if (filters.priceMin != null && usd < filters.priceMin) return false;
+        if (filters.priceMax != null && usd > filters.priceMax) return false;
       }
       // Валюта, язык и страна
       if (filters.currency && ev.currency !== filters.currency) return false;

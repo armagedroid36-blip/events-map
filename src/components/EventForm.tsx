@@ -15,7 +15,7 @@ import { z } from 'zod';
 import type { Category, EventItem } from '../lib/types';
 import { getApi, photoUrl } from '../lib/api';
 import { geocodeAddress, reverseGeocode } from '../lib/geocode';
-import { detectLang } from '../lib/translate';
+import { detectLang, translateText } from '../lib/translate';
 import { LANGUAGES } from '../lib/languages';
 import { detectCountry } from '../lib/countries';
 import { isValidCoords } from '../lib/coords';
@@ -47,6 +47,33 @@ function ClickToMove({ onMove }: { onMove: (lat: number, lng: number) => void })
     },
   });
   return null;
+}
+
+/**
+ * Фоновый перевод названия/описания на второй язык после сохранения события.
+ * Сбой перевода не критичен: событие остаётся с оригиналом.
+ */
+async function translateInBackground(
+  id: string,
+  title: string,
+  description: string,
+  sourceLang: 'ru' | 'en',
+): Promise<void> {
+  try {
+    const target: 'ru' | 'en' = sourceLang === 'ru' ? 'en' : 'ru';
+    const [titleTr, descTr] = await Promise.all([
+      translateText(title, target),
+      translateText(description, target),
+    ]);
+    if (!titleTr && !descTr) return;
+    const upd: Partial<EventItem> =
+      target === 'ru'
+        ? { title_ru: titleTr ?? undefined, description_ru: descTr ?? undefined }
+        : { title_en: titleTr ?? undefined, description_en: descTr ?? undefined };
+    await getApi().updateEvent(id, upd);
+  } catch {
+    // перевод недоступен — остаётся оригинал
+  }
 }
 
 /** Значки для полей контактов */
@@ -329,9 +356,13 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
         };
         if (user?.role === 'org') upd.status = 'moderation';
         await getApi().updateEvent(editEvent.id, upd);
+        // Перевод на второй язык — только если текст изменился
+        if (title !== editEvent.title || description !== editEvent.description) {
+          void translateInBackground(editEvent.id, title, description, lang);
+        }
       } else if (isOrg) {
         // Организатор: создаём/повторяем событие (на модерацию)
-        await getApi().createOrgEvent({
+        const ev = await getApi().createOrgEvent({
           ...common,
           contact_telegram: contactTg.trim() || undefined,
           contact_whatsapp: contactWa.trim() || undefined,
@@ -339,9 +370,10 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
           contact_phone: contactPhoneVal.trim() || undefined,
           contact_instagram: contactIg.trim() || undefined,
         });
+        void translateInBackground(ev.id, title, description, lang);
       } else if (user?.role === 'admin') {
         // Администратор: публикуется сразу, без модерации
-        await getApi().createEvent({
+        const ev = await getApi().createEvent({
           ...common,
           contact_telegram: contactTg.trim() || undefined,
           contact_whatsapp: contactWa.trim() || undefined,
@@ -350,6 +382,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
           contact_instagram: contactIg.trim() || undefined,
           status: 'active',
         });
+        void translateInBackground(ev.id, title, description, lang);
       } else {
         // Гость: заявка с контактом
         await getApi().submitApplication({ ...common, contact });

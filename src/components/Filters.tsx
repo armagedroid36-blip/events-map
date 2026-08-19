@@ -120,7 +120,7 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
         {filters.price !== 'free' && (
           <div className="mt-2 grid grid-cols-2 gap-2">
             <div>
-              <label className="mb-0.5 block text-[11px] text-gray-400">{t('filters.priceFrom')}</label>
+              <label className="mb-0.5 block text-[11px] text-gray-400">{t('filters.priceFrom')} (USD)</label>
               <input
                 type="number"
                 min="0"
@@ -130,7 +130,7 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
               />
             </div>
             <div>
-              <label className="mb-0.5 block text-[11px] text-gray-400">{t('filters.priceTo')}</label>
+              <label className="mb-0.5 block text-[11px] text-gray-400">{t('filters.priceTo')} (USD)</label>
               <input
                 type="number"
                 min="0"
