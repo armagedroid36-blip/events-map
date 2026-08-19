@@ -43,48 +43,42 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
         </select>
       </div>
 
-      {/* Период */}
+      {/* Дата: сегодня / завтра / конкретная дата */}
       <div>
-        <label className="mb-1 block text-xs text-gray-500">{t('filters.period')}</label>
+        <label className="mb-1 block text-xs text-gray-500">{t('filters.date')}</label>
         <div className="flex gap-2">
           <button
-            onClick={() => set('period', 'all')}
+            onClick={() => set('date', filters.date === 'today' ? undefined : 'today')}
             className={`flex-1 rounded-md border px-2 py-1.5 text-sm ${
-              filters.period === 'all'
+              filters.date === 'today'
                 ? 'border-gray-900 bg-gray-900 text-white'
                 : 'border-gray-300 text-gray-700 hover:bg-gray-50'
             }`}
           >
-            {t('filters.allPeriod')}
+            {t('filters.today')}
           </button>
           <button
-            onClick={() => set('period', 'upcoming')}
+            onClick={() => set('date', filters.date === 'tomorrow' ? undefined : 'tomorrow')}
             className={`flex-1 rounded-md border px-2 py-1.5 text-sm ${
-              filters.period === 'upcoming'
+              filters.date === 'tomorrow'
                 ? 'border-gray-900 bg-gray-900 text-white'
                 : 'border-gray-300 text-gray-700 hover:bg-gray-50'
             }`}
           >
-            {t('filters.upcoming')}
+            {t('filters.tomorrow')}
           </button>
         </div>
-      </div>
-
-      {/* Город (с автодополнением из базы) */}
-      <div>
-        <label className="mb-1 block text-xs text-gray-500">{t('filters.city')}</label>
         <input
-          list="city-options"
-          value={filters.city ?? ''}
-          onChange={(e) => set('city', e.target.value || undefined)}
-          placeholder={t('filters.cityPlaceholder')}
-          className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+          type="date"
+          value={
+            filters.date && filters.date !== 'today' && filters.date !== 'tomorrow'
+              ? filters.date
+              : ''
+          }
+          onChange={(e) => set('date', e.target.value || undefined)}
+          placeholder={t('filters.datePlaceholder')}
+          className="mt-2 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
         />
-        <datalist id="city-options">
-          {cities.map((c) => (
-            <option key={c} value={c} />
-          ))}
-        </datalist>
       </div>
 
       {/* Страна */}
@@ -104,6 +98,23 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
         </select>
       </div>
 
+      {/* Город (с автодополнением из базы) */}
+      <div>
+        <label className="mb-1 block text-xs text-gray-500">{t('filters.city')}</label>
+        <input
+          list="city-options"
+          value={filters.city ?? ''}
+          onChange={(e) => set('city', e.target.value || undefined)}
+          placeholder={t('filters.cityPlaceholder')}
+          className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+        />
+        <datalist id="city-options">
+          {cities.map((c) => (
+            <option key={c} value={c} />
+          ))}
+        </datalist>
+      </div>
+
       {/* Цена */}
       <div>
         <label className="mb-1 block text-xs text-gray-500">{t('filters.price')}</label>
@@ -115,12 +126,13 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
           <option value="any">{t('filters.anyPrice')}</option>
           <option value="free">{t('filters.freeOnly')}</option>
           <option value="paid">{t('filters.paidOnly')}</option>
+          <option value="donation">{t('filters.donationOnly')}</option>
         </select>
         {/* Диапазон цены (применяется к платным) */}
-        {filters.price !== 'free' && (
+        {filters.price !== 'free' && filters.price !== 'donation' && (
           <div className="mt-2 grid grid-cols-2 gap-2">
             <div>
-              <label className="mb-0.5 block text-[11px] text-gray-400">{t('filters.priceFrom')} (USD)</label>
+              <label className="mb-0.5 block text-[11px] text-gray-400">{t('filters.priceFrom')}</label>
               <input
                 type="number"
                 min="0"
@@ -130,7 +142,7 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
               />
             </div>
             <div>
-              <label className="mb-0.5 block text-[11px] text-gray-400">{t('filters.priceTo')} (USD)</label>
+              <label className="mb-0.5 block text-[11px] text-gray-400">{t('filters.priceTo')}</label>
               <input
                 type="number"
                 min="0"
@@ -142,7 +154,7 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
           </div>
         )}
         {/* Валюта */}
-        {filters.price !== 'free' && (
+        {filters.price !== 'free' && filters.price !== 'donation' && (
           <div className="mt-2">
             <label className="mb-0.5 block text-[11px] text-gray-400">{t('filters.currency')}</label>
             <select
@@ -193,7 +205,7 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
         onClick={() =>
           onChange({
             categoryId: null,
-            period: 'upcoming',
+            date: undefined,
             price: 'any',
             priceMin: undefined,
             priceMax: undefined,

@@ -59,6 +59,8 @@ export interface EventItem {
   contact_instagram?: string;
   /** Цена билета (null = бесплатно) */
   price?: number | null;
+  /** Донат: вход бесплатный, можно пожертвовать */
+  donation?: boolean;
   /** Валюта: 'usd' | код местной валюты (idr, thb, vnd, sgd, myr, php) */
   currency?: string | null;
   /** Страна события (для фильтра) */
@@ -117,10 +119,10 @@ export interface ImportRow {
 /** Настройки фильтров публичной части */
 export interface Filters {
   categoryId: string | null;
-  /** Период: 'upcoming' | 'all' | конкретный диапазон */
-  period: 'upcoming' | 'all';
-  /** Цена: любая / только бесплатные / только платные */
-  price: 'any' | 'free' | 'paid';
+  /** Дата: 'today' | 'tomorrow' | конкретная дата YYYY-MM-DD */
+  date?: string;
+  /** Цена: любая / бесплатные / платные / донат */
+  price: 'any' | 'free' | 'paid' | 'donation';
   /** Диапазон цены (в USD) */
   priceMin?: number;
   priceMax?: number;
@@ -130,8 +132,6 @@ export interface Filters {
   language?: string | null;
   /** Страна события */
   country?: string | null;
-  dateFrom?: string;
-  dateTo?: string;
   city?: string;
   query?: string;
 }

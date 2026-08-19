@@ -20,6 +20,16 @@ export function todayIso(): string {
   return `${y}-${m}-${day}`;
 }
 
+/** Завтрашняя дата в формате YYYY-MM-DD (в часовом поясе пользователя) */
+export function tomorrowIso(): string {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 /** Событие ещё не закончилось (предстоящее) */
 export function isUpcoming(event: { start_date: string; end_date?: string }): boolean {
   return (event.end_date ?? event.start_date) >= todayIso();

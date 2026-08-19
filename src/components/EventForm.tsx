@@ -174,6 +174,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
   const [uploading, setUploading] = useState(false);
   // Цена и валюта (null = бесплатно)
   const [free, setFree] = useState(event ? event.price == null : false);
+  const [donation, setDonation] = useState<boolean>(event?.donation ?? false);
   const [price, setPrice] = useState(event?.price != null ? String(event.price) : '');
   const [currency, setCurrency] = useState(event?.currency ?? 'usd');
   // Координаты
@@ -342,6 +343,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
         website: website || undefined,
         photos,
         price: priceVal,
+        donation,
         currency: priceVal == null ? null : currency,
       };
       if (editEvent) {
@@ -551,10 +553,27 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
               <input
                 type="checkbox"
                 checked={free}
-                onChange={(e) => setFree(e.target.checked)}
+                onChange={(e) => {
+                  const v = e.target.checked;
+                  setFree(v);
+                  if (!v) setDonation(false);
+                }}
                 className="h-4 w-4"
               />
               {t('form.free')}
+            </label>
+            <label className="mb-2 flex items-center gap-1.5 text-sm text-gray-700">
+              <input
+                type="checkbox"
+                checked={donation}
+                onChange={(e) => {
+                  const v = e.target.checked;
+                  setDonation(v);
+                  if (v) setFree(true); // донат = бесплатный вход
+                }}
+                className="h-4 w-4"
+              />
+              {t('form.donation')}
             </label>
             {!free && (
               <div className="grid grid-cols-2 gap-2">

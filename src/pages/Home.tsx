@@ -11,7 +11,7 @@ import EventCard from '../components/EventCard';
 import QuickLocations from '../components/QuickLocations';
 import EventForm from '../components/EventForm';
 import { getApi } from '../lib/api';
-import { isUpcoming } from '../lib/dates';
+import { todayIso, tomorrowIso } from '../lib/dates';
 import { cityMatches, ruToEn } from '../lib/cities';
 import { geocodeAddress } from '../lib/geocode';
 import { detectCountry } from '../lib/countries';
@@ -51,7 +51,7 @@ export default function Home() {
   // --- Состояние интерфейса ---
   const [filters, setFilters] = useState<Filters>({
     categoryId: null,
-    period: 'upcoming',
+    date: undefined,
     price: 'any',
     priceMin: undefined,
     priceMax: undefined,
@@ -130,12 +130,23 @@ export default function Home() {
     const city = filters.city ?? '';
     return events.filter((ev) => {
       if (filters.categoryId && ev.category_id !== filters.categoryId) return false;
-      if (filters.period === 'upcoming' && !isUpcoming(ev)) return false;
-      // Цена: бесплатные (price = null или 0) или платные (price > 0) + диапазон
+      // Дата: событие проходит в выбранный день (сегодня / завтра / конкретная дата)
+      if (filters.date) {
+        const d =
+          filters.date === 'today'
+            ? todayIso()
+            : filters.date === 'tomorrow'
+              ? tomorrowIso()
+              : filters.date;
+        const end = ev.end_date ?? ev.start_date;
+        if (ev.start_date > d || end < d) return false;
+      }
+      // Цена: бесплатные (price = null или 0), платные (price > 0) или донат + диапазон
       if (filters.price === 'free' && ev.price != null && ev.price > 0) return false;
       if (filters.price === 'paid' && (ev.price == null || ev.price <= 0)) return false;
+      if (filters.price === 'donation' && !ev.donation) return false;
       // Диапазон цены считается в USD: конвертируем цену события по курсу валюты
-      if (filters.price !== 'free' && ev.price != null && ev.price > 0) {
+      if ((filters.price === 'any' || filters.price === 'paid') && ev.price != null && ev.price > 0) {
         const usd = toUsd(ev.price, ev.currency);
         if (filters.priceMin != null && usd < filters.priceMin) return false;
         if (filters.priceMax != null && usd > filters.priceMax) return false;
