@@ -172,8 +172,8 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
   // Фото: пути загруженных файлов
   const [photos, setPhotos] = useState<string[]>(event?.photos ?? []);
   const [uploading, setUploading] = useState(false);
-  // Цена и валюта (null = бесплатно)
-  const [free, setFree] = useState(event ? event.price == null : false);
+  // Цена и валюта (null = бесплатно); донат и бесплатно — взаимоисключающие
+  const [free, setFree] = useState(event ? event.price == null && !event.donation : false);
   const [donation, setDonation] = useState<boolean>(event?.donation ?? false);
   const [price, setPrice] = useState(event?.price != null ? String(event.price) : '');
   const [currency, setCurrency] = useState(event?.currency ?? 'usd');
@@ -553,7 +553,10 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
               <input
                 type="checkbox"
                 checked={free}
-                onChange={(e) => setFree(e.target.checked)}
+                onChange={(e) => {
+                  setFree(e.target.checked);
+                  if (e.target.checked) setDonation(false);
+                }}
                 className="h-4 w-4"
               />
               {t('form.free')}
@@ -562,12 +565,15 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
               <input
                 type="checkbox"
                 checked={donation}
-                onChange={(e) => setDonation(e.target.checked)}
+                onChange={(e) => {
+                  setDonation(e.target.checked);
+                  if (e.target.checked) setFree(false);
+                }}
                 className="h-4 w-4"
               />
               {t('form.donation')}
             </label>
-            {!free && (
+            {!free && !donation && (
               <div className="grid grid-cols-2 gap-2">
                 <input
                   type="number"
