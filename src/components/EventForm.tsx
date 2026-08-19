@@ -553,11 +553,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
               <input
                 type="checkbox"
                 checked={free}
-                onChange={(e) => {
-                  const v = e.target.checked;
-                  setFree(v);
-                  if (!v) setDonation(false);
-                }}
+                onChange={(e) => setFree(e.target.checked)}
                 className="h-4 w-4"
               />
               {t('form.free')}
@@ -566,11 +562,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
               <input
                 type="checkbox"
                 checked={donation}
-                onChange={(e) => {
-                  const v = e.target.checked;
-                  setDonation(v);
-                  if (v) setFree(true); // донат = бесплатный вход
-                }}
+                onChange={(e) => setDonation(e.target.checked)}
                 className="h-4 w-4"
               />
               {t('form.donation')}
