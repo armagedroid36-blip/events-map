@@ -18,6 +18,7 @@ import { geocodeAddress, reverseGeocode } from '../lib/geocode';
 import { detectLang } from '../lib/translate';
 import { LANGUAGES } from '../lib/languages';
 import { detectCountry } from '../lib/countries';
+import { isValidCoords } from '../lib/coords';
 import { config } from '../config';
 import { useAuth } from '../lib/auth';
 
@@ -151,6 +152,11 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
   // Координаты
   const [lat, setLat] = useState<number>(event?.lat ?? config.defaultCenter.lat);
   const [lng, setLng] = useState<number>(event?.lng ?? config.defaultCenter.lng);
+  // Маркер трогали (для нового события без отметки на карте отправка блокируется).
+  // При повторе/редактировании маркер уже стоит на месте исходного события.
+  const [markerTouched, setMarkerTouched] = useState<boolean>(
+    !!event && isValidCoords(event.lat, event.lng),
+  );
   const [geocoding, setGeocoding] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -187,8 +193,8 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
           title: z.string().min(2, t('form.required')),
           start_date: z.string().min(1, t('form.required')),
           start_time: z.string().min(1, t('form.required')),
-          end_date: z.string().min(1, t('form.required')),
-          end_time: z.string().min(1, t('form.required')),
+          end_date: z.string(),
+          end_time: z.string(),
           city: z.string().min(1, t('form.required')),
           category_id: z.string().min(1, t('form.required')),
           website: z.union([z.literal(''), z.string().url(t('form.badUrl'))]),
@@ -209,6 +215,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
     if (coords) {
       setLat(coords.lat);
       setLng(coords.lng);
+      setMarkerTouched(true);
     }
   }
 
@@ -216,6 +223,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
   async function onMapClick(newLat: number, newLng: number) {
     setLat(newLat);
     setLng(newLng);
+    setMarkerTouched(true);
     setGeocoding(true);
     const place = await reverseGeocode(newLat, newLng);
     setGeocoding(false);
@@ -263,13 +271,18 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
       setErrors(er);
       return;
     }
+    // Новое событие без отметки на карте — координаты по умолчанию (море/0,0)
+    if (!editEvent && !markerTouched) {
+      setErrors({ map: t('form.markOnMap') });
+      return;
+    }
     setSubmitting(true);
     try {
       const lang = detectLang(title);
       const priceVal = free ? 0 : parseFloat(price) || null;
 
-      // Валидация времени: конец не раньше начала
-      if (endDate < startDate || (endDate === startDate && endTime < startTime)) {
+      // Валидация времени: конец не раньше начала — только когда оба заполнены
+      if (endDate && (endDate < startDate || (endDate === startDate && endTime && endTime < startTime))) {
         setErrors({ end_date: t('form.timeOrder'), end_time: t('form.timeOrder') });
         setSubmitting(false);
         return;
@@ -422,12 +435,12 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
             </div>
             <div>
               <label className="mb-1 block text-sm text-gray-600">{t('form.endDate')}</label>
-              <input type="date" required value={endDate} onChange={(e) => setEndDate(e.target.value)} className={input} />
+              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className={input} />
               {err('end_date')}
             </div>
             <div>
               <label className="mb-1 block text-sm text-gray-600">{t('form.endTime')}</label>
-              <input type="time" required value={endTime} onChange={(e) => setEndTime(e.target.value)} className={input} />
+              <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} className={input} />
               {err('end_time')}
             </div>
           </div>
@@ -450,6 +463,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
                 <ClickToMove onMove={onMapClick} />
               </MapContainer>
             </div>
+            {err('map')}
           </div>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">

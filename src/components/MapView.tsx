@@ -10,6 +10,7 @@ import 'leaflet.markercluster';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import type { Category, EventItem } from '../lib/types';
+import { isValidCoords } from '../lib/coords';
 import { config } from '../config';
 
 // Акцентные цвета — только для категорий (по спецификации дизайна)
@@ -51,8 +52,11 @@ function ClusterLayer({ events, categories, onSelect }: ClusterLayerProps) {
     const group = groupRef.current;
 
     // Пересоздаём маркеры при изменении списка событий
+    // (события с невалидными координатами — в море или 0,0 — не рисуем)
     group.clearLayers();
-    const markers = events.map((ev) => {
+    const markers = events
+      .filter((ev) => isValidCoords(ev.lat, ev.lng))
+      .map((ev) => {
       const cat = categories.find((c) => c.id === ev.category_id);
       const icon = L.divIcon({
         // Маркер: круг с эмодзи категории и белой обводкой

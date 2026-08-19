@@ -138,6 +138,7 @@ export default {
     contactInstagramField: 'Instagram (nick or link)',
     timePast: 'Start time cannot be in the past',
     timeOrder: 'End time cannot be earlier than start time',
+    markOnMap: 'Mark the location on the map',
     photosUpload: 'Photos (file upload)',
     photosLimit: 'Up to 5 photos, 5 MB each (JPG, PNG, WebP)',
     publish: 'Publish',

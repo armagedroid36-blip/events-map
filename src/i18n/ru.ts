@@ -138,6 +138,7 @@ export default {
     contactInstagramField: 'Instagram (ник или ссылка)',
     timePast: 'Время начала не может быть в прошлом',
     timeOrder: 'Время окончания не может быть раньше времени начала',
+    markOnMap: 'Отметьте место на карте',
     photosUpload: 'Фотографии (загрузка файлов)',
     photosLimit: 'До 5 фото, каждое до 5 МБ (JPG, PNG, WebP)',
     publish: 'Опубликовать',

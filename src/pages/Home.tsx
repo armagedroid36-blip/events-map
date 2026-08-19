@@ -112,9 +112,9 @@ export default function Home() {
     return events.filter((ev) => {
       if (filters.categoryId && ev.category_id !== filters.categoryId) return false;
       if (filters.period === 'upcoming' && !isUpcoming(ev)) return false;
-      // Цена: бесплатные (price = null) или платные + диапазон
-      if (filters.price === 'free' && ev.price != null) return false;
-      if (filters.price === 'paid' && ev.price == null) return false;
+      // Цена: бесплатные (price = null или 0) или платные (price > 0) + диапазон
+      if (filters.price === 'free' && ev.price != null && ev.price > 0) return false;
+      if (filters.price === 'paid' && (ev.price == null || ev.price <= 0)) return false;
       if (filters.price !== 'free' && ev.price != null) {
         if (filters.priceMin != null && ev.price < filters.priceMin) return false;
         if (filters.priceMax != null && ev.price > filters.priceMax) return false;
