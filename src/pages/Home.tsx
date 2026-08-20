@@ -388,7 +388,7 @@ export default function Home() {
       {listOpen && (
         <div
           id="events-list-panel"
-          className="glass absolute inset-x-0 bottom-28 z-[1130] mx-auto max-h-[50vh] w-full max-w-xl overflow-y-auto rounded-t-xl p-3 shadow-xl thin-scroll"
+          className="glass absolute inset-x-0 bottom-28 z-[1130] mx-auto max-h-[50vh] w-full max-w-xl overflow-y-auto rounded-xl p-3 shadow-xl thin-scroll"
         >
           {onMapEvents.length === 0 && (
             <p className="py-4 text-center text-sm text-gray-500">{t('list.empty')}</p>
