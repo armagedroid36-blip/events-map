@@ -213,6 +213,8 @@ export default function Home() {
   // Выбор события: карточка + запись в историю просмотров + счётчик просмотров
   async function selectEvent(ev: EventItem) {
     setSelected(ev);
+    // Карточка открывается на месте списка — список сворачиваем
+    setListOpen(false);
     if (user) {
       getApi().addHistory(ev.id).catch(() => {});
     }
@@ -337,7 +339,7 @@ export default function Home() {
           на мобильных — снизу, на десктопе — справа.
           Крестик-кружок — над карточкой, вне скролл-области */}
       {selected && (
-        <div className="absolute inset-x-0 bottom-0 top-[45%] z-[1140] lg:inset-x-auto lg:top-20 lg:bottom-3 lg:right-3 lg:w-[380px]">
+        <div className="absolute inset-x-0 bottom-0 top-[45%] z-[1170] lg:inset-x-auto lg:top-20 lg:bottom-3 lg:right-3 lg:w-[380px]">
           <div className="glass h-full overflow-y-auto p-3 shadow-[0_-6px_16px_rgba(0,0,0,0.12)] lg:rounded-2xl lg:p-4">
             <EventCard
               event={selected}
