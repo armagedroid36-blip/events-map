@@ -189,17 +189,19 @@ function Lightbox({
   const imgCache = useRef(new Map<string, HTMLImageElement>());
 
   useEffect(() => {
-    if (scale <= 1) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
-    // Размеры берём из окна галереи (стабильны): канвас в flex-цепочке
-    // со схлопывающейся высотой иначе получает «маленькое окно»
     const W = slideW;
     const H = slideH;
     if (!W || !H) return;
     const dpr = window.devicePixelRatio || 1;
-    canvas.width = Math.round(W * dpr);
-    canvas.height = Math.round(H * dpr);
+    const pw = Math.round(W * dpr);
+    const ph = Math.round(H * dpr);
+    // Буфер пересоздаём только при изменении размера (иначе дёргается)
+    if (canvas.width !== pw || canvas.height !== ph) {
+      canvas.width = pw;
+      canvas.height = ph;
+    }
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     const src = fullUrl(photos[idx]);
@@ -271,7 +273,7 @@ function Lightbox({
         >
           {photos.map((p, i) => (
             <div key={i} className="h-full w-full shrink-0">
-              {i === idx && scale > 1 ? (
+              {i === idx ? (
                 <canvas
                   ref={canvasRef}
                   style={{
