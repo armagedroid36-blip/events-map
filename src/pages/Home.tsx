@@ -11,7 +11,7 @@ import EventCard from '../components/EventCard';
 import QuickLocations from '../components/QuickLocations';
 import EventForm from '../components/EventForm';
 import { getApi } from '../lib/api';
-import { todayIso, tomorrowIso } from '../lib/dates';
+import { isUpcoming, todayIso, tomorrowIso } from '../lib/dates';
 import { cityMatches, ruToEn } from '../lib/cities';
 import { geocodeAddress } from '../lib/geocode';
 import { detectCountry } from '../lib/countries';
@@ -139,6 +139,9 @@ export default function Home() {
     const city = filters.city ?? '';
     return events.filter((ev) => {
       if (filters.categoryId && ev.category_id !== filters.categoryId) return false;
+      // По умолчанию — только предстоящие (прошедшие скрыты);
+      // выбранная дата в фильтре — поверх, показывает события этого дня
+      if (!filters.date && !isUpcoming(ev)) return false;
       // Дата: событие проходит в выбранный день (сегодня / завтра / конкретная дата)
       if (filters.date) {
         const d =

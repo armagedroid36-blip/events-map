@@ -114,12 +114,8 @@ class SupabaseApi implements DataApi {
   // --- Публичная часть ---
 
   async listEvents(): Promise<EventItem[]> {
-    // Автоархив: завершившиеся события уходят с карты в архив
-    try {
-      await this.db.rpc('archive_past_events');
-    } catch {
-      /* не критично */
-    }
+    // Архивация прошедших событий выполняется отдельной фоновой задачей,
+    // а не при каждом заходе на главную (лишняя пишущая операция)
     const { data, error } = await this.db
       .from('events')
       .select('*')

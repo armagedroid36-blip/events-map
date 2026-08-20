@@ -30,7 +30,31 @@ export function tomorrowIso(): string {
   return `${y}-${m}-${day}`;
 }
 
-/** Событие ещё не закончилось (предстоящее) */
-export function isUpcoming(event: { start_date: string; end_date?: string }): boolean {
-  return (event.end_date ?? event.start_date) >= todayIso();
+/** Текущее локальное время HH:MM (для сравнения с временем события) */
+export function nowHHMM(): string {
+  const d = new Date();
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+}
+
+/**
+ * Событие ещё не закончилось (предстоящее).
+ * Учитывает время: сегодняшнее событие скрывается, как только прошло
+ * (end_time ?? start_time); без времени — событие на весь день.
+ */
+export function isUpcoming(event: {
+  start_date: string;
+  end_date?: string;
+  start_time?: string;
+  end_time?: string;
+}): boolean {
+  const today = todayIso();
+  const endDate = event.end_date ?? event.start_date;
+  // Дата окончания/начала в будущем — предстоящее
+  if (endDate > today) return true;
+  // Дата в прошлом — прошедшее
+  if (endDate < today) return false;
+  // Дата — сегодня: без времени — весь день
+  if (!event.start_time) return true;
+  const endTime = event.end_time ?? event.start_time;
+  return nowHHMM() < endTime;
 }
