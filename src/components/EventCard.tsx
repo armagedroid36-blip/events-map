@@ -188,8 +188,10 @@ function Lightbox({
     if (scale <= 1) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const W = canvas.clientWidth;
-    const H = canvas.clientHeight;
+    // Размеры берём из окна галереи (стабильны), а не из самого канваса:
+    // на первом кадре канвас ещё не получил CSS-размер, иначе «маленькое окно»
+    const W = wrapRef.current?.offsetWidth ?? canvas.clientWidth;
+    const H = wrapRef.current?.offsetHeight ?? canvas.clientHeight;
     if (!W || !H) return;
     const dpr = window.devicePixelRatio || 1;
     canvas.width = Math.round(W * dpr);
