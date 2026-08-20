@@ -32,7 +32,7 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
         <select
           value={filters.categoryId ?? ''}
           onChange={(e) => set('categoryId', e.target.value || null)}
-          className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+          className="w-full rounded-md border border-gray-400 px-2 py-1.5 hover:border-gray-500 text-sm"
         >
           <option value="">{t('filters.allCategories')}</option>
           {categories.map((c) => (
@@ -52,7 +52,7 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
             className={`flex-1 rounded-md border px-2 py-1.5 text-sm ${
               filters.date === 'today'
                 ? 'border-gray-900 bg-gray-900 text-white'
-                : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                : 'border-gray-400 text-gray-700 hover:border-gray-500 hover:bg-gray-50'
             }`}
           >
             {t('filters.today')}
@@ -62,7 +62,7 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
             className={`flex-1 rounded-md border px-2 py-1.5 text-sm ${
               filters.date === 'tomorrow'
                 ? 'border-gray-900 bg-gray-900 text-white'
-                : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                : 'border-gray-400 text-gray-700 hover:border-gray-500 hover:bg-gray-50'
             }`}
           >
             {t('filters.tomorrow')}
@@ -77,7 +77,7 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
           }
           onChange={(e) => set('date', e.target.value || undefined)}
           placeholder={t('filters.datePlaceholder')}
-          className="mt-2 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+          className="mt-2 w-full rounded-md border border-gray-400 px-2 py-1.5 hover:border-gray-500 text-sm"
         />
       </div>
 
@@ -87,7 +87,7 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
         <select
           value={filters.country ?? ''}
           onChange={(e) => set('country', e.target.value || null)}
-          className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+          className="w-full rounded-md border border-gray-400 px-2 py-1.5 hover:border-gray-500 text-sm"
         >
           <option value="">{t('filters.anyCountry')}</option>
           {[...new Set([...countries, ...KNOWN_COUNTRIES])].map((c) => (
@@ -106,7 +106,7 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
           value={filters.city ?? ''}
           onChange={(e) => set('city', e.target.value || undefined)}
           placeholder={t('filters.cityPlaceholder')}
-          className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+          className="w-full rounded-md border border-gray-400 px-2 py-1.5 hover:border-gray-500 text-sm"
         />
         <datalist id="city-options">
           {cities.map((c) => (
@@ -121,7 +121,7 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
         <select
           value={filters.price}
           onChange={(e) => set('price', e.target.value as 'any' | 'free' | 'paid')}
-          className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+          className="w-full rounded-md border border-gray-400 px-2 py-1.5 hover:border-gray-500 text-sm"
         >
           <option value="any">{t('filters.anyPrice')}</option>
           <option value="free">{t('filters.freeOnly')}</option>
@@ -138,7 +138,7 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
                 min="0"
                 value={filters.priceMin ?? ''}
                 onChange={(e) => set('priceMin', e.target.value ? parseFloat(e.target.value) : undefined)}
-                className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                className="w-full rounded-md border border-gray-400 px-2 py-1.5 hover:border-gray-500 text-sm"
               />
             </div>
             <div>
@@ -148,7 +148,7 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
                 min="0"
                 value={filters.priceMax ?? ''}
                 onChange={(e) => set('priceMax', e.target.value ? parseFloat(e.target.value) : undefined)}
-                className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                className="w-full rounded-md border border-gray-400 px-2 py-1.5 hover:border-gray-500 text-sm"
               />
             </div>
           </div>
@@ -160,7 +160,7 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
             <select
               value={filters.currency ?? ''}
               onChange={(e) => set('currency', e.target.value || null)}
-              className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+              className="w-full rounded-md border border-gray-400 px-2 py-1.5 hover:border-gray-500 text-sm"
             >
               <option value="">{t('filters.anyCurrency')}</option>
               {Object.keys(t('form.currencies', { returnObjects: true }) as Record<string, string>).map((code) => (
@@ -179,7 +179,7 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
         <select
           value={filters.language ?? ''}
           onChange={(e) => set('language', e.target.value || null)}
-          className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+          className="w-full rounded-md border border-gray-400 px-2 py-1.5 hover:border-gray-500 text-sm"
         >
           <option value="">{t('filters.anyLanguage')}</option>
           {LANGUAGES.map((l) => (
@@ -197,7 +197,7 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
           value={filters.query ?? ''}
           onChange={(e) => set('query', e.target.value || undefined)}
           placeholder={t('filters.queryPlaceholder')}
-          className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+          className="w-full rounded-md border border-gray-400 px-2 py-1.5 hover:border-gray-500 text-sm"
         />
       </div>
 
@@ -216,7 +216,7 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
             query: undefined,
           })
         }
-        className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm text-gray-600 hover:bg-gray-50"
+        className="w-full rounded-md border border-gray-400 px-2 py-1.5 hover:border-gray-500 text-sm text-gray-600 hover:bg-gray-50"
       >
         {t('filters.reset')}
       </button>
