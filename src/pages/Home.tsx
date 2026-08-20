@@ -96,6 +96,15 @@ export default function Home() {
   const [bounds, setBounds] = useState<MapBounds | null>(null);
 
   // Загрузка данных из слоя данных
+  async function loadData() {
+    const api = getApi();
+    const [evs, cats] = await Promise.all([api.listEvents(), api.getCategories()]);
+    setEvents(evs);
+    setCategories(cats);
+    setLoading(false);
+  }
+
+  // Первичная загрузка данных
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -365,7 +374,13 @@ export default function Home() {
       )}
 
       {formOpen && (
-        <EventForm categories={categories} onClose={() => setFormOpen(false)} />
+        <EventForm
+          categories={categories}
+          onClose={() => {
+            setFormOpen(false);
+            loadData();
+          }}
+        />
       )}
     </div>
   );
