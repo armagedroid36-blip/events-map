@@ -18,7 +18,7 @@ export const config = {
   demoMode: false,
 
   // Версия сборки — показывается в шапке мелким текстом для сверки
-  buildVersion: 'v19.08-6',
+  buildVersion: 'v19.08-7',
 
   // --- Карта ---
   // Центр по умолчанию — Юго-Восточная Азия (используется, если посетитель
@@ -48,5 +48,11 @@ export const config = {
     { id: 'party', name_ru: 'Вечеринки', name_en: 'Parties', emoji: '🪩' },
     { id: 'festival', name_ru: 'Фестивали', name_en: 'Festivals', emoji: '🎉' },
     { id: 'food', name_ru: 'Еда и напитки', name_en: 'Food & Drink', emoji: '🍜' },
+    { id: 'cinema', name_ru: 'Киноклуб', name_en: 'Cinema Club', emoji: '🎬' },
+    { id: 'wellness', name_ru: 'Йога и здоровье', name_en: 'Yoga & Wellness', emoji: '🧘' },
+    { id: 'workshop', name_ru: 'Мастер-классы', name_en: 'Workshops', emoji: '🎨' },
+    { id: 'games', name_ru: 'Игры и квизы', name_en: 'Games & Quizzes', emoji: '🎲' },
+    { id: 'meetup', name_ru: 'Встречи и нетворкинг', name_en: 'Meetups & Networking', emoji: '🤝' },
+    { id: 'tour', name_ru: 'Экскурсии и туры', name_en: 'Tours & Excursions', emoji: '🗺️' },
   ],
 };

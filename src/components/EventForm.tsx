@@ -33,10 +33,10 @@ interface Props {
 
 /** Иконка маркера на мини-карте формы */
 const formIcon = L.divIcon({
-  html: `<div class="event-marker" style="background:#111827">📍</div>`,
+  html: `<div class="event-marker" style="--marker-bg:#111827;--marker-color:#111827">📍</div>`,
   className: 'event-marker-wrap',
-  iconSize: [34, 34],
-  iconAnchor: [17, 34],
+  iconSize: [36, 46],
+  iconAnchor: [18, 44],
 });
 
 /** Клик по мини-карте передвигает маркер и подставляет адрес */

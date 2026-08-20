@@ -22,22 +22,52 @@ body {
   background-image: url(https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png);
 }
 
-/* Маркеры событий: круг с эмодзи категории (создаются в MapView) */
+/* Маркеры событий: полупрозрачный пин-капля с эмодзи категории (MapView, EventForm).
+   Голова — круг, кончик — ромб с обводкой цвета категории, корпус — var(--marker-bg)
+   (по умолчанию светлый полупрозрачный). Остриё указывает на координату события. */
 .event-marker-wrap {
   background: transparent;
   border: none;
 }
 .event-marker {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
+  position: relative;
+  width: 36px;
+  height: 46px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 16px;
-  border: 2px solid #fff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  line-height: 1;
   cursor: pointer;
+  background: transparent;
+}
+/* Голова пина — круг */
+.event-marker::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--marker-bg, rgba(255, 255, 255, 0.85));
+  border: 2px solid var(--marker-color, #e11d48);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  z-index: 0;
+}
+/* Острый кончик пина — ромб из двух обводок */
+.event-marker::after {
+  content: '';
+  position: absolute;
+  top: 24px;
+  left: 7px;
+  width: 16px;
+  height: 16px;
+  background: var(--marker-bg, rgba(255, 255, 255, 0.85));
+  border-right: 2px solid var(--marker-color, #e11d48);
+  border-bottom: 2px solid var(--marker-color, #e11d48);
+  transform: rotate(45deg);
+  z-index: 0;
 }
 
 /* Курсор карты: обычная стрелка вместо «руки» Leaflet.
