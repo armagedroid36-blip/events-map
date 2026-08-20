@@ -16,6 +16,7 @@ export default function EventsModerationTab({ onChanged }: Props) {
   const { t } = useTranslation();
   const [events, setEvents] = useState<EventItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
   // Выбранное для просмотра событие
   const [selected, setSelected] = useState<EventItem | null>(null);
@@ -32,10 +33,11 @@ export default function EventsModerationTab({ onChanged }: Props) {
     let alive = true;
     (async () => {
       const api = getApi();
-      const [evs, cats] = await Promise.all([api.listAllEvents(), api.getCategories()]);
+      const [evs, cats] = await Promise.all([api.listModerationEvents(), api.getCategories()]);
       if (!alive) return;
-      setEvents(evs.filter((e) => e.status === 'moderation'));
+      setEvents(evs);
       setCategories(cats);
+      setLoading(false);
     })();
     return () => {
       alive = false;
@@ -58,6 +60,14 @@ export default function EventsModerationTab({ onChanged }: Props) {
     setRejectTarget(null);
     setRejectReason('');
     onChanged();
+  }
+
+  if (loading) {
+    return (
+      <div className="mb-4 rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-500">
+        {t('common.loading')}
+      </div>
+    );
   }
 
   if (!events.length) {
@@ -124,13 +134,16 @@ export default function EventsModerationTab({ onChanged }: Props) {
         {events.map((ev) => {
           const cat = categories.find((c) => c.id === ev.category_id);
           return (
-            <div key={ev.id} className="flex items-center justify-between gap-3 rounded-lg border border-amber-200 bg-amber-50/50 p-3">
+            <div
+              key={ev.id}
+              className="flex flex-col gap-3 rounded-lg border border-amber-200 bg-amber-50/50 p-3 sm:flex-row sm:items-center sm:justify-between"
+            >
               <button
                 onClick={() => setSelected(ev)}
                 className="min-w-0 flex-1 text-left"
                 title={t('admin.moderation.view')}
               >
-                <p className="truncate font-medium text-gray-900 hover:underline">
+                <p className="break-words font-medium text-gray-900 hover:underline sm:truncate">
                   {ev.title_ru || ev.title_en || ev.title}
                 </p>
                 <p className="text-xs text-gray-500">
@@ -146,7 +159,7 @@ export default function EventsModerationTab({ onChanged }: Props) {
                   </p>
                 )}
               </button>
-              <div className="flex shrink-0 flex-wrap gap-1.5">
+              <div className="flex shrink-0 flex-wrap gap-1.5 sm:justify-end">
                 <button
                   onClick={() => setEditEvent(ev)}
                   className="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm text-gray-700 hover:bg-gray-50"

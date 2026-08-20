@@ -161,6 +161,10 @@ export class DemoApi {
     return load<EventItem[]>(LS_EVENTS, DEMO_EVENTS);
   }
 
+  async listModerationEvents(): Promise<EventItem[]> {
+    return load<EventItem[]>(LS_EVENTS, DEMO_EVENTS).filter((e) => e.status === 'moderation');
+  }
+
   async getCategories(): Promise<Category[]> {
     return load<Category[]>(LS_CATS, DEMO_CATEGORIES);
   }

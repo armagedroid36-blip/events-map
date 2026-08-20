@@ -24,6 +24,8 @@ export interface DataApi {
   listEvents(): Promise<EventItem[]>;
   /** Полный список (включая прошедшие/скрытые) — только для админки */
   listAllEvents(): Promise<EventItem[]>;
+  /** Только события на модерации (для админа) */
+  listModerationEvents(): Promise<EventItem[]>;
   getCategories(): Promise<Category[]>;
   submitApplication(draft: ApplicationDraft): Promise<void>;
 
@@ -129,6 +131,13 @@ class SupabaseApi implements DataApi {
 
   async listAllEvents(): Promise<EventItem[]> {
     const { data, error } = await this.db.rpc('list_all_events');
+    if (error) throw error;
+    return (data ?? []) as EventItem[];
+  }
+
+  async listModerationEvents(): Promise<EventItem[]> {
+    // Только события со статусом moderation (RPC security definer + is_admin)
+    const { data, error } = await this.db.rpc('list_moderation_events');
     if (error) throw error;
     return (data ?? []) as EventItem[];
   }

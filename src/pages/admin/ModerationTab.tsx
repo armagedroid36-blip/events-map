@@ -15,6 +15,7 @@ export default function ModerationTab({ onChanged }: Props) {
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
   const [apps, setApps] = useState<Application[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [message, setMessage] = useState('');
   // Раскрытое поле причины отклонения
@@ -29,6 +30,7 @@ export default function ModerationTab({ onChanged }: Props) {
       if (!alive) return;
       setApps(aps.filter((a) => a.status === 'new'));
       setCategories(cats);
+      setLoading(false);
     })();
     return () => {
       alive = false;
@@ -57,6 +59,19 @@ export default function ModerationTab({ onChanged }: Props) {
     onChanged();
   }
 
+  if (loading) {
+    return (
+      <div>
+        <h2 className="mb-4 text-base font-semibold text-gray-900">
+          {t('admin.moderation.title')}
+        </h2>
+        <p className="rounded-lg border border-dashed border-gray-300 bg-white p-6 text-center text-sm text-gray-500">
+          {t('common.loading')}
+        </p>
+      </div>
+    );
+  }
+
   if (!apps.length) {
     return (
       <div>
@@ -81,9 +96,9 @@ export default function ModerationTab({ onChanged }: Props) {
           const cat = categories.find((c) => c.id === a.category_id);
           return (
             <div key={a.id} className="rounded-xl border border-gray-200 bg-white p-4">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <h3 className="font-semibold text-gray-900">{a.title}</h3>
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
+                <div className="min-w-0">
+                  <h3 className="break-words font-semibold text-gray-900">{a.title}</h3>
                   <p className="mt-0.5 text-xs text-gray-500">
                     {cat ? `${cat.emoji} ${lang === 'ru' ? cat.name_ru : cat.name_en}` : ''}
                     {' • '}
