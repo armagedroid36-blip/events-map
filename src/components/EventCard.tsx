@@ -250,7 +250,7 @@ function Lightbox({
       {/* Окно галереи: трек со всеми фото, сдвигается как в обычной галерее */}
       <div
         ref={wrapRef}
-        className="relative max-h-[85vh] w-full max-w-[92vw] overflow-hidden rounded-2xl shadow-2xl"
+        className="relative h-[96vh] w-full max-w-full overflow-hidden rounded-2xl shadow-2xl"
         onClick={(e) => e.stopPropagation()}
         onDoubleClick={() => {
           if (scale > 1) {
@@ -286,7 +286,7 @@ function Lightbox({
                   src={fullUrl(p)}
                   alt=""
                   draggable={false}
-                  className="event-lightbox-img max-h-[85vh] w-full select-none object-contain"
+                  className="event-lightbox-img h-full w-full select-none object-contain"
                 />
               )}
             </div>
