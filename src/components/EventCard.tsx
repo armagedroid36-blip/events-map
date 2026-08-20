@@ -99,6 +99,7 @@ function Lightbox({
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
   const [slideW, setSlideW] = useState(0);
+  const [slideH, setSlideH] = useState(0);
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const winZ = useRef(nextZ()).current;
   // Начало жеста
@@ -111,9 +112,12 @@ function Lightbox({
     startOffset: { x: number; y: number };
   } | null>(null);
 
-  // Ширина слайда (для сдвига трека в пикселях)
+  // Ширина/высота слайда (для сдвига трека и размера канваса)
   function measure() {
-    if (wrapRef.current) setSlideW(wrapRef.current.offsetWidth);
+    if (wrapRef.current) {
+      setSlideW(wrapRef.current.offsetWidth);
+      setSlideH(wrapRef.current.offsetHeight);
+    }
   }
 
   useEffect(() => {
@@ -188,10 +192,10 @@ function Lightbox({
     if (scale <= 1) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
-    // Размеры берём из окна галереи (стабильны), а не из самого канваса:
-    // на первом кадре канвас ещё не получил CSS-размер, иначе «маленькое окно»
-    const W = wrapRef.current?.offsetWidth ?? canvas.clientWidth;
-    const H = wrapRef.current?.offsetHeight ?? canvas.clientHeight;
+    // Размеры берём из окна галереи (стабильны): канвас в flex-цепочке
+    // со схлопывающейся высотой иначе получает «маленькое окно»
+    const W = slideW;
+    const H = slideH;
     if (!W || !H) return;
     const dpr = window.devicePixelRatio || 1;
     canvas.width = Math.round(W * dpr);
@@ -222,7 +226,7 @@ function Lightbox({
       };
       im.src = src;
     }
-  }, [scale, offset.x, offset.y, idx, photos]);
+  }, [scale, offset.x, offset.y, idx, photos, slideW, slideH]);
 
   return (
     <div
@@ -268,7 +272,13 @@ function Lightbox({
           {photos.map((p, i) => (
             <div key={i} className="h-full w-full shrink-0">
               {i === idx && scale > 1 ? (
-                <canvas ref={canvasRef} className="h-full w-full" />
+                <canvas
+                  ref={canvasRef}
+                  style={{
+                    width: slideW ? `${slideW}px` : '100%',
+                    height: slideH ? `${slideH}px` : '100%',
+                  }}
+                />
               ) : (
                 <img
                   src={fullUrl(p)}
