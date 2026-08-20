@@ -260,7 +260,14 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
           end_time: z.string(),
           city: z.string().min(1, t('form.required')),
           category_id: z.string().min(1, t('form.required')),
-          website: z.union([z.literal(''), z.string().url(t('form.badUrl'))]),
+          // Ссылка: пустая, полный URL или без протокола (t.me/x, example.com/y).
+          // Отклоняется только явный мусор (пробелы внутри, нет точки-домена).
+          website: z.string().refine(
+            (v) =>
+              v === '' ||
+              /^(https?:\/\/)?[^\s]+\.[^\s]{2,}(\/\S*)?$/.test(v.trim()),
+            { message: t('form.badUrl') },
+          ),
         })
         .refine((v) => !v.start_date || !v.end_date || v.end_date >= v.start_date, {
           message: t('form.badDate'),
@@ -360,6 +367,13 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
         }
       }
 
+      // Нормализация ссылки: без протокола -> добавляем https://
+      const websiteNorm = website.trim()
+        ? website.trim().startsWith('http://') || website.trim().startsWith('https://')
+          ? website.trim()
+          : `https://${website.trim()}`
+        : '';
+
       const common = {
         title,
         description,
@@ -375,7 +389,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
         lng,
         category_id: categoryId,
         language: language || undefined,
-        website: website || undefined,
+        website: websiteNorm || undefined,
         photos,
         price: priceVal,
         donation,
