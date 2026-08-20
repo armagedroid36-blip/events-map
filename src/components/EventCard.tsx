@@ -351,7 +351,7 @@ export default function EventCard({ event, categories, onClose }: Props) {
 
   return (
     <div className="rounded-lg p-4">
-      <div className="mb-2 flex items-start justify-between gap-2">
+      <div className="sticky top-0 z-10 -mx-4 -mt-4 mb-2 flex items-start justify-between gap-2 rounded-t-lg bg-white/90 px-4 py-3 backdrop-blur">
         <h3 className="text-base font-semibold leading-snug text-gray-900">{title}</h3>
         <button
           onClick={onClose}
