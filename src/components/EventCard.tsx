@@ -226,7 +226,7 @@ function Lightbox({
                 src={fullUrl(p)}
                 alt=""
                 draggable={false}
-                className="max-h-[85vh] w-full select-none object-contain"
+                className="event-lightbox-img max-h-[85vh] w-full select-none object-contain"
                 style={{
                   transform:
                     i === idx && scale > 1

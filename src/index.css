@@ -70,6 +70,17 @@ body {
   cursor: default;
 }
 
+/* Фото в карусели: убирает тонкие полоски-артефакты при CSS-зуме
+   (известная проблема растеризации Chrome/Android при transform: scale) */
+.event-lightbox-img {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  image-rendering: auto;
+  will-change: transform;
+}
+
 /* Атрибуция карты — по центру внизу, чтобы её не закрывали боковые панели */
 .leaflet-bottom.leaflet-right {
   left: 50%;
