@@ -179,6 +179,49 @@ function Lightbox({
     }
   }
 
+  // Канвас-зум: фото перерисовывается целиком (без швов-артефактов,
+  // которые даёт CSS transform: scale на Android/Chrome)
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const imgCache = useRef(new Map<string, HTMLImageElement>());
+
+  useEffect(() => {
+    if (scale <= 1) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const W = canvas.clientWidth;
+    const H = canvas.clientHeight;
+    if (!W || !H) return;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const src = fullUrl(photos[idx]);
+    const draw = (im: HTMLImageElement) => {
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      const base = Math.min(W / im.naturalWidth, H / im.naturalHeight);
+      const dw = im.naturalWidth * base * scale * dpr;
+      const dh = im.naturalHeight * base * scale * dpr;
+      const dx = (canvas.width - dw) / 2 + offset.x * dpr;
+      const dy = (canvas.height - dh) / 2 + offset.y * dpr;
+      ctx.drawImage(im, dx, dy, dw, dh);
+    };
+    const cached = imgCache.current.get(src);
+    if (cached) {
+      draw(cached);
+    } else {
+      const im = new Image();
+      im.onload = () => {
+        imgCache.current.set(src, im);
+        draw(im);
+      };
+      im.src = src;
+    }
+  }, [scale, offset.x, offset.y, idx, photos]);
+
   return (
     <div
       className="glass-overlay fixed inset-0 z-[3000] flex items-center justify-center"
@@ -222,19 +265,16 @@ function Lightbox({
         >
           {photos.map((p, i) => (
             <div key={i} className="h-full w-full shrink-0">
-              <img
-                src={fullUrl(p)}
-                alt=""
-                draggable={false}
-                className="event-lightbox-img max-h-[85vh] w-full select-none object-contain"
-                style={{
-                  transform:
-                    i === idx && scale > 1
-                      ? `translate(${offset.x}px, ${offset.y}px) translateZ(0) scale(${scale})`
-                      : undefined,
-                  transition: dragging ? 'none' : 'transform 0.1s ease-out',
-                }}
-              />
+              {i === idx && scale > 1 ? (
+                <canvas ref={canvasRef} className="h-full w-full" />
+              ) : (
+                <img
+                  src={fullUrl(p)}
+                  alt=""
+                  draggable={false}
+                  className="event-lightbox-img max-h-[85vh] w-full select-none object-contain"
+                />
+              )}
             </div>
           ))}
         </div>
