@@ -191,8 +191,10 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
   // Фото: пути загруженных файлов
   const [photos, setPhotos] = useState<string[]>(event?.photos ?? []);
   const [uploading, setUploading] = useState(false);
-  // Цена и валюта (null = бесплатно); донат и бесплатно — взаимоисключающие
-  const [free, setFree] = useState(event ? event.price == null && !event.donation : false);
+  // Цена и валюта (price = null → «уточнить у организатора»); донат,
+  // бесплатно и «уточнить» — взаимоисключающие
+  const [free, setFree] = useState(event ? event.price === 0 : false);
+  const [priceUnknown, setPriceUnknown] = useState(event ? event.price == null && !event.donation : false);
   const [donation, setDonation] = useState<boolean>(event?.donation ?? false);
   const [price, setPrice] = useState(event?.price != null ? String(event.price) : '');
   const [currency, setCurrency] = useState(event?.currency ?? 'usd');
@@ -605,7 +607,10 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
                 checked={free}
                 onChange={(e) => {
                   setFree(e.target.checked);
-                  if (e.target.checked) setDonation(false);
+                  if (e.target.checked) {
+                    setDonation(false);
+                    setPriceUnknown(false);
+                  }
                 }}
                 className="h-4 w-4"
               />
@@ -617,13 +622,31 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
                 checked={donation}
                 onChange={(e) => {
                   setDonation(e.target.checked);
-                  if (e.target.checked) setFree(false);
+                  if (e.target.checked) {
+                    setFree(false);
+                    setPriceUnknown(false);
+                  }
                 }}
                 className="h-4 w-4"
               />
               {t('form.donation')}
             </label>
-            {!free && !donation && (
+            <label className="mb-2 flex items-center gap-1.5 text-sm text-gray-700">
+              <input
+                type="checkbox"
+                checked={priceUnknown}
+                onChange={(e) => {
+                  setPriceUnknown(e.target.checked);
+                  if (e.target.checked) {
+                    setFree(false);
+                    setDonation(false);
+                  }
+                }}
+                className="h-4 w-4"
+              />
+              {t('form.priceUnknown')}
+            </label>
+            {!free && !donation && !priceUnknown && (
               <div className="grid grid-cols-2 gap-2">
                 <input
                   type="number"

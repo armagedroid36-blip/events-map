@@ -149,6 +149,7 @@ export default {
     pricePlaceholder: 'Например: 50',
     free: 'Бесплатно',
     donation: 'Донат',
+    priceUnknown: 'Уточнить у организатора',
     currency: 'Валюта',
     currencies: {
       usd: 'Доллар (USD)',

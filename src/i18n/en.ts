@@ -149,6 +149,7 @@ export default {
     pricePlaceholder: 'e.g. 50',
     free: 'Free',
     donation: 'Donation',
+    priceUnknown: 'Ask the organizer',
     currency: 'Currency',
     currencies: {
       usd: 'Dollar (USD)',
