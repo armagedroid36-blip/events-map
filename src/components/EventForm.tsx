@@ -9,7 +9,7 @@ import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { nextZ } from '../lib/zindex';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { z } from 'zod';
 import type { Category, EventItem } from '../lib/types';
@@ -52,6 +52,19 @@ function ClickToMove({ onMove }: { onMove: (lat: number, lng: number) => void })
       onMove(e.latlng.lat, e.latlng.lng);
     },
   });
+  return null;
+}
+
+/** Внешнее изменение центра мини-карты (геолокация пользователя) */
+function CenterController({ lat, lng }: { lat: number; lng: number }) {
+  const map = useMap();
+  const last = useRef('');
+  useEffect(() => {
+    const key = `${lat.toFixed(4)},${lng.toFixed(4)}`;
+    if (key === last.current) return;
+    last.current = key;
+    map.setView([lat, lng], map.getZoom(), { animate: true });
+  }, [lat, lng, map]);
   return null;
 }
 
@@ -198,6 +211,22 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
 
   const isOrg = user?.role === 'org';
   const isAdmin = user?.role === 'admin';
+
+  // Для новой формы центрируем мини-карту на пользователе (при согласии
+  // на геолокацию); при редактировании/повторе — координаты события
+  useEffect(() => {
+    if (event) return;
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setLat(pos.coords.latitude);
+        setLng(pos.coords.longitude);
+      },
+      () => {},
+      { timeout: 5000, maximumAge: 60000 },
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Контакты из профиля — предзаполняют поля только НОВОЙ формы.
   // При редактировании/повторе контакты берутся из самого события.
@@ -502,6 +531,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
                 />
                 <Marker position={[lat, lng]} icon={formIcon} />
                 <ClickToMove onMove={onMapClick} />
+                <CenterController lat={lat} lng={lng} />
               </MapContainer>
             </div>
             {err('map')}
