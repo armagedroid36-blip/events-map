@@ -351,16 +351,7 @@ export default function EventCard({ event, categories, onClose }: Props) {
 
   return (
     <div className="rounded-lg p-4">
-      <div className="sticky top-0 z-10 -mx-4 -mt-4 mb-2 flex items-start justify-between gap-2 rounded-t-lg bg-white/90 px-4 py-3 backdrop-blur">
-        <h3 className="text-base font-semibold leading-snug text-gray-900">{title}</h3>
-        <button
-          onClick={onClose}
-          className="shrink-0 rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
-          aria-label={t('common.close')}
-        >
-          ✕
-        </button>
-      </div>
+      <h3 className="mb-2 text-base font-semibold leading-snug text-gray-900">{title}</h3>
 
       {/* Фото: маленькие превью, клик — карусель на весь экран */}
       {photos.length > 0 && (

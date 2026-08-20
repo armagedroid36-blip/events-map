@@ -331,14 +331,24 @@ export default function Home() {
       )}
 
       {/* Карточка выбранного события (без списка):
-          на мобильных — снизу, на десктопе — справа */}
+          на мобильных — снизу, на десктопе — справа.
+          Крестик-кружок — над карточкой, вне скролл-области */}
       {selected && (
-        <div className="glass absolute inset-x-0 bottom-0 top-[45%] z-[1140] overflow-y-auto p-3 shadow-[0_-6px_16px_rgba(0,0,0,0.12)] lg:inset-x-auto lg:top-20 lg:bottom-3 lg:right-3 lg:w-[380px] lg:rounded-2xl lg:p-4">
-          <EventCard
-            event={selected}
-            categories={categories}
-            onClose={() => setSelected(null)}
-          />
+        <div className="absolute inset-x-0 bottom-0 top-[45%] z-[1140] lg:inset-x-auto lg:top-20 lg:bottom-3 lg:right-3 lg:w-[380px]">
+          <div className="glass h-full overflow-y-auto p-3 shadow-[0_-6px_16px_rgba(0,0,0,0.12)] lg:rounded-2xl lg:p-4">
+            <EventCard
+              event={selected}
+              categories={categories}
+              onClose={() => setSelected(null)}
+            />
+          </div>
+          <button
+            onClick={() => setSelected(null)}
+            className="absolute -top-3 right-2 flex h-9 w-9 items-center justify-center rounded-full bg-white text-gray-700 shadow-lg hover:bg-gray-100 lg:-right-3 lg:right-auto"
+            aria-label={t('common.close')}
+          >
+            ✕
+          </button>
         </div>
       )}
 

@@ -192,7 +192,14 @@ export default function EventsModerationTab({ onChanged }: Props) {
           className="fixed inset-0 z-[2000] overflow-y-auto bg-black/40 p-4"
           onClick={() => setSelected(null)}
         >
-          <div className="glass-strong mx-auto my-6 w-full max-w-lg rounded-xl p-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+          <div className="glass-strong relative mx-auto my-6 w-full max-w-lg rounded-xl p-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setSelected(null)}
+              className="absolute -right-3 -top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white text-gray-700 shadow-lg hover:bg-gray-100"
+              aria-label={t('common.close')}
+            >
+              ✕
+            </button>
             <EventCard event={selected} categories={categories} onClose={() => setSelected(null)} />
             <div className="mt-3 flex justify-end gap-2">
               <button
