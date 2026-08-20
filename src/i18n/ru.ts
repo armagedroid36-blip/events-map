@@ -236,6 +236,14 @@ export default {
       deleteAll: 'Удалить все',
       deleteAllConfirm: 'Точно удалить все {{count}}?',
       deleteAllDone: 'Удалено {{count}} событий',
+      // Проблемы события на модерации (что проверить)
+      noDescription: 'Нет описания',
+      noContacts: 'Нет контактов',
+      noAddress: 'Нет адреса',
+      noTime: 'Нет времени',
+      noPhotos: 'Нет фото',
+      approxCoords: 'Координаты приблизительные',
+      attention: 'Требует внимания',
     },
     events: {
       title: 'События',

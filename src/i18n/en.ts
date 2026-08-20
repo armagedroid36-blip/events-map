@@ -236,6 +236,14 @@ export default {
       deleteAll: 'Delete all',
       deleteAllConfirm: 'Really delete all {{count}}?',
       deleteAllDone: 'Deleted {{count}} events',
+      // Event issues on moderation (what to check)
+      noDescription: 'No description',
+      noContacts: 'No contacts',
+      noAddress: 'No address',
+      noTime: 'No time',
+      noPhotos: 'No photos',
+      approxCoords: 'Approximate coordinates',
+      attention: 'Needs attention',
     },
     events: {
       title: 'Events',

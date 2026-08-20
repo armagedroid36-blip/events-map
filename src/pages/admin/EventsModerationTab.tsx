@@ -62,6 +62,22 @@ export default function EventsModerationTab({ onChanged }: Props) {
     onChanged();
   }
 
+  /** Проблемы события — пустые/сомнительные поля, которые надо проверить. */
+  function getIssues(ev: EventItem): string[] {
+    const issues: string[] = [];
+    if (!ev.description?.trim()) issues.push('noDescription');
+    if (!ev.contact_telegram && !ev.contact_whatsapp && !ev.contact_email && !ev.contact_phone) {
+      issues.push('noContacts');
+    }
+    if (!ev.address?.trim()) issues.push('noAddress');
+    if (!ev.start_time) issues.push('noTime');
+    if (!ev.photos?.length) issues.push('noPhotos');
+    // Координаты приблизительные: адреса нет и нет ссылки на пост/сайт с картой
+    // (типично для событий из Telegram-парсера)
+    if (!ev.address?.trim() && !ev.website?.trim()) issues.push('approxCoords');
+    return issues;
+  }
+
   if (loading) {
     return (
       <div className="mb-4 rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-500">
@@ -133,6 +149,7 @@ export default function EventsModerationTab({ onChanged }: Props) {
       <div className="space-y-2">
         {events.map((ev) => {
           const cat = categories.find((c) => c.id === ev.category_id);
+          const issues = getIssues(ev);
           return (
             <div
               key={ev.id}
@@ -150,6 +167,19 @@ export default function EventsModerationTab({ onChanged }: Props) {
                   {formatDate(ev.start_date)} {ev.end_date ? `— ${formatDate(ev.end_date)}` : ''} • {ev.city}
                   {cat ? ` • ${cat.emoji} ${cat.name_ru}` : ''}
                 </p>
+                {/* Проблемы события: что проверить (макс. 3) */}
+                {issues.length > 0 && (
+                  <p className="mt-1 flex flex-wrap gap-1">
+                    {issues.slice(0, 3).map((issue) => (
+                      <span
+                        key={issue}
+                        className="rounded bg-amber-200/80 px-1.5 py-0.5 text-[11px] font-medium text-amber-800"
+                      >
+                        {t(`admin.moderation.${issue}`)}
+                      </span>
+                    ))}
+                  </p>
+                )}
                 {/* Контакты организатора — видны только админу */}
                 {(ev.contact_telegram || ev.contact_whatsapp || ev.contact_email || ev.contact_phone) && (
                   <p className="mt-1 text-xs text-gray-600">
@@ -200,6 +230,24 @@ export default function EventsModerationTab({ onChanged }: Props) {
             >
               ✕
             </button>
+            {/* Проблемы события: что проверить перед решением */}
+            {getIssues(selected).length > 0 && (
+              <div className="mb-3 rounded-md bg-amber-50 p-2.5">
+                <p className="mb-1.5 text-xs font-semibold text-amber-800">
+                  {t('admin.moderation.attention')}
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {getIssues(selected).map((issue) => (
+                    <span
+                      key={issue}
+                      className="rounded bg-amber-200/80 px-1.5 py-0.5 text-[11px] font-medium text-amber-800"
+                    >
+                      {t(`admin.moderation.${issue}`)}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
             <EventCard event={selected} categories={categories} onClose={() => setSelected(null)} />
             <div className="mt-3 flex justify-end gap-2">
               <button
