@@ -70,15 +70,12 @@ body {
   cursor: default;
 }
 
-/* Фото в карусели: убирает тонкие полоски-артефакты при CSS-зуме
-   (известная проблема растеризации Chrome/Android при transform: scale) */
+/* Фото в карусели: зум через CSS zoom (без швов-артефактов растеризации).
+   backface-visibility — защита от мерцания при смене слайдов. */
 .event-lightbox-img {
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
   image-rendering: auto;
-  will-change: transform;
 }
 
 /* Атрибуция карты — по центру внизу, чтобы её не закрывали боковые панели */

@@ -228,9 +228,12 @@ function Lightbox({
                 draggable={false}
                 className="event-lightbox-img max-h-[85vh] w-full select-none object-contain"
                 style={{
+                  // Зум через CSS zoom: масштабирует без швов-артефактов
+                  // (transform: scale даёт тонкие линии на Android/Chrome)
+                  zoom: i === idx && scale > 1 ? scale : 1,
                   transform:
                     i === idx && scale > 1
-                      ? `translate(${offset.x}px, ${offset.y}px) scale(${scale})`
+                      ? `translate(${offset.x}px, ${offset.y}px)`
                       : undefined,
                   transition: dragging ? 'none' : 'transform 0.1s ease-out',
                 }}
