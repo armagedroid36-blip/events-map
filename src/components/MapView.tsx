@@ -59,10 +59,15 @@ function ClusterLayer({ events, categories, onSelect }: ClusterLayerProps) {
       .map((ev) => {
       const cat = categories.find((c) => c.id === ev.category_id);
       const icon = L.divIcon({
-        // Маркер: полупрозрачный пин-капля, цвет категории — акцентная обводка
-        html: `<div class="event-marker" style="--marker-color:${colorFor(ev.category_id)}">${
-          cat?.emoji ?? '📍'
-        }</div>`,
+        // Маркер: полупрозрачный SVG-пин-капля, цвет категории — обводка,
+        // эмодзи — отдельным слоем ПОВЕРХ пина
+        html: `<span class="event-marker" style="--marker-color:${colorFor(ev.category_id)}">
+          <svg width="36" height="46" viewBox="0 0 36 46" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 1 C9 1 2 8.5 2 18 C2 29 18 44 18 44 C18 44 34 29 34 18 C34 8.5 27 1 18 1 Z"
+              fill="var(--marker-bg, rgba(255,255,255,0.85))" stroke="var(--marker-color)" stroke-width="2"/>
+          </svg>
+          <span class="event-marker-emoji">${cat?.emoji ?? '📍'}</span>
+        </span>`,
         className: 'event-marker-wrap',
         iconSize: [36, 46],
         iconAnchor: [18, 44],

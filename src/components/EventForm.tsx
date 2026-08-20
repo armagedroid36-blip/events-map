@@ -33,7 +33,13 @@ interface Props {
 
 /** Иконка маркера на мини-карте формы */
 const formIcon = L.divIcon({
-  html: `<div class="event-marker" style="--marker-bg:#111827;--marker-color:#111827">📍</div>`,
+  html: `<span class="event-marker" style="--marker-bg:#111827;--marker-color:#111827">
+    <svg width="36" height="46" viewBox="0 0 36 46" xmlns="http://www.w3.org/2000/svg">
+      <path d="M18 1 C9 1 2 8.5 2 18 C2 29 18 44 18 44 C18 44 34 29 34 18 C34 8.5 27 1 18 1 Z"
+        fill="var(--marker-bg, rgba(255,255,255,0.85))" stroke="var(--marker-color)" stroke-width="2"/>
+    </svg>
+    <span class="event-marker-emoji">📍</span>
+  </span>`,
   className: 'event-marker-wrap',
   iconSize: [36, 46],
   iconAnchor: [18, 44],
