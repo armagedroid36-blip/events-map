@@ -321,7 +321,7 @@ function Lightbox({
   );
 }
 
-export default function EventCard({ event, categories, onClose }: Props) {
+export default function EventCard({ event, categories, onClose: _onClose }: Props) {
   const { t, i18n } = useTranslation();
   const [lightbox, setLightbox] = useState<number | null>(null);
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
