@@ -70,6 +70,8 @@ export default function Home() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   // Кнопка «События на карте» — список событий видимой области
   const [listOpen, setListOpen] = useState(false);
+  // Верх карточки события на мобильном (поднимается до верха списка)
+  const [cardTop, setCardTop] = useState<string | undefined>(undefined);
 
   // Аккордеон: открытие панели на главной закрывает меню шестерёнки;
   // открытие меню шестерёнки закрывает панели главной
@@ -213,8 +215,14 @@ export default function Home() {
   // Выбор события: карточка + запись в историю просмотров + счётчик просмотров
   async function selectEvent(ev: EventItem) {
     setSelected(ev);
-    // Карточка открывается на месте списка — список сворачиваем
-    setListOpen(false);
+    // На мобильном карточка поднимается до верха открытого списка
+    // (список не сворачиваем — после закрытия карточки он снова виден)
+    if (window.innerWidth < 1024) {
+      const listEl = document.getElementById('events-list-panel');
+      setCardTop(listEl ? `${Math.round(listEl.getBoundingClientRect().top)}px` : '45%');
+    } else {
+      setCardTop(undefined);
+    }
     if (user) {
       getApi().addHistory(ev.id).catch(() => {});
     }
@@ -339,7 +347,10 @@ export default function Home() {
           на мобильных — снизу, на десктопе — справа.
           Крестик-кружок — над карточкой, вне скролл-области */}
       {selected && (
-        <div className="absolute inset-x-0 bottom-0 top-[45%] z-[1170] lg:inset-x-auto lg:top-20 lg:bottom-3 lg:right-3 lg:w-[380px]">
+        <div
+          className="absolute inset-x-0 bottom-0 z-[1170] lg:inset-x-auto lg:top-20 lg:bottom-3 lg:right-3 lg:w-[380px]"
+          style={cardTop ? { top: cardTop } : undefined}
+        >
           <div className="glass h-full overflow-y-auto p-3 shadow-[0_-6px_16px_rgba(0,0,0,0.12)] lg:rounded-2xl lg:p-4">
             <EventCard
               event={selected}
@@ -375,7 +386,10 @@ export default function Home() {
 
       {/* Список под кнопкой — события текущего участка карты */}
       {listOpen && (
-        <div className="glass absolute inset-x-0 bottom-28 z-[1130] mx-auto max-h-[50vh] w-full max-w-xl overflow-y-auto rounded-t-xl p-3 shadow-xl thin-scroll">
+        <div
+          id="events-list-panel"
+          className="glass absolute inset-x-0 bottom-28 z-[1130] mx-auto max-h-[50vh] w-full max-w-xl overflow-y-auto rounded-t-xl p-3 shadow-xl thin-scroll"
+        >
           {onMapEvents.length === 0 && (
             <p className="py-4 text-center text-sm text-gray-500">{t('list.empty')}</p>
           )}
