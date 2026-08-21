@@ -266,6 +266,31 @@ function normalizeTg(link) {
   return m ? '@' + m[1] : null;
 }
 
+/** Адрес из текста: «📍 Локация: …», «Адрес: …», «Место: …» — первое совпадение */
+function extractAddress(text) {
+  const m = text.match(/(?:📍\s*)?(?:локаци[яи]|адрес|место)\s*[:—-]?\s*([^\n]{3,120})/i);
+  if (!m) return null;
+  return (
+    m[1]
+      .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, '') // эмодзи
+      .replace(/[.,;:!?\s]+$/g, '') // хвостовая пунктуация и пробелы
+      .trim() || null
+  );
+}
+
+/** Обратный геокодинг: координаты → адрес (Nominatim), fallback когда адреса нет */
+async function reverseGeocode(lat, lng) {
+  try {
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=ru`;
+    const res = await fetch(url, { headers: { 'User-Agent': UA } });
+    if (!res.ok) return null;
+    const d = await res.json();
+    return d.display_name || null;
+  } catch {
+    return null;
+  }
+}
+
 // ===== Основной цикл =====
 
 async function existingKeys() {
@@ -334,6 +359,12 @@ async function main() {
         lat = geo.lat;
         lng = geo.lng;
         address = geo.address || null;
+      }
+      // Адрес из текста поста приоритетнее (например «📍 Локация: …»)
+      address = extractAddress(post.text) || address;
+      // Если адреса нет, но координаты есть — обратный геокодинг (fallback)
+      if (!address && lat != null && lng != null) {
+        address = await reverseGeocode(lat, lng);
       }
       if ((lat == null || lng == null) && address) {
         const g = await geocode(address, ch.city, ch.country);
