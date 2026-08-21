@@ -248,7 +248,7 @@ async function resolveMap(url) {
     if (m2) return { lat: parseFloat(m2[1]), lng: parseFloat(m2[2]), address: null, url: finalUrl };
     // адрес из ?q=...
     const q = finalUrl.match(/[?&]q=([^&]+)/);
-    if (q) return { lat: null, lng: null, address: decodeURIComponent(q[1]).slice(0, 200), url: finalUrl };
+    if (q) return { lat: null, lng: null, address: decodeURIComponent(q[1].replace(/\+/g, ' ')).slice(0, 200), url: finalUrl };
     // адрес из /place/...
     const pl = finalUrl.match(/\/maps\/place\/([^/]+)/);
     if (pl) return { lat: null, lng: null, address: decodeURIComponent(pl[1].replace(/\+/g, ' ')).slice(0, 200), url: finalUrl };
@@ -259,28 +259,48 @@ async function resolveMap(url) {
 }
 
 /** Геокодировать адрес через Nominatim (с городом).
+ *  Пробует варианты: полный адрес, затем без названия заведения (по сегментам
+ *  запятых) — «606 Cafe, 86 Đoàn Trần Nghiệp, ...» → «86 Đoàn Trần Nghiệp, ...».
  *  rejectNear — координаты центра города: если Nominatim вернул точку в радиусе
- *  ~0.01° от центра (геокодер «угадал» город по названию) — считаем провалом. */
+ *  ~0.01° от центра (геокодер «угадал» город по названию) — вариант не годится. */
 async function geocode(address, city, country, rejectNear) {
   if (!address) return null;
-  const q = encodeURIComponent(`${address}, ${city}, ${country}`);
-  try {
-    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, {
-      headers: { 'User-Agent': UA, Accept: 'application/json' },
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    if (data && data[0]) {
-      const lat = parseFloat(data[0].lat);
-      const lng = parseFloat(data[0].lon);
-      if (rejectNear) {
-        const dLat = lat - rejectNear.lat;
-        const dLng = lng - rejectNear.lng;
-        if (dLat * dLat + dLng * dLng < 0.01 * 0.01) return null;
-      }
-      return { lat, lng };
+  // Мусор из Google-ссылок («..., street, ...») ломает поиск Nominatim
+  address = address.replace(/,?\s*street\s*,?/gi, ', ').trim();
+  const parts = address.split(',').map((s) => s.trim()).filter(Boolean);
+  const variants = [address];
+  if (parts.length > 2) {
+    variants.push(parts.slice(1).join(', ')); // убрать название заведения
+    variants.push(parts.slice(2).join(', ')); // улица/район + город
+  }
+  for (const v of variants) {
+    // Если в адресе уже есть город/страна («Đà Nẵng», «Nha Trang», «Вьетнам») —
+    // суффикс «Дананг, VN» дублирует и ломает поиск, пробуем и без него.
+    const queries = [`${v}, ${city}, ${country}`];
+    if (/đà nẵng|da nang|nha trang|hội an|ho chi minh|вьетнам|vietnam|việt nam/i.test(v)) {
+      queries.push(v);
     }
-  } catch { /* ignore */ }
+    for (const qs of queries) {
+      const q = encodeURIComponent(qs);
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, {
+          headers: { 'User-Agent': UA, Accept: 'application/json' },
+        });
+        if (!res.ok) continue;
+        const data = await res.json();
+        if (data && data[0]) {
+          const lat = parseFloat(data[0].lat);
+          const lng = parseFloat(data[0].lon);
+          if (rejectNear) {
+            const dLat = lat - rejectNear.lat;
+            const dLng = lng - rejectNear.lng;
+            if (dLat * dLat + dLng * dLng < 0.01 * 0.01) continue; // «угадал центр» — следующий запрос
+          }
+          return { lat, lng };
+        }
+      } catch { /* ignore — пробуем следующий вариант */ }
+    }
+  }
   return null;
 }
 
@@ -385,9 +405,11 @@ async function main() {
         address = geo.address || null;
       }
       // Адрес через LLM: понимает любой эмодзи (📍📌🗺️…) и просто упоминания места;
-      // при ошибке/без ключа — fallback на regex, затем адрес из карты
+      // при ошибке/без ключа — fallback на regex. ПРИОРИТЕТ: адрес из ссылки на
+      // карту (resolveMap, точный адрес Google) — он не должен затираться LLM.
       const llmAddr = await extractAddressLLM(post.text, ch.city);
-      address = llmAddr?.address || extractAddress(post.text) || address || null;
+      const llmOrRegex = llmAddr?.address || extractAddress(post.text) || null;
+      address = address || llmOrRegex || null;
       // Если адреса нет, но координаты есть — обратный геокодинг (fallback)
       if (!address && lat != null && lng != null) {
         address = await reverseGeocode(lat, lng);
@@ -396,6 +418,11 @@ async function main() {
       if ((lat == null || lng == null) && address) {
         const g = await geocode(address, ch.city, ch.country, ch.fallback);
         if (g) { lat = g.lat; lng = g.lng; }
+      }
+      // Адрес из карты не геокодировался, но LLM нашёл другой (например, с улицей) — пробуем его
+      if ((lat == null || lng == null) && llmOrRegex && llmOrRegex !== address) {
+        const g = await geocode(llmOrRegex, ch.city, ch.country, ch.fallback);
+        if (g) { lat = g.lat; lng = g.lng; address = llmOrRegex; }
       }
       // Если адрес не геокодируется или его нет — lat/lng остаются null:
       // событие не рисуется на карте (isValidCoords), но попадает в модерацию,
