@@ -5,6 +5,7 @@
 // Запускается в GitHub Actions ежедневно; статус событий — «на модерации».
 import { createClient } from '@supabase/supabase-js';
 import { extractPrice } from './price-llm.mjs';
+import { extractCategory } from './category-llm.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -348,6 +349,8 @@ async function main() {
         const rp = parsePrice(post.text);
         if (rp != null) p = { price: rp, currency: null, free: false, donation: false };
       }
+      // Категория: LLM точнее в спорных случаях; при ошибке/без ключа — старая логика
+      const llmCat = await extractCategory(post.text, ch.city);
       const website = `https://t.me/${post.pid}`;
 
       const row = {
@@ -365,7 +368,7 @@ async function main() {
         address,
         lat,
         lng,
-        category_id: pickCategory(post.text),
+        category_id: llmCat || pickCategory(post.text),
         website,
         contact_telegram: tgMain,
         photos: [],

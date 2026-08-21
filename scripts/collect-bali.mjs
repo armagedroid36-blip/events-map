@@ -3,6 +3,7 @@
 // API Балифорума открытый, без ключа. Переменные окружения: SUPABASE_URL, SUPABASE_SERVICE_ROLE.
 import { createClient } from '@supabase/supabase-js';
 import { extractPrice } from './price-llm.mjs';
+import { extractCategory } from './category-llm.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -252,6 +253,9 @@ async function main() {
       const description = extractDescription(detail);
       const contacts = extractContacts(detail);
       const p = await extractPrice(description, ev.place?.cityName || 'Bali');
+      // Категория: LLM точнее в спорных случаях; при ошибке/без ключа — старая логика
+      const typesHint = ev.types?.length ? `Типы Балифорума: ${ev.types.map((t) => t.name).join(', ')}` : 'Bali';
+      const llmCat = await extractCategory(description, typesHint);
       const startDate = when.raw.startAt.slice(0, 10);
       const endDate = when.raw.endAt ? when.raw.endAt.slice(0, 10) : null;
       const startTime = when.raw.startAt.slice(11, 16) || null;
@@ -274,7 +278,7 @@ async function main() {
         address: loc.address || place.title || null,
         lat: loc.lat,
         lng: loc.lng,
-        category_id: pickCategory(ev.types),
+        category_id: llmCat || pickCategory(ev.types),
         website: `${BASE}/events/${ev.slug}`,
         contact: contacts.contact || null,
         contact_telegram: contacts.contact_telegram || null,
