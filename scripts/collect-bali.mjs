@@ -83,13 +83,28 @@ function pickCategory(types) {
   return DEFAULT_CAT;
 }
 
+/** Декодировать HTML-entities: &#NNN;, &#xHH;, &amp;, &lt;, &gt;, &quot;, &apos;, &nbsp; */
+function decodeEntities(s) {
+  if (!s) return s;
+  return s
+    .replace(/&#x([0-9a-fA-F]+);/g, (m, h) => String.fromCharCode(parseInt(h, 16)))
+    .replace(/&#(\d+);/g, (m, d) => String.fromCharCode(parseInt(d, 10)))
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&');
+}
+
 /** Текст описания из blocks: каждый блок — абзац, переносы строк сохраняются */
 function extractDescription(detail) {
   const blocks = detail?.content?.blocks;
   if (!Array.isArray(blocks)) return '';
   const text = blocks
     .map((b) => (b.data && b.data.text ? b.data.text : ''))
-    .map((t) => t.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').trim())
+    .map((t) => t.replace(/<[^>]+>/g, ''))
+    .map((t) => decodeEntities(t).trim())
     .filter(Boolean)
     .join('\n\n')
     .replace(/[ \t]+/g, ' ')
@@ -101,7 +116,7 @@ function extractDescription(detail) {
 function extractContacts(detail) {
   const blocks = detail?.content?.blocks;
   if (!Array.isArray(blocks)) return {};
-  const text = blocks.map((b) => (b.data && b.data.text ? b.data.text : '')).join(' ');
+  const text = decodeEntities(blocks.map((b) => (b.data && b.data.text ? b.data.text : '')).join(' '));
   const out = {};
   const tg = text.match(/(?:t\.me|telegram\.me)\/([a-zA-Z0-9_]+)/g);
   if (tg) out.contact_telegram = tg[0].startsWith('http') ? tg[0] : `https://${tg[0]}`;
