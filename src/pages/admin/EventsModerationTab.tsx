@@ -66,7 +66,7 @@ export default function EventsModerationTab({ onChanged }: Props) {
   function getIssues(ev: EventItem): string[] {
     const issues: string[] = [];
     if (!ev.description?.trim()) issues.push('noDescription');
-    if (!ev.contact_telegram && !ev.contact_whatsapp && !ev.contact_email && !ev.contact_phone) {
+    if (!ev.contact_telegram && !ev.contact_whatsapp && !ev.contact_email && !ev.contact_phone && !ev.contact_instagram) {
       issues.push('noContacts');
     }
     if (!ev.address?.trim()) issues.push('noAddress');
@@ -181,9 +181,9 @@ export default function EventsModerationTab({ onChanged }: Props) {
                   </p>
                 )}
                 {/* Контакты организатора — видны только админу */}
-                {(ev.contact_telegram || ev.contact_whatsapp || ev.contact_email || ev.contact_phone) && (
+                {(ev.contact_telegram || ev.contact_whatsapp || ev.contact_email || ev.contact_phone || ev.contact_instagram) && (
                   <p className="mt-1 text-xs text-gray-600">
-                    {[ev.contact_telegram && `TG: ${ev.contact_telegram}`, ev.contact_whatsapp && `WA: ${ev.contact_whatsapp}`, ev.contact_email && ev.contact_email, ev.contact_phone && ev.contact_phone]
+                    {[ev.contact_telegram && `TG: ${ev.contact_telegram}`, ev.contact_whatsapp && `WA: ${ev.contact_whatsapp}`, ev.contact_email && ev.contact_email, ev.contact_phone && ev.contact_phone, ev.contact_instagram && `IG: ${ev.contact_instagram}`]
                       .filter(Boolean)
                       .join(' • ')}
                   </p>
