@@ -54,7 +54,7 @@ function waLink(v: string) {
   return `https://wa.me/${s}`;
 }
 function igLink(v: string) {
-  const s = v.trim().replace(/^@/, '').split('/').pop() || '';
+  const s = v.trim().replace(/^@/, '').replace(/\/+$/, '').split('/').pop() || '';
   return `https://instagram.com/${s}`;
 }
 
