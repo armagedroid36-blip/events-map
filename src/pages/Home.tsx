@@ -106,6 +106,18 @@ export default function Home() {
     setLoading(false);
   }
 
+  // Удаление события (только админ): из БД и из списка на карте
+  async function handleDeleteEvent(id: string) {
+    try {
+      await getApi().deleteEvent(id);
+      setSelected(null);
+      setEvents((prev) => prev.filter((e) => e.id !== id));
+    } catch (err) {
+      console.error('Не удалось удалить событие:', err);
+      alert('Не удалось удалить событие');
+    }
+  }
+
   // Первичная загрузка данных
   useEffect(() => {
     let alive = true;
@@ -356,6 +368,8 @@ export default function Home() {
               event={selected}
               categories={categories}
               onClose={() => setSelected(null)}
+              isAdmin={user?.role === 'admin'}
+              onDelete={handleDeleteEvent}
             />
           </div>
           <button

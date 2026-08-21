@@ -122,6 +122,8 @@ interface Props {
   event: EventItem;
   categories: Category[];
   onClose: () => void;
+  isAdmin?: boolean;
+  onDelete?: (id: string) => void;
 }
 
 /** Полный URL фото: загруженные файлы хранятся как пути в хранилище */
@@ -367,7 +369,7 @@ function Lightbox({
   );
 }
 
-export default function EventCard({ event, categories, onClose: _onClose }: Props) {
+export default function EventCard({ event, categories, onClose: _onClose, isAdmin, onDelete }: Props) {
   const { t, i18n } = useTranslation();
   const [lightbox, setLightbox] = useState<number | null>(null);
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
@@ -395,8 +397,23 @@ export default function EventCard({ event, categories, onClose: _onClose }: Prop
 
   const photos = (event.photos ?? []).filter((p) => p);
 
+  // Удаление доступно только админу, с подтверждением
+  const handleDelete = () => {
+    if (onDelete && window.confirm('Удалить событие?')) onDelete(event.id);
+  };
+
   return (
-    <div className="rounded-lg p-4">
+    <div className="relative rounded-lg p-4">
+      {isAdmin && onDelete && (
+        <button
+          onClick={handleDelete}
+          className="absolute right-2 top-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-red-50 text-red-600 shadow hover:bg-red-100"
+          title="Удалить событие"
+          aria-label="Удалить событие"
+        >
+          🗑
+        </button>
+      )}
       <h3 className="mb-2 text-base font-semibold leading-snug text-gray-900">{title}</h3>
 
       {/* Фото: маленькие превью, клик — карусель на весь экран */}
