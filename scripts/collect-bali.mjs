@@ -199,8 +199,8 @@ async function main() {
       const photos = (ev.images || []).slice(0, 3).map((i) => i.previewUrl).filter(Boolean);
 
       const row = {
-        title: ev.title,
-        title_ru: ev.title,
+        title: decodeEntities(ev.title),
+        title_ru: decodeEntities(ev.title),
         description,
         description_ru: description,
         source_lang: 'ru',
