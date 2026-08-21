@@ -102,11 +102,7 @@ function extractDescription(detail) {
   const blocks = detail?.content?.blocks;
   if (!Array.isArray(blocks)) return '';
   const text = blocks
-    .map((b) => {
-      // linkTool — «плашка»-ссылка: «Название: https://…»
-      if (b.type === 'linkTool' && b.data?.link) return `${b.data.meta?.title || 'Ссылка'}: ${b.data.link}`;
-      return b.data && b.data.text ? b.data.text : '';
-    })
+    .map((b) => (b.data && b.data.text ? b.data.text : ''))
     .map((t) => decodeEntities(t))
     // <a>-ссылки не теряем: «текст (url)», остальные теги удаляем ниже
     .map((t) => t.replace(/<a[^>]*href=["']([^"']+)["'][^>]*>([^<]*)<\/a>/gi, (m, href, txt) => `${txt.trim()} (${href})`))
@@ -163,23 +159,24 @@ function extractContacts(detail) {
       out.contact_instagram = `https://www.instagram.com/${user}/`;
     }
   }
-  // Сайт: первый URL, чей host (без www.) не в исключениях; сохраняем ПОЛНЫЙ URL (путь и query)
-  const urls = text.match(/https?:\/\/[^\s"'<>]+/gi) || [];
-  for (const u of urls) {
-    const clean = u.replace(/[.,;!?]+$/, '');
-    const host = clean.replace(/^https?:\/\/(?:www\.)?/i, '').split('/')[0].toLowerCase();
+  // Сайт: ПРИОРИТЕТНО linkTool-плашка (полный link), иначе первый URL с host не в исключениях
+  const lt = blocks.find((b) => b.type === 'linkTool' && b.data?.link);
+  if (lt) {
+    const link = decodeEntities(lt.data.link);
+    const host = link.replace(/^https?:\/\/(?:www\.)?/i, '').split('/')[0].toLowerCase();
     if (!/(^|\.)(t\.me|telegram\.me|baliforum\.ru|instagram\.com|facebook\.com|youtube\.com|wa\.me|goo\.gl|maps\.|api\.)/i.test(host)) {
-      out.contact = clean;
-      break;
+      out.contact = link.replace(/[.,;!?]+$/, '');
     }
   }
-  // Fallback: если сайт не найден в тексте — берём полный link из linkTool-блока (не соцсети)
   if (!out.contact) {
-    const lt = blocks.find((b) => b.type === 'linkTool' && b.data?.link);
-    if (lt) {
-      const link = decodeEntities(lt.data.link);
-      const host = link.replace(/^https?:\/\/(?:www\.)?/i, '').split('/')[0];
-      if (!/(^|\.)(t\.me|telegram\.me|baliforum\.ru|instagram\.com|facebook\.com|youtube\.com|wa\.me|goo\.gl|maps\.|api\.)/i.test(host)) out.contact = link;
+    const urls = text.match(/https?:\/\/[^\s"'<>]+/gi) || [];
+    for (const u of urls) {
+      const clean = u.replace(/[.,;!?]+$/, '');
+      const host = clean.replace(/^https?:\/\/(?:www\.)?/i, '').split('/')[0].toLowerCase();
+      if (!/(^|\.)(t\.me|telegram\.me|baliforum\.ru|instagram\.com|facebook\.com|youtube\.com|wa\.me|goo\.gl|maps\.|api\.)/i.test(host)) {
+        out.contact = clean;
+        break;
+      }
     }
   }
   return out;
