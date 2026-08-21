@@ -107,8 +107,11 @@ function extractDescription(detail) {
       if (b.type === 'linkTool' && b.data?.link) return `${b.data.meta?.title || 'Ссылка'}: ${b.data.link}`;
       return b.data && b.data.text ? b.data.text : '';
     })
+    .map((t) => decodeEntities(t))
+    // <a>-ссылки не теряем: «текст (url)», остальные теги удаляем ниже
+    .map((t) => t.replace(/<a[^>]*href=["']([^"']+)["'][^>]*>([^<]*)<\/a>/gi, (m, href, txt) => `${txt.trim()} (${href})`))
     .map((t) => t.replace(/<[^>]+>/g, ''))
-    .map((t) => decodeEntities(t).trim())
+    .map((t) => t.trim())
     .filter(Boolean)
     .join('\n\n')
     .replace(/[ \t]+/g, ' ')
@@ -160,11 +163,15 @@ function extractContacts(detail) {
       out.contact_instagram = `https://www.instagram.com/${user}/`;
     }
   }
-  const site = text.match(/https?:\/\/(?!t\.me|telegram|static\.baliforum|baliforum|instagram|facebook|youtube|wa\.me|api\.|maps\.|goo\.gl)[a-z0-9-]+(\.[a-z0-9-]+)+/i);
-  if (site) {
-    // пост-фильтр по полному домену: отсечь www.-варианты заблокированных (www.instagram.com и т.п.)
-    const host = site[0].replace(/^https?:\/\/(?:www\.)?/i, '');
-    if (!/(^|\.)(t\.me|telegram\.me|baliforum\.ru|instagram\.com|facebook\.com|youtube\.com|wa\.me|goo\.gl|maps\.|api\.)/i.test(host)) out.contact = site[0];
+  // Сайт: первый URL, чей host (без www.) не в исключениях; сохраняем ПОЛНЫЙ URL (путь и query)
+  const urls = text.match(/https?:\/\/[^\s"'<>]+/gi) || [];
+  for (const u of urls) {
+    const clean = u.replace(/[.,;!?]+$/, '');
+    const host = clean.replace(/^https?:\/\/(?:www\.)?/i, '').split('/')[0].toLowerCase();
+    if (!/(^|\.)(t\.me|telegram\.me|baliforum\.ru|instagram\.com|facebook\.com|youtube\.com|wa\.me|goo\.gl|maps\.|api\.)/i.test(host)) {
+      out.contact = clean;
+      break;
+    }
   }
   // Fallback: если сайт не найден в тексте — берём полный link из linkTool-блока (не соцсети)
   if (!out.contact) {
