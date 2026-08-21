@@ -28,11 +28,12 @@ const DRY_RUN = process.env.DRY_RUN === '1'; // тест без записи в 
 const TYPE_MAP = {
   'Концерт': 'concert', 'Музыка': 'concert', 'Живая музыка': 'concert',
   'Импровизация': 'concert', 'Открытый микрофон': 'concert',
-  'Вечеринка': 'party', 'Танцы': 'party', 'Игра': 'party',
+  'Вечеринка': 'party', 'Танцы': 'party',
   'Выставка': 'exhibition', 'Искусство': 'exhibition', 'Ремесло': 'exhibition',
   'Еда': 'food',
   'Бизнес': 'conference', 'IT': 'conference', 'Тренинг': 'conference',
   'Спорт': 'sport',
+  'Игра': 'games', 'Квиз': 'games', 'Викторина': 'games',
   'Кино': 'lecture', 'Здоровье': 'lecture', 'Йога': 'lecture',
   'Медитация': 'lecture', 'Духовное': 'lecture',
   'Дети': 'festival', 'Семья': 'festival', 'Рождество': 'festival',
@@ -77,8 +78,13 @@ function pickDate(eventDates) {
 
 function pickCategory(types) {
   if (!Array.isArray(types)) return DEFAULT_CAT;
-  for (const t of types) {
-    const id = TYPE_MAP[t.name];
+  const names = types.map((t) => t.name);
+  // Квизы и игры имеют приоритет: «Вечеринка» в списке не должна перебивать «Игру»
+  for (const n of names) {
+    if (n === 'Квиз' || n === 'Викторина' || n === 'Игра') return 'games';
+  }
+  for (const n of names) {
+    const id = TYPE_MAP[n];
     if (id) return id;
   }
   return DEFAULT_CAT;
