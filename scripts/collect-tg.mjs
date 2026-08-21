@@ -262,7 +262,9 @@ async function resolveMap(url) {
  *  Пробует варианты: полный адрес, затем без названия заведения (по сегментам
  *  запятых) — «606 Cafe, 86 Đoàn Trần Nghiệp, ...» → «86 Đoàn Trần Nghiệp, ...».
  *  rejectNear — координаты центра города: если Nominatim вернул точку в радиусе
- *  ~0.01° от центра (геокодер «угадал» город по названию) — вариант не годится. */
+ *  ~0.01° от центра (геокодер «угадал» город по названию) — вариант не годится.
+ *  Если ничего не нашлось — пробует поиск по НАЗВАНИЮ места (убирает стоп-слова:
+ *  «кафе рядом с Океанус» → «Океанус Nha Trang»), затем словарь известных мест. */
 async function geocode(address, city, country, rejectNear) {
   if (!address) return null;
   // Мусор из Google-ссылок («..., street, ...») ломает поиск Nominatim
@@ -281,28 +283,69 @@ async function geocode(address, city, country, rejectNear) {
       queries.push(v);
     }
     for (const qs of queries) {
-      const q = encodeURIComponent(qs);
-      try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, {
-          headers: { 'User-Agent': UA, Accept: 'application/json' },
-        });
-        if (!res.ok) continue;
-        const data = await res.json();
-        if (data && data[0]) {
-          const lat = parseFloat(data[0].lat);
-          const lng = parseFloat(data[0].lon);
-          if (rejectNear) {
-            const dLat = lat - rejectNear.lat;
-            const dLng = lng - rejectNear.lng;
-            if (dLat * dLat + dLng * dLng < 0.01 * 0.01) continue; // «угадал центр» — следующий запрос
-          }
-          return { lat, lng };
-        }
-      } catch { /* ignore — пробуем следующий вариант */ }
+      const r = await nominatim(qs, rejectNear);
+      if (r) return r;
     }
+  }
+  // 1) Словарь известных мест (которых нет в OSM, координаты проверены вручную)
+  const low = address.toLowerCase();
+  for (const p of PLACE_COORDS) {
+    if (low.includes(p.key)) return { lat: p.lat, lng: p.lng };
+  }
+  // 2) Поиск по названию: «кафе рядом с Океанус (север)» → «Океанус Nha Trang»
+  const nameWords = address
+    .replace(/[()]/g, ' ')
+    .split(/[\s,]+/)
+    .filter((w) => w.length >= 3 && !STOP_WORDS.has(w.toLowerCase()));
+  const name = nameWords.slice(0, 3).join(' ');
+  if (name && name !== address) {
+    const r = await nominatim(`${name}, ${city}, ${country}`, rejectNear);
+    if (r) return r;
+    const r2 = await nominatim(`${name}, ${city}`, rejectNear);
+    if (r2) return r2;
   }
   return null;
 }
+
+/** Один запрос к Nominatim с отбраковкой «угадал центр города» */
+async function nominatim(query, rejectNear) {
+  try {
+    const q = encodeURIComponent(query);
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, {
+      headers: { 'User-Agent': UA, Accept: 'application/json' },
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data && data[0]) {
+      const lat = parseFloat(data[0].lat);
+      const lng = parseFloat(data[0].lon);
+      if (rejectNear) {
+        const dLat = lat - rejectNear.lat;
+        const dLng = lng - rejectNear.lng;
+        if (dLat * dLat + dLng * dLng < 0.01 * 0.01) return null; // «угадал центр»
+      }
+      return { lat, lng };
+    }
+  } catch { /* ignore */ }
+  return null;
+}
+
+// Слова: которые не несут гео-смысла в названии места
+const STOP_WORDS = new Set([
+  'кафе', 'ресторан', 'клуб', 'настольных', 'игр', 'настолки', 'мафия',
+  'место', 'локация', 'адрес', 'рядом', 'около', 'возле', 'недалеко',
+  'центре', 'север', 'юг', 'восток', 'запад', 'этаж', 'лифте', 'этаже',
+  'приглашает', 'занятие', 'студия', 'сеть', 'заведение', 'при', 'на', 'в',
+]);
+
+// Известные места, которых нет в OpenStreetMap (координаты проверены вручную).
+// Ключ — подстрока адреса (нижний регистр).
+const PLACE_COORDS = [
+  { key: 'океанус', lat: 12.273779, lng: 109.202092 },  // Muong Thanh Oceanus Apartment, север Нячанга
+  { key: 'oceanus', lat: 12.273779, lng: 109.202092 },
+  { key: 'neverland', lat: 12.2407732, lng: 109.1894251 }, // Neverland Adventure Club, 40 Hồng Bàng (центр)
+  { key: 'boton blue', lat: 12.293901, lng: 109.212355 },  // Boton Blue Hotel & Spa, Phạm Văn Đồng (север)
+];
 
 /** t.me-ник → удобный формат для нашей базы */
 function normalizeTg(link) {
