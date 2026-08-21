@@ -114,6 +114,7 @@ export default {
     noPhoto: 'No photo yet',
     free: 'Free',
     priceUnknown: 'Ask the organizer for the price',
+    placeUnknown: 'Ask the organizer for the exact location',
     contacts: 'Organizer contacts',
   },
   form: {

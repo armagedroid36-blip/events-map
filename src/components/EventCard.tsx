@@ -10,6 +10,7 @@ import { localizedText } from '../lib/translate';
 import { languageName } from '../lib/languages';
 import { formatDate } from '../lib/dates';
 import { photoUrl } from '../lib/api';
+import { isValidCoords } from '../lib/coords';
 import { nextZ } from '../lib/zindex';
 
 /** Символы валют */
@@ -453,19 +454,20 @@ export default function EventCard({ event, categories, onClose: _onClose, isAdmi
         ) : null}
       </div>
 
-      {/* Адрес: клик открывает Google Maps */}
-      {event.address && (
+      {/* Адрес: клик открывает Google Maps. Если координат нет — адрес неточный,
+          показываем «место уточнить у организатора» вместо кликабельного адреса */}
+      {event.address && isValidCoords(event.lat, event.lng) ? (
         <a
-          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-            event.lat && event.lng ? `${event.lat},${event.lng}` : event.address,
-          )}`}
+          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${event.lat},${event.lng}`)}`}
           target="_blank"
           rel="noopener noreferrer"
           className="mb-2 block text-sm text-gray-600 hover:text-gray-900 hover:underline"
         >
           📍 {event.address}
         </a>
-      )}
+      ) : event.address ? (
+        <p className="mb-2 block text-sm text-gray-600">📍 {t('card.placeUnknown')}</p>
+      ) : null}
 
       {/* Цена: 0 = бесплатно, пусто = уточнять, иначе сумма */}
       <div className="mb-2 text-sm font-semibold">
