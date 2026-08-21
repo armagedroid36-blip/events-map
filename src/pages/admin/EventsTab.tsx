@@ -166,9 +166,9 @@ export default function EventsTab({ version, onChanged }: Props) {
                   <td className="px-3 py-2 text-gray-400">{cat?.emoji ?? '📍'}</td>
                   <td className="max-w-[260px] truncate px-3 py-2 font-medium text-gray-900">
                     {ev.title}
-                    {(ev.contact_telegram || ev.contact_whatsapp || ev.contact_email || ev.contact_phone || ev.contact_instagram) && (
+                    {(ev.contact_telegram || ev.contact_whatsapp || ev.contact_email || ev.contact_phone || ev.contact_instagram || ev.contact) && (
                       <span className="block truncate text-xs font-normal text-gray-400">
-                        {[ev.contact_telegram && `TG: ${ev.contact_telegram}`, ev.contact_whatsapp && `WA: ${ev.contact_whatsapp}`, ev.contact_email && ev.contact_email, ev.contact_phone && ev.contact_phone, ev.contact_instagram && `IG: ${ev.contact_instagram}`]
+                        {[ev.contact_telegram && `TG: ${ev.contact_telegram}`, ev.contact_whatsapp && `WA: ${ev.contact_whatsapp}`, ev.contact_email && ev.contact_email, ev.contact_phone && ev.contact_phone, ev.contact_instagram && `IG: ${ev.contact_instagram}`, ev.contact && `Site: ${ev.contact}`]
                           .filter(Boolean)
                           .join(' • ')}
                       </span>
