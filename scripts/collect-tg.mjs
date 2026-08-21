@@ -7,6 +7,7 @@ import { createClient } from '@supabase/supabase-js';
 import { extractPrice } from './price-llm.mjs';
 import { extractCategory } from './category-llm.mjs';
 import { extractTime } from './time-llm.mjs';
+import { extractAddressLLM } from './address-llm.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -372,8 +373,10 @@ async function main() {
         lng = geo.lng;
         address = geo.address || null;
       }
-      // Адрес из текста поста приоритетнее (например «📍 Локация: …»)
-      address = extractAddress(post.text) || address;
+      // Адрес через LLM: понимает любой эмодзи (📍📌🗺️…) и просто упоминания места;
+      // при ошибке/без ключа — fallback на regex, затем адрес из карты
+      const llmAddr = await extractAddressLLM(post.text, ch.city);
+      address = llmAddr?.address || extractAddress(post.text) || address || null;
       // Если адреса нет, но координаты есть — обратный геокодинг (fallback)
       if (!address && lat != null && lng != null) {
         address = await reverseGeocode(lat, lng);
