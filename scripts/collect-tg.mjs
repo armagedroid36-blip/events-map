@@ -18,7 +18,8 @@ if (!SUPABASE_URL || !SERVICE_ROLE) {
 const db = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } });
 
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36';
-const MAX_EVENTS = Number(process.env.MAX_EVENTS || 40); // лимит новых событий за запуск
+const MAX_EVENTS = Number(process.env.MAX_EVENTS || 100); // предохранитель: лимит за запуск
+const MAX_PER_CHANNEL = Number(process.env.MAX_PER_CHANNEL || 10); // лимит на канал (направление)
 const MAX_POSTS = Number(process.env.MAX_POSTS || 25);   // сколько свежих постов смотрим на канал
 const DRY_RUN = process.env.DRY_RUN === '1';
 
@@ -288,6 +289,7 @@ async function main() {
 
   for (const ch of CHANNELS) {
     if (inserted >= MAX_EVENTS) break;
+    let perChannel = 0; // счётчик событий этого канала, сбрасывается на каждом канале
     console.log(`Канал: ${ch.username} (${ch.city})`);
     let html;
     try {
@@ -301,7 +303,7 @@ async function main() {
     console.log(`  Постов на странице: ${posts.length}`);
 
     for (const raw of posts) {
-      if (inserted >= MAX_EVENTS) break;
+      if (inserted >= MAX_EVENTS || perChannel >= MAX_PER_CHANNEL) break;
       const post = parsePost(raw);
       if (!post.pid || !post.text) continue;
       const cleanText = decodeEntities(post.text);
@@ -383,6 +385,7 @@ async function main() {
         console.error(`  Ошибка вставки «${title.slice(0, 40)}»: ${error.message}`);
       } else {
         inserted++;
+        perChannel++;
         seen.add(key);
         console.log(`  ${DRY_RUN ? '[dry] +' : '+'} ${title.slice(0, 45)} | ${when.date} ${when.time || ''} | ${ch.city} | ${row.category_id}${tgMain ? ' | ' + tgMain : ''}${address ? ' | ' + address.slice(0, 40) : ''}`);
       }
