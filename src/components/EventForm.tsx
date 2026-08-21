@@ -446,8 +446,11 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
         await getApi().submitApplication({ ...common, contact });
       }
       setDone(true);
-    } catch {
-      setErrors({ form: t('form.error') });
+    } catch (err) {
+      // ВРЕМЕННАЯ ДИАГНОСТИКА: показываем реальный текст ошибки от базы
+      const e = err as { message?: string; code?: string; details?: string; hint?: string };
+      const parts = [e.code, e.message, e.details, e.hint].filter(Boolean);
+      setErrors({ form: parts.length ? parts.join(' — ') : t('form.error') });
     }
     setSubmitting(false);
   }
