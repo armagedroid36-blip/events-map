@@ -102,7 +102,11 @@ function extractDescription(detail) {
   const blocks = detail?.content?.blocks;
   if (!Array.isArray(blocks)) return '';
   const text = blocks
-    .map((b) => (b.data && b.data.text ? b.data.text : ''))
+    .map((b) => {
+      // linkTool — «плашка»-ссылка: «Название: https://…»
+      if (b.type === 'linkTool' && b.data?.link) return `${b.data.meta?.title || 'Ссылка'}: ${b.data.link}`;
+      return b.data && b.data.text ? b.data.text : '';
+    })
     .map((t) => t.replace(/<[^>]+>/g, ''))
     .map((t) => decodeEntities(t).trim())
     .filter(Boolean)
@@ -116,7 +120,11 @@ function extractDescription(detail) {
 function extractContacts(detail) {
   const blocks = detail?.content?.blocks;
   if (!Array.isArray(blocks)) return {};
-  const text = decodeEntities(blocks.map((b) => (b.data && b.data.text ? b.data.text : '')).join(' '));
+  const text = decodeEntities(
+    blocks
+      .map((b) => (b.type === 'linkTool' && b.data?.link ? b.data.link : b.data && b.data.text ? b.data.text : ''))
+      .join(' ')
+  );
   const out = {};
   // Telegram: ссылки t.me/telegram.me > @ник без ссылки (email не цепляем: перед @ буква)
   const tg = text.match(/(?:t\.me|telegram\.me)\/([a-zA-Z0-9_]+)/);
@@ -157,6 +165,15 @@ function extractContacts(detail) {
     // пост-фильтр по полному домену: отсечь www.-варианты заблокированных (www.instagram.com и т.п.)
     const host = site[0].replace(/^https?:\/\/(?:www\.)?/i, '');
     if (!/(^|\.)(t\.me|telegram\.me|baliforum\.ru|instagram\.com|facebook\.com|youtube\.com|wa\.me|goo\.gl|maps\.|api\.)/i.test(host)) out.contact = site[0];
+  }
+  // Fallback: если сайт не найден в тексте — берём полный link из linkTool-блока (не соцсети)
+  if (!out.contact) {
+    const lt = blocks.find((b) => b.type === 'linkTool' && b.data?.link);
+    if (lt) {
+      const link = decodeEntities(lt.data.link);
+      const host = link.replace(/^https?:\/\/(?:www\.)?/i, '').split('/')[0];
+      if (!/(^|\.)(t\.me|telegram\.me|baliforum\.ru|instagram\.com|facebook\.com|youtube\.com|wa\.me|goo\.gl|maps\.|api\.)/i.test(host)) out.contact = link;
+    }
   }
   return out;
 }
