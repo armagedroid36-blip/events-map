@@ -252,6 +252,16 @@ export default function EventsModerationTab({ onChanged }: Props) {
             <div className="mt-3 flex justify-end gap-2">
               <button
                 onClick={() => {
+                  const ev = selected;
+                  setSelected(null);
+                  setEditEvent(ev);
+                }}
+                className="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+              >
+                {t('admin.moderation.edit')}
+              </button>
+              <button
+                onClick={() => {
                   const id = selected.id;
                   setSelected(null);
                   approve(id);
