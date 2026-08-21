@@ -58,18 +58,50 @@ function igLink(v: string) {
   return `https://instagram.com/${s}`;
 }
 
-/** Разбить текст по URL: найденные ссылки — кликабельными, открываются в новой вкладке */
+/** Короткий вид URL: без протокола, обрезать до ~40 символов */
+function shortUrl(url: string): string {
+  let s = url.replace(/^https?:\/\//, '');
+  if (s.length > 40) s = s.slice(0, 40).replace(/[.,;:!?]+$/, '') + '…';
+  return s;
+}
+
+/** Голые URL в тексте → кликабельные короткие ссылки */
+function linkifyBare(text: string, keyBase: number): ReactNode {
+  const parts = text.split(/(https?:\/\/[^\s<>)]+)/g);
+  return parts.map((part, i) => {
+    const k = `${keyBase}-${i}`;
+    if (/^https?:\/\//.test(part)) {
+      return (
+        <a key={k} href={part} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline break-all">
+          {shortUrl(part)}
+        </a>
+      );
+    }
+    return <span key={k}>{part}</span>;
+  });
+}
+
+/** Кликабельные ссылки в описании: «текст (URL)» → подпись без URL; голый URL → короткая ссылка */
 function linkifyText(text: string): ReactNode {
-  const parts = text.split(/(https?:\/\/[^\s<>]+)/g);
-  return parts.map((part, i) =>
-    /^https?:\/\//.test(part) ? (
-      <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline break-all">
-        {part}
-      </a>
-    ) : (
-      <span key={i}>{part}</span>
-    ),
-  );
+  const out: ReactNode[] = [];
+  // Этап 1: «текст (https://…URL…)» — URL прячем, показываем только подпись
+  const re = /([^()\n]*?)\s*\(https?:\/\/[^\s<>)]+\)/g;
+  let last = 0;
+  let k = 0;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text)) !== null) {
+    out.push(linkifyBare(text.slice(last, m.index), k++));
+    const url = m[0].match(/https?:\/\/[^\s<>)]+/)?.[0] || '';
+    const label = m[1].trim() || shortUrl(url);
+    out.push(
+      <a key={k++} href={url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+        {label}
+      </a>,
+    );
+    last = m.index + m[0].length;
+  }
+  out.push(linkifyBare(text.slice(last), k));
+  return <>{out}</>;
 }
 
 function CLink({ href, title, children }: { href: string; title: string; children: ReactNode }) {
