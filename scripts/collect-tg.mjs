@@ -6,6 +6,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { extractPrice } from './price-llm.mjs';
 import { extractCategory } from './category-llm.mjs';
+import { extractTime } from './time-llm.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -395,6 +396,8 @@ async function main() {
       }
       // Категория: LLM точнее в спорных случаях; при ошибке/без ключа — старая логика
       const llmCat = await extractCategory(post.text, ch.city);
+      // Время: LLM понимает «9pm»; при ошибке/без ключа — старый regex
+      const llmTime = await extractTime(post.text);
       const website = `https://t.me/${post.pid}`;
 
       const row = {
@@ -406,8 +409,8 @@ async function main() {
         language: 'ru',
         start_date: when.date,
         end_date: null,
-        start_time: when.time || null,
-        end_time: null,
+        start_time: llmTime?.start_time || when.time || null,
+        end_time: llmTime?.end_time || null,
         city: ch.city,
         address,
         lat,
