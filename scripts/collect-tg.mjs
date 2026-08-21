@@ -211,7 +211,18 @@ function parsePost(block) {
       .trim()
   );
   const links = [...new Set([...block.matchAll(/href="(https?:\/\/[^"]+)"/g)].map((m) => m[1]))];
-  return { pid, dt, text, links };
+  // Фото поста: обложки (background-image), <img> и постеры видео.
+  // Оставляем только реальные фото (URL с «cdn»), отсекая иконки/логотипы telegram.org
+  const photos = [
+    ...[...block.matchAll(/background-image:\s*url\(['"]?([^'")]+)['"]?\)/g)].map((m) => m[1]),
+    ...[...block.matchAll(/<img[^>]+src="([^"]+)"/g)].map((m) => m[1]),
+    ...[...block.matchAll(/poster="([^"]+)"/g)].map((m) => m[1]),
+  ]
+    .filter((u) => /cdn|telegram-cdn/i.test(u))
+    .map((u) => (u.startsWith('//') ? `https:${u}` : u))
+    .filter((u, i, arr) => arr.indexOf(u) === i)
+    .slice(0, 5);
+  return { pid, dt, text, links, photos };
 }
 
 /** Ссылки goo.gl/maps и t.me из поста */
@@ -404,7 +415,7 @@ async function main() {
         category_id: llmCat || pickCategory(post.text),
         website,
         contact_telegram: tgMain,
-        photos: [],
+        photos: post.photos ? post.photos.slice(0, 3) : [],
         price: p?.price ?? null,
         currency: p?.currency ?? null,
         donation: !!p?.donation,
