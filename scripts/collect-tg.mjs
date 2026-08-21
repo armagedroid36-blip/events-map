@@ -4,6 +4,7 @@
 // контакты организатора (t.me), цена (если в тексте), ссылка на пост.
 // Запускается в GitHub Actions ежедневно; статус событий — «на модерации».
 import { createClient } from '@supabase/supabase-js';
+import { extractPrice } from './price-llm.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -341,7 +342,12 @@ async function main() {
         lng = ch.fallback.lng;
       }
 
-      const price = parsePrice(post.text);
+      // Цена через LLM; если LLM недоступен — fallback на regex parsePrice
+      let p = await extractPrice(post.text, ch.city);
+      if (!p) {
+        const rp = parsePrice(post.text);
+        if (rp != null) p = { price: rp, currency: null, free: false, donation: false };
+      }
       const website = `https://t.me/${post.pid}`;
 
       const row = {
@@ -363,8 +369,9 @@ async function main() {
         website,
         contact_telegram: tgMain,
         photos: [],
-        price,
-        currency: price == null ? null : (price > 10000 ? 'vnd' : 'usd'),
+        price: p?.price ?? null,
+        currency: p?.currency ?? null,
+        donation: !!p?.donation,
         status: 'moderation',
       };
 

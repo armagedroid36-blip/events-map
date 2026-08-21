@@ -2,6 +2,7 @@
 // Запускается по расписанию в GitHub Actions (или вручную).
 // API Балифорума открытый, без ключа. Переменные окружения: SUPABASE_URL, SUPABASE_SERVICE_ROLE.
 import { createClient } from '@supabase/supabase-js';
+import { extractPrice } from './price-llm.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -244,6 +245,7 @@ async function main() {
 
       const description = extractDescription(detail);
       const contacts = extractContacts(detail);
+      const p = await extractPrice(description, ev.place?.cityName || 'Bali');
       const startDate = when.raw.startAt.slice(0, 10);
       const endDate = when.raw.endAt ? when.raw.endAt.slice(0, 10) : null;
       const startTime = when.raw.startAt.slice(11, 16) || null;
@@ -274,8 +276,9 @@ async function main() {
         contact_phone: contacts.contact_phone || null,
         contact_instagram: contacts.contact_instagram || null,
         photos,
-        price: null,
-        currency: null,
+        price: p?.price ?? null,
+        currency: p?.currency ?? null,
+        donation: !!p?.donation,
         status: 'moderation',
       };
 
