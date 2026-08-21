@@ -145,7 +145,13 @@ class SupabaseApi implements DataApi {
   }
 
   async submitApplication(draft: ApplicationDraft): Promise<void> {
-    const { error } = await this.db.from('applications').insert(draft as never);
+    // Таблица applications не содержит country/languages/donation — лишние поля
+    // роняют INSERT (42703), и пользователь видит «Не удалось отправить заявку».
+    const clean: Record<string, unknown> = { ...(draft as Record<string, unknown>) };
+    delete clean.country;
+    delete clean.languages;
+    delete clean.donation;
+    const { error } = await this.db.from('applications').insert(clean as never);
     if (error) throw error;
   }
 
