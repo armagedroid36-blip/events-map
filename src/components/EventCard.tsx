@@ -403,17 +403,7 @@ export default function EventCard({ event, categories, onClose: _onClose, isAdmi
   };
 
   return (
-    <div className="relative rounded-lg p-4">
-      {isAdmin && onDelete && (
-        <button
-          onClick={handleDelete}
-          className="absolute right-2 top-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-red-50 text-red-600 shadow hover:bg-red-100"
-          title="Удалить событие"
-          aria-label="Удалить событие"
-        >
-          🗑
-        </button>
-      )}
+    <div className="rounded-lg p-4">
       <h3 className="mb-2 text-base font-semibold leading-snug text-gray-900">{title}</h3>
 
       {/* Фото: маленькие превью, клик — карусель на весь экран */}
@@ -548,6 +538,20 @@ export default function EventCard({ event, categories, onClose: _onClose, isAdmi
           <Lightbox photos={photos} start={lightbox} onClose={() => setLightbox(null)} />,
           document.body,
         )}
+
+      {/* Удаление (только админ) — внизу карточки, справа */}
+      {isAdmin && onDelete && (
+        <div className="mt-3 flex justify-end">
+          <button
+            onClick={handleDelete}
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-red-50 text-red-600 shadow hover:bg-red-100"
+            title="Удалить событие"
+            aria-label="Удалить событие"
+          >
+            🗑
+          </button>
+        </div>
+      )}
     </div>
   );
 }
