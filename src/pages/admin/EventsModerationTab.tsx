@@ -153,7 +153,7 @@ export default function EventsModerationTab({ onChanged }: Props) {
           return (
             <div
               key={ev.id}
-              className="flex flex-col gap-3 rounded-lg border border-amber-200 bg-amber-50/50 p-3 sm:flex-row sm:items-center sm:justify-between"
+              className="flex min-w-0 flex-col gap-3 rounded-lg border border-amber-200 bg-amber-50/50 p-3 sm:flex-row sm:items-center sm:justify-between"
             >
               <button
                 onClick={() => setSelected(ev)}
@@ -182,7 +182,7 @@ export default function EventsModerationTab({ onChanged }: Props) {
                 )}
                 {/* Контакты организатора — видны только админу */}
                 {(ev.contact_telegram || ev.contact_whatsapp || ev.contact_email || ev.contact_phone || ev.contact_instagram || ev.contact) && (
-                  <p className="mt-1 text-xs text-gray-600">
+                  <p className="mt-1 break-all text-xs text-gray-600">
                     {[ev.contact_telegram && `TG: ${ev.contact_telegram}`, ev.contact_whatsapp && `WA: ${ev.contact_whatsapp}`, ev.contact_email && ev.contact_email, ev.contact_phone && ev.contact_phone, ev.contact_instagram && `IG: ${ev.contact_instagram}`, ev.contact && `Site: ${ev.contact}`]
                       .filter(Boolean)
                       .join(' • ')}

@@ -58,6 +58,20 @@ function igLink(v: string) {
   return `https://instagram.com/${s}`;
 }
 
+/** Разбить текст по URL: найденные ссылки — кликабельными, открываются в новой вкладке */
+function linkifyText(text: string): ReactNode {
+  const parts = text.split(/(https?:\/\/[^\s<>]+)/g);
+  return parts.map((part, i) =>
+    /^https?:\/\//.test(part) ? (
+      <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline break-all">
+        {part}
+      </a>
+    ) : (
+      <span key={i}>{part}</span>
+    ),
+  );
+}
+
 function CLink({ href, title, children }: { href: string; title: string; children: ReactNode }) {
   return (
     <a
@@ -420,7 +434,7 @@ export default function EventCard({ event, categories, onClose: _onClose }: Prop
         )}
       </div>
 
-      <p className="mb-3 whitespace-pre-line text-sm leading-relaxed text-gray-700">{description}</p>
+      <p className="mb-3 whitespace-pre-line text-sm leading-relaxed text-gray-700">{linkifyText(description)}</p>
 
       {/* Контакты организатора: векторные иконки-ссылки */}
       {(event.contact_telegram || event.contact_whatsapp || event.contact_email || event.contact_phone || event.contact_instagram) && (
