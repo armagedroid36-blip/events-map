@@ -25,7 +25,9 @@ const MAX_PER_CHANNEL = Number(process.env.MAX_PER_CHANNEL || 10); // лимит
 const MAX_POSTS = Number(process.env.MAX_POSTS || 25);   // сколько свежих постов смотрим на канал
 const DRY_RUN = process.env.DRY_RUN === '1';
 
-// Каналы: город, координаты города (запасные), страна.
+// Каналы: город, страна. fallback — координаты центра города, используются
+// ТОЛЬКО как эталон для отбраковки в geocode (геокодер «угадал» центр),
+// в координаты события НЕ подставляются.
 const CHANNELS = [
   {
     username: 'nyachang_ru',
@@ -256,8 +258,10 @@ async function resolveMap(url) {
   }
 }
 
-/** Геокодировать адрес через Nominatim (с городом) */
-async function geocode(address, city, country) {
+/** Геокодировать адрес через Nominatim (с городом).
+ *  rejectNear — координаты центра города: если Nominatim вернул точку в радиусе
+ *  ~0.01° от центра (геокодер «угадал» город по названию) — считаем провалом. */
+async function geocode(address, city, country, rejectNear) {
   if (!address) return null;
   const q = encodeURIComponent(`${address}, ${city}, ${country}`);
   try {
@@ -267,7 +271,14 @@ async function geocode(address, city, country) {
     if (!res.ok) return null;
     const data = await res.json();
     if (data && data[0]) {
-      return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+      const lat = parseFloat(data[0].lat);
+      const lng = parseFloat(data[0].lon);
+      if (rejectNear) {
+        const dLat = lat - rejectNear.lat;
+        const dLng = lng - rejectNear.lng;
+        if (dLat * dLat + dLng * dLng < 0.01 * 0.01) return null;
+      }
+      return { lat, lng };
     }
   } catch { /* ignore */ }
   return null;
@@ -381,15 +392,14 @@ async function main() {
       if (!address && lat != null && lng != null) {
         address = await reverseGeocode(lat, lng);
       }
+      // Координаты: только из карты или геокодом. Центр города НЕ подставляем.
       if ((lat == null || lng == null) && address) {
-        const g = await geocode(address, ch.city, ch.country);
+        const g = await geocode(address, ch.city, ch.country, ch.fallback);
         if (g) { lat = g.lat; lng = g.lng; }
       }
-      // В крайнем случае — центр города
-      if (lat == null || lng == null) {
-        lat = ch.fallback.lat;
-        lng = ch.fallback.lng;
-      }
+      // Если адрес не геокодируется или его нет — lat/lng остаются null:
+      // событие не рисуется на карте (isValidCoords), но попадает в модерацию,
+      // где админ увидит отсутствие координат.
 
       // Цена через LLM; если LLM недоступен — fallback на regex parsePrice
       let p = await extractPrice(post.text, ch.city);

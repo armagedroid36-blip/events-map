@@ -46,8 +46,9 @@ export interface EventItem {
   /** Город и адрес — единые, без перевода */
   city: string;
   address?: string;
-  lat: number;
-  lng: number;
+  /** Координаты могут отсутствовать (событие с адресом, но без геокода) */
+  lat: number | null;
+  lng: number | null;
   category_id: string;
   /** Ссылка на страницу события (внешняя) */
   website?: string;

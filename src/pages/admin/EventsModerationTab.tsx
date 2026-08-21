@@ -6,6 +6,7 @@ import { getApi } from '../../lib/api';
 import { formatDate } from '../../lib/dates';
 import EventCard from '../../components/EventCard';
 import EventForm from '../../components/EventForm';
+import { isValidCoords } from '../../lib/coords';
 import type { Category, EventItem } from '../../lib/types';
 
 interface Props {
@@ -72,6 +73,8 @@ export default function EventsModerationTab({ onChanged }: Props) {
     if (!ev.address?.trim()) issues.push('noAddress');
     if (!ev.start_time) issues.push('noTime');
     if (!ev.photos?.length) issues.push('noPhotos');
+    // Координат нет — событие не отображается на карте; нужен точный адрес
+    if (!isValidCoords(ev.lat, ev.lng)) issues.push('noCoords');
     // Координаты приблизительные: адреса нет и нет ссылки на пост/сайт с картой
     // (типично для событий из Telegram-парсера)
     if (!ev.address?.trim() && !ev.website?.trim()) issues.push('approxCoords');

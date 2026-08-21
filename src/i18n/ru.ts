@@ -243,6 +243,7 @@ export default {
       noAddress: 'Нет адреса',
       noTime: 'Нет времени',
       noPhotos: 'Нет фото',
+      noCoords: 'Нет координат — нужен точный адрес',
       approxCoords: 'Координаты приблизительные',
       attention: 'Требует внимания',
     },

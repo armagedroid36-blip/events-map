@@ -196,10 +196,14 @@ export default function Home() {
     if (!bounds) return visible.slice(0, LIST_LIMIT);
     const [sw, ne] = bounds;
     return visible
-      .filter(
-        (ev) =>
-          ev.lat >= sw[0] && ev.lat <= ne[0] && ev.lng >= sw[1] && ev.lng <= ne[1],
-      )
+      .filter((ev) => {
+        const lat = ev.lat;
+        const lng = ev.lng;
+        // Без координат (адрес есть, геокода нет) — не фильтровать по карте,
+        // иначе событие исчезает из списка при перемещении карты
+        if (lat == null || lng == null) return true;
+        return lat >= sw[0] && lat <= ne[0] && lng >= sw[1] && lng <= ne[1];
+      })
       .slice(0, LIST_LIMIT);
   }, [visible, bounds]);
 

@@ -56,6 +56,7 @@ function ClusterLayer({ events, categories, onSelect }: ClusterLayerProps) {
     group.clearLayers();
     const markers = events
       .filter((ev) => isValidCoords(ev.lat, ev.lng))
+      .filter((ev): ev is EventItem & { lat: number; lng: number } => ev.lat != null && ev.lng != null)
       .map((ev) => {
       const cat = categories.find((c) => c.id === ev.category_id);
       const icon = L.divIcon({

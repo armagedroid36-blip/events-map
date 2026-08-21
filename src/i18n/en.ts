@@ -243,6 +243,7 @@ export default {
       noAddress: 'No address',
       noTime: 'No time',
       noPhotos: 'No photos',
+      noCoords: 'No coordinates — exact address needed',
       approxCoords: 'Approximate coordinates',
       attention: 'Needs attention',
     },
