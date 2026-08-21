@@ -179,7 +179,11 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
   const [city, setCity] = useState(event?.city ?? '');
   const [address, setAddress] = useState(event?.address ?? '');
   const [categoryId, setCategoryId] = useState(event?.category_id ?? '');
-  const [language, setLanguage] = useState(event?.language ?? '');
+  const [language] = useState(event?.language ?? '');
+  // Несколько языков: если заданы — берём их, иначе одиночный language
+  const [languages, setLanguages] = useState<string[]>(
+    event?.languages?.length ? event.languages : event?.language ? [event.language] : [],
+  );
   const [website, setWebsite] = useState(event?.website ?? '');
   // Контакты: поля ввода (для организатора предзаполняются из профиля)
   const [contact, setContact] = useState(event?.contact ?? '');
@@ -390,7 +394,8 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
         lat,
         lng,
         category_id: categoryId,
-        language: language || undefined,
+        languages: languages.length ? languages : undefined,
+        language: languages[0] || language || undefined,
         website: websiteNorm || undefined,
         photos,
         price: priceVal,
@@ -585,17 +590,30 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
             {err('category_id')}
           </div>
 
-          {/* Язык мероприятия */}
+          {/* Язык мероприятия: можно выбрать несколько */}
           <div>
             <label className="mb-1 block text-sm text-gray-600">{t('form.language')}</label>
-            <select value={language} onChange={(e) => setLanguage(e.target.value)} className={input}>
-              <option value="">{t('form.selectLanguage')}</option>
-              {LANGUAGES.map((l) => (
-                <option key={l.code} value={l.code}>
-                  {lang === 'ru' ? l.name_ru : l.name_en}
-                </option>
-              ))}
-            </select>
+            <div className="flex flex-wrap gap-1.5">
+              {LANGUAGES.map((l) => {
+                const active = languages.includes(l.code);
+                return (
+                  <button
+                    key={l.code}
+                    type="button"
+                    onClick={() =>
+                      setLanguages((prev) => (active ? prev.filter((c) => c !== l.code) : [...prev, l.code]))
+                    }
+                    className={
+                      active
+                        ? 'rounded-full bg-gray-900 px-2.5 py-1 text-xs font-medium text-white'
+                        : 'rounded-full border border-gray-300 px-2.5 py-1 text-xs text-gray-600 hover:bg-gray-50'
+                    }
+                  >
+                    {lang === 'ru' ? l.name_ru : l.name_en}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Цена и валюта */}

@@ -35,6 +35,8 @@ export interface EventItem {
   source_lang: string;
   /** Язык мероприятия (для посетителей): 'en', 'ru' и т.д. */
   language?: string | null;
+  /** Языки мероприятия (несколько): ['en', 'ru'] — приоритетнее, чем language */
+  languages?: string[];
   /** Даты: ISO-формат (YYYY-MM-DD) */
   start_date: string;
   end_date?: string;

@@ -18,7 +18,7 @@ export const config = {
   demoMode: false,
 
   // Версия сборки — показывается в шапке мелким текстом для сверки
-  buildVersion: 'v20.08-12',
+  buildVersion: 'v20.08-13',
 
   // --- Карта ---
   // Центр по умолчанию — Юго-Восточная Азия (используется, если посетитель
@@ -54,5 +54,6 @@ export const config = {
     { id: 'games', name_ru: 'Игры и квизы', name_en: 'Games & Quizzes', emoji: '🎲' },
     { id: 'meetup', name_ru: 'Встречи и нетворкинг', name_en: 'Meetups & Networking', emoji: '🤝' },
     { id: 'tour', name_ru: 'Экскурсии и туры', name_en: 'Tours & Excursions', emoji: '🗺️' },
+    { id: 'speaking', name_ru: 'Разговорный клуб', name_en: 'Speaking Club', emoji: '💬' },
   ],
 };

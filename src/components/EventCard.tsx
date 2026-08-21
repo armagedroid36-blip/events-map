@@ -440,12 +440,17 @@ export default function EventCard({ event, categories, onClose: _onClose, isAdmi
             </span>
           </>
         )}
-        {event.language && (
+        {event.languages?.length ? (
+          <>
+            <span className="text-gray-300">•</span>
+            <span>🌐 {event.languages.map((c) => languageName(c, lang)).filter(Boolean).join(' · ')}</span>
+          </>
+        ) : event.language ? (
           <>
             <span className="text-gray-300">•</span>
             <span>🗣 {languageName(event.language, lang)}</span>
           </>
-        )}
+        ) : null}
       </div>
 
       {/* Адрес: клик открывает Google Maps */}
