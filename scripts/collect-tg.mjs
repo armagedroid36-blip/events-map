@@ -157,9 +157,30 @@ function parsePrice(text) {
   return n;
 }
 
+/** Декодировать HTML-entities: &#NNN;, &#xHH;, &amp;, &lt;, &gt;, &quot;, &apos;, &nbsp;.
+ *  Итеративно — покрывает двойное кодирование (&amp;#43; → &#43; → +). */
+function decodeEntities(s) {
+  if (!s) return s;
+  let out = s;
+  for (let i = 0; i < 5; i++) {
+    const next = out
+      .replace(/&#x([0-9a-fA-F]+);/g, (m, h) => String.fromCharCode(parseInt(h, 16)))
+      .replace(/&#(\d+);/g, (m, d) => String.fromCharCode(parseInt(d, 10)))
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&apos;/g, "'")
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&amp;/g, '&');
+    if (next === out) break;
+    out = next;
+  }
+  return out;
+}
+
 /** Название: первая строка без эмодзи и служебных слов */
 function extractTitle(text) {
-  const first = text.split(/\n/)[0].trim();
+  const first = decodeEntities(text).split(/\n/)[0].trim();
   const clean = first
     .replace(/[^\p{L}\p{N}\s.,!?«»"':()\-]/gu, ' ')
     .replace(/\s+/g, ' ')
@@ -179,13 +200,13 @@ function parsePost(block) {
   const pid = block.match(/data-post="([^"]+)"/)?.[1] || null;
   const dt = block.match(/datetime="([^"]+)"/)?.[1] || null;
   const tm = block.match(/class="tgme_widget_message_text[^"]*"[^>]*>(.*?)<\/div>/s)?.[1] || '';
-  const text = tm
-    .replace(/<br\s*\/?>/gi, '\n')
-    .replace(/<[^>]+>/g, '')
-    .replace(/&[a-z]+;/g, (e) => ({ '&#33;': '!', '&amp;': '&', '&quot;': '"', '&lt;': '<', '&gt;': '>' })[e] || e)
-    .replace(/&#\d+;/g, ' ')
-    .replace(/[ \t]+/g, ' ')
-    .trim();
+  const text = decodeEntities(
+    tm
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<[^>]+>/g, '')
+      .replace(/[ \t]+/g, ' ')
+      .trim()
+  );
   const links = [...new Set([...block.matchAll(/href="(https?:\/\/[^"]+)"/g)].map((m) => m[1]))];
   return { pid, dt, text, links };
 }
@@ -281,7 +302,7 @@ async function main() {
       if (inserted >= MAX_EVENTS) break;
       const post = parsePost(raw);
       if (!post.pid || !post.text) continue;
-      const cleanText = post.text.replace(/&/g, '&amp;');
+      const cleanText = decodeEntities(post.text);
 
       // Событие должно содержать дату в будущем
       const when = parseDate(post.text);
