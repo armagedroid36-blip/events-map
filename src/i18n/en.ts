@@ -194,6 +194,7 @@ export default {
     badUrl: 'Enter a valid link',
     badPhotoUrl: 'Invalid image link',
     geocodeFail: 'Could not find the address on the map. Move the marker manually.',
+    loginToPublish: 'Only organizers can publish events. Sign in as an organizer.',
   },
   admin: {
     login: 'Admin login',

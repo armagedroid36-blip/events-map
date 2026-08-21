@@ -441,9 +441,6 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
           status: 'active',
         });
         void translateInBackground(ev.id, title, description, lang);
-      } else {
-        // Гость: заявка с контактом
-        await getApi().submitApplication({ ...common, contact });
       }
       setDone(true);
     } catch {
@@ -460,6 +457,26 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
             <p className="mb-4 text-gray-800">
               {isEdit ? t('form.saved') : isAdmin ? t('form.published') : t('form.success')}
             </p>
+            <button
+              onClick={onClose}
+              className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700"
+            >
+              {t('common.close')}
+            </button>
+          </div>
+        </div>
+      </div>,
+      document.body,
+    );
+  }
+
+  // Гости и обычные пользователи не размещают события — только организаторы/админ
+  if (!isEdit && !isOrg && !isAdmin) {
+    return createPortal(
+      <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/25 p-4" style={{ zIndex: winZ }} onClick={onClose}>
+        <div className="flex min-h-full items-center justify-center">
+          <div className="glass-strong mx-auto w-full max-w-md rounded-xl p-6 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <p className="mb-4 text-gray-800">{t('form.loginToPublish')}</p>
             <button
               onClick={onClose}
               className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700"
