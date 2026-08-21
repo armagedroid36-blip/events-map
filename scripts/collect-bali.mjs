@@ -122,10 +122,33 @@ function extractContacts(detail) {
   if (tg) out.contact_telegram = tg[0].startsWith('http') ? tg[0] : `https://${tg[0]}`;
   const email = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
   if (email) out.contact_email = email[0];
-  const phone = text.match(/\+62[\d\s\-()]{7,}/) || text.match(/(?<![\d])\b0[78][\d]{2}[\d\s\-()]{6,}/);
-  if (phone) out.contact_phone = phone[0].replace(/\s+/g, ' ').trim();
+  // Телефон: сначала явный префикс tel:, затем мобильные, затем стационарные индонезийские
+  let phone = null;
+  const telMatch = text.match(/tel:\s*\(?\d[\d\s\-()]{6,}\)?/i);
+  if (telMatch) {
+    phone = telMatch[0].replace(/^tel:\s*/i, '');
+  } else {
+    const m = text.match(/\+62[\d\s\-()]{7,}/)
+      || text.match(/(?<![\d])\b0[78][\d]{2}[\d\s\-()]{6,}/)
+      || text.match(/\(0\d{2,4}\)\s?\d{4,8}/)
+      || text.match(/(?<![\d])\b0\d{2,4}[\s\-]\d{4,8}/);
+    if (m) phone = m[0];
+  }
+  if (phone) out.contact_phone = phone.replace(/\s+/g, ' ').trim();
+  // Instagram: из <a href> и голых ссылок; user до первого '/', query отрезана
+  const insta = text.match(/instagram\.com\/([A-Za-z0-9_.]+)/i);
+  if (insta) {
+    const user = insta[1];
+    if (!['p', 'reel', 'explore', 'stories', 'accounts', 'tags', 'share', 'discover'].includes(user.toLowerCase())) {
+      out.contact_instagram = `https://www.instagram.com/${user}/`;
+    }
+  }
   const site = text.match(/https?:\/\/(?!t\.me|telegram|static\.baliforum|baliforum|instagram|facebook|youtube|wa\.me|api\.|maps\.|goo\.gl)[a-z0-9-]+(\.[a-z0-9-]+)+/i);
-  if (site) out.contact = site[0];
+  if (site) {
+    // пост-фильтр по полному домену: отсечь www.-варианты заблокированных (www.instagram.com и т.п.)
+    const host = site[0].replace(/^https?:\/\/(?:www\.)?/i, '');
+    if (!/(^|\.)(t\.me|telegram\.me|baliforum\.ru|instagram\.com|facebook\.com|youtube\.com|wa\.me|goo\.gl|maps\.|api\.)/i.test(host)) out.contact = site[0];
+  }
   return out;
 }
 
@@ -219,6 +242,7 @@ async function main() {
         contact_telegram: contacts.contact_telegram || null,
         contact_email: contacts.contact_email || null,
         contact_phone: contacts.contact_phone || null,
+        contact_instagram: contacts.contact_instagram || null,
         photos,
         price: null,
         currency: null,
