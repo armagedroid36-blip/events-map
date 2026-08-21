@@ -118,8 +118,14 @@ function extractContacts(detail) {
   if (!Array.isArray(blocks)) return {};
   const text = decodeEntities(blocks.map((b) => (b.data && b.data.text ? b.data.text : '')).join(' '));
   const out = {};
-  const tg = text.match(/(?:t\.me|telegram\.me)\/([a-zA-Z0-9_]+)/g);
-  if (tg) out.contact_telegram = tg[0].startsWith('http') ? tg[0] : `https://${tg[0]}`;
+  // Telegram: ссылки t.me/telegram.me > @ник без ссылки (email не цепляем: перед @ буква)
+  const tg = text.match(/(?:t\.me|telegram\.me)\/([a-zA-Z0-9_]+)/);
+  if (tg) {
+    out.contact_telegram = tg[0].startsWith('http') ? tg[0] : `https://${tg[0]}`;
+  } else {
+    const nick = text.match(/(?<![A-Za-z0-9_.+-])@([A-Za-z0-9_]{3,})/);
+    if (nick) out.contact_telegram = `https://t.me/${nick[1]}`;
+  }
   const email = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
   if (email) out.contact_email = email[0];
   // Телефон: сначала явный префикс tel:, затем мобильные, затем стационарные индонезийские
@@ -135,10 +141,13 @@ function extractContacts(detail) {
     if (m) phone = m[0];
   }
   if (phone) out.contact_phone = phone.replace(/\s+/g, ' ').trim();
-  // Instagram: из <a href> и голых ссылок; user до первого '/', query отрезана
-  const insta = text.match(/instagram\.com\/([A-Za-z0-9_.]+)/i);
-  if (insta) {
-    const user = insta[1];
+  // Instagram: https-ссылка > голая ссылка instagram.com/ник > inst:/ig:/instagram: ник
+  const igHref = text.match(/https?:\/\/[^\s"'<>]*instagram\.com\/([A-Za-z0-9_.]+)/i);
+  const igBare = igHref ? null : text.match(/instagram\.com\/([A-Za-z0-9_.]+)/i);
+  const igNick = !igHref && !igBare ? text.match(/(?:^|\s)(?:instagram|inst|ig)\s*[:—-]?\s*@?([A-Za-z0-9_.]{3,})/i) : null;
+  const igRaw = igHref || igBare || igNick;
+  if (igRaw) {
+    const user = igRaw[1];
     if (!['p', 'reel', 'explore', 'stories', 'accounts', 'tags', 'share', 'discover'].includes(user.toLowerCase())) {
       out.contact_instagram = `https://www.instagram.com/${user}/`;
     }
