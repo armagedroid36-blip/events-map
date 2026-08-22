@@ -252,14 +252,14 @@ export default function EventsModerationTab({ onChanged }: Props) {
               </div>
             )}
             <EventCard event={selected} categories={categories} onClose={() => setSelected(null)} />
-            <div className="mt-3 flex flex-wrap justify-end gap-2">
+            <div className="mt-3 flex justify-end gap-2">
               <button
                 onClick={() => {
                   const ev = selected;
                   setSelected(null);
                   setEditEvent(ev);
                 }}
-                className="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                className="rounded-md border border-gray-300 px-2 py-2 text-sm text-gray-700 hover:bg-gray-50 sm:px-4"
               >
                 {t('admin.moderation.edit')}
               </button>
@@ -269,7 +269,7 @@ export default function EventsModerationTab({ onChanged }: Props) {
                   setSelected(null);
                   approve(id);
                 }}
-                className="rounded-md bg-green-600 px-4 py-2 text-sm text-white hover:bg-green-500"
+                className="rounded-md bg-green-600 px-2 py-2 text-sm text-white hover:bg-green-500 sm:px-4"
               >
                 {t('admin.moderation.approve')}
               </button>
@@ -278,7 +278,7 @@ export default function EventsModerationTab({ onChanged }: Props) {
                   setSelected(null);
                   setRejectTarget(selected);
                 }}
-                className="rounded-md border border-red-300 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                className="rounded-md border border-red-300 px-2 py-2 text-sm text-red-600 hover:bg-red-50 sm:px-4"
               >
                 {t('admin.moderation.reject')}
               </button>
