@@ -252,7 +252,7 @@ export default function EventsModerationTab({ onChanged }: Props) {
               </div>
             )}
             <EventCard event={selected} categories={categories} onClose={() => setSelected(null)} />
-            <div className="mt-3 flex justify-end gap-2">
+            <div className="mt-3 flex flex-wrap justify-end gap-2">
               <button
                 onClick={() => {
                   const ev = selected;
