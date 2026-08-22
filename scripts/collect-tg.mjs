@@ -33,6 +33,7 @@ const CHANNELS = [
     username: 'nyachang_ru',
     city: 'Нячанг',
     country: 'VN',
+    tzMin: 420, // UTC+7
     fallback: { lat: 12.2388, lng: 109.1967 },
     keywords: ['квиз', 'йога', 'настолки', 'мафия', 'медитаци', 'мастер-класс', 'рисован', 'глин', 'концерт', 'вечеринк', 'выставк', 'фестивал', 'тур', 'экскурси', 'нетворк', 'speaking', 'english'],
   },
@@ -40,6 +41,7 @@ const CHANNELS = [
     username: 'danang_afisha',
     city: 'Дананг',
     country: 'VN',
+    tzMin: 420, // UTC+7
     fallback: { lat: 16.0544, lng: 108.2022 },
     keywords: ['квиз', 'йога', 'настолки', 'мафия', 'медитаци', 'мастер-класс', 'рисован', 'глин', 'концерт', 'вечеринк', 'выставк', 'фестивал', 'тур', 'экскурси', 'нетворк', 'speaking', 'english'],
   },
@@ -109,7 +111,12 @@ function parseDate(text) {
     const month = MONTHS[m1[2].toLowerCase()];
     let year = now.getFullYear();
     const cand = new Date(year, month - 1, day);
-    if (cand < now) year++;
+    if (cand < now) {
+      // «25 декабря» в январе — анонс на следующий год (дата далеко в прошлом);
+      // «21 августа» 22-го числа — уже прошедшее событие, не берём
+      if ((now - cand) / 86400000 > 90) year++;
+      else return null;
+    }
     date = new Date(year, month - 1, day);
   }
 
@@ -425,6 +432,23 @@ async function main() {
       if (!when) {
         console.log(`  - ${post.pid}: нет даты — пропуск`);
         continue;
+      }
+
+      // Пропускаем события, которые уже начались/закончились к моменту сбора
+      const cityTz = ch.tzMin ?? 7 * 60;
+      const cityNow = new Date(Date.now() + cityTz * 60000);
+      const todayCity = `${cityNow.getUTCFullYear()}-${String(cityNow.getUTCMonth() + 1).padStart(2, '0')}-${String(cityNow.getUTCDate()).padStart(2, '0')}`;
+      if (when.date < todayCity) {
+        console.log(`  - ${post.pid}: дата в прошлом (${when.date}) — пропуск`);
+        continue;
+      }
+      if (when.date === todayCity && when.time) {
+        const [hh, mm] = when.time.split(':').map(Number);
+        const nowMin = cityNow.getUTCHours() * 60 + cityNow.getUTCMinutes();
+        if (hh * 60 + mm <= nowMin) {
+          console.log(`  - ${post.pid}: уже началось (${when.time}) — пропуск`);
+          continue;
+        }
       }
 
       const title = extractTitle(post.text);
