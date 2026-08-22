@@ -373,6 +373,12 @@ function Lightbox({
 export default function EventCard({ event, categories, onClose: _onClose, isAdmin, onDelete }: Props) {
   const { t, i18n } = useTranslation();
   const [lightbox, setLightbox] = useState<number | null>(null);
+  // Индексы фото с битыми ссылками (onError) — скрываем их, не пряча молча
+  const [brokenPhotos, setBrokenPhotos] = useState<Set<number>>(() => new Set());
+  // При смене события сбрасываем отметки битых фото
+  useEffect(() => {
+    setBrokenPhotos(new Set());
+  }, [event.id]);
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
   const cat = categories.find((c) => c.id === event.category_id);
 
@@ -398,6 +404,9 @@ export default function EventCard({ event, categories, onClose: _onClose, isAdmi
 
   const photos = (event.photos ?? []).filter((p) => p);
 
+  // Рабочие фото: без битых ссылок (onError)
+  const okPhotos = photos.filter((_, i) => !brokenPhotos.has(i));
+
   // Удаление доступно только админу, с подтверждением
   const handleDelete = () => {
     if (onDelete && window.confirm('Удалить событие?')) onDelete(event.id);
@@ -407,17 +416,30 @@ export default function EventCard({ event, categories, onClose: _onClose, isAdmi
     <div className="rounded-lg p-4">
       <h3 className="mb-2 text-base font-semibold leading-snug text-gray-900">{title}</h3>
 
-      {/* Фото: маленькие превью, клик — карусель на весь экран */}
-      {photos.length > 0 && (
+      {/* Фото: маленькие превью, клик — карусель на весь экран.
+          Нет рабочих фото — заглушка вместо пустого верха карточки */}
+      {okPhotos.length === 0 ? (
+        <div className="mb-3 flex h-32 w-full items-center justify-center gap-2 rounded-md border border-gray-200 bg-gray-100">
+          <span className="text-2xl leading-none">📷</span>
+          <span className="text-sm text-gray-500">{t('card.noPhoto')}</span>
+        </div>
+      ) : (
         <div className="mb-3 flex gap-1.5 overflow-x-auto pb-1">
-          {photos.map((src, i) => (
+          {okPhotos.map((src, i) => (
             <img
               key={i}
               src={fullUrl(src)}
               alt=""
               className="h-20 w-28 shrink-0 cursor-pointer rounded-md object-cover hover:opacity-90"
               onClick={() => setLightbox(i)}
-              onError={(e) => ((e.target as HTMLImageElement).style.display = 'none')}
+              onError={() =>
+                setBrokenPhotos((prev) => {
+                  if (prev.has(i)) return prev;
+                  const next = new Set(prev);
+                  next.add(i);
+                  return next;
+                })
+              }
             />
           ))}
         </div>
@@ -540,9 +562,9 @@ export default function EventCard({ event, categories, onClose: _onClose, isAdmi
         </a>
       )}
 
-      {lightbox !== null && photos.length > 0 &&
+      {lightbox !== null && okPhotos.length > 0 &&
         createPortal(
-          <Lightbox photos={photos} start={lightbox} onClose={() => setLightbox(null)} />,
+          <Lightbox photos={okPhotos} start={lightbox} onClose={() => setLightbox(null)} />,
           document.body,
         )}
 
