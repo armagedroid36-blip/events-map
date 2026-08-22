@@ -23,6 +23,8 @@ interface AuthCtx {
     contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string; instagram?: string },
   ) => Promise<boolean>;
   signOut: () => Promise<void>;
+  /** Удалить аккаунт: профиль, историю, черновики событий, пользователя */
+  deleteAccount: () => Promise<void>;
 }
 
 const Ctx = createContext<AuthCtx>({
@@ -32,6 +34,7 @@ const Ctx = createContext<AuthCtx>({
   signUp: async () => {},
   confirmSignup: async () => false,
   signOut: async () => {},
+  deleteAccount: async () => {},
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -78,8 +81,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }
 
+  async function deleteAccount() {
+    await getApi().deleteAccount();
+    setUser(null);
+  }
+
   return (
-    <Ctx.Provider value={{ user, ready, signIn, signUp, confirmSignup, signOut }}>
+    <Ctx.Provider value={{ user, ready, signIn, signUp, confirmSignup, signOut, deleteAccount }}>
       {children}
     </Ctx.Provider>
   );

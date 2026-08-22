@@ -12,6 +12,9 @@ export default {
     myEvents: 'My events',
     history: 'History',
     logout: 'Sign out',
+    deleteAccount: 'Delete account',
+    deleteAccountConfirm: 'Delete your account? This cannot be undone.',
+    deleteAccountError: 'Failed to delete your account. Try again later.',
   },
   auth: {
     loginTitle: 'Sign in',
@@ -302,6 +305,41 @@ export default {
   },
   geo: {
     denied: 'Geolocation unavailable — the map is centered on Southeast Asia.',
+  },
+  privacy: {
+    link: 'Privacy',
+    title: 'Privacy Policy',
+    updated: 'Last updated: {{date}}',
+    collect: {
+      title: 'What data we collect',
+      items: [
+        'When you register: email, password and role (user or organizer).',
+        'For organizers additionally: Telegram, WhatsApp, phone, Instagram.',
+        'When you submit an event: contacts, photos, name, description, price.',
+        'Technical data: the interface language you choose (stored in your browser) and the visit counter.',
+      ],
+    },
+    use: {
+      title: 'Why we use it',
+      text: 'To run the site and publish events on the map, to contact organizers about their events, and for statistics (visits and card views).',
+    },
+    storage: {
+      title: 'Where the data is stored',
+      text: 'Data is stored in the Supabase cloud database; the site is hosted on GitHub Pages. The servers are located outside Indonesia and Vietnam (USA). Data is transferred abroad to keep the site working.',
+    },
+    rights: {
+      title: 'Your rights',
+      text: 'You can request access to your data, have it corrected or deleted, withdraw your consent to data processing, and file a complaint with the data protection authority.',
+    },
+    deleteAccount: {
+      title: 'How to delete your account',
+      text: 'Sign in, open the gear menu in the top-right corner and choose “Delete account”.',
+    },
+    operator: {
+      title: 'Operator and contacts',
+      // TODO: fill from Dmitry's separate prompt (operator contacts)
+      text: 'The operator contact details will be added here.',
+    },
   },
   common: {
     cancel: 'Cancel',

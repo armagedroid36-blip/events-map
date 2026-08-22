@@ -349,6 +349,8 @@ export class DemoApi {
 
   async signOut(): Promise<void> {}
 
+  async deleteAccount(): Promise<void> {}
+
   async getCurrentUser() {
     return { id: 'demo', email: 'demo@demo', role: 'admin' };
   }

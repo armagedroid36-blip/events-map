@@ -45,6 +45,8 @@ export interface DataApi {
   ): Promise<CurrentUser | null>;
   signIn(email: string, password: string): Promise<CurrentUser | null>;
   signOut(): Promise<void>;
+  /** Удалить свой аккаунт: профиль, историю, черновики событий и пользователя */
+  deleteAccount(): Promise<void>;
   getCurrentUser(): Promise<CurrentUser | null>;
 
   // --- Профиль и фото ---
@@ -219,6 +221,15 @@ class SupabaseApi implements DataApi {
 
   async signOut(): Promise<void> {
     await this.db.auth.signOut();
+  }
+
+  async deleteAccount(): Promise<void> {
+    // Удаление выполняет SQL-функция (security definer): профиль, история,
+    // черновики событий и сам пользователь auth.users
+    const { error } = await this.db.rpc('delete_my_account');
+    if (error) throw error;
+    // Сессия уже недействительна — чистим её локально
+    await this.db.auth.signOut().catch(() => {});
   }
 
   async getCurrentUser(): Promise<CurrentUser | null> {

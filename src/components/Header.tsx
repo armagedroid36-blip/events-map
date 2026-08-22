@@ -13,9 +13,10 @@ interface HeaderProps {
 
 export default function Header({ onOpenForm }: HeaderProps) {
   const { t, i18n } = useTranslation();
-  const { user, signOut } = useAuth();
+  const { user, signOut, deleteAccount } = useAuth();
   const [authOpen, setAuthOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [busyDelete, setBusyDelete] = useState(false);
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
 
   // Аккордеон: открытие меню шестерёнки закрывает панели главной
@@ -38,6 +39,21 @@ export default function Header({ onOpenForm }: HeaderProps) {
   function go(hash: string) {
     window.location.hash = hash;
     setMenuOpen(false);
+  }
+
+  // Удаление аккаунта: подтверждение, вызов RPC, при ошибке — сообщение
+  async function onDeleteAccount() {
+    if (!window.confirm(t('menu.deleteAccountConfirm'))) return;
+    setMenuOpen(false);
+    setBusyDelete(true);
+    try {
+      await deleteAccount();
+      if (window.location.hash !== '#/') window.location.hash = '#/';
+    } catch {
+      window.alert(t('menu.deleteAccountError'));
+    } finally {
+      setBusyDelete(false);
+    }
   }
 
   // Пункты меню шестерёнки по ролям
@@ -71,6 +87,14 @@ export default function Header({ onOpenForm }: HeaderProps) {
         </a>
 
         <div className="flex shrink-0 items-center gap-2">
+          {/* Ссылка на политику конфиденциальности — для всех посетителей */}
+          <a
+            href="#/privacy"
+            className="rounded-md px-2 py-1.5 text-xs font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+          >
+            {t('privacy.link')}
+          </a>
+
           {/* Переключатель языка */}
           <button
             onClick={switchLang}
@@ -129,6 +153,13 @@ export default function Header({ onOpenForm }: HeaderProps) {
                       className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50"
                     >
                       {t('menu.logout')}
+                    </button>
+                    <button
+                      onClick={onDeleteAccount}
+                      disabled={busyDelete}
+                      className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
+                    >
+                      {t('menu.deleteAccount')}
                     </button>
                   </div>
                   </>,

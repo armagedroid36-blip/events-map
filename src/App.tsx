@@ -1,6 +1,7 @@
 // Точка входа приложения.
 // Навигация по якорю: #/ — карта, #/admin — управление (админ),
-// #/my-events — мои мероприятия (организатор), #/history — история просмотров.
+// #/my-events — мои мероприятия (организатор), #/history — история просмотров,
+// #/privacy — политика конфиденциальности.
 // (Без внешнего роутера — для MVP достаточно, работает на любом хостинге.)
 import { lazy, Suspense, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
@@ -13,6 +14,7 @@ const Home = lazy(() => import('./pages/Home'));
 const Admin = lazy(() => import('./pages/Admin'));
 const MyEvents = lazy(() => import('./pages/MyEvents'));
 const HistoryPage = lazy(() => import('./pages/History'));
+const Privacy = lazy(() => import('./pages/Privacy'));
 
 export default function App() {
   const { t } = useTranslation();
@@ -35,6 +37,7 @@ export default function App() {
   if (route.startsWith('#/admin')) page = <Admin />;
   else if (route.startsWith('#/my-events')) page = <MyEvents />;
   else if (route.startsWith('#/history')) page = <HistoryPage />;
+  else if (route.startsWith('#/privacy')) page = <Privacy />;
   else page = <Home />;
 
   return (
