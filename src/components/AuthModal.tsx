@@ -3,7 +3,7 @@
 // Организатор указывает контакты для связи (видит только админ).
 import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useAuth } from '../lib/auth';
 import { nextZ } from '../lib/zindex';
 
@@ -23,6 +23,8 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
   const [instagram, setInstagram] = useState('');
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
+  // Обязательное согласие на обработку персональных данных (только регистрация)
+  const [consent, setConsent] = useState(false);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -215,6 +217,28 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
                   />
                 </div>
               )}
+
+              {/* Обязательное согласие на обработку персональных данных */}
+              <label className="flex cursor-pointer items-start gap-2 rounded-md bg-gray-50 p-3">
+                <input
+                  type="checkbox"
+                  checked={consent}
+                  onChange={(e) => setConsent(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-gray-900"
+                />
+                <span className="text-sm leading-snug text-gray-600">
+                  <Trans i18nKey="auth.consent">
+                    <a
+                      href="#/privacy"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="font-medium text-gray-900 underline hover:text-gray-700"
+                    >
+                      Privacy Policy
+                    </a>
+                  </Trans>
+                </span>
+              </label>
             </>
           )}
 
@@ -222,7 +246,7 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
 
           <button
             type="submit"
-            disabled={busy}
+            disabled={busy || (mode === 'register' && !consent)}
             className="w-full rounded-md bg-gray-900 px-3 py-2.5 text-sm font-semibold text-white hover:bg-gray-700 disabled:opacity-50"
           >
             {busy ? '...' : mode === 'login' ? t('auth.login') : t('auth.register')}

@@ -38,6 +38,10 @@ export default {
     code: 'Code from the email',
     confirm: 'Confirm',
     wrongCode: 'Wrong code. Check the email and try again.',
+    // Consent to personal data processing (required, on sign-up).
+    // <0> — link to the privacy policy (the only child in the Trans from
+    // AuthModal; full text lives here in both languages).
+    consent: 'I agree to the processing of my personal data and accept the <0>Privacy Policy</0>.',
   },
   myEvents: {
     title: 'My events',
