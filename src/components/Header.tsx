@@ -154,13 +154,15 @@ export default function Header({ onOpenForm }: HeaderProps) {
                     >
                       {t('menu.logout')}
                     </button>
-                    <button
-                      onClick={onDeleteAccount}
-                      disabled={busyDelete}
-                      className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
-                    >
-                      {t('menu.deleteAccount')}
-                    </button>
+                    {user.role !== 'admin' && (
+                      <button
+                        onClick={onDeleteAccount}
+                        disabled={busyDelete}
+                        className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
+                      >
+                        {t('menu.deleteAccount')}
+                      </button>
+                    )}
                   </div>
                   </>,
                   document.body,
