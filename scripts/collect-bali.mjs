@@ -42,6 +42,31 @@ const TYPE_MAP = {
 };
 const DEFAULT_CAT = 'lecture';
 
+// Центры районов Бали: используются, когда у события нет точных координат,
+// чтобы маркер всё равно появился на карте (в карточке — «место уточнить»).
+const BALI_DISTRICT_CENTERS = {
+  'canggu': { lat: -8.6475, lng: 115.1436 },
+  'pererenan': { lat: -8.6395, lng: 115.1479 },
+  'ubud': { lat: -8.5069, lng: 115.2625 },
+  'seminyak': { lat: -8.6911, lng: 115.1605 },
+  'legian': { lat: -8.7069, lng: 115.1667 },
+  'kuta': { lat: -8.7235, lng: 115.1705 },
+  'sanur': { lat: -8.6866, lng: 115.2629 },
+  'denpasar': { lat: -8.65, lng: 115.2167 },
+  'uluwatu': { lat: -8.8291, lng: 115.0849 },
+  'pecatu': { lat: -8.7743, lng: 115.0989 },
+  'jimbaran': { lat: -8.7901, lng: 115.1638 },
+  'nusa dua': { lat: -8.801, lng: 115.23 },
+  'sidemen': { lat: -8.4836, lng: 115.4431 },
+  'amed': { lat: -8.3339, lng: 115.6543 },
+  'lovina': { lat: -8.158, lng: 115.0295 },
+  'munduk': { lat: -8.2683, lng: 115.0798 },
+  'tabanan': { lat: -8.5435, lng: 115.1176 },
+  'gianyar': { lat: -8.5449, lng: 115.3282 },
+  // Запасной вариант — центр острова
+  'bali': { lat: -8.4095, lng: 115.1889 },
+};
+
 // ===== Утилиты =====
 
 function todayUtc() {
@@ -232,7 +257,6 @@ async function main() {
       if (!when) continue; // нет ближайшей будущей даты
       const place = ev.place;
       const loc = place && place.location;
-      if (!loc || loc.lat == null || loc.lng == null) continue; // без координат на карту не кладём
       if (!ev.title || !ev.slug) continue;
 
       const key = `${ev.title}|${when.raw.startAt.slice(0, 10)}`;
@@ -263,6 +287,12 @@ async function main() {
       const district = place.districtName || 'Bali';
       const photos = (ev.images || []).slice(0, 3).map((i) => i.previewUrl).filter(Boolean);
 
+      // Точных координат нет — ставим центр района: событие видно на карте,
+      // а в карточке будет «место уточнить у организатора».
+      const center = BALI_DISTRICT_CENTERS[district.toLowerCase()] || BALI_DISTRICT_CENTERS['bali'];
+      const lat = loc && loc.lat != null ? loc.lat : center.lat;
+      const lng = loc && loc.lng != null ? loc.lng : center.lng;
+
       const row = {
         title: decodeEntities(ev.title),
         title_ru: decodeEntities(ev.title),
@@ -275,9 +305,9 @@ async function main() {
         start_time: startTime,
         end_time: endTime,
         city: `${district}, Bali`,
-        address: loc.address || place.title || null,
-        lat: loc.lat,
-        lng: loc.lng,
+        address: (loc && loc.address) || place.title || null,
+        lat,
+        lng,
         category_id: llmCat || pickCategory(ev.types),
         website: `${BASE}/events/${ev.slug}`,
         contact: contacts.contact || null,

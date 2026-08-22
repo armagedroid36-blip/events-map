@@ -476,8 +476,8 @@ export default function EventCard({ event, categories, onClose: _onClose, isAdmi
         ) : null}
       </div>
 
-      {/* Адрес: клик открывает Google Maps. Если координат нет — адрес неточный,
-          показываем «место уточнить у организатора» вместо кликабельного адреса */}
+      {/* Адрес: клик открывает Google Maps. Если адреса нет, но координаты есть
+          (центр города от сборщика) — показываем «место уточнить у организатора» */}
       {event.address && isValidCoords(event.lat, event.lng) ? (
         <a
           href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${event.lat},${event.lng}`)}`}
@@ -487,7 +487,7 @@ export default function EventCard({ event, categories, onClose: _onClose, isAdmi
         >
           📍 {event.address}
         </a>
-      ) : event.address ? (
+      ) : isValidCoords(event.lat, event.lng) || event.address ? (
         <p className="mb-2 block text-sm text-gray-600">📍 {t('card.placeUnknown')}</p>
       ) : null}
 

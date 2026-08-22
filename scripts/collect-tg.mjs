@@ -491,9 +491,12 @@ async function main() {
         const g = await geocode(llmOrRegex, ch.city, ch.country, ch.fallback);
         if (g) { lat = g.lat; lng = g.lng; address = llmOrRegex; }
       }
-      // Если адрес не геокодируется или его нет — lat/lng остаются null:
-      // событие не рисуется на карте (isValidCoords), но попадает в модерацию,
-      // где админ увидит отсутствие координат.
+      // Если адрес не геокодируется или его нет — ставим центр города:
+      // событие видно на карте, а в карточке будет «место уточнить у организатора».
+      if (lat == null || lng == null) {
+        lat = ch.fallback.lat;
+        lng = ch.fallback.lng;
+      }
 
       // Цена через LLM; если LLM недоступен — fallback на regex parsePrice
       let p = await extractPrice(post.text, ch.city);
