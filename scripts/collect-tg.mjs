@@ -211,6 +211,9 @@ function splitPosts(html) {
 }
 
 function parsePost(block) {
+  // Убрать аватарку канала из шапки поста (div > a > i > img) — иначе она
+  // попадает в photos как «реальное фото» (её URL тоже содержит «cdn»).
+  block = block.replace(/<div class="tgme_widget_message_user">.*?<\/div>/gis, '');
   const pid = block.match(/data-post="([^"]+)"/)?.[1] || null;
   const dt = block.match(/datetime="([^"]+)"/)?.[1] || null;
   const tm = block.match(/class="tgme_widget_message_text[^"]*"[^>]*>(.*?)<\/div>/s)?.[1] || '';
