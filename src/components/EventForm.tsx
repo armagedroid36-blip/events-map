@@ -195,6 +195,12 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
   // Фото: пути загруженных файлов
   const [photos, setPhotos] = useState<string[]>(event?.photos ?? []);
   const [uploading, setUploading] = useState(false);
+  // Битые фото (onError): вместо иконки «битый файл» — серая заглушка.
+  // Ключ — сам src: устойчиво к удалению фото из середины списка.
+  const [brokenPhotos, setBrokenPhotos] = useState<Set<string>>(() => new Set());
+  // Полные http/https-ссылки (из парсера, напр. telegram-cdn) рендерим как есть,
+  // относительные пути хранилища — через photoUrl() (supabase-префикс)
+  const fullUrl = (src: string) => (src.startsWith('http') ? src : photoUrl(src));
   // Цена и валюта (price = null → «уточнить у организатора»); донат,
   // бесплатно и «уточнить» — взаимоисключающие
   const [free, setFree] = useState(event ? event.price === 0 : false);
@@ -736,7 +742,25 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
             <div className="flex flex-wrap gap-2">
               {photos.map((p) => (
                 <div key={p} className="relative">
-                  <img src={photoUrl(p)} alt="" className="h-16 w-16 rounded-md object-cover" />
+                  {brokenPhotos.has(p) ? (
+                    <div className="flex h-16 w-16 items-center justify-center rounded-md bg-gray-100 text-gray-400">
+                      <span className="text-lg leading-none">📷</span>
+                    </div>
+                  ) : (
+                    <img
+                      src={fullUrl(p)}
+                      alt=""
+                      className="h-16 w-16 rounded-md object-cover"
+                      onError={() =>
+                        setBrokenPhotos((prev) => {
+                          if (prev.has(p)) return prev;
+                          const next = new Set(prev);
+                          next.add(p);
+                          return next;
+                        })
+                      }
+                    />
+                  )}
                   <button
                     type="button"
                     onClick={() => setPhotos((arr) => arr.filter((x) => x !== p))}
