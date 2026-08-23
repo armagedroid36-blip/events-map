@@ -38,6 +38,16 @@ export default {
     code: 'Code from the email',
     confirm: 'Confirm',
     wrongCode: 'Wrong code. Check the email and try again.',
+    backToForm: 'Edit details',
+    resend: 'Resend code',
+    resendWait: 'Retry in {{sec}} s',
+    // Confirmation code errors (OtpError from lib/api.ts, codes otp_*)
+    otp: {
+      otp_expired: 'The code is invalid or has expired. Request a new one.',
+      otp_invalid: 'Invalid code. Check the email and try again.',
+      otp_network: 'Could not reach the server. Check your internet connection and try again.',
+      otp_server: 'Something went wrong. Please try again.',
+    },
     // Consent to personal data processing (required, on sign-up).
     // <0> — link to the privacy policy (the only child in the Trans from
     // AuthModal; full text lives here in both languages).

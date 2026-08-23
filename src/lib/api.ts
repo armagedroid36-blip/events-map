@@ -18,6 +18,32 @@ import { config } from '../config';
 import { DemoApi } from './demo';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
+/** Код ошибки подтверждения кода (OTP) — AuthModal показывает по нему сообщение */
+export type OtpErrorCode = 'otp_expired' | 'otp_invalid' | 'otp_network' | 'otp_server';
+
+export class OtpError extends Error {
+  readonly code: OtpErrorCode;
+
+  constructor(code: OtpErrorCode) {
+    super(code);
+    this.name = 'OtpError';
+    this.code = code;
+  }
+}
+
+/**
+ * GoTrue для verifyOtp возвращает один код `otp_expired`
+ * («Token has expired or is invalid») и для неверного, и для истёкшего кода —
+ * разделить их по ответу Supabase нельзя, оба → otp_expired.
+ * Сетевые сбои supabase-js возвращает как error (не бросает) — по тексту.
+ */
+function otpErrorCode(error: { code?: string; message?: string } | null): OtpErrorCode {
+  const raw = `${error?.code ?? ''} ${error?.message ?? ''}`.toLowerCase();
+  if (raw.includes('expired') || raw.includes('invalid')) return 'otp_expired';
+  if (raw.includes('fetch') || raw.includes('network') || raw.includes('connection')) return 'otp_network';
+  return 'otp_invalid';
+}
+
 /** Единый интерфейс доступа к данным */
 export interface DataApi {
   // --- Публичная часть ---
@@ -200,12 +226,24 @@ class SupabaseApi implements DataApi {
     role: UserRole,
     contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string; instagram?: string },
   ): Promise<CurrentUser | null> {
-    const { data, error } = await this.db.auth.verifyOtp({
-      email,
-      token: code.trim(),
-      type: 'signup',
-    });
-    if (error || !data.user) return null;
+    // Любые ошибки OTP пробрасываем как OtpError с кодом — AuthModal показывает
+    // отдельное сообщение и не сбрасывает шаг подтверждения
+    let data: { user: { id: string } | null };
+    try {
+      const res = await this.db.auth.verifyOtp({
+        email,
+        token: code.trim(),
+        type: 'signup',
+      });
+      data = res.data;
+      if (res.error || !data.user) {
+        throw new OtpError(otpErrorCode(res.error));
+      }
+    } catch (ex) {
+      if (ex instanceof OtpError) throw ex;
+      // Сетевой сбой (GoTrue недоступен, нет интернета)
+      throw new OtpError('otp_network');
+    }
     const { error: pErr } = await this.db.rpc('create_profile', {
       uid: data.user.id,
       p_role: role,
@@ -215,7 +253,7 @@ class SupabaseApi implements DataApi {
       ph: contacts.phone ?? '',
       ig: contacts.instagram ?? '',
     });
-    if (pErr) return null;
+    if (pErr) throw new OtpError('otp_server');
     return { id: data.user.id, email, role };
   }
 

@@ -1,11 +1,28 @@
 // Окно входа / регистрации.
 // Регистрация: выбор роли (пользователь / организатор).
 // Организатор указывает контакты для связи (видит только админ).
-import { useRef, useState } from 'react';
+// На шаге ввода кода подтверждения данные не теряются: черновик хранится
+// в localStorage, при повторном открытии пользователь возвращается на шаг кода.
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import { useAuth } from '../lib/auth';
+import { OtpError } from '../lib/api';
 import { nextZ } from '../lib/zindex';
+
+// Черновик регистрации: сохраняется при переходе на шаг кода, удаляется
+// при успешном подтверждении или явном «Изменить данные»
+interface RegDraft {
+  email: string;
+  password: string;
+  role: 'user' | 'org';
+  telegram: string;
+  whatsapp: string;
+  phone: string;
+  instagram: string;
+}
+const DRAFT_KEY = 'events-map-reg-draft';
+const RESEND_SECONDS = 60;
 
 export default function AuthModal({ onClose }: { onClose: () => void }) {
   const { t } = useTranslation();
@@ -25,6 +42,65 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
   const [err, setErr] = useState('');
   // Обязательное согласие на обработку персональных данных (только регистрация)
   const [consent, setConsent] = useState(false);
+  // Таймер повторной отправки кода (секунд до активации кнопки)
+  const [resendIn, setResendIn] = useState(0);
+
+  // Восстановление черновика: если регистрация была прервана на шаге кода,
+  // возвращаемся на этот шаг с заполненными полями
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+      const d = JSON.parse(raw) as RegDraft & { confirm?: boolean };
+      if (!d.confirm) return;
+      setMode('register');
+      setConfirm(true);
+      setEmail(d.email ?? '');
+      setPassword(d.password ?? '');
+      setRole(d.role === 'org' ? 'org' : 'user');
+      setTelegram(d.telegram ?? '');
+      setWhatsapp(d.whatsapp ?? '');
+      setPhone(d.phone ?? '');
+      setInstagram(d.instagram ?? '');
+    } catch {
+      // Битый черновик — игнорируем, форма пустая
+    }
+  }, []);
+
+  // Обратный отсчёт для повторной отправки кода
+  useEffect(() => {
+    if (resendIn <= 0) return;
+    const id = setInterval(() => setResendIn((s) => Math.max(0, s - 1)), 1000);
+    return () => clearInterval(id);
+  }, [resendIn]);
+
+  function saveDraft() {
+    const d: RegDraft & { confirm: boolean } = {
+      email,
+      password,
+      role,
+      telegram,
+      whatsapp,
+      phone,
+      instagram,
+      confirm: true,
+    };
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
+  }
+
+  // Повторная отправка кода подтверждения (новое письмо)
+  async function resendCode() {
+    setBusy(true);
+    setErr('');
+    try {
+      await signUp(email, password, role, { telegram, whatsapp, email, phone, instagram });
+      setResendIn(RESEND_SECONDS);
+    } catch (ex) {
+      setErr(ex instanceof Error ? ex.message : t('auth.error'));
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -39,8 +115,10 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
           return;
         }
       } else {
-        // Регистрация: отправляем запрос — на почту придёт код подтверждения
+        // Регистрация: отправляем запрос — на почту придёт код подтверждения.
+        // Черновик сохраняем ДО перехода на шаг кода (данные переживают закрытие)
         await signUp(email, password, role, { telegram, whatsapp, email, phone, instagram });
+        saveDraft();
         setConfirm(true);
         setBusy(false);
         return;
@@ -56,16 +134,32 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
     e.preventDefault();
     setBusy(true);
     setErr('');
-    const ok = await confirmSignup(email, code, role, { telegram, whatsapp, email, phone, instagram });
-    setBusy(false);
-    if (ok) onClose();
-    else setErr(t('auth.wrongCode'));
+    try {
+      const ok = await confirmSignup(email, code, role, { telegram, whatsapp, email, phone, instagram });
+      if (ok) {
+        localStorage.removeItem(DRAFT_KEY);
+        onClose();
+        return;
+      }
+      setErr(t('auth.wrongCode'));
+    } catch (ex) {
+      // OtpError → своё сообщение для каждого типа; шаг подтверждения не сбрасывается
+      if (ex instanceof OtpError) {
+        setErr(t(`auth.otp.${ex.code}`));
+      } else {
+        setErr(ex instanceof Error ? ex.message : t('auth.error'));
+      }
+    } finally {
+      setBusy(false);
+    }
   }
 
-  // Шаг подтверждения кодом из письма
+  // Шаг подтверждения кодом из письма.
+  // Клик по фону НЕ закрывает модалку (чтобы не потерять шаг); закрытие —
+  // только через ✕. Данные при этом хранятся в черновике (localStorage).
   if (confirm) {
     return createPortal(
-      <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/25" style={{ zIndex: z }} onClick={onClose}>
+      <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/25" style={{ zIndex: z }}>
         <div className="flex min-h-full items-center justify-center p-4">
           <div
             className="glass-strong w-full max-w-md rounded-xl p-6 shadow-2xl"
@@ -98,6 +192,27 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
                 {busy ? '...' : t('auth.confirm')}
               </button>
             </form>
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  localStorage.removeItem(DRAFT_KEY);
+                  setConfirm(false);
+                  setErr('');
+                }}
+                className="text-sm text-gray-500 hover:text-gray-700"
+              >
+                ← {t('auth.backToForm')}
+              </button>
+              <button
+                type="button"
+                onClick={resendCode}
+                disabled={busy || resendIn > 0}
+                className="text-sm font-medium text-gray-900 underline hover:text-gray-700 disabled:opacity-50"
+              >
+                {resendIn > 0 ? t('auth.resendWait', { sec: resendIn }) : t('auth.resend')}
+              </button>
+            </div>
           </div>
         </div>
       </div>,
