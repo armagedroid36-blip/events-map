@@ -118,7 +118,7 @@ async function collectSongkick(seen, limit, insertedCount) {
     const events = parseSongkick(html, metro.lat, metro.lng);
     for (const ev of events) {
       if (insertedCount + added >= limit) break;
-      const key = `${ev.name}|${ev.date}`;
+      const key = normKey(ev.name, ev.date);
       if (seen.has(key)) continue;
       // Фильтр «для туристов»
       if (!isInternationalName(ev.name)) continue;
@@ -227,9 +227,14 @@ async function fetchEvents(query) {
   return (data._embedded?.events) || [];
 }
 
+/** Ключ дубля: title+дата в нижнем регистре (по всем статусам, не только moderation) */
+function normKey(title, date) {
+  return `${String(title || '').trim().toLowerCase()}|${String(date || '').trim()}`;
+}
+
 async function existingKeys() {
-  const { data } = await db.from('events').select('title, start_date').eq('status', 'moderation');
-  return new Set((data || []).map((e) => `${e.title}|${e.start_date}`));
+  const { data } = await db.from('events').select('title, start_date');
+  return new Set((data || []).map((e) => normKey(e.title, e.start_date)));
 }
 
 function categoryOf(ev) {

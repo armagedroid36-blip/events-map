@@ -387,13 +387,18 @@ async function reverseGeocode(lat, lng) {
 
 // ===== Основной цикл =====
 
+/** Ключ дубля: title+дата в нижнем регистре (по всем статусам, не только moderation) */
+function normKey(title, date) {
+  return `${String(title || '').trim().toLowerCase()}|${String(date || '').trim()}`;
+}
+
 async function existingKeys() {
-  const { data, error } = await db.from('events').select('title, start_date').eq('status', 'moderation');
+  const { data, error } = await db.from('events').select('title, start_date');
   if (error) {
     console.error('Ошибка чтения дублей:', error.message);
     return new Set();
   }
-  return new Set((data || []).map((e) => `${e.title}|${e.start_date}`));
+  return new Set((data || []).map((e) => normKey(e.title, e.start_date)));
 }
 
 async function fetchChannel(username) {
@@ -452,7 +457,7 @@ async function main() {
       }
 
       const title = extractTitle(post.text);
-      const key = `${title}|${when.date}`;
+      const key = normKey(title, when.date);
       if (seen.has(key)) continue;
 
       const { mapLinks, tgLinks } = pickLinks(post.links, ch.username);

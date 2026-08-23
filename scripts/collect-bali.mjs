@@ -221,13 +221,18 @@ async function fetchJson(url) {
   return res.json();
 }
 
+/** Ключ дубля: title+дата в нижнем регистре (по всем статусам, не только moderation) */
+function normKey(title, date) {
+  return `${String(title || '').trim().toLowerCase()}|${String(date || '').trim()}`;
+}
+
 async function existingKeys() {
-  const { data, error } = await db.from('events').select('title, start_date').eq('status', 'moderation');
+  const { data, error } = await db.from('events').select('title, start_date');
   if (error) {
     console.error('Ошибка чтения дублей:', error.message);
     return new Set();
   }
-  return new Set((data || []).map((e) => `${e.title}|${e.start_date}`));
+  return new Set((data || []).map((e) => normKey(e.title, e.start_date)));
 }
 
 // ===== Основной цикл =====
@@ -259,7 +264,7 @@ async function main() {
       const loc = place && place.location;
       if (!ev.title || !ev.slug) continue;
 
-      const key = `${ev.title}|${when.raw.startAt.slice(0, 10)}`;
+      const key = normKey(ev.title, when.raw.startAt.slice(0, 10));
       if (seen.has(key)) {
         skipped++;
         continue;
