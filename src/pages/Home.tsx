@@ -1,7 +1,7 @@
 // Главная (публичная) страница: карта на ВЕСЬ экран (фон сайта),
 // поверх неё — плавающие панели: шапка, фильтры, карточка события,
 // кнопка «События на карте» с списком событий видимой области.
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
 import MapView, { type MapBounds } from '../components/MapView';
@@ -14,11 +14,41 @@ import { getApi } from '../lib/api';
 import { isUpcoming, todayIso, tomorrowIso } from '../lib/dates';
 import { cityMatches, ruToEn } from '../lib/cities';
 import { geocodeAddress } from '../lib/geocode';
-import { detectCountry } from '../lib/countries';
+import { eventCountry } from '../lib/countries';
 import { useAuth } from '../lib/auth';
 import type { Category, EventItem, Filters } from '../lib/types';
 
 const LIST_LIMIT = 50;
+
+/** Фильтры по умолчанию (без ограничений) */
+const DEFAULT_FILTERS: Filters = {
+  categoryId: null,
+  date: undefined,
+  price: 'any',
+  priceMin: undefined,
+  priceMax: undefined,
+  currency: null,
+  language: null,
+  country: null,
+  city: undefined,
+  query: undefined,
+};
+
+/** Фильтры ещё не заданы (ничего не ограничивает) */
+function isDefaultFilters(f: Filters): boolean {
+  return (
+    f.categoryId == null &&
+    !f.date &&
+    f.price === 'any' &&
+    f.priceMin == null &&
+    f.priceMax == null &&
+    f.currency == null &&
+    f.language == null &&
+    f.country == null &&
+    !f.city &&
+    !f.query
+  );
+}
 
 // Примерные курсы к USD (без внешних API): цена события приводится к USD
 // для сравнения с диапазоном фильтра. Неизвестная валюта = как USD.
@@ -49,18 +79,14 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   // --- Состояние интерфейса ---
-  const [filters, setFilters] = useState<Filters>({
-    categoryId: null,
-    date: undefined,
-    price: 'any',
-    priceMin: undefined,
-    priceMax: undefined,
-    currency: null,
-    language: null,
-    country: null,
-    city: undefined,
-    query: undefined,
-  });
+  // filters — применённые фильтры (по ним считается список и карта);
+  // draft — черновик в панели, применяется только по кнопке «Найти»
+  const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
+  const [draft, setDraft] = useState<Filters>(DEFAULT_FILTERS);
+  // Показывать лоадер после нажатия «Найти»
+  const [searching, setSearching] = useState(false);
+  // Последний город, по которому ушёл запрос геокодинга (для гонок запросов)
+  const geocodeCityRef = useRef('');
   const [selected, setSelected] = useState<EventItem | null>(null);
   const [center, setCenter] = useState<{ lat: number; lng: number } | null>(null);
   const [zoom, setZoom] = useState<number | undefined>(undefined);
@@ -180,7 +206,11 @@ export default function Home() {
       // Валюта, язык и страна
       if (filters.currency && ev.currency !== filters.currency) return false;
       if (filters.language && ev.language !== filters.language) return false;
-      if (filters.country && (ev.country || detectCountry(ev.city)) !== filters.country) return false;
+      if (filters.country) {
+        const ec = eventCountry(ev);
+        // «Другие» — события, чью страну не удалось определить
+        if (filters.country === 'other' ? ec !== '' : ec !== filters.country) return false;
+      }
       // Город: работает и по-русски, и по-английски («Убуд» = «Ubud»)
       if (city && !cityMatches(ev.city, city)) return false;
       if (q) {
@@ -213,20 +243,33 @@ export default function Home() {
     setZoom(z);
   }
 
-  // Ввели город в фильтре — карта перемещается к нему (с небольшой задержкой,
-  // чтобы не дёргать карту при каждом нажатии клавиши)
-  useEffect(() => {
-    const city = filters.city?.trim();
+  // Применение фильтров по кнопке «Найти»: черновик становится рабочим
+  // набором, карта едет к выбранному городу, показывается лоадер.
+  function applyFilters() {
+    const next = draft;
+    setFilters(next);
+    setMobileFiltersOpen(false);
+    setSearching(true);
+    window.setTimeout(() => setSearching(false), 500);
+    const city = next.city?.trim();
     if (!city) return;
-    const timer = setTimeout(async () => {
-      const coords = await geocodeAddress(ruToEn(city));
-      if (coords && filters.city?.trim() === city) {
-        setCenter(coords);
-        setZoom(11);
-      }
-    }, 600);
-    return () => clearTimeout(timer);
-  }, [filters.city]);
+    geocodeCityRef.current = city;
+    geocodeAddress(ruToEn(city))
+      .then((coords) => {
+        if (coords && geocodeCityRef.current === city) {
+          setCenter(coords);
+          setZoom(11);
+        }
+      })
+      .catch(() => {});
+  }
+
+  // Сброс: очищает и черновик в панели, и применённые фильтры
+  function resetFilters() {
+    setDraft(DEFAULT_FILTERS);
+    setFilters(DEFAULT_FILTERS);
+    geocodeCityRef.current = '';
+  }
 
   // Выбор события: карточка + запись в историю просмотров + счётчик просмотров
   async function selectEvent(ev: EventItem) {
@@ -245,14 +288,16 @@ export default function Home() {
     getApi().incrementCounter('card_views').catch(() => {});
   }
 
-  // Города и страны из базы — для автодополнения и фильтра
+  // Города и страны из базы — для автодополнения и фильтра.
+  // Страна события: из поля country, иначе из справочника по городу;
+  // не определилась — «Другие»
   const allCities = useMemo(
     () => [...new Set(events.map((e) => e.city).filter(Boolean))].sort(),
     [events],
   );
   const allCountries = useMemo(
     () =>
-      [...new Set(events.map((e) => e.country || detectCountry(e.city)).filter(Boolean))].sort(),
+      [...new Set(events.map((e) => eventCountry(e) || 'other'))].sort(),
     [events],
   );
 
@@ -280,8 +325,6 @@ export default function Home() {
           onBoundsChange={setBounds}
           onMapClick={() => {
             setSelected(null);
-            setMobileFiltersOpen(false);
-            setFiltersCollapsed(true);
             setListOpen(false);
           }}
         />
@@ -300,10 +343,11 @@ export default function Home() {
         {t('filters.title')}
       </button>
 
-      {/* Оверлей фильтров на мобильных */}
+      {/* Оверлей фильтров на мобильных: панель закрывается только явным
+          действием (кнопка «Фильтры», крестик, «Найти») — клик по фону нет */}
       {mobileFiltersOpen && (
         <>
-          <div className="fixed inset-0 z-[1145] bg-black/20 lg:hidden" onClick={() => setMobileFiltersOpen(false)} />
+          <div className="fixed inset-0 z-[1145] bg-black/20 lg:hidden" />
           <div className="glass absolute inset-x-3 top-24 z-[1150] max-h-[60vh] overflow-y-auto rounded-xl p-3 shadow-xl lg:hidden thin-scroll">
           <div className="mb-2 flex items-center justify-between">
             <span className="text-sm font-semibold text-gray-900">{t('filters.title')}</span>
@@ -318,13 +362,15 @@ export default function Home() {
           <div className="mb-3">
             {user?.role === 'admin' && <QuickLocations onGoTo={goTo} />}
           </div>
-          <FiltersPanel categories={categories} filters={filters} onChange={setFilters} cities={allCities} countries={allCountries} />
-          <button
-            onClick={() => setMobileFiltersOpen(false)}
-            className="mt-3 w-full rounded-md bg-gray-900 px-3 py-2 text-sm font-semibold text-white hover:bg-gray-700"
-          >
-            {t('filters.apply')}
-          </button>
+          <FiltersPanel
+            categories={categories}
+            filters={draft}
+            onChange={setDraft}
+            cities={allCities}
+            countries={allCountries}
+            onApply={applyFilters}
+            onReset={resetFilters}
+          />
         </div>
         </>
       )}
@@ -354,7 +400,15 @@ export default function Home() {
             >
               ✕
             </button>
-            <FiltersPanel categories={categories} filters={filters} onChange={setFilters} cities={allCities} countries={allCountries} />
+            <FiltersPanel
+              categories={categories}
+              filters={draft}
+              onChange={setDraft}
+              cities={allCities}
+              countries={allCountries}
+              onApply={applyFilters}
+              onReset={resetFilters}
+            />
           </div>
         </div>
       )}
@@ -383,6 +437,25 @@ export default function Home() {
           >
             ✕
           </button>
+        </div>
+      )}
+
+      {/* Обратная связь поиска: лоадер при применении фильтров и плашка,
+          если по параметрам ничего не найдено */}
+      {searching && (
+        <div className="pointer-events-none absolute inset-x-0 top-1/2 z-[1165] flex -translate-y-1/2 justify-center">
+          <div className="glass flex items-center gap-2 rounded-full px-4 py-2 text-sm text-gray-700 shadow">
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-900" />
+            {t('common.loading')}
+          </div>
+        </div>
+      )}
+      {!searching && !isDefaultFilters(filters) && visible.length === 0 && (
+        <div className="pointer-events-none absolute inset-x-0 top-1/2 z-[1165] flex -translate-y-1/2 justify-center px-4">
+          <div className="glass max-w-sm rounded-xl px-4 py-3 text-center shadow">
+            <p className="text-sm font-medium text-gray-900">{t('filters.empty')}</p>
+            <p className="mt-1 text-xs text-gray-500">{t('filters.emptyHint')}</p>
+          </div>
         </div>
       )}
 

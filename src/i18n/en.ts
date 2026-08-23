@@ -112,8 +112,11 @@ export default {
     anyLanguage: 'Any',
     query: 'Keywords',
     queryPlaceholder: 'e.g. music, yoga…',
-    apply: 'Show',
+    apply: 'Search',
     reset: 'Reset',
+    empty: 'No events found for your request',
+    emptyHint: 'Try changing the filters or picking another destination.',
+    other: 'Other',
   },
   list: {
     title: 'Events as a list',

@@ -2,7 +2,8 @@
 import { useTranslation } from 'react-i18next';
 import type { Category, Filters } from '../lib/types';
 import { LANGUAGES } from '../lib/languages';
-import { KNOWN_COUNTRIES } from '../lib/countries';
+import { COUNTRY_NAMES, KNOWN_COUNTRIES, detectCountry } from '../lib/countries';
+import { todayIso } from '../lib/dates';
 
 interface Props {
   categories: Category[];
@@ -10,17 +11,62 @@ interface Props {
   onChange: (f: Filters) => void;
   /** Города из базы — для автодополнения */
   cities?: string[];
-  /** Страны из базы — для фильтра */
+  /** Страны из базы — для фильтра (канонические коды, возможно 'other') */
   countries?: string[];
+  /** Применить фильтры по кнопке «Найти» */
+  onApply?: () => void;
+  /** Сбросить фильтры (в т.ч. уже применённые) */
+  onReset?: () => void;
 }
 
-export default function FiltersPanel({ categories, filters, onChange, cities = [], countries = [] }: Props) {
+/** Пустой набор фильтров (для кнопки «Сбросить») */
+const EMPTY_FILTERS: Filters = {
+  categoryId: null,
+  date: undefined,
+  price: 'any',
+  priceMin: undefined,
+  priceMax: undefined,
+  currency: null,
+  language: null,
+  country: null,
+  city: undefined,
+  query: undefined,
+};
+
+export default function FiltersPanel({
+  categories,
+  filters,
+  onChange,
+  cities = [],
+  countries = [],
+  onApply,
+  onReset,
+}: Props) {
   const { t, i18n } = useTranslation();
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
 
   function set<K extends keyof Filters>(key: K, value: Filters[K]) {
     onChange({ ...filters, [key]: value });
   }
+
+  // Страны: известные + встреченные в базе, без повторов, с названием на
+  // языке интерфейса; «Другие» — события, страну которых не определили.
+  const countryList = [...new Set([...countries, ...KNOWN_COUNTRIES])].sort((a, b) => {
+    if (a === 'other') return 1;
+    if (b === 'other') return -1;
+    const na = COUNTRY_NAMES[a]?.[lang] ?? a;
+    const nb = COUNTRY_NAMES[b]?.[lang] ?? b;
+    return na.localeCompare(nb);
+  });
+
+  // Города только выбранной страны (при «Любая страна» — все города базы).
+  // Города без страны в справочнике видны только при «Любая страна» и «Другие».
+  const cityOptions = filters.country
+    ? cities.filter(
+        (c) =>
+          (filters.country === 'other' ? '' : filters.country) === detectCountry(c),
+      )
+    : cities;
 
   return (
     <div className="space-y-3 rounded-lg p-3">
@@ -70,6 +116,7 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
         </div>
         <input
           type="date"
+          min={todayIso()}
           value={
             filters.date && filters.date !== 'today' && filters.date !== 'tomorrow'
               ? filters.date
@@ -90,9 +137,11 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
           className="w-full rounded-md border border-gray-400 px-2 py-1.5 hover:border-gray-500 text-sm"
         >
           <option value="">{t('filters.anyCountry')}</option>
-          {[...new Set([...countries, ...KNOWN_COUNTRIES])].map((c) => (
-            <option key={c} value={c}>
-              {c}
+          {countryList.map((code) => (
+            <option key={code} value={code}>
+              {code === 'other'
+                ? t('filters.other')
+                : (COUNTRY_NAMES[code]?.[lang] ?? code)}
             </option>
           ))}
         </select>
@@ -109,7 +158,7 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
           className="w-full rounded-md border border-gray-400 px-2 py-1.5 hover:border-gray-500 text-sm"
         />
         <datalist id="city-options">
-          {cities.map((c) => (
+          {cityOptions.map((c) => (
             <option key={c} value={c} />
           ))}
         </datalist>
@@ -201,21 +250,20 @@ export default function FiltersPanel({ categories, filters, onChange, cities = [
         />
       </div>
 
+      {onApply && (
+        <button
+          onClick={onApply}
+          className="w-full rounded-md bg-gray-900 px-3 py-2 text-sm font-semibold text-white hover:bg-gray-700"
+        >
+          {t('filters.apply')}
+        </button>
+      )}
+
       <button
-        onClick={() =>
-          onChange({
-            categoryId: null,
-            date: undefined,
-            price: 'any',
-            priceMin: undefined,
-            priceMax: undefined,
-            currency: null,
-            language: null,
-            country: null,
-            city: undefined,
-            query: undefined,
-          })
-        }
+        onClick={() => {
+          onChange(EMPTY_FILTERS);
+          onReset?.();
+        }}
         className="w-full rounded-md border border-gray-400 px-2 py-1.5 hover:border-gray-500 text-sm text-gray-600 hover:bg-gray-50"
       >
         {t('filters.reset')}
