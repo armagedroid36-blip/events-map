@@ -204,6 +204,15 @@ function normalizeCity(s: string): string {
   return v ? v[0].toUpperCase() + v.slice(1) : v;
 }
 
+/** Ключ дедупа файла: размер + хэш первых байт (djb2) */
+async function fileKey(f: File): Promise<string> {
+  const buf = await f.slice(0, 65536).arrayBuffer();
+  const u8 = new Uint8Array(buf);
+  let h = 5381;
+  for (let i = 0; i < u8.length; i++) h = ((h << 5) + h + u8[i]) >>> 0;
+  return `${f.size}:${h.toString(36)}`;
+}
+
 export default function EventForm({ categories, onClose, event: eventProp, editEvent }: Props) {
   const { t, i18n } = useTranslation();
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
@@ -243,6 +252,11 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
   // Битые фото (onError): вместо иконки «битый файл» — серая заглушка.
   // Ключ — сам src: устойчиво к удалению фото из середины списка.
   const [brokenPhotos, setBrokenPhotos] = useState<Set<string>>(() => new Set());
+  // Ошибки выбора фото (размер/формат) и ключи загруженных файлов (дедуп)
+  const [photoError, setPhotoError] = useState('');
+  const [photoKeys, setPhotoKeys] = useState<Set<string>>(() => new Set());
+  // Свой язык мероприятия (ввод с подсказками)
+  const [customLang, setCustomLang] = useState('');
   // Полные http/https-ссылки (из парсера, напр. telegram-cdn) рендерим как есть,
   // относительные пути хранилища — через photoUrl() (supabase-префикс)
   const fullUrl = (src: string) => (src.startsWith('http') ? src : photoUrl(src));
@@ -314,6 +328,17 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOrg, isAdmin]);
 
+  // Язык события: для новой формы предзаполняем языком браузера/интерфейса,
+  // если он есть в списке LANGUAGES
+  useEffect(() => {
+    if (event) return;
+    const code = (navigator.language || '').split('-')[0].toLowerCase();
+    if (code && LANGUAGES.some((l) => l.code === code)) {
+      setLanguages((prev) => (prev.length ? prev : [code]));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // --- Схема валидации (zod) ---
   const schema = useMemo(
     () =>
@@ -371,24 +396,105 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
     }
   }
 
-  /** Загрузка фото файлами */
-  async function onFiles(e: React.ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(e.target.files ?? []);
+  /** Общая загрузка фото: файлы из диалога или из буфера обмена.
+      Проверки: размер ≤ 5 МБ, формат JPG/PNG/WebP, дедуп по содержимому. */
+  async function addFiles(files: File[]) {
     if (!files.length) return;
-    const canAdd = 5 - photos.length;
-    if (canAdd <= 0) return;
-    setUploading(true);
-    try {
-      for (const f of files.slice(0, canAdd)) {
-        if (f.size > 5 * 1024 * 1024) continue; // до 5 МБ
+    setPhotoError('');
+    const errs = new Set<string>();
+    const seen = new Set(photoKeys);
+    let added = 0;
+    for (const f of files) {
+      if (photos.length + added >= 5) break;
+      if (f.size > 5 * 1024 * 1024) {
+        errs.add(t('form.photoTooBig'));
+        continue;
+      }
+      if (!/^image\/(jpeg|png|webp)$/i.test(f.type)) {
+        errs.add(t('form.photoType'));
+        continue;
+      }
+      const key = await fileKey(f);
+      if (seen.has(key)) continue; // тот же файл — пропускаем
+      seen.add(key);
+      setUploading(true);
+      try {
         const path = await getApi().uploadPhoto(f);
         setPhotos((p) => [...p, path]);
+        setPhotoKeys((prev) => {
+          const n = new Set(prev);
+          n.add(key);
+          return n;
+        });
+        added += 1;
+      } catch {
+        errs.add(t('form.error'));
       }
-    } catch {
-      // ошибка загрузки — просто пропускаем файл
     }
     setUploading(false);
+    if (errs.size) setPhotoError([...errs].join(' '));
+  }
+
+  /** Выбор файлов диалогом */
+  async function onFiles(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
     e.target.value = '';
+    if (files.length) await addFiles(files);
+  }
+
+  /** Вставка изображения из буфера обмена (Ctrl+V / долгое нажатие) */
+  function onFormPaste(e: React.ClipboardEvent) {
+    const items = Array.from(e.clipboardData?.items ?? []);
+    const files = items
+      .filter((i) => i.kind === 'file' && i.type.startsWith('image/'))
+      .map((i) => i.getAsFile())
+      .filter((f): f is File => !!f);
+    if (!files.length) return;
+    e.preventDefault();
+    void addFiles(files);
+  }
+
+  /** Добавить свой язык из поля ввода */
+  function addCustomLang() {
+    const v = customLang.trim();
+    if (!v) return;
+    setLanguages((prev) => (prev.includes(v) ? prev : [...prev, v]));
+    setCustomLang('');
+  }
+
+  /** Есть ли введённые данные (для подтверждения закрытия формы) */
+  function hasData(): boolean {
+    return (
+      title.trim() !== '' ||
+      description.trim() !== '' ||
+      startDate !== '' ||
+      startTime !== '' ||
+      endDate !== '' ||
+      endTime !== '' ||
+      city.trim() !== '' ||
+      address.trim() !== '' ||
+      categoryId !== '' ||
+      website.trim() !== '' ||
+      photos.length > 0 ||
+      languages.length > 0 ||
+      price !== '' ||
+      free ||
+      donation ||
+      priceUnknown ||
+      contact.trim() !== '' ||
+      contactTg.trim() !== '' ||
+      contactWa.trim() !== '' ||
+      contactEmailVal.trim() !== '' ||
+      contactPhoneVal.trim() !== '' ||
+      contactIg.trim() !== '' ||
+      customLang.trim() !== ''
+    );
+  }
+
+  /** Закрытие формы: при заполненных полях — подтверждение */
+  function requestClose() {
+    if (hasData() && !window.confirm(t('form.unsavedConfirm'))) return;
+    onClose();
   }
 
   async function submit(e: React.FormEvent) {
@@ -568,7 +674,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
   const err = (k: string) => (errors[k] ? <p className="mt-0.5 text-xs text-red-600">{errors[k]}</p> : null);
 
   return createPortal(
-    <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/25 p-4" style={{ zIndex: winZ }} onClick={onClose}>
+    <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/25 p-4" style={{ zIndex: winZ }} onClick={requestClose}>
       <div className="flex min-h-full items-center justify-center">
         <div
           className="glass-strong mx-auto my-6 w-full max-w-2xl rounded-xl p-6 shadow-2xl"
@@ -578,7 +684,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
           <h2 className="text-lg font-semibold text-gray-900">
             {isEdit ? t('form.editTitle') : isRepeat ? t('myEvents.repeatTitle') : t('form.title')}
           </h2>
-          <button onClick={onClose} className="rounded p-1 text-gray-400 hover:bg-gray-100" aria-label="close">
+          <button onClick={requestClose} className="rounded p-1 text-gray-400 hover:bg-gray-100" aria-label="close">
             ✕
           </button>
         </div>
@@ -586,7 +692,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
           {isEdit ? t('form.editHint') : isRepeat ? t('myEvents.repeatHint') : t('form.subtitle')}
         </p>
 
-        <form onSubmit={submit} className="space-y-3">
+        <form onSubmit={submit} onPaste={onFormPaste} className="space-y-3">
           <div>
             <label className="mb-1 block text-sm text-gray-600">{t('form.name')} *</label>
             <input
@@ -751,10 +857,21 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
             {err('category_id')}
           </div>
 
-          {/* Язык мероприятия: можно выбрать несколько */}
+          {/* Язык мероприятия: чипы + свой язык; «Не имеет значения» очищает выбор */}
           <div>
             <label className="mb-1 block text-sm text-gray-600">{t('form.language')}</label>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => setLanguages([])}
+                className={
+                  languages.length === 0
+                    ? 'rounded-full bg-gray-900 px-2.5 py-1 text-xs font-medium text-white'
+                    : 'rounded-full border border-gray-300 px-2.5 py-1 text-xs text-gray-600 hover:bg-gray-50'
+                }
+              >
+                {t('form.languageAny')}
+              </button>
               {LANGUAGES.map((l) => {
                 const active = languages.includes(l.code);
                 return (
@@ -774,6 +891,32 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
                   </button>
                 );
               })}
+            </div>
+            <div className="relative mt-2 max-w-xs">
+              <input
+                list="event-lang-options"
+                value={customLang}
+                onChange={(e) => setCustomLang(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addCustomLang();
+                  }
+                }}
+                onBlur={addCustomLang}
+                placeholder={t('form.languageCustomPlaceholder')}
+                className={input}
+              />
+              <datalist id="event-lang-options">
+                {LANGUAGES.map((l) => (
+                  <option key={l.code} value={l.code}>
+                    {lang === 'ru' ? l.name_ru : l.name_en}
+                  </option>
+                ))}
+                {languages.map((c) => (
+                  <option key={`c-${c}`} value={c} />
+                ))}
+              </datalist>
             </div>
           </div>
 
@@ -874,6 +1017,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
                 <IconInput icon={IconPhone} value={contactPhoneVal} onChange={setContactPhoneVal} placeholder={t('form.contactPhoneField')} />
                 <IconInput icon={IconInstagram} value={contactIg} onChange={setContactIg} placeholder={t('form.contactInstagramField')} />
               </div>
+              <p className="mt-1 text-xs text-gray-400">{t('form.contactsFallback')}</p>
             </div>
           ) : (
             <div>
@@ -924,7 +1068,10 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
               )}
             </div>
             {uploading && <p className="mt-1 text-xs text-gray-400">{t('common.loading')}</p>}
-            <p className="mt-1 text-xs text-gray-400">{t('form.photosLimit')}</p>
+            <p className="mt-1 text-xs text-gray-400">
+              {t('form.pasteHint')} • {t('form.photosLimit')}
+            </p>
+            {photoError && <p className="mt-1 text-xs text-red-600">{photoError}</p>}
           </div>
 
           {errors.form && <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{errors.form}</p>}
