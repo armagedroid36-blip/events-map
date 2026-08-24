@@ -340,10 +340,10 @@ export default function Home() {
       </div>
 
       {/* Шапка поверх карты — плавающая, с закруглёнными краями.
-          Плотный фон, чтобы шапка читалась на фоне карты (десктоп) */}
+          Прозрачность — как у кнопок (glass-btn), чтобы не закрывать карту */}
       <div
         className="glass absolute inset-x-3 top-2 z-[1200] rounded-2xl shadow-lg"
-        style={{ background: 'rgba(255, 255, 255, 0.92)' }}
+        style={{ background: 'rgba(255, 255, 255, 0.32)' }}
       >
         <Header onOpenForm={() => setFormOpen(true)} />
       </div>
