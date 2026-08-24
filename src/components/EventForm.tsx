@@ -9,7 +9,7 @@ import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { nextZ } from '../lib/zindex';
-import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap, AttributionControl } from 'react-leaflet';
 import L from 'leaflet';
 import { z } from 'zod';
 import type { Category, EventItem } from '../lib/types';
@@ -825,11 +825,15 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
                 zoom={6}
                 className="h-full w-full"
                 style={{ height: '100%', width: '100%' }}
+                // Дефолтный контрол атрибуции (со ссылкой «Leaflet») выключен —
+                // ниже свой с prefix={false}, чтобы ссылки не было.
+                attributionControl={false}
               >
                 <TileLayer
                   attribution="&copy; OpenStreetMap &copy; CARTO"
                   url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
                 />
+                <AttributionControl position="bottomright" prefix={false} />
                 <Marker position={[lat, lng]} icon={formIcon} />
                 <ClickToMove onMove={onMapClick} />
                 <CenterController lat={lat} lng={lng} />
