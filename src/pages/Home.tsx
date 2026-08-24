@@ -325,7 +325,7 @@ export default function Home() {
       {mobileFiltersOpen && (
         <>
           <div className="fixed inset-0 z-[1145] bg-black/20 lg:hidden" />
-          <div className="glass absolute inset-x-3 top-24 z-[1150] max-h-[60vh] overflow-y-auto rounded-xl p-3 shadow-xl lg:hidden thin-scroll">
+          <div className="glass absolute inset-x-3 top-18 z-[1160] max-h-[60vh] overflow-y-auto rounded-xl p-3 shadow-xl lg:hidden thin-scroll">
           <button
             onClick={() => setMobileFiltersOpen(false)}
             className="absolute right-2 top-2 z-10 rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
