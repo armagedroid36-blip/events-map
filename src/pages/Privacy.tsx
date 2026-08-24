@@ -1,6 +1,7 @@
 // Страница «Политика конфиденциальности» (#/privacy): статические тексты,
 // язык — из глобального переключателя (i18n.language). Доступна всем без входа.
 import { useTranslation } from 'react-i18next';
+import Header from '../components/Header';
 
 // Дата обновления политики (обновлять вручную при изменении текстов)
 const UPDATED = '2026-08-22';
@@ -15,7 +16,9 @@ export default function Privacy() {
   }).format(new Date(`${UPDATED}T00:00:00`));
 
   return (
-    <div className="mx-auto max-w-2xl p-4">
+    <div className="flex min-h-screen flex-col">
+      <Header />
+      <div className="mx-auto w-full max-w-2xl flex-1 p-4">
       <h1 className="text-xl font-semibold text-gray-900">{t('privacy.title')}</h1>
 
       <div className="mt-6 space-y-6 text-sm leading-relaxed text-gray-700">
@@ -55,6 +58,7 @@ export default function Privacy() {
       </div>
 
       <p className="mt-8 text-xs text-gray-400">{t('privacy.updated', { date: updated })}</p>
+      </div>
     </div>
   );
 }

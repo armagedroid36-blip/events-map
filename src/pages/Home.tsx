@@ -160,6 +160,15 @@ export default function Home() {
     };
   }, []);
 
+  // «Создать мероприятие» с другой страницы (Header без формы): возвращаемся
+  // на главную с флагом в sessionStorage — открываем форму сразу
+  useEffect(() => {
+    if (sessionStorage.getItem('events-map-open-form') === '1') {
+      sessionStorage.removeItem('events-map-open-form');
+      setFormOpen(true);
+    }
+  }, []);
+
   // Геолокация: центр на посетителе; при отказе — Юго-Восточная Азия
   useEffect(() => {
     if (!navigator.geolocation) return;
@@ -330,8 +339,12 @@ export default function Home() {
         />
       </div>
 
-      {/* Шапка поверх карты — плавающая, с закруглёнными краями */}
-      <div className="glass absolute inset-x-3 top-2 z-[1200] rounded-2xl shadow-lg">
+      {/* Шапка поверх карты — плавающая, с закруглёнными краями.
+          Плотный фон, чтобы шапка читалась на фоне карты (десктоп) */}
+      <div
+        className="glass absolute inset-x-3 top-2 z-[1200] rounded-2xl shadow-lg"
+        style={{ background: 'rgba(255, 255, 255, 0.92)' }}
+      >
         <Header onOpenForm={() => setFormOpen(true)} />
       </div>
 
@@ -343,22 +356,30 @@ export default function Home() {
         {t('filters.title')}
       </button>
 
+      {/* Кнопка «Создать мероприятие» для организатора (мобильные):
+          на десктопе она в шапке, на мобильных шапка прячет её в меню */}
+      {user?.role === 'org' && !mobileFiltersOpen && (
+        <button
+          onClick={() => setFormOpen(true)}
+          className="absolute right-3 top-20 z-[1155] rounded-md bg-emerald-600 px-3.5 py-2 text-sm font-semibold text-white shadow-lg hover:bg-emerald-700 lg:hidden"
+        >
+          + {t('menu.addEvent')}
+        </button>
+      )}
+
       {/* Оверлей фильтров на мобильных: панель закрывается только явным
           действием (кнопка «Фильтры», крестик, «Найти») — клик по фону нет */}
       {mobileFiltersOpen && (
         <>
           <div className="fixed inset-0 z-[1145] bg-black/20 lg:hidden" />
           <div className="glass absolute inset-x-3 top-24 z-[1150] max-h-[60vh] overflow-y-auto rounded-xl p-3 shadow-xl lg:hidden thin-scroll">
-          <div className="mb-2 flex items-center justify-between">
-            <span className="text-sm font-semibold text-gray-900">{t('filters.title')}</span>
-            <button
-              onClick={() => setMobileFiltersOpen(false)}
-              className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
-              aria-label={t('common.close')}
-            >
-              ✕
-            </button>
-          </div>
+          <button
+            onClick={() => setMobileFiltersOpen(false)}
+            className="absolute right-2 top-2 z-10 rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            aria-label={t('common.close')}
+          >
+            ✕
+          </button>
           <div className="mb-3">
             {user?.role === 'admin' && <QuickLocations onGoTo={goTo} />}
           </div>

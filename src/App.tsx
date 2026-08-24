@@ -15,6 +15,8 @@ const Admin = lazy(() => import('./pages/Admin'));
 const MyEvents = lazy(() => import('./pages/MyEvents'));
 const HistoryPage = lazy(() => import('./pages/History'));
 const Privacy = lazy(() => import('./pages/Privacy'));
+const Profile = lazy(() => import('./pages/Profile'));
+const Favorites = lazy(() => import('./pages/Favorites'));
 
 export default function App() {
   const { t } = useTranslation();
@@ -38,6 +40,8 @@ export default function App() {
   else if (route.startsWith('#/my-events')) page = <MyEvents />;
   else if (route.startsWith('#/history')) page = <HistoryPage />;
   else if (route.startsWith('#/privacy')) page = <Privacy />;
+  else if (route.startsWith('#/profile')) page = <Profile />;
+  else if (route.startsWith('#/favorites')) page = <Favorites />;
   else page = <Home />;
 
   return (

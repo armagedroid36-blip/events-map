@@ -4,6 +4,7 @@
 // правит что хочет и отправляет на модерацию.
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import Header from '../components/Header';
 import { getApi } from '../lib/api';
 import { useAuth } from '../lib/auth';
 import type { Category, EventItem } from '../lib/types';
@@ -38,8 +39,11 @@ export default function MyEvents() {
 
   if (!user || user.role !== 'org') {
     return (
-      <div className="mx-auto max-w-3xl p-6 text-center text-gray-500">
-        {t('myEvents.accessDenied')}
+      <div className="flex min-h-screen flex-col">
+        <Header />
+        <div className="flex flex-1 items-center justify-center p-6 text-center text-gray-500">
+          {t('myEvents.accessDenied')}
+        </div>
       </div>
     );
   }
@@ -117,7 +121,9 @@ export default function MyEvents() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl p-4">
+    <div className="flex min-h-screen flex-col">
+      <Header />
+      <div className="mx-auto w-full max-w-3xl flex-1 p-4">
       <h1 className="mb-4 text-xl font-semibold text-gray-900">{t('myEvents.title')}</h1>
 
       <div className="mb-4 flex gap-2">
@@ -174,6 +180,7 @@ export default function MyEvents() {
           }}
         />
       )}
+      </div>
     </div>
   );
 }

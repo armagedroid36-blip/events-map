@@ -1,5 +1,7 @@
-// Шапка сайта: название, переключатель языка RU/EN, вход / меню шестерёнки.
-// Войти: незарегистрированные. Шестерёнка с меню по ролям — для вошедших.
+// Шапка сайта: название, навигация по ролям, переключатель языка RU/EN,
+// вход / меню шестерёнки.
+// Навигация: на десктопе — пункты в шапке, на мобильных — в меню шестерёнки.
+// Войти: незарегистрированные. Шестерёнка с меню — для вошедших.
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +10,14 @@ import AuthModal from './AuthModal';
 import { config } from '../config';
 
 interface HeaderProps {
-  onOpenForm: () => void;
+  /** Открыть форму создания события. Если не передано (страница без формы) —
+   *  переходим на главную и открываем форму там. */
+  onOpenForm?: () => void;
+}
+
+interface NavItem {
+  label: string;
+  action: () => void;
 }
 
 export default function Header({ onOpenForm }: HeaderProps) {
@@ -18,6 +27,13 @@ export default function Header({ onOpenForm }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [busyDelete, setBusyDelete] = useState(false);
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
+
+  // Страница без формы: «Создать мероприятие» переходит на главную,
+  // флаг в sessionStorage открывает там форму.
+  const openForm = onOpenForm ?? (() => {
+    sessionStorage.setItem('events-map-open-form', '1');
+    window.location.hash = '#/';
+  });
 
   // Аккордеон: открытие меню шестерёнки закрывает панели главной
   useEffect(() => {
@@ -41,6 +57,28 @@ export default function Header({ onOpenForm }: HeaderProps) {
     setMenuOpen(false);
   }
 
+  // Пункты навигации по ролям (одни для шапки на десктопе и меню шестерёнки)
+  const nav: NavItem[] = [{ label: t('menu.search'), action: () => go('#/') }];
+  if (user) {
+    if (user.role === 'admin') {
+      nav.push(
+        { label: t('menu.manage'), action: () => go('#/admin') },
+        { label: t('menu.profile'), action: () => go('#/profile') },
+      );
+    } else if (user.role === 'org') {
+      nav.push(
+        { label: t('menu.myEvents'), action: () => go('#/my-events') },
+        { label: t('menu.addEvent'), action: openForm },
+        { label: t('menu.profile'), action: () => go('#/profile') },
+      );
+    } else {
+      nav.push(
+        { label: t('menu.favorites'), action: () => go('#/favorites') },
+        { label: t('menu.profile'), action: () => go('#/profile') },
+      );
+    }
+  }
+
   // Удаление аккаунта: подтверждение, вызов RPC, при ошибке — сообщение
   async function onDeleteAccount() {
     if (!window.confirm(t('menu.deleteAccountConfirm'))) return;
@@ -56,28 +94,9 @@ export default function Header({ onOpenForm }: HeaderProps) {
     }
   }
 
-  // Пункты меню шестерёнки по ролям
-  const menu: { label: string; action: () => void }[] = [];
-  if (user) {
-    if (user.role === 'admin') {
-      menu.push(
-        { label: t('menu.addEvent'), action: onOpenForm },
-        { label: t('menu.manage'), action: () => go('#/admin') },
-      );
-    } else if (user.role === 'org') {
-      menu.push(
-        { label: t('menu.addEvent'), action: onOpenForm },
-        { label: t('menu.myEvents'), action: () => go('#/my-events') },
-        { label: t('menu.history'), action: () => go('#/history') },
-      );
-    } else {
-      menu.push({ label: t('menu.history'), action: () => go('#/history') });
-    }
-  }
-
   return (
     <header>
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3">
         {/* Название сайта — клик возвращает на карту */}
         <a href="#/" className="min-w-0">
           <h1 className="truncate text-lg font-semibold text-gray-900">
@@ -86,11 +105,27 @@ export default function Header({ onOpenForm }: HeaderProps) {
           </h1>
         </a>
 
+        {/* Навигация по ролям (десктоп); на мобильных — в меню шестерёнки */}
+        <nav className="hidden flex-1 items-center gap-1 lg:flex">
+          {nav.map((n) => (
+            <button
+              key={n.label}
+              onClick={() => {
+                setMenuOpen(false);
+                n.action();
+              }}
+              className="rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900"
+            >
+              {n.label}
+            </button>
+          ))}
+        </nav>
+
         <div className="flex shrink-0 items-center gap-2">
           {/* Ссылка на политику конфиденциальности — для всех посетителей */}
           <a
             href="#/privacy"
-            className="rounded-md px-2 py-1.5 text-xs font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+            className="rounded-md px-2 py-1.5 text-xs font-medium text-gray-500 hover:bg-white/70 hover:text-gray-700"
           >
             {t('privacy.link')}
           </a>
@@ -98,7 +133,7 @@ export default function Header({ onOpenForm }: HeaderProps) {
           {/* Переключатель языка */}
           <button
             onClick={switchLang}
-            className="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="rounded-md border border-gray-300 bg-white/70 px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
             title="Switch language / Сменить язык"
           >
             {lang === 'ru' ? 'EN' : 'RU'}
@@ -131,16 +166,16 @@ export default function Header({ onOpenForm }: HeaderProps) {
                   <>
                     <div className="fixed inset-0 z-[1290]" onClick={() => setMenuOpen(false)} />
                     <div className="glass fixed right-3 top-[80px] z-[1300] w-56 rounded-lg py-1 shadow-xl">
-                    {menu.map((m) => (
+                    {nav.map((n) => (
                       <button
-                        key={m.label}
+                        key={n.label}
                         onClick={() => {
                           setMenuOpen(false);
-                          m.action();
+                          n.action();
                         }}
                         className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
                       >
-                        {m.label}
+                        {n.label}
                       </button>
                     ))}
                     <div className="my-1 border-t border-gray-100" />
