@@ -96,7 +96,7 @@ export default function Header({ onOpenForm }: HeaderProps) {
 
   return (
     <header>
-      <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3">
+      <div className="mx-auto flex max-w-7xl items-center gap-x-3 px-4 py-3">
         {/* Название сайта — клик возвращает на карту */}
         <a href="#/" className="min-w-0">
           <h1 className="truncate text-lg font-semibold text-gray-900">
@@ -122,10 +122,12 @@ export default function Header({ onOpenForm }: HeaderProps) {
         </nav>
 
         <div className="flex shrink-0 items-center gap-2">
-          {/* Ссылка на политику конфиденциальности — для всех посетителей */}
+          {/* Ссылка на политику конфиденциальности — для всех посетителей.
+              На мобильных скрыта (нет места в одну строку) — доступна
+              из меню шестерёнки и из формы входа/регистрации */}
           <a
             href="#/privacy"
-            className="rounded-md px-2 py-1.5 text-xs font-medium text-gray-500 hover:bg-white/70 hover:text-gray-700"
+            className="hidden rounded-md px-2 py-1.5 text-xs font-medium text-gray-500 hover:bg-white/70 hover:text-gray-700 sm:block"
           >
             {t('privacy.link')}
           </a>
@@ -179,6 +181,16 @@ export default function Header({ onOpenForm }: HeaderProps) {
                       </button>
                     ))}
                     <div className="my-1 border-t border-gray-100" />
+                    {/* Политика — видна в меню на мобильных (в шапке скрыта) */}
+                    <button
+                      onClick={() => {
+                        setMenuOpen(false);
+                        go('#/privacy');
+                      }}
+                      className="block w-full px-4 py-2 text-left text-sm text-gray-500 hover:bg-gray-50"
+                    >
+                      {t('privacy.link')}
+                    </button>
                     <button
                       onClick={() => {
                         setMenuOpen(false);
