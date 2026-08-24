@@ -28,7 +28,7 @@ export default function Header({ onOpenForm }: HeaderProps) {
   const [busyDelete, setBusyDelete] = useState(false);
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
 
-  // Страница без формы: «Создать мероприятие» переходит на главную,
+  // Страница без формы: «Создать событие» переходит на главную,
   // флаг в sessionStorage открывает там форму.
   const openForm = onOpenForm ?? (() => {
     sessionStorage.setItem('events-map-open-form', '1');
