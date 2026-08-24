@@ -320,33 +320,38 @@ export default function Home() {
         </button>
       )}
 
-      {/* Оверлей фильтров на мобильных: панель закрывается только явным
-          действием (кнопка «Фильтры», крестик, «Найти») — клик по фону нет */}
+      {/* Модалка фильтров на мобильных — вид как у «Создать событие»:
+          затемнение, центрированная карточка, скролл на внешнем контейнере.
+          Закрывается только крестиком и кнопкой «Найти» — клик по фону НЕ закрывает */}
       {mobileFiltersOpen && (
-        <>
-          <div className="fixed inset-0 z-[1145] bg-black/20 lg:hidden" />
-          <div className="glass absolute inset-x-3 top-18 z-[1160] max-h-[60vh] overflow-y-auto rounded-xl p-3 shadow-xl lg:hidden thin-scroll">
-          <button
-            onClick={() => setMobileFiltersOpen(false)}
-            className="absolute right-2 top-2 z-10 rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
-            aria-label={t('common.close')}
-          >
-            ✕
-          </button>
-          <div className="mb-3">
-            {user?.role === 'admin' && <QuickLocations onGoTo={goTo} />}
+        <div className="fixed inset-0 z-[1150] overflow-y-auto bg-black/25 p-4 lg:hidden">
+          <div className="flex min-h-full items-center justify-center">
+            <div className="glass-strong mx-auto my-6 w-full max-w-2xl rounded-xl p-6 shadow-2xl">
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-gray-900">{t('filters.title')}</h2>
+                <button
+                  onClick={() => setMobileFiltersOpen(false)}
+                  className="rounded p-1 text-gray-400 hover:bg-gray-100"
+                  aria-label={t('common.close')}
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="mb-3">
+                {user?.role === 'admin' && <QuickLocations onGoTo={goTo} />}
+              </div>
+              <FiltersPanel
+                categories={categories}
+                filters={draft}
+                onChange={setDraft}
+                cities={allCities}
+                countries={allCountries}
+                onApply={applyFilters}
+                onReset={resetFilters}
+              />
+            </div>
           </div>
-          <FiltersPanel
-            categories={categories}
-            filters={draft}
-            onChange={setDraft}
-            cities={allCities}
-            countries={allCountries}
-            onApply={applyFilters}
-            onReset={resetFilters}
-          />
         </div>
-        </>
       )}
 
       {/* Левая панель (десктоп): быстрые кнопки + фильтры, со сворачиванием */}
