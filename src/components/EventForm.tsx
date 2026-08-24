@@ -19,6 +19,7 @@ import { detectLang, translateText } from '../lib/translate';
 import { LANGUAGES } from '../lib/languages';
 import { detectCountry } from '../lib/countries';
 import { isValidCoords } from '../lib/coords';
+import { todayIso } from '../lib/dates';
 import { config } from '../config';
 import { useAuth } from '../lib/auth';
 
@@ -159,6 +160,50 @@ function IconInput({
   );
 }
 
+/** Поле даты с крестиком очистки (✕ очищает без открытия календаря) */
+function DateField({
+  value,
+  onChange,
+  min,
+  required,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  min?: string;
+  required?: boolean;
+}) {
+  const { t } = useTranslation();
+  return (
+    <div className="relative">
+      <input
+        type="date"
+        value={value}
+        min={min}
+        required={required}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full rounded-md border border-gray-300 px-2.5 py-2 pr-9 text-sm focus:border-gray-900 focus:outline-none"
+      />
+      {value && (
+        <button
+          type="button"
+          onClick={() => onChange('')}
+          className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded p-0.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+          aria-label={t('common.clear')}
+          title={t('common.clear')}
+        >
+          ✕
+        </button>
+      )}
+    </div>
+  );
+}
+
+/** Нормализация названия города: trim + первая буква заглавная */
+function normalizeCity(s: string): string {
+  const v = s.trim();
+  return v ? v[0].toUpperCase() + v.slice(1) : v;
+}
+
 export default function EventForm({ categories, onClose, event: eventProp, editEvent }: Props) {
   const { t, i18n } = useTranslation();
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
@@ -221,6 +266,15 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
 
+  // Ошибка конкретного поля исчезает, как только поле меняют
+  const clearErr = (k: string) =>
+    setErrors((prev) => {
+      if (!(k in prev)) return prev;
+      const next = { ...prev };
+      delete next[k];
+      return next;
+    });
+
   const isOrg = user?.role === 'org';
   const isAdmin = user?.role === 'admin';
 
@@ -265,7 +319,8 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
     () =>
       z
         .object({
-          title: z.string().min(2, t('form.required')),
+          title: z.string().min(2, t('form.required')).max(100, t('form.titleTooLong')),
+          description: z.string().max(5000, t('form.descriptionTooLong')),
           start_date: z.string().min(1, t('form.required')),
           start_time: z.string().min(1, t('form.required')),
           end_date: z.string(),
@@ -306,12 +361,13 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
     setLat(newLat);
     setLng(newLng);
     setMarkerTouched(true);
+    clearErr('map');
     setGeocoding(true);
     const place = await reverseGeocode(newLat, newLng);
     setGeocoding(false);
     if (place) {
       setAddress(place.address);
-      setCity((c) => c || place.city);
+      setCity((c) => c || normalizeCity(place.city));
     }
   }
 
@@ -339,11 +395,12 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
     e.preventDefault();
     const res = schema.safeParse({
       title,
+      description,
       start_date: startDate,
       start_time: startTime,
       end_date: endDate,
       end_time: endTime,
-      city,
+      city: city.trim(),
       category_id: categoryId,
       website,
     });
@@ -362,6 +419,8 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
     try {
       const lang = detectLang(title);
       const priceVal = free ? 0 : parseFloat(price) || null;
+      // Город: нормализация — trim + первая буква заглавная
+      const cityNorm = normalizeCity(city);
 
       // Валидация времени: конец не раньше начала — только когда оба заполнены
       if (endDate && (endDate < startDate || (endDate === startDate && endTime && endTime < startTime))) {
@@ -371,11 +430,20 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
       }
       // Начало не в прошлом (для нового события или повтора)
       if (!editEvent) {
-        const startAt = new Date(`${startDate}T${startTime || '00:00'}`);
-        if (startAt.getTime() < Date.now() - 60 * 1000) {
-          setErrors({ start_time: t('form.timePast') });
+        const today = todayIso();
+        if (startDate && startDate < today) {
+          setErrors({ start_date: t('form.timePast') });
           setSubmitting(false);
           return;
+        }
+        if (startDate === today) {
+          // Пустое время считается 00:00 — для сегодняшней даты это уже прошлое
+          const startAt = new Date(`${startDate}T${startTime || '00:00'}`);
+          if (isNaN(startAt.getTime()) || startAt.getTime() < Date.now() - 60 * 1000) {
+            setErrors({ start_time: t('form.timePast') });
+            setSubmitting(false);
+            return;
+          }
         }
       }
 
@@ -394,8 +462,8 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
         end_date: endDate || undefined,
         start_time: startTime || undefined,
         end_time: endTime || undefined,
-        city,
-        country: detectCountry(city) || undefined,
+        city: cityNorm,
+        country: detectCountry(cityNorm) || undefined,
         address,
         lat,
         lng,
@@ -521,40 +589,95 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
         <form onSubmit={submit} className="space-y-3">
           <div>
             <label className="mb-1 block text-sm text-gray-600">{t('form.name')} *</label>
-            <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('form.namePlaceholder')} className={input} />
+            <input
+              value={title}
+              maxLength={100}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                clearErr('title');
+              }}
+              placeholder={t('form.namePlaceholder')}
+              className={input}
+            />
             {err('title')}
+            <p className="mt-0.5 text-right text-xs text-gray-400">{title.length}/100</p>
           </div>
 
           <div>
             <label className="mb-1 block text-sm text-gray-600">{t('form.description')}</label>
             <textarea
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              maxLength={5000}
+              onChange={(e) => {
+                setDescription(e.target.value);
+                clearErr('description');
+              }}
               placeholder={t('form.descriptionPlaceholder')}
               rows={3}
               className={input}
             />
+            {err('description')}
+            <p className="mt-0.5 text-right text-xs text-gray-400">{description.length}/5000</p>
           </div>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <label className="mb-1 block text-sm text-gray-600">{t('form.startDate')}</label>
-              <input type="date" required value={startDate} onChange={(e) => setStartDate(e.target.value)} className={input} />
+              <DateField
+                value={startDate}
+                min={!editEvent ? todayIso() : undefined}
+                required
+                onChange={(v) => {
+                  setStartDate(v);
+                  clearErr('start_date');
+                }}
+              />
               {err('start_date')}
             </div>
             <div>
               <label className="mb-1 block text-sm text-gray-600">{t('form.startTime')}</label>
-              <input type="time" required value={startTime} onChange={(e) => setStartTime(e.target.value)} className={input} />
+              <input
+                type="time"
+                required
+                value={startTime}
+                onChange={(e) => {
+                  setStartTime(e.target.value);
+                  clearErr('start_time');
+                }}
+                className={input}
+              />
               {err('start_time')}
             </div>
             <div>
-              <label className="mb-1 block text-sm text-gray-600">{t('form.endDate')}</label>
-              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className={input} />
+              <label className="mb-1 block text-sm text-gray-600">
+                {t('form.endDate')}{' '}
+                <span className="text-xs font-normal text-gray-400">({t('form.optional')})</span>
+              </label>
+              <DateField
+                value={endDate}
+                min={startDate || undefined}
+                onChange={(v) => {
+                  setEndDate(v);
+                  clearErr('end_date');
+                }}
+              />
               {err('end_date')}
             </div>
             <div>
-              <label className="mb-1 block text-sm text-gray-600">{t('form.endTime')}</label>
-              <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} className={input} />
+              <label className="mb-1 block text-sm text-gray-600">
+                {t('form.endTime')}{' '}
+                <span className="text-xs font-normal text-gray-400">({t('form.optional')})</span>
+              </label>
+              <input
+                type="time"
+                value={endTime}
+                min={endDate && endDate === startDate ? startTime : undefined}
+                onChange={(e) => {
+                  setEndTime(e.target.value);
+                  clearErr('end_time');
+                }}
+                className={input}
+              />
               {err('end_time')}
             </div>
           </div>
@@ -584,7 +707,15 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <label className="mb-1 block text-sm text-gray-600">{t('form.city')} *</label>
-              <input value={city} onChange={(e) => setCity(e.target.value)} placeholder={t('form.cityPlaceholder')} className={input} />
+              <input
+                value={city}
+                onChange={(e) => {
+                  setCity(e.target.value);
+                  clearErr('city');
+                }}
+                placeholder={t('form.cityPlaceholder')}
+                className={input}
+              />
               {err('city')}
             </div>
             <div>
@@ -602,7 +733,14 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
 
           <div>
             <label className="mb-1 block text-sm text-gray-600">{t('form.category')} *</label>
-            <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className={input}>
+            <select
+              value={categoryId}
+              onChange={(e) => {
+                setCategoryId(e.target.value);
+                clearErr('category_id');
+              }}
+              className={input}
+            >
               <option value="">{t('form.selectCategory')}</option>
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -713,7 +851,15 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
 
           <div>
             <label className="mb-1 block text-sm text-gray-600">{t('form.website')}</label>
-            <input value={website} onChange={(e) => setWebsite(e.target.value)} placeholder={t('form.websitePlaceholder')} className={input} />
+            <input
+              value={website}
+              onChange={(e) => {
+                setWebsite(e.target.value);
+                clearErr('website');
+              }}
+              placeholder={t('form.websitePlaceholder')}
+              className={input}
+            />
             {err('website')}
           </div>
 
