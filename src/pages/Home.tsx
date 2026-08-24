@@ -79,10 +79,17 @@ export default function Home() {
     update();
     const ro = new ResizeObserver(update);
     ro.observe(el);
+    // Страховка: шрифты и layout могут доехать позже первого замера
+    window.addEventListener('load', update);
     window.addEventListener('resize', update);
+    const t1 = window.setTimeout(update, 300);
+    const t2 = window.setTimeout(update, 1200);
     return () => {
       ro.disconnect();
+      window.removeEventListener('load', update);
       window.removeEventListener('resize', update);
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
       document.documentElement.style.removeProperty('--header-bottom');
     };
   }, [loading]);
