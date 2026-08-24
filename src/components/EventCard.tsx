@@ -12,6 +12,7 @@ import { formatDate } from '../lib/dates';
 import { photoUrl } from '../lib/api';
 import { isValidCoords } from '../lib/coords';
 import { nextZ } from '../lib/zindex';
+import FavoriteButton from './FavoriteButton';
 
 /** Символы валют */
 const CURRENCY_SYMBOLS: Record<string, string> = {
@@ -125,6 +126,10 @@ interface Props {
   onClose: () => void;
   isAdmin?: boolean;
   onDelete?: (id: string) => void;
+  /** id событий в избранном; null — гость (сердечко скрыто) */
+  favoriteIds?: string[] | null;
+  /** Переключить избранное (вызывается при клике на сердечко) */
+  onToggleFavorite?: (id: string) => void;
 }
 
 /** Полный URL фото: загруженные файлы хранятся как пути в хранилище */
@@ -370,7 +375,7 @@ function Lightbox({
   );
 }
 
-export default function EventCard({ event, categories, onClose: _onClose, isAdmin, onDelete }: Props) {
+export default function EventCard({ event, categories, onClose: _onClose, isAdmin, onDelete, favoriteIds = null, onToggleFavorite }: Props) {
   const { t, i18n } = useTranslation();
   const [lightbox, setLightbox] = useState<number | null>(null);
   // Индексы фото с битыми ссылками (onError) — скрываем их, не пряча молча
@@ -414,7 +419,16 @@ export default function EventCard({ event, categories, onClose: _onClose, isAdmi
 
   return (
     <div className="rounded-lg p-4">
-      <h3 className="mb-2 text-base font-semibold leading-snug text-gray-900">{title}</h3>
+      <div className="mb-2 flex items-start justify-between gap-2">
+        <h3 className="flex-1 text-base font-semibold leading-snug text-gray-900">{title}</h3>
+        {/* Сердечко — только для вошедших (favoriteIds !== null) */}
+        {favoriteIds !== null && onToggleFavorite && (
+          <FavoriteButton
+            active={favoriteIds.includes(event.id)}
+            onToggle={() => onToggleFavorite(event.id)}
+          />
+        )}
+      </div>
 
       {/* Фото: маленькие превью, клик — карусель на весь экран.
           Нет рабочих фото — заглушка вместо пустого верха карточки */}

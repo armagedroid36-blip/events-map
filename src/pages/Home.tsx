@@ -11,28 +11,14 @@ import EventCard from '../components/EventCard';
 import QuickLocations from '../components/QuickLocations';
 import EventForm from '../components/EventForm';
 import { getApi } from '../lib/api';
-import { isUpcoming, todayIso, tomorrowIso } from '../lib/dates';
-import { cityMatches, ruToEn } from '../lib/cities';
+import { ruToEn } from '../lib/cities';
 import { geocodeAddress } from '../lib/geocode';
 import { eventCountry } from '../lib/countries';
+import { DEFAULT_FILTERS, eventMatchesFilters } from '../lib/eventFilters';
 import { useAuth } from '../lib/auth';
 import type { Category, EventItem, Filters } from '../lib/types';
 
 const LIST_LIMIT = 50;
-
-/** Фильтры по умолчанию (без ограничений) */
-const DEFAULT_FILTERS: Filters = {
-  categoryId: null,
-  date: undefined,
-  price: 'any',
-  priceMin: undefined,
-  priceMax: undefined,
-  currency: null,
-  language: null,
-  country: null,
-  city: undefined,
-  query: undefined,
-};
 
 /** Фильтры ещё не заданы (ничего не ограничивает) */
 function isDefaultFilters(f: Filters): boolean {
@@ -48,25 +34,6 @@ function isDefaultFilters(f: Filters): boolean {
     !f.city &&
     !f.query
   );
-}
-
-// Примерные курсы к USD (без внешних API): цена события приводится к USD
-// для сравнения с диапазоном фильтра. Неизвестная валюта = как USD.
-const CURRENCY_TO_USD: Record<string, number> = {
-  usd: 1,
-  idr: 15500,
-  vnd: 24500,
-  thb: 34,
-  sgd: 1.34,
-  myr: 4.2,
-  php: 56,
-  eur: 0.92,
-  rub: 88,
-};
-
-function toUsd(price: number, currency?: string | null): number {
-  const rate = CURRENCY_TO_USD[(currency ?? 'usd').toLowerCase()] ?? 1;
-  return price / rate;
 }
 
 export default function Home() {
@@ -98,6 +65,34 @@ export default function Home() {
   const [listOpen, setListOpen] = useState(false);
   // Верх карточки события на мобильном (поднимается до верха списка)
   const [cardTop, setCardTop] = useState<string | undefined>(undefined);
+  // Избранное: id сохранённых событий (null — гость, сердечки скрыты)
+  const [favoriteIds, setFavoriteIds] = useState<string[] | null>(null);
+
+  useEffect(() => {
+    if (!user) {
+      setFavoriteIds(null);
+      return;
+    }
+    getApi()
+      .getFavoritesIds()
+      .then((ids) => setFavoriteIds(ids))
+      .catch(() => setFavoriteIds([]));
+  }, [user]);
+
+  // Переключение избранного: оптимистичное обновление + запрос в БД.
+  // При ошибке состояние откатывается.
+  function toggleFavorite(id: string) {
+    const isFav = favoriteIds?.includes(id) ?? false;
+    setFavoriteIds((prev) =>
+      isFav ? (prev ?? []).filter((x) => x !== id) : prev ? [...prev, id] : [id],
+    );
+    const req = isFav ? getApi().removeFavorite(id) : getApi().addFavorite(id);
+    req.catch(() => {
+      setFavoriteIds((prev) =>
+        isFav ? (prev ? [...prev, id] : [id]) : (prev ?? []).filter((x) => x !== id),
+      );
+    });
+  }
 
   // Аккордеон: открытие панели на главной закрывает меню шестерёнки;
   // открытие меню шестерёнки закрывает панели главной
@@ -183,52 +178,10 @@ export default function Home() {
   }, []);
 
   // Применение фильтров: категория, период, город, ключевые слова
-  const visible = useMemo(() => {
-    const q = (filters.query ?? '').toLowerCase();
-    const city = filters.city ?? '';
-    return events.filter((ev) => {
-      if (filters.categoryId && ev.category_id !== filters.categoryId) return false;
-      // По умолчанию — только предстоящие (прошедшие скрыты);
-      // выбранная дата в фильтре — поверх, показывает события этого дня
-      if (!filters.date && !isUpcoming(ev)) return false;
-      // Дата: событие проходит в выбранный день (сегодня / завтра / конкретная дата)
-      if (filters.date) {
-        const d =
-          filters.date === 'today'
-            ? todayIso()
-            : filters.date === 'tomorrow'
-              ? tomorrowIso()
-              : filters.date;
-        const end = ev.end_date ?? ev.start_date;
-        if (ev.start_date > d || end < d) return false;
-      }
-      // Цена: бесплатные (price = null или 0), платные (price > 0) или донат + диапазон
-      if (filters.price === 'free' && ev.price != null && ev.price > 0) return false;
-      if (filters.price === 'paid' && (ev.price == null || ev.price <= 0)) return false;
-      if (filters.price === 'donation' && !ev.donation) return false;
-      // Диапазон цены считается в USD: конвертируем цену события по курсу валюты
-      if ((filters.price === 'any' || filters.price === 'paid') && ev.price != null && ev.price > 0) {
-        const usd = toUsd(ev.price, ev.currency);
-        if (filters.priceMin != null && usd < filters.priceMin) return false;
-        if (filters.priceMax != null && usd > filters.priceMax) return false;
-      }
-      // Валюта, язык и страна
-      if (filters.currency && ev.currency !== filters.currency) return false;
-      if (filters.language && ev.language !== filters.language) return false;
-      if (filters.country) {
-        const ec = eventCountry(ev);
-        // «Другие» — события, чью страну не удалось определить
-        if (filters.country === 'other' ? ec !== '' : ec !== filters.country) return false;
-      }
-      // Город: работает и по-русски, и по-английски («Убуд» = «Ubud»)
-      if (city && !cityMatches(ev.city, city)) return false;
-      if (q) {
-        const hay = `${ev.title} ${ev.description} ${ev.city}`.toLowerCase();
-        if (!hay.includes(q)) return false;
-      }
-      return true;
-    });
-  }, [events, filters]);
+  const visible = useMemo(() => events.filter((ev) => eventMatchesFilters(ev, filters)), [
+    events,
+    filters,
+  ]);
 
   // События на видимом участке карты (bounds) + фильтры
   const onMapEvents = useMemo(() => {
@@ -449,6 +402,8 @@ export default function Home() {
               onClose={() => setSelected(null)}
               isAdmin={user?.role === 'admin'}
               onDelete={handleDeleteEvent}
+              favoriteIds={favoriteIds}
+              onToggleFavorite={user ? toggleFavorite : undefined}
             />
           </div>
           <button
@@ -510,6 +465,8 @@ export default function Home() {
             categories={categories}
             selectedId={selected?.id ?? null}
             onSelect={selectEvent}
+            favoriteIds={favoriteIds}
+            onToggleFavorite={user ? toggleFavorite : undefined}
           />
         </div>
       )}

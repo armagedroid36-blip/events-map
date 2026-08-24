@@ -112,6 +112,22 @@ export interface DataApi {
   clearHistory(): Promise<void>;
   removeHistory(id: string): Promise<void>;
 
+  // --- Уведомления организатора (бейдж «движение по заявкам») ---
+  /** Сколько событий организатора изменилось с последнего просмотра «Моих событий» */
+  getMyEventsBadge(): Promise<number>;
+  /** Отметить, что организатор увидел свои события — бейдж исчезает */
+  markMyEventsSeen(): Promise<void>;
+
+  // --- Избранное ---
+  /** Сохранённые события (активные; для вошедших) */
+  listFavorites(): Promise<EventItem[]>;
+  /** id событий, добавленных в избранное текущим пользователем */
+  getFavoritesIds(): Promise<string[]>;
+  /** Добавить событие в избранное */
+  addFavorite(eventId: string): Promise<void>;
+  /** Убрать событие из избранного */
+  removeFavorite(eventId: string): Promise<void>;
+
   // --- Админка (управление) ---
   adminLogin(email: string, password: string): Promise<boolean>;
   listApplications(): Promise<Application[]>;
@@ -523,6 +539,88 @@ class SupabaseApi implements DataApi {
 
   async removeHistory(id: string): Promise<void> {
     await this.db.from('history').delete().eq('id', id);
+  }
+
+  // --- Уведомления организатора (бейдж «движение по заявкам») ---
+
+  async getMyEventsBadge(): Promise<number> {
+    const me = await this.getCurrentUser();
+    if (!me || me.role !== 'org') return 0;
+    const profile = await this.profileOf(me.id);
+    const lastSeen = profile?.last_seen_my_events_at ?? null;
+    // События, которые изменились после последнего просмотра (любой статус,
+    // кроме архивных: архивируются прошедшие, «движение» по ним не нужно).
+    // Если lastSeen не задан (ещё ни разу не открывал «Мои события») —
+    // бейдж показывает все его события.
+    let q = this.db
+      .from('events')
+      .select('id', { count: 'exact', head: true })
+      .eq('owner_id', me.id)
+      .neq('status', 'archived');
+    if (lastSeen) q = q.gt('updated_at', lastSeen);
+    const { count, error } = await q;
+    if (error) throw error;
+    return count ?? 0;
+  }
+
+  async markMyEventsSeen(): Promise<void> {
+    const me = await this.getCurrentUser();
+    if (!me || me.role !== 'org') return;
+    const { error } = await this.db
+      .from('profiles')
+      .update({ last_seen_my_events_at: new Date().toISOString() })
+      .eq('id', me.id);
+    if (error) throw error;
+  }
+
+  // --- Избранное ---
+
+  async listFavorites(): Promise<EventItem[]> {
+    const me = await this.getCurrentUser();
+    if (!me) return [];
+    const { data, error } = await this.db
+      .from('favorites')
+      .select('events(*)')
+      .eq('user_id', me.id)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    const rows = (data ?? []) as unknown as { events: EventItem | null }[];
+    // Только активные события: отклонённые/на модерации посетителю не видны
+    return rows
+      .map((row) => row.events)
+      .filter((e): e is EventItem => e != null && e.status === 'active');
+  }
+
+  async getFavoritesIds(): Promise<string[]> {
+    const me = await this.getCurrentUser();
+    if (!me) return [];
+    const { data, error } = await this.db
+      .from('favorites')
+      .select('event_id')
+      .eq('user_id', me.id);
+    if (error) throw error;
+    return ((data ?? []) as { event_id: string }[]).map((r) => r.event_id);
+  }
+
+  async addFavorite(eventId: string): Promise<void> {
+    const me = await this.getCurrentUser();
+    if (!me) throw new Error('Войдите, чтобы сохранять события');
+    // Повторное добавление не даёт ошибку (unique(user_id, event_id))
+    const { error } = await this.db
+      .from('favorites')
+      .upsert({ user_id: me.id, event_id: eventId }, { onConflict: 'user_id,event_id', ignoreDuplicates: true });
+    if (error) throw error;
+  }
+
+  async removeFavorite(eventId: string): Promise<void> {
+    const me = await this.getCurrentUser();
+    if (!me) return;
+    const { error } = await this.db
+      .from('favorites')
+      .delete()
+      .eq('user_id', me.id)
+      .eq('event_id', eventId);
+    if (error) throw error;
   }
 
   // --- Админка (управление) ---

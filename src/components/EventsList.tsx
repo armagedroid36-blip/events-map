@@ -4,15 +4,20 @@ import { useTranslation } from 'react-i18next';
 import type { Category, EventItem } from '../lib/types';
 import { localizedText } from '../lib/translate';
 import { formatDate } from '../lib/dates';
+import FavoriteButton from './FavoriteButton';
 
 interface Props {
   events: EventItem[];
   categories: Category[];
   selectedId: string | null;
   onSelect: (ev: EventItem) => void;
+  /** id событий в избранном; null — гость (сердечко скрыто) */
+  favoriteIds?: string[] | null;
+  /** Переключить избранное (вызывается при клике на сердечко) */
+  onToggleFavorite?: (id: string) => void;
 }
 
-export default function EventsList({ events, categories, selectedId, onSelect }: Props) {
+export default function EventsList({ events, categories, selectedId, onSelect, favoriteIds = null, onToggleFavorite }: Props) {
   const { t, i18n } = useTranslation();
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
 
@@ -39,10 +44,10 @@ export default function EventsList({ events, categories, selectedId, onSelect }:
           const title = localizedText(ev.title, ev.title_ru, ev.title_en, ev.source_lang, lang);
           const isSelected = ev.id === selectedId;
           return (
-            <li key={ev.id}>
+            <li key={ev.id} className="flex items-stretch gap-1">
               <button
                 onClick={() => onSelect(ev)}
-                className={`w-full rounded-lg border p-3 text-left transition-colors ${
+                className={`flex-1 rounded-lg border p-3 text-left transition-colors ${
                   isSelected
                     ? 'border-gray-900 bg-white/50 ring-1 ring-gray-900'
                     : 'border-white/50 bg-white/25 hover:bg-white/50'
@@ -63,6 +68,15 @@ export default function EventsList({ events, categories, selectedId, onSelect }:
                   </div>
                 </div>
               </button>
+              {/* Сердечко — только для вошедших (favoriteIds !== null) */}
+              {favoriteIds !== null && onToggleFavorite && (
+                <div className="flex items-center">
+                  <FavoriteButton
+                    active={favoriteIds.includes(ev.id)}
+                    onToggle={() => onToggleFavorite(ev.id)}
+                  />
+                </div>
+              )}
             </li>
           );
         })}

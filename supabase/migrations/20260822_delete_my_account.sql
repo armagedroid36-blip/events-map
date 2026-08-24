@@ -3,6 +3,7 @@
 -- Вызывается из меню шестерёнки → «Удалить аккаунт» (подтверждение).
 --
 -- Что удаляется:
+--   - избранное;
 --   - профиль (роль, контакты организатора);
 --   - история просмотров;
 --   - черновики событий (на модерации / отклонённые) этого пользователя;
@@ -28,6 +29,7 @@ begin
     raise exception 'Not authenticated';
   end if;
 
+  delete from public.favorites where user_id = uid;
   delete from public.history where user_id = uid;
   delete from public.events where owner_id = uid and status <> 'active';
   delete from public.profiles where id = uid;

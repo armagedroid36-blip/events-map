@@ -120,7 +120,7 @@ export default {
   favorites: {
     title: 'Избранное',
     accessDenied: 'Войдите, чтобы видеть избранное.',
-    empty: 'Здесь появятся события, которые вы добавите в избранное.',
+    empty: 'Пока ничего не сохранено',
   },
   map: {
     searchPlaceholder: 'Поиск по городу или стране…',
@@ -178,6 +178,8 @@ export default {
     priceUnknown: 'Цену уточняйте у организатора',
     placeUnknown: 'Место уточните у организатора',
     contacts: 'Контакты организатора',
+    addToFavorites: 'В избранное',
+    removeFromFavorites: 'Убрать из избранного',
   },
   form: {
     title: 'Разместить событие',

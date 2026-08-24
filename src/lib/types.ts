@@ -151,6 +151,8 @@ export interface Profile {
   contact_email?: string;
   contact_phone?: string;
   instagram?: string;
+  /** Когда организатор последний раз открывал «Мои события» (для бейджа) */
+  last_seen_my_events_at?: string | null;
 }
 
 /** Текущий пользователь (сессия) */

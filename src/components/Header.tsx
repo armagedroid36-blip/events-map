@@ -7,6 +7,7 @@ import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../lib/auth';
 import AuthModal from './AuthModal';
+import { getApi } from '../lib/api';
 import { config } from '../config';
 
 interface HeaderProps {
@@ -26,7 +27,35 @@ export default function Header({ onOpenForm }: HeaderProps) {
   const [authOpen, setAuthOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [busyDelete, setBusyDelete] = useState(false);
+  // Бейдж «движение по заявкам»: сколько событий организатора изменилось
+  const [badge, setBadge] = useState(0);
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
+
+  // Загрузка бейджа для организатора; для остальных ролей — 0
+  useEffect(() => {
+    if (user?.role !== 'org') {
+      setBadge(0);
+      return;
+    }
+    getApi()
+      .getMyEventsBadge()
+      .then(setBadge)
+      .catch(() => setBadge(0));
+  }, [user]);
+
+  // Страница «Мои события» сообщает об открытии — бейдж пересчитывается
+  useEffect(() => {
+    const h = () => {
+      if (user?.role === 'org') {
+        getApi()
+          .getMyEventsBadge()
+          .then(setBadge)
+          .catch(() => setBadge(0));
+      }
+    };
+    window.addEventListener('my-events-seen', h);
+    return () => window.removeEventListener('my-events-seen', h);
+  }, [user]);
 
   // Страница без формы: «Создать событие» переходит на главную,
   // флаг в sessionStorage открывает там форму.
@@ -69,6 +98,7 @@ export default function Header({ onOpenForm }: HeaderProps) {
       nav.push(
         { label: t('menu.myEvents'), action: () => go('#/my-events') },
         { label: t('menu.addEvent'), action: openForm },
+        { label: t('menu.favorites'), action: () => go('#/favorites') },
         { label: t('menu.profile'), action: () => go('#/profile') },
       );
     } else {
@@ -149,19 +179,47 @@ export default function Header({ onOpenForm }: HeaderProps) {
               {t('app.login')}
             </button>
           ) : (
-            <div className="relative">
-              <button
-                onClick={() => setMenuOpen((v) => !v)}
-                className="glass-btn flex h-9 w-9 items-center justify-center rounded-full"
-                aria-label={t('menu.title')}
-                title={t('menu.title')}
-              >
-                {/* Шестерёнка */}
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="3" />
-                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-                </svg>
-              </button>
+            <>
+              {/* Колокольчик уведомлений (организатор): клик — «Мои события».
+                  Бейдж = число изменённых событий с последнего просмотра */}
+              {user.role === 'org' && badge > 0 && (
+                <button
+                  onClick={() => go('#/my-events')}
+                  className="glass-btn relative flex h-9 w-9 items-center justify-center rounded-full"
+                  aria-label={t('menu.myEvents')}
+                  title={t('menu.myEvents')}
+                >
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+                    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+                  </svg>
+                  <span className="absolute -right-1 -top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold leading-none text-white">
+                    {badge > 99 ? '99+' : badge}
+                  </span>
+                </button>
+              )}
+              <div className="relative">
+                <button
+                  onClick={() => setMenuOpen((v) => !v)}
+                  className="glass-btn flex h-9 w-9 items-center justify-center rounded-full"
+                  aria-label={t('menu.title')}
+                  title={t('menu.title')}
+                >
+                  {/* Шестерёнка */}
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                  </svg>
+                </button>
 
               {menuOpen &&
                 createPortal(
@@ -215,6 +273,7 @@ export default function Header({ onOpenForm }: HeaderProps) {
                   document.body,
                 )}
             </div>
+            </>
           )}
         </div>
       </div>

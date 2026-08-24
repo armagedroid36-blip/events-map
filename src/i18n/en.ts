@@ -120,7 +120,7 @@ export default {
   favorites: {
     title: 'Favorites',
     accessDenied: 'Sign in to see your favorites.',
-    empty: 'Events you add to favorites will appear here.',
+    empty: 'Nothing saved yet',
   },
   map: {
     searchPlaceholder: 'Search by city or country…',
@@ -178,6 +178,8 @@ export default {
     priceUnknown: 'Ask the organizer for the price',
     placeUnknown: 'Ask the organizer for the exact location',
     contacts: 'Organizer contacts',
+    addToFavorites: 'Add to favorites',
+    removeFromFavorites: 'Remove from favorites',
   },
   form: {
     title: 'Submit an event',

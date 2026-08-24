@@ -34,7 +34,15 @@ export default function MyEvents() {
   }
 
   useEffect(() => {
-    if (user?.role === 'org') load();
+    if (user?.role === 'org') {
+      load();
+      // Отметить просмотр «Моих событий»: бейдж уведомлений в шапке исчезает.
+      // Событие 'my-events-seen' слушает Header и пересчитывает бейдж.
+      getApi()
+        .markMyEventsSeen()
+        .then(() => window.dispatchEvent(new CustomEvent('my-events-seen')))
+        .catch(() => {});
+    }
   }, [user]);
 
   if (!user || user.role !== 'org') {

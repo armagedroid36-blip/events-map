@@ -135,6 +135,7 @@ const DEMO_EVENTS: EventItem[] = [
 const LS_EVENTS = 'events-map-demo-events';
 const LS_APPS = 'events-map-demo-applications';
 const LS_CATS = 'events-map-demo-categories';
+const LS_FAVS = 'events-map-demo-favorites';
 
 /** Чтение/запись JSON в localStorage с запасным значением */
 function load<T>(key: string, fallback: T): T {
@@ -410,6 +411,40 @@ export class DemoApi {
   async clearHistory(): Promise<void> {}
 
   async removeHistory(_id: string): Promise<void> {}
+
+  // --- Уведомления организатора (демо: бейдж не считается) ---
+
+  async getMyEventsBadge(): Promise<number> {
+    return 0;
+  }
+
+  async markMyEventsSeen(): Promise<void> {}
+
+  // --- Избранное (демо: localStorage) ---
+
+  async listFavorites(): Promise<EventItem[]> {
+    const ids = load<string[]>(LS_FAVS, []);
+    return load<EventItem[]>(LS_EVENTS, DEMO_EVENTS).filter(
+      (e) => e.status === 'active' && ids.includes(e.id),
+    );
+  }
+
+  async getFavoritesIds(): Promise<string[]> {
+    return load<string[]>(LS_FAVS, []);
+  }
+
+  async addFavorite(eventId: string): Promise<void> {
+    const ids = load<string[]>(LS_FAVS, []);
+    if (!ids.includes(eventId)) ids.push(eventId);
+    save(LS_FAVS, ids);
+  }
+
+  async removeFavorite(eventId: string): Promise<void> {
+    save(
+      LS_FAVS,
+      load<string[]>(LS_FAVS, []).filter((id) => id !== eventId),
+    );
+  }
 }
 
 /** Категории по умолчанию (совпадают с config.defaultCategories) */
