@@ -37,15 +37,19 @@ export default function CategoriesTab({ onChanged }: Props) {
       return;
     }
     setMessage(null);
-    const payload = {
-      name_ru: editing.name_ru.trim(),
-      name_en: editing.name_en.trim(),
-      emoji: editing.emoji.trim(),
-    };
-    if (editing.id) await getApi().updateCategory(editing.id, payload);
-    else await getApi().createCategory(payload);
-    setEditing(null);
-    onChanged();
+    try {
+      const payload = {
+        name_ru: editing.name_ru.trim(),
+        name_en: editing.name_en.trim(),
+        emoji: editing.emoji.trim(),
+      };
+      if (editing.id) await getApi().updateCategory(editing.id, payload);
+      else await getApi().createCategory(payload);
+      setEditing(null);
+      onChanged();
+    } catch {
+      setMessage({ kind: 'err', text: 'Не удалось сохранить категорию' });
+    }
   }
 
   async function handleDelete(id: string) {
