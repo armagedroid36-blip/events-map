@@ -17,6 +17,7 @@ import { getApi, photoUrl } from '../lib/api';
 import { geocodeAddress, reverseGeocode } from '../lib/geocode';
 import { detectLang, translateText } from '../lib/translate';
 import { LANGUAGES } from '../lib/languages';
+import { contactErrors, normalizeContacts } from '../lib/contacts';
 import { detectCountry } from '../lib/countries';
 import { isValidCoords } from '../lib/coords';
 import { todayIso } from '../lib/dates';
@@ -553,6 +554,26 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
         }
       }
 
+      // Валидация контактов: общие правила (как в регистрации и профиле)
+      const cErr = contactErrors({
+        telegram: contactTg,
+        whatsapp: contactWa,
+        email: contactEmailVal,
+        phone: contactPhoneVal,
+        instagram: contactIg,
+      });
+      if (Object.keys(cErr).length > 0) {
+        const er: Record<string, string> = {};
+        if (cErr.telegram) er.contact_telegram = t(`form.${cErr.telegram}`);
+        if (cErr.whatsapp) er.contact_whatsapp = t(`form.${cErr.whatsapp}`);
+        if (cErr.email) er.contact_email = t(`form.${cErr.email}`);
+        if (cErr.phone) er.contact_phone = t(`form.${cErr.phone}`);
+        if (cErr.instagram) er.contact_instagram = t(`form.${cErr.instagram}`);
+        setErrors(er);
+        setSubmitting(false);
+        return;
+      }
+
       // Нормализация ссылки: без протокола -> добавляем https://
       const websiteNorm = website.trim()
         ? website.trim().startsWith('http://') || website.trim().startsWith('https://')
@@ -582,15 +603,22 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
         donation,
         currency: priceVal == null ? null : currency,
       };
+      const normC = normalizeContacts({
+        telegram: contactTg,
+        whatsapp: contactWa,
+        email: contactEmailVal,
+        phone: contactPhoneVal,
+        instagram: contactIg,
+      });
       if (editEvent) {
         // Редактирование: админ — без изменения статуса, организатор — на модерацию
         const upd: Record<string, unknown> = {
           ...common,
-          contact_telegram: contactTg.trim() || undefined,
-          contact_whatsapp: contactWa.trim() || undefined,
-          contact_email: contactEmailVal.trim() || undefined,
-          contact_phone: contactPhoneVal.trim() || undefined,
-          contact_instagram: contactIg.trim() || undefined,
+          contact_telegram: normC.telegram || undefined,
+          contact_whatsapp: normC.whatsapp || undefined,
+          contact_email: normC.email || undefined,
+          contact_phone: normC.phone || undefined,
+          contact_instagram: normC.instagram || undefined,
         };
         if (user?.role === 'org') upd.status = 'moderation';
         await getApi().updateEvent(editEvent.id, upd);
@@ -602,22 +630,22 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
         // Организатор: создаём/повторяем событие (на модерацию)
         const ev = await getApi().createOrgEvent({
           ...common,
-          contact_telegram: contactTg.trim() || undefined,
-          contact_whatsapp: contactWa.trim() || undefined,
-          contact_email: contactEmailVal.trim() || undefined,
-          contact_phone: contactPhoneVal.trim() || undefined,
-          contact_instagram: contactIg.trim() || undefined,
+          contact_telegram: normC.telegram || undefined,
+          contact_whatsapp: normC.whatsapp || undefined,
+          contact_email: normC.email || undefined,
+          contact_phone: normC.phone || undefined,
+          contact_instagram: normC.instagram || undefined,
         });
         void translateInBackground(ev.id, title, description, lang);
       } else if (user?.role === 'admin') {
         // Администратор: публикуется сразу, без модерации
         const ev = await getApi().createEvent({
           ...common,
-          contact_telegram: contactTg.trim() || undefined,
-          contact_whatsapp: contactWa.trim() || undefined,
-          contact_email: contactEmailVal.trim() || undefined,
-          contact_phone: contactPhoneVal.trim() || undefined,
-          contact_instagram: contactIg.trim() || undefined,
+          contact_telegram: normC.telegram || undefined,
+          contact_whatsapp: normC.whatsapp || undefined,
+          contact_email: normC.email || undefined,
+          contact_phone: normC.phone || undefined,
+          contact_instagram: normC.instagram || undefined,
           status: 'active',
         });
         void translateInBackground(ev.id, title, description, lang);
@@ -1011,12 +1039,17 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
             <div>
               <label className="mb-1 block text-sm text-gray-600">{t('form.contactsChoice')}</label>
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                <IconInput icon={IconTelegram} value={contactTg} onChange={setContactTg} placeholder={t('form.contactTelegramField')} />
-                <IconInput icon={IconWhatsapp} value={contactWa} onChange={setContactWa} placeholder={t('form.contactWhatsappField')} />
-                <IconInput icon={IconEmail} type="email" value={contactEmailVal} onChange={setContactEmailVal} placeholder={t('form.contactEmailField')} />
-                <IconInput icon={IconPhone} value={contactPhoneVal} onChange={setContactPhoneVal} placeholder={t('form.contactPhoneField')} />
-                <IconInput icon={IconInstagram} value={contactIg} onChange={setContactIg} placeholder={t('form.contactInstagramField')} />
+                <IconInput icon={IconTelegram} value={contactTg} onChange={(v) => { setContactTg(v); clearErr('contact_telegram'); }} placeholder={t('form.contactTelegramField')} />
+                <IconInput icon={IconWhatsapp} value={contactWa} onChange={(v) => { setContactWa(v); clearErr('contact_whatsapp'); }} placeholder={t('form.contactWhatsappField')} />
+                <IconInput icon={IconEmail} type="email" value={contactEmailVal} onChange={(v) => { setContactEmailVal(v); clearErr('contact_email'); }} placeholder={t('form.contactEmailField')} />
+                <IconInput icon={IconPhone} value={contactPhoneVal} onChange={(v) => { setContactPhoneVal(v); clearErr('contact_phone'); }} placeholder={t('form.contactPhoneField')} />
+                <IconInput icon={IconInstagram} value={contactIg} onChange={(v) => { setContactIg(v); clearErr('contact_instagram'); }} placeholder={t('form.contactInstagramField')} />
               </div>
+              {err('contact_telegram')}
+              {err('contact_whatsapp')}
+              {err('contact_email')}
+              {err('contact_phone')}
+              {err('contact_instagram')}
               <p className="mt-1 text-xs text-gray-400">{t('form.contactsFallback')}</p>
             </div>
           ) : (

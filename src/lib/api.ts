@@ -74,11 +74,17 @@ export interface DataApi {
   /** Удалить свой аккаунт: профиль, историю, черновики событий и пользователя */
   deleteAccount(): Promise<void>;
   getCurrentUser(): Promise<CurrentUser | null>;
+  /** Отправить письмо со ссылкой восстановления пароля (не раскрывает, есть ли email) */
+  resetPassword(email: string): Promise<void>;
+  /** Сменить пароль (авторизованный пользователь, recovery-сессия) */
+  updatePassword(newPassword: string): Promise<void>;
 
   // --- Профиль и фото ---
   uploadPhoto(file: File): Promise<string>;
   /** Профиль текущего пользователя (контакты организатора) */
   getMyProfile(): Promise<Profile | null>;
+  /** Сохранить контакты в профиле текущего пользователя */
+  updateProfile(contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string; instagram?: string }): Promise<void>;
 
   // --- События организатора ---
   listMyEvents(): Promise<EventItem[]>;
@@ -282,6 +288,18 @@ class SupabaseApi implements DataApi {
     };
   }
 
+  async resetPassword(email: string): Promise<void> {
+    const { error } = await this.db.auth.resetPasswordForEmail(email, {
+      redirectTo: config.siteUrl,
+    });
+    if (error) throw new Error(error.message);
+  }
+
+  async updatePassword(newPassword: string): Promise<void> {
+    const { error } = await this.db.auth.updateUser({ password: newPassword });
+    if (error) throw new Error(error.message);
+  }
+
   // --- Профиль и фото ---
 
   async uploadPhoto(file: File): Promise<string> {
@@ -298,6 +316,29 @@ class SupabaseApi implements DataApi {
     const me = await this.getCurrentUser();
     if (!me) return null;
     return this.profileOf(me.id);
+  }
+
+  async updateProfile(contacts: {
+    telegram?: string;
+    whatsapp?: string;
+    email?: string;
+    phone?: string;
+    instagram?: string;
+  }): Promise<void> {
+    // Прямой UPDATE своей строки: политика «profiles own» (ALL, auth.uid() = id)
+    const me = await this.getCurrentUser();
+    if (!me) throw new Error('Войдите, чтобы изменить профиль');
+    const { error } = await this.db
+      .from('profiles')
+      .update({
+        contact_telegram: contacts.telegram || null,
+        contact_whatsapp: contacts.whatsapp || null,
+        contact_email: contacts.email || null,
+        contact_phone: contacts.phone || null,
+        instagram: contacts.instagram || null,
+      })
+      .eq('id', me.id);
+    if (error) throw error;
   }
 
   // --- События организатора ---

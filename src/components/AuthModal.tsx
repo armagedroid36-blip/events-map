@@ -7,8 +7,10 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import { useAuth } from '../lib/auth';
-import { OtpError } from '../lib/api';
+import { OtpError, getApi } from '../lib/api';
 import { nextZ } from '../lib/zindex';
+import { contactErrors, normalizeContacts } from '../lib/contacts';
+import type { ContactErrorCode, ContactField } from '../lib/contacts';
 
 // Черновик регистрации: сохраняется при переходе на шаг кода, удаляется
 // при успешном подтверждении или явном «Изменить данные»
@@ -28,7 +30,7 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
   const { t } = useTranslation();
   const { signIn, signUp, confirmSignup } = useAuth();
   const z = useRef(nextZ()).current;
-  const [mode, setMode] = useState<'login' | 'register'>('login');
+  const [mode, setMode] = useState<'login' | 'register' | 'forgot'>('login');
   const [confirm, setConfirm] = useState(false);
   const [code, setCode] = useState('');
   const [role, setRole] = useState<'user' | 'org'>('user');
@@ -40,6 +42,10 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
   const [instagram, setInstagram] = useState('');
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
+  // Ошибки валидации контактов (сбрасываются при вводе)
+  const [contactErr, setContactErr] = useState<Partial<Record<ContactField, ContactErrorCode>>>({});
+  // Письмо со ссылкой восстановления отправлено (режим «Забыли пароль?»)
+  const [resetSent, setResetSent] = useState(false);
   // Обязательное согласие на обработку персональных данных (только регистрация)
   const [consent, setConsent] = useState(false);
   // Таймер повторной отправки кода (секунд до активации кнопки)
@@ -75,17 +81,34 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
   }, [resendIn]);
 
   function saveDraft() {
+    const norm = normalizeContacts({ telegram, whatsapp, phone, email, instagram });
     const d: RegDraft & { confirm: boolean } = {
       email,
       password,
       role,
-      telegram,
-      whatsapp,
-      phone,
-      instagram,
+      telegram: norm.telegram ?? '',
+      whatsapp: norm.whatsapp ?? '',
+      phone: norm.phone ?? '',
+      instagram: norm.instagram ?? '',
       confirm: true,
     };
     localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
+  }
+
+  // Восстановление пароля: отправка ссылки на почту.
+  // Сообщение одинаковое для существующего и несуществующего email (безопасность)
+  async function forgotSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setErr('');
+    try {
+      await getApi().resetPassword(email);
+      setResetSent(true);
+    } catch (ex) {
+      setErr(ex instanceof Error ? ex.message : t('auth.error'));
+    } finally {
+      setBusy(false);
+    }
   }
 
   // Повторная отправка кода подтверждения (новое письмо)
@@ -93,7 +116,8 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
     setBusy(true);
     setErr('');
     try {
-      await signUp(email, password, role, { telegram, whatsapp, email, phone, instagram });
+      const norm = normalizeContacts({ telegram, whatsapp, phone, email, instagram });
+      await signUp(email, password, role, norm);
       setResendIn(RESEND_SECONDS);
     } catch (ex) {
       setErr(ex instanceof Error ? ex.message : t('auth.error'));
@@ -115,9 +139,17 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
           return;
         }
       } else {
-        // Регистрация: отправляем запрос — на почту придёт код подтверждения.
+        // Регистрация: проверяем контакты организатора (если заполнены)
+        const cErr = contactErrors({ telegram, whatsapp, phone, email, instagram });
+        if (Object.keys(cErr).length > 0) {
+          setContactErr(cErr);
+          setBusy(false);
+          return;
+        }
+        const norm = normalizeContacts({ telegram, whatsapp, phone, email, instagram });
+        // Отправляем запрос — на почту придёт код подтверждения.
         // Черновик сохраняем ДО перехода на шаг кода (данные переживают закрытие)
-        await signUp(email, password, role, { telegram, whatsapp, email, phone, instagram });
+        await signUp(email, password, role, norm);
         saveDraft();
         setConfirm(true);
         setBusy(false);
@@ -135,7 +167,8 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
     setBusy(true);
     setErr('');
     try {
-      const ok = await confirmSignup(email, code, role, { telegram, whatsapp, email, phone, instagram });
+      const norm = normalizeContacts({ telegram, whatsapp, phone, email, instagram });
+      const ok = await confirmSignup(email, code, role, norm);
       if (ok) {
         localStorage.removeItem(DRAFT_KEY);
         onClose();
@@ -229,29 +262,77 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
         >
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-gray-900">
-            {mode === 'login' ? t('auth.loginTitle') : t('auth.registerTitle')}
+            {mode === 'forgot'
+              ? t('auth.resetTitle')
+              : mode === 'login'
+                ? t('auth.loginTitle')
+                : t('auth.registerTitle')}
           </h2>
           <button onClick={onClose} className="rounded p-1 text-gray-400 hover:bg-gray-100" aria-label="close">
             ✕
           </button>
         </div>
 
-        {/* Переключение режима */}
-        <div className="mb-4 flex rounded-lg bg-gray-100 p-1 text-sm">
-          <button
-            onClick={() => setMode('login')}
-            className={`flex-1 rounded-md py-1.5 ${mode === 'login' ? 'bg-white font-medium text-gray-900 shadow' : 'text-gray-500'}`}
-          >
-            {t('auth.login')}
-          </button>
-          <button
-            onClick={() => setMode('register')}
-            className={`flex-1 rounded-md py-1.5 ${mode === 'register' ? 'bg-white font-medium text-gray-900 shadow' : 'text-gray-500'}`}
-          >
-            {t('auth.register')}
-          </button>
-        </div>
+        {/* Переключение режима (не показываем на шаге восстановления пароля) */}
+        {mode !== 'forgot' && (
+          <div className="mb-4 flex rounded-lg bg-gray-100 p-1 text-sm">
+            <button
+              onClick={() => setMode('login')}
+              className={`flex-1 rounded-md py-1.5 ${mode === 'login' ? 'bg-white font-medium text-gray-900 shadow' : 'text-gray-500'}`}
+            >
+              {t('auth.login')}
+            </button>
+            <button
+              onClick={() => setMode('register')}
+              className={`flex-1 rounded-md py-1.5 ${mode === 'register' ? 'bg-white font-medium text-gray-900 shadow' : 'text-gray-500'}`}
+            >
+              {t('auth.register')}
+            </button>
+          </div>
+        )}
 
+        {/* Восстановление пароля: поле email + отправка ссылки */}
+        {mode === 'forgot' && (
+          <div className="space-y-3">
+            {resetSent ? (
+              <p className="rounded-md bg-green-50 px-3 py-2.5 text-sm text-green-800">{t('auth.resetSent')}</p>
+            ) : (
+              <form onSubmit={forgotSubmit} className="space-y-3">
+                <div>
+                  <label className="mb-1 block text-sm text-gray-600">{t('auth.email')}</label>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-2 text-sm focus:border-gray-900 focus:outline-none"
+                  />
+                </div>
+                {err && <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{err}</p>}
+                <button
+                  type="submit"
+                  disabled={busy}
+                  className="w-full rounded-md bg-gray-900 px-3 py-2.5 text-sm font-semibold text-white hover:bg-gray-700 disabled:opacity-50"
+                >
+                  {busy ? '...' : t('auth.resetSubmit')}
+                </button>
+              </form>
+            )}
+            <button
+              type="button"
+              onClick={() => {
+                setMode('login');
+                setResetSent(false);
+                setErr('');
+              }}
+              className="text-sm text-gray-500 hover:text-gray-700"
+            >
+              {t('auth.backToLogin')}
+            </button>
+          </div>
+        )}
+
+        {mode !== 'forgot' && (
         <form onSubmit={submit} className="space-y-3">
           <div>
             <label className="mb-1 block text-sm text-gray-600">{t('auth.email')}</label>
@@ -306,30 +387,62 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
               {role === 'org' && (
                 <div className="space-y-2 rounded-lg bg-gray-50 p-3">
                   <p className="text-xs text-gray-500">{t('auth.orgContactsHint')}</p>
-                  <input
-                    value={telegram}
-                    onChange={(e) => setTelegram(e.target.value)}
-                    placeholder={t('auth.contactTelegram')}
-                    className="w-full rounded-md border border-gray-300 px-2.5 py-2 text-sm focus:border-gray-900 focus:outline-none"
-                  />
-                  <input
-                    value={whatsapp}
-                    onChange={(e) => setWhatsapp(e.target.value)}
-                    placeholder={t('auth.contactWhatsapp')}
-                    className="w-full rounded-md border border-gray-300 px-2.5 py-2 text-sm focus:border-gray-900 focus:outline-none"
-                  />
-                  <input
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder={t('auth.contactPhone')}
-                    className="w-full rounded-md border border-gray-300 px-2.5 py-2 text-sm focus:border-gray-900 focus:outline-none"
-                  />
-                  <input
-                    value={instagram}
-                    onChange={(e) => setInstagram(e.target.value)}
-                    placeholder={t('auth.contactInstagram')}
-                    className="w-full rounded-md border border-gray-300 px-2.5 py-2 text-sm focus:border-gray-900 focus:outline-none"
-                  />
+                  <div>
+                    <input
+                      value={telegram}
+                      onChange={(e) => {
+                        setTelegram(e.target.value);
+                        setContactErr((prev) => ({ ...prev, telegram: undefined }));
+                      }}
+                      placeholder={t('auth.contactTelegram')}
+                      className="w-full rounded-md border border-gray-300 px-2.5 py-2 text-sm focus:border-gray-900 focus:outline-none"
+                    />
+                    {contactErr.telegram && (
+                      <p className="mt-1 text-xs text-red-600">{t(`form.${contactErr.telegram}`)}</p>
+                    )}
+                  </div>
+                  <div>
+                    <input
+                      value={whatsapp}
+                      onChange={(e) => {
+                        setWhatsapp(e.target.value);
+                        setContactErr((prev) => ({ ...prev, whatsapp: undefined }));
+                      }}
+                      placeholder={t('auth.contactWhatsapp')}
+                      className="w-full rounded-md border border-gray-300 px-2.5 py-2 text-sm focus:border-gray-900 focus:outline-none"
+                    />
+                    {contactErr.whatsapp && (
+                      <p className="mt-1 text-xs text-red-600">{t(`form.${contactErr.whatsapp}`)}</p>
+                    )}
+                  </div>
+                  <div>
+                    <input
+                      value={phone}
+                      onChange={(e) => {
+                        setPhone(e.target.value);
+                        setContactErr((prev) => ({ ...prev, phone: undefined }));
+                      }}
+                      placeholder={t('auth.contactPhone')}
+                      className="w-full rounded-md border border-gray-300 px-2.5 py-2 text-sm focus:border-gray-900 focus:outline-none"
+                    />
+                    {contactErr.phone && (
+                      <p className="mt-1 text-xs text-red-600">{t(`form.${contactErr.phone}`)}</p>
+                    )}
+                  </div>
+                  <div>
+                    <input
+                      value={instagram}
+                      onChange={(e) => {
+                        setInstagram(e.target.value);
+                        setContactErr((prev) => ({ ...prev, instagram: undefined }));
+                      }}
+                      placeholder={t('auth.contactInstagram')}
+                      className="w-full rounded-md border border-gray-300 px-2.5 py-2 text-sm focus:border-gray-900 focus:outline-none"
+                    />
+                    {contactErr.instagram && (
+                      <p className="mt-1 text-xs text-red-600">{t(`form.${contactErr.instagram}`)}</p>
+                    )}
+                  </div>
                 </div>
               )}
 
@@ -366,7 +479,22 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
           >
             {busy ? '...' : mode === 'login' ? t('auth.login') : t('auth.register')}
           </button>
+
+          {/* Ссылка «Забыли пароль?» — только на форме входа */}
+          {mode === 'login' && (
+            <button
+              type="button"
+              onClick={() => {
+                setMode('forgot');
+                setErr('');
+              }}
+              className="block w-full text-center text-sm text-gray-500 underline hover:text-gray-700"
+            >
+              {t('auth.forgot')}
+            </button>
+          )}
         </form>
+        )}
         </div>
       </div>
     </div>,

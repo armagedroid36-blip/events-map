@@ -17,10 +17,14 @@ const HistoryPage = lazy(() => import('./pages/History'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const Profile = lazy(() => import('./pages/Profile'));
 const Favorites = lazy(() => import('./pages/Favorites'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 
 export default function App() {
   const { t } = useTranslation();
   const [route, setRoute] = useState(window.location.hash);
+  // Ссылка восстановления пароля: Supabase кладёт в hash
+  // #access_token=...&type=recovery&... — рендерим страницу сброса
+  const [recovery, setRecovery] = useState(() => window.location.hash.includes('type=recovery'));
 
   // Счётчик посещений: одна загрузка страницы = одно посещение
   useEffect(() => {
@@ -36,7 +40,8 @@ export default function App() {
   }, []);
 
   let page: ReactNode;
-  if (route.startsWith('#/admin')) page = <Admin />;
+  if (recovery) page = <ResetPassword onFinish={() => setRecovery(false)} />;
+  else if (route.startsWith('#/admin')) page = <Admin />;
   else if (route.startsWith('#/my-events')) page = <MyEvents />;
   else if (route.startsWith('#/history')) page = <HistoryPage />;
   else if (route.startsWith('#/privacy')) page = <Privacy />;

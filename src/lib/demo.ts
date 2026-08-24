@@ -363,6 +363,12 @@ export class DemoApi {
     return null;
   }
 
+  async updateProfile(): Promise<void> {}
+
+  async resetPassword(): Promise<void> {}
+
+  async updatePassword(): Promise<void> {}
+
   async listMyEvents(): Promise<EventItem[]> {
     return load<EventItem[]>(LS_EVENTS, DEMO_EVENTS).filter((e) => e.status !== 'archived');
   }
