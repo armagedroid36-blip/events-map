@@ -1,7 +1,7 @@
 // Главная (публичная) страница: карта на ВЕСЬ экран (фон сайта),
 // поверх неё — плавающие панели: шапка, фильтры, карточка события,
 // кнопка «События на карте» с списком событий видимой области.
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
 import MapView, { type MapBounds } from '../components/MapView';
@@ -65,6 +65,27 @@ export default function Home() {
   const [listOpen, setListOpen] = useState(false);
   // Верх карточки события на мобильном (поднимается до верха списка)
   const [cardTop, setCardTop] = useState<string | undefined>(undefined);
+  // Реальная нижняя граница шапки + зазор: панели, кнопки и меню шестерёнки
+  // выравниваются по ней (CSS-переменная --header-bottom), чтобы ни одна
+  // панель не заныривала под шапку и не перекрывала её на любом устройстве
+  const headerRef = useRef<HTMLDivElement | null>(null);
+  useLayoutEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const update = () => {
+      const bottom = Math.round(el.getBoundingClientRect().bottom) + 12;
+      document.documentElement.style.setProperty('--header-bottom', `${bottom}px`);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    window.addEventListener('resize', update);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', update);
+      document.documentElement.style.removeProperty('--header-bottom');
+    };
+  }, [loading]);
   // Избранное: id сохранённых событий (null — гость, сердечки скрыты)
   const [favoriteIds, setFavoriteIds] = useState<string[] | null>(null);
 
@@ -295,6 +316,7 @@ export default function Home() {
       {/* Шапка поверх карты — плавающая, с закруглёнными краями.
           Прозрачность — как у кнопок (glass-btn), чтобы не закрывать карту */}
       <div
+        ref={headerRef}
         className="glass absolute inset-x-3 top-2 z-[1200] rounded-2xl shadow-lg"
         style={{ background: 'rgba(255, 255, 255, 0.32)' }}
       >
@@ -304,7 +326,7 @@ export default function Home() {
       {/* Кнопка открытия фильтров на мобильных */}
       <button
         onClick={openFilters}
-        className="glass-btn absolute left-3 top-20 z-[1150] rounded-md px-3 py-2 text-sm font-medium shadow hover:bg-white/75 lg:hidden"
+        className="glass-btn absolute left-3 top-(--header-bottom) z-[1150] rounded-md px-3 py-2 text-sm font-medium shadow hover:bg-white/75 lg:hidden"
       >
         {t('filters.title')}
       </button>
@@ -314,7 +336,7 @@ export default function Home() {
       {user?.role === 'org' && !mobileFiltersOpen && (
         <button
           onClick={() => setFormOpen(true)}
-          className="absolute right-3 top-20 z-[1155] rounded-md bg-emerald-600 px-3.5 py-2 text-sm font-semibold text-white shadow-lg hover:bg-emerald-700 lg:hidden"
+          className="absolute right-3 top-(--header-bottom) z-[1155] rounded-md bg-emerald-600 px-3.5 py-2 text-sm font-semibold text-white shadow-lg hover:bg-emerald-700 lg:hidden"
         >
           + {t('menu.addEvent')}
         </button>
@@ -365,7 +387,7 @@ export default function Home() {
           <span>{t('filters.title')}</span>
         </button>
       ) : (
-        <div className="absolute bottom-3 left-3 top-20 z-[1100] hidden w-72 flex-col gap-2 lg:flex">
+        <div className="absolute bottom-3 left-3 top-(--header-bottom) z-[1100] hidden w-72 flex-col gap-2 lg:flex">
           {user?.role === 'admin' && (
             <div className="relative glass rounded-lg p-2 shadow">
               <QuickLocations onGoTo={goTo} />
@@ -397,7 +419,7 @@ export default function Home() {
           Крестик-кружок — над карточкой, вне скролл-области */}
       {selected && (
         <div
-          className="absolute inset-x-0 bottom-0 z-[1170] lg:inset-x-auto lg:top-20 lg:bottom-3 lg:right-3 lg:w-[380px]"
+          className="absolute inset-x-0 bottom-0 z-[1170] lg:inset-x-auto lg:top-(--header-bottom) lg:bottom-3 lg:right-3 lg:w-[380px]"
           style={cardTop ? { top: cardTop } : undefined}
         >
           <div className="glass h-full overflow-y-auto p-3 shadow-[0_-6px_16px_rgba(0,0,0,0.12)] lg:rounded-2xl lg:p-4">
