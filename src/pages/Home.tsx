@@ -351,7 +351,7 @@ export default function Home() {
       {/* Кнопка открытия фильтров на мобильных */}
       <button
         onClick={openFilters}
-        className="glass-btn absolute left-3 top-20 z-[1150] rounded-md px-3 py-2 text-sm font-medium shadow hover:bg-white/75 lg:hidden"
+        className="glass-btn absolute left-3 top-28 z-[1150] rounded-md px-3 py-2 text-sm font-medium shadow hover:bg-white/75 lg:hidden"
       >
         {t('filters.title')}
       </button>
@@ -361,7 +361,7 @@ export default function Home() {
       {user?.role === 'org' && !mobileFiltersOpen && (
         <button
           onClick={() => setFormOpen(true)}
-          className="absolute right-3 top-20 z-[1155] rounded-md bg-emerald-600 px-3.5 py-2 text-sm font-semibold text-white shadow-lg hover:bg-emerald-700 lg:hidden"
+          className="absolute right-3 top-28 z-[1155] rounded-md bg-emerald-600 px-3.5 py-2 text-sm font-semibold text-white shadow-lg hover:bg-emerald-700 lg:hidden"
         >
           + {t('menu.addEvent')}
         </button>
@@ -372,7 +372,7 @@ export default function Home() {
       {mobileFiltersOpen && (
         <>
           <div className="fixed inset-0 z-[1145] bg-black/20 lg:hidden" />
-          <div className="glass absolute inset-x-3 top-24 z-[1150] max-h-[60vh] overflow-y-auto rounded-xl p-3 shadow-xl lg:hidden thin-scroll">
+          <div className="glass absolute inset-x-3 top-28 z-[1150] max-h-[60vh] overflow-y-auto rounded-xl p-3 shadow-xl lg:hidden thin-scroll">
           <button
             onClick={() => setMobileFiltersOpen(false)}
             className="absolute right-2 top-2 z-10 rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
