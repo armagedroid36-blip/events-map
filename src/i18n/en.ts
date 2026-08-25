@@ -293,6 +293,7 @@ export default {
       categories: 'Categories',
       stats: 'Stats',
       import: 'Import',
+      settings: 'Settings',
     },
     eventsModeration: {
       title: 'Events awaiting review',
@@ -380,6 +381,16 @@ export default {
       skippedPast: 'Skipped rows (past date): {{count}}',
       error: 'Import error: {{message}}',
       sample: 'Download CSV sample',
+    },
+    settings: {
+      title: 'Moderation notifications',
+      notifyEmail: 'Notification email',
+      hint: 'New moderation events are sent to this address and to Telegram.',
+      save: 'Save',
+      saved: 'Saved',
+      saveError: 'Failed to save',
+      loadError: 'Failed to load settings',
+      invalidEmail: 'Enter a valid email',
     },
   },
   geo: {

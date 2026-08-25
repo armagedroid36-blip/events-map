@@ -420,6 +420,14 @@ export class DemoApi {
 
   async markMyEventsSeen(): Promise<void> {}
 
+  async markModerationSeen(): Promise<void> {}
+
+  async getNotifyEmail(): Promise<string | null> {
+    return null;
+  }
+
+  async setNotifyEmail(_email: string): Promise<void> {}
+
   // --- Избранное (демо: localStorage) ---
 
   async listFavorites(): Promise<EventItem[]> {

@@ -293,6 +293,7 @@ export default {
       categories: 'Категории',
       stats: 'Статистика',
       import: 'Импорт',
+      settings: 'Настройки',
     },
     eventsModeration: {
       title: 'Мероприятия на модерации',
@@ -380,6 +381,16 @@ export default {
       skippedPast: 'Пропущено строк (дата в прошлом): {{count}}',
       error: 'Ошибка импорта: {{message}}',
       sample: 'Скачать пример CSV',
+    },
+    settings: {
+      title: 'Уведомления о модерации',
+      notifyEmail: 'Email для уведомлений',
+      hint: 'На этот адрес и в Telegram приходят уведомления о новых событиях на модерации.',
+      save: 'Сохранить',
+      saved: 'Сохранено',
+      saveError: 'Не удалось сохранить',
+      loadError: 'Не удалось загрузить настройки',
+      invalidEmail: 'Введите корректный email',
     },
   },
   geo: {

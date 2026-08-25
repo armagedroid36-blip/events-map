@@ -120,6 +120,10 @@ export interface DataApi {
   markMyEventsSeen(): Promise<void>;
   /** Отметить, что админ открыл вкладку «Модерация» — бейдж исчезает */
   markModerationSeen(): Promise<void>;
+  /** Email для уведомлений о модерации (настройка админа) */
+  getNotifyEmail(): Promise<string | null>;
+  /** Сохранить email для уведомлений о модерации (только админ) */
+  setNotifyEmail(email: string): Promise<void>;
 
   // --- Избранное ---
   /** Сохранённые события (активные; для вошедших) */
@@ -597,6 +601,17 @@ class SupabaseApi implements DataApi {
       .from('profiles')
       .update({ last_seen_moderation_at: new Date().toISOString() })
       .eq('id', me.id);
+    if (error) throw error;
+  }
+
+  async getNotifyEmail(): Promise<string | null> {
+    const { data, error } = await this.db.rpc('get_notify_email');
+    if (error) throw error;
+    return (data as string | null) ?? null;
+  }
+
+  async setNotifyEmail(email: string): Promise<void> {
+    const { error } = await this.db.rpc('set_notify_email', { p_email: email });
     if (error) throw error;
   }
 

@@ -14,8 +14,9 @@ import EventsTab from './admin/EventsTab';
 import CategoriesTab from './admin/CategoriesTab';
 import ImportTab from './admin/ImportTab';
 import ArchiveTab from './admin/ArchiveTab';
+import SettingsTab from './admin/SettingsTab';
 
-type Tab = 'stats' | 'moderation' | 'events' | 'categories' | 'import' | 'archive';
+type Tab = 'stats' | 'moderation' | 'events' | 'categories' | 'import' | 'archive' | 'settings';
 
 export default function Admin() {
   const { t } = useTranslation();
@@ -106,6 +107,7 @@ export default function Admin() {
     { id: 'archive', label: t('admin.nav.archive') },
     { id: 'categories', label: t('admin.nav.categories') },
     { id: 'import', label: t('admin.nav.import') },
+    { id: 'settings', label: t('admin.nav.settings') },
   ];
 
   return (
@@ -157,6 +159,7 @@ export default function Admin() {
         {tab === 'archive' && <ArchiveTab />}
         {tab === 'categories' && <CategoriesTab onChanged={() => setVersion((v) => v + 1)} />}
         {tab === 'import' && <ImportTab onChanged={() => setVersion((v) => v + 1)} />}
+        {tab === 'settings' && <SettingsTab />}
       </div>
     </div>
   );
