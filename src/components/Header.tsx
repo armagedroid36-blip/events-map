@@ -100,7 +100,7 @@ export default function Header({ onOpenForm }: HeaderProps) {
   }
 
   // Пункты навигации по ролям (одни для шапки на десктопе и меню шестерёнки)
-  const nav: NavItem[] = [{ label: t('menu.search'), action: () => go('#/') }];
+  const nav: NavItem[] = [];
   if (user) {
     if (user.role === 'admin') {
       nav.push(
