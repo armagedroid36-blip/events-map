@@ -13,6 +13,7 @@ import type {
   CurrentUser,
   HistoryItem,
   UserRole,
+  UserStatsRow,
 } from './types';
 import { config } from '../config';
 import { DemoApi } from './demo';
@@ -52,6 +53,8 @@ export interface DataApi {
   listAllEvents(): Promise<EventItem[]>;
   /** Только события на модерации (для админа) */
   listModerationEvents(): Promise<EventItem[]>;
+  /** Статистика по пользователям и организаторам (для админа) */
+  listUsersStats(): Promise<UserStatsRow[]>;
   getCategories(): Promise<Category[]>;
   submitApplication(draft: ApplicationDraft): Promise<void>;
 
@@ -193,6 +196,13 @@ class SupabaseApi implements DataApi {
     const { data, error } = await this.db.rpc('list_moderation_events');
     if (error) throw error;
     return (data ?? []) as EventItem[];
+  }
+
+  async listUsersStats(): Promise<UserStatsRow[]> {
+    // Все пользователи/организаторы со счётчиками событий (RPC security definer)
+    const { data, error } = await this.db.rpc('admin_users_stats');
+    if (error) throw error;
+    return (data ?? []) as UserStatsRow[];
   }
 
   async getCategories(): Promise<Category[]> {

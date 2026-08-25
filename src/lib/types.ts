@@ -180,3 +180,28 @@ export interface HistoryItem {
   event_id: string;
   viewed_at: string;
 }
+
+/** Строка статистики пользователя для админки (вкладка «Пользователи») */
+export interface UserStatsRow {
+  user_id: string;
+  email: string;
+  role: UserRole;
+  created_at: string;
+  contact_telegram?: string | null;
+  contact_whatsapp?: string | null;
+  contact_email?: string | null;
+  contact_phone?: string | null;
+  instagram?: string | null;
+  events_total: number;
+  events_active: number;
+  events_moderation: number;
+  events_rejected: number;
+  events_archived: number;
+  events_needs_changes: number;
+  categories: Array<{
+    category_id: string;
+    name_ru: string;
+    name_en: string;
+    count: number;
+  }>;
+}

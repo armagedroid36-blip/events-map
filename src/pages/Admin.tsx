@@ -15,8 +15,9 @@ import CategoriesTab from './admin/CategoriesTab';
 import ImportTab from './admin/ImportTab';
 import ArchiveTab from './admin/ArchiveTab';
 import SettingsTab from './admin/SettingsTab';
+import UsersTab from './admin/UsersTab';
 
-type Tab = 'stats' | 'moderation' | 'events' | 'categories' | 'import' | 'archive' | 'settings';
+type Tab = 'stats' | 'moderation' | 'events' | 'categories' | 'import' | 'archive' | 'settings' | 'users';
 
 export default function Admin() {
   const { t } = useTranslation();
@@ -107,6 +108,7 @@ export default function Admin() {
     { id: 'archive', label: t('admin.nav.archive') },
     { id: 'categories', label: t('admin.nav.categories') },
     { id: 'import', label: t('admin.nav.import') },
+    { id: 'users', label: t('admin.nav.users') },
     { id: 'settings', label: t('admin.settingsTitle') },
   ];
 
@@ -159,6 +161,7 @@ export default function Admin() {
         {tab === 'archive' && <ArchiveTab />}
         {tab === 'categories' && <CategoriesTab onChanged={() => setVersion((v) => v + 1)} />}
         {tab === 'import' && <ImportTab onChanged={() => setVersion((v) => v + 1)} />}
+        {tab === 'users' && <UsersTab version={version} />}
         {tab === 'settings' && <SettingsTab />}
       </div>
     </div>
