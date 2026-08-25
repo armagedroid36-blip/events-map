@@ -125,27 +125,27 @@ export default function FavoritesPage() {
               onSelect={setSelected}
               favoriteIds={favoriteIds}
               onToggleFavorite={toggleFavorite}
-            />
-
-            {selected && (
-              <div className="mt-4 rounded-2xl border border-gray-200 bg-white p-3 shadow-sm">
-                <div className="flex justify-end pb-1">
-                  <button
-                    onClick={() => setSelected(null)}
-                    className="rounded-md px-2 py-1 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-900"
-                  >
-                    ✕ {t('common.close')}
-                  </button>
+              // Детали выбранного события разворачиваются сразу под его превью
+              renderExpanded={(ev) => (
+                <div className="mt-2 rounded-2xl border border-gray-200 bg-white p-3 shadow-sm">
+                  <div className="flex justify-end pb-1">
+                    <button
+                      onClick={() => setSelected(null)}
+                      className="rounded-md px-2 py-1 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+                    >
+                      ✕ {t('common.close')}
+                    </button>
+                  </div>
+                  <EventCard
+                    event={ev}
+                    categories={categories}
+                    onClose={() => setSelected(null)}
+                    favoriteIds={favoriteIds}
+                    onToggleFavorite={toggleFavorite}
+                  />
                 </div>
-                <EventCard
-                  event={selected}
-                  categories={categories}
-                  onClose={() => setSelected(null)}
-                  favoriteIds={favoriteIds}
-                  onToggleFavorite={toggleFavorite}
-                />
-              </div>
-            )}
+              )}
+            />
           </>
         )}
       </div>
