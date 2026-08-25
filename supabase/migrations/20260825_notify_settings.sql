@@ -16,7 +16,8 @@ insert into public.app_settings (key, value) values
   ('notify_chat_id', '321398408')
 on conflict (key) do nothing;
 
--- Email получателя уведомлений о модерации (только админ)
+-- Email получателя уведомлений о модерации.
+-- Доступ: админ (UI) и service role (скрипт-монитор); остальные отклоняются.
 create or replace function public.get_notify_email()
 returns text
 language plpgsql
@@ -24,7 +25,7 @@ security definer
 set search_path = public
 as $$
 begin
-  if not is_admin() then
+  if not (is_admin() or auth.role() = 'service_role') then
     raise exception 'Permission denied';
   end if;
   return (select value from public.app_settings where key = 'notify_email');
@@ -32,7 +33,7 @@ end;
 $$;
 
 revoke all on function public.get_notify_email() from public;
-grant execute on function public.get_notify_email() to authenticated;
+grant execute on function public.get_notify_email() to anon, authenticated, service_role;
 
 -- Смена email получателя уведомлений (только админ)
 create or replace function public.set_notify_email(p_email text)
