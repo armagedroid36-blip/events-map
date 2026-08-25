@@ -20,7 +20,10 @@ export default function SettingsTab() {
         if (!alive) return;
         if (value) setEmail(value);
       } catch {
-        if (alive) setErrorMsg(t('admin.settings.loadError'));
+        if (alive) {
+          setStatus('error');
+          setErrorMsg('Не удалось загрузить настройки');
+        }
       } finally {
         if (alive) setLoading(false);
       }
@@ -28,24 +31,19 @@ export default function SettingsTab() {
     return () => {
       alive = false;
     };
-  }, [t]);
+  }, []);
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
-    const value = email.trim();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      setStatus('error');
-      setErrorMsg(t('admin.settings.invalidEmail'));
-      return;
-    }
+    if (!email.trim()) return;
     setSaving(true);
     setStatus('idle');
     try {
-      await getApi().setNotifyEmail(value);
+      await getApi().setNotifyEmail(email.trim());
       setStatus('saved');
     } catch {
       setStatus('error');
-      setErrorMsg(t('admin.settings.saveError'));
+      setErrorMsg('Не удалось сохранить');
     } finally {
       setSaving(false);
     }
@@ -53,11 +51,10 @@ export default function SettingsTab() {
 
   return (
     <div>
-      <h2 className="mb-4 text-base font-semibold text-gray-900">{t('admin.settings.title')}</h2>
-      <p className="mb-4 text-sm text-gray-500">{t('admin.settings.hint')}</p>
+      <h2 className="mb-4 text-base font-semibold text-gray-900">{t('admin.settingsTitle')}</h2>
       <form onSubmit={handleSave} className="max-w-md">
         <label className="mb-1 block text-sm font-medium text-gray-700">
-          {t('admin.settings.notifyEmail')}
+          {t('admin.notifyEmail')}
         </label>
         <input
           type="email"
@@ -76,9 +73,9 @@ export default function SettingsTab() {
             disabled={loading || saving}
             className="rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700 disabled:opacity-50"
           >
-            {saving ? '...' : t('admin.settings.save')}
+            {saving ? '...' : t('admin.saveEmail')}
           </button>
-          {status === 'saved' && <span className="text-sm text-green-600">{t('admin.settings.saved')}</span>}
+          {status === 'saved' && <span className="text-sm text-green-600">{t('admin.savedEmail')}</span>}
           {status === 'error' && <span className="text-sm text-red-600">{errorMsg}</span>}
         </div>
       </form>

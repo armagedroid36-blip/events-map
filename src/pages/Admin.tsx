@@ -107,7 +107,7 @@ export default function Admin() {
     { id: 'archive', label: t('admin.nav.archive') },
     { id: 'categories', label: t('admin.nav.categories') },
     { id: 'import', label: t('admin.nav.import') },
-    { id: 'settings', label: t('admin.nav.settings') },
+    { id: 'settings', label: t('admin.settingsTitle') },
   ];
 
   return (
