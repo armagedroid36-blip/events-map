@@ -21,6 +21,8 @@ export default function FavoritesPage() {
   // Черновик фильтров в панели; применяется по кнопке «Найти»
   const [draft, setDraft] = useState<Filters>(DEFAULT_FILTERS);
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
+  // Панель фильтров спрятана под кнопку (все экраны); открывается по клику
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [selected, setSelected] = useState<EventItem | null>(null);
 
   async function load() {
@@ -87,20 +89,34 @@ export default function FavoritesPage() {
           <p className="py-8 text-center text-sm text-gray-500">{t('favorites.empty')}</p>
         ) : (
           <>
-            <div className="mb-4 rounded-lg border border-gray-200 bg-white/70">
-              <FiltersPanel
-                categories={categories}
-                filters={draft}
-                onChange={setDraft}
-                cities={allCities}
-                countries={allCountries}
-                onApply={() => setFilters(draft)}
-                onReset={() => {
-                  setDraft(DEFAULT_FILTERS);
-                  setFilters(DEFAULT_FILTERS);
-                }}
-              />
-            </div>
+            {/* Кнопка открытия фильтров — панель спрятана под неё */}
+            <button
+              onClick={() => setFiltersOpen((v) => !v)}
+              className="mb-4 flex w-full items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 sm:w-auto"
+            >
+              <span>{t('filters.title')}</span>
+              <span className="ml-3 text-gray-400">{filtersOpen ? '▴' : '▾'}</span>
+            </button>
+
+            {filtersOpen && (
+              <div className="mb-4 rounded-lg border border-gray-200 bg-white/70">
+                <FiltersPanel
+                  categories={categories}
+                  filters={draft}
+                  onChange={setDraft}
+                  cities={allCities}
+                  countries={allCountries}
+                  onApply={() => {
+                    setFilters(draft);
+                    setFiltersOpen(false);
+                  }}
+                  onReset={() => {
+                    setDraft(DEFAULT_FILTERS);
+                    setFilters(DEFAULT_FILTERS);
+                  }}
+                />
+              </div>
+            )}
 
             <EventsList
               events={visible}
