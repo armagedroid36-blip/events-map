@@ -375,6 +375,7 @@ export default {
       upload: 'Choose file',
       import: 'Import',
       result: 'Imported events: {{count}}',
+      skippedPast: 'Skipped rows (past date): {{count}}',
       error: 'Import error: {{message}}',
       sample: 'Download CSV sample',
     },

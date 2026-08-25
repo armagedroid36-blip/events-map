@@ -6,6 +6,7 @@ import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getApi } from '../../lib/api';
 import { geocodeAddress } from '../../lib/geocode';
+import { todayIso } from '../../lib/dates';
 import type { Category, ImportRow } from '../../lib/types';
 
 interface Props {
@@ -83,10 +84,18 @@ export default function ImportTab({ onChanged }: Props) {
       }
       if (!rows.length) throw new Error('Файл пуст');
 
-      // Преобразуем строки в ImportRow, определяя категорию по имени
+      // Преобразуем строки в ImportRow, определяя категорию по имени.
+      // Строки с датой начала в прошлом пропускаем до запроса — сервер их
+      // всё равно не примет (триггер events_no_past_start на events).
+      const today = todayIso();
       const importRows: ImportRow[] = [];
+      let skippedPast = 0;
       for (const r of rows) {
         if (!r.title || !r.start_date) continue;
+        if (r.start_date < today) {
+          skippedPast += 1;
+          continue;
+        }
         let category_id = '';
         if (r.category) {
           const cat = categories.find(
@@ -125,7 +134,9 @@ export default function ImportTab({ onChanged }: Props) {
       }
 
       const count = await getApi().importEvents(importRows);
-      setResult({ kind: 'ok', text: t('admin.import.result', { count }) });
+      let resultText = t('admin.import.result', { count });
+      if (skippedPast > 0) resultText += ` ${t('admin.import.skippedPast', { count: skippedPast })}`;
+      setResult({ kind: 'ok', text: resultText });
       onChanged();
     } catch (e) {
       setResult({ kind: 'err', text: t('admin.import.error', { message: (e as Error).message }) });

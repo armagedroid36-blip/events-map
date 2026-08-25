@@ -375,6 +375,7 @@ export default {
       upload: 'Выбрать файл',
       import: 'Импортировать',
       result: 'Импортировано событий: {{count}}',
+      skippedPast: 'Пропущено строк (дата в прошлом): {{count}}',
       error: 'Ошибка импорта: {{message}}',
       sample: 'Скачать пример CSV',
     },
