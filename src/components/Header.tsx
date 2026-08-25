@@ -22,6 +22,8 @@ interface NavItem {
   action: () => void;
   /** Скрыть пункт из десктопной навигации шапки (в меню шестерёнки остаётся) */
   hideDesktop?: boolean;
+  /** Скрыть из шапки на мобильных (портрет); в меню шестерёнки остаётся */
+  hideMobile?: boolean;
 }
 
 export default function Header({ onOpenForm }: HeaderProps) {
@@ -110,14 +112,14 @@ export default function Header({ onOpenForm }: HeaderProps) {
       );
     } else if (user.role === 'org') {
       nav.push(
-        { label: t('menu.myEvents'), action: () => go('#/my-events') },
+        { label: t('menu.myEvents'), action: () => go('#/my-events'), hideMobile: true },
         { label: t('menu.addEvent'), action: openForm, hideDesktop: true },
-        { label: t('menu.favorites'), action: () => go('#/favorites') },
+        { label: t('menu.favorites'), action: () => go('#/favorites'), hideMobile: true },
         { label: t('menu.profile'), action: () => go('#/profile'), hideDesktop: true },
       );
     } else {
       nav.push(
-        { label: t('menu.favorites'), action: () => go('#/favorites') },
+        { label: t('menu.favorites'), action: () => go('#/favorites'), hideMobile: true },
         { label: t('menu.profile'), action: () => go('#/profile'), hideDesktop: true },
       );
     }
@@ -158,7 +160,7 @@ export default function Header({ onOpenForm }: HeaderProps) {
                 setMenuOpen(false);
                 n.action();
               }}
-              className="rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900"
+              className={`rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900${n.hideMobile ? ' hidden sm:block' : ''}`}
             >
               {n.label}
             </button>
