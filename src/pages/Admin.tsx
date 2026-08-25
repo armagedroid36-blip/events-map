@@ -34,6 +34,17 @@ export default function Admin() {
     if (user?.role === 'admin') setAuthed(true);
   }, [user]);
 
+  // Открытие вкладки «Модерация» сбрасывает бейдж уведомлений:
+  // отмечаем просмотр и сообщаем Header (событие 'moderation-seen')
+  useEffect(() => {
+    if (tab === 'moderation' && user?.role === 'admin') {
+      getApi()
+        .markModerationSeen()
+        .then(() => window.dispatchEvent(new CustomEvent('moderation-seen')))
+        .catch(() => {});
+    }
+  }, [tab, user]);
+
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setLoginBusy(true);

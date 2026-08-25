@@ -10,6 +10,7 @@ export default {
     addEvent: 'Create an event',
     manage: 'Manage',
     myEvents: 'My events',
+    notifications: 'Notifications',
     search: 'Search',
     profile: 'Profile',
     favorites: 'Favorites',

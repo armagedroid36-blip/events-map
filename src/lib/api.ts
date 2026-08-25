@@ -113,10 +113,13 @@ export interface DataApi {
   removeHistory(id: string): Promise<void>;
 
   // --- Уведомления организатора (бейдж «движение по заявкам») ---
-  /** Сколько событий организатора изменилось с последнего просмотра «Моих событий» */
+  /** Сколько событий организатора изменилось с последнего просмотра «Моих событий»;
+   *  для админа — сколько событий на модерации с последнего просмотра вкладки */
   getMyEventsBadge(): Promise<number>;
   /** Отметить, что организатор увидел свои события — бейдж исчезает */
   markMyEventsSeen(): Promise<void>;
+  /** Отметить, что админ открыл вкладку «Модерация» — бейдж исчезает */
+  markModerationSeen(): Promise<void>;
 
   // --- Избранное ---
   /** Сохранённые события (активные; для вошедших) */
@@ -541,26 +544,41 @@ class SupabaseApi implements DataApi {
     await this.db.from('history').delete().eq('id', id);
   }
 
-  // --- Уведомления организатора (бейдж «движение по заявкам») ---
+  // --- Уведомления (бейдж колокольчика) ---
 
   async getMyEventsBadge(): Promise<number> {
     const me = await this.getCurrentUser();
-    if (!me || me.role !== 'org') return 0;
+    if (!me) return 0;
     const profile = await this.profileOf(me.id);
-    const lastSeen = profile?.last_seen_my_events_at ?? null;
-    // События, которые изменились после последнего просмотра (любой статус,
-    // кроме архивных: архивируются прошедшие, «движение» по ним не нужно).
-    // Если lastSeen не задан (ещё ни разу не открывал «Мои события») —
-    // бейдж показывает все его события.
-    let q = this.db
-      .from('events')
-      .select('id', { count: 'exact', head: true })
-      .eq('owner_id', me.id)
-      .neq('status', 'archived');
-    if (lastSeen) q = q.gt('updated_at', lastSeen);
-    const { count, error } = await q;
-    if (error) throw error;
-    return count ?? 0;
+    // Организатор: события, которые изменились после последнего просмотра
+    // «Моих событий» (любой статус, кроме архивных). Если lastSeen не задан
+    // (ещё ни разу не открывал «Мои события») — бейдж показывает все его события.
+    if (me.role === 'org') {
+      const lastSeen = profile?.last_seen_my_events_at ?? null;
+      let q = this.db
+        .from('events')
+        .select('id', { count: 'exact', head: true })
+        .eq('owner_id', me.id)
+        .neq('status', 'archived');
+      if (lastSeen) q = q.gt('updated_at', lastSeen);
+      const { count, error } = await q;
+      if (error) throw error;
+      return count ?? 0;
+    }
+    // Админ: события на модерации, появившиеся/изменённые после последнего
+    // открытия вкладки «Модерация». lastSeen не задан — все на модерации.
+    if (me.role === 'admin') {
+      const lastSeen = profile?.last_seen_moderation_at ?? null;
+      let q = this.db
+        .from('events')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'moderation');
+      if (lastSeen) q = q.gt('updated_at', lastSeen);
+      const { count, error } = await q;
+      if (error) throw error;
+      return count ?? 0;
+    }
+    return 0;
   }
 
   async markMyEventsSeen(): Promise<void> {
@@ -569,6 +587,16 @@ class SupabaseApi implements DataApi {
     const { error } = await this.db
       .from('profiles')
       .update({ last_seen_my_events_at: new Date().toISOString() })
+      .eq('id', me.id);
+    if (error) throw error;
+  }
+
+  async markModerationSeen(): Promise<void> {
+    const me = await this.getCurrentUser();
+    if (!me || me.role !== 'admin') return;
+    const { error } = await this.db
+      .from('profiles')
+      .update({ last_seen_moderation_at: new Date().toISOString() })
       .eq('id', me.id);
     if (error) throw error;
   }

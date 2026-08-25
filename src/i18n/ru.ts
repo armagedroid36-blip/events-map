@@ -10,6 +10,7 @@ export default {
     addEvent: 'Создать событие',
     manage: 'Управление',
     myEvents: 'Мои события',
+    notifications: 'Уведомления',
     search: 'Поиск',
     profile: 'Профиль',
     favorites: 'Избранное',

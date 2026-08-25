@@ -2,7 +2,7 @@
 // вход / меню шестерёнки.
 // Навигация: на десктопе — пункты в шапке, на мобильных — в меню шестерёнки.
 // Войти: незарегистрированные. Шестерёнка с меню — для вошедших.
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../lib/auth';
@@ -31,31 +31,42 @@ export default function Header({ onOpenForm }: HeaderProps) {
   const [badge, setBadge] = useState(0);
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
 
-  // Загрузка бейджа для организатора; для остальных ролей — 0
-  useEffect(() => {
-    if (user?.role !== 'org') {
-      setBadge(0);
-      return;
-    }
+  // Бейдж уведомлений: org — движение по его событиям («Мои события»),
+  // admin — события на модерации. Пересчитывается: при монтировании,
+  // каждые 30 сек, при возврате вкладки и фокусе окна, по событиям
+  // 'my-events-seen' (MyEvents) и 'moderation-seen' (Admin).
+  const refreshBadge = useCallback(() => {
     getApi()
       .getMyEventsBadge()
       .then(setBadge)
       .catch(() => setBadge(0));
-  }, [user]);
+  }, []);
 
-  // Страница «Мои события» сообщает об открытии — бейдж пересчитывается
   useEffect(() => {
-    const h = () => {
-      if (user?.role === 'org') {
-        getApi()
-          .getMyEventsBadge()
-          .then(setBadge)
-          .catch(() => setBadge(0));
-      }
+    // Гости и обычные пользователи бейдж не видят и таймеры не держат
+    if (user?.role !== 'org' && user?.role !== 'admin') {
+      setBadge(0);
+      return;
+    }
+    refreshBadge();
+    const timer = window.setInterval(refreshBadge, 30_000);
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') refreshBadge();
     };
-    window.addEventListener('my-events-seen', h);
-    return () => window.removeEventListener('my-events-seen', h);
-  }, [user]);
+    const onFocus = () => refreshBadge();
+    const onSeen = () => refreshBadge();
+    window.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('focus', onFocus);
+    window.addEventListener('my-events-seen', onSeen);
+    window.addEventListener('moderation-seen', onSeen);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('focus', onFocus);
+      window.removeEventListener('my-events-seen', onSeen);
+      window.removeEventListener('moderation-seen', onSeen);
+    };
+  }, [user, refreshBadge]);
 
   // Страница без формы: «Создать событие» переходит на главную,
   // флаг в sessionStorage открывает там форму.
@@ -180,14 +191,14 @@ export default function Header({ onOpenForm }: HeaderProps) {
             </button>
           ) : (
             <>
-              {/* Колокольчик уведомлений (организатор): клик — «Мои события».
-                  Бейдж = число изменённых событий с последнего просмотра */}
-              {user.role === 'org' && badge > 0 && (
+              {/* Колокольчик уведомлений: организатор — «Мои события»,
+                  админ — «Модерация». Бейдж = число изменённых/новых */}
+              {(user.role === 'org' || user.role === 'admin') && badge > 0 && (
                 <button
-                  onClick={() => go('#/my-events')}
+                  onClick={() => go(user.role === 'org' ? '#/my-events' : '#/admin')}
                   className="glass-btn relative flex h-9 w-9 items-center justify-center rounded-full"
-                  aria-label={t('menu.myEvents')}
-                  title={t('menu.myEvents')}
+                  aria-label={t('menu.notifications')}
+                  title={t('menu.notifications')}
                 >
                   <svg
                     width="18"
