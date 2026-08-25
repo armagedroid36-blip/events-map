@@ -514,9 +514,17 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
     if (!res.success) {
       const er: Record<string, string> = {};
       for (const issue of res.error.issues) er[String(issue.path[0])] = issue.message;
+      // Общее сообщение над кнопкой: не заполнены обязательные поля
+      er.form = t('form.requiredFields');
       setErrors(er);
       return;
     }
+    // Валидация схемы прошла — убираем общее сообщение «заполните поля»
+    setErrors((prev) => {
+      const n = { ...prev };
+      delete n.form;
+      return n;
+    });
     // Новое событие без отметки на карте — координаты по умолчанию (море/0,0)
     if (!editEvent && !markerTouched) {
       setErrors({ map: t('form.markOnMap') });

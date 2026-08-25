@@ -265,6 +265,7 @@ export default {
     success: 'Thank you! Your submission is sent for review. The event will appear on the map after moderation.',
     error: 'Failed to send the submission. Check the fields and try again.',
     required: 'This field is required',
+    requiredFields: 'Please fill in the required fields',
     badDate: 'End date is earlier than start date',
     badUrl: 'Enter a valid link',
     badPhotoUrl: 'Invalid image link',
