@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import type { Category, EventItem } from '../lib/types';
 import { localizedText } from '../lib/translate';
 import { formatDate } from '../lib/dates';
+import { recurrenceLabel } from '../lib/recurrence';
 import FavoriteButton from './FavoriteButton';
 
 interface Props {
@@ -66,8 +67,9 @@ export default function EventsList({ events, categories, selectedId, onSelect, f
                     <div className="min-w-0">
                       <p className="truncate text-sm font-semibold text-gray-900">{title}</p>
                       <p className="mt-0.5 text-xs text-gray-500">
-                        {formatDate(ev.start_date, lang)}
-                        {ev.end_date ? ` — ${formatDate(ev.end_date, lang)}` : ''}
+                        {ev.recurrence
+                          ? (recurrenceLabel(ev, lang, t) ?? '')
+                          : `${formatDate(ev.start_date, lang)}${ev.end_date ? ` — ${formatDate(ev.end_date, lang)}` : ''}`}
                         {' • '}
                         {ev.city}
                       </p>

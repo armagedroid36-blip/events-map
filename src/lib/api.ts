@@ -411,6 +411,7 @@ class SupabaseApi implements DataApi {
         donation: data.donation ?? false,
         currency: data.currency ?? null,
         photos: data.photos ?? [],
+        recurrence: data.recurrence ?? null,
         owner_id: me.id,
         status: 'moderation',
       })
@@ -461,6 +462,7 @@ class SupabaseApi implements DataApi {
         language: src.language,
         donation: src.donation ?? false,
         photos: src.photos ?? [],
+        recurrence: src.recurrence ?? null,
         owner_id: me.id,
         status: 'moderation',
       })

@@ -12,6 +12,14 @@ export interface Category {
 /** Статус события в базе */
 export type EventStatus = 'active' | 'past' | 'moderation' | 'rejected' | 'archived' | 'needs_changes';
 
+/** Правило повтора регулярного события (null у разовых) */
+export interface Recurrence {
+  /** 'daily' = каждый день; 'weekly' = еженедельно по дням недели */
+  freq: 'daily' | 'weekly';
+  /** Дни недели для weekly: 1=Пн … 7=Вс (ISO) */
+  days?: number[];
+}
+
 /**
  * Событие.
  * Название и описание хранятся в двух вариантах: оригинал (на языке
@@ -40,6 +48,8 @@ export interface EventItem {
   /** Даты: ISO-формат (YYYY-MM-DD) */
   start_date: string;
   end_date?: string;
+  /** Правило повтора: null/отсутствует = разовое событие */
+  recurrence?: Recurrence | null;
   /** Точное время начала/конца (HH:MM, местное) */
   start_time?: string;
   end_time?: string;

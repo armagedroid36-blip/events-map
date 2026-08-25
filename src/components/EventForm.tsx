@@ -12,7 +12,7 @@ import { nextZ } from '../lib/zindex';
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap, AttributionControl } from 'react-leaflet';
 import L from 'leaflet';
 import { z } from 'zod';
-import type { Category, EventItem } from '../lib/types';
+import type { Category, EventItem, Recurrence } from '../lib/types';
 import { getApi, photoUrl } from '../lib/api';
 import { geocodeAddress, reverseGeocode } from '../lib/geocode';
 import { detectLang, translateText } from '../lib/translate';
@@ -232,6 +232,11 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
   const [endDate, setEndDate] = useState(event?.end_date ?? '');
   const [startTime, setStartTime] = useState(event?.start_time ?? '');
   const [endTime, setEndTime] = useState(event?.end_time ?? '');
+  // Повторение: разовое / каждый день / по дням недели (из recurrence события)
+  const [repeatMode, setRepeatMode] = useState<'once' | 'daily' | 'weekly'>(
+    event?.recurrence?.freq === 'daily' ? 'daily' : event?.recurrence?.freq === 'weekly' ? 'weekly' : 'once',
+  );
+  const [repeatDays, setRepeatDays] = useState<number[]>(event?.recurrence?.days ?? []);
   const [city, setCity] = useState(event?.city ?? '');
   const [address, setAddress] = useState(event?.address ?? '');
   const [categoryId, setCategoryId] = useState(event?.category_id ?? '');
@@ -583,12 +588,27 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
         return;
       }
 
+      // Валидация повтора: «по дням недели» требует хотя бы один день
+      if (repeatMode === 'weekly' && repeatDays.length === 0) {
+        setErrors({ repeatDays: t('form.repeatDaysRequired') });
+        setSubmitting(false);
+        return;
+      }
+
       // Нормализация ссылки: без протокола -> добавляем https://
       const websiteNorm = website.trim()
         ? website.trim().startsWith('http://') || website.trim().startsWith('https://')
           ? website.trim()
           : `https://${website.trim()}`
         : '';
+
+      // Правило повтора (в БД — jsonb events.recurrence)
+      const recurrence: Recurrence | null =
+        repeatMode === 'once'
+          ? null
+          : repeatMode === 'daily'
+            ? { freq: 'daily' }
+            : { freq: 'weekly', days: repeatDays };
 
       const common = {
         title,
@@ -611,6 +631,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
         price: priceVal,
         donation,
         currency: priceVal == null ? null : currency,
+        recurrence,
       };
       const normC = normalizeContacts({
         telegram: contactTg,
@@ -823,6 +844,85 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
               />
               {err('end_time')}
             </div>
+          </div>
+
+          {/* Повторение: разовое / каждый день / по дням недели */}
+          <div className="mb-4">
+            <label className="mb-1 block text-sm text-gray-600">{t('form.repeat')}</label>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setRepeatMode('once');
+                  clearErr('repeatDays');
+                }}
+                className={`rounded-md px-3 py-1.5 text-sm ${
+                  repeatMode === 'once'
+                    ? 'bg-gray-900 text-white'
+                    : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                {t('form.repeatOnce')}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setRepeatMode('daily');
+                  clearErr('repeatDays');
+                }}
+                className={`rounded-md px-3 py-1.5 text-sm ${
+                  repeatMode === 'daily'
+                    ? 'bg-gray-900 text-white'
+                    : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                {t('form.repeatDaily')}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setRepeatMode('weekly');
+                  clearErr('repeatDays');
+                }}
+                className={`rounded-md px-3 py-1.5 text-sm ${
+                  repeatMode === 'weekly'
+                    ? 'bg-gray-900 text-white'
+                    : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                {t('form.repeatWeekly')}
+              </button>
+            </div>
+            {repeatMode === 'weekly' && (
+              <div className="mt-2">
+                <div className="flex flex-wrap gap-1.5">
+                  {(t('weekdaysShort', { returnObjects: true }) as string[]).map((name, i) => {
+                    const day = i + 1;
+                    const active = repeatDays.includes(day);
+                    return (
+                      <button
+                        key={day}
+                        type="button"
+                        onClick={() =>
+                          setRepeatDays((prev) =>
+                            active ? prev.filter((d) => d !== day) : [...prev, day].sort((a, b) => a - b),
+                          )
+                        }
+                        className={`rounded-md px-2.5 py-1.5 text-sm ${
+                          active
+                            ? 'bg-emerald-600 text-white'
+                            : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+                        }`}
+                      >
+                        {name}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="mt-1 text-xs text-gray-400">{t('form.repeatStartHint')}</p>
+                {err('repeatDays')}
+              </div>
+            )}
           </div>
 
           {/* Карта: отметка = точка события */}

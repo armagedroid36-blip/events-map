@@ -9,6 +9,7 @@ import type { Category, EventItem } from '../lib/types';
 import { localizedText } from '../lib/translate';
 import { languageName } from '../lib/languages';
 import { formatDate } from '../lib/dates';
+import { recurrenceLabel } from '../lib/recurrence';
 import { photoUrl } from '../lib/api';
 import { isValidCoords } from '../lib/coords';
 import { nextZ } from '../lib/zindex';
@@ -396,12 +397,14 @@ export default function EventCard({ event, categories, onClose: _onClose, isAdmi
     lang,
   );
 
-  const dateLabel = event.end_date
-    ? t('card.dates', {
-        start: formatDate(event.start_date, lang),
-        end: formatDate(event.end_date, lang),
-      })
-    : t('card.dateSingle', { start: formatDate(event.start_date, lang) });
+  const dateLabel = event.recurrence
+    ? (recurrenceLabel(event, lang, t) ?? '')
+    : event.end_date
+      ? t('card.dates', {
+          start: formatDate(event.start_date, lang),
+          end: formatDate(event.end_date, lang),
+        })
+      : t('card.dateSingle', { start: formatDate(event.start_date, lang) });
 
   // Точное время, если указано
   const timeLabel =

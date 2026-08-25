@@ -2,6 +2,7 @@
 // «Избранном» (Favorites). Единая реализация, чтобы поведение совпадало.
 import type { EventItem, Filters } from './types';
 import { isUpcoming, todayIso, tomorrowIso } from './dates';
+import { recurrenceMatchesDate } from './recurrence';
 import { cityMatches } from './cities';
 import { eventCountry } from './countries';
 
@@ -55,7 +56,11 @@ export function eventMatchesFilters(ev: EventItem, filters: Filters): boolean {
           ? tomorrowIso()
           : filters.date;
     const end = ev.end_date ?? ev.start_date;
-    if (ev.start_date > d || end < d) return false;
+    if (ev.recurrence) {
+      if (!recurrenceMatchesDate(ev, d)) return false;
+    } else {
+      if (ev.start_date > d || end < d) return false;
+    }
   }
   // Цена: бесплатные (price = null или 0), платные (price > 0) или донат + диапазон
   if (filters.price === 'free' && ev.price != null && ev.price > 0) return false;

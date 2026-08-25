@@ -29,12 +29,13 @@ async function main() {
   }
   (byEnd || []).forEach((r) => ids.add(r.id));
 
-  // 2) end_date нет, start_date в прошлом
+  // 2) end_date нет, start_date в прошлом (бессрочные регулярные НЕ архивируются)
   const { data: byStart, error: e2 } = await db
     .from('events')
     .select('id')
     .eq('status', 'active')
     .is('end_date', null)
+    .is('recurrence', null)
     .lt('start_date', today);
   if (e2) {
     console.error('Ошибка выборки по start_date:', e2.message);

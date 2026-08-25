@@ -46,8 +46,14 @@ export function isUpcoming(event: {
   end_date?: string;
   start_time?: string;
   end_time?: string;
+  recurrence?: { freq: 'daily' | 'weekly'; days?: number[] } | null;
 }): boolean {
   const today = todayIso();
+  // Регулярное событие: бессрочная или активная серия — предстоящее
+  if (event.recurrence) {
+    if (event.end_date && event.end_date < today) return false; // серия закончилась
+    return true;
+  }
   const endDate = event.end_date ?? event.start_date;
   // Дата окончания/начала в будущем — предстоящее
   if (endDate > today) return true;
