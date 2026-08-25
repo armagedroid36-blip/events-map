@@ -24,14 +24,20 @@ export default function FavoritesPage() {
   // Панель фильтров спрятана под кнопку (все экраны); открывается по клику
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [selected, setSelected] = useState<EventItem | null>(null);
+  const [loading, setLoading] = useState(true);
 
   async function load() {
-    const [favs, cats] = await Promise.all([
-      getApi().listFavorites(),
-      getApi().getCategories(),
-    ]);
-    setEvents(favs);
-    setCategories(cats);
+    setLoading(true);
+    try {
+      const [favs, cats] = await Promise.all([
+        getApi().listFavorites(),
+        getApi().getCategories(),
+      ]);
+      setEvents(favs);
+      setCategories(cats);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -85,7 +91,9 @@ export default function FavoritesPage() {
       <div className="mx-auto w-full max-w-3xl flex-1 p-4">
         <h1 className="mb-4 text-xl font-semibold text-gray-900">{t('favorites.title')}</h1>
 
-        {events.length === 0 ? (
+        {loading ? (
+          <p className="py-8 text-center text-sm text-gray-500">{t('common.loading')}</p>
+        ) : events.length === 0 ? (
           <p className="py-8 text-center text-sm text-gray-500">{t('favorites.empty')}</p>
         ) : (
           <>

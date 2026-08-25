@@ -21,16 +21,22 @@ export default function MyEvents() {
   const [repeat, setRepeat] = useState<EventItem | null>(null);
   // Редактирование существующей карточки (организатор)
   const [edit, setEdit] = useState<EventItem | null>(null);
+  const [loading, setLoading] = useState(true);
 
   async function load() {
-    const [ev, ar, cats] = await Promise.all([
-      getApi().listMyEvents(),
-      getApi().listArchived(),
-      getApi().getCategories(),
-    ]);
-    setEvents(ev);
-    setArchive(ar);
-    setCategories(cats);
+    setLoading(true);
+    try {
+      const [ev, ar, cats] = await Promise.all([
+        getApi().listMyEvents(),
+        getApi().listArchived(),
+        getApi().getCategories(),
+      ]);
+      setEvents(ev);
+      setArchive(ar);
+      setCategories(cats);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -151,14 +157,22 @@ export default function MyEvents() {
 
       {tab === 'active' ? (
         <div className="space-y-2">
-          {events.length === 0 && <p className="text-sm text-gray-500">{t('myEvents.empty')}</p>}
+          {loading ? (
+            <p className="text-sm text-gray-500">{t('common.loading')}</p>
+          ) : (
+            events.length === 0 && <p className="text-sm text-gray-500">{t('myEvents.empty')}</p>
+          )}
           {events.map((ev) => (
             <EventRow key={ev.id} ev={ev} />
           ))}
         </div>
       ) : (
         <div className="space-y-2">
-          {archive.length === 0 && <p className="text-sm text-gray-500">{t('myEvents.archiveEmpty')}</p>}
+          {loading ? (
+            <p className="text-sm text-gray-500">{t('common.loading')}</p>
+          ) : (
+            archive.length === 0 && <p className="text-sm text-gray-500">{t('myEvents.archiveEmpty')}</p>
+          )}
           {archive.map((ev) => (
             <EventRow key={ev.id} ev={ev} />
           ))}
