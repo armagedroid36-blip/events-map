@@ -353,7 +353,7 @@ export default function Home() {
           затемнение, центрированная карточка, скролл на внешнем контейнере.
           Закрывается только крестиком и кнопкой «Найти» — клик по фону НЕ закрывает */}
       {mobileFiltersOpen && (
-        <div className="fixed inset-0 z-[1150] overflow-y-auto bg-black/25 p-4 lg:hidden">
+        <div className="fixed inset-0 z-[1300] overflow-y-auto bg-black/25 p-4 lg:hidden">
           <div className="flex min-h-full items-center justify-center">
             <div className="glass-strong mx-auto my-6 w-full max-w-2xl rounded-xl p-6 shadow-2xl">
               <div className="mb-4 flex items-center justify-between">
