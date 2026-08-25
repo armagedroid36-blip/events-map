@@ -1,6 +1,7 @@
 // Шапка сайта: название, навигация по ролям, переключатель языка RU/EN,
 // вход / меню шестерёнки.
-// Навигация: на десктопе — пункты в шапке, на мобильных — в меню шестерёнки.
+// Навигация: пункты по ролям — в правом блоке шапки (все экраны),
+// дублируются в меню шестерёнки.
 // Войти: незарегистрированные. Шестерёнка с меню — для вошедших.
 import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -139,7 +140,7 @@ export default function Header({ onOpenForm }: HeaderProps) {
 
   return (
     <header>
-      <div className="mx-auto flex max-w-7xl items-center gap-x-3 px-4 py-3">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3">
         {/* Название сайта — клик возвращает на карту */}
         <a href="#/" className="min-w-0">
           <h1 className="truncate text-lg font-semibold text-gray-900">
@@ -148,8 +149,8 @@ export default function Header({ onOpenForm }: HeaderProps) {
           </h1>
         </a>
 
-        {/* Навигация по ролям (десктоп); на мобильных — в меню шестерёнки */}
-        <nav className="hidden flex-1 items-center gap-1 lg:flex">
+        <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-1 sm:gap-2">
+          {/* Навигация по ролям — видна на всех экранах (кроме hideDesktop) */}
           {nav.filter((n) => !n.hideDesktop).map((n) => (
             <button
               key={n.label}
@@ -162,9 +163,6 @@ export default function Header({ onOpenForm }: HeaderProps) {
               {n.label}
             </button>
           ))}
-        </nav>
-
-        <div className="flex shrink-0 items-center gap-2">
           {/* Переключатель языка */}
           <button
             onClick={switchLang}
