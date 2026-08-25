@@ -165,16 +165,6 @@ export default function Header({ onOpenForm }: HeaderProps) {
         </nav>
 
         <div className="flex shrink-0 items-center gap-2">
-          {/* Ссылка на политику конфиденциальности — для всех посетителей.
-              На мобильных скрыта (нет места в одну строку) — доступна
-              из меню шестерёнки и из формы входа/регистрации */}
-          <a
-            href="#/privacy"
-            className="hidden rounded-md px-2 py-1.5 text-xs font-medium text-gray-500 hover:bg-white/70 hover:text-gray-700 sm:block"
-          >
-            {t('privacy.link')}
-          </a>
-
           {/* Переключатель языка */}
           <button
             onClick={switchLang}

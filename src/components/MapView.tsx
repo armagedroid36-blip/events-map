@@ -3,6 +3,7 @@
 // управление центром извне (геолокация и быстрые кнопки).
 import { useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, useMap, AttributionControl } from 'react-leaflet';
+import { useTranslation } from 'react-i18next';
 import L from 'leaflet';
 // Плагин кластеризации маркеров (регистрируется в Leaflet при импорте)
 import 'leaflet.markercluster';
@@ -162,6 +163,7 @@ export default function MapView({
   onBoundsChange,
   onMapClick,
 }: MapViewProps) {
+  const { t } = useTranslation();
   const initialCenter: [number, number] = [
     center?.lat ?? config.defaultCenter.lat,
     center?.lng ?? config.defaultCenter.lng,
@@ -171,7 +173,7 @@ export default function MapView({
     <MapContainer
       center={initialCenter}
       zoom={zoom ?? config.defaultZoom}
-      className="h-full w-full"
+      className="relative h-full w-full"
       style={{ minHeight: 320 }}
       // Кнопки зума скрыты: их перекрывают плавающие панели.
       // Зум работает колесом мыши, двойным кликом и жестами на телефоне.
@@ -191,6 +193,13 @@ export default function MapView({
       />
       {/* Атрибуция по центру внизу (центрируется CSS) — чтобы её не закрывали панели */}
       <AttributionControl position="bottomright" prefix={false} />
+      {/* Ссылка на политику конфиденциальности — по центру внизу, над атрибуцией */}
+      <a
+        href="#/privacy"
+        className="absolute bottom-9 left-1/2 z-[1000] -translate-x-1/2 rounded-md bg-white/80 px-2 py-0.5 text-[11px] font-medium text-gray-600 shadow-sm hover:text-gray-900"
+      >
+        {t('privacy.link')}
+      </a>
       <ClusterLayer events={events} categories={categories} onSelect={onSelect} />
       <MapController center={center} zoom={zoom} />
       <BoundsTracker onBoundsChange={onBoundsChange} onMapClick={onMapClick} />
