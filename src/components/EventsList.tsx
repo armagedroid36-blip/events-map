@@ -47,7 +47,7 @@ export default function EventsList({ events, categories, selectedId, onSelect, f
             <li key={ev.id} className="flex items-stretch gap-1">
               <button
                 onClick={() => onSelect(ev)}
-                className={`flex-1 rounded-lg border p-3 text-left transition-colors ${
+                className={`min-w-0 flex-1 rounded-lg border p-3 text-left transition-colors ${
                   isSelected
                     ? 'border-gray-900 bg-white/50 ring-1 ring-gray-900'
                     : 'border-white/50 bg-white/25 hover:bg-white/50'
