@@ -338,12 +338,12 @@ export default function Home() {
         {t('filters.title')}
       </button>
 
-      {/* Кнопка «Создать событие» для организатора (мобильные):
-          на десктопе она в шапке, на мобильных шапка прячет её в меню */}
+      {/* Плавающая кнопка «Создать событие» для организатора:
+          на всех ширинах под шапкой справа (на десктопе пункт шапки убран) */}
       {user?.role === 'org' && !mobileFiltersOpen && (
         <button
           onClick={() => setFormOpen(true)}
-          className="absolute right-3 top-(--header-bottom) z-[1155] rounded-md bg-emerald-600 px-3.5 py-2 text-sm font-semibold text-white shadow-lg hover:bg-emerald-700 lg:hidden"
+          className="absolute right-3 top-(--header-bottom) z-[1155] rounded-md bg-emerald-600 px-3.5 py-2 text-sm font-semibold text-white shadow-lg hover:bg-emerald-700"
         >
           + {t('menu.addEvent')}
         </button>

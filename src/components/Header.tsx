@@ -19,6 +19,8 @@ interface HeaderProps {
 interface NavItem {
   label: string;
   action: () => void;
+  /** Скрыть пункт из десктопной навигации шапки (в меню шестерёнки остаётся) */
+  hideDesktop?: boolean;
 }
 
 export default function Header({ onOpenForm }: HeaderProps) {
@@ -108,7 +110,7 @@ export default function Header({ onOpenForm }: HeaderProps) {
     } else if (user.role === 'org') {
       nav.push(
         { label: t('menu.myEvents'), action: () => go('#/my-events') },
-        { label: t('menu.addEvent'), action: openForm },
+        { label: t('menu.addEvent'), action: openForm, hideDesktop: true },
         { label: t('menu.favorites'), action: () => go('#/favorites') },
         { label: t('menu.profile'), action: () => go('#/profile') },
       );
@@ -148,7 +150,7 @@ export default function Header({ onOpenForm }: HeaderProps) {
 
         {/* Навигация по ролям (десктоп); на мобильных — в меню шестерёнки */}
         <nav className="hidden flex-1 items-center gap-1 lg:flex">
-          {nav.map((n) => (
+          {nav.filter((n) => !n.hideDesktop).map((n) => (
             <button
               key={n.label}
               onClick={() => {
