@@ -106,19 +106,19 @@ export default function Header({ onOpenForm }: HeaderProps) {
     if (user.role === 'admin') {
       nav.push(
         { label: t('menu.manage'), action: () => go('#/admin') },
-        { label: t('menu.profile'), action: () => go('#/profile') },
+        { label: t('menu.profile'), action: () => go('#/profile'), hideDesktop: true },
       );
     } else if (user.role === 'org') {
       nav.push(
         { label: t('menu.myEvents'), action: () => go('#/my-events') },
         { label: t('menu.addEvent'), action: openForm, hideDesktop: true },
         { label: t('menu.favorites'), action: () => go('#/favorites') },
-        { label: t('menu.profile'), action: () => go('#/profile') },
+        { label: t('menu.profile'), action: () => go('#/profile'), hideDesktop: true },
       );
     } else {
       nav.push(
         { label: t('menu.favorites'), action: () => go('#/favorites') },
-        { label: t('menu.profile'), action: () => go('#/profile') },
+        { label: t('menu.profile'), action: () => go('#/profile'), hideDesktop: true },
       );
     }
   }
