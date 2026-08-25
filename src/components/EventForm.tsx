@@ -223,6 +223,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
   const event = editEvent ?? eventProp;
   const isRepeat = !!event;
   const isEdit = !!editEvent;
+  const isResubmit = isEdit && user?.role === 'org' && (event?.status === 'rejected' || event?.status === 'needs_changes');
 
   // --- Состояние формы (при повторе — данные из события) ---
   const [title, setTitle] = useState(event?.title ?? '');
@@ -1126,7 +1127,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
             disabled={submitting || uploading}
             className="w-full rounded-md bg-gray-900 px-3 py-2.5 text-sm font-semibold text-white hover:bg-gray-700 disabled:opacity-50"
           >
-            {submitting ? '...' : isEdit ? t('form.save') : isAdmin ? t('form.publish') : t('form.submit')}
+            {submitting ? '...' : isEdit ? (isResubmit ? t('form.submit') : t('form.save')) : isAdmin ? t('form.publish') : t('form.submit')}
           </button>
         </form>
         </div>
