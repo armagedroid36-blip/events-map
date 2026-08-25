@@ -567,16 +567,15 @@ class SupabaseApi implements DataApi {
     }
     // Админ: события на модерации, появившиеся/изменённые после последнего
     // открытия вкладки «Модерация». lastSeen не задан — все на модерации.
+    // Прямой select скрыт RLS (moderation не видна обычным запросам) —
+    // считаем через security definer RPC, как list_moderation_events.
     if (me.role === 'admin') {
       const lastSeen = profile?.last_seen_moderation_at ?? null;
-      let q = this.db
-        .from('events')
-        .select('id', { count: 'exact', head: true })
-        .eq('status', 'moderation');
-      if (lastSeen) q = q.gt('updated_at', lastSeen);
-      const { count, error } = await q;
+      const { data, error } = await this.db.rpc('count_moderation_events', {
+        p_last_seen: lastSeen,
+      });
       if (error) throw error;
-      return count ?? 0;
+      return Number(data ?? 0);
     }
     return 0;
   }
