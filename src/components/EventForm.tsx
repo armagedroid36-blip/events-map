@@ -939,8 +939,8 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
                 attributionControl={false}
               >
                 <TileLayer
-                  attribution="&copy; OpenStreetMap &copy; CARTO"
-                  url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+                  attribution="&copy; OpenStreetMap contributors"
+                  url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 <AttributionControl position="bottomright" prefix={false} />
                 <Marker position={[lat, lng]} icon={formIcon} />

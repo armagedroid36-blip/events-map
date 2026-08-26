@@ -185,10 +185,10 @@ export default function MapView({
       // ниже рендерится свой с prefix={false}, чтобы ссылки не было.
       attributionControl={false}
     >
-      {/* Тайлы Esri World Street Map — бесплатно, без ключей */}
+      {/* Тайлы OpenStreetMap — бесплатно, без ключей */}
       <TileLayer
-        url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
-        attribution='&copy; Esri, Maxar, Earthstar Geographics, and the GIS User Community'
+        url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
       {/* Атрибуция по центру внизу (центрируется CSS) — чтобы её не закрывали панели */}
       <AttributionControl position="bottomright" prefix={false} />
