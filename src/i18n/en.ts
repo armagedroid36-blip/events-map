@@ -189,7 +189,7 @@ export default {
     priceUnknown: 'Ask the organizer for the price',
     placeUnknown: 'Ask the organizer for the exact location',
     contacts: 'Organizer contacts',
-    orgProfile: 'Organizer profile',
+    organizer: 'Organizer',
     share: 'Share',
     shareTelegram: 'Telegram',
     shareWhatsapp: 'WhatsApp',

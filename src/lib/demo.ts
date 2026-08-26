@@ -30,6 +30,9 @@ const DEMO_EVENTS: EventItem[] = [
     contact: 'hello@example.com',
     photos: [],
     status: 'active',
+    owner_id: 'demo-org',
+    org_display_name: 'Демо-организатор',
+    org_avatar_url: null,
     created_at: new Date().toISOString(),
   },
   {

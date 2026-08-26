@@ -521,9 +521,12 @@ export default function EventCard({ event, categories, onClose, isAdmin, onDelet
   const [lightbox, setLightbox] = useState<number | null>(null);
   // Индексы фото с битыми ссылками (onError) — скрываем их, не пряча молча
   const [brokenPhotos, setBrokenPhotos] = useState<Set<number>>(() => new Set());
+  // Битая аватарка организатора — вместо неё заглушка-иконка
+  const [brokenOrgAvatar, setBrokenOrgAvatar] = useState(false);
   // При смене события сбрасываем отметки битых фото
   useEffect(() => {
     setBrokenPhotos(new Set());
+    setBrokenOrgAvatar(false);
   }, [event.id]);
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
   const cat = categories.find((c) => c.id === event.category_id);
@@ -565,34 +568,6 @@ export default function EventCard({ event, categories, onClose, isAdmin, onDelet
       <div className="mb-2 flex items-start justify-between gap-2">
         <h3 className="flex-1 text-base font-semibold leading-snug text-gray-900">{title}</h3>
         <div className="flex shrink-0 items-center gap-1">
-          {/* Иконка организатора: открывает публичный профиль (если событие
-              создано через аккаунт; у импортированных owner_id нет) */}
-          {event.owner_id && (
-            <button
-              type="button"
-              onClick={() => {
-                onClose();
-                window.location.hash = `#/org/${encodeURIComponent(event.owner_id ?? '')}`;
-              }}
-              title={t('card.orgProfile')}
-              aria-label={t('card.orgProfile')}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                width="18"
-                height="18"
-              >
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-            </button>
-          )}
           {/* Поделиться — доступно всем, в т.ч. гостям */}
           <ShareButton
             url={`${window.location.origin}${window.location.pathname}#/?e=${encodeURIComponent(event.id)}`}
@@ -696,10 +671,52 @@ export default function EventCard({ event, categories, onClose, isAdmin, onDelet
 
       <p className="mb-3 whitespace-pre-line text-sm leading-relaxed text-gray-700">{linkifyText(description)}</p>
 
-      {/* Контакты организатора: векторные иконки-ссылки */}
-      {(event.contact_telegram || event.contact_whatsapp || event.contact_email || event.contact_phone || event.contact_instagram) && (
+      {/* Организатор: кружок с аватаркой (клик — публичный профиль)
+          + контакты организатора (векторные иконки-ссылки) */}
+      {(event.owner_id || event.contact_telegram || event.contact_whatsapp || event.contact_email || event.contact_phone || event.contact_instagram) && (
         <div className="mb-3 border-t border-gray-200 pt-2">
-          <p className="mb-1.5 text-xs font-medium text-gray-500">{t('card.contacts')}</p>
+          <p className="mb-1.5 text-xs font-medium text-gray-500">{t('card.organizer')}</p>
+          {event.owner_id && (
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                window.location.hash = `#/org/${encodeURIComponent(event.owner_id ?? '')}`;
+              }}
+              title={t('card.organizer')}
+              aria-label={t('card.organizer')}
+              className="mb-2 flex items-center gap-2 rounded-full hover:bg-gray-50"
+            >
+              {event.org_avatar_url && !brokenOrgAvatar ? (
+                <img
+                  src={fullUrl(event.org_avatar_url)}
+                  alt=""
+                  className="h-10 w-10 shrink-0 rounded-full object-cover"
+                  onError={() => setBrokenOrgAvatar(true)}
+                />
+              ) : (
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-400">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    width="20"
+                    height="20"
+                  >
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                </span>
+              )}
+              {event.org_display_name && (
+                <span className="text-sm font-medium text-gray-900">{event.org_display_name}</span>
+              )}
+            </button>
+          )}
+          {(event.contact_telegram || event.contact_whatsapp || event.contact_email || event.contact_phone || event.contact_instagram) && (
           <div className="flex flex-wrap gap-2">
             {event.contact_telegram && (
               <CLink href={tgLink(event.contact_telegram)} title="Telegram">
@@ -740,6 +757,7 @@ export default function EventCard({ event, categories, onClose, isAdmin, onDelet
               </CLink>
             )}
           </div>
+          )}
         </div>
       )}
 

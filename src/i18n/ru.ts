@@ -189,7 +189,7 @@ export default {
     priceUnknown: 'Цену уточняйте у организатора',
     placeUnknown: 'Место уточните у организатора',
     contacts: 'Контакты организатора',
-    orgProfile: 'Профиль организатора',
+    organizer: 'Организатор',
     share: 'Поделиться',
     shareTelegram: 'Telegram',
     shareWhatsapp: 'WhatsApp',
