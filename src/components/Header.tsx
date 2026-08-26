@@ -107,7 +107,7 @@ export default function Header({ onOpenForm }: HeaderProps) {
   if (user) {
     if (user.role === 'admin') {
       nav.push(
-        { label: t('menu.manage'), action: () => go('#/admin') },
+        { label: t('menu.manage'), action: () => go('#/admin'), hideMobile: true },
         { label: t('menu.profile'), action: () => go('#/profile'), hideDesktop: true },
       );
     } else if (user.role === 'org') {
