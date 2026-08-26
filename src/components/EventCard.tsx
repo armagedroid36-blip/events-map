@@ -376,6 +376,146 @@ function Lightbox({
   );
 }
 
+/** Кнопка «Поделиться»: ссылка на событие в мессенджеры и email,
+ *  копирование ссылки, нативная системная «Поделиться» (navigator.share).
+ *  Панель — createPortal в body с тёмным оверлеем (паттерн меню шестерёнки). */
+function ShareButton({ url, title }: { url: string; title: string }) {
+  const { t } = useTranslation();
+  const btnRef = useRef<HTMLButtonElement | null>(null);
+  const [open, setOpen] = useState(false);
+  const [pos, setPos] = useState<{ right: number; top: number } | null>(null);
+  const [copied, setCopied] = useState(false);
+  const z = useRef(nextZ()).current;
+  const copyTimer = useRef<number | null>(null);
+
+  function openPanel() {
+    const r = btnRef.current?.getBoundingClientRect();
+    if (r) {
+      // Панель под кнопкой, с зажимом по краям экрана
+      setPos({
+        right: Math.max(8, Math.round(window.innerWidth - r.right)),
+        top: Math.min(Math.round(r.bottom + 8), Math.max(8, window.innerHeight - 280)),
+      });
+    } else {
+      setPos({ right: 12, top: 72 });
+    }
+    setOpen(true);
+  }
+
+  function closePanel() {
+    setOpen(false);
+    setCopied(false);
+    if (copyTimer.current) window.clearTimeout(copyTimer.current);
+  }
+
+  function copyLink() {
+    navigator.clipboard?.writeText(url).then(() => {
+      setCopied(true);
+      if (copyTimer.current) window.clearTimeout(copyTimer.current);
+      copyTimer.current = window.setTimeout(() => setCopied(false), 2000);
+    }).catch(() => {});
+  }
+
+  const shareText = `${title} — ${url}`;
+  const itemCls = 'block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50';
+
+  return (
+    <>
+      <button
+        ref={btnRef}
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          openPanel();
+        }}
+        title={t('card.share')}
+        aria-label={t('card.share')}
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
+      >
+        {/* Иконка share: стрелка из коробки */}
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+          <polyline points="16 6 12 2 8 6" />
+          <line x1="12" y1="2" x2="12" y2="15" />
+        </svg>
+      </button>
+
+      {open &&
+        createPortal(
+          <>
+            <div className="fixed inset-0 bg-black/20" style={{ zIndex: z }} onClick={closePanel} />
+            <div
+              className="glass fixed w-56 rounded-lg py-1 shadow-xl"
+              style={pos ? { right: pos.right, top: pos.top, zIndex: z + 1 } : { zIndex: z + 1 }}
+            >
+              <a
+                href={`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={closePanel}
+                className={itemCls}
+              >
+                {t('card.shareTelegram')}
+              </a>
+              <a
+                href={`https://wa.me/?text=${encodeURIComponent(shareText)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={closePanel}
+                className={itemCls}
+              >
+                {t('card.shareWhatsapp')}
+              </a>
+              <a
+                href={`viber://forward?text=${encodeURIComponent(shareText)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={closePanel}
+                className={itemCls}
+              >
+                {t('card.shareViber')}
+              </a>
+              <a
+                href={`mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(url)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={closePanel}
+                className={itemCls}
+              >
+                {t('card.shareEmail')}
+              </a>
+              <button type="button" onClick={copyLink} className={itemCls}>
+                {copied ? t('card.copied') : t('card.copyLink')}
+              </button>
+              {typeof navigator.share === 'function' && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.share({ title, text: title, url }).catch(() => {});
+                    closePanel();
+                  }}
+                  className={itemCls}
+                >
+                  {t('card.shareNative')}
+                </button>
+              )}
+            </div>
+          </>,
+          document.body,
+        )}
+    </>
+  );
+}
+
 export default function EventCard({ event, categories, onClose: _onClose, isAdmin, onDelete, favoriteIds = null, onToggleFavorite }: Props) {
   const { t, i18n } = useTranslation();
   const [lightbox, setLightbox] = useState<number | null>(null);
@@ -424,13 +564,20 @@ export default function EventCard({ event, categories, onClose: _onClose, isAdmi
     <div className="rounded-lg p-4">
       <div className="mb-2 flex items-start justify-between gap-2">
         <h3 className="flex-1 text-base font-semibold leading-snug text-gray-900">{title}</h3>
-        {/* Сердечко — только для вошедших (favoriteIds !== null) */}
-        {favoriteIds !== null && onToggleFavorite && (
-          <FavoriteButton
-            active={favoriteIds.includes(event.id)}
-            onToggle={() => onToggleFavorite(event.id)}
+        <div className="flex shrink-0 items-center gap-1">
+          {/* Поделиться — доступно всем, в т.ч. гостям */}
+          <ShareButton
+            url={`${window.location.origin}${window.location.pathname}#/?e=${encodeURIComponent(event.id)}`}
+            title={title}
           />
-        )}
+          {/* Сердечко — только для вошедших (favoriteIds !== null) */}
+          {favoriteIds !== null && onToggleFavorite && (
+            <FavoriteButton
+              active={favoriteIds.includes(event.id)}
+              onToggle={() => onToggleFavorite(event.id)}
+            />
+          )}
+        </div>
       </div>
 
       {/* Фото: маленькие превью, клик — карусель на весь экран.

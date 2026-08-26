@@ -155,11 +155,18 @@ export default function Home() {
     setLoading(false);
   }
 
+  // Закрытие карточки: убираем параметр e= из адресной строки,
+  // чтобы глубокая ссылка не висела в hash
+  function closeCard() {
+    setSelected(null);
+    if (window.location.hash.includes('e=')) window.location.hash = '#/';
+  }
+
   // Удаление события (только админ): из БД и из списка на карте
   async function handleDeleteEvent(id: string) {
     try {
       await getApi().deleteEvent(id);
-      setSelected(null);
+      closeCard();
       setEvents((prev) => prev.filter((e) => e.id !== id));
     } catch (err) {
       console.error('Не удалось удалить событие:', err);
@@ -177,6 +184,13 @@ export default function Home() {
       setEvents(evs);
       setCategories(cats);
       setLoading(false);
+      // Глубокая ссылка #/?e=<id>: открыть карточку события независимо
+      // от фильтров; события нет (скрыто/удалено) — молча игнорируем
+      const m = window.location.hash.match(/[?&]e=([^&]+)/);
+      if (m) {
+        const ev = evs.find((x) => x.id === decodeURIComponent(m[1]));
+        if (ev) selectEvent(ev);
+      }
     })();
     return () => {
       alive = false;
@@ -314,7 +328,7 @@ export default function Home() {
           zoom={zoom}
           onBoundsChange={setBounds}
           onMapClick={() => {
-            setSelected(null);
+            closeCard();
             setListOpen(false);
           }}
         />
@@ -433,7 +447,7 @@ export default function Home() {
             <EventCard
               event={selected}
               categories={categories}
-              onClose={() => setSelected(null)}
+              onClose={closeCard}
               isAdmin={user?.role === 'admin'}
               onDelete={handleDeleteEvent}
               favoriteIds={favoriteIds}
@@ -441,7 +455,7 @@ export default function Home() {
             />
           </div>
           <button
-            onClick={() => setSelected(null)}
+            onClick={closeCard}
             className="absolute -top-3 right-2 flex h-9 w-9 items-center justify-center rounded-full bg-white text-gray-700 shadow-lg hover:bg-gray-100 lg:-right-3 lg:right-auto"
             aria-label={t('common.close')}
           >
