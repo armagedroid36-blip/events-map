@@ -32,6 +32,15 @@ export class OtpError extends Error {
   }
 }
 
+/** Ошибка входа: аккаунт заблокирован администратором.
+ *  Отличается от «неверный пароль» — AuthModal показывает auth.blocked. */
+export class AccountBlockedError extends Error {
+  constructor() {
+    super('Account blocked');
+    this.name = 'AccountBlockedError';
+  }
+}
+
 /**
  * GoTrue для verifyOtp возвращает один код `otp_expired`
  * («Token has expired or is invalid») и для неверного, и для истёкшего кода —
@@ -55,6 +64,10 @@ export interface DataApi {
   listModerationEvents(): Promise<EventItem[]>;
   /** Статистика по пользователям и организаторам (для админа) */
   listUsersStats(): Promise<UserStatsRow[]>;
+  /** Заблокировать пользователя/организатора (только админ) */
+  blockUser(id: string): Promise<void>;
+  /** Разблокировать пользователя/организатора (только админ) */
+  unblockUser(id: string): Promise<void>;
   getCategories(): Promise<Category[]>;
   submitApplication(draft: ApplicationDraft): Promise<void>;
 
@@ -173,13 +186,9 @@ class SupabaseApi implements DataApi {
   // --- Публичная часть ---
 
   async listEvents(): Promise<EventItem[]> {
-    // Архивация прошедших событий выполняется отдельной фоновой задачей,
-    // а не при каждом заходе на главную (лишняя пишущая операция)
-    const { data, error } = await this.db
-      .from('events')
-      .select('*')
-      .eq('status', 'active')
-      .order('start_date', { ascending: true });
+    // Публичный список — через security definer RPC: события заблокированных
+    // организаторов скрыты, работает и для анонимов
+    const { data, error } = await this.db.rpc('list_active_events');
     if (error) throw error;
     return (data ?? []) as EventItem[];
   }
@@ -202,6 +211,16 @@ class SupabaseApi implements DataApi {
     const { data, error } = await this.db.rpc('admin_users_stats');
     if (error) throw error;
     return (data ?? []) as UserStatsRow[];
+  }
+
+  async blockUser(id: string): Promise<void> {
+    const { error } = await this.db.rpc('admin_block_user', { target: id });
+    if (error) throw error;
+  }
+
+  async unblockUser(id: string): Promise<void> {
+    const { error } = await this.db.rpc('admin_unblock_user', { target: id });
+    if (error) throw error;
   }
 
   async getCategories(): Promise<Category[]> {
@@ -251,6 +270,12 @@ class SupabaseApi implements DataApi {
     const user = data.user;
     if (!user) return null;
     const profile = await this.profileOf(user.id);
+    // Заблокированный не входит: гасим созданную сессию и сообщаем AuthModal,
+    // что это блокировка, а не неверный пароль
+    if (profile?.blocked_at) {
+      await this.db.auth.signOut().catch(() => {});
+      throw new AccountBlockedError();
+    }
     return {
       id: user.id,
       email: user.email ?? email,
@@ -313,6 +338,12 @@ class SupabaseApi implements DataApi {
     const user = data.session?.user;
     if (!user) return null;
     const profile = await this.profileOf(user.id);
+    // Заблокированного разлогиниваем при следующей проверке сессии:
+    // живая сессия перестаёт работать
+    if (profile?.blocked_at) {
+      await this.db.auth.signOut().catch(() => {});
+      return null;
+    }
     return {
       id: user.id,
       email: user.email ?? '',

@@ -171,6 +171,10 @@ export class DemoApi {
     return [];
   }
 
+  async blockUser(_id: string): Promise<void> {}
+
+  async unblockUser(_id: string): Promise<void> {}
+
   async getCategories(): Promise<Category[]> {
     return load<Category[]>(LS_CATS, DEMO_CATEGORIES);
   }

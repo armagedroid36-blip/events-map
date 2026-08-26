@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import { useAuth } from '../lib/auth';
-import { OtpError, getApi } from '../lib/api';
+import { AccountBlockedError, OtpError, getApi } from '../lib/api';
 import { nextZ } from '../lib/zindex';
 import { contactErrors, normalizeContacts } from '../lib/contacts';
 import type { ContactErrorCode, ContactField } from '../lib/contacts';
@@ -157,7 +157,12 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
       }
       onClose();
     } catch (ex) {
-      setErr(ex instanceof Error ? ex.message : t('auth.error'));
+      // Заблокированный аккаунт — отдельное сообщение (не «неверный пароль»)
+      if (ex instanceof AccountBlockedError) {
+        setErr(t('auth.blocked'));
+      } else {
+        setErr(ex instanceof Error ? ex.message : t('auth.error'));
+      }
     }
     setBusy(false);
   }

@@ -165,6 +165,8 @@ export interface Profile {
   last_seen_my_events_at?: string | null;
   /** Когда админ последний раз открывал вкладку «Модерация» (для бейджа) */
   last_seen_moderation_at?: string | null;
+  /** Когда пользователь заблокирован (null = не заблокирован) */
+  blocked_at?: string | null;
 }
 
 /** Текущий пользователь (сессия) */
@@ -198,6 +200,8 @@ export interface UserStatsRow {
   events_rejected: number;
   events_archived: number;
   events_needs_changes: number;
+  /** Когда пользователь заблокирован (null = не заблокирован) */
+  blocked_at?: string | null;
   categories: Array<{
     category_id: string;
     name_ru: string;

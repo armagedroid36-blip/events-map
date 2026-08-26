@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
-import { getApi } from '../lib/api';
+import { AccountBlockedError, getApi } from '../lib/api';
 import { useAuth } from '../lib/auth';
 import { config } from '../config';
 import StatsTab from './admin/StatsTab';
@@ -51,11 +51,17 @@ export default function Admin() {
     e.preventDefault();
     setLoginBusy(true);
     setLoginErr('');
-    // Вход в админку — только через Supabase Auth с ролью admin
-    const u = await signIn(email, password);
-    setLoginBusy(false);
-    if (u?.role === 'admin') setAuthed(true);
-    else setLoginErr(t('admin.wrongCredentials'));
+    try {
+      // Вход в админку — только через Supabase Auth с ролью admin
+      const u = await signIn(email, password);
+      if (u?.role === 'admin') setAuthed(true);
+      else setLoginErr(t('admin.wrongCredentials'));
+    } catch (ex) {
+      // Заблокированный аккаунт (org/user пытается войти в админку) — своё сообщение
+      setLoginErr(ex instanceof AccountBlockedError ? t('auth.blocked') : t('admin.wrongCredentials'));
+    } finally {
+      setLoginBusy(false);
+    }
   }
 
   // --- Экран входа ---
