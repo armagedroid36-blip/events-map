@@ -185,11 +185,10 @@ export default function MapView({
       // ниже рендерится свой с prefix={false}, чтобы ссылки не было.
       attributionControl={false}
     >
-      {/* Тайлы Carto Voyager — бесплатно, без ключей. Названия на латинице
-          (английский/транслит) вместо местных алфавитов */}
+      {/* Тайлы Esri World Street Map — бесплатно, без ключей */}
       <TileLayer
-        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
+        attribution='&copy; Esri, Maxar, Earthstar Geographics, and the GIS User Community'
       />
       {/* Атрибуция по центру внизу (центрируется CSS) — чтобы её не закрывали панели */}
       <AttributionControl position="bottomright" prefix={false} />
