@@ -516,7 +516,7 @@ function ShareButton({ url, title }: { url: string; title: string }) {
   );
 }
 
-export default function EventCard({ event, categories, onClose: _onClose, isAdmin, onDelete, favoriteIds = null, onToggleFavorite }: Props) {
+export default function EventCard({ event, categories, onClose, isAdmin, onDelete, favoriteIds = null, onToggleFavorite }: Props) {
   const { t, i18n } = useTranslation();
   const [lightbox, setLightbox] = useState<number | null>(null);
   // Индексы фото с битыми ссылками (onError) — скрываем их, не пряча молча
@@ -565,6 +565,34 @@ export default function EventCard({ event, categories, onClose: _onClose, isAdmi
       <div className="mb-2 flex items-start justify-between gap-2">
         <h3 className="flex-1 text-base font-semibold leading-snug text-gray-900">{title}</h3>
         <div className="flex shrink-0 items-center gap-1">
+          {/* Иконка организатора: открывает публичный профиль (если событие
+              создано через аккаунт; у импортированных owner_id нет) */}
+          {event.owner_id && (
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                window.location.hash = `#/org/${encodeURIComponent(event.owner_id ?? '')}`;
+              }}
+              title={t('card.orgProfile')}
+              aria-label={t('card.orgProfile')}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                width="18"
+                height="18"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            </button>
+          )}
           {/* Поделиться — доступно всем, в т.ч. гостям */}
           <ShareButton
             url={`${window.location.origin}${window.location.pathname}#/?e=${encodeURIComponent(event.id)}`}

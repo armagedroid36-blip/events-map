@@ -161,12 +161,38 @@ export interface Profile {
   contact_email?: string;
   contact_phone?: string;
   instagram?: string;
+  /** Название организатора (публичный профиль) */
+  display_name?: string | null;
+  /** Описание организатора (публичный профиль) */
+  bio?: string | null;
+  /** Путь к аватарке в storage (как photos) */
+  avatar_url?: string | null;
+  /** Показывать контакты публично на странице организатора */
+  contacts_public?: boolean;
   /** Когда организатор последний раз открывал «Мои события» (для бейджа) */
   last_seen_my_events_at?: string | null;
   /** Когда админ последний раз открывал вкладку «Модерация» (для бейджа) */
   last_seen_moderation_at?: string | null;
   /** Когда пользователь заблокирован (null = не заблокирован) */
   blocked_at?: string | null;
+}
+
+/**
+ * Публичный профиль организатора (страница #/org/<id>).
+ * Контакты приходят из RPC get_org_profile: отдаются только если
+ * организатор включил contacts_public, иначе — null.
+ */
+export interface OrgProfile {
+  id: string;
+  display_name: string | null;
+  bio: string | null;
+  avatar_url: string | null;
+  contacts_public: boolean;
+  contact_telegram?: string | null;
+  contact_whatsapp?: string | null;
+  contact_email?: string | null;
+  contact_phone?: string | null;
+  instagram?: string | null;
 }
 
 /** Текущий пользователь (сессия) */

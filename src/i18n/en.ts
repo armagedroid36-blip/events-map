@@ -118,6 +118,15 @@ export default {
     confirmPassword: 'Repeat password',
     passwordTooShort: 'Password must be at least 6 characters',
     passwordsDontMatch: 'Passwords do not match',
+    // Organizer profile block (role='org' only)
+    orgBlockTitle: 'Organizer profile',
+    avatar: 'Profile photo',
+    uploadAvatar: 'Upload photo',
+    saveOrgProfile: 'Save profile',
+    orgName: 'Organizer name',
+    orgBio: 'About',
+    contactsPublic: 'Show contacts publicly',
+    contactsPublicHint: 'Contacts will be visible to everyone on your organizer profile page',
   },
   favorites: {
     title: 'Favorites',
@@ -180,6 +189,7 @@ export default {
     priceUnknown: 'Ask the organizer for the price',
     placeUnknown: 'Ask the organizer for the exact location',
     contacts: 'Organizer contacts',
+    orgProfile: 'Organizer profile',
     share: 'Share',
     shareTelegram: 'Telegram',
     shareWhatsapp: 'WhatsApp',
@@ -193,6 +203,22 @@ export default {
     recurrenceDaily: 'Every day',
     recurrenceWeekly: 'Weekly: {{days}}',
     recurrenceUntil: 'until {{date}}',
+  },
+  // Public organizer profile (#/org/<id>) and subscription
+  org: {
+    title: 'Organizer',
+    contacts: 'Contacts',
+    events: "Organizer's events",
+    empty: 'No events yet',
+    subscribe: 'Subscribe to new events',
+    emailPlaceholder: 'your@email.com',
+    subscribed: 'You are subscribed. Emails about new events will be sent to this address.',
+    already: 'You are already subscribed to this organizer.',
+    notFound: 'Organizer not found',
+    invalidEmail: 'Enter a valid email',
+    // Unsubscribe page (#/unsubscribe?token=...)
+    unsubscribed: 'You have unsubscribed from this organizer\'s mailing.',
+    unsubError: 'Could not unsubscribe. Check the link from the email.',
   },
   weekdaysShort: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
   form: {

@@ -10,6 +10,7 @@ import type {
   ApplicationDraft,
   ImportRow,
   Profile,
+  OrgProfile,
   CurrentUser,
   HistoryItem,
   UserRole,
@@ -70,6 +71,14 @@ export interface DataApi {
   unblockUser(id: string): Promise<void>;
   getCategories(): Promise<Category[]>;
   submitApplication(draft: ApplicationDraft): Promise<void>;
+  /** Публичный профиль организатора (анонимам тоже доступен) */
+  getOrgProfile(orgId: string): Promise<OrgProfile | null>;
+  /** Активные события организатора (публичная часть) */
+  listOrgEvents(orgId: string): Promise<EventItem[]>;
+  /** Подписаться на email-рассылку о новых событиях организатора */
+  subscribeOrg(orgId: string, email: string): Promise<string>;
+  /** Отписаться по токену из письма */
+  unsubscribeOrg(token: string): Promise<void>;
 
   // --- Авторизация ---
   signUp(
@@ -99,8 +108,18 @@ export interface DataApi {
   uploadPhoto(file: File): Promise<string>;
   /** Профиль текущего пользователя (контакты организатора) */
   getMyProfile(): Promise<Profile | null>;
-  /** Сохранить контакты в профиле текущего пользователя */
-  updateProfile(contacts: { telegram?: string; whatsapp?: string; email?: string; phone?: string; instagram?: string }): Promise<void>;
+  /** Сохранить контакты и публичные поля профиля организатора */
+  updateProfile(profile: {
+    telegram?: string;
+    whatsapp?: string;
+    email?: string;
+    phone?: string;
+    instagram?: string;
+    display_name?: string | null;
+    bio?: string | null;
+    avatar_url?: string | null;
+    contacts_public?: boolean;
+  }): Promise<void>;
 
   // --- События организатора ---
   listMyEvents(): Promise<EventItem[]>;
@@ -375,31 +394,80 @@ class SupabaseApi implements DataApi {
     return path;
   }
 
+  async getOrgProfile(orgId: string): Promise<OrgProfile | null> {
+    // Публичный RPC: контакты отдаются только при contacts_public = true,
+    // заблокированный/не-org возвращает пустую выборку
+    const { data, error } = await this.db
+      .rpc('get_org_profile', { p_org_id: orgId })
+      .maybeSingle();
+    if (error) throw error;
+    return (data as OrgProfile | null) ?? null;
+  }
+
+  async listOrgEvents(orgId: string): Promise<EventItem[]> {
+    // Активные события организатора. RLS «read active events public»
+    // пропускает только активные события незаблокированных организаторов —
+    // события заблокированных не утекут и через этот запрос.
+    const { data, error } = await this.db
+      .from('events')
+      .select('*')
+      .eq('owner_id', orgId)
+      .eq('status', 'active')
+      .order('start_date', { ascending: true });
+    if (error) throw error;
+    return (data ?? []) as EventItem[];
+  }
+
+  async subscribeOrg(orgId: string, email: string): Promise<string> {
+    const { data, error } = await this.db.rpc('subscribe_org', {
+      p_org_id: orgId,
+      p_email: email,
+    });
+    if (error) throw error;
+    return (data as string) ?? 'subscribed';
+  }
+
+  async unsubscribeOrg(token: string): Promise<void> {
+    const { error } = await this.db.rpc('unsubscribe_org', { p_token: token });
+    if (error) throw error;
+  }
+
   async getMyProfile(): Promise<Profile | null> {
     const me = await this.getCurrentUser();
     if (!me) return null;
     return this.profileOf(me.id);
   }
 
-  async updateProfile(contacts: {
+  async updateProfile(profile: {
     telegram?: string;
     whatsapp?: string;
     email?: string;
     phone?: string;
     instagram?: string;
+    display_name?: string | null;
+    bio?: string | null;
+    avatar_url?: string | null;
+    contacts_public?: boolean;
   }): Promise<void> {
     // Прямой UPDATE своей строки: политика «profiles own» (ALL, auth.uid() = id)
     const me = await this.getCurrentUser();
     if (!me) throw new Error('Войдите, чтобы изменить профиль');
+    const patch: Record<string, unknown> = {
+      contact_telegram: profile.telegram || null,
+      contact_whatsapp: profile.whatsapp || null,
+      contact_email: profile.email || null,
+      contact_phone: profile.phone || null,
+      instagram: profile.instagram || null,
+    };
+    // Публичные поля профиля организатора (undefined = не трогать,
+    // null = очистить)
+    if (profile.display_name !== undefined) patch.display_name = profile.display_name;
+    if (profile.bio !== undefined) patch.bio = profile.bio;
+    if (profile.avatar_url !== undefined) patch.avatar_url = profile.avatar_url;
+    if (profile.contacts_public !== undefined) patch.contacts_public = profile.contacts_public;
     const { error } = await this.db
       .from('profiles')
-      .update({
-        contact_telegram: contacts.telegram || null,
-        contact_whatsapp: contacts.whatsapp || null,
-        contact_email: contacts.email || null,
-        contact_phone: contacts.phone || null,
-        instagram: contacts.instagram || null,
-      })
+      .update(patch)
       .eq('id', me.id);
     if (error) throw error;
   }

@@ -1,0 +1,26 @@
+name: Notify subscribers
+
+on:
+  schedule:
+    # Ежедневно в 04:00 UTC (события за последние 24 часа)
+    - cron: '0 4 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci --no-audit --no-fund || npm install --no-audit --no-fund
+      - name: Рассылка подписчикам о новых событиях
+        run: node scripts/notify-subscribers.mjs
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}

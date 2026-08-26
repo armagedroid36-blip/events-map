@@ -1,7 +1,7 @@
 // Демо-режим: сайт работает БЕЗ базы данных.
 // Данные хранятся в localStorage браузера. Нужен, чтобы проверить
 // внешний вид и поведение сайта до подключения Supabase.
-import type { Category, EventItem, Application, ApplicationDraft, ImportRow, UserStatsRow } from './types';
+import type { Category, EventItem, Application, ApplicationDraft, ImportRow, UserStatsRow, OrgProfile } from './types';
 
 /** Относительные даты: событие всегда в будущем, демо «живое» */
 function inDays(n: number): string {
@@ -189,6 +189,35 @@ export class DemoApi {
     });
     save(LS_APPS, apps);
   }
+
+  // --- Публичный профиль организатора (демо: заглушки, без падений) ---
+
+  async getOrgProfile(_orgId: string): Promise<OrgProfile | null> {
+    return {
+      id: 'demo-org',
+      display_name: 'Демо-организатор',
+      bio: 'Демо-профиль организатора: аватар, описание и подписка работают без базы.',
+      avatar_url: null,
+      contacts_public: true,
+      contact_telegram: 'demo_org',
+      contact_whatsapp: null,
+      contact_email: 'demo@example.com',
+      contact_phone: null,
+      instagram: null,
+    };
+  }
+
+  async listOrgEvents(orgId: string): Promise<EventItem[]> {
+    return load<EventItem[]>(LS_EVENTS, DEMO_EVENTS).filter(
+      (e) => e.status === 'active' && e.owner_id === orgId,
+    );
+  }
+
+  async subscribeOrg(_orgId: string, _email: string): Promise<string> {
+    return 'subscribed';
+  }
+
+  async unsubscribeOrg(_token: string): Promise<void> {}
 
   // --- Админка (в демо-режиме доступна без входа) ---
 

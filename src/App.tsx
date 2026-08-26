@@ -18,6 +18,8 @@ const Privacy = lazy(() => import('./pages/Privacy'));
 const Profile = lazy(() => import('./pages/Profile'));
 const Favorites = lazy(() => import('./pages/Favorites'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
+const OrgProfilePage = lazy(() => import('./pages/OrgProfilePage'));
+const UnsubscribePage = lazy(() => import('./pages/UnsubscribePage'));
 
 export default function App() {
   const { t } = useTranslation();
@@ -47,6 +49,9 @@ export default function App() {
   else if (route.startsWith('#/privacy')) page = <Privacy />;
   else if (route.startsWith('#/profile')) page = <Profile />;
   else if (route.startsWith('#/favorites')) page = <Favorites />;
+  else if (route.startsWith('#/org/'))
+    page = <OrgProfilePage orgId={decodeURIComponent(route.slice('#/org/'.length))} />;
+  else if (route.startsWith('#/unsubscribe')) page = <UnsubscribePage />;
   else page = <Home />;
 
   return (

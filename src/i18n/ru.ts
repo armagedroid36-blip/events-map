@@ -118,6 +118,15 @@ export default {
     confirmPassword: 'Повторите пароль',
     passwordTooShort: 'Пароль должен быть не короче 6 символов',
     passwordsDontMatch: 'Пароли не совпадают',
+    // Блок «Профиль организатора» (только role='org')
+    orgBlockTitle: 'Профиль организатора',
+    avatar: 'Фото профиля',
+    uploadAvatar: 'Загрузить фото',
+    saveOrgProfile: 'Сохранить профиль',
+    orgName: 'Название организатора',
+    orgBio: 'Описание',
+    contactsPublic: 'Показывать контакты публично',
+    contactsPublicHint: 'Контакты будут видны всем на странице вашего профиля организатора',
   },
   favorites: {
     title: 'Избранное',
@@ -180,6 +189,7 @@ export default {
     priceUnknown: 'Цену уточняйте у организатора',
     placeUnknown: 'Место уточните у организатора',
     contacts: 'Контакты организатора',
+    orgProfile: 'Профиль организатора',
     share: 'Поделиться',
     shareTelegram: 'Telegram',
     shareWhatsapp: 'WhatsApp',
@@ -193,6 +203,22 @@ export default {
     recurrenceDaily: 'Ежедневно',
     recurrenceWeekly: 'Каждую неделю: {{days}}',
     recurrenceUntil: 'до {{date}}',
+  },
+  // Публичный профиль организатора (#/org/<id>) и подписка
+  org: {
+    title: 'Организатор',
+    contacts: 'Контакты',
+    events: 'События организатора',
+    empty: 'Пока нет событий',
+    subscribe: 'Подписаться на новые события',
+    emailPlaceholder: 'ваш@email.ru',
+    subscribed: 'Вы подписаны. Письма о новых событиях будут приходить на этот email.',
+    already: 'Вы уже подписаны на этого организатора.',
+    notFound: 'Организатор не найден',
+    invalidEmail: 'Введите корректный email',
+    // Страница отписки (#/unsubscribe?token=...)
+    unsubscribed: 'Вы отписались от рассылки этого организатора.',
+    unsubError: 'Не удалось отписаться. Проверьте ссылку из письма.',
   },
   weekdaysShort: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
   form: {
