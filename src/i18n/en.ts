@@ -93,6 +93,8 @@ export default {
     startDate: 'New start date',
     endDate: 'New end date (optional)',
     repeatConfirm: 'Send for review',
+    delete: 'Delete',
+    deleteConfirm: 'Delete this event?',
   },
   history: {
     title: 'Viewing history',

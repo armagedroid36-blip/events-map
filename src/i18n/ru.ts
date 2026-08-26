@@ -93,6 +93,8 @@ export default {
     startDate: 'Новая дата начала',
     endDate: 'Новая дата окончания (необязательно)',
     repeatConfirm: 'Отправить на модерацию',
+    delete: 'Удалить',
+    deleteConfirm: 'Удалить событие?',
   },
   history: {
     title: 'История просмотров',

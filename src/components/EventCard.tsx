@@ -126,6 +126,8 @@ interface Props {
   categories: Category[];
   onClose: () => void;
   isAdmin?: boolean;
+  /** Текущий пользователь — владелец события (organizer) */
+  isOwner?: boolean;
   onDelete?: (id: string) => void;
   /** id событий в избранном; null — гость (сердечко скрыто) */
   favoriteIds?: string[] | null;
@@ -516,7 +518,7 @@ function ShareButton({ url, title }: { url: string; title: string }) {
   );
 }
 
-export default function EventCard({ event, categories, onClose, isAdmin, onDelete, favoriteIds = null, onToggleFavorite }: Props) {
+export default function EventCard({ event, categories, onClose, isAdmin, isOwner, onDelete, favoriteIds = null, onToggleFavorite }: Props) {
   const { t, i18n } = useTranslation();
   const [lightbox, setLightbox] = useState<number | null>(null);
   // Индексы фото с битыми ссылками (onError) — скрываем их, не пряча молча
@@ -558,7 +560,7 @@ export default function EventCard({ event, categories, onClose, isAdmin, onDelet
   // Рабочие фото: без битых ссылок (onError)
   const okPhotos = photos.filter((_, i) => !brokenPhotos.has(i));
 
-  // Удаление доступно только админу, с подтверждением
+  // Удаление доступно админу или владельцу события, с подтверждением
   const handleDelete = () => {
     if (onDelete && window.confirm('Удалить событие?')) onDelete(event.id);
   };
@@ -778,8 +780,8 @@ export default function EventCard({ event, categories, onClose, isAdmin, onDelet
           document.body,
         )}
 
-      {/* Удаление (только админ) — внизу карточки, справа */}
-      {isAdmin && onDelete && (
+      {/* Удаление (админ или владелец события) — внизу карточки, справа */}
+      {(isAdmin || isOwner) && onDelete && (
         <div className="mt-3 flex justify-end">
           <button
             onClick={handleDelete}

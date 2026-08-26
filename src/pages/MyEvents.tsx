@@ -22,6 +22,8 @@ export default function MyEvents() {
   // Редактирование существующей карточки (организатор)
   const [edit, setEdit] = useState<EventItem | null>(null);
   const [loading, setLoading] = useState(true);
+  // id события, которое сейчас удаляется (busy на кнопке-корзине)
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   async function load() {
     setLoading(true);
@@ -88,6 +90,21 @@ export default function MyEvents() {
 
   function EventRow({ ev }: { ev: EventItem }) {
     const isArchive = ev.status === 'archived';
+
+    async function handleDelete() {
+      if (!window.confirm(t('myEvents.deleteConfirm'))) return;
+      setDeletingId(ev.id);
+      try {
+        await getApi().deleteEvent(ev.id);
+        await load();
+      } catch (err) {
+        console.error('Не удалось удалить событие:', err);
+        alert('Не удалось удалить событие');
+      } finally {
+        setDeletingId(null);
+      }
+    }
+
     return (
       <div className="flex items-center justify-between gap-3 rounded-lg border border-gray-200 bg-white p-3">
         <div className="min-w-0">
@@ -129,6 +146,19 @@ export default function MyEvents() {
               )}
             </>
           )}
+          <button
+            onClick={handleDelete}
+            disabled={deletingId === ev.id}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600 shadow hover:bg-red-100 disabled:opacity-50"
+            title={t('myEvents.delete')}
+            aria-label={t('myEvents.delete')}
+          >
+            {deletingId === ev.id ? (
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />
+            ) : (
+              '🗑'
+            )}
+          </button>
         </div>
       </div>
     );

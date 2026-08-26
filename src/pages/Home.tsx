@@ -449,6 +449,7 @@ export default function Home() {
               categories={categories}
               onClose={closeCard}
               isAdmin={user?.role === 'admin'}
+              isOwner={user?.id === selected.owner_id}
               onDelete={handleDeleteEvent}
               favoriteIds={favoriteIds}
               onToggleFavorite={user ? toggleFavorite : undefined}
