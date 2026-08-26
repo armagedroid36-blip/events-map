@@ -106,8 +106,8 @@ export default function MyEvents() {
     }
 
     return (
-      <div className="flex items-center justify-between gap-3 rounded-lg border border-gray-200 bg-white p-3">
-        <div className="min-w-0">
+      <div className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0 w-full sm:w-auto">
           <p className="truncate font-medium text-gray-900">
             {ev.title_ru || ev.title_en || ev.title}
           </p>
@@ -120,7 +120,7 @@ export default function MyEvents() {
             </p>
           )}
         </div>
-        <div className="flex shrink-0 gap-2">
+        <div className="flex shrink-0 flex-wrap gap-2 sm:flex-nowrap">
           {isArchive ? (
             <button
               onClick={() => setRepeat(ev)}
