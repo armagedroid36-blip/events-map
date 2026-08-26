@@ -185,10 +185,11 @@ export default function MapView({
       // ниже рендерится свой с prefix={false}, чтобы ссылки не было.
       attributionControl={false}
     >
-      {/* Тайлы OpenStreetMap — бесплатно, без ключей */}
+      {/* Тайлы Carto Voyager — бесплатно, без ключей. Названия на латинице
+          (английский/транслит) вместо местных алфавитов */}
       <TileLayer
-        url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
       />
       {/* Атрибуция по центру внизу (центрируется CSS) — чтобы её не закрывали панели */}
       <AttributionControl position="bottomright" prefix={false} />
