@@ -68,33 +68,43 @@ export default function UsersTab({ version }: Props) {
   async function exportXlsx() {
     setBusy(true);
     try {
-      // Динамический импорт — xlsx не попадает в бандл публичной части
-      const XLSX = await import('xlsx');
-      const usersData = sorted.map((r) => [
-        r.email,
-        roleLabel(r.role),
-        (r.created_at || '').slice(0, 10),
-        contactsOf(r),
-        r.events_total,
-        r.events_active,
-        r.events_moderation,
-        r.events_rejected,
-        r.events_archived,
-        r.events_needs_changes,
-        r.categories.map((c) => `${catName(c)}: ${c.count}`).join(', '),
-      ]);
-      const sheetUsers = XLSX.utils.aoa_to_sheet([headerCells, ...usersData]);
-      const sheetCats = XLSX.utils.aoa_to_sheet([
-        [t('admin.users.colUser'), t('admin.users.colCategory'), t('admin.users.colCount')],
-        ...sorted.flatMap((r) =>
-          r.categories.map((c) => [r.email, catName(c), c.count]),
-        ),
-      ]);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, sheetUsers, t('admin.users.sheetUsers'));
-      XLSX.utils.book_append_sheet(wb, sheetCats, t('admin.users.sheetCategories'));
-      const date = new Date().toISOString().slice(0, 10);
-      XLSX.writeFile(wb, `users-stats-${date}.xlsx`);
+      // Динамический импорт — exceljs не попадает в бандл публичной части
+      const ExcelJS = await import('exceljs');
+      const wb = new ExcelJS.Workbook();
+      const wsUsers = wb.addWorksheet(t('admin.users.sheetUsers'));
+      wsUsers.addRow(headerCells);
+      for (const r of sorted) {
+        wsUsers.addRow([
+          r.email,
+          roleLabel(r.role),
+          (r.created_at || '').slice(0, 10),
+          contactsOf(r),
+          r.events_total,
+          r.events_active,
+          r.events_moderation,
+          r.events_rejected,
+          r.events_archived,
+          r.events_needs_changes,
+          r.categories.map((c) => `${catName(c)}: ${c.count}`).join(', '),
+        ]);
+      }
+      const wsCats = wb.addWorksheet(t('admin.users.sheetCategories'));
+      wsCats.addRow([t('admin.users.colUser'), t('admin.users.colCategory'), t('admin.users.colCount')]);
+      for (const r of sorted) {
+        for (const c of r.categories) wsCats.addRow([r.email, catName(c), c.count]);
+      }
+      const buf = await wb.xlsx.writeBuffer();
+      const blob = new Blob([buf], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `users-stats-${new Date().toISOString().slice(0, 10)}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
     } catch {
       // Молча: экспорт не критичен, кнопка остаётся доступной
     } finally {

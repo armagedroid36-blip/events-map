@@ -8,7 +8,7 @@ import { getApi } from './api';
 interface AuthCtx {
   user: CurrentUser | null;
   ready: boolean;
-  signIn: (email: string, password: string) => Promise<boolean>;
+  signIn: (email: string, password: string) => Promise<CurrentUser | null>;
   signUp: (
     email: string,
     password: string,
@@ -30,7 +30,7 @@ interface AuthCtx {
 const Ctx = createContext<AuthCtx>({
   user: null,
   ready: false,
-  signIn: async () => false,
+  signIn: async () => null,
   signUp: async () => {},
   confirmSignup: async () => false,
   signOut: async () => {},
@@ -49,10 +49,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .finally(() => setReady(true));
   }, []);
 
-  async function signIn(email: string, password: string): Promise<boolean> {
+  async function signIn(email: string, password: string): Promise<CurrentUser | null> {
     const u = await getApi().signIn(email, password);
     if (u) setUser(u);
-    return !!u;
+    return u;
   }
 
   async function signUp(

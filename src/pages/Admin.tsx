@@ -21,7 +21,7 @@ type Tab = 'stats' | 'moderation' | 'events' | 'categories' | 'import' | 'archiv
 
 export default function Admin() {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, signIn } = useAuth();
   const [authed, setAuthed] = useState(config.demoMode);
   const [tab, setTab] = useState<Tab>('stats');
   const [email, setEmail] = useState('');
@@ -51,9 +51,10 @@ export default function Admin() {
     e.preventDefault();
     setLoginBusy(true);
     setLoginErr('');
-    const ok = await getApi().adminLogin(email, password);
+    // Вход в админку — только через Supabase Auth с ролью admin
+    const u = await signIn(email, password);
     setLoginBusy(false);
-    if (ok) setAuthed(true);
+    if (u?.role === 'admin') setAuthed(true);
     else setLoginErr(t('admin.wrongCredentials'));
   }
 

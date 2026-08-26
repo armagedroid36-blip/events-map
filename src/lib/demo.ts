@@ -188,10 +188,6 @@ export class DemoApi {
 
   // --- Админка (в демо-режиме доступна без входа) ---
 
-  async adminLogin(_email: string, _password: string): Promise<boolean> {
-    return true; // демо: вход пропускается
-  }
-
   async listApplications(): Promise<Application[]> {
     return load<Application[]>(LS_APPS, []);
   }

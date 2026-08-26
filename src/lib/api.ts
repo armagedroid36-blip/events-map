@@ -139,7 +139,6 @@ export interface DataApi {
   removeFavorite(eventId: string): Promise<void>;
 
   // --- Админка (управление) ---
-  adminLogin(email: string, password: string): Promise<boolean>;
   listApplications(): Promise<Application[]>;
   approveApplication(id: string): Promise<void>;
   rejectApplication(id: string, reason: string): Promise<void>;
@@ -678,11 +677,6 @@ class SupabaseApi implements DataApi {
   }
 
   // --- Админка (управление) ---
-
-  async adminLogin(_email: string, password: string): Promise<boolean> {
-    // Админ входит обычной авторизацией; этот метод оставлен для совместимости
-    return config.adminPassword !== '' && password === config.adminPassword;
-  }
 
   async listApplications(): Promise<Application[]> {
     const { data, error } = await this.db.rpc('list_all_applications');

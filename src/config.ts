@@ -9,8 +9,6 @@ export const config = {
   // Значения берутся из файла .env в корне проекта (см. README).
   supabaseUrl: import.meta.env.VITE_SUPABASE_URL ?? '',
   supabaseAnonKey: import.meta.env.VITE_SUPABASE_ANON_KEY ?? '',
-  // Пароль входа в админку (MVP; хранится в .env)
-  adminPassword: import.meta.env.VITE_ADMIN_PASSWORD ?? '',
 
   // --- Режим демо ---
   // true: сайт работает БЕЗ базы данных, с примерами событий (для проверки).
@@ -18,7 +16,7 @@ export const config = {
   demoMode: false,
 
   // Версия сборки — показывается в шапке мелким текстом для сверки
-  buildVersion: 'v23.08-38',
+  buildVersion: 'v23.08-39',
 
   // Адрес сайта (для ссылок восстановления пароля Supabase)
   siteUrl: 'https://armagedroid36-blip.github.io/events-map/',

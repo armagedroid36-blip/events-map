@@ -1,8 +1,6 @@
 // Уведомления админу о новых событиях на модерации: Telegram + email.
 // Первый запуск (нет moderation_last_sent) — все события на модерации (до 10),
-// затем записывается отметка. Повторные — только изменившиеся после отметки;
-// новых нет — тишина (код 0).
-// Запускается в GitHub Actions каждые 30 минут.
+// далее — только новые после последней успешной отправки.
 import { createClient } from '@supabase/supabase-js';
 import nodemailer from 'nodemailer';
 
@@ -14,6 +12,9 @@ const SMTP_PORT = process.env.SMTP_PORT;
 const SMTP_USER = process.env.SMTP_USER;
 const SMTP_PASS = process.env.SMTP_PASS;
 
+const MAX_ITEMS = 10;
+const ADMIN_URL = 'https://armagedroid36-blip.github.io/events-map/#/admin';
+
 if (!SUPABASE_URL || !SERVICE_ROLE) {
   console.error('Нужны переменные: SUPABASE_URL, SUPABASE_SERVICE_ROLE');
   process.exit(1);
@@ -21,19 +22,26 @@ if (!SUPABASE_URL || !SERVICE_ROLE) {
 
 const db = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } });
 
-const ADMIN_URL = 'https://armagedroid36-blip.github.io/events-map/#/admin';
-const MAX_ITEMS = 10;
-
 // Экранирование HTML для parse_mode=HTML (Telegram)
-const esc = (s) =>
-  String(s ?? '').replace(/[&<>"']/g, (c) => (
-    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
-  ));
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  })[c]);
+}
+
+// Убираем переводы строк — защита от SMTP-инъекции через заголовки
+function cleanLine(s) {
+  return String(s ?? '').replace(/[\r\n]+/g, ' ').trim();
+}
 
 function buildText(events, total) {
   const lines = [`Новые события на модерации: ${total}`];
   for (const ev of events) {
-    const title = ev.title_ru || ev.title_en || ev.title || 'Без названия';
+    const title = cleanLine(ev.title_ru || ev.title_en || ev.title || 'Без названия');
     const city = ev.city || '';
     const date = ev.start_date || '';
     const parts = [esc(title)];
@@ -43,7 +51,7 @@ function buildText(events, total) {
   }
   const rest = total - events.length;
   if (rest > 0) lines.push(`и ещё ${rest}…`);
-  lines.push(`Открыть: ${ADMIN_URL}`);
+  lines.push(`Полный список: ${ADMIN_URL}`);
   return lines.join('\n');
 }
 
@@ -67,7 +75,7 @@ async function sendTelegram(text, chatId) {
   return true;
 }
 
-async function sendEmail(text, to) {
+async function sendEmail(text, to, subject = 'Новые события на модерации') {
   const smtpOk = SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS;
   if (!smtpOk) {
     console.warn('Email пропущен: SMTP_* не заданы');
@@ -86,7 +94,7 @@ async function sendEmail(text, to) {
   await transport.sendMail({
     from: SMTP_USER,
     to,
-    subject: 'Новые события на модерации',
+    subject,
     text,
   });
   console.log(`Email: отправлено на ${to}`);
@@ -129,6 +137,9 @@ async function main() {
 
   // 3. Текст
   const text = buildText(events || [], count);
+  // Заголовок письма — с первым названием события (переносы строк вырезаны)
+  const firstTitle = cleanLine(events?.[0]?.title_ru || events?.[0]?.title_en || events?.[0]?.title || '');
+  const subject = firstTitle ? `Новые события на модерации: ${firstTitle}` : 'Новые события на модерации';
 
   // 4. Отправка по каналам (ошибки изолированы)
   let sent = false;
@@ -138,7 +149,7 @@ async function main() {
     console.error('Telegram ошибка:', e.message);
   }
   try {
-    sent = (await sendEmail(text, notifyEmail)) || sent;
+    sent = (await sendEmail(text, notifyEmail, subject)) || sent;
   } catch (e) {
     console.error('Email ошибка:', e.message);
   }
