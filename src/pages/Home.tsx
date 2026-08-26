@@ -189,7 +189,16 @@ export default function Home() {
       const m = window.location.hash.match(/[?&]e=([^&]+)/);
       if (m) {
         const ev = evs.find((x) => x.id === decodeURIComponent(m[1]));
-        if (ev) selectEvent(ev);
+        if (ev) {
+          selectEvent(ev);
+          // Deep link: летим к координатам события, чтобы маркер был виден
+          // рядом с карточкой (событие может быть в другом городе/стране).
+          // Без координат — карточка открывается как раньше, карту не двигаем.
+          if (ev.lat != null && ev.lng != null) {
+            setCenter({ lat: ev.lat, lng: ev.lng });
+            setZoom(15);
+          }
+        }
       }
     })();
     return () => {
