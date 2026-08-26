@@ -20,6 +20,8 @@ export default function UsersTab({ version }: Props) {
   // id строки, для которой выполняется блокировка/разблокировка
   const [actionId, setActionId] = useState<string | null>(null);
   const [actionError, setActionError] = useState('');
+  // Поиск по email (фильтрует таблицу и экспорт)
+  const [query, setQuery] = useState('');
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
 
   const load = useCallback(async () => {
@@ -62,10 +64,34 @@ export default function UsersTab({ version }: Props) {
       .filter((x): x is string => !!x)
       .join(', ');
 
+  // Нормализация контактов в ссылки (как в EventCard)
+  const tgLink = (v: string) => {
+    const s = v.trim().replace(/^@/, '').replace(/^https?:\/\//, '');
+    const m = s.match(/(?:t\.me\/|telegram\.me\/)?([a-zA-Z0-9_]+)/);
+    return `https://t.me/${m ? m[1] : ''}`;
+  };
+  const waLink = (v: string) => `https://wa.me/${v.replace(/[^\d]/g, '')}`;
+  const igLink = (v: string) =>
+    `https://instagram.com/${v.trim().replace(/^@/, '').replace(/\/+$/, '').split('/').pop() || ''}`;
+
+  const contactLinks = (r: UserStatsRow): { key: string; href: string; text: string }[] => {
+    const out: { key: string; href: string; text: string }[] = [];
+    if (r.contact_telegram) out.push({ key: 'tg', href: tgLink(r.contact_telegram), text: r.contact_telegram });
+    if (r.contact_whatsapp) out.push({ key: 'wa', href: waLink(r.contact_whatsapp), text: r.contact_whatsapp });
+    if (r.contact_email) out.push({ key: 'email', href: `mailto:${r.contact_email}`, text: r.contact_email });
+    if (r.contact_phone) out.push({ key: 'phone', href: `tel:+${r.contact_phone.replace(/[^\d]/g, '')}`, text: r.contact_phone });
+    if (r.instagram) out.push({ key: 'ig', href: igLink(r.instagram), text: r.instagram });
+    return out;
+  };
+
   // Сортировка по умолчанию: события по убыванию, затем email
   const sorted = [...rows].sort(
     (a, b) => b.events_total - a.events_total || a.email.localeCompare(b.email),
   );
+
+  // Поиск по email: подстрока, регистронезависимо (фильтрует и таблицу, и экспорт)
+  const q = query.trim().toLowerCase();
+  const filtered = q ? sorted.filter((r) => r.email.toLowerCase().includes(q)) : sorted;
 
   const headerCells = [
     t('admin.users.colUser'),
@@ -109,7 +135,7 @@ export default function UsersTab({ version }: Props) {
       const wb = new ExcelJS.Workbook();
       const wsUsers = wb.addWorksheet(t('admin.users.sheetUsers'));
       wsUsers.addRow(headerCells);
-      for (const r of sorted) {
+      for (const r of filtered) {
         wsUsers.addRow([
           r.email,
           roleLabel(r.role),
@@ -127,7 +153,7 @@ export default function UsersTab({ version }: Props) {
       }
       const wsCats = wb.addWorksheet(t('admin.users.sheetCategories'));
       wsCats.addRow([t('admin.users.colUser'), t('admin.users.colCategory'), t('admin.users.colCount')]);
-      for (const r of sorted) {
+      for (const r of filtered) {
         for (const c of r.categories) wsCats.addRow([r.email, catName(c), c.count]);
       }
       const buf = await wb.xlsx.writeBuffer();
@@ -153,13 +179,21 @@ export default function UsersTab({ version }: Props) {
     <div>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-base font-semibold text-gray-900">{t('admin.users.title')}</h2>
-        <button
-          onClick={exportXlsx}
-          disabled={busy || sorted.length === 0}
-          className="rounded-md bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-50"
-        >
-          {busy ? '…' : t('admin.users.export')}
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={exportXlsx}
+            disabled={busy || filtered.length === 0}
+            className="rounded-md bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-50"
+          >
+            {busy ? '…' : t('admin.users.export')}
+          </button>
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t('admin.users.search')}
+            className="w-64 rounded-md border border-gray-300 px-2.5 py-1.5 text-sm"
+          />
+        </div>
       </div>
 
       {error && <p className="mb-3 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
@@ -169,6 +203,8 @@ export default function UsersTab({ version }: Props) {
 
       {sorted.length === 0 && !error ? (
         <p className="text-sm text-gray-500">{t('admin.users.empty')}</p>
+      ) : filtered.length === 0 ? (
+        <p className="text-sm text-gray-500">{t('admin.users.searchEmpty')}</p>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
           <table className="w-full min-w-[1040px] text-left text-sm">
@@ -182,15 +218,43 @@ export default function UsersTab({ version }: Props) {
               </tr>
             </thead>
             <tbody>
-              {sorted.map((r) => (
+              {filtered.map((r) => (
                 <tr key={r.user_id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
-                  <td className="whitespace-nowrap px-3 py-2 text-gray-900">{r.email}</td>
+                  <td className="whitespace-nowrap px-3 py-2">
+                    {r.role === 'org' ? (
+                      <a
+                        href={`#/org/${encodeURIComponent(r.user_id)}`}
+                        title={t('admin.users.openProfile')}
+                        className="text-blue-600 hover:underline"
+                      >
+                        {r.email}
+                      </a>
+                    ) : (
+                      <span className="text-gray-900">{r.email}</span>
+                    )}
+                  </td>
                   <td className="whitespace-nowrap px-3 py-2 text-gray-600">{roleLabel(r.role)}</td>
                   <td className="whitespace-nowrap px-3 py-2 text-gray-600">
                     {(r.created_at || '').slice(0, 10)}
                   </td>
-                  <td className="max-w-[220px] truncate px-3 py-2 text-gray-600" title={contactsOf(r)}>
-                    {contactsOf(r) || '—'}
+                  <td className="px-3 py-2 text-gray-600">
+                    {contactLinks(r).length === 0 ? (
+                      '—'
+                    ) : (
+                      <div className="flex flex-wrap gap-x-2 gap-y-1">
+                        {contactLinks(r).map((l, i) => (
+                          <a
+                            key={`${l.key}-${i}`}
+                            href={l.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:underline"
+                          >
+                            {l.text}
+                          </a>
+                        ))}
+                      </div>
+                    )}
                   </td>
                   <td className="whitespace-nowrap px-3 py-2">
                     {r.blocked_at ? (
