@@ -1,0 +1,10 @@
+name: Check bot token
+on:
+  workflow_dispatch: {}
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - run: node -e "fetch('https://api.telegram.org/bot'+process.env.TG+'/getMe').then(r=>r.json()).then(j=>console.log('BOT='+(j.result?j.result.username:'ERR')))"
+        env:
+          TG: ${{ secrets.TELEGRAM_BOT_TOKEN }}
