@@ -3,7 +3,7 @@
 // Навигация: пункты по ролям — в правом блоке шапки (все экраны),
 // дублируются в меню шестерёнки.
 // Войти: незарегистрированные. Шестерёнка с меню — для вошедших.
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../lib/auth';
@@ -75,6 +75,40 @@ export default function Header({ onOpenForm }: HeaderProps) {
     };
   }, [user, refreshBadge]);
 
+  // Нижняя граница шапки + зазор — в CSS-переменную --header-bottom.
+  // Меню шестерёнки — portal в body и позиционируется по этой переменной
+  // (top-(--header-bottom)). Раньше её ставил только Home, поэтому на
+  // остальных страницах (my-events, favorites, profile, admin) переменной
+  // не было и меню уезжало вниз документа. Header меряет себя сам —
+  // переменная есть на любой странице с шапкой. На главной эффект Home
+  // (родитель) выполняется позже и перезапишет значение с учётом
+  // плавающей обёртки — layout главной не меняется.
+  const headerRef = useRef<HTMLElement | null>(null);
+  useLayoutEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const update = () => {
+      const bottom = Math.round(el.getBoundingClientRect().bottom) + 12;
+      document.documentElement.style.setProperty('--header-bottom', `${bottom}px`);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    // Страховка: шрифты и layout могут доехать позже первого замера
+    window.addEventListener('load', update);
+    window.addEventListener('resize', update);
+    const t1 = window.setTimeout(update, 300);
+    const t2 = window.setTimeout(update, 1200);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('load', update);
+      window.removeEventListener('resize', update);
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+      document.documentElement.style.removeProperty('--header-bottom');
+    };
+  }, []);
+
   // Страница без формы: «Создать событие» переходит на главную,
   // флаг в sessionStorage открывает там форму.
   const openForm = onOpenForm ?? (() => {
@@ -143,7 +177,7 @@ export default function Header({ onOpenForm }: HeaderProps) {
   }
 
   return (
-    <header>
+    <header ref={headerRef}>
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3">
         {/* Название сайта — клик возвращает на карту.
             flex-1 min-w-0: при появлении бейджа уведомлений (колокольчик)
