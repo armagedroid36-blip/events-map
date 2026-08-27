@@ -145,8 +145,11 @@ export default function Header({ onOpenForm }: HeaderProps) {
   return (
     <header>
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3">
-        {/* Название сайта — клик возвращает на карту */}
-        <a href="#/" className="min-w-0">
+        {/* Название сайта — клик возвращает на карту.
+            flex-1 min-w-0: при появлении бейджа уведомлений (колокольчик)
+            правый блок становится шире — название сжимается (truncate),
+            шапка остаётся в одну строку. */}
+        <a href="#/" className="min-w-0 flex-1">
           <h1 className="truncate text-lg font-semibold text-gray-900">
             {t('app.title')}{' '}
             <span className="text-[10px] font-normal text-gray-400">{config.buildVersion}</span>
