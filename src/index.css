@@ -60,11 +60,16 @@ body {
   z-index: 2;
   pointer-events: none;
 }
-/* Красное сердечко избранного (SVG) — в углу пина, не перекрывает эмодзи */
-.event-marker-fav {
+/* Красное сердечко избранного (SVG) — в углу пина, не перекрывает эмодзи.
+   Специфичность выше, чем у .event-marker svg (иначе сердечко растягивается
+   на весь пин и перекрывает эмодзи) */
+.event-marker .event-marker-fav,
+.marker-cluster .event-marker-fav {
   position: absolute;
   top: 5px;
   right: -2px;
+  /* left:auto — иначе .event-marker svg (left:0) побеждает right */
+  left: auto;
   z-index: 3;
   pointer-events: none;
   width: 11px;
