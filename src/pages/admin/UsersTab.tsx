@@ -1,7 +1,7 @@
 // Вкладка «Пользователи» (админка): список пользователей и организаторов
 // со статистикой по событиям и категориям, статусом блокировки,
 // блокировка/разблокировка + экспорт в .xlsx (exceljs).
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getApi } from '../../lib/api';
 import { useAuth } from '../../lib/auth';
@@ -23,24 +23,27 @@ export default function UsersTab({ version }: Props) {
   // Поиск по email (фильтрует таблицу и экспорт)
   const [query, setQuery] = useState('');
   // id строк, созданных после last_seen_users_at — подсветка «Новый».
-  // НЕ сбрасываются по 'users-seen': подсветка остаётся, пока админ
-  // смотрит таблицу (в БД отметка уже обновлена, при следующем заходе нет).
+  // lastSeen читается ОДИН раз при первом заходе на вкладку (ref), а
+  // markUsersSeen вызывается ПОСЛЕ расчёта подсветки — иначе гонка: отметка
+  // в БД обновится раньше, чем таблица её прочитает, и подсветки не будет.
+  // Подсветка живёт до перезахода на вкладку (в БД отметка уже новая).
   const [newIds, setNewIds] = useState<Set<string>>(new Set());
+  const lastSeenRef = useRef<string | null | undefined>(undefined);
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
+
+  const computeNewIds = (data: UserStatsRow[], lastSeen: string | null | undefined): Set<string> =>
+    new Set(
+      data
+        .filter((r) => r.role !== 'admin' && (!lastSeen || r.created_at > lastSeen))
+        .map((r) => r.user_id),
+    );
 
   const load = useCallback(async () => {
     try {
       const data = await getApi().listUsersStats();
       setRows(data);
       setError('');
-      const lastSeen = await getApi().getUsersLastSeen();
-      setNewIds(
-        new Set(
-          data
-            .filter((r) => r.role !== 'admin' && (!lastSeen || r.created_at > lastSeen))
-            .map((r) => r.user_id),
-        ),
-      );
+      setNewIds(computeNewIds(data, lastSeenRef.current));
     } catch {
       setError(t('admin.users.empty'));
     }
@@ -54,15 +57,19 @@ export default function UsersTab({ version }: Props) {
         if (!alive) return;
         setRows(data);
         setError('');
-        const lastSeen = await getApi().getUsersLastSeen();
-        if (!alive) return;
-        setNewIds(
-          new Set(
-            data
-              .filter((r) => r.role !== 'admin' && (!lastSeen || r.created_at > lastSeen))
-              .map((r) => r.user_id),
-          ),
-        );
+        if (lastSeenRef.current === undefined) {
+          lastSeenRef.current = await getApi().getUsersLastSeen();
+          if (!alive) return;
+          setNewIds(computeNewIds(data, lastSeenRef.current));
+          // Бейджи вкладки и колокольчика сбрасываем после того, как
+          // подсветка посчитана по СТАРОЙ отметке
+          getApi()
+            .markUsersSeen()
+            .then(() => window.dispatchEvent(new CustomEvent('users-seen')))
+            .catch(() => {});
+        } else {
+          setNewIds(computeNewIds(data, lastSeenRef.current));
+        }
       } catch {
         if (!alive) return;
         setRows([]);

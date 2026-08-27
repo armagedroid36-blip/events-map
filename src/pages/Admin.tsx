@@ -87,17 +87,6 @@ export default function Admin() {
     }
   }, [tab, user]);
 
-  // Открытие вкладки «Пользователи» сбрасывает бейдж новых пользователей
-  // (событие 'users-seen' слушают Header и этот же экран)
-  useEffect(() => {
-    if (tab === 'users' && user?.role === 'admin') {
-      getApi()
-        .markUsersSeen()
-        .then(() => window.dispatchEvent(new CustomEvent('users-seen')))
-        .catch(() => {});
-    }
-  }, [tab, user]);
-
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setLoginBusy(true);
