@@ -186,8 +186,10 @@ export default function Header({ onOpenForm }: HeaderProps) {
         <a href="#/" className="flex min-w-0 flex-1 items-center gap-2">
           {/* Логотип — клик тоже возвращает на карту (внутри ссылки).
               Относительный путь: сайт на GitHub Pages живёт в подпапке,
-              src="/logo.png" с ведущим слэшем уходил в корень домена (404). */}
-          <img src="logo.png" alt="" className="h-24 w-24 shrink-0 rounded object-contain" />
+              src="/logo.png" с ведущим слэшем уходил в корень домена (404).
+              h-9 w-auto: крупнее исходного, но шапка остаётся прежней
+              высоты (квадратный контейнер 96px раздувал шапку до 120px). */}
+          <img src="logo.png" alt="" className="h-9 w-auto shrink-0 rounded object-contain" />
           <h1 className="truncate text-lg font-semibold text-gray-900">
             {t('app.title')}{' '}
             <span className="text-[10px] font-normal text-gray-400">{config.buildVersion}</span>
