@@ -177,6 +177,8 @@ export interface Profile {
   last_seen_my_events_at?: string | null;
   /** Когда админ последний раз открывал вкладку «Модерация» (для бейджа) */
   last_seen_moderation_at?: string | null;
+  /** Когда админ последний раз открывал вкладку «Пользователи» (для бейджа) */
+  last_seen_users_at?: string | null;
   /** Когда пользователь заблокирован (null = не заблокирован) */
   blocked_at?: string | null;
 }

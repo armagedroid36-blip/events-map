@@ -350,6 +350,7 @@ export default {
       search: 'Поиск по email…',
       searchEmpty: 'Ничего не найдено',
       openProfile: 'Открыть профиль организатора',
+      newBadge: 'Новый',
       colUser: 'Пользователь',
       colRole: 'Роль',
       colRegistered: 'Дата регистрации',

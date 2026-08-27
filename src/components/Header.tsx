@@ -64,12 +64,14 @@ export default function Header({ onOpenForm }: HeaderProps) {
     window.addEventListener('focus', onFocus);
     window.addEventListener('my-events-seen', onSeen);
     window.addEventListener('moderation-seen', onSeen);
+    window.addEventListener('users-seen', onSeen);
     return () => {
       window.clearInterval(timer);
       window.removeEventListener('visibilitychange', onVisible);
       window.removeEventListener('focus', onFocus);
       window.removeEventListener('my-events-seen', onSeen);
       window.removeEventListener('moderation-seen', onSeen);
+      window.removeEventListener('users-seen', onSeen);
     };
   }, [user, refreshBadge]);
 

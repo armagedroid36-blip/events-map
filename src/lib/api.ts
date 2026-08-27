@@ -149,12 +149,18 @@ export interface DataApi {
 
   // --- Уведомления организатора (бейдж «движение по заявкам») ---
   /** Сколько событий организатора изменилось с последнего просмотра «Моих событий»;
-   *  для админа — сколько событий на модерации с последнего просмотра вкладки */
+   *  для админа — сумма: события на модерации + новые пользователи/организаторы */
   getMyEventsBadge(): Promise<number>;
   /** Отметить, что организатор увидел свои события — бейдж исчезает */
   markMyEventsSeen(): Promise<void>;
   /** Отметить, что админ открыл вкладку «Модерация» — бейдж исчезает */
   markModerationSeen(): Promise<void>;
+  /** Счётчики новых уведомлений админа: события на модерации и новые пользователи/организаторы */
+  getAdminBadges(): Promise<{ moderation: number; users: number }>;
+  /** Отметить, что админ открыл вкладку «Пользователи» — бейдж исчезает */
+  markUsersSeen(): Promise<void>;
+  /** Когда админ последний раз открывал вкладку «Пользователи» (для подсветки в таблице) */
+  getUsersLastSeen(): Promise<string | null>;
   /** Email для уведомлений о модерации (настройка админа) */
   getNotifyEmail(): Promise<string | null>;
   /** Сохранить email для уведомлений о модерации (только админ) */
@@ -679,17 +685,13 @@ class SupabaseApi implements DataApi {
       if (error) throw error;
       return count ?? 0;
     }
-    // Админ: события на модерации, появившиеся/изменённые после последнего
-    // открытия вкладки «Модерация». lastSeen не задан — все на модерации.
+    // Админ: события на модерации + новые пользователи/организаторы,
+    // появившиеся после последнего просмотра вкладок «Модерация»/«Пользователи».
     // Прямой select скрыт RLS (moderation не видна обычным запросам) —
     // считаем через security definer RPC, как list_moderation_events.
     if (me.role === 'admin') {
-      const lastSeen = profile?.last_seen_moderation_at ?? null;
-      const { data, error } = await this.db.rpc('count_moderation_events', {
-        p_last_seen: lastSeen,
-      });
-      if (error) throw error;
-      return Number(data ?? 0);
+      const b = await this.getAdminBadges();
+      return b.moderation + b.users;
     }
     return 0;
   }
@@ -712,6 +714,41 @@ class SupabaseApi implements DataApi {
       .update({ last_seen_moderation_at: new Date().toISOString() })
       .eq('id', me.id);
     if (error) throw error;
+  }
+
+  async getAdminBadges(): Promise<{ moderation: number; users: number }> {
+    const me = await this.getCurrentUser();
+    if (!me || me.role !== 'admin') return { moderation: 0, users: 0 };
+    const profile = await this.profileOf(me.id);
+    // Два RPC параллельно: события на модерации и новые пользователи
+    const [mod, usr] = await Promise.all([
+      this.db.rpc('count_moderation_events', {
+        p_last_seen: profile?.last_seen_moderation_at ?? null,
+      }),
+      this.db.rpc('count_new_users', {
+        p_last_seen: profile?.last_seen_users_at ?? null,
+      }),
+    ]);
+    if (mod.error) throw mod.error;
+    if (usr.error) throw usr.error;
+    return { moderation: Number(mod.data ?? 0), users: Number(usr.data ?? 0) };
+  }
+
+  async markUsersSeen(): Promise<void> {
+    const me = await this.getCurrentUser();
+    if (!me || me.role !== 'admin') return;
+    const { error } = await this.db
+      .from('profiles')
+      .update({ last_seen_users_at: new Date().toISOString() })
+      .eq('id', me.id);
+    if (error) throw error;
+  }
+
+  async getUsersLastSeen(): Promise<string | null> {
+    const me = await this.getCurrentUser();
+    if (!me || me.role !== 'admin') return null;
+    const profile = await this.profileOf(me.id);
+    return profile?.last_seen_users_at ?? null;
   }
 
   async getNotifyEmail(): Promise<string | null> {

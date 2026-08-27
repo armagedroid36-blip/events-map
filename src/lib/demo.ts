@@ -459,6 +459,16 @@ export class DemoApi {
 
   async markModerationSeen(): Promise<void> {}
 
+  async getAdminBadges(): Promise<{ moderation: number; users: number }> {
+    return { moderation: 0, users: 0 };
+  }
+
+  async markUsersSeen(): Promise<void> {}
+
+  async getUsersLastSeen(): Promise<string | null> {
+    return null;
+  }
+
   async getNotifyEmail(): Promise<string | null> {
     return null;
   }

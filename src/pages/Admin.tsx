@@ -1,7 +1,7 @@
 // Админ-панель (/admin).
 // В демо-режиме вход пропускается; с реальной Supabase — вход по email/паролю
 // (Supabase Auth, роль — администратор).
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
 import { AccountBlockedError, getApi } from '../lib/api';
@@ -30,6 +30,46 @@ export default function Admin() {
   const [loginBusy, setLoginBusy] = useState(false);
   // Счётчик обновления данных после действий (модерация, CRUD, импорт)
   const [version, setVersion] = useState(0);
+  // Бейджи вкладок: события на модерации и новые пользователи/организаторы
+  const [badges, setBadges] = useState<{ moderation: number; users: number }>({
+    moderation: 0,
+    users: 0,
+  });
+
+  // Бейджи пересчитываются: при монтировании, каждые 30 сек, при возврате
+  // вкладки и фокусе окна, по событиям 'moderation-seen'/'users-seen' (Header
+  // слушает то же самое и обновляет колокольчик).
+  const refreshBadges = useCallback(() => {
+    getApi()
+      .getAdminBadges()
+      .then(setBadges)
+      .catch(() => setBadges({ moderation: 0, users: 0 }));
+  }, []);
+
+  useEffect(() => {
+    if (user?.role !== 'admin') {
+      setBadges({ moderation: 0, users: 0 });
+      return;
+    }
+    refreshBadges();
+    const timer = window.setInterval(refreshBadges, 30_000);
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') refreshBadges();
+    };
+    const onFocus = () => refreshBadges();
+    const onSeen = () => refreshBadges();
+    window.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('focus', onFocus);
+    window.addEventListener('moderation-seen', onSeen);
+    window.addEventListener('users-seen', onSeen);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('focus', onFocus);
+      window.removeEventListener('moderation-seen', onSeen);
+      window.removeEventListener('users-seen', onSeen);
+    };
+  }, [user, refreshBadges]);
 
   // Вошедший администратор попадает в админку сразу, без второго входа
   useEffect(() => {
@@ -43,6 +83,17 @@ export default function Admin() {
       getApi()
         .markModerationSeen()
         .then(() => window.dispatchEvent(new CustomEvent('moderation-seen')))
+        .catch(() => {});
+    }
+  }, [tab, user]);
+
+  // Открытие вкладки «Пользователи» сбрасывает бейдж новых пользователей
+  // (событие 'users-seen' слушают Header и этот же экран)
+  useEffect(() => {
+    if (tab === 'users' && user?.role === 'admin') {
+      getApi()
+        .markUsersSeen()
+        .then(() => window.dispatchEvent(new CustomEvent('users-seen')))
         .catch(() => {});
     }
   }, [tab, user]);
@@ -129,13 +180,18 @@ export default function Admin() {
             <button
               key={x.id}
               onClick={() => setTab(x.id)}
-              className={`rounded-md px-3 py-1.5 text-sm font-medium ${
+              className={`flex items-center rounded-md px-3 py-1.5 text-sm font-medium ${
                 tab === x.id
                   ? 'bg-gray-900 text-white'
                   : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
               {x.label}
+              {(x.id === 'moderation' || x.id === 'users') && badges[x.id] > 0 && (
+                <span className="ml-1.5 inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold leading-none text-white">
+                  {badges[x.id] > 99 ? '99+' : badges[x.id]}
+                </span>
+              )}
             </button>
           ))}
           <div className="ml-auto flex items-center gap-2">

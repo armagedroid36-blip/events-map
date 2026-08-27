@@ -22,6 +22,10 @@ export default function UsersTab({ version }: Props) {
   const [actionError, setActionError] = useState('');
   // Поиск по email (фильтрует таблицу и экспорт)
   const [query, setQuery] = useState('');
+  // id строк, созданных после last_seen_users_at — подсветка «Новый».
+  // НЕ сбрасываются по 'users-seen': подсветка остаётся, пока админ
+  // смотрит таблицу (в БД отметка уже обновлена, при следующем заходе нет).
+  const [newIds, setNewIds] = useState<Set<string>>(new Set());
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
 
   const load = useCallback(async () => {
@@ -29,6 +33,14 @@ export default function UsersTab({ version }: Props) {
       const data = await getApi().listUsersStats();
       setRows(data);
       setError('');
+      const lastSeen = await getApi().getUsersLastSeen();
+      setNewIds(
+        new Set(
+          data
+            .filter((r) => r.role !== 'admin' && (!lastSeen || r.created_at > lastSeen))
+            .map((r) => r.user_id),
+        ),
+      );
     } catch {
       setError(t('admin.users.empty'));
     }
@@ -42,9 +54,19 @@ export default function UsersTab({ version }: Props) {
         if (!alive) return;
         setRows(data);
         setError('');
+        const lastSeen = await getApi().getUsersLastSeen();
+        if (!alive) return;
+        setNewIds(
+          new Set(
+            data
+              .filter((r) => r.role !== 'admin' && (!lastSeen || r.created_at > lastSeen))
+              .map((r) => r.user_id),
+          ),
+        );
       } catch {
         if (!alive) return;
         setRows([]);
+        setNewIds(new Set());
         setError(t('admin.users.empty'));
       }
     })();
@@ -219,7 +241,12 @@ export default function UsersTab({ version }: Props) {
             </thead>
             <tbody>
               {filtered.map((r) => (
-                <tr key={r.user_id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
+                <tr
+                  key={r.user_id}
+                  className={`border-b border-gray-100 last:border-0 hover:bg-gray-50 ${
+                    newIds.has(r.user_id) ? 'bg-amber-50' : ''
+                  }`}
+                >
                   <td className="whitespace-nowrap px-3 py-2">
                     {r.role === 'org' ? (
                       <a
@@ -231,6 +258,11 @@ export default function UsersTab({ version }: Props) {
                       </a>
                     ) : (
                       <span className="text-gray-900">{r.email}</span>
+                    )}
+                    {newIds.has(r.user_id) && (
+                      <span className="ml-1.5 inline-flex items-center rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-bold leading-none text-white">
+                        {t('admin.users.newBadge')}
+                      </span>
                     )}
                   </td>
                   <td className="whitespace-nowrap px-3 py-2 text-gray-600">{roleLabel(r.role)}</td>

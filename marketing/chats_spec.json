@@ -1,0 +1,112 @@
+{
+  "sheets": [
+    {
+      "name": "Чаты и группы",
+      "freeze_panes": "A2",
+      "autofilter": "A1:K35",
+      "column_widths": {"A": 12, "B": 12, "C": 32, "D": 44, "E": 14, "F": 9, "G": 44, "H": 11, "I": 12, "J": 11, "K": 48},
+      "rows": [
+        [{"value": "Платформа", "bold": true, "fill": "DDEBF7"}, {"value": "Тип", "bold": true, "fill": "DDEBF7"}, {"value": "Название", "bold": true, "fill": "DDEBF7"}, {"value": "Ссылка", "bold": true, "fill": "DDEBF7"}, {"value": "Город", "bold": true, "fill": "DDEBF7"}, {"value": "Язык", "bold": true, "fill": "DDEBF7"}, {"value": "Аудитория / описание", "bold": true, "fill": "DDEBF7"}, {"value": "Проверено", "bold": true, "fill": "DDEBF7"}, {"value": "Для дайджеста", "bold": true, "fill": "DDEBF7"}, {"value": "Риск бана", "bold": true, "fill": "DDEBF7"}, {"value": "Примечания", "bold": true, "fill": "DDEBF7"}],
+        ["Telegram", "Чат", "Бали Чат | Балифорум", {"value": "t.me/balichat", "hyperlink": "https://t.me/balichat"}, "Бали", "Рус", "Крупнейшее комьюнити о Бали, чат форума Балифорум", "Да", "Да", "Средний", "Своя модерация. Лучше согласовать регулярную рубрику с админами"],
+        ["Telegram", "Чат", "Бали | Чат | Форум", {"value": "t.me/russians_in_bali", "hyperlink": "https://t.me/russians_in_bali"}, "Бали", "Рус", "Русскоязычный чат о Бали", "Да", "Да", "Средний", "Начать с участия в обсуждениях"],
+        ["Telegram", "Чат", "Бали — Первый раз на Бали?", {"value": "t.me/bali_ru", "hyperlink": "https://t.me/bali_ru"}, "Бали", "Рус", "Чат вопросов новичков", "Да", "Осторожно", "Средний", "Постить только реально полезные подборки"],
+        ["Telegram", "Чат", "УБУД | ЧАТ", {"value": "t.me/ubud_chat", "hyperlink": "https://t.me/ubud_chat"}, "Убуд, Бали", "Рус", "Чат Убуда", "Да", "Да", "Средний", ""],
+        ["Telegram", "Группа", "Бали скидки и проверенные места", {"value": "t.me/bali_dlya_svoih", "hyperlink": "https://t.me/bali_dlya_svoih"}, "Бали", "Рус", "Группа про проверенные места и скидки", "Да", "Да", "Средний", "Аудитория близка к организаторам событий"],
+        ["Telegram", "Группа", "На Бали", {"value": "t.me/na_bali", "hyperlink": "https://t.me/na_bali"}, "Бали", "Рус", "Общая группа", "Да", "Осторожно", "Средний", "Проверить активность и правила"],
+        ["Telegram", "Группа", "BALI expats", {"value": "t.me/bali_expats", "hyperlink": "https://t.me/bali_expats"}, "Бали", "Англ", "Экспаты: инфо и контакты", "Да", "Да", "Средний", ""],
+        ["Telegram", "Группа", "Bali Digital Nomads", {"value": "t.me/balidigitalnomads", "hyperlink": "https://t.me/balidigitalnomads"}, "Бали", "Англ", "Цифровые кочевники", "Да", "Да", "Средний", ""],
+        ["Telegram", "Группа", "bali_events", {"value": "t.me/bali_events", "hyperlink": "https://t.me/bali_events"}, "Бали", "Смеш.", "По названию — события/афиша", "Да", "Осторожно", "Средний", "Проверить тематику: возможно, конкурент — изучить"],
+        ["Telegram", "Группа", "bali_expat_chat", {"value": "t.me/bali_expat_chat", "hyperlink": "https://t.me/bali_expat_chat"}, "Бали", "Англ", "Чат экспатов", "Да", "Осторожно", "Средний", ""],
+        ["Telegram", "Канал", "bali_digital_nomads (переезд в Индонезию)", {"value": "t.me/bali_digital_nomads", "hyperlink": "https://t.me/bali_digital_nomads"}, "Индонезия", "Рус", "Канал о переезде", "Да", "Реклама", "Низкий", "Для платного/бартерного репоста, не для своих постов"],
+        ["Telegram", "Рекламный аккаунт", "BaliForum Marketing", {"value": "t.me/baliforum", "hyperlink": "https://t.me/baliforum"}, "Бали", "Рус", "Официальный аккаунт по рекламе Балифорума", "Да", "Реклама", "Низкий", "Точка входа для партнёрства с Балифорумом"],
+        ["Telegram", "Чат", "Бали AntiChat", {"value": "t.me/bali_chat", "hyperlink": "https://t.me/bali_chat"}, "Бали", "Рус", "Анонимный чат", "Да", "Нет", "Высокий", "НЕ постить: анонимный флуд, мгновенный бан"],
+        ["Telegram", "Чат", "Дананг экспаты", {"value": "t.me/danang_expats", "hyperlink": "https://t.me/danang_expats"}, "Дананг", "Рус", "Чат экспатов Дананга", "Да", "Да", "Средний", ""],
+        ["Telegram", "Группа", "danang_chat", {"value": "t.me/danang_chat", "hyperlink": "https://t.me/danang_chat"}, "Дананг", "Смеш.", "Общая группа", "Да", "Осторожно", "Средний", "Проверить активность"],
+        ["Telegram", "Группа", "Danang Digital Nomads", {"value": "t.me/danang_digital_nomads", "hyperlink": "https://t.me/danang_digital_nomads"}, "Дананг", "Англ", "Цифровые кочевники", "Да", "Осторожно", "Средний", ""],
+        ["Telegram", "Канал", "Русские в Дананге", {"value": "t.me/russians_in_danang", "hyperlink": "https://t.me/russians_in_danang"}, "Дананг", "Рус", "Новостной канал эмигрантов", "Да", "Реклама", "Низкий", "Договориться о репосте"],
+        ["Telegram", "Канал", "Данангские дела", {"value": "t.me/danang_ru", "hyperlink": "https://t.me/danang_ru"}, "Дананг", "Рус", "Ссылки и полезности", "Да", "Реклама", "Низкий", "Репост/партнёрство"],
+        ["Telegram", "Канал", "ДАНАНГ гайд", {"value": "t.me/danang_info", "hyperlink": "https://t.me/danang_info"}, "Дананг", "Рус", "Гид по Данангу", "Да", "Реклама", "Низкий", "Обмен ссылками"],
+        ["Telegram", "Чат", "Нячанг экспаты", {"value": "t.me/nhatrang_expats", "hyperlink": "https://t.me/nhatrang_expats"}, "Нячанг", "Рус", "Чат экспатов Нячанга", "Да", "Да", "Средний", ""],
+        ["Telegram", "Группа", "Nha Trang Expats", {"value": "t.me/nha_trang_expats", "hyperlink": "https://t.me/nha_trang_expats"}, "Нячанг", "Англ", "Группа экспатов", "Да", "Осторожно", "Средний", ""],
+        ["Telegram", "Канал", "Nhatrang Expats | DO News", {"value": "t.me/nhatrangexpats", "hyperlink": "https://t.me/nhatrangexpats"}, "Нячанг", "Англ", "Новости", "Да", "Реклама", "Низкий", "Репост"],
+        ["Telegram", "Канал", "Nha Trang News", {"value": "t.me/nhatrang_today", "hyperlink": "https://t.me/nhatrang_today"}, "Нячанг", "Англ", "Новости Нячанга", "Да", "Реклама", "Низкий", "Репост"],
+        ["Telegram", "Канал", "Русские в Нячанге", {"value": "t.me/russians_in_nhatrang", "hyperlink": "https://t.me/russians_in_nhatrang"}, "Нячанг", "Рус", "Новостной канал", "Да", "Реклама", "Низкий", "Репост"],
+        ["Telegram", "Чат", "vietnam_expats", {"value": "t.me/vietnam_expats", "hyperlink": "https://t.me/vietnam_expats"}, "Вьетнам", "Нем/Англ", "Экспаты Вьетнама", "Да", "Осторожно", "Средний", "Аудитория скорее немецкоязычная, низкий приоритет"],
+        ["Facebook", "Группа", "Canggu Community", {"value": "facebook.com/groups/canggucommunity", "hyperlink": "https://www.facebook.com/groups/canggucommunity"}, "Чангу, Бали", "Англ", "Крупнейшее сообщество экспатов (~100k)", "Вручную", "Да", "Средний", "Ссылку проверить при вступлении"],
+        ["Facebook", "Группа", "Ubud Community", {"value": "facebook.com/groups/ubudcommunity", "hyperlink": "https://www.facebook.com/groups/ubudcommunity"}, "Убуд, Бали", "Англ", "Сообщество Убуда", "Вручную", "Да", "Средний", "Ссылку проверить при вступлении"],
+        ["Facebook", "Группа", "Bali Digital Nomads", {"value": "поиск в FB: Bali Digital Nomads", "hyperlink": "https://www.facebook.com/search/groups/?q=Bali%20Digital%20Nomads"}, "Бали", "Англ", "Цифровые кочевники", "Вручную", "Да", "Средний", ""],
+        ["Facebook", "Группа", "BALI Expats", {"value": "поиск в FB: BALI Expats", "hyperlink": "https://www.facebook.com/search/groups/?q=BALI%20Expats"}, "Бали", "Англ", "Экспаты", "Вручную", "Да", "Средний", ""],
+        ["Facebook", "Группа", "Da Nang Expats", {"value": "поиск в FB: Da Nang Expats", "hyperlink": "https://www.facebook.com/search/groups/?q=Da%20Nang%20Expats"}, "Дананг", "Англ", "Экспаты", "Вручную", "Да", "Средний", ""],
+        ["Facebook", "Группа", "Nha Trang Expats", {"value": "поиск в FB: Nha Trang Expats", "hyperlink": "https://www.facebook.com/search/groups/?q=Nha%20Trang%20Expats"}, "Нячанг", "Англ", "Экспаты", "Вручную", "Да", "Средний", ""],
+        ["Facebook", "Группа", "Русские в Нячанге / Дананге", {"value": "поиск в FB: Русские в Нячанге", "hyperlink": "https://www.facebook.com/search/groups/?q=%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B5%20%D0%B2%20%D0%9D%D1%8F%D1%87%D0%B0%D0%BD%D0%B3%D0%B5"}, "Нячанг / Дананг", "Рус", "Русскоязычные сообщества", "Вручную", "Да", "Средний", ""],
+        ["ВКонтакте", "Паблик", "Крупные паблики «Бали», «Нячанг», «Вьетнам»", {"value": "поиск в VK", "hyperlink": "https://vk.com/search?c%5Bgroup%5D=1&c%5Bq%5D=%D0%91%D0%B0%D0%BB%D0%B8"}, "Все города", "Рус", "Русскоязычные туристы", "Вручную", "Да", "Средний", "Выбрать 2-3 паблика с активными комментариями"]
+      ],
+      "conditional_formats": [
+        {"range": "J2:J35", "type": "cell_is", "operator": "equal", "formula": ["\"Высокий\""], "fill": "FFC7CE"},
+        {"range": "J2:J35", "type": "cell_is", "operator": "equal", "formula": ["\"Средний\""], "fill": "FFEB9C"},
+        {"range": "J2:J35", "type": "cell_is", "operator": "equal", "formula": ["\"Низкий\""], "fill": "C6EFCE"}
+      ]
+    },
+    {
+      "name": "Антиспам",
+      "freeze_panes": "A2",
+      "column_widths": {"A": 8, "B": 110},
+      "rows": [
+        [{"value": "№", "bold": true, "fill": "DDEBF7"}, {"value": "Правило", "bold": true, "fill": "DDEBF7"}],
+        [1, "Завести ОТДЕЛЬНЫЙ аккаунт для продвижения (не личный): имя, аватар, 2-3 недели прогрева — подписки, вступления, комментарии. Аккаунт-пустышка банится сразу."],
+        [2, "Вступать в чаты медленно: 2-3 в день, с перерывами. Массовые вступления (10+ за час) — триггер глобального спам-бана Telegram."],
+        [3, "НЕ постить одинаковый текст в разные чаты: менять вступление, порядок событий, эмодзи. Одинаковые сообщения подряд — главный признак спамера."],
+        [4, "Формат поста: 70% пользы (подборка событий), 1 короткая ссылка в конце. Голая ссылка без текста = мгновенный бан."],
+        [5, "Сначала участие: ответить на 2-3 вопроса в чате, поздороваться. Первый пост — минимум через день после вступления."],
+        [6, "Прочитать закреп и правила чата. Где реклама запрещена — не постить; где разрешена с разрешения — спросить админа."],
+        [7, "Балифорум: реклама/рубрика только через официальный аккаунт @baliforum (Marketing). Согласовать регулярный дайджест — это легальный канал."],
+        [8, "НЕ постить в анонимные чаты (AntiChat) и чаты с явным запретом рекламы."],
+        [9, "Частота: максимум 1 пост в чат в неделю, лучше рубрика в одно и то же время (например, вторник утром)."],
+        [10, "Если заблокировали в чате — не спорить и не создавать аккаунты для обхода. Обход = глобальный бан Telegram всех аккаунтов."],
+        [11, "Ссылки использовать естественные: короткие ссылки сайта на карточку события (#/?e=...) или главную. Длинные URL с UTM выглядят как реклама."],
+        [12, "Facebook: аккаунт без истории блокируется сразу. Заполнить профиль, добавить друзей, вступить в 2-3 группы, неделю участвовать в обсуждениях — потом первый пост."],
+        [13, "Facebook: в группах с опросом на вступление (3 вопроса) — отвечать честно. Некоторые группы принимают только по инвайту от участника."],
+        [14, "ВКонтакте: рекламные посты в пабликах — через редакцию (часто платно, но дёшево). В комментариях под постами не спамить."],
+        [15, "Отслеживать результат: после каждого дайджеста смотреть счётчики сайта (visits / card_views) в течение 24-48 часов. Удвоение переходов — канал работает."]
+      ]
+    },
+    {
+      "name": "Дайджест-шаблон",
+      "freeze_panes": "A2",
+      "column_widths": {"A": 110},
+      "rows": [
+        [{"value": "СТРУКТУРА ПОСТА (RU)", "bold": true, "fill": "DDEBF7"}],
+        [{"value": "1) Приветствие + польза (кто ты и зачем постишь)", "wrap": true}],
+        [{"value": "2) 3-5 событий: название, дата/время, место, цена, короткая ссылка на карточку", "wrap": true}],
+        [{"value": "3) Одна ссылка на сайт", "wrap": true}],
+        [{"value": "4) Вопрос для вовлечения в конце", "wrap": true}],
+        [{"value": "ПРИМЕР (RU) — заменить [город] и события:", "bold": true, "fill": "FFF2CC"}],
+        [{"value": "👋 Привет! Я собираю афишу событий для [туристов и экспатов в Бали/Дананге/Нячанге] и делюсь подборкой на эту неделю:\n\n1) Йога-класс на рассвете в Чангу — вт/чт 7:00, пляж Беррава. 100k IDR. Подробнее: [ссылка]\n2) Маркет локальных брендов в Убуде — сб 10:00-18:00, в центре. Вход свободный. Подробнее: [ссылка]\n3) Встреча экспатов «Newcomers Night» — пт 19:00, кафе на Джалан Легиан. Бесплатно. Подробнее: [ссылка]\n\nВсе события — на карте, с фильтром по городу и категории:\n[ссылка на сайт]\n\nКакое планируете посетить? Делитесь в комментариях 👇", "wrap": true}],
+        [{"value": "", "wrap": true}],
+        [{"value": "ПРИМЕР (EN):", "bold": true, "fill": "FFF2CC"}],
+        [{"value": "👋 Hi everyone! I curate a weekly events map for tourists & expats in [Bali/Da Nang/Nha Trang]. Here's what's on this week:\n\n1) Sunrise yoga in Canggu — Tue/Thu 7:00 AM, Berawa beach. 100k IDR. Details: [link]\n2) Local brands market in Ubud — Sat 10:00-18:00, city center. Free entry. Details: [link]\n3) Newcomers Night for expats — Fri 7:00 PM, cafe on Jl. Legian. Free. Details: [link]\n\nAll events on one map, filter by city & category:\n[site link]\n\nWhich one are you going to? 👇", "wrap": true}],
+        [{"value": "", "wrap": true}],
+        [{"value": "ПРАВИЛА ШАБЛОНА:", "bold": true, "fill": "DDEBF7"}],
+        [{"value": "- Меняй вступление и порядок событий для каждого чата (антиспам).", "wrap": true}],
+        [{"value": "- В английских чатах — только EN-версия, в русских — RU.", "wrap": true}],
+        [{"value": "- Ссылка на карточку события: https://armagedroid36-blip.github.io/events-map/#/?e=<id события>. Короткая и кликабельная.", "wrap": true}],
+        [{"value": "- Не больше 5 событий в посте — иначе пост выглядит как каталог.", "wrap": true}],
+        [{"value": "- Время указывай местное (Бали = WITA, Вьетнам = ICT), без перевода в МСК.", "wrap": true}],
+        [{"value": "- Если событий на неделю мало — постим 3 лучших, а не растягиваем.", "wrap": true}]
+      ]
+    },
+    {
+      "name": "План старта",
+      "freeze_panes": "A2",
+      "column_widths": {"A": 14, "B": 100},
+      "rows": [
+        [{"value": "Неделя", "bold": true, "fill": "DDEBF7"}, {"value": "Действия", "bold": true, "fill": "DDEBF7"}],
+        ["1", "Создать отдельный аккаунт Telegram для продвижения (имя, аватар, био с ссылкой на сайт). Прогрев: подписаться на 10-15 каналов по теме, вступить в 2 чата (balichat, russians_in_bali), почитать правила, ответить на пару вопросов."],
+        ["2", "Первый дайджест: собрать 4-5 реальных событий из базы сайта, опубликовать в 2 чата РАЗНЫМИ текстами. Написать в @baliforum (Marketing) предложение о регулярной рубрике."],
+        ["3", "Расширение: добавить ещё 3-4 чата (ubud_chat, bali_dlya_svoih, danang_expats, nhatrang_expats). Подготовить EN-версию для bali_expats и balidigitalnomads."],
+        ["4", "Запуск Facebook: заполнить профиль, вступить в Canggu Community и ещё 1-2 группы, участвовать в обсуждениях. Договориться о репосте с 1-2 каналами (danang_info, russians_in_danang)."],
+        ["5+", "Анализ: смотреть visits/card_views после каждого поста, оставлять каналы с отдачей, убирать мёртвые. Добавить ВК-паблики. Постепенно ввести тарифы для организаторов (кросс-промо)."]
+      ]
+    }
+  ]
+}

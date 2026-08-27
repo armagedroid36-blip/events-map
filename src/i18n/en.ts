@@ -350,6 +350,7 @@ export default {
       search: 'Search by email…',
       searchEmpty: 'Nothing found',
       openProfile: 'Open organizer profile',
+      newBadge: 'New',
       colUser: 'User',
       colRole: 'Role',
       colRegistered: 'Registered',
