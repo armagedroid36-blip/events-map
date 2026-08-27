@@ -58,7 +58,7 @@ function ClusterLayer({ events, categories, onSelect, favoriteIds }: ClusterLaye
           if (childCount >= 100) size = 'large';
           const hasFav = cluster
             .getAllChildMarkers()
-            .some((m) => (m.options.icon as L.DivIcon).options.html?.includes('event-marker-fav'));
+            .some((m) => String((m.options.icon as L.DivIcon).options.html ?? '').includes('event-marker-fav'));
           return L.divIcon({
             html: `<div><span>${childCount}</span></div>${hasFav ? '<span class="event-marker-fav">♥</span>' : ''}`,
             className: `marker-cluster marker-cluster-${size}`,
