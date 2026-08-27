@@ -184,8 +184,10 @@ export default function Header({ onOpenForm }: HeaderProps) {
             правый блок становится шире — название сжимается (truncate),
             шапка остаётся в одну строку. */}
         <a href="#/" className="flex min-w-0 flex-1 items-center gap-2">
-          {/* Логотип — клик тоже возвращает на карту (внутри ссылки) */}
-          <img src="/logo.png" alt="" className="h-8 w-8 shrink-0 rounded object-contain" />
+          {/* Логотип — клик тоже возвращает на карту (внутри ссылки).
+              Относительный путь: сайт на GitHub Pages живёт в подпапке,
+              src="/logo.png" с ведущим слэшем уходил в корень домена (404). */}
+          <img src="logo.png" alt="" className="h-8 w-8 shrink-0 rounded object-contain" />
           <h1 className="truncate text-lg font-semibold text-gray-900">
             {t('app.title')}{' '}
             <span className="text-[10px] font-normal text-gray-400">{config.buildVersion}</span>
