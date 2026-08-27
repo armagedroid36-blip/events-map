@@ -183,7 +183,9 @@ export default function Header({ onOpenForm }: HeaderProps) {
             flex-1 min-w-0: при появлении бейджа уведомлений (колокольчик)
             правый блок становится шире — название сжимается (truncate),
             шапка остаётся в одну строку. */}
-        <a href="#/" className="min-w-0 flex-1">
+        <a href="#/" className="flex min-w-0 flex-1 items-center gap-2">
+          {/* Логотип — клик тоже возвращает на карту (внутри ссылки) */}
+          <img src="/logo.png" alt="" className="h-8 w-8 shrink-0 rounded object-contain" />
           <h1 className="truncate text-lg font-semibold text-gray-900">
             {t('app.title')}{' '}
             <span className="text-[10px] font-normal text-gray-400">{config.buildVersion}</span>
