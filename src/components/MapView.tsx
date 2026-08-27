@@ -49,6 +49,22 @@ function ClusterLayer({ events, categories, onSelect, favoriteIds }: ClusterLaye
       groupRef.current = L.markerClusterGroup({
         showCoverageOnHover: false,
         maxClusterRadius: 50,
+        // Кластер: стандартный кружок с числом; если внутри есть избранные
+        // события — в углу кружка показываем сердечко (как на пинах)
+        iconCreateFunction: (cluster) => {
+          const childCount = cluster.getChildCount();
+          let size = 'small';
+          if (childCount >= 10) size = 'medium';
+          if (childCount >= 100) size = 'large';
+          const hasFav = cluster
+            .getAllChildMarkers()
+            .some((m) => (m.options.icon as L.DivIcon).options.html?.includes('event-marker-fav'));
+          return L.divIcon({
+            html: `<div><span>${childCount}</span></div>${hasFav ? '<span class="event-marker-fav">♥</span>' : ''}`,
+            className: `marker-cluster marker-cluster-${size}`,
+            iconSize: [40, 40],
+          });
+        },
       });
       map.addLayer(groupRef.current);
     }
