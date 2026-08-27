@@ -64,11 +64,11 @@ body {
 .event-marker-fav {
   position: absolute;
   top: 5px;
-  right: 1px;
+  right: -2px;
   z-index: 3;
   pointer-events: none;
-  width: 16px;
-  height: 16px;
+  width: 11px;
+  height: 11px;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
 }
 /* Кластер: сердечко в углу кружка, если внутри есть избранные события */
@@ -76,8 +76,8 @@ body {
   position: relative;
 }
 .marker-cluster .event-marker-fav {
-  top: -8px;
-  right: -8px;
+  top: -7px;
+  right: -7px;
 }
 
 /* Курсор карты: обычная стрелка вместо «руки» Leaflet.
