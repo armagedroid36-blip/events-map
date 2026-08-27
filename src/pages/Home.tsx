@@ -336,6 +336,7 @@ export default function Home() {
           center={center}
           zoom={zoom}
           onBoundsChange={setBounds}
+          favoriteIds={favoriteIds}
           onMapClick={() => {
             closeCard();
             setListOpen(false);

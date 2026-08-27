@@ -60,6 +60,18 @@ body {
   z-index: 2;
   pointer-events: none;
 }
+/* Красное сердечко избранного — справа от пина, не перекрывает эмодзи */
+.event-marker-fav {
+  position: absolute;
+  top: -2px;
+  right: -5px;
+  z-index: 3;
+  pointer-events: none;
+  font-size: 12px;
+  line-height: 1;
+  color: #ef4444;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
+}
 
 /* Курсор карты: обычная стрелка вместо «руки» Leaflet.
    В Windows курсор grab рисуется белой рукой без чёрной окантовки

@@ -31,10 +31,12 @@ interface ClusterLayerProps {
   events: EventItem[];
   categories: Category[];
   onSelect: (ev: EventItem) => void;
+  /** id событий в избранном; null — гость (сердечки скрыты) */
+  favoriteIds?: string[] | null;
 }
 
 /** Слой маркеров с кластеризацией */
-function ClusterLayer({ events, categories, onSelect }: ClusterLayerProps) {
+function ClusterLayer({ events, categories, onSelect, favoriteIds }: ClusterLayerProps) {
   const map = useMap();
   const groupRef = useRef<L.MarkerClusterGroup | null>(null);
   // Актуальный обработчик клика — чтобы не пересоздавать слой при каждом клике
@@ -60,15 +62,17 @@ function ClusterLayer({ events, categories, onSelect }: ClusterLayerProps) {
       .filter((ev): ev is EventItem & { lat: number; lng: number } => ev.lat != null && ev.lng != null)
       .map((ev) => {
       const cat = categories.find((c) => c.id === ev.category_id);
+      const fav = favoriteIds?.includes(ev.id) ?? false;
       const icon = L.divIcon({
         // Маркер: полупрозрачный SVG-пин-капля, цвет категории — обводка,
-        // эмодзи — отдельным слоем ПОВЕРХ пина
+        // эмодзи — отдельным слоем ПОВЕРХ пина; у избранного — сердечко справа
         html: `<span class="event-marker" style="--marker-color:${colorFor(ev.category_id)}">
           <svg width="36" height="46" viewBox="0 0 36 46" xmlns="http://www.w3.org/2000/svg">
             <path d="M18 1 C9 1 2 8.5 2 18 C2 29 18 44 18 44 C18 44 34 29 34 18 C34 8.5 27 1 18 1 Z"
               fill="var(--marker-bg, rgba(255,255,255,0.85))" stroke="var(--marker-color)" stroke-width="2"/>
           </svg>
           <span class="event-marker-emoji">${cat?.emoji ?? '📍'}</span>
+          ${fav ? '<span class="event-marker-fav">♥</span>' : ''}
         </span>`,
         className: 'event-marker-wrap',
         iconSize: [36, 46],
@@ -83,7 +87,7 @@ function ClusterLayer({ events, categories, onSelect }: ClusterLayerProps) {
     return () => {
       group.clearLayers();
     };
-  }, [events, categories, map]);
+  }, [events, categories, favoriteIds, map]);
 
   return null;
 }
@@ -152,6 +156,8 @@ interface MapViewProps {
   onBoundsChange?: (b: MapBounds) => void;
   /** Клик по карте (сворачивает открытые меню) */
   onMapClick?: () => void;
+  /** id событий в избранном; null — гость (сердечки скрыты) */
+  favoriteIds?: string[] | null;
 }
 
 export default function MapView({
@@ -162,6 +168,7 @@ export default function MapView({
   zoom,
   onBoundsChange,
   onMapClick,
+  favoriteIds,
 }: MapViewProps) {
   const { t } = useTranslation();
   const initialCenter: [number, number] = [
@@ -200,7 +207,7 @@ export default function MapView({
       >
         {t('privacy.link')}
       </a>
-      <ClusterLayer events={events} categories={categories} onSelect={onSelect} />
+      <ClusterLayer events={events} categories={categories} onSelect={onSelect} favoriteIds={favoriteIds} />
       <MapController center={center} zoom={zoom} />
       <BoundsTracker onBoundsChange={onBoundsChange} onMapClick={onMapClick} />
     </MapContainer>
