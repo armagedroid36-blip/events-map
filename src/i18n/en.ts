@@ -315,6 +315,7 @@ export default {
     required: 'This field is required',
     requiredFields: 'Please fill in the required fields',
     badDate: 'End date is earlier than start date',
+    dateTooLong: 'Event cannot be longer than 3 days',
     badUrl: 'Enter a valid link',
     badPhotoUrl: 'Invalid image link',
     badPhone: 'Enter a valid phone number',

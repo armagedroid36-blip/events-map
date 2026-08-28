@@ -371,6 +371,18 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
         .refine((v) => !v.start_date || !v.end_date || v.end_date >= v.start_date, {
           message: t('form.badDate'),
           path: ['end_date'],
+        })
+        // Длительность не больше 3 дней (end_date - start_date <= 3),
+        // даты без времени, разница в календарных днях (1-е по 4-е — ок, по 5-е — нет)
+        .refine((v) => {
+          if (!v.start_date || !v.end_date) return true;
+          const days =
+            (Date.parse(v.end_date + 'T00:00:00Z') - Date.parse(v.start_date + 'T00:00:00Z')) /
+            86_400_000;
+          return days <= 3;
+        }, {
+          message: t('form.dateTooLong'),
+          path: ['end_date'],
         }),
     [t],
   );

@@ -286,6 +286,17 @@ function EventEditor({ initial, categories, onCancel, onSaved }: EditorProps) {
       setError(t('form.required'));
       return;
     }
+    // Запрет длительности больше 3 дней (UI-защита, в БД ограничения нет)
+    if (
+      form.start_date &&
+      form.end_date &&
+      (Date.parse(form.end_date + 'T00:00:00Z') - Date.parse(form.start_date + 'T00:00:00Z')) /
+        86_400_000 >
+        3
+    ) {
+      setError(t('form.dateTooLong'));
+      return;
+    }
     setSaving(true);
     setError('');
     try {
