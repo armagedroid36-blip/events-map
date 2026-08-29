@@ -19,7 +19,7 @@ const BASE = 'https://baliforum.ru';
 const API = `${BASE}/api/v1/events`;
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36';
 
-const MAX_EVENTS = Number(process.env.MAX_EVENTS || 60); // лимит новых событий за один запуск
+const MAX_EVENTS = Number(process.env.MAX_EVENTS || 300); // лимит новых событий за один запуск (предохранитель: токены LLM)
 const MAX_PAGES = 60;    // предохранитель: сколько страниц листаем максимум
 const DAYS_AHEAD = 120;  // горизонт планирования, дней
 const DESC_LIMIT = 3000; // максимум символов описания (полные описания Балифорума длинные)

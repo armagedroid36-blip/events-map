@@ -20,9 +20,9 @@ if (!SUPABASE_URL || !SERVICE_ROLE) {
 const db = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } });
 
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36';
-const MAX_EVENTS = Number(process.env.MAX_EVENTS || 100); // предохранитель: лимит за запуск
-const MAX_PER_CHANNEL = Number(process.env.MAX_PER_CHANNEL || 10); // лимит на канал (направление)
-const MAX_POSTS = Number(process.env.MAX_POSTS || 25);   // сколько свежих постов смотрим на канал
+const MAX_EVENTS = Number(process.env.MAX_EVENTS || 300); // предохранитель: лимит за запуск (токены LLM)
+const MAX_POSTS = Number(process.env.MAX_POSTS || 200);   // максимум постов на одну страницу канала
+const MAX_PAGES_PER_CHANNEL = Number(process.env.MAX_PAGES_PER_CHANNEL || 5); // предохранитель: страниц на канал
 const DRY_RUN = process.env.DRY_RUN === '1';
 
 // Каналы: город, страна. fallback — координаты центра города, используются
@@ -404,8 +404,12 @@ async function existingKeys() {
   return new Set((data || []).map((e) => normKey(e.title, e.start_date)));
 }
 
-async function fetchChannel(username) {
-  const res = await fetch(`https://t.me/s/${username}`, { headers: { 'User-Agent': UA } });
+/** Страница канала: первая, или ?before=<pid> — посты старше указанного */
+async function fetchChannel(username, before) {
+  const url = before
+    ? `https://t.me/s/${username}?before=${before}`
+    : `https://t.me/s/${username}`;
+  const res = await fetch(url, { headers: { 'User-Agent': UA } });
   if (!res.ok) throw new Error(`HTTP ${res.status} для t.me/s/${username}`);
   return res.text();
 }
@@ -416,141 +420,149 @@ async function main() {
 
   for (const ch of CHANNELS) {
     if (inserted >= MAX_EVENTS) break;
-    let perChannel = 0; // счётчик событий этого канала, сбрасывается на каждом канале
     console.log(`Канал: ${ch.username} (${ch.city})`);
-    let html;
-    try {
-      html = await fetchChannel(ch.username);
-    } catch (e) {
-      console.error(`  ${e.message}`);
-      continue;
-    }
-
-    const posts = splitPosts(html).slice(0, MAX_POSTS);
-    console.log(`  Постов на странице: ${posts.length}`);
-
-    for (const raw of posts) {
-      if (inserted >= MAX_EVENTS || perChannel >= MAX_PER_CHANNEL) break;
-      const post = parsePost(raw);
-      if (!post.pid || !post.text) continue;
-      const cleanText = decodeEntities(post.text);
-
-      // Событие должно содержать дату в будущем
-      const when = parseDate(post.text);
-      if (!when) {
-        console.log(`  - ${post.pid}: нет даты — пропуск`);
-        continue;
+    let before = null; // pid первого поста страницы → следующая страница (?before=)
+    for (let page = 1; page <= MAX_PAGES_PER_CHANNEL; page++) {
+      if (inserted >= MAX_EVENTS) break;
+      let html;
+      try {
+        html = await fetchChannel(ch.username, before);
+      } catch (e) {
+        console.error(`  ${e.message}`);
+        break;
       }
 
-      // Пропускаем события, которые уже начались/закончились к моменту сбора
-      const cityTz = ch.tzMin ?? 7 * 60;
-      const cityNow = new Date(Date.now() + cityTz * 60000);
-      const todayCity = `${cityNow.getUTCFullYear()}-${String(cityNow.getUTCMonth() + 1).padStart(2, '0')}-${String(cityNow.getUTCDate()).padStart(2, '0')}`;
-      if (when.date < todayCity) {
-        console.log(`  - ${post.pid}: дата в прошлом (${when.date}) — пропуск`);
-        continue;
-      }
-      if (when.date === todayCity && when.time) {
-        const [hh, mm] = when.time.split(':').map(Number);
-        const nowMin = cityNow.getUTCHours() * 60 + cityNow.getUTCMinutes();
-        if (hh * 60 + mm <= nowMin) {
-          console.log(`  - ${post.pid}: уже началось (${when.time}) — пропуск`);
+      const posts = splitPosts(html).slice(0, MAX_POSTS).map(parsePost);
+      console.log(`  Страница ${page}: постов ${posts.length}`);
+      if (!posts.length) break;
+
+      // Листаем дальше: before = pid первого поста текущей страницы.
+      // Если страница не сдвинулась (тот же pid) — канал закончился.
+      const firstPid = posts.find((p) => p.pid)?.pid?.split('/').pop() ?? null;
+      if (!firstPid || firstPid === before) break;
+      before = firstPid;
+
+      for (const post of posts) {
+        if (inserted >= MAX_EVENTS) break;
+        if (!post.pid || !post.text) continue;
+        const cleanText = decodeEntities(post.text);
+
+        // Событие должно содержать дату в будущем
+        const when = parseDate(post.text);
+        if (!when) {
+          console.log(`  - ${post.pid}: нет даты — пропуск`);
           continue;
         }
-      }
 
-      const title = extractTitle(post.text);
-      const key = normKey(title, when.date);
-      if (seen.has(key)) continue;
+        // Пропускаем события, которые уже начались/закончились к моменту сбора
+        const cityTz = ch.tzMin ?? 7 * 60;
+        const cityNow = new Date(Date.now() + cityTz * 60000);
+        const todayCity = `${cityNow.getUTCFullYear()}-${String(cityNow.getUTCMonth() + 1).padStart(2, '0')}-${String(cityNow.getUTCDate()).padStart(2, '0')}`;
+        if (when.date < todayCity) {
+          console.log(`  - ${post.pid}: дата в прошлом (${when.date}) — пропуск`);
+          continue;
+        }
+        if (when.date === todayCity && when.time) {
+          const [hh, mm] = when.time.split(':').map(Number);
+          const nowMin = cityNow.getUTCHours() * 60 + cityNow.getUTCMinutes();
+          if (hh * 60 + mm <= nowMin) {
+            console.log(`  - ${post.pid}: уже началось (${when.time}) — пропуск`);
+            continue;
+          }
+        }
 
-      const { mapLinks, tgLinks } = pickLinks(post.links, ch.username);
-      const contacts = tgLinks.map(normalizeTg).filter(Boolean);
-      const tgMain = contacts.find((c) => !c.includes('bot')) || contacts[0] || null;
+        const title = extractTitle(post.text);
+        const key = normKey(title, when.date);
+        if (seen.has(key)) continue;
 
-      // Координаты: из карты или геокодом
-      let lat = null;
-      let lng = null;
-      let address = null;
-      let mapUrl = null;
-      if (mapLinks.length) {
-        mapUrl = mapLinks[0];
-        const geo = await resolveMap(mapUrl);
-        lat = geo.lat;
-        lng = geo.lng;
-        address = geo.address || null;
-      }
-      // Адрес через LLM: понимает любой эмодзи (📍📌🗺️…) и просто упоминания места;
-      // при ошибке/без ключа — fallback на regex. ПРИОРИТЕТ: адрес из ссылки на
-      // карту (resolveMap, точный адрес Google) — он не должен затираться LLM.
-      const llmAddr = await extractAddressLLM(post.text, ch.city);
-      const llmOrRegex = llmAddr?.address || extractAddress(post.text) || null;
-      address = address || llmOrRegex || null;
-      // Если адреса нет, но координаты есть — обратный геокодинг (fallback)
-      if (!address && lat != null && lng != null) {
-        address = await reverseGeocode(lat, lng);
-      }
-      // Координаты: только из карты или геокодом. Центр города НЕ подставляем.
-      if ((lat == null || lng == null) && address) {
-        const g = await geocode(address, ch.city, ch.country, ch.fallback);
-        if (g) { lat = g.lat; lng = g.lng; }
-      }
-      // Адрес из карты не геокодировался, но LLM нашёл другой (например, с улицей) — пробуем его
-      if ((lat == null || lng == null) && llmOrRegex && llmOrRegex !== address) {
-        const g = await geocode(llmOrRegex, ch.city, ch.country, ch.fallback);
-        if (g) { lat = g.lat; lng = g.lng; address = llmOrRegex; }
-      }
-      // Если адрес не геокодируется или его нет — ставим центр города:
-      // событие видно на карте, а в карточке будет «место уточнить у организатора».
-      if (lat == null || lng == null) {
-        lat = ch.fallback.lat;
-        lng = ch.fallback.lng;
-      }
+        const { mapLinks, tgLinks } = pickLinks(post.links, ch.username);
+        const contacts = tgLinks.map(normalizeTg).filter(Boolean);
+        const tgMain = contacts.find((c) => !c.includes('bot')) || contacts[0] || null;
 
-      // Цена через LLM; если LLM недоступен — fallback на regex parsePrice
-      let p = await extractPrice(post.text, ch.city);
-      if (!p) {
-        const rp = parsePrice(post.text);
-        if (rp != null) p = { price: rp, currency: null, free: false, donation: false };
-      }
-      // Категория: LLM точнее в спорных случаях; при ошибке/без ключа — старая логика
-      const llmCat = await extractCategory(post.text, ch.city);
-      // Время: LLM понимает «9pm»; при ошибке/без ключа — старый regex
-      const llmTime = await extractTime(post.text);
-      const website = `https://t.me/${post.pid}`;
+        // Координаты: из карты или геокодом
+        let lat = null;
+        let lng = null;
+        let address = null;
+        let mapUrl = null;
+        if (mapLinks.length) {
+          mapUrl = mapLinks[0];
+          const geo = await resolveMap(mapUrl);
+          lat = geo.lat;
+          lng = geo.lng;
+          address = geo.address || null;
+        }
+        // Адрес через LLM: понимает любой эмодзи (📍📌🗺️…) и просто упоминания места;
+        // при ошибке/без ключа — fallback на regex. ПРИОРИТЕТ: адрес из ссылки на
+        // карту (resolveMap, точный адрес Google) — он не должен затираться LLM.
+        const llmAddr = await extractAddressLLM(post.text, ch.city);
+        const llmOrRegex = llmAddr?.address || extractAddress(post.text) || null;
+        address = address || llmOrRegex || null;
+        // Если адреса нет, но координаты есть — обратный геокодинг (fallback)
+        if (!address && lat != null && lng != null) {
+          address = await reverseGeocode(lat, lng);
+        }
+        // Координаты: только из карты или геокодом. Центр города НЕ подставляем.
+        if ((lat == null || lng == null) && address) {
+          const g = await geocode(address, ch.city, ch.country, ch.fallback);
+          if (g) { lat = g.lat; lng = g.lng; }
+        }
+        // Адрес из карты не геокодировался, но LLM нашёл другой (например, с улицей) — пробуем его
+        if ((lat == null || lng == null) && llmOrRegex && llmOrRegex !== address) {
+          const g = await geocode(llmOrRegex, ch.city, ch.country, ch.fallback);
+          if (g) { lat = g.lat; lng = g.lng; address = llmOrRegex; }
+        }
+        // Если адрес не геокодируется или его нет — ставим центр города:
+        // событие видно на карте, а в карточке будет «место уточнить у организатора».
+        if (lat == null || lng == null) {
+          lat = ch.fallback.lat;
+          lng = ch.fallback.lng;
+        }
 
-      const row = {
-        title,
-        title_ru: title,
-        description: cleanText.slice(0, 3000),
-        description_ru: cleanText.slice(0, 3000),
-        source_lang: 'ru',
-        language: 'ru',
-        start_date: when.date,
-        end_date: null,
-        start_time: llmTime?.start_time || when.time || null,
-        end_time: llmTime?.end_time || null,
-        city: ch.city,
-        address,
-        lat,
-        lng,
-        category_id: llmCat || pickCategory(post.text),
-        website,
-        contact_telegram: tgMain,
-        photos: post.photos ? post.photos.slice(0, 3) : [],
-        price: p?.price ?? null,
-        currency: p?.currency ?? null,
-        donation: !!p?.donation,
-        status: 'moderation',
-      };
+        // Цена через LLM; если LLM недоступен — fallback на regex parsePrice
+        let p = await extractPrice(post.text, ch.city);
+        if (!p) {
+          const rp = parsePrice(post.text);
+          if (rp != null) p = { price: rp, currency: null, free: false, donation: false };
+        }
+        // Категория: LLM точнее в спорных случаях; при ошибке/без ключа — старая логика
+        const llmCat = await extractCategory(post.text, ch.city);
+        // Время: LLM понимает «9pm»; при ошибке/без ключа — старый regex
+        const llmTime = await extractTime(post.text);
+        const website = `https://t.me/${post.pid}`;
 
-      const { error } = DRY_RUN ? { error: null } : await db.from('events').insert(row);
-      if (error) {
-        console.error(`  Ошибка вставки «${title.slice(0, 40)}»: ${error.message}`);
-      } else {
-        inserted++;
-        perChannel++;
-        seen.add(key);
-        console.log(`  ${DRY_RUN ? '[dry] +' : '+'} ${title.slice(0, 45)} | ${when.date} ${when.time || ''} | ${ch.city} | ${row.category_id}${tgMain ? ' | ' + tgMain : ''}${address ? ' | ' + address.slice(0, 40) : ''}`);
+        const row = {
+          title,
+          title_ru: title,
+          description: cleanText.slice(0, 3000),
+          description_ru: cleanText.slice(0, 3000),
+          source_lang: 'ru',
+          language: 'ru',
+          start_date: when.date,
+          end_date: null,
+          start_time: llmTime?.start_time || when.time || null,
+          end_time: llmTime?.end_time || null,
+          city: ch.city,
+          address,
+          lat,
+          lng,
+          category_id: llmCat || pickCategory(post.text),
+          website,
+          contact_telegram: tgMain,
+          photos: post.photos ? post.photos.slice(0, 3) : [],
+          price: p?.price ?? null,
+          currency: p?.currency ?? null,
+          donation: !!p?.donation,
+          status: 'moderation',
+        };
+
+        const { error } = DRY_RUN ? { error: null } : await db.from('events').insert(row);
+        if (error) {
+          console.error(`  Ошибка вставки «${title.slice(0, 40)}»: ${error.message}`);
+        } else {
+          inserted++;
+          seen.add(key);
+          console.log(`  ${DRY_RUN ? '[dry] +' : '+'} ${title.slice(0, 45)} | ${when.date} ${when.time || ''} | ${ch.city} | ${row.category_id}${tgMain ? ' | ' + tgMain : ''}${address ? ' | ' + address.slice(0, 40) : ''}`);
+        }
       }
     }
   }
