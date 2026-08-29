@@ -317,7 +317,13 @@ async function main() {
       const startTime = when.raw.startAt.slice(11, 16) || null;
       const endTime = when.raw.endAt ? when.raw.endAt.slice(11, 16) : null;
       const district = place.districtName || 'Bali';
-      const photos = (ev.images || []).slice(0, 3).map((i) => i.previewUrl).filter(Boolean);
+      // Фото: у большинства событий Балифорума images пустой, реальные фото —
+      // в media.content (previewUrl) и desktopPreview (обложка). Собираем из всех.
+      const photos = [
+        ...((ev.media?.content || []).map((m) => m.previewUrl || m.originalUrl).filter(Boolean)),
+        ...(ev.images || []).map((i) => i.previewUrl).filter(Boolean),
+        ...(ev.desktopPreview?.previewUrl ? [ev.desktopPreview.previewUrl] : []),
+      ].filter((u, i, arr) => arr.indexOf(u) === i).slice(0, 3);
 
       // Точных координат нет — ставим центр района: событие видно на карте,
       // а в карточке будет «место уточнить у организатора».
