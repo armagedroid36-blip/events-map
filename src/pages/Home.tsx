@@ -367,7 +367,7 @@ export default function Home() {
       {user?.role === 'org' && !mobileFiltersOpen && (
         <button
           onClick={() => setFormOpen(true)}
-          className="absolute right-3 top-(--header-bottom) z-[1155] rounded-md bg-emerald-600 px-3.5 py-2 text-sm font-semibold text-white shadow-lg hover:bg-emerald-700"
+          className="absolute right-3 top-(--header-bottom) z-[1155] rounded-md bg-[#14A2D0] px-3.5 py-2 text-sm font-semibold text-white shadow-lg hover:bg-[#118AB1]"
         >
           + {t('menu.addEvent')}
         </button>
