@@ -264,7 +264,10 @@ async function main() {
       const loc = place && place.location;
       if (!ev.title || !ev.slug) continue;
 
-      const key = normKey(ev.title, when.raw.startAt.slice(0, 10));
+      // ВАЖНО: ключ дубля строим по ДЕКОДИРОВАННОМУ title (как он ляжет в базу),
+      // иначе «&amp;» и «&» дают разные ключи и одно событие дублируется каждым прогоном
+      const title = decodeEntities(ev.title);
+      const key = normKey(title, when.raw.startAt.slice(0, 10));
       if (seen.has(key)) {
         skipped++;
         continue;
@@ -299,8 +302,8 @@ async function main() {
       const lng = loc && loc.lng != null ? loc.lng : center.lng;
 
       const row = {
-        title: decodeEntities(ev.title),
-        title_ru: decodeEntities(ev.title),
+        title,
+        title_ru: title,
         description,
         description_ru: description,
         source_lang: 'ru',
