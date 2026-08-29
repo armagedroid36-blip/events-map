@@ -1,8 +1,9 @@
 // Сборщик «местных шоу для туристов»: постоянные представления, которые идут
-// каждый день (расписание стабильное, парсить страницы не нужно — источники
-// проверены вручную). События регулярные (recurrence daily, без end_date —
-// архив их не трогает).
-// Сейчас: VinWonders Nha Trang (остров Хон Че) — Tata Show и Once Show.
+// каждый день (расписание стабильное, парсить страницы не нужно — адреса и
+// фото проверены вручную по страницам-источникам). События регулярные
+// (recurrence daily, без end_date — архив их не трогает).
+// Сейчас: VinWonders Nha Trang (Tata Show, Once Show), Дананг
+// (Charming Danang Show, Ao Dai Show).
 // Запускается в GitHub Actions после collect-bali.mjs; статус — «на модерации».
 import { createClient } from '@supabase/supabase-js';
 
@@ -17,64 +18,77 @@ if (!SUPABASE_URL || !SERVICE_ROLE) {
 const db = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } });
 const DRY_RUN = process.env.DRY_RUN === '1';
 
-// Постоянные шоу: title (ru), title_en, описание (ru/en), координаты, категория,
-// website (стабильный ключ дедупликации), фото (обложки с официального сайта).
+// Постоянные шоу: title (ru), title_en, описание (ru/en), город, ТОЧНЫЙ адрес,
+// координаты, категория, website (стабильный ключ дедупликации), фото
+// (проверены вручную: существуют и реально открываются).
 const SHOWS = [
   {
     title: 'Tata Show в VinWonders',
     title_en: 'Tata Show at VinWonders',
     description:
-      'Грандиозное цирковое шоу принцессы Таты: акробатика, трюки и спецэффекты. Ежедневно в парке VinWonders Nha Trang (остров Хон Че).',
+      'Грандиозное цирковое шоу принцессы Таты: акробатика, трюки и спецэффекты. Ежедневно в парке VinWonders Nha Trang.',
     description_en:
-      'The spectacular circus show of Princess Tata: acrobatics, stunts and special effects. Daily at VinWonders Nha Trang (Hon Tre island).',
+      'The spectacular circus show of Princess Tata: acrobatics, stunts and special effects. Daily at VinWonders Nha Trang.',
     city: 'Нячанг',
-    address: 'VinWonders Nha Trang, остров Хон Че',
+    address: 'VinWonders Nha Trang, Hon Tre Island, Vinh Nguyen, Nha Trang',
     lat: 12.2186,
     lng: 109.241,
     website: 'https://vinwonders.com/en/tata-show/',
-    photo: 'https://static.vinwonders.com/2022/05/Hinh-anh-VinWonders-Nha-Trang-Fairy-land-Tata-show-3x2-so-3.jpg',
+    photos: [
+      'https://static.vinwonders.com/2022/05/Hinh-anh-VinWonders-Nha-Trang-Fairy-land-Tata-show-3x2-so-3.jpg',
+      'https://static.vinwonders.com/2022/05/Hinh-anh-VinWonders-Nha-Trang-Fairy-land-Tata-show-3x2-so-12.jpg',
+    ],
   },
   {
     title: 'Once Show в VinWonders',
     title_en: 'Once Show at VinWonders',
     description:
-      'Мультимедийное шоу «Once»: танец, 3D-проекции на воду и музыку. Ежедневно в парке VinWonders Nha Trang (остров Хон Че).',
+      'Мультимедийное шоу «Once»: танец, 3D-проекции на воду и музыку. Ежедневно в парке VinWonders Nha Trang.',
     description_en:
-      'The "Once" multimedia show: dance, 3D water projections and music. Daily at VinWonders Nha Trang (Hon Tre island).',
+      'The "Once" multimedia show: dance, 3D water projections and music. Daily at VinWonders Nha Trang.',
     city: 'Нячанг',
-    address: 'VinWonders Nha Trang, остров Хон Че',
+    address: 'VinWonders Nha Trang, Hon Tre Island, Vinh Nguyen, Nha Trang',
     lat: 12.2186,
     lng: 109.241,
     website: 'https://vinwonders.com/en/once-show/',
-    photo: 'https://static.vinwonders.com/2023/10/Hinh-anh-VinWonders-Nha-Trang-Once-Show-3x2-so-1.jpg',
+    photos: [
+      'https://static.vinwonders.com/2022/05/ONCE-SHOW-Water-Screen-Sorceress.jpg',
+      'https://static.vinwonders.com/2022/05/ONCE-SHOW-Underwater-MEDIUM.jpg',
+    ],
   },
   {
     title: 'Шоу Charming Danang в Дананге',
     title_en: 'Charming Danang Show',
     description:
-      'Красочное вечернее шоу о культуре Вьетнама: аозай, конические шляпы, лотосы, музыка и танец. Идёт ежедневно в Дананге.',
+      'Красочное вечернее шоу о культуре Вьетнама: аозай, конические шляпы, лотосы, музыка и танец. Ежедневно 19:30–20:40.',
     description_en:
-      'A colorful evening show about Vietnamese culture: ao dai, conical hats, lotus flowers, music and dance. Runs daily in Da Nang.',
+      'A colorful evening show about Vietnamese culture: ao dai, conical hats, lotus flowers, music and dance. Daily 19:30–20:40.',
     city: 'Дананг',
-    address: 'Дананг, уточняйте у организатора',
+    address: 'Culture House of Labor Da Nang, 2 Cach Mang Thang Tam, Hoa Cuong Nam, Hai Chau, Da Nang',
     lat: 16.0544,
     lng: 108.2022,
     website: 'https://danangfantasticity.com/en/art/charming-danang-show',
-    photo: 'https://danangfantasticity.com/wp-content/uploads/2016/12/show-dien-da-nang-quyen-ru-19h30-20h40-hang-ngay-04-1.jpg',
+    photos: [
+      'https://danangfantasticity.com/wp-content/uploads/2016/12/show-dien-da-nang-quyen-ru-19h30-20h40-hang-ngay-01.jpg',
+      'https://danangfantasticity.com/wp-content/uploads/2016/12/show-dien-da-nang-quyen-ru-19h30-20h40-hang-ngay-02.jpg',
+    ],
   },
   {
     title: 'Шоу Ao Dai в Дананге',
     title_en: 'Ao Dai Show Da Nang',
     description:
-      'Театральное шоу об истории вьетнамского платья аозай: от прошлого к настоящему, династии, традиции и современность. Каждый вечер в Дананге.',
+      'Театральное шоу об истории вьетнамского платья аозай: от прошлого к настоящему, династии, традиции и современность. Каждый вечер.',
     description_en:
-      'A theatrical show about the history of the Vietnamese ao dai: from past to present, dynasties, traditions and modernity. Every night in Da Nang.',
+      'A theatrical show about the history of the Vietnamese ao dai: from past to present, dynasties, traditions and modernity. Every night.',
     city: 'Дананг',
-    address: 'Дананг, уточняйте у организатора',
-    lat: 16.0544,
-    lng: 108.2022,
+    address: 'Trung Vuong Theatre, 30 Tran Phu, Hai Chau, Da Nang',
+    lat: 16.0644,
+    lng: 108.2244,
     website: 'https://danangfantasticity.com/en/art/ao-dai-show-da-nang',
-    photo: 'https://danangfantasticity.com/wp-content/uploads/2022/04/ao-dai-show-da-nang-noi-ton-vinh-van-hoa-t-1024x683.jpg',
+    photos: [
+      'https://danangfantasticity.com/wp-content/uploads/2022/04/300-nam-ao-dai-ngu-than-xua-hoat-canh-cho-que.jpg',
+      'https://danangfantasticity.com/wp-content/uploads/2022/04/ao-dai-nu-sinh-viet-nam-1024x576.jpg',
+    ],
   },
 ];
 
@@ -118,7 +132,7 @@ async function main() {
       category_id: 'show',
       website: s.website,
       contact: null,
-      photos: [s.photo],
+      photos: s.photos.slice(0, 3),
       price: null,
       currency: null,
       donation: false,
