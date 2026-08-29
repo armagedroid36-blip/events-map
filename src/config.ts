@@ -16,7 +16,7 @@ export const config = {
   demoMode: false,
 
   // Версия сборки — показывается в шапке мелким текстом для сверки
-  buildVersion: 'v23.08-73',
+  buildVersion: 'v23.08-74',
 
   // Адрес сайта (для ссылок восстановления пароля Supabase)
   siteUrl: 'https://armagedroid36-blip.github.io/events-map/',
@@ -43,8 +43,10 @@ export const config = {
   // Бесплатный ключ: https://carto.com/basemaps/apikey (без аккаунта, до 5 млн
   // запросов/мес). Атрибуция OSM+CARTO обязательна. Ключ публичный — он
   // задуман для использования в клиентском коде.
+  // {r} — ретина-тайлы @2x: на телефонах (DPR 2-3) без него карта и названия
+  // растягиваются с обычных 256px и выглядят размытыми.
   cartoBasemapsUrl:
-    'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=cb1_2a31_1_ad0141c91bca7b0367211137',
+    'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=cb1_2a31_1_ad0141c91bca7b0367211137',
 
   // --- Категории по умолчанию (можно менять в админке) ---
   defaultCategories: [
