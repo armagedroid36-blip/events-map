@@ -8,6 +8,7 @@ import { extractPrice } from './price-llm.mjs';
 import { extractCategory } from './category-llm.mjs';
 import { extractTime } from './time-llm.mjs';
 import { extractAddressLLM } from './address-llm.mjs';
+import { extractAddress } from './address-regex.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -363,18 +364,6 @@ function normalizeTg(link) {
   return m ? '@' + m[1] : null;
 }
 
-/** Адрес из текста: «📍 Локация: …», «Адрес: …», «Место: …» — первое совпадение */
-function extractAddress(text) {
-  const m = text.match(/(?:📍\s*)?(?:локаци[яи]|адрес|место)\s*[:—-]?\s*([^\n]{3,120})/i);
-  if (!m) return null;
-  return (
-    m[1]
-      .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, '') // эмодзи
-      .replace(/[.,;:!?\s]+$/g, '') // хвостовая пунктуация и пробелы
-      .trim() || null
-  );
-}
-
 /** Обратный геокодинг: координаты → адрес (Nominatim), fallback когда адреса нет */
 async function reverseGeocode(lat, lng) {
   try {
@@ -548,7 +537,7 @@ async function main() {
         // при ошибке/без ключа — fallback на regex. ПРИОРИТЕТ: адрес из ссылки на
         // карту (resolveMap, точный адрес Google) — он не должен затираться LLM.
         const llmAddr = await extractAddressLLM(post.text, ch.city);
-        const llmOrRegex = llmAddr?.address || extractAddress(post.text) || null;
+        const llmOrRegex = llmAddr?.address || extractAddress(post.text, ch.city) || null;
         address = address || llmOrRegex || null;
         // Если адреса нет, но координаты есть — обратный геокодинг (fallback)
         if (!address && lat != null && lng != null) {
