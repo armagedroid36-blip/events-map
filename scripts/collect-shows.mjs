@@ -28,6 +28,7 @@ const SHOWS = [
     description_en:
       'The spectacular circus show of Princess Tata: acrobatics, stunts and special effects. Daily at VinWonders Nha Trang (Hon Tre island).',
     city: 'Нячанг',
+    address: 'VinWonders Nha Trang, остров Хон Че',
     lat: 12.2186,
     lng: 109.241,
     website: 'https://vinwonders.com/en/tata-show/',
@@ -41,10 +42,39 @@ const SHOWS = [
     description_en:
       'The "Once" multimedia show: dance, 3D water projections and music. Daily at VinWonders Nha Trang (Hon Tre island).',
     city: 'Нячанг',
+    address: 'VinWonders Nha Trang, остров Хон Че',
     lat: 12.2186,
     lng: 109.241,
     website: 'https://vinwonders.com/en/once-show/',
     photo: 'https://static.vinwonders.com/2023/10/Hinh-anh-VinWonders-Nha-Trang-Once-Show-3x2-so-1.jpg',
+  },
+  {
+    title: 'Шоу Charming Danang в Дананге',
+    title_en: 'Charming Danang Show',
+    description:
+      'Красочное вечернее шоу о культуре Вьетнама: аозай, конические шляпы, лотосы, музыка и танец. Идёт ежедневно в Дананге.',
+    description_en:
+      'A colorful evening show about Vietnamese culture: ao dai, conical hats, lotus flowers, music and dance. Runs daily in Da Nang.',
+    city: 'Дананг',
+    address: 'Дананг, уточняйте у организатора',
+    lat: 16.0544,
+    lng: 108.2022,
+    website: 'https://danangfantasticity.com/en/art/charming-danang-show',
+    photo: 'https://danangfantasticity.com/wp-content/uploads/2016/12/show-dien-da-nang-quyen-ru-19h30-20h40-hang-ngay-04-1.jpg',
+  },
+  {
+    title: 'Шоу Ao Dai в Дананге',
+    title_en: 'Ao Dai Show Da Nang',
+    description:
+      'Театральное шоу об истории вьетнамского платья аозай: от прошлого к настоящему, династии, традиции и современность. Каждый вечер в Дананге.',
+    description_en:
+      'A theatrical show about the history of the Vietnamese ao dai: from past to present, dynasties, traditions and modernity. Every night in Da Nang.',
+    city: 'Дананг',
+    address: 'Дананг, уточняйте у организатора',
+    lat: 16.0544,
+    lng: 108.2022,
+    website: 'https://danangfantasticity.com/en/art/ao-dai-show-da-nang',
+    photo: 'https://danangfantasticity.com/wp-content/uploads/2022/04/ao-dai-show-da-nang-noi-ton-vinh-van-hoa-t-1024x683.jpg',
   },
 ];
 
@@ -82,7 +112,7 @@ async function main() {
       start_time: null,
       end_time: null,
       city: s.city,
-      address: 'VinWonders Nha Trang, остров Хон Че',
+      address: s.address,
       lat: s.lat,
       lng: s.lng,
       category_id: 'show',
