@@ -226,19 +226,28 @@ function normKey(title, date) {
   return `${String(title || '').trim().toLowerCase()}|${String(date || '').trim()}`;
 }
 
+/** Загрузка ключей дублей + живых ссылок Балифорума (для защиты от повторов по slug) */
 async function existingKeys() {
-  const { data, error } = await db.from('events').select('title, start_date');
+  const { data, error } = await db.from('events').select('title, start_date, website, status');
   if (error) {
     console.error('Ошибка чтения дублей:', error.message);
-    return new Set();
+    return { seen: new Set(), liveWebsites: [] };
   }
-  return new Set((data || []).map((e) => normKey(e.title, e.start_date)));
+  const seen = new Set();
+  const liveWebsites = [];
+  for (const e of data || []) {
+    seen.add(normKey(e.title, e.start_date));
+    if ((e.status === 'active' || e.status === 'moderation') && e.website) {
+      liveWebsites.push({ website: e.website, start_date: e.start_date });
+    }
+  }
+  return { seen, liveWebsites };
 }
 
 // ===== Основной цикл =====
 
 async function main() {
-  const seen = await existingKeys();
+  const { seen, liveWebsites } = await existingKeys();
   let inserted = 0;
   let skipped = 0;
 
@@ -273,6 +282,22 @@ async function main() {
         continue;
       }
 
+      // Защита от дублей одного события Балифорума: тот же slug (website) уже есть
+      // в живых — значит, это то же событие, у которого между прогонами «сдвинулась»
+      // ближайшая дата (многодневное событие: вчера ближайшая была 29-е, сегодня 30-е).
+      // Не создаём вторую карточку; 60 дней — запас на «следующий сезон» того же slug.
+      const website = `${BASE}/events/${ev.slug}`;
+      const startDate = when.raw.startAt.slice(0, 10);
+      const twinSite = liveWebsites.find(
+        (w) =>
+          w.website === website &&
+          Math.abs((new Date(startDate) - new Date(w.start_date)) / 86400000) <= 60,
+      );
+      if (twinSite) {
+        skipped++;
+        continue;
+      }
+
       // Детали: описание + контакты организатора
       let detail = {};
       try {
@@ -288,7 +313,6 @@ async function main() {
       // Категория: LLM точнее в спорных случаях; при ошибке/без ключа — старая логика
       const typesHint = ev.types?.length ? `Типы Балифорума: ${ev.types.map((t) => t.name).join(', ')}` : 'Bali';
       const llmCat = await extractCategory(description, typesHint);
-      const startDate = when.raw.startAt.slice(0, 10);
       const endDate = when.raw.endAt ? when.raw.endAt.slice(0, 10) : null;
       const startTime = when.raw.startAt.slice(11, 16) || null;
       const endTime = when.raw.endAt ? when.raw.endAt.slice(11, 16) : null;
@@ -317,7 +341,7 @@ async function main() {
         lat,
         lng,
         category_id: llmCat || pickCategory(ev.types),
-        website: `${BASE}/events/${ev.slug}`,
+        website,
         contact: contacts.contact || null,
         contact_telegram: contacts.contact_telegram || null,
         contact_email: contacts.contact_email || null,

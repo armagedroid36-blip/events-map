@@ -395,13 +395,31 @@ function normKey(title, date) {
   return `${String(title || '').trim().toLowerCase()}|${String(date || '').trim()}`;
 }
 
+/** Ключ «той же афиши»: title + город — для объединения повторных анонсов в расписание */
+function sameTitleKey(title, city) {
+  return `${String(title || '').trim().toLowerCase()}|${String(city || '').trim()}`;
+}
+
+/** Загрузка ключей дублей + живых событий (для объединения повторных анонсов) */
 async function existingKeys() {
-  const { data, error } = await db.from('events').select('title, start_date');
+  const { data, error } = await db
+    .from('events')
+    .select('id, title, start_date, end_date, recurrence, website, status, city');
   if (error) {
     console.error('Ошибка чтения дублей:', error.message);
-    return new Set();
+    return { seen: new Set(), liveByTitle: new Map() };
   }
-  return new Set((data || []).map((e) => normKey(e.title, e.start_date)));
+  const seen = new Set();
+  const liveByTitle = new Map();
+  for (const e of data || []) {
+    seen.add(normKey(e.title, e.start_date));
+    if (e.status === 'active' || e.status === 'moderation') {
+      const k = sameTitleKey(e.title, e.city);
+      if (!liveByTitle.has(k)) liveByTitle.set(k, []);
+      liveByTitle.get(k).push(e);
+    }
+  }
+  return { seen, liveByTitle };
 }
 
 /** Страница канала: первая, или ?before=<pid> — посты старше указанного */
@@ -415,7 +433,7 @@ async function fetchChannel(username, before) {
 }
 
 async function main() {
-  const seen = await existingKeys();
+  const { seen, liveByTitle } = await existingKeys();
   let inserted = 0;
 
   for (const ch of CHANNELS) {
@@ -474,6 +492,41 @@ async function main() {
         const title = extractTitle(post.text);
         const key = normKey(title, when.date);
         if (seen.has(key)) continue;
+
+        // Повторный анонс того же занятия (еженедельная афиша): тот же канал,
+        // то же название, дата в пределах 14 дней от первой — продлеваем
+        // расписание (recurrence weekly) вместо создания новой карточки.
+        const twins = (liveByTitle.get(sameTitleKey(title, ch.city)) || []).filter(
+          (e) => e.website && e.website.startsWith(`https://t.me/${ch.username}/`),
+        );
+        const twin = twins.find((e) => {
+          const diff = Math.round(
+            (new Date(`${when.date}T00:00:00`).getTime() - new Date(`${e.start_date}T00:00:00`).getTime()) / 86400000,
+          );
+          return diff > 0 && diff <= 14;
+        });
+        if (twin) {
+          const isoDow = (s) => new Date(`${s}T00:00:00`).getDay() || 7; // 1=Пн..7=Вс
+          const newDow = isoDow(when.date);
+          const curDow = isoDow(twin.start_date);
+          const rec =
+            twin.recurrence && twin.recurrence.freq === 'weekly' && Array.isArray(twin.recurrence.days)
+              ? { freq: 'weekly', days: [...twin.recurrence.days] }
+              : { freq: 'weekly', days: [] };
+          if (!rec.days.includes(curDow)) rec.days.push(curDow);
+          if (!rec.days.includes(newDow)) rec.days.push(newDow);
+          const end = twin.end_date && twin.end_date >= when.date ? twin.end_date : when.date;
+          const { error: uErr } = DRY_RUN
+            ? { error: null }
+            : await db.from('events').update({ recurrence: rec, end_date: end }).eq('id', twin.id);
+          if (uErr) {
+            console.error(`  Ошибка продления расписания «${title.slice(0, 40)}»: ${uErr.message}`);
+          } else {
+            seen.add(key);
+            console.log(`  ~ расписание продлено: ${title.slice(0, 45)} | +${when.date} (${ch.city})`);
+          }
+          continue;
+        }
 
         const { mapLinks, tgLinks } = pickLinks(post.links, ch.username);
         const contacts = tgLinks.map(normalizeTg).filter(Boolean);
@@ -561,6 +614,18 @@ async function main() {
         } else {
           inserted++;
           seen.add(key);
+          const lk = sameTitleKey(title, ch.city);
+          if (!liveByTitle.has(lk)) liveByTitle.set(lk, []);
+          liveByTitle.get(lk).push({
+            id: null,
+            title,
+            start_date: when.date,
+            end_date: null,
+            recurrence: null,
+            website,
+            status: 'moderation',
+            city: ch.city,
+          });
           console.log(`  ${DRY_RUN ? '[dry] +' : '+'} ${title.slice(0, 45)} | ${when.date} ${when.time || ''} | ${ch.city} | ${row.category_id}${tgMain ? ' | ' + tgMain : ''}${address ? ' | ' + address.slice(0, 40) : ''}`);
         }
       }
