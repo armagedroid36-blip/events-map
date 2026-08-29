@@ -505,9 +505,15 @@ export default {
     },
     operator: {
       title: 'Operator and contacts',
-      // TODO: fill from Dmitry's separate prompt (operator contacts)
-      text: 'The operator contact details will be added here.',
+      text: 'For questions about the site, listing events and feedback: email dima.armagedroid@yandex.ru or Telegram bot @Eventsmap_feedback_bot.',
     },
+  },
+  contacts: {
+    link: 'Contacts',
+    title: 'Contact us',
+    hint: 'Found a bug, have a suggestion or want to list your event? Write to us — pick the channel you prefer:',
+    email: 'Email us',
+    telegram: 'Message us on Telegram',
   },
   common: {
     cancel: 'Cancel',

@@ -287,7 +287,7 @@ export default function Header({ onOpenForm }: HeaderProps) {
                       </button>
                     ))}
                     <div className="my-1 border-t border-gray-100" />
-                    {/* Политика — видна в меню на мобильных (в шапке скрыта) */}
+                    {/* Политика и Контакты — видны в меню на мобильных (в шапке скрыты) */}
                     <button
                       onClick={() => {
                         setMenuOpen(false);
@@ -296,6 +296,15 @@ export default function Header({ onOpenForm }: HeaderProps) {
                       className="block w-full px-4 py-2 text-left text-sm text-gray-500 hover:bg-gray-50"
                     >
                       {t('privacy.link')}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setMenuOpen(false);
+                        go('#/contacts');
+                      }}
+                      className="block w-full px-4 py-2 text-left text-sm text-gray-500 hover:bg-gray-50"
+                    >
+                      {t('contacts.link')}
                     </button>
                     <button
                       onClick={() => {

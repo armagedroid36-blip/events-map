@@ -222,13 +222,21 @@ export default function MapView({
       />
       {/* Атрибуция по центру внизу (центрируется CSS) — чтобы её не закрывали панели */}
       <AttributionControl position="bottomright" prefix={false} />
-      {/* Ссылка на политику конфиденциальности — по центру внизу, над атрибуцией */}
-      <a
-        href="#/privacy"
-        className="absolute bottom-9 left-1/2 z-[1000] -translate-x-1/2 rounded-md bg-white/80 px-2 py-0.5 text-[11px] font-medium text-gray-600 shadow-sm hover:text-gray-900"
-      >
-        {t('privacy.link')}
-      </a>
+      {/* Ссылки «Политика» и «Контакты» — по центру внизу, над атрибуцией */}
+      <div className="absolute bottom-9 left-1/2 z-[1000] flex -translate-x-1/2 gap-2">
+        <a
+          href="#/privacy"
+          className="rounded-md bg-white/80 px-2 py-0.5 text-[11px] font-medium text-gray-600 shadow-sm hover:text-gray-900"
+        >
+          {t('privacy.link')}
+        </a>
+        <a
+          href="#/contacts"
+          className="rounded-md bg-white/80 px-2 py-0.5 text-[11px] font-medium text-gray-600 shadow-sm hover:text-gray-900"
+        >
+          {t('contacts.link')}
+        </a>
+      </div>
       <ClusterLayer events={events} categories={categories} onSelect={onSelect} favoriteIds={favoriteIds} />
       <MapController center={center} zoom={zoom} />
       <BoundsTracker onBoundsChange={onBoundsChange} onMapClick={onMapClick} />
