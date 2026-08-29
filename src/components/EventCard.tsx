@@ -568,7 +568,14 @@ export default function EventCard({ event, categories, onClose, isAdmin, isOwner
   return (
     <div className="rounded-lg p-4">
       <div className="mb-2 flex items-start justify-between gap-2">
-        <h3 className="flex-1 text-base font-semibold leading-snug text-gray-900">{title}</h3>
+        <div className="flex-1">
+          <h3 className="text-base font-semibold leading-snug text-gray-900">{title}</h3>
+          {event.is_international && (
+            <span className="mt-1 inline-block rounded-full bg-[#72D2CF]/25 px-2 py-0.5 text-[10px] font-semibold text-[#0F766E]">
+              {t('card.international')}
+            </span>
+          )}
+        </div>
         <div className="flex shrink-0 items-center gap-1">
           {/* Поделиться — доступно всем, в т.ч. гостям */}
           <ShareButton

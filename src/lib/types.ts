@@ -89,6 +89,8 @@ export interface EventItem {
   org_avatar_url?: string | null;
   /** Имя организатора (из profiles, в публичном списке событий) */
   org_display_name?: string | null;
+  /** Артист международный (гастролирующий) — метка LLM для концертов */
+  is_international?: boolean;
   created_at: string;
 }
 

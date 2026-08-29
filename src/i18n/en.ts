@@ -190,6 +190,7 @@ export default {
     free: 'Free',
     priceUnknown: 'Ask the organizer for the price',
     placeUnknown: 'Ask the organizer for the exact location',
+    international: 'International artist',
     contacts: 'Organizer contacts',
     organizer: 'Organizer',
     share: 'Share',

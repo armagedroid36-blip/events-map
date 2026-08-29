@@ -190,6 +190,7 @@ export default {
     free: 'Бесплатно',
     priceUnknown: 'Цену уточняйте у организатора',
     placeUnknown: 'Место уточните у организатора',
+    international: 'Международный артист',
     contacts: 'Контакты организатора',
     organizer: 'Организатор',
     share: 'Поделиться',

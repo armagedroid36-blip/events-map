@@ -4,6 +4,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { extractPrice } from './price-llm.mjs';
 import { extractCategory } from './category-llm.mjs';
+import { isInternationalArtist } from './intl-llm.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -313,6 +314,13 @@ async function main() {
       // Категория: LLM точнее в спорных случаях; при ошибке/без ключа — старая логика
       const typesHint = ev.types?.length ? `Типы Балифорума: ${ev.types.map((t) => t.name).join(', ')}` : 'Bali';
       const llmCat = await extractCategory(description, typesHint);
+      // Метка «международный артист»: только для концертов/музыки/живой музыки —
+      // отличает гастролирующих артистов от местных кавер-бэндов и резидентов.
+      const MUSIC_TYPES = ['концерт', 'музыка', 'живая музыка'];
+      const isMusic = (ev.types || []).some((t) =>
+        MUSIC_TYPES.some((w) => String(t.name || '').toLowerCase().includes(w)),
+      );
+      const isInternational = isMusic ? !!(await isInternationalArtist(ev.title, description)) : false;
       const endDate = when.raw.endAt ? when.raw.endAt.slice(0, 10) : null;
       const startTime = when.raw.startAt.slice(11, 16) || null;
       const endTime = when.raw.endAt ? when.raw.endAt.slice(11, 16) : null;
@@ -357,6 +365,7 @@ async function main() {
         price: p?.price ?? null,
         currency: p?.currency ?? null,
         donation: !!p?.donation,
+        is_international: isInternational,
         status: 'moderation',
       };
 
