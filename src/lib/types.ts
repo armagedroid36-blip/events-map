@@ -241,3 +241,13 @@ export interface UserStatsRow {
     count: number;
   }>;
 }
+
+/** Строка дневной статистики счётчика (динамика в админке, из RPC admin_stats_history) */
+export interface StatsDailyRow {
+  /** Дата в формате YYYY-MM-DD */
+  day: string;
+  /** Имя счётчика: visits | card_views */
+  name: string;
+  /** Значение за этот день */
+  count: number;
+}

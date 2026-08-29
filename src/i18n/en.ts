@@ -454,6 +454,11 @@ export default {
       newApplications: 'New submissions',
       visits: 'Visits',
       cardViews: 'Card views',
+      dynamics: 'Dynamics',
+      day: 'Day',
+      month: 'Month',
+      year: 'Year',
+      noData: 'No data yet',
     },
     import: {
       title: 'Import events',

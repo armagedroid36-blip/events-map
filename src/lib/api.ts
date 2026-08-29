@@ -15,6 +15,7 @@ import type {
   HistoryItem,
   UserRole,
   UserStatsRow,
+  StatsDailyRow,
 } from './types';
 import { config } from '../config';
 import { DemoApi } from './demo';
@@ -140,6 +141,8 @@ export interface DataApi {
   incrementCounter(name: string): Promise<void>;
   /** Текущие значения счётчиков */
   getStats(): Promise<Record<string, number>>;
+  /** История счётчиков по дням (динамика для админки; только админ) */
+  getStatsHistory(): Promise<StatsDailyRow[]>;
 
   // --- История просмотров ---
   addHistory(eventId: string): Promise<void>;
@@ -613,6 +616,13 @@ class SupabaseApi implements DataApi {
     const out: Record<string, number> = {};
     for (const row of data) out[row.name] = Number(row.value) || 0;
     return out;
+  }
+
+  async getStatsHistory(): Promise<StatsDailyRow[]> {
+    // Все строки stats_daily (RPC security definer + is_admin)
+    const { data, error } = await this.db.rpc('admin_stats_history');
+    if (error) throw error;
+    return (data ?? []) as StatsDailyRow[];
   }
 
   async listArchived(): Promise<EventItem[]> {

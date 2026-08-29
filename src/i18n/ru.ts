@@ -454,6 +454,11 @@ export default {
       newApplications: 'Новые заявки',
       visits: 'Посещения',
       cardViews: 'Просмотры карточек',
+      dynamics: 'Динамика',
+      day: 'День',
+      month: 'Месяц',
+      year: 'Год',
+      noData: 'Пока нет данных',
     },
     import: {
       title: 'Импорт событий',
