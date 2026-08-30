@@ -49,6 +49,9 @@ function ClusterLayer({ events, categories, onSelect, favoriteIds }: ClusterLaye
       groupRef.current = L.markerClusterGroup({
         showCoverageOnHover: false,
         maxClusterRadius: 50,
+        // Без zoom-анимации (см. MapContainer): кластеры не застревают
+        // со старым transform при быстром/прерванном зуме.
+        zoomAnimation: false,
         // Кластер: стандартный кружок с числом; если внутри есть избранные
         // события — в углу кружка показываем сердечко (как на пинах)
         iconCreateFunction: (cluster) => {
@@ -100,7 +103,7 @@ function ClusterLayer({ events, categories, onSelect, favoriteIds }: ClusterLaye
         iconSize: [36, 46],
         iconAnchor: [18, 44],
       });
-      const marker = L.marker([ev.lat, ev.lng], { icon });
+      const marker = L.marker([ev.lat, ev.lng], { icon, zoomAnimation: false });
       marker.on('click', () => onSelectRef.current(ev));
       return marker;
     });
@@ -207,6 +210,13 @@ export default function MapView({
       // Кнопки зума скрыты: их перекрывают плавающие панели.
       // Зум работает колесом мыши, двойным кликом и жестами на телефоне.
       zoomControl={false}
+      // Zoom-анимация выключена: при быстрой серии зумов (колесо, pinch,
+      // прерывание flyTo) Leaflet применяет CSS-трансформации к слоям, и при
+      // обрыве анимации кластеры/маркеры застревают со старым transform
+      // (уплывают в океан/за пределы). Без анимации позиции пересчитываются
+      // мгновенно, поведение кликов не меняется.
+      zoomAnimation={false}
+      markerZoomAnimation={false}
       // Минимальный зум 3: мир (2048 px) всегда больше контейнера карты —
       // за краями карты не видно пустых серых полей.
       minZoom={3}
