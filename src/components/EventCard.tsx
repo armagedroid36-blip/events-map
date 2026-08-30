@@ -775,7 +775,7 @@ export default function EventCard({ event, categories, onClose, isAdmin, isOwner
           href={event.website}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-block rounded-md bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-700"
+          className="inline-block rounded-md bg-[#e66343] px-3 py-1.5 text-sm font-medium text-white hover:bg-[#d95a3c]"
         >
           {t('card.details')} →
         </a>

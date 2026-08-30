@@ -182,7 +182,7 @@ export default {
     emptyHint: 'Попробуйте изменить фильтры или выбрать другое направление.',
   },
   card: {
-    details: 'Подробнее',
+    details: 'Источник / Подробнее',
     dates: '{{start}} — {{end}}',
     dateSingle: '{{start}}',
     location: '📍 {{city}}',

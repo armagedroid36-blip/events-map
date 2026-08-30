@@ -182,7 +182,7 @@ export default {
     emptyHint: 'Try changing the filters or picking another destination.',
   },
   card: {
-    details: 'More details',
+    details: 'Source / Details',
     dates: '{{start}} — {{end}}',
     dateSingle: '{{start}}',
     location: '📍 {{city}}',
