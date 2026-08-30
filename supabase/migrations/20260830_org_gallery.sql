@@ -23,21 +23,25 @@ alter table public.org_gallery enable row level security;
 -- RLS на profiles закрыт для гостей (только own read/admin read), подзапрос
 -- вернул бы пусто и галерея была бы не видна анонимам. Используем
 -- security definer хелпер is_banned(uid) (уже есть в БД, SELECT-only, можно из RLS).
+drop policy if exists "org_gallery public read" on public.org_gallery;
 create policy "org_gallery public read"
   on public.org_gallery for select
   to anon, authenticated
   using (not is_banned(org_id));
 
+drop policy if exists "org_gallery own insert" on public.org_gallery;
 create policy "org_gallery own insert"
   on public.org_gallery for insert
   to authenticated
   with check (auth.uid() = org_id);
 
+drop policy if exists "org_gallery own update" on public.org_gallery;
 create policy "org_gallery own update"
   on public.org_gallery for update
   to authenticated
   using (auth.uid() = org_id);
 
+drop policy if exists "org_gallery own delete" on public.org_gallery;
 create policy "org_gallery own delete"
   on public.org_gallery for delete
   to authenticated
@@ -96,24 +100,9 @@ $$;
 revoke all on function public.add_gallery_photo(text) from public;
 grant execute on function public.add_gallery_photo(text) to authenticated;
 
--- 4. delete_gallery_photo: владелец удаляет запись И объект из storage.
-create or replace function public.delete_gallery_photo(p_id uuid)
-returns void
-language plpgsql
-security definer
-set search_path = public
-as $$
-declare v_path text;
-begin
-  select photo_path into v_path
-  from public.org_gallery
-  where id = p_id and org_id = auth.uid();
-  if found then
-    delete from public.org_gallery where id = p_id;
-    delete from storage.objects where bucket_id = 'photos' and name = v_path;
-  end if;
-end;
-$$;
-
-revoke all on function public.delete_gallery_photo(uuid) from public;
-grant execute on function public.delete_gallery_photo(uuid) to authenticated;
+-- 4. Удаление фото — через Edge Function gallery_delete (verify JWT + service role):
+--    storage API НЕ позволяет прямое DELETE из storage.objects (42501 «Use the
+--    Storage API instead»), поэтому SQL-функция удаления НЕ создаётся.
+--    Edge Function: проверяет владельца по JWT, удаляет объект через
+--    DELETE /storage/v1/object/photos/<path> и запись из org_gallery.
+drop function if exists public.delete_gallery_photo(uuid);

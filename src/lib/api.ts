@@ -527,9 +527,18 @@ class SupabaseApi implements DataApi {
   }
 
   async removeGalleryPhoto(id: string): Promise<void> {
-    // RPC удаляет запись + объект из storage (только владелец)
-    const { error } = await this.db.rpc('delete_gallery_photo', { p_id: id });
-    if (error) throw error;
+    // Удаление через Edge Function gallery_delete (verify JWT + service role):
+    // storage API запрещает прямое DELETE из storage.objects (42501), поэтому
+    // объект удаляет Edge Function через Storage API.
+    const { data } = await this.db.auth.getSession();
+    const token = data.session?.access_token;
+    if (!token) throw new Error('Войдите, чтобы удалить фото');
+    const res = await fetch(`${config.supabaseUrl}/functions/v1/gallery_delete`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ p_id: id }),
+    });
+    if (!res.ok) throw new Error(await res.text().catch(() => 'delete failed'));
   }
 
   // --- События организатора ---
