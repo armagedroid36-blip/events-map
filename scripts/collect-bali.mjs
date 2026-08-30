@@ -362,7 +362,8 @@ async function main() {
         contact_phone: contacts.contact_phone || null,
         contact_instagram: contacts.contact_instagram || null,
         photos,
-        price: p?.price ?? null,
+        // free=true → price=0 («Бесплатно» на карточке); donation — отдельно (price остаётся null)
+        price: p?.free ? 0 : (p?.price ?? null),
         currency: p?.currency ?? null,
         donation: !!p?.donation,
         is_international: isInternational,

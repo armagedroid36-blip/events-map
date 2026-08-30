@@ -8,7 +8,9 @@ const SYSTEM_PROMPT =
   'Определи цену билета на событие по тексту. Ответь ТОЛЬКО JSON: {"price": number|null, "currency": "idr"|"vnd"|"usd"|"rub"|null, "free": boolean, "donation": boolean}. ' +
   'Правила: "600к"/"200 000 IDR" на Бали → price=600000/200000, currency="idr"; "$12" → 12, "usd"; ' +
   '"вход свободный"/"бесплатно"/"free" → price=null, free=true; "донат"/"donation" → price=null, donation=true; ' +
-  'цены нет → price=null, currency=null, free=false. Если валюта не указана: Бали → idr, Дананг/Нячанг → vnd, рублёвые суммы → rub. ' +
+  'цены нет → price=null, currency=null, free=false. ' +
+  'ВАЖНО: если в тексте есть ЛЮБЫЕ цены на вход — даже частичные ("бесплатно до 22:00", "девушкам бесплатно, мужчинам 150k", "по QR бесплатно, без QR 300k") — это НЕ бесплатное событие: free=false, price=наименьшая платная цена. ' +
+  'Если валюта не указана: Бали → idr, Дананг/Нячанг → vnd, рублёвые суммы → rub. ' +
   'Не выдумывай цену, если её нет в тексте.';
 
 /**
