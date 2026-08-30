@@ -460,6 +460,13 @@ export default {
       month: 'Month',
       year: 'Year',
       noData: 'No data yet',
+      byCountry: 'Visits by country',
+      period7: '7 days',
+      period30: '30 days',
+      period90: '90 days',
+      unknown: 'Unknown',
+      countryVisits: 'Daily visits: {{country}}',
+      share: 'Share',
     },
     import: {
       title: 'Import events',

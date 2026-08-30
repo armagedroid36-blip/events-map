@@ -6,7 +6,14 @@ import { useTranslation } from 'react-i18next';
 import { getApi } from '../../lib/api';
 import { todayIso } from '../../lib/dates';
 import { aggregateDays, aggregateMonths, aggregateYears, type StatsPoint } from '../../lib/statsHistory';
-import type { Application, EventItem, StatsDailyRow } from '../../lib/types';
+import { countryFlag, countryName } from '../../lib/isoCountries';
+import type {
+  Application,
+  EventItem,
+  StatsDailyRow,
+  VisitCountryDay,
+  VisitCountryRow,
+} from '../../lib/types';
 
 interface Props {
   version: number;
@@ -102,13 +109,18 @@ function BarChart({ points }: { points: StatsPoint[] }) {
 }
 
 export default function StatsTab({ version }: Props) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [events, setEvents] = useState<EventItem[]>([]);
   const [apps, setApps] = useState<Application[]>([]);
   const [stats, setStats] = useState<Record<string, number>>({});
   // null = ещё грузится, [] = данных нет (демо/новая база)
   const [history, setHistory] = useState<StatsDailyRow[] | null>(null);
   const [period, setPeriod] = useState<Period>('day');
+  // --- Посещения по странам ---
+  const [countryPeriod, setCountryPeriod] = useState<7 | 30 | 90>(30);
+  const [countryRows, setCountryRows] = useState<VisitCountryRow[] | null>(null);
+  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+  const [countrySeries, setCountrySeries] = useState<VisitCountryDay[] | null>(null);
 
   useEffect(() => {
     let alive = true;
@@ -132,6 +144,35 @@ export default function StatsTab({ version }: Props) {
       alive = false;
     };
   }, [version]);
+
+  // Топ стран за выбранный период (не роняем вкладку при ошибке RPC)
+  useEffect(() => {
+    let alive = true;
+    getApi()
+      .getVisitsByCountry(countryPeriod)
+      .then((rows) => alive && setCountryRows(rows))
+      .catch(() => alive && setCountryRows([]));
+    return () => {
+      alive = false;
+    };
+  }, [countryPeriod, version]);
+
+  // График выбранной страны по дням
+  useEffect(() => {
+    if (!selectedCountry) {
+      setCountrySeries(null);
+      return;
+    }
+    let alive = true;
+    setCountrySeries(null);
+    getApi()
+      .getVisitsCountrySeries(selectedCountry, countryPeriod)
+      .then((rows) => alive && setCountrySeries(rows))
+      .catch(() => alive && setCountrySeries([]));
+    return () => {
+      alive = false;
+    };
+  }, [selectedCountry, countryPeriod, version]);
 
   const today = todayIso();
   const total = events.length;
@@ -159,6 +200,20 @@ export default function StatsTab({ version }: Props) {
     visits: points.reduce((s, p) => s + p.visits, 0),
     cardViews: points.reduce((s, p) => s + p.cardViews, 0),
   };
+
+  // --- Посещения по странам: топ-10, доли, график выбранной страны ---
+  const lang = i18n.language?.startsWith('en') ? 'en' : 'ru';
+  const countryTotal = (countryRows ?? []).reduce((s, r) => s + r.count, 0);
+  const topCountries = (countryRows ?? []).slice(0, 10);
+  const maxCountry = Math.max(1, ...topCountries.map((r) => r.count));
+  const countryNameOf = (code: string) =>
+    code === 'unknown' ? t('admin.stats.unknown') : countryName(code, lang);
+  const seriesPoints: StatsPoint[] = (countrySeries ?? []).map((d) => ({
+    key: d.day,
+    label: `${d.day.slice(8, 10)}.${d.day.slice(5, 7)}`,
+    visits: d.count,
+    cardViews: 0,
+  }));
 
   return (
     <div>
@@ -227,6 +282,79 @@ export default function StatsTab({ version }: Props) {
               </div>
               <BarChart points={points} />
             </div>
+          </>
+        )}
+      </div>
+
+      <div className="mt-6">
+        <h3 className="mb-3 text-sm font-semibold text-gray-900">{t('admin.stats.byCountry')}</h3>
+        <div className="mb-3 inline-flex rounded-lg border border-gray-200 bg-white p-0.5">
+          {([7, 30, 90] as const).map((p) => (
+            <button
+              key={p}
+              type="button"
+              onClick={() => setCountryPeriod(p)}
+              className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
+                countryPeriod === p ? 'bg-gray-900 text-white' : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              {t(`admin.stats.period${p}`)}
+            </button>
+          ))}
+        </div>
+
+        {countryRows === null ? (
+          <p className="text-sm text-gray-500">…</p>
+        ) : topCountries.length === 0 ? (
+          <p className="text-sm text-gray-500">{t('admin.stats.noData')}</p>
+        ) : (
+          <>
+            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+              {topCountries.map((r, idx) => {
+                const selected = selectedCountry === r.country;
+                const share = countryTotal > 0 ? Math.round((r.count / countryTotal) * 100) : 0;
+                return (
+                  <button
+                    key={r.country}
+                    type="button"
+                    onClick={() => setSelectedCountry(selected ? null : r.country)}
+                    className={`flex w-full items-center gap-2 border-b border-gray-100 px-3 py-2 text-left transition-colors last:border-b-0 hover:bg-gray-50 ${
+                      selected ? 'bg-blue-50' : ''
+                    }`}
+                  >
+                    <span className="w-5 text-sm text-gray-400">{idx + 1}</span>
+                    <span className="text-lg leading-none">{countryFlag(r.country)}</span>
+                    <span className="min-w-0 flex-1 truncate text-sm font-medium text-gray-900">
+                      {countryNameOf(r.country)}
+                    </span>
+                    <span className="shrink-0 text-xs text-gray-500">
+                      {r.count} · {share}%
+                    </span>
+                    <span className="hidden h-1.5 w-24 shrink-0 overflow-hidden rounded-full bg-gray-100 sm:block">
+                      <span
+                        className="block h-full rounded-full"
+                        style={{ width: `${Math.max(2, (r.count / maxCountry) * 100)}%`, background: BAR_VISITS }}
+                      />
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {selectedCountry && (
+              <div className="mt-3 rounded-xl border border-gray-200 bg-white p-4">
+                <p className="mb-2 text-xs text-gray-500">
+                  {t('admin.stats.countryVisits', { country: countryNameOf(selectedCountry) })}
+                </p>
+                {countrySeries === null ? (
+                  <p className="text-sm text-gray-500">…</p>
+                ) : seriesPoints.length === 0 ? (
+                  <p className="text-sm text-gray-500">{t('admin.stats.noData')}</p>
+                ) : (
+                  <BarChart points={seriesPoints} />
+                )}
+              </div>
+            )}
           </>
         )}
       </div>

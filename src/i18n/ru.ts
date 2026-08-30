@@ -460,6 +460,13 @@ export default {
       month: 'Месяц',
       year: 'Год',
       noData: 'Пока нет данных',
+      byCountry: 'Посещения по странам',
+      period7: '7 дней',
+      period30: '30 дней',
+      period90: '90 дней',
+      unknown: 'Не определено',
+      countryVisits: 'Визиты по дням: {{country}}',
+      share: 'Доля',
     },
     import: {
       title: 'Импорт событий',

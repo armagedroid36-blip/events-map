@@ -253,3 +253,19 @@ export interface StatsDailyRow {
   /** Значение за этот день */
   count: number;
 }
+
+/** Визиты по странам за период (из RPC admin_visits_by_country) */
+export interface VisitCountryRow {
+  /** ISO-2 код страны (или 'unknown') */
+  country: string;
+  /** Сумма визитов за период */
+  count: number;
+}
+
+/** Визиты одной страны по дням (из RPC admin_visits_country_series) */
+export interface VisitCountryDay {
+  /** Дата в формате YYYY-MM-DD */
+  day: string;
+  /** Визиты за этот день */
+  count: number;
+}

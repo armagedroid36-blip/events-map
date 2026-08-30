@@ -16,6 +16,8 @@ import type {
   UserRole,
   UserStatsRow,
   StatsDailyRow,
+  VisitCountryRow,
+  VisitCountryDay,
 } from './types';
 import { config } from '../config';
 import { DemoApi } from './demo';
@@ -143,6 +145,10 @@ export interface DataApi {
   getStats(): Promise<Record<string, number>>;
   /** История счётчиков по дням (динамика для админки; только админ) */
   getStatsHistory(): Promise<StatsDailyRow[]>;
+  /** Визиты по странам за период (топ; только админ) */
+  getVisitsByCountry(days: number): Promise<VisitCountryRow[]>;
+  /** Визиты одной страны по дням за период (график; только админ) */
+  getVisitsCountrySeries(country: string, days: number): Promise<VisitCountryDay[]>;
 
   // --- История просмотров ---
   addHistory(eventId: string): Promise<void>;
@@ -623,6 +629,23 @@ class SupabaseApi implements DataApi {
     const { data, error } = await this.db.rpc('admin_stats_history');
     if (error) throw error;
     return (data ?? []) as StatsDailyRow[];
+  }
+
+  async getVisitsByCountry(days: number): Promise<VisitCountryRow[]> {
+    // Топ стран за период (RPC security definer + is_admin)
+    const { data, error } = await this.db.rpc('admin_visits_by_country', { p_days: days });
+    if (error) throw error;
+    return (data ?? []) as VisitCountryRow[];
+  }
+
+  async getVisitsCountrySeries(country: string, days: number): Promise<VisitCountryDay[]> {
+    // Визиты страны по дням (RPC security definer + is_admin)
+    const { data, error } = await this.db.rpc('admin_visits_country_series', {
+      p_country: country,
+      p_days: days,
+    });
+    if (error) throw error;
+    return (data ?? []) as VisitCountryDay[];
   }
 
   async listArchived(): Promise<EventItem[]> {

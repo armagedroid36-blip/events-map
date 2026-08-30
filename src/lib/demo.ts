@@ -1,7 +1,7 @@
 // Демо-режим: сайт работает БЕЗ базы данных.
 // Данные хранятся в localStorage браузера. Нужен, чтобы проверить
 // внешний вид и поведение сайта до подключения Supabase.
-import type { Category, EventItem, Application, ApplicationDraft, ImportRow, UserStatsRow, OrgProfile, StatsDailyRow } from './types';
+import type { Category, EventItem, Application, ApplicationDraft, ImportRow, UserStatsRow, OrgProfile, StatsDailyRow, VisitCountryRow, VisitCountryDay } from './types';
 
 /** Относительные даты: событие всегда в будущем, демо «живое» */
 function inDays(n: number): string {
@@ -437,6 +437,15 @@ export class DemoApi {
 
   async getStatsHistory(): Promise<StatsDailyRow[]> {
     // Демо: без базы истории счётчиков нет
+    return [];
+  }
+
+  async getVisitsByCountry(_days: number): Promise<VisitCountryRow[]> {
+    // Демо: без базы данных по странам нет
+    return [];
+  }
+
+  async getVisitsCountrySeries(_country: string, _days: number): Promise<VisitCountryDay[]> {
     return [];
   }
 

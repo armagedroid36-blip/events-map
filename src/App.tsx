@@ -7,6 +7,7 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getApi } from './lib/api';
+import { trackVisit } from './lib/trackVisit';
 
 // Страницы грузятся по требованию (code-split): тяжёлые зависимости
 // (карта Leaflet, админка) уходят в отдельные чанки, основной чанк меньше.
@@ -30,10 +31,12 @@ export default function App() {
   const [recovery, setRecovery] = useState(() => window.location.hash.includes('type=recovery'));
 
   // Счётчик посещений: одна загрузка страницы = одно посещение
+  // (+ трекинг по странам через Edge Function)
   useEffect(() => {
     getApi()
       .incrementCounter('visits')
       .catch(() => {});
+    trackVisit();
   }, []);
 
   useEffect(() => {
