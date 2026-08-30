@@ -46,7 +46,8 @@ function ClusterLayer({ events, categories, onSelect, favoriteIds }: ClusterLaye
   useEffect(() => {
     // Группа кластеров создаётся один раз на время жизни карты
     if (!groupRef.current) {
-      groupRef.current = L.markerClusterGroup({
+      // zoomAnimation не описан в типах плагина (есть в рантайме) — расширяем тип
+      const opts = {
         showCoverageOnHover: false,
         maxClusterRadius: 50,
         // Без zoom-анимации (см. MapContainer): кластеры не застревают
@@ -54,7 +55,7 @@ function ClusterLayer({ events, categories, onSelect, favoriteIds }: ClusterLaye
         zoomAnimation: false,
         // Кластер: стандартный кружок с числом; если внутри есть избранные
         // события — в углу кружка показываем сердечко (как на пинах)
-        iconCreateFunction: (cluster) => {
+        iconCreateFunction: (cluster: L.MarkerCluster) => {
           const childCount = cluster.getChildCount();
           let size = 'small';
           if (childCount >= 10) size = 'medium';
@@ -72,7 +73,8 @@ function ClusterLayer({ events, categories, onSelect, favoriteIds }: ClusterLaye
             iconSize: [40, 40],
           });
         },
-      });
+      } as L.MarkerClusterGroupOptions & { zoomAnimation: boolean };
+      groupRef.current = L.markerClusterGroup(opts);
       map.addLayer(groupRef.current);
     }
     const group = groupRef.current;
@@ -103,7 +105,11 @@ function ClusterLayer({ events, categories, onSelect, favoriteIds }: ClusterLaye
         iconSize: [36, 46],
         iconAnchor: [18, 44],
       });
-      const marker = L.marker([ev.lat, ev.lng], { icon, zoomAnimation: false });
+      // zoomAnimation не описан в типах Leaflet для Marker (есть в рантайме)
+      const marker = L.marker([ev.lat, ev.lng], {
+        icon,
+        zoomAnimation: false,
+      } as L.MarkerOptions & { zoomAnimation: boolean });
       marker.on('click', () => onSelectRef.current(ev));
       return marker;
     });
