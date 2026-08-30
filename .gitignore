@@ -30,3 +30,4 @@ dist-ssr
 # Экспорты данных (выгрузки из базы) — не в репозиторий
 org_*.json
 org-contacts.*
+supabase/.temp/
