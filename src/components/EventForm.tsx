@@ -2,7 +2,7 @@
 // - Точное время начала/окончания
 // - Тычок по карте -> адрес и город заполняются автоматически
 // - Организатор выбирает контакты для связи из своего профиля
-// - Фото загружаются файлами (до 5, до 5 МБ)
+// - Фото загружаются файлами (до 5, до 10 МБ, сжимаются на клиенте)
 // - После сохранения событие уходит на модерацию
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
@@ -14,6 +14,7 @@ import L from 'leaflet';
 import { z } from 'zod';
 import type { Category, EventItem, Recurrence } from '../lib/types';
 import { getApi, photoUrl } from '../lib/api';
+import { compressImage } from '../lib/imageCompress';
 import { geocodeAddress, reverseGeocode } from '../lib/geocode';
 import { detectLang, translateText } from '../lib/translate';
 import { LANGUAGES } from '../lib/languages';
@@ -416,7 +417,10 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
   }
 
   /** Общая загрузка фото: файлы из диалога или из буфера обмена.
-      Проверки: размер ≤ 5 МБ, формат JPG/PNG/WebP, дедуп по содержимому. */
+      Проверки: размер ≤ 10 МБ (после сжатия файл станет маленьким, а отказ
+      на фото 6–8 МБ с телефона нелогичен), формат JPG/PNG/WebP, дедуп по
+      содержимому ОРИГИНАЛА (сжатие не ломает дедуп). Фото сжимается на
+      клиенте (imageCompress) — лимит storage 1 ГБ и трафик 5 ГБ/мес. */
   async function addFiles(files: File[]) {
     if (!files.length) return;
     setPhotoError('');
@@ -425,7 +429,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
     let added = 0;
     for (const f of files) {
       if (photos.length + added >= 5) break;
-      if (f.size > 5 * 1024 * 1024) {
+      if (f.size > 10 * 1024 * 1024) {
         errs.add(t('form.photoTooBig'));
         continue;
       }
@@ -438,7 +442,8 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
       seen.add(key);
       setUploading(true);
       try {
-        const path = await getApi().uploadPhoto(f);
+        const compressed = await compressImage(f);
+        const path = await getApi().uploadPhoto(compressed);
         setPhotos((p) => [...p, path]);
         setPhotoKeys((prev) => {
           const n = new Set(prev);

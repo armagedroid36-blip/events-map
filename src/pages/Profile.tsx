@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
 import { getApi, photoUrl } from '../lib/api';
+import { compressImage } from '../lib/imageCompress';
 import { useAuth } from '../lib/auth';
 import { contactErrors, normalizeContacts } from '../lib/contacts';
 import type { ContactErrorCode, ContactField } from '../lib/contacts';
@@ -91,7 +92,7 @@ export default function ProfilePage() {
     }
   }, [user]);
 
-  /** Загрузка файлов в галерею: по одному — upload → RPC → обновить список */
+  /** Загрузка файлов в галерею: сжатие → upload → RPC → обновить список */
   async function onGalleryFiles(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? []);
     e.target.value = '';
@@ -105,7 +106,8 @@ export default function ProfilePage() {
           setGalleryErr(t('profile.photoTooBig'));
           continue;
         }
-        const path = await api.uploadPhoto(file);
+        const compressed = await compressImage(file);
+        const path = await api.uploadPhoto(compressed);
         await api.addGalleryPhoto(path);
         const rows = await api.listMyGallery();
         setPhotos(rows);
