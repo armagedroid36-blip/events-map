@@ -8,6 +8,7 @@ import { getApi, photoUrl } from '../lib/api';
 import { useAuth } from '../lib/auth';
 import { contactErrors, normalizeContacts } from '../lib/contacts';
 import type { ContactErrorCode, ContactField } from '../lib/contacts';
+import type { GalleryPhoto } from '../lib/types';
 
 /** Полный URL аватарки: http/blob-ссылки как есть, пути хранилища через photoUrl */
 function avatarDisplay(url: string | null): string | null {
@@ -35,6 +36,12 @@ export default function ProfilePage() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Галерея организатора (только role='org')
+  const [photos, setPhotos] = useState<GalleryPhoto[]>([]);
+  const [galleryBusy, setGalleryBusy] = useState(false);
+  const [galleryErr, setGalleryErr] = useState('');
+  const galleryInputRef = useRef<HTMLInputElement | null>(null);
 
   // Смена пароля: новый пароль + подтверждение (без текущего — пользователь авторизован)
   const [pw, setPw] = useState('');
@@ -73,6 +80,54 @@ export default function ProfilePage() {
     const id = setTimeout(() => setSaved(''), 3000);
     return () => clearTimeout(id);
   }, [saved]);
+
+  // Галерея: своя (только организатор)
+  useEffect(() => {
+    if (user?.role === 'org') {
+      getApi()
+        .listMyGallery()
+        .then((rows) => setPhotos(rows))
+        .catch(() => setPhotos([]));
+    }
+  }, [user]);
+
+  /** Загрузка файлов в галерею: по одному — upload → RPC → обновить список */
+  async function onGalleryFiles(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+    e.target.value = '';
+    if (files.length === 0) return;
+    setGalleryErr('');
+    setGalleryBusy(true);
+    try {
+      const api = getApi();
+      for (const file of files) {
+        if (!file.type.startsWith('image/') || file.size > 10 * 1024 * 1024) {
+          setGalleryErr(t('profile.photoTooBig'));
+          continue;
+        }
+        const path = await api.uploadPhoto(file);
+        await api.addGalleryPhoto(path);
+        const rows = await api.listMyGallery();
+        setPhotos(rows);
+      }
+    } catch (ex) {
+      const msg = (ex as { message?: string })?.message ?? '';
+      setGalleryErr(msg.includes('Gallery limit') ? t('profile.galleryLimit') : t('form.error'));
+    } finally {
+      setGalleryBusy(false);
+    }
+  }
+
+  /** Удаление фото: RPC убирает запись и объект storage */
+  async function onGalleryRemove(id: string) {
+    setGalleryErr('');
+    try {
+      await getApi().removeGalleryPhoto(id);
+      setPhotos((prev) => prev.filter((p) => p.id !== id));
+    } catch {
+      setGalleryErr(t('form.error'));
+    }
+  }
 
   if (!user) {
     return (
@@ -328,6 +383,58 @@ export default function ProfilePage() {
               {busy ? '...' : t('profile.saveOrgProfile')}
             </button>
           </form>
+        )}
+
+        {/* Галерея организатора — загрузка и удаление фото (только организатор) */}
+        {user.role === 'org' && (
+          <div className="mt-4 rounded-lg border border-gray-200 bg-white p-4 text-sm">
+            <h2 className="font-semibold text-gray-900">{t('profile.gallery')}</h2>
+            {galleryErr && (
+              <p className="mt-2 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{galleryErr}</p>
+            )}
+            {photos.length === 0 ? (
+              <p className="mt-2 text-sm text-gray-500">{t('profile.galleryEmpty')}</p>
+            ) : (
+              <div className="mt-3 grid grid-cols-3 gap-2">
+                {photos.map((p) => (
+                  <div key={p.id} className="relative">
+                    <img
+                      src={avatarDisplay(p.photo_path) ?? undefined}
+                      alt=""
+                      className="aspect-square w-full rounded-lg object-cover"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => onGalleryRemove(p.id)}
+                      aria-label="✕"
+                      className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-white text-sm font-bold text-gray-700 shadow hover:bg-gray-100"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <input
+              ref={galleryInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={onGalleryFiles}
+            />
+            <button
+              type="button"
+              onClick={() => galleryInputRef.current?.click()}
+              disabled={galleryBusy}
+              className="mt-3 rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            >
+              {galleryBusy ? '...' : t('profile.addPhoto')}
+            </button>
+          </div>
         )}
 
         {/* Смена пароля — всем ролям */}

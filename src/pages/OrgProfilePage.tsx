@@ -8,7 +8,7 @@ import Header from '../components/Header';
 import { getApi, photoUrl } from '../lib/api';
 import { formatDate } from '../lib/dates';
 import { localizedText } from '../lib/translate';
-import type { OrgProfile, EventItem, Category } from '../lib/types';
+import type { OrgProfile, EventItem, Category, GalleryPhoto } from '../lib/types';
 
 /** Ссылки на мессенджеры из произвольного формата ввода (как в EventCard) */
 function tgLink(v: string) {
@@ -59,6 +59,9 @@ export default function OrgProfilePage({ orgId }: Props) {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  // Галерея: фото + индекс открытого в лайтбоксе (null = закрыт)
+  const [photos, setPhotos] = useState<GalleryPhoto[]>([]);
+  const [lightbox, setLightbox] = useState<number | null>(null);
 
   // Подписка
   const [email, setEmail] = useState('');
@@ -78,15 +81,18 @@ export default function OrgProfilePage({ orgId }: Props) {
     setSubErr('');
     (async () => {
       try {
-        const [p, evs, cats] = await Promise.all([
+        const [p, evs, cats, gals] = await Promise.all([
           api.getOrgProfile(orgId),
           api.listOrgEvents(orgId),
           api.getCategories(),
+          // Галерея не должна ронять страницу при сетевой ошибке
+          api.listOrgGallery(orgId).catch(() => []),
         ]);
         if (!alive) return;
         setProfile(p);
         setEvents(evs);
         setCategories(cats);
+        setPhotos(gals);
       } catch {
         /* сетевые ошибки: страница остаётся пустой */
       } finally {
@@ -97,6 +103,16 @@ export default function OrgProfilePage({ orgId }: Props) {
       alive = false;
     };
   }, [orgId]);
+
+  // Escape закрывает лайтбокс
+  useEffect(() => {
+    if (lightbox === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLightbox(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [lightbox]);
 
   /** Клик по событию: главная + открытие карточки по deep link #/?e=<id> */
   function openEvent(id: string) {
@@ -194,6 +210,32 @@ export default function OrgProfilePage({ orgId }: Props) {
             )}
           </div>
         </div>
+
+        {/* Галерея — сразу после шапки, только если есть фото */}
+        {photos.length > 0 && (
+          <div className="mt-4 rounded-lg border border-gray-200 bg-white p-4">
+            <h2 className="mb-2 text-sm font-semibold text-gray-900">{t('org.gallery')}</h2>
+            <div className="grid grid-cols-3 gap-2">
+              {photos.map((p, i) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => setLightbox(i)}
+                  className="block overflow-hidden rounded-lg focus:outline-none"
+                >
+                  <img
+                    src={avatarSrc(p.photo_path) ?? undefined}
+                    alt=""
+                    className="aspect-square w-full object-cover transition-opacity hover:opacity-90"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).style.display = 'none';
+                    }}
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Контакты — только если организатор включил contacts_public */}
         {contacts.length > 0 && (
@@ -304,6 +346,49 @@ export default function OrgProfilePage({ orgId }: Props) {
           {subErr && <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{subErr}</p>}
         </form>
       </div>
+
+      {/* Лайтбокс: просмотр фото, стрелки ← →, Escape, клик по фону/крестик */}
+      {lightbox !== null && photos[lightbox] && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setLightbox(null);
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => setLightbox(null)}
+            aria-label="✕"
+            className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-xl text-white hover:bg-white/40"
+          >
+            ✕
+          </button>
+          <button
+            type="button"
+            onClick={() => setLightbox((lightbox - 1 + photos.length) % photos.length)}
+            aria-label="←"
+            className="absolute left-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/20 text-xl text-white hover:bg-white/40"
+          >
+            ←
+          </button>
+          <img
+            src={avatarSrc(photos[lightbox].photo_path) ?? undefined}
+            alt=""
+            className="max-h-[85vh] max-w-full rounded-lg object-contain"
+          />
+          <button
+            type="button"
+            onClick={() => setLightbox((lightbox + 1) % photos.length)}
+            aria-label="→"
+            className="absolute right-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/20 text-xl text-white hover:bg-white/40"
+          >
+            →
+          </button>
+          <span className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-3 py-1 text-xs text-white">
+            {lightbox + 1} / {photos.length}
+          </span>
+        </div>
+      )}
     </div>
   );
 }

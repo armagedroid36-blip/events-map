@@ -1,7 +1,7 @@
 // Демо-режим: сайт работает БЕЗ базы данных.
 // Данные хранятся в localStorage браузера. Нужен, чтобы проверить
 // внешний вид и поведение сайта до подключения Supabase.
-import type { Category, EventItem, Application, ApplicationDraft, ImportRow, UserStatsRow, OrgProfile, StatsDailyRow, VisitCountryRow, VisitCountryDay } from './types';
+import type { Category, EventItem, Application, ApplicationDraft, ImportRow, UserStatsRow, OrgProfile, StatsDailyRow, VisitCountryRow, VisitCountryDay, GalleryPhoto } from './types';
 
 /** Относительные даты: событие всегда в будущем, демо «живое» */
 function inDays(n: number): string {
@@ -402,6 +402,20 @@ export class DemoApi {
   }
 
   async updateProfile(): Promise<void> {}
+
+  // --- Галерея организатора (демо: пусто, без падений) ---
+
+  async listOrgGallery(_orgId: string): Promise<GalleryPhoto[]> {
+    return [];
+  }
+
+  async listMyGallery(): Promise<GalleryPhoto[]> {
+    return [];
+  }
+
+  async addGalleryPhoto(_path: string): Promise<void> {}
+
+  async removeGalleryPhoto(_id: string): Promise<void> {}
 
   async resetPassword(): Promise<void> {}
 

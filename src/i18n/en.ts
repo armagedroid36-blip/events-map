@@ -129,6 +129,12 @@ export default {
     orgBio: 'About',
     contactsPublic: 'Show contacts publicly',
     contactsPublicHint: 'Contacts will be visible to everyone on your organizer profile page',
+    // Organizer gallery
+    gallery: 'Gallery',
+    addPhoto: 'Add photo',
+    galleryEmpty: 'No photos yet — add your first',
+    galleryLimit: 'You can add up to 15 photos',
+    photoTooBig: 'File is too large (up to 10 MB)',
   },
   favorites: {
     title: 'Favorites',
@@ -219,6 +225,7 @@ export default {
     already: 'You are already subscribed to this organizer.',
     notFound: 'Organizer not found',
     invalidEmail: 'Enter a valid email',
+    gallery: 'Gallery',
     // Unsubscribe page (#/unsubscribe?token=...)
     unsubscribed: 'You have unsubscribed from this organizer\'s mailing.',
     unsubError: 'Could not unsubscribe. Check the link from the email.',

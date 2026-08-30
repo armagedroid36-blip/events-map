@@ -18,6 +18,7 @@ import type {
   StatsDailyRow,
   VisitCountryRow,
   VisitCountryDay,
+  GalleryPhoto,
 } from './types';
 import { config } from '../config';
 import { DemoApi } from './demo';
@@ -123,6 +124,16 @@ export interface DataApi {
     avatar_url?: string | null;
     contacts_public?: boolean;
   }): Promise<void>;
+
+  // --- Галерея организатора ---
+  /** Публичная галерея организатора (страница #/org/<id>) */
+  listOrgGallery(orgId: string): Promise<GalleryPhoto[]>;
+  /** Своя галерея (для редактирования в профиле) */
+  listMyGallery(): Promise<GalleryPhoto[]>;
+  /** Добавить фото в свою галерею (путь в storage; лимит 15) */
+  addGalleryPhoto(path: string): Promise<void>;
+  /** Удалить фото из своей галереи (запись + объект storage) */
+  removeGalleryPhoto(id: string): Promise<void>;
 
   // --- События организатора ---
   listMyEvents(): Promise<EventItem[]>;
@@ -484,6 +495,40 @@ class SupabaseApi implements DataApi {
       .from('profiles')
       .update(patch)
       .eq('id', me.id);
+    if (error) throw error;
+  }
+
+  // --- Галерея организатора ---
+
+  async listOrgGallery(orgId: string): Promise<GalleryPhoto[]> {
+    // Публичное чтение (RPC security definer: скрывает заблокированных)
+    const { data, error } = await this.db.rpc('get_org_gallery', { p_org_id: orgId });
+    if (error) throw error;
+    return (data ?? []) as GalleryPhoto[];
+  }
+
+  async listMyGallery(): Promise<GalleryPhoto[]> {
+    // Своя галерея — прямой SELECT (политика select: not is_banned(org_id))
+    const me = await this.getCurrentUser();
+    if (!me) return [];
+    const { data, error } = await this.db
+      .from('org_gallery')
+      .select('id, photo_path, created_at')
+      .eq('org_id', me.id)
+      .order('created_at', { ascending: true });
+    if (error) throw error;
+    return (data ?? []) as GalleryPhoto[];
+  }
+
+  async addGalleryPhoto(path: string): Promise<void> {
+    // RPC проверяет роль org и лимит 15; 'Gallery limit' пробрасываем как есть
+    const { error } = await this.db.rpc('add_gallery_photo', { p_path: path });
+    if (error) throw error;
+  }
+
+  async removeGalleryPhoto(id: string): Promise<void> {
+    // RPC удаляет запись + объект из storage (только владелец)
+    const { error } = await this.db.rpc('delete_gallery_photo', { p_id: id });
     if (error) throw error;
   }
 

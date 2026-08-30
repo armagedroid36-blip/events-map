@@ -269,3 +269,11 @@ export interface VisitCountryDay {
   /** Визиты за этот день */
   count: number;
 }
+
+/** Фото галереи организатора (таблица org_gallery) */
+export interface GalleryPhoto {
+  id: string;
+  /** Путь в storage bucket 'photos' (или полная http-ссылка) */
+  photo_path: string;
+  created_at: string;
+}
