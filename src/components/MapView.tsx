@@ -279,7 +279,17 @@ export default function MapView({
     if (map.isStyleLoaded() && map.getSource('events')) apply();
     else map.once('load', apply);
 
+    // Spiderfy-радиус считается в пикселях ТЕКУЩЕГО зума — при каждом
+    // zoomend пересоздаём маркеры, чтобы разнесение соответствовало зуму
+    // (иначе пины, разнесённые на zoom 4, на zoom 14 разъезжаются на километры)
+    const onZoomEnd = () => {
+      if (!map.getSource('events')) return;
+      apply();
+    };
+    map.on('zoomend', onZoomEnd);
+
     return () => {
+      map.off('zoomend', onZoomEnd);
       markersRef.current.forEach((m) => m.remove());
       markersRef.current = [];
     };
