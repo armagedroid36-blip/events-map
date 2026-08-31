@@ -152,8 +152,15 @@ export default function MapView({
     };
     map.on('zoomend', toggleMarkers);
 
-    // Клик по пустой карте — сворачиваем открытые меню
-    map.on('click', () => cbRef.current.onMapClick?.());
+    // Клик по пустой карте — сворачиваем открытые меню.
+    // Клик по кластеру или HTML-маркеру сюда НЕ попадает: маркеры сами
+    // останавливают всплытие (stopPropagation), а кластер фильтруется ниже.
+    map.on('click', (e: maplibregl.MapMouseEvent) => {
+      // Клик по кластеру — приближение, меню не трогаем
+      const feats = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
+      if (feats.length > 0) return;
+      cbRef.current.onMapClick?.();
+    });
 
     return () => {
       markersRef.current = [];
@@ -221,7 +228,13 @@ export default function MapView({
               ? '<svg class="event-marker-fav" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#ef4444" stroke="#ffffff" stroke-width="2"/></svg>'
               : ''
           }`;
-          el.addEventListener('click', () => cbRef.current.onSelect(ev));
+          el.addEventListener('click', (e: MouseEvent) => {
+            // Без stopPropagation клик по пину всплывает до контейнера карты,
+            // маплibre эмитит map click -> onMapClick закрывает только что
+            // открытую карточку события
+            e.stopPropagation();
+            cbRef.current.onSelect(ev);
+          });
           const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
             .setLngLat([ev.lng!, ev.lat!])
             .addTo(map);
