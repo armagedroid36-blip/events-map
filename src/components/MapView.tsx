@@ -206,19 +206,46 @@ export default function MapView({
         });
       }
 
-      // HTML-маркеры одиночных событий (те же, что были на Leaflet)
+      // HTML-маркеры одиночных событий (те же, что были на Leaflet).
+      // Spiderfy: в БД много событий с координатами ЦЕНТРА ГОРОДА (одинаковые
+      // lat/lng) — такие пины лежат друг на друге и «теряются» при раскрытии
+      // кластера. Группы одинаковых координат разносим по кругу.
       markersRef.current.forEach((m) => m.remove());
       markersRef.current = [];
-      events
-        .filter((ev) => isValidCoords(ev.lat, ev.lng) && ev.lat != null && ev.lng != null)
-        .forEach((ev) => {
-          const cat = categories.find((c) => c.id === ev.category_id);
-          const fav = favoriteIds?.includes(ev.id) ?? false;
-          const el = document.createElement('span');
-          el.className = 'event-marker';
-          el.style.setProperty('--marker-color', colorFor(ev.category_id));
-          el.style.cursor = 'pointer';
-          el.innerHTML = `<svg width="36" height="46" viewBox="0 0 36 46" xmlns="http://www.w3.org/2000/svg">
+      const withCoords = events.filter(
+        (ev) => isValidCoords(ev.lat, ev.lng) && ev.lat != null && ev.lng != null,
+      );
+      // Событие -> смещённые координаты [lng, lat] (для групп дублей)
+      const placed = new Map<string, [number, number]>();
+      const groups = new Map<string, EventItem[]>();
+      for (const ev of withCoords) {
+        const key = `${ev.lat!.toFixed(4)},${ev.lng!.toFixed(4)}`;
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key)!.push(ev);
+      }
+      for (const group of groups.values()) {
+        const [lat0, lng0] = [group[0].lat!, group[0].lng!];
+        if (group.length === 1) {
+          placed.set(group[0].id, [lng0, lat0]);
+          continue;
+        }
+        const base = map.project([lng0, lat0]);
+        const radius = 18 + Math.min(34, (group.length - 1) * 5);
+        group.forEach((ev, i) => {
+          const ang = (i / group.length) * Math.PI * 2 - Math.PI / 2;
+          const pt = map.unproject([base.x + Math.cos(ang) * radius, base.y + Math.sin(ang) * radius]);
+          placed.set(ev.id, [pt.lng, pt.lat]);
+        });
+      }
+
+      withCoords.forEach((ev) => {
+        const cat = categories.find((c) => c.id === ev.category_id);
+        const fav = favoriteIds?.includes(ev.id) ?? false;
+        const el = document.createElement('span');
+        el.className = 'event-marker';
+        el.style.setProperty('--marker-color', colorFor(ev.category_id));
+        el.style.cursor = 'pointer';
+        el.innerHTML = `<svg width="36" height="46" viewBox="0 0 36 46" xmlns="http://www.w3.org/2000/svg">
             <path d="M18 1 C9 1 2 8.5 2 18 C2 29 18 44 18 44 C18 44 34 29 34 18 C34 8.5 27 1 18 1 Z"
               fill="var(--marker-bg, rgba(255,255,255,0.85))" stroke="var(--marker-color)" stroke-width="2"/>
           </svg>
@@ -228,18 +255,19 @@ export default function MapView({
               ? '<svg class="event-marker-fav" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#ef4444" stroke="#ffffff" stroke-width="2"/></svg>'
               : ''
           }`;
-          el.addEventListener('click', (e: MouseEvent) => {
-            // Без stopPropagation клик по пину всплывает до контейнера карты,
-            // маплibre эмитит map click -> onMapClick закрывает только что
-            // открытую карточку события
-            e.stopPropagation();
-            cbRef.current.onSelect(ev);
-          });
-          const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
-            .setLngLat([ev.lng!, ev.lat!])
-            .addTo(map);
-          markersRef.current.push(marker);
+        el.addEventListener('click', (e: MouseEvent) => {
+          // Без stopPropagation клик по пину всплывает до контейнера карты,
+          // маплibre эмитит map click -> onMapClick закрывает только что
+          // открытую карточку события
+          e.stopPropagation();
+          cbRef.current.onSelect(ev);
         });
+        const [mlng, mlat] = placed.get(ev.id) ?? [ev.lng!, ev.lat!];
+        const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
+          .setLngLat([mlng, mlat])
+          .addTo(map);
+        markersRef.current.push(marker);
+      });
 
       // Видимость по текущему зуму
       const show = map.getZoom() >= MARKER_MIN_ZOOM;
