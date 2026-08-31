@@ -1,8 +1,8 @@
-/* Глобальные стили: Tailwind + стили карты Leaflet */
+/* Глобальные стили: Tailwind + стили карты MapLibre GL */
 @import 'tailwindcss';
 
-/* Стили карты Leaflet — подключаются явно, иначе маркеры не отображаются */
-@import 'leaflet/dist/leaflet.css';
+/* Стили MapLibre GL — подключаются явно, иначе карта не рендерится */
+@import 'maplibre-gl/dist/maplibre-gl.css';
 
 html,
 body,
@@ -15,11 +15,6 @@ body {
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
   background: #ffffff;
   color: #1a1a1a;
-}
-
-/* Поправить стандартные иконки Leaflet (иначе вместо них пустые квадраты) */
-.leaflet-default-icon-path {
-  background-image: url(https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png);
 }
 
 /* Маркеры событий: полупрозрачный SVG-пин-капля с эмодзи категории (MapView, EventForm).
@@ -63,8 +58,7 @@ body {
 /* Красное сердечко избранного (SVG) — в углу пина, не перекрывает эмодзи.
    Специфичность выше, чем у .event-marker svg (иначе сердечко растягивается
    на весь пин и перекрывает эмодзи) */
-.event-marker .event-marker-fav,
-.marker-cluster .event-marker-fav {
+.event-marker .event-marker-fav {
   position: absolute;
   top: 5px;
   right: -2px;
@@ -76,23 +70,6 @@ body {
   height: 14px;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
 }
-/* Кластер: сердечко в углу кружка, если внутри есть избранные события */
-.marker-cluster {
-  position: relative;
-}
-.marker-cluster .event-marker-fav {
-  top: -7px;
-  right: -7px;
-}
-
-/* Курсор карты: обычная стрелка вместо «руки» Leaflet.
-   В Windows курсор grab рисуется белой рукой без чёрной окантовки
-   и не читается на светлой карте. */
-.leaflet-container,
-.leaflet-grab,
-.leaflet-grabbing {
-  cursor: default;
-}
 
 /* Фото в карусели: зум через CSS zoom (без швов-артефактов растеризации).
    backface-visibility — защита от мерцания при смене слайдов. */
@@ -102,8 +79,8 @@ body {
   image-rendering: auto;
 }
 
-/* Атрибуция карты — по центру внизу, чтобы её не закрывали боковые панели */
-.leaflet-bottom.leaflet-right {
+/* Атрибуция карты MapLibre — по центру внизу, чтобы её не закрывали боковые панели */
+.maplibregl-ctrl-bottom-right {
   left: 50%;
   right: auto;
   transform: translateX(-50%);

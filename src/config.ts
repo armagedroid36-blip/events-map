@@ -39,14 +39,11 @@ export const config = {
   // OpenStreetMap Nominatim — бесплатно, без ключа. Приватный сервер снимает лимиты.
   nominatimUrl: 'https://nominatim.openstreetmap.org/search',
 
-  // --- Тайлы карты: CARTO Basemaps (Voyager, названия на латинице) ---
-  // Бесплатный ключ: https://carto.com/basemaps/apikey (без аккаунта, до 5 млн
-  // запросов/мес). Атрибуция OSM+CARTO обязательна. Ключ публичный — он
-  // задуман для использования в клиентском коде.
-  // {r} — ретина-тайлы @2x: на телефонах (DPR 2-3) без него карта и названия
-  // растягиваются с обычных 256px и выглядят размытыми.
-  cartoBasemapsUrl:
-    'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=cb1_2a31_1_ad0141c91bca7b0367211137',
+  // --- Тайлы карты: OpenFreeMap (MapLibre GL, брендовый стиль) ---
+  // Стиль — src/lib/mapStyle.ts (map-style-brand.json). Атрибуция обязательна
+  // (лицензия OSM + OpenFreeMap), показывается контролом MapLibre на всех картах.
+  mapAttribution:
+    '&copy; <a href="https://openfreemap.org">OpenFreeMap</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 
   // --- Категории по умолчанию (можно менять в админке) ---
   defaultCategories: [

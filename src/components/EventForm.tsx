@@ -9,8 +9,8 @@ import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { nextZ } from '../lib/zindex';
-import { MapContainer, TileLayer, Marker, useMapEvents, useMap, AttributionControl } from 'react-leaflet';
-import L from 'leaflet';
+import * as maplibregl from 'maplibre-gl';
+import { mapStyle } from '../lib/mapStyle';
 import { z } from 'zod';
 import type { Category, EventItem, Recurrence } from '../lib/types';
 import { getApi, photoUrl } from '../lib/api';
@@ -34,41 +34,80 @@ interface Props {
   editEvent?: EventItem | null;
 }
 
-/** Иконка маркера на мини-карте формы */
-const formIcon = L.divIcon({
-  html: `<span class="event-marker" style="--marker-bg:#111827;--marker-color:#111827">
-    <svg width="36" height="46" viewBox="0 0 36 46" xmlns="http://www.w3.org/2000/svg">
-      <path d="M18 1 C9 1 2 8.5 2 18 C2 29 18 44 18 44 C18 44 34 29 34 18 C34 8.5 27 1 18 1 Z"
-        fill="var(--marker-bg, rgba(255,255,255,0.85))" stroke="var(--marker-color)" stroke-width="2"/>
-    </svg>
-    <span class="event-marker-emoji">📍</span>
-  </span>`,
-  className: 'event-marker-wrap',
-  iconSize: [36, 46],
-  iconAnchor: [18, 44],
-});
+/** HTML чёрного пина 📍 для мини-карты формы (как был formIcon на Leaflet) */
+const formMarkerHtml = `<span class="event-marker" style="--marker-bg:#111827;--marker-color:#111827">
+  <svg width="36" height="46" viewBox="0 0 36 46" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 1 C9 1 2 8.5 2 18 C2 29 18 44 18 44 C18 44 34 29 34 18 C34 8.5 27 1 18 1 Z"
+      fill="var(--marker-bg, rgba(255,255,255,0.85))" stroke="var(--marker-color)" stroke-width="2"/>
+  </svg>
+  <span class="event-marker-emoji">📍</span>
+</span>`;
 
-/** Клик по мини-карте передвигает маркер и подставляет адрес */
-function ClickToMove({ onMove }: { onMove: (lat: number, lng: number) => void }) {
-  useMapEvents({
-    click(e) {
-      onMove(e.latlng.lat, e.latlng.lng);
-    },
-  });
-  return null;
-}
+/** Мини-карта формы: клик ставит маркер и координаты, внешние lat/lng двигают карту */
+function MiniMap({
+  lat,
+  lng,
+  onMove,
+}: {
+  lat: number;
+  lng: number;
+  onMove: (lat: number, lng: number) => void;
+}) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<maplibregl.Map | null>(null);
+  const markerRef = useRef<maplibregl.Marker | null>(null);
+  const onMoveRef = useRef(onMove);
+  onMoveRef.current = onMove;
+  const lastKey = useRef('');
 
-/** Внешнее изменение центра мини-карты (геолокация пользователя) */
-function CenterController({ lat, lng }: { lat: number; lng: number }) {
-  const map = useMap();
-  const last = useRef('');
+  // Инициализация — один раз
   useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const map = new maplibregl.Map({
+      container: el,
+      style: mapStyle,
+      center: [lng, lat],
+      zoom: 6,
+      attributionControl: false,
+    });
+    map.addControl(
+      new maplibregl.AttributionControl({ compact: true, customAttribution: config.mapAttribution }),
+      'bottom-right',
+    );
+    const markerEl = document.createElement('div');
+    markerEl.innerHTML = formMarkerHtml;
+    const marker = new maplibregl.Marker({
+      element: markerEl.firstElementChild as HTMLElement,
+      anchor: 'bottom',
+    })
+      .setLngLat([lng, lat])
+      .addTo(map);
+    // Клик по мини-карте передвигает маркер и подставляет адрес
+    map.on('click', (e: maplibregl.MapMouseEvent) => onMoveRef.current(e.lngLat.lat, e.lngLat.lng));
+    mapRef.current = map;
+    markerRef.current = marker;
+    return () => {
+      map.remove();
+      mapRef.current = null;
+      markerRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Внешнее изменение центра (геолокация/геокодинг) — маркер + flyTo
+  useEffect(() => {
+    const map = mapRef.current;
+    const marker = markerRef.current;
+    if (!map || !marker) return;
     const key = `${lat.toFixed(4)},${lng.toFixed(4)}`;
-    if (key === last.current) return;
-    last.current = key;
-    map.setView([lat, lng], map.getZoom(), { animate: true });
-  }, [lat, lng, map]);
-  return null;
+    if (key === lastKey.current) return;
+    lastKey.current = key;
+    marker.setLngLat([lng, lat]);
+    map.flyTo({ center: [lng, lat], zoom: map.getZoom() });
+  }, [lat, lng]);
+
+  return <div ref={containerRef} className="h-full w-full" />;
 }
 
 /**
@@ -946,24 +985,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
           <div>
             <label className="mb-1 block text-sm text-gray-600">{t('form.mapHint')}</label>
             <div className="h-96 overflow-hidden rounded-lg border border-gray-200">
-              <MapContainer
-                center={[lat, lng]}
-                zoom={6}
-                className="h-full w-full"
-                style={{ height: '100%', width: '100%' }}
-                // Дефолтный контрол атрибуции (со ссылкой «Leaflet») выключен —
-                // ниже свой с prefix={false}, чтобы ссылки не было.
-                attributionControl={false}
-              >
-                <TileLayer
-                  attribution="&copy; OpenStreetMap &copy; CARTO"
-                  url={config.cartoBasemapsUrl}
-                />
-                <AttributionControl position="bottomright" prefix={false} />
-                <Marker position={[lat, lng]} icon={formIcon} />
-                <ClickToMove onMove={onMapClick} />
-                <CenterController lat={lat} lng={lng} />
-              </MapContainer>
+              <MiniMap lat={lat} lng={lng} onMove={onMapClick} />
             </div>
             {err('map')}
           </div>

@@ -1,32 +1,95 @@
 // Вкладка «События»: список с поиском и пагинацией,
 // добавление, редактирование, удаление с подтверждением.
 // При сохранении название/описание автоматически переводятся на второй язык.
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
-import L from 'leaflet';
+import * as maplibregl from 'maplibre-gl';
 import { getApi } from '../../lib/api';
 import { geocodeAddress } from '../../lib/geocode';
 import { translateText, detectLang } from '../../lib/translate';
 import { formatDate } from '../../lib/dates';
+import { config } from '../../config';
+import { mapStyle } from '../../lib/mapStyle';
 import type { Category, EventItem } from '../../lib/types';
 
 const PAGE_SIZE = 20;
 
-const editIcon = L.divIcon({
-  html: `<div class="event-marker" style="background:#111827">📍</div>`,
-  className: 'event-marker-wrap',
-  iconSize: [34, 34],
-  iconAnchor: [17, 34],
-});
+/** Мини-карта админки: клик/перетаскивание ставят координаты события */
+function EditMap({
+  lat,
+  lng,
+  onChange,
+}: {
+  lat: number;
+  lng: number;
+  onChange: (lat: number, lng: number) => void;
+}) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<maplibregl.Map | null>(null);
+  const markerRef = useRef<maplibregl.Marker | null>(null);
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+  const lastKey = useRef('');
 
-function ClickToMove({ onMove }: { onMove: (lat: number, lng: number) => void }) {
-  useMapEvents({
-    click(e) {
-      onMove(e.latlng.lat, e.latlng.lng);
-    },
-  });
-  return null;
+  // Инициализация — один раз
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const map = new maplibregl.Map({
+      container: el,
+      style: mapStyle,
+      center: [lng, lat],
+      zoom: 9,
+      attributionControl: false,
+    });
+    map.addControl(
+      new maplibregl.AttributionControl({ compact: true, customAttribution: config.mapAttribution }),
+      'bottom-right',
+    );
+    // Чёрный круг 📍 (как был editIcon на Leaflet)
+    const markerEl = document.createElement('div');
+    markerEl.className = 'event-marker';
+    markerEl.style.background = '#111827';
+    markerEl.style.borderRadius = '9999px';
+    markerEl.style.display = 'flex';
+    markerEl.style.alignItems = 'center';
+    markerEl.style.justifyContent = 'center';
+    markerEl.style.width = '34px';
+    markerEl.style.height = '34px';
+    markerEl.style.cursor = 'move';
+    markerEl.textContent = '📍';
+    const marker = new maplibregl.Marker({ element: markerEl, anchor: 'bottom', draggable: true })
+      .setLngLat([lng, lat])
+      .addTo(map);
+    // Перетаскивание
+    marker.on('dragend', () => {
+      const p = marker.getLngLat();
+      onChangeRef.current(p.lat, p.lng);
+    });
+    // Клик по карте ставит маркер и координаты
+    map.on('click', (e: maplibregl.MapMouseEvent) => onChangeRef.current(e.lngLat.lat, e.lngLat.lng));
+    mapRef.current = map;
+    markerRef.current = marker;
+    return () => {
+      map.remove();
+      mapRef.current = null;
+      markerRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Внешнее изменение координат (геокодинг адреса) — маркер за точкой
+  useEffect(() => {
+    const map = mapRef.current;
+    const marker = markerRef.current;
+    if (!map || !marker) return;
+    const key = `${lat.toFixed(4)},${lng.toFixed(4)}`;
+    if (key === lastKey.current) return;
+    lastKey.current = key;
+    marker.setLngLat([lng, lat]);
+  }, [lat, lng]);
+
+  return <div ref={containerRef} className="h-full w-full" />;
 }
 
 interface Props {
@@ -397,32 +460,14 @@ function EventEditor({ initial, categories, onCancel, onSaved }: EditorProps) {
 
         {/* Мини-карта с маркером */}
         <div className="h-48 overflow-hidden rounded-lg border border-gray-200 sm:col-span-2">
-          <MapContainer
-            center={[form.lat ?? 10.2, form.lng ?? 108.5]}
-            zoom={9}
-            className="h-full w-full"
-            style={{ minHeight: 190 }}
-          >
-            <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
-            <ClickToMove
-              onMove={(la, ln) => {
-                set('lat', la);
-                set('lng', ln);
-              }}
-            />
-            <Marker
-              position={[form.lat ?? 10.2, form.lng ?? 108.5]}
-              icon={editIcon}
-              draggable
-              eventHandlers={{
-                dragend: (e) => {
-                  const p = (e.target as L.Marker).getLatLng();
-                  set('lat', p.lat);
-                  set('lng', p.lng);
-                },
-              }}
-            />
-          </MapContainer>
+          <EditMap
+            lat={form.lat ?? 10.2}
+            lng={form.lng ?? 108.5}
+            onChange={(la, ln) => {
+              set('lat', la);
+              set('lng', ln);
+            }}
+          />
         </div>
 
         <div>
