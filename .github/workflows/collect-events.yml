@@ -2,8 +2,8 @@ name: Collect events
 
 on:
   schedule:
-    # Каждый день в 00:00 по индонезийскому времени (Бали, WITA = UTC+8) = 16:00 UTC
-    - cron: '0 16 * * *'
+    # Полдень (12:00) и полночь (00:00) по Бали (WITA = UTC+8): 04:00 и 16:00 UTC
+    - cron: '0 4,16 * * *'
   workflow_dispatch: {}
 
 jobs:
