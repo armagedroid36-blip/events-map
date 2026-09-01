@@ -63,6 +63,9 @@ export default function MapView({
   cbRef.current = { onSelect, onBoundsChange, onMapClick };
   // Ключ последнего внешнего центра — чтобы не дёргать карту без надобности
   const lastCenterKey = useRef('');
+  // Актуальные события для кликов по одиночным точкам (слой unclustered-point)
+  const eventsRef = useRef<EventItem[]>([]);
+  eventsRef.current = events;
 
   // Инициализация карты — ОДИН раз на время жизни компонента
   useEffect(() => {
@@ -121,6 +124,24 @@ export default function MapView({
         },
         paint: { 'text-color': '#ffffff' },
       });
+      // Одиночные события (вне кластеров) — кружки с цветом категории.
+      // БЕЗ этого слоя события, не образующие кластер, на зуме < 14 невидимы
+      // (HTML-маркеры появляются только с зума 14) — карта «теряла» события,
+      // которые есть в списке. Слой скрыт с зума 14: там кластеров уже нет,
+      // одиночки показываются HTML-маркерами.
+      map.addLayer({
+        id: 'unclustered-point',
+        type: 'circle',
+        source: 'events',
+        filter: ['!', ['has', 'point_count']],
+        maxzoom: 14,
+        paint: {
+          'circle-color': ['get', 'color'],
+          'circle-radius': 10,
+          'circle-stroke-color': '#ffffff',
+          'circle-stroke-width': 2,
+        },
+      });
     });
 
     // Границы видимой области (для списка «События на карте»)
@@ -143,6 +164,24 @@ export default function MapView({
       map.easeTo({ center: [coords[0], coords[1]], zoom: map.getZoom() + 2 });
     });
 
+    // Клик по одиночной точке — выбор события (как по HTML-маркеру)
+    map.on('click', 'unclustered-point', (e: maplibregl.MapLayerMouseEvent) => {
+      const id = e.features?.[0]?.properties?.id as string | undefined;
+      if (!id) return;
+      const ev = eventsRef.current.find((x) => x.id === id);
+      if (ev) cbRef.current.onSelect(ev);
+    });
+
+    // Курсор-указатель над кластерами и одиночными точками
+    for (const layer of ['clusters', 'unclustered-point']) {
+      map.on('mouseenter', layer, () => {
+        map.getCanvas().style.cursor = 'pointer';
+      });
+      map.on('mouseleave', layer, () => {
+        map.getCanvas().style.cursor = '';
+      });
+    }
+
     // Видимость HTML-маркеров: только с зума 14 (до этого — кластеры)
     const toggleMarkers = () => {
       const show = map.getZoom() >= MARKER_MIN_ZOOM;
@@ -156,8 +195,10 @@ export default function MapView({
     // Клик по кластеру или HTML-маркеру сюда НЕ попадает: маркеры сами
     // останавливают всплытие (stopPropagation), а кластер фильтруется ниже.
     map.on('click', (e: maplibregl.MapMouseEvent) => {
-      // Клик по кластеру — приближение, меню не трогаем
-      const feats = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
+      // Клик по кластеру или одиночной точке — меню не трогаем
+      const feats = map.queryRenderedFeatures(e.point, {
+        layers: ['clusters', 'unclustered-point'],
+      });
       if (feats.length > 0) return;
       cbRef.current.onMapClick?.();
     });
@@ -187,13 +228,13 @@ export default function MapView({
     const features: Array<{
       type: 'Feature';
       geometry: { type: 'Point'; coordinates: [number, number] };
-      properties: { id: string } | null;
+      properties: { id: string; color: string } | null;
     }> = events
       .filter((ev) => isValidCoords(ev.lat, ev.lng) && ev.lat != null && ev.lng != null)
       .map((ev) => ({
         type: 'Feature',
         geometry: { type: 'Point', coordinates: [ev.lng!, ev.lat!] },
-        properties: { id: ev.id },
+        properties: { id: ev.id, color: colorFor(ev.category_id) },
       }));
 
     const apply = () => {
