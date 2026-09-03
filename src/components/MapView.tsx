@@ -202,24 +202,83 @@ export default function MapView({
         properties: { id: ev.id, color: colorFor(ev.category_id) },
       }));
 
+    // События с координатами — для создания маркеров и spiderfy-раскладки
+    const withCoords = events.filter(
+      (ev) => isValidCoords(ev.lat, ev.lng) && ev.lat != null && ev.lng != null,
+    );
+    const evById = new Map(withCoords.map((ev) => [ev.id, ev]));
+    // Zoom, на котором источник ПОСЛЕДНИЙ раз подтвердил кластеризацию
+    // (sourcedata). querySourceFeatures между сменой зума и пересчётом
+    // источника отдаёт УСТАРЕВШИЕ кластеры — показывать по ним нельзя.
+    let lastClusterZoom: number | null = null;
+
+    // Spiderfy-раскладка на ТЕКУЩЕМ зуме. В БД много событий с координатами
+    // ЦЕНТРА ГОРОДА (одинаковые lat/lng) — такие пины лежат друг на друге.
+    // Группы одинаковых координат разносим по кругу радиусом в пикселях
+    // текущего зума (поэтому раскладку надо пересчитывать на каждом zoomend).
+    const computePlaced = (): Map<string, [number, number]> => {
+      const placed = new Map<string, [number, number]>();
+      const groups = new Map<string, EventItem[]>();
+      for (const ev of withCoords) {
+        const key = `${ev.lat!.toFixed(4)},${ev.lng!.toFixed(4)}`;
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key)!.push(ev);
+      }
+      for (const group of groups.values()) {
+        const [lat0, lng0] = [group[0].lat!, group[0].lng!];
+        if (group.length === 1) {
+          placed.set(group[0].id, [lng0, lat0]);
+          continue;
+        }
+        const base = map.project([lng0, lat0]);
+        const radius = 18 + Math.min(34, (group.length - 1) * 5);
+        group.forEach((ev, i) => {
+          const ang = (i / group.length) * Math.PI * 2 - Math.PI / 2;
+          const pt = map.unproject([base.x + Math.cos(ang) * radius, base.y + Math.sin(ang) * radius]);
+          placed.set(ev.id, [pt.lng, pt.lat]);
+        });
+      }
+      return placed;
+    };
+
     // Видимость HTML-маркеров-пинов. Правило: одиночное событие (не
     // входящее в кластер на ТЕКУЩЕМ зуме) показывается пином на любом зуме;
     // событие, поглощённое кластером, скрыто — его место занимает круг
     // кластера (без дублей). На зуме >= 14 (clusterMaxZoom 13) кластеризация
     // отключена — видны ВСЕ пины.
+    const showAll = () => {
+      markersRef.current.forEach((m) => {
+        m.getElement().style.display = '';
+      });
+    };
+    const hideAll = () => {
+      markersRef.current.forEach((m) => {
+        m.getElement().style.display = 'none';
+      });
+    };
     const updateVisibility = () => {
       if (map.getZoom() >= MARKER_MIN_ZOOM) {
-        markersRef.current.forEach((m) => {
-          m.getElement().style.display = '';
-        });
+        showAll();
         return;
       }
       // Зум < 14: geojson-источник сам кластеризует точки на текущем зуме —
       // одиночки приходят фичами БЕЗ point_count, участники кластеров
       // отдельными фичами не приходят вовсе. querySourceFeatures отдаёт
-      // актуальное состояние кластеризации (в видимой области).
+      // состояние кластеризации (в видимой области).
       const src = map.getSource('events');
-      if (!src || !map.isSourceLoaded('events')) return; // пересчёт по sourcedata
+      if (!src || !map.isSourceLoaded('events')) {
+        // Источник ещё не подтвердил кластеризацию (setData/зум пересчитывает
+        // асинхронно) — пины прячем, чтобы не мелькали до sourcedata
+        hideAll();
+        return;
+      }
+      // Кластеризация в источнике могла не догнать текущий зум (пересчёт
+      // асинхронный) — querySourceFeatures отдаст устаревшее. Прячем пины
+      // до sourcedata, который подтвердит состояние на актуальном зуме.
+      if (lastClusterZoom === null || Math.abs(map.getZoom() - lastClusterZoom) > 0.05) {
+        hideAll();
+        return;
+      }
       const feats = map.querySourceFeatures('events');
       const free = new Set<string>();
       for (const f of feats) {
@@ -242,38 +301,12 @@ export default function MapView({
         });
       }
 
-      // HTML-маркеры одиночных событий (те же, что были на Leaflet).
-      // Spiderfy: в БД много событий с координатами ЦЕНТРА ГОРОДА (одинаковые
-      // lat/lng) — такие пины лежат друг на друге и «теряются» при раскрытии
-      // кластера. Группы одинаковых координат разносим по кругу.
+      // HTML-маркеры-пины. Создаём СРАЗУ скрытыми — видимость включает только
+      // updateVisibility(), когда источник подтвердил состояние кластеризации
+      // (sourcedata); иначе между пересозданием и пересчётом мелькают ВСЕ пины.
       markersRef.current.forEach((m) => m.remove());
       markersRef.current = [];
-      const withCoords = events.filter(
-        (ev) => isValidCoords(ev.lat, ev.lng) && ev.lat != null && ev.lng != null,
-      );
-      // Событие -> смещённые координаты [lng, lat] (для групп дублей)
-      const placed = new Map<string, [number, number]>();
-      const groups = new Map<string, EventItem[]>();
-      for (const ev of withCoords) {
-        const key = `${ev.lat!.toFixed(4)},${ev.lng!.toFixed(4)}`;
-        if (!groups.has(key)) groups.set(key, []);
-        groups.get(key)!.push(ev);
-      }
-      for (const group of groups.values()) {
-        const [lat0, lng0] = [group[0].lat!, group[0].lng!];
-        if (group.length === 1) {
-          placed.set(group[0].id, [lng0, lat0]);
-          continue;
-        }
-        const base = map.project([lng0, lat0]);
-        const radius = 18 + Math.min(34, (group.length - 1) * 5);
-        group.forEach((ev, i) => {
-          const ang = (i / group.length) * Math.PI * 2 - Math.PI / 2;
-          const pt = map.unproject([base.x + Math.cos(ang) * radius, base.y + Math.sin(ang) * radius]);
-          placed.set(ev.id, [pt.lng, pt.lat]);
-        });
-      }
-
+      const placed = computePlaced();
       withCoords.forEach((ev) => {
         const cat = categories.find((c) => c.id === ev.category_id);
         const fav = favoriteIds?.includes(ev.id) ?? false;
@@ -298,8 +331,9 @@ export default function MapView({
           e.stopPropagation();
           cbRef.current.onSelect(ev);
         });
-        // id события — для пересчёта видимости (updateVisibility)
+        // id события — для пересчёта видимости и позиций
         el.dataset.eventId = ev.id;
+        el.style.display = 'none';
         const [mlng, mlat] = placed.get(ev.id) ?? [ev.lng!, ev.lat!];
         const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
           .setLngLat([mlng, mlat])
@@ -307,21 +341,36 @@ export default function MapView({
         markersRef.current.push(marker);
       });
 
-      // Видимость: на зуме >= 14 — все пины; ниже — только одиночки вне
-      // кластеров (после setData источник пересчитывается асинхронно —
-      // финальный пересчёт произойдёт по событию sourcedata)
+      // z >= 14: показать всех сразу (кластеризации нет — источник не нужен);
+      // z < 14: пока скрыты, финальную видимость выставит sourcedata
       updateVisibility();
     };
 
     if (map.isStyleLoaded() && map.getSource('events')) apply();
     else map.once('load', apply);
 
-    // Spiderfy-радиус считается в пикселях ТЕКУЩЕГО зума — при каждом
-    // zoomend пересоздаём маркеры, чтобы разнесение соответствовало зуму
-    // (иначе пины, разнесённые на zoom 4, на zoom 14 разъезжаются на километры)
+    // Обновление spiderfy-позиций на новый зум БЕЗ пересоздания DOM
+    // (пересоздание на каждом zoomend вызывало вспышку: свежие маркеры
+    // видимы, пока источник не пересчитал кластеры). Позиции маркеров
+    // меняются через setLngLat — элементы остаются теми же.
+    const relayout = () => {
+      const placed = computePlaced();
+      markersRef.current.forEach((m) => {
+        const id = m.getElement().dataset.eventId;
+        const ev = id ? evById.get(id) : undefined;
+        if (!ev) return;
+        const p = placed.get(ev.id) ?? [ev.lng!, ev.lat!];
+        m.setLngLat(p);
+      });
+    };
+
     const onZoomEnd = () => {
       if (!map.getSource('events')) return;
-      apply();
+      relayout();
+      // z >= 14: пины видны сразу (кластеров нет на любом состоянии источника)
+      if (map.getZoom() >= MARKER_MIN_ZOOM) updateVisibility();
+      // z < 14: видимость обновит sourcedata — после пересчёта кластеров
+      // источником под новый зум (до него состояние пинов валидно)
     };
     map.on('zoomend', onZoomEnd);
 
@@ -329,7 +378,10 @@ export default function MapView({
     // (sourcedata) и по окончании панорамирования (события, въехавшие во
     // вьюпорт, могли выйти из кластера или попасть в него).
     const onSourceData = (e: maplibregl.MapSourceDataEvent) => {
-      if (e.sourceId === 'events' && e.isSourceLoaded) updateVisibility();
+      if (e.sourceId === 'events' && e.isSourceLoaded) {
+        lastClusterZoom = map.getZoom();
+        updateVisibility();
+      }
     };
     const onMoveEnd = () => {
       if (!map.getSource('events')) return;

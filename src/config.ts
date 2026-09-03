@@ -16,7 +16,7 @@ export const config = {
   demoMode: false,
 
   // Версия сборки — показывается в шапке мелким текстом для сверки
-  buildVersion: 'v23.09-83',
+  buildVersion: 'v23.09-84',
 
   // Адрес сайта (для ссылок восстановления пароля Supabase)
   siteUrl: 'https://armagedroid36-blip.github.io/events-map/',
