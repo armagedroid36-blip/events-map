@@ -123,6 +123,11 @@ export default function MapView({
           'text-field': ['get', 'point_count_abbreviated'],
           'text-font': ['Noto Sans Regular'],
           'text-size': 12,
+          // Без allow-overlap цифра скрывается, когда collision-бокс текста
+          // задевает бейдж-сердечко (cluster-fav-heart лежит слоем выше и
+          // размещается с приоритетом). Визуально сердечко на кромке круга и
+          // цифру в центре не перекрывает — allow-overlap безопасен.
+          'text-allow-overlap': true,
         },
         paint: { 'text-color': '#ffffff' },
       });
