@@ -1,13 +1,18 @@
 // Удаление фото из галереи организатора.
 // JWT-сессия обязательна (verify_jwt — деплой БЕЗ --no-verify-jwt): владелец
-// определяется по auth.uid() из токена. Storage API не разрешает прямое
+// определяется по uid ИЗ ОТВЕТА Supabase Auth (GET /auth/v1/user), а не из
+// декодированного payload токена. Подпись токена проверяет платформа Auth:
+// подделанный JWT не дойдёт до тела функции, а /auth/v1/user гарантирует,
+// что uid взят из реальной сессии. Storage API не разрешает прямое
 // DELETE из storage.objects (42501), поэтому объект удаляется через
 // DELETE /storage/v1/object/photos/<path> с service role, запись — через
 // REST org_gallery (тоже service role). IP/секреты не логируются.
-// env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (автоматически в Edge Functions).
+// env: SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
+// (автоматически доступны в Edge Functions).
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
+const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') || '';
 const SERVICE_ROLE = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
 
 /** CORS на ВСЕХ ответах (включая ошибки — иначе браузер не прочитает их) */
@@ -20,15 +25,25 @@ function json(status: number, msg: string): Response {
   return new Response(JSON.stringify({ error: msg }), { status, headers: { ...CORS, 'Content-Type': 'application/json' } });
 }
 
-/** Декодировать uid из JWT (payload, base64url) */
-function uidFromAuth(auth: string | null): string | null {
+/** uid из сессии: верификация токена через Supabase Auth.
+ *  Authorization: Bearer <token> из запроса → GET {SUPABASE_URL}/auth/v1/user
+ *  (apikey: anon-ключ, Authorization: Bearer <token>) → id из ответа.
+ *  Подпись НЕ проверяется вручную (никакого декодинга payload): токен
+ *  принимает только Auth. Не 200 / нет id / нет ключа → null (401). */
+async function uidFromAuth(auth: string | null): Promise<string | null> {
   if (!auth) return null;
-  const parts = auth.split('.');
-  if (parts.length < 2) return null;
-  const pad = '='.repeat((4 - (parts[1].length % 4)) % 4);
+  const token = auth.startsWith('Bearer ') ? auth.slice(7) : auth;
+  if (!token || !ANON_KEY) return null;
   try {
-    const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/') + pad));
-    return payload?.sub ?? null;
+    const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+      headers: {
+        apikey: ANON_KEY,
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (res.status !== 200) return null;
+    const user = await res.json().catch(() => null);
+    return user?.id ?? null;
   } catch {
     return null;
   }
@@ -59,7 +74,7 @@ serve(async (req) => {
     return json(405, 'method not allowed');
   }
 
-  const uid = uidFromAuth(req.headers.get('Authorization'));
+  const uid = await uidFromAuth(req.headers.get('Authorization'));
   if (!uid) return json(401, 'unauthorized');
 
   let pId = '';
