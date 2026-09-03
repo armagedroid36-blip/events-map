@@ -97,6 +97,10 @@ export default function MapView({
         cluster: true,
         clusterMaxZoom: 13,
         clusterRadius: 50,
+        // Агрегат «есть ли в кластере избранное»: favCount = сумма fav (0/1)
+        // по событиям кластера. Считается самим кластеризатором при setData,
+        // поэтому переключение избранного обновляет бейджи без ручных вызовов.
+        clusterProperties: { favCount: ['+', ['get', 'fav']] },
       });
       map.addLayer({
         id: 'clusters',
@@ -122,6 +126,38 @@ export default function MapView({
         },
         paint: { 'text-color': '#ffffff' },
       });
+      // Бейдж «в кластере есть избранное»: маленькое сердечко у правого
+      // верхнего края круга. Сердечко рисуется слоем-символом (иконка
+      // 'heart-fav'), favCount приходит из clusterProperties источника.
+      // icon-offset ступенчатый по point_count — бейдж «сидит» на кромке
+      // круга при всех радиусах (18/28/40) и не перекрывает цифру в центре.
+      const heartSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#ef4444" stroke="#ffffff" stroke-width="2"/></svg>`;
+      const heartIcon = new Image();
+      heartIcon.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(heartSvg)}`;
+      heartIcon.onload = () => {
+        if (map.getImage('heart-fav') || !map.getSource('events')) return;
+        map.addImage('heart-fav', heartIcon);
+        map.addLayer({
+          id: 'cluster-fav-heart',
+          type: 'symbol',
+          source: 'events',
+          filter: ['all', ['has', 'point_count'], ['>', ['get', 'favCount'], 0]],
+          layout: {
+            'icon-image': 'heart-fav',
+            'icon-size': 0.6,
+            'icon-allow-overlap': true,
+            'icon-offset': [
+              'step',
+              ['get', 'point_count'],
+              ['literal', [12, -12]],
+              10,
+              ['literal', [22, -22]],
+              100,
+              ['literal', [34, -34]],
+            ],
+          },
+        });
+      };
       // Одиночные события НЕ рисуются слоем-кружком: на любом зуме они
       // показываются HTML-маркерами-пинами (видимость пересчитывается по
       // кластеризации источника — см. updateVisibility в data-эффекте).
@@ -140,13 +176,17 @@ export default function MapView({
     map.on('moveend', fireBounds);
     map.on('zoomend', fireBounds);
 
-    // Клик по кластеру — приближение к его центру
-    map.on('click', 'clusters', (e: maplibregl.MapLayerMouseEvent) => {
+    // Клик по кластеру — приближение к его центру. Тот же обработчик висит
+    // на бейдже-сердечке ('cluster-fav-heart'): сердечко лежит на кромке
+    // круга, его выступающая часть кликабельна так же, как сам кластер.
+    const zoomToCluster = (e: maplibregl.MapLayerMouseEvent) => {
       const f = e.features?.[0];
       if (!f) return;
       const coords = (f.geometry as { coordinates: [number, number] }).coordinates;
       map.easeTo({ center: [coords[0], coords[1]], zoom: map.getZoom() + 2 });
-    });
+    };
+    map.on('click', 'clusters', zoomToCluster);
+    map.on('click', 'cluster-fav-heart', zoomToCluster);
 
     // Курсор-указатель над кластерами
     map.on('mouseenter', 'clusters', () => {
@@ -158,11 +198,12 @@ export default function MapView({
 
     // Клик по пустой карте — сворачиваем открытые меню.
     // Клик по кластеру или HTML-маркеру сюда НЕ попадает: маркеры сами
-    // останавливают всплытие (stopPropagation), а кластер фильтруется ниже.
+    // останавливают всплытие (stopPropagation), а кластер/сердечко
+    // фильтруются ниже.
     map.on('click', (e: maplibregl.MapMouseEvent) => {
-      // Клик по кластеру — меню не трогаем
+      // Клик по кластеру или бейджу-сердечку — меню не трогаем
       const feats = map.queryRenderedFeatures(e.point, {
-        layers: ['clusters'],
+        layers: ['clusters', 'cluster-fav-heart'],
       });
       if (feats.length > 0) return;
       cbRef.current.onMapClick?.();
@@ -193,13 +234,20 @@ export default function MapView({
     const features: Array<{
       type: 'Feature';
       geometry: { type: 'Point'; coordinates: [number, number] };
-      properties: { id: string; color: string } | null;
+      properties: { id: string; color: string; fav: number } | null;
     }> = events
       .filter((ev) => isValidCoords(ev.lat, ev.lng) && ev.lat != null && ev.lng != null)
       .map((ev) => ({
         type: 'Feature',
         geometry: { type: 'Point', coordinates: [ev.lng!, ev.lat!] },
-        properties: { id: ev.id, color: colorFor(ev.category_id) },
+        properties: {
+          id: ev.id,
+          color: colorFor(ev.category_id),
+          // 0/1 — всегда число: кластеризатор суммирует его в favCount
+          // (clusterProperties источника). Гость (favoriteIds = null) даёт 0,
+          // и бейджей на кластерах нет — фильтр favCount > 0 не сработает.
+          fav: favoriteIds?.includes(ev.id) ? 1 : 0,
+        },
       }));
 
     // События с координатами — для создания маркеров и spiderfy-раскладки
