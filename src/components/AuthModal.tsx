@@ -22,6 +22,10 @@ interface RegDraft {
   whatsapp: string;
   phone: string;
   instagram: string;
+  // Согласия (закон Вьетнама 91/2025, версия политики 2026-09-03):
+  // consentTransfer — отдельное согласие на трансграничную передачу данных
+  consent: boolean;
+  consentTransfer: boolean;
 }
 const DRAFT_KEY = 'events-map-reg-draft';
 const RESEND_SECONDS = 60;
@@ -48,6 +52,8 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
   const [resetSent, setResetSent] = useState(false);
   // Обязательное согласие на обработку персональных данных (только регистрация)
   const [consent, setConsent] = useState(false);
+  // Отдельное согласие на трансграничную передачу данных (закон Вьетнама 91/2025)
+  const [consentTransfer, setConsentTransfer] = useState(false);
   // Таймер повторной отправки кода (секунд до активации кнопки)
   const [resendIn, setResendIn] = useState(0);
 
@@ -59,6 +65,9 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
       if (!raw) return;
       const d = JSON.parse(raw) as RegDraft & { confirm?: boolean };
       if (!d.confirm) return;
+      // Старый формат черновика (до 2026-09-03): отметок согласий в нём нет —
+      // не восстанавливаем, пользователь отметит согласия заново
+      if (!d.consent) return;
       setMode('register');
       setConfirm(true);
       setEmail(d.email ?? '');
@@ -68,6 +77,8 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
       setWhatsapp(d.whatsapp ?? '');
       setPhone(d.phone ?? '');
       setInstagram(d.instagram ?? '');
+      setConsent(Boolean(d.consent));
+      setConsentTransfer(Boolean(d.consentTransfer));
     } catch {
       // Битый черновик — игнорируем, форма пустая
     }
@@ -90,6 +101,8 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
       whatsapp: norm.whatsapp ?? '',
       phone: norm.phone ?? '',
       instagram: norm.instagram ?? '',
+      consent,
+      consentTransfer,
       confirm: true,
     };
     localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
@@ -139,6 +152,13 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
           return;
         }
       } else {
+        // Регистрация: оба согласия обязательны. Кнопка disabled, но Enter
+        // может отправить форму мимо неё — этот guard страхует
+        if (!consent || !consentTransfer) {
+          setErr(t('auth.consentRequired'));
+          setBusy(false);
+          return;
+        }
         // Регистрация: проверяем контакты организатора (если заполнены)
         const cErr = contactErrors({ telegram, whatsapp, phone, email, instagram });
         if (Object.keys(cErr).length > 0) {
@@ -472,6 +492,19 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
                   </Trans>
                 </span>
               </label>
+
+              {/* Отдельное согласие на трансграничную передачу (закон Вьетнама 91/2025) */}
+              <label className="flex cursor-pointer items-start gap-2 rounded-md bg-gray-50 p-3">
+                <input
+                  type="checkbox"
+                  checked={consentTransfer}
+                  onChange={(e) => setConsentTransfer(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-gray-900"
+                />
+                <span className="text-sm leading-snug text-gray-600">
+                  <Trans i18nKey="auth.consentTransfer" />
+                </span>
+              </label>
             </>
           )}
 
@@ -479,7 +512,7 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
 
           <button
             type="submit"
-            disabled={busy || (mode === 'register' && !consent)}
+            disabled={busy || (mode === 'register' && (!consent || !consentTransfer))}
             className="w-full rounded-md bg-gray-900 px-3 py-2.5 text-sm font-semibold text-white hover:bg-gray-700 disabled:opacity-50"
           >
             {busy ? '...' : mode === 'login' ? t('auth.login') : t('auth.register')}

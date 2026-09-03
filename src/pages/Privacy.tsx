@@ -2,9 +2,10 @@
 // язык — из глобального переключателя (i18n.language). Доступна всем без входа.
 import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
+import { config } from '../config';
 
-// Дата обновления политики (обновлять вручную при изменении текстов)
-const UPDATED = '2026-08-22';
+// Дата обновления политики — config.privacyPolicyVersion (единый источник:
+// он же записывается в profiles.consent_version при регистрации)
 
 export default function Privacy() {
   const { t, i18n } = useTranslation();
@@ -13,7 +14,7 @@ export default function Privacy() {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-  }).format(new Date(`${UPDATED}T00:00:00`));
+  }).format(new Date(`${config.privacyPolicyVersion}T00:00:00`));
 
   return (
     <div className="flex min-h-screen flex-col">

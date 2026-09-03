@@ -73,6 +73,11 @@ export default {
     // <0> — link to the privacy policy (the only child in the Trans from
     // AuthModal; full text lives here in both languages).
     consent: 'I agree to the processing of my personal data and accept the <0>Privacy Policy</0>.',
+    // Separate consent to cross-border transfer (Vietnam law 91/2025).
+    // No link — rendered as plain text in AuthModal via Trans.
+    consentTransfer:
+      'I agree to the transfer of my data abroad (database and hosting are located in the US).',
+    consentRequired: 'To register, please confirm both consents.',
   },
   myEvents: {
     title: 'My events',
@@ -508,7 +513,7 @@ export default {
     },
     storage: {
       title: 'Where the data is stored',
-      text: 'Data is stored in the Supabase cloud database; the site is hosted on GitHub Pages. The servers are located outside Indonesia and Vietnam (USA). Data is transferred abroad to keep the site working.',
+      text: 'Data is stored in the Supabase cloud database; the site is hosted on GitHub Pages. The servers are located outside Indonesia and Vietnam (USA). Data is transferred abroad only on the basis of a separate user consent given during registration.',
     },
     rights: {
       title: 'Your rights',

@@ -360,6 +360,9 @@ class SupabaseApi implements DataApi {
       em: contacts.email ?? '',
       ph: contacts.phone ?? '',
       ig: contacts.instagram ?? '',
+      // Версия политики конфиденциальности, принятой при регистрации
+      // (фиксируется в profiles.consent_version, закон Вьетнама 91/2025)
+      c_version: config.privacyPolicyVersion,
     });
     if (pErr) throw new OtpError('otp_server');
     return { id: data.user.id, email, role };
