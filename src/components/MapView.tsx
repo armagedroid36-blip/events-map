@@ -23,8 +23,9 @@ function colorFor(id: string): string {
   return CATEGORY_COLORS[Math.abs(h) % CATEGORY_COLORS.length];
 }
 
-// Кластеризация работает до этого зума (clusterMaxZoom 13) —
-// выше события показываются отдельными HTML-маркерами
+// Кластеризация работает до зума 13 (clusterMaxZoom). На зуме >= 14
+// (MARKER_MIN_ZOOM) кластеров нет, пины одиночек видны всегда; на зуме
+// < 14 пин виден, только если событие не поглощено кластером.
 const MARKER_MIN_ZOOM = 14;
 
 /** Границы видимой области карты: [юго-запад, северо-восток] */
@@ -63,9 +64,6 @@ export default function MapView({
   cbRef.current = { onSelect, onBoundsChange, onMapClick };
   // Ключ последнего внешнего центра — чтобы не дёргать карту без надобности
   const lastCenterKey = useRef('');
-  // Актуальные события для кликов по одиночным точкам (слой unclustered-point)
-  const eventsRef = useRef<EventItem[]>([]);
-  eventsRef.current = events;
 
   // Инициализация карты — ОДИН раз на время жизни компонента
   useEffect(() => {
@@ -124,24 +122,10 @@ export default function MapView({
         },
         paint: { 'text-color': '#ffffff' },
       });
-      // Одиночные события (вне кластеров) — кружки с цветом категории.
-      // БЕЗ этого слоя события, не образующие кластер, на зуме < 14 невидимы
-      // (HTML-маркеры появляются только с зума 14) — карта «теряла» события,
-      // которые есть в списке. Слой скрыт с зума 14: там кластеров уже нет,
-      // одиночки показываются HTML-маркерами.
-      map.addLayer({
-        id: 'unclustered-point',
-        type: 'circle',
-        source: 'events',
-        filter: ['!', ['has', 'point_count']],
-        maxzoom: 14,
-        paint: {
-          'circle-color': ['get', 'color'],
-          'circle-radius': 10,
-          'circle-stroke-color': '#ffffff',
-          'circle-stroke-width': 2,
-        },
-      });
+      // Одиночные события НЕ рисуются слоем-кружком: на любом зуме они
+      // показываются HTML-маркерами-пинами (видимость пересчитывается по
+      // кластеризации источника — см. updateVisibility в data-эффекте).
+      // Слой 'clusters' рисует только реальные кластеры (2+ событий).
     });
 
     // Границы видимой области (для списка «События на карте»)
@@ -164,40 +148,21 @@ export default function MapView({
       map.easeTo({ center: [coords[0], coords[1]], zoom: map.getZoom() + 2 });
     });
 
-    // Клик по одиночной точке — выбор события (как по HTML-маркеру)
-    map.on('click', 'unclustered-point', (e: maplibregl.MapLayerMouseEvent) => {
-      const id = e.features?.[0]?.properties?.id as string | undefined;
-      if (!id) return;
-      const ev = eventsRef.current.find((x) => x.id === id);
-      if (ev) cbRef.current.onSelect(ev);
+    // Курсор-указатель над кластерами
+    map.on('mouseenter', 'clusters', () => {
+      map.getCanvas().style.cursor = 'pointer';
     });
-
-    // Курсор-указатель над кластерами и одиночными точками
-    for (const layer of ['clusters', 'unclustered-point']) {
-      map.on('mouseenter', layer, () => {
-        map.getCanvas().style.cursor = 'pointer';
-      });
-      map.on('mouseleave', layer, () => {
-        map.getCanvas().style.cursor = '';
-      });
-    }
-
-    // Видимость HTML-маркеров: только с зума 14 (до этого — кластеры)
-    const toggleMarkers = () => {
-      const show = map.getZoom() >= MARKER_MIN_ZOOM;
-      markersRef.current.forEach((m) => {
-        m.getElement().style.display = show ? '' : 'none';
-      });
-    };
-    map.on('zoomend', toggleMarkers);
+    map.on('mouseleave', 'clusters', () => {
+      map.getCanvas().style.cursor = '';
+    });
 
     // Клик по пустой карте — сворачиваем открытые меню.
     // Клик по кластеру или HTML-маркеру сюда НЕ попадает: маркеры сами
     // останавливают всплытие (stopPropagation), а кластер фильтруется ниже.
     map.on('click', (e: maplibregl.MapMouseEvent) => {
-      // Клик по кластеру или одиночной точке — меню не трогаем
+      // Клик по кластеру — меню не трогаем
       const feats = map.queryRenderedFeatures(e.point, {
-        layers: ['clusters', 'unclustered-point'],
+        layers: ['clusters'],
       });
       if (feats.length > 0) return;
       cbRef.current.onMapClick?.();
@@ -236,6 +201,36 @@ export default function MapView({
         geometry: { type: 'Point', coordinates: [ev.lng!, ev.lat!] },
         properties: { id: ev.id, color: colorFor(ev.category_id) },
       }));
+
+    // Видимость HTML-маркеров-пинов. Правило: одиночное событие (не
+    // входящее в кластер на ТЕКУЩЕМ зуме) показывается пином на любом зуме;
+    // событие, поглощённое кластером, скрыто — его место занимает круг
+    // кластера (без дублей). На зуме >= 14 (clusterMaxZoom 13) кластеризация
+    // отключена — видны ВСЕ пины.
+    const updateVisibility = () => {
+      if (map.getZoom() >= MARKER_MIN_ZOOM) {
+        markersRef.current.forEach((m) => {
+          m.getElement().style.display = '';
+        });
+        return;
+      }
+      // Зум < 14: geojson-источник сам кластеризует точки на текущем зуме —
+      // одиночки приходят фичами БЕЗ point_count, участники кластеров
+      // отдельными фичами не приходят вовсе. querySourceFeatures отдаёт
+      // актуальное состояние кластеризации (в видимой области).
+      const src = map.getSource('events');
+      if (!src || !map.isSourceLoaded('events')) return; // пересчёт по sourcedata
+      const feats = map.querySourceFeatures('events');
+      const free = new Set<string>();
+      for (const f of feats) {
+        const p = f.properties;
+        if (p && !p.point_count && typeof p.id === 'string') free.add(p.id);
+      }
+      markersRef.current.forEach((m) => {
+        const id = m.getElement().dataset.eventId;
+        m.getElement().style.display = id && free.has(id) ? '' : 'none';
+      });
+    };
 
     const apply = () => {
       // Источник для кластеров (создаётся на 'load' в init-эффекте)
@@ -303,6 +298,8 @@ export default function MapView({
           e.stopPropagation();
           cbRef.current.onSelect(ev);
         });
+        // id события — для пересчёта видимости (updateVisibility)
+        el.dataset.eventId = ev.id;
         const [mlng, mlat] = placed.get(ev.id) ?? [ev.lng!, ev.lat!];
         const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
           .setLngLat([mlng, mlat])
@@ -310,11 +307,10 @@ export default function MapView({
         markersRef.current.push(marker);
       });
 
-      // Видимость по текущему зуму
-      const show = map.getZoom() >= MARKER_MIN_ZOOM;
-      markersRef.current.forEach((m) => {
-        m.getElement().style.display = show ? '' : 'none';
-      });
+      // Видимость: на зуме >= 14 — все пины; ниже — только одиночки вне
+      // кластеров (после setData источник пересчитывается асинхронно —
+      // финальный пересчёт произойдёт по событию sourcedata)
+      updateVisibility();
     };
 
     if (map.isStyleLoaded() && map.getSource('events')) apply();
@@ -329,8 +325,23 @@ export default function MapView({
     };
     map.on('zoomend', onZoomEnd);
 
+    // Пересчёт видимости пинов: после пересчёта кластеров источником
+    // (sourcedata) и по окончании панорамирования (события, въехавшие во
+    // вьюпорт, могли выйти из кластера или попасть в него).
+    const onSourceData = (e: maplibregl.MapSourceDataEvent) => {
+      if (e.sourceId === 'events' && e.isSourceLoaded) updateVisibility();
+    };
+    const onMoveEnd = () => {
+      if (!map.getSource('events')) return;
+      updateVisibility();
+    };
+    map.on('sourcedata', onSourceData);
+    map.on('moveend', onMoveEnd);
+
     return () => {
       map.off('zoomend', onZoomEnd);
+      map.off('sourcedata', onSourceData);
+      map.off('moveend', onMoveEnd);
       markersRef.current.forEach((m) => m.remove());
       markersRef.current = [];
     };
