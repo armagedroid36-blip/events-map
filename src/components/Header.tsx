@@ -187,9 +187,12 @@ export default function Header({ onOpenForm }: HeaderProps) {
           {/* Логотип — клик тоже возвращает на карту (внутри ссылки).
               Относительный путь: сайт на GitHub Pages живёт в подпапке,
               src="/logo.png" с ведущим слэшем уходил в корень домена (404).
-              h-12 + py-1.5 контейнера: логотип почти во всю высоту шапки
+              logo-mark.png — логотип БЕЗ прозрачных полей (обрезан по пину):
+              в logo.png пин занимает лишь ~34% ширины файла, из-за полей
+              визуальный зазор до надписи не зависит от gap.
+              h-12 + py-1.5 контейнера: пин почти во всю высоту шапки
               (48 + 12 = 60px — как раньше h-9 + py-3), шапка не растёт. */}
-          <img src="logo.png" alt="" className="h-12 w-auto shrink-0 rounded object-contain" />
+          <img src="logo-mark.png" alt="" className="h-12 w-auto shrink-0 rounded object-contain" />
           <h1 className="truncate text-xl font-extrabold tracking-tight text-gray-900">
             {t('app.brand')}{' '}
             <span className="text-[10px] font-normal text-gray-400">{config.buildVersion}</span>
