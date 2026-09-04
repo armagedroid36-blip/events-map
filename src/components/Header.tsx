@@ -183,7 +183,7 @@ export default function Header({ onOpenForm }: HeaderProps) {
             flex-1 min-w-0: при появлении бейджа уведомлений (колокольчик)
             правый блок становится шире — название сжимается (truncate),
             шапка остаётся в одну строку. */}
-        <a href="#/" className="flex min-w-0 flex-1 items-center gap-2">
+        <a href="#/" className="flex min-w-0 flex-1 items-center gap-[3px]">
           {/* Логотип — клик тоже возвращает на карту (внутри ссылки).
               Относительный путь: сайт на GitHub Pages живёт в подпапке,
               src="/logo.png" с ведущим слэшем уходил в корень домена (404).
