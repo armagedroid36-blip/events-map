@@ -9,6 +9,7 @@ import { compressImage } from '../lib/imageCompress';
 import { useAuth } from '../lib/auth';
 import { contactErrors, normalizeContacts } from '../lib/contacts';
 import type { ContactErrorCode, ContactField } from '../lib/contacts';
+import { pushSupported, getBrowserSubscription, enablePush, disablePush, subscriptionData } from '../lib/push';
 import type { GalleryPhoto } from '../lib/types';
 
 /** Полный URL аватарки: http/blob-ссылки как есть, пути хранилища через photoUrl */
@@ -48,6 +49,11 @@ export default function ProfilePage() {
   const [pw, setPw] = useState('');
   const [pw2, setPw2] = useState('');
   const [pwErr, setPwErr] = useState('');
+
+  // Push-уведомления: включена ли подписка в этом браузере
+  const [pushOn, setPushOn] = useState(false);
+  const [pushBusy, setPushBusy] = useState(false);
+  const [pushMsg, setPushMsg] = useState('');
 
   // Сообщение «Сохранено» (3 секунды)
   const [saved, setSaved] = useState('');
@@ -91,6 +97,88 @@ export default function ProfilePage() {
         .catch(() => setPhotos([]));
     }
   }, [user]);
+
+  // Push: при открытии профиля показываем актуальное состояние подписки
+  useEffect(() => {
+    let alive = true;
+    getBrowserSubscription().then((sub) => {
+      if (alive) setPushOn(!!sub);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  // Push: браузер сам перевыпускает подписку (pushsubscriptionchange) —
+  // переподписываемся и обновляем запись в БД, пока пользователь в системе.
+  useEffect(() => {
+    if (!user || !pushSupported()) return;
+    let reg: ServiceWorkerRegistration | null = null;
+    let alive = true;
+    const onChange = async () => {
+      try {
+        if (Notification.permission !== 'granted') return;
+        const sub = await enablePush();
+        if (!sub || !alive) return;
+        const { endpoint, p256dh, auth } = subscriptionData(sub);
+        await getApi().pushSubscribe(endpoint, p256dh, auth);
+        if (alive) setPushOn(true);
+      } catch {
+        // переподписка не удалась — пользователь увидит кнопку «Включить»
+      }
+    };
+    navigator.serviceWorker.ready.then((r) => {
+      if (!alive) return;
+      reg = r;
+      r.addEventListener('pushsubscriptionchange', onChange);
+    });
+    return () => {
+      alive = false;
+      if (reg) reg.removeEventListener('pushsubscriptionchange', onChange);
+    };
+  }, [user]);
+
+  /** Включить push: разрешение браузера → подписка → запись в БД */
+  async function onEnablePush() {
+    setPushBusy(true);
+    setPushMsg('');
+    try {
+      const perm = await Notification.requestPermission();
+      if (perm !== 'granted') {
+        setPushMsg(t('profile.pushPermissionDenied'));
+        return;
+      }
+      const sub = await enablePush();
+      if (!sub) {
+        setPushMsg(t('profile.pushUnsupported'));
+        return;
+      }
+      const { endpoint, p256dh, auth } = subscriptionData(sub);
+      await getApi().pushSubscribe(endpoint, p256dh, auth);
+      setPushOn(true);
+    } catch {
+      setPushMsg(t('profile.pushError'));
+    } finally {
+      setPushBusy(false);
+    }
+  }
+
+  /** Выключить push: удалить запись из БД и отписаться в браузере */
+  async function onDisablePush() {
+    setPushBusy(true);
+    setPushMsg('');
+    try {
+      const sub = await getBrowserSubscription();
+      if (sub) {
+        const { endpoint } = subscriptionData(sub);
+        await getApi().pushUnsubscribe(endpoint).catch(() => {});
+        await disablePush();
+      }
+      setPushOn(false);
+    } finally {
+      setPushBusy(false);
+    }
+  }
 
   /** Загрузка файлов в галерею: сжатие → upload → RPC → обновить список */
   async function onGalleryFiles(e: React.ChangeEvent<HTMLInputElement>) {
@@ -253,6 +341,40 @@ export default function ProfilePage() {
             <span className="text-gray-500">{t('profile.role')}</span>
             <span className="font-medium text-gray-900">{roleLabel}</span>
           </div>
+        </div>
+
+        {/* Push-уведомления о новых событиях — всем ролям */}
+        <div className="mt-4 rounded-lg border border-gray-200 bg-white p-4 text-sm">
+          <h2 className="font-semibold text-gray-900">{t('profile.pushTitle')}</h2>
+          <p className="mt-1 text-xs text-gray-500">
+            {pushOn ? t('profile.pushOnHint') : t('profile.pushOffHint')}
+          </p>
+          {pushMsg && (
+            <p className="mt-2 rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-800">{pushMsg}</p>
+          )}
+          {pushSupported() ? (
+            pushOn ? (
+              <button
+                type="button"
+                onClick={onDisablePush}
+                disabled={pushBusy}
+                className="mt-3 rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              >
+                {pushBusy ? '...' : t('profile.pushDisable')}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={onEnablePush}
+                disabled={pushBusy}
+                className="mt-3 rounded-md bg-gray-900 px-3 py-1.5 text-sm font-semibold text-white hover:bg-gray-700 disabled:opacity-50"
+              >
+                {pushBusy ? '...' : t('profile.pushEnable')}
+              </button>
+            )
+          ) : (
+            <p className="mt-2 text-xs text-gray-400">{t('profile.pushUnsupported')}</p>
+          )}
         </div>
 
         {/* Контакты организатора — редактируются (только организатор) */}

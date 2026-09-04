@@ -477,6 +477,12 @@ export class DemoApi {
 
   async removeHistory(_id: string): Promise<void> {}
 
+  // --- Push-уведомления (демо: без сервера подписки не хранятся) ---
+
+  async pushSubscribe(_endpoint: string, _p256dh: string, _auth: string): Promise<void> {}
+
+  async pushUnsubscribe(_endpoint: string): Promise<void> {}
+
   // --- Уведомления организатора (демо: бейдж не считается) ---
 
   async getMyEventsBadge(): Promise<number> {

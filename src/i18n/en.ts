@@ -140,6 +140,15 @@ export default {
     galleryEmpty: 'No photos yet — add your first',
     galleryLimit: 'You can add up to 15 photos',
     photoTooBig: 'File is too large (up to 10 MB)',
+    // Push notifications about new events
+    pushTitle: 'Notifications about new events',
+    pushEnable: 'Enable notifications',
+    pushDisable: 'Disable notifications',
+    pushOnHint: 'On: we will notify you when new events appear on the map.',
+    pushOffHint: 'Get notified about new events even when the site is closed.',
+    pushPermissionDenied: 'Allow notifications in your browser settings and try again.',
+    pushUnsupported: 'Notifications unavailable: need a modern browser and a secure (HTTPS) connection.',
+    pushError: 'Could not enable notifications. Please try again.',
   },
   favorites: {
     title: 'Favorites',

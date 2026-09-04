@@ -196,6 +196,12 @@ export interface DataApi {
   /** Убрать событие из избранного */
   removeFavorite(eventId: string): Promise<void>;
 
+  // --- Push-уведомления (браузерные, о новых событиях) ---
+  /** Сохранить подписку браузера текущего пользователя (endpoint уникален) */
+  pushSubscribe(endpoint: string, p256dh: string, auth: string): Promise<void>;
+  /** Удалить подписку браузера (выключение уведомлений) */
+  pushUnsubscribe(endpoint: string): Promise<void>;
+
   // --- Админка (управление) ---
   listApplications(): Promise<Application[]>;
   approveApplication(id: string): Promise<void>;
@@ -899,6 +905,30 @@ class SupabaseApi implements DataApi {
       .delete()
       .eq('user_id', me.id)
       .eq('event_id', eventId);
+    if (error) throw error;
+  }
+
+  // --- Push-уведомления ---
+
+  async pushSubscribe(endpoint: string, p256dh: string, auth: string): Promise<void> {
+    const me = await this.getCurrentUser();
+    if (!me) throw new Error('Войдите, чтобы включить уведомления');
+    // Повторное включение той же подписки не ошибка (endpoint unique,
+    // ON CONFLICT DO NOTHING — политики UPDATE нет и не нужно)
+    const { error } = await this.db
+      .from('push_subscriptions')
+      .upsert({ user_id: me.id, endpoint, p256dh, auth }, { onConflict: 'endpoint', ignoreDuplicates: true });
+    if (error) throw error;
+  }
+
+  async pushUnsubscribe(endpoint: string): Promise<void> {
+    const me = await this.getCurrentUser();
+    if (!me) return;
+    const { error } = await this.db
+      .from('push_subscriptions')
+      .delete()
+      .eq('user_id', me.id)
+      .eq('endpoint', endpoint);
     if (error) throw error;
   }
 

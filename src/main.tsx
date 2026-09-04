@@ -13,3 +13,13 @@ createRoot(document.getElementById('root')!).render(
     </AuthProvider>
   </StrictMode>,
 );
+
+// Service worker (push-уведомления) — только production; путь строится от
+// document.baseURI, поэтому работает и в корне домена, и в подпапке /events-map/.
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register(new URL('sw.js', document.baseURI).href)
+      .catch((err) => console.error('SW registration failed:', err));
+  });
+}
