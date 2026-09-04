@@ -18,8 +18,7 @@ export default function FavoritesPage() {
   const { user } = useAuth();
   const [events, setEvents] = useState<EventItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  // Черновик фильтров в панели; применяется по кнопке «Найти»
-  const [draft, setDraft] = useState<Filters>(DEFAULT_FILTERS);
+  // Активные фильтры — применяются мгновенно (общая панель с главной)
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
   // Панель фильтров спрятана под кнопку (все экраны); открывается по клику
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -110,18 +109,11 @@ export default function FavoritesPage() {
               <div className="mb-4 rounded-lg border border-gray-200 bg-white/70">
                 <FiltersPanel
                   categories={categories}
-                  filters={draft}
-                  onChange={setDraft}
+                  filters={filters}
+                  onChange={setFilters}
                   cities={allCities}
                   countries={allCountries}
-                  onApply={() => {
-                    setFilters(draft);
-                    setFiltersOpen(false);
-                  }}
-                  onReset={() => {
-                    setDraft(DEFAULT_FILTERS);
-                    setFilters(DEFAULT_FILTERS);
-                  }}
+                  count={visible.length}
                 />
               </div>
             )}

@@ -46,12 +46,9 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   // --- Состояние интерфейса ---
-  // filters — применённые фильтры (по ним считается список и карта);
-  // draft — черновик в панели, применяется только по кнопке «Найти»
+  // filters — активные фильтры. Применяются МГНОВЕННО при любом изменении
+  // (как в Яндекс.Афише): черновика и кнопки «Найти» больше нет.
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
-  const [draft, setDraft] = useState<Filters>(DEFAULT_FILTERS);
-  // Показывать лоадер после нажатия «Найти»
-  const [searching, setSearching] = useState(false);
   // Последний город, по которому ушёл запрос геокодинга (для гонок запросов)
   const geocodeCityRef = useRef('');
   const [selected, setSelected] = useState<EventItem | null>(null);
@@ -256,20 +253,17 @@ export default function Home() {
     setZoom(z);
   }
 
-  // Применение фильтров по кнопке «Найти»: черновик становится рабочим
-  // набором, карта едет к выбранному городу, показывается лоадер.
-  function applyFilters() {
-    const next = draft;
-    setFilters(next);
-    setMobileFiltersOpen(false);
-    setSearching(true);
-    window.setTimeout(() => setSearching(false), 500);
-    const city = next.city?.trim();
-    if (!city) return;
-    geocodeCityRef.current = city;
-    geocodeAddress(ruToEn(city))
+  // Геопереход к выбранному городу — только по подтверждённому выбору
+  // (клик по варианту автокомплита или Enter в поле города), НЕ на каждый
+  // символ ввода: свободный текст фильтрует список/карту, но не дёргает её.
+  // Защита от гонок: geocodeCityRef помнит город последнего запроса.
+  function handleCityCommit(city: string) {
+    const c = city.trim();
+    if (!c) return;
+    geocodeCityRef.current = c;
+    geocodeAddress(ruToEn(c))
       .then((coords) => {
-        if (coords && geocodeCityRef.current === city) {
+        if (coords && geocodeCityRef.current === c) {
           setCenter(coords);
           setZoom(11);
         }
@@ -277,9 +271,9 @@ export default function Home() {
       .catch(() => {});
   }
 
-  // Сброс: очищает и черновик в панели, и применённые фильтры
+  // Сброс фильтров (кнопка «Сбросить» в панели): инвалидируем геокодинг,
+  // чтобы запоздавший ответ не увёз карту к городу после сброса.
   function resetFilters() {
-    setDraft(DEFAULT_FILTERS);
     setFilters(DEFAULT_FILTERS);
     geocodeCityRef.current = '';
   }
@@ -395,11 +389,13 @@ export default function Home() {
               </div>
               <FiltersPanel
                 categories={categories}
-                filters={draft}
-                onChange={setDraft}
+                filters={filters}
+                onChange={setFilters}
                 cities={allCities}
                 countries={allCountries}
-                onApply={applyFilters}
+                count={visible.length}
+                onShowResults={() => setMobileFiltersOpen(false)}
+                onCityCommit={handleCityCommit}
                 onReset={resetFilters}
               />
             </div>
@@ -434,11 +430,12 @@ export default function Home() {
             </button>
             <FiltersPanel
               categories={categories}
-              filters={draft}
-              onChange={setDraft}
+              filters={filters}
+              onChange={setFilters}
               cities={allCities}
               countries={allCountries}
-              onApply={applyFilters}
+              count={visible.length}
+              onCityCommit={handleCityCommit}
               onReset={resetFilters}
             />
           </div>
@@ -475,17 +472,9 @@ export default function Home() {
         </div>
       )}
 
-      {/* Обратная связь поиска: лоадер при применении фильтров и плашка,
-          если по параметрам ничего не найдено */}
-      {searching && (
-        <div className="pointer-events-none absolute inset-x-0 top-1/2 z-[1165] flex -translate-y-1/2 justify-center">
-          <div className="glass flex items-center gap-2 rounded-full px-4 py-2 text-sm text-gray-700 shadow">
-            <span className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-900" />
-            {t('common.loading')}
-          </div>
-        </div>
-      )}
-      {!searching && !isDefaultFilters(filters) && visible.length === 0 && (
+      {/* Обратная связь поиска: плашка, если по активным фильтрам ничего
+          не найдено (лоадера «searching» больше нет — фильтры мгновенные) */}
+      {!isDefaultFilters(filters) && visible.length === 0 && (
         <div className="pointer-events-none absolute inset-x-0 top-1/2 z-[1165] flex -translate-y-1/2 justify-center px-4">
           <div className="glass max-w-sm rounded-xl px-4 py-3 text-center shadow">
             <p className="text-sm font-medium text-gray-900">{t('filters.empty')}</p>
