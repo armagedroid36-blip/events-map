@@ -18,8 +18,6 @@ import { DEFAULT_FILTERS, eventMatchesFilters } from '../lib/eventFilters';
 import { useAuth } from '../lib/auth';
 import type { Category, EventItem, Filters } from '../lib/types';
 
-const LIST_LIMIT = 50;
-
 /** Фильтры ещё не заданы (ничего не ограничивает) */
 function isDefaultFilters(f: Filters): boolean {
   return (
@@ -231,20 +229,19 @@ export default function Home() {
     filters,
   ]);
 
-  // События на видимом участке карты (bounds) + фильтры
+  // События на видимом участке карты (bounds) + фильтры.
+  // Без лимита: список и счётчик кнопки показывают ВСЕ события области.
   const onMapEvents = useMemo(() => {
-    if (!bounds) return visible.slice(0, LIST_LIMIT);
+    if (!bounds) return visible;
     const [sw, ne] = bounds;
-    return visible
-      .filter((ev) => {
-        const lat = ev.lat;
-        const lng = ev.lng;
-        // Без координат (адрес есть, геокода нет) — не фильтровать по карте,
-        // иначе событие исчезает из списка при перемещении карты
-        if (lat == null || lng == null) return true;
-        return lat >= sw[0] && lat <= ne[0] && lng >= sw[1] && lng <= ne[1];
-      })
-      .slice(0, LIST_LIMIT);
+    return visible.filter((ev) => {
+      const lat = ev.lat;
+      const lng = ev.lng;
+      // Без координат (адрес есть, геокода нет) — не фильтровать по карте,
+      // иначе событие исчезает из списка при перемещении карты
+      if (lat == null || lng == null) return true;
+      return lat >= sw[0] && lat <= ne[0] && lng >= sw[1] && lng <= ne[1];
+    });
   }, [visible, bounds]);
 
   // Переход по быстрой кнопке направления
