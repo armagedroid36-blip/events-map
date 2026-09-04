@@ -602,6 +602,9 @@ export default function FiltersPanel({
 
       <button
         onClick={() => {
+          // Таймер debounce текстового запроса гасим, чтобы он не сработал
+          // после сброса и не вернул query поверх очищенных фильтров.
+          window.clearTimeout(qTimer.current);
           onChange(EMPTY_FILTERS);
           setQueryDraft('');
           onReset?.();
