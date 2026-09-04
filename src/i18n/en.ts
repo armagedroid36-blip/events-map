@@ -2,6 +2,7 @@
 export default {
   app: {
     title: 'Events on the Map',
+    brand: 'MyPins',
     tagline: 'Conferences, concerts, exhibitions and parties — on the world map',
     login: 'Sign in',
   },

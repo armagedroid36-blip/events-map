@@ -178,7 +178,7 @@ export default function Header({ onOpenForm }: HeaderProps) {
 
   return (
     <header ref={headerRef}>
-      <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 py-1.5 pl-2 pr-4">
         {/* Название сайта — клик возвращает на карту.
             flex-1 min-w-0: при появлении бейджа уведомлений (колокольчик)
             правый блок становится шире — название сжимается (truncate),
@@ -187,11 +187,11 @@ export default function Header({ onOpenForm }: HeaderProps) {
           {/* Логотип — клик тоже возвращает на карту (внутри ссылки).
               Относительный путь: сайт на GitHub Pages живёт в подпапке,
               src="/logo.png" с ведущим слэшем уходил в корень домена (404).
-              h-9 w-auto: крупнее исходного, но шапка остаётся прежней
-              высоты (квадратный контейнер 96px раздувал шапку до 120px). */}
-          <img src="logo.png" alt="" className="h-9 w-auto shrink-0 rounded object-contain" />
-          <h1 className="truncate text-lg font-semibold text-gray-900">
-            {t('app.title')}{' '}
+              h-12 + py-1.5 контейнера: логотип почти во всю высоту шапки
+              (48 + 12 = 60px — как раньше h-9 + py-3), шапка не растёт. */}
+          <img src="logo.png" alt="" className="h-12 w-auto shrink-0 rounded object-contain" />
+          <h1 className="truncate text-xl font-extrabold tracking-tight text-gray-900">
+            {t('app.brand')}{' '}
             <span className="text-[10px] font-normal text-gray-400">{config.buildVersion}</span>
           </h1>
         </a>
