@@ -49,6 +49,11 @@ export default function ProfilePage() {
   const [pw, setPw] = useState('');
   const [pw2, setPw2] = useState('');
   const [pwErr, setPwErr] = useState('');
+  // Результат смены пароля — зелёная/красная плашка ПОД формой (внизу страницы
+  // сообщение наверху не видно). ok=true — успех, ok=false — ошибка.
+  const [pwMsg, setPwMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const pwMsgTimer = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(pwMsgTimer.current), []);
 
   // Push-уведомления: включена ли подписка в этом браузере
   const [pushOn, setPushOn] = useState(false);
@@ -300,6 +305,8 @@ export default function ProfilePage() {
   async function savePassword(e: React.FormEvent) {
     e.preventDefault();
     setPwErr('');
+    setPwMsg(null);
+    window.clearTimeout(pwMsgTimer.current);
     if (pw.length < 6) {
       setPwErr(t('profile.passwordTooShort'));
       return;
@@ -311,11 +318,15 @@ export default function ProfilePage() {
     setBusy(true);
     try {
       await getApi().updatePassword(pw);
+      // Успех: поля очищаем, зелёное сообщение под формой (не вверху страницы)
       setPw('');
       setPw2('');
-      setSaved(t('profile.saved'));
-    } catch {
-      setSaved(t('form.error'));
+      setPwMsg({ ok: true, text: t('profile.passwordChanged') });
+      pwMsgTimer.current = window.setTimeout(() => setPwMsg(null), 6000);
+    } catch (err) {
+      // Ошибка: поля НЕ чистим (чтобы можно было поправить), показываем детали
+      const detail = (err as { message?: string })?.message;
+      setPwMsg({ ok: false, text: detail || t('profile.passwordError') });
     } finally {
       setBusy(false);
     }
@@ -574,6 +585,7 @@ export default function ProfilePage() {
               onChange={(e) => {
                 setPw(e.target.value);
                 setPwErr('');
+                setPwMsg(null);
               }}
               className="w-full rounded-md border border-gray-300 px-2.5 py-2 text-sm focus:border-gray-900 focus:outline-none"
             />
@@ -588,6 +600,7 @@ export default function ProfilePage() {
               onChange={(e) => {
                 setPw2(e.target.value);
                 setPwErr('');
+                setPwMsg(null);
               }}
               className="w-full rounded-md border border-gray-300 px-2.5 py-2 text-sm focus:border-gray-900 focus:outline-none"
             />
@@ -600,6 +613,17 @@ export default function ProfilePage() {
           >
             {busy ? '...' : t('profile.changePassword')}
           </button>
+          {pwMsg && (
+            <p
+              className={
+                pwMsg.ok
+                  ? 'rounded-md bg-green-50 px-3 py-2 text-sm text-green-800'
+                  : 'rounded-md bg-red-50 px-3 py-2 text-sm text-red-700'
+              }
+            >
+              {pwMsg.text}
+            </p>
+          )}
         </form>
       </div>
     </div>

@@ -125,6 +125,8 @@ export default {
     confirmPassword: 'Повторите пароль',
     passwordTooShort: 'Пароль должен быть не короче 6 символов',
     passwordsDontMatch: 'Пароли не совпадают',
+    passwordChanged: 'Пароль изменён',
+    passwordError: 'Не удалось изменить пароль. Попробуйте ещё раз.',
     // Блок «Профиль организатора» (только role='org')
     orgBlockTitle: 'Профиль организатора',
     avatar: 'Фото профиля',

@@ -125,6 +125,8 @@ export default {
     confirmPassword: 'Repeat password',
     passwordTooShort: 'Password must be at least 6 characters',
     passwordsDontMatch: 'Passwords do not match',
+    passwordChanged: 'Password changed',
+    passwordError: 'Could not change password. Please try again.',
     // Organizer profile block (role='org' only)
     orgBlockTitle: 'Organizer profile',
     avatar: 'Profile photo',
