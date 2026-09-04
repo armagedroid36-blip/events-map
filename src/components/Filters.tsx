@@ -414,7 +414,7 @@ export default function FiltersPanel({
 
   return (
     <div className="space-y-3 rounded-lg p-3">
-      <div className="flex items-baseline justify-between gap-2">
+      <div className="flex items-baseline justify-between gap-2 pr-8">
         <h2 className="text-sm font-semibold text-gray-900">{t('filters.title')}</h2>
         {count != null && (
           <span className="text-xs text-gray-500">{t('filters.found', { count })}</span>

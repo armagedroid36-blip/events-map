@@ -22,7 +22,7 @@ export const config = {
   demoMode: false,
 
   // Версия сборки — показывается в шапке мелким текстом для сверки
-  buildVersion: 'v23.09-96',
+  buildVersion: 'v23.09-97',
 
   // Версия политики конфиденциальности (пишется в profiles.consent_version)
   privacyPolicyVersion,
