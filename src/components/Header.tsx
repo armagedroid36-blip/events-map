@@ -1,8 +1,8 @@
 // Шапка сайта: название, навигация по ролям, переключатель языка RU/EN,
-// вход / меню шестерёнки.
+// вход / меню.
 // Навигация: пункты по ролям — в правом блоке шапки (все экраны),
-// дублируются в меню шестерёнки.
-// Войти: незарегистрированные. Шестерёнка с меню — для вошедших.
+// дублируются в меню.
+// Войти: незарегистрированные. Кнопка меню — для вошедших.
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
@@ -20,9 +20,9 @@ interface HeaderProps {
 interface NavItem {
   label: string;
   action: () => void;
-  /** Скрыть пункт из десктопной навигации шапки (в меню шестерёнки остаётся) */
+  /** Скрыть пункт из десктопной навигации шапки (в меню остаётся) */
   hideDesktop?: boolean;
-  /** Скрыть из шапки на мобильных (портрет); в меню шестерёнки остаётся */
+  /** Скрыть из шапки на мобильных (портрет); в меню остаётся */
   hideMobile?: boolean;
 }
 
@@ -76,7 +76,7 @@ export default function Header({ onOpenForm }: HeaderProps) {
   }, [user, refreshBadge]);
 
   // Нижняя граница шапки + зазор — в CSS-переменную --header-bottom.
-  // Меню шестерёнки — portal в body и позиционируется по этой переменной
+  // Меню — portal в body и позиционируется по этой переменной
   // (top-(--header-bottom)). Раньше её ставил только Home, поэтому на
   // остальных страницах (my-events, favorites, profile, admin) переменной
   // не было и меню уезжало вниз документа. Header меряет себя сам —
@@ -116,7 +116,7 @@ export default function Header({ onOpenForm }: HeaderProps) {
     window.location.hash = '#/';
   });
 
-  // Аккордеон: открытие меню шестерёнки закрывает панели главной
+  // Аккордеон: открытие меню закрывает панели главной
   useEffect(() => {
     if (menuOpen) window.dispatchEvent(new CustomEvent('close-home-panels'));
   }, [menuOpen]);
@@ -138,7 +138,7 @@ export default function Header({ onOpenForm }: HeaderProps) {
     setMenuOpen(false);
   }
 
-  // Пункты навигации по ролям (одни для шапки на десктопе и меню шестерёнки)
+  // Пункты навигации по ролям (одни для шапки на десктопе и меню)
   const nav: NavItem[] = [];
   if (user) {
     if (user.role === 'admin') {
@@ -262,10 +262,11 @@ export default function Header({ onOpenForm }: HeaderProps) {
                   aria-label={t('menu.title')}
                   title={t('menu.title')}
                 >
-                  {/* Шестерёнка */}
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="3" />
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                  {/* Бургер (меню) */}
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
                   </svg>
                 </button>
 

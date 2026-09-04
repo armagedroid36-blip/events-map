@@ -521,7 +521,7 @@ export default {
     },
     deleteAccount: {
       title: 'How to delete your account',
-      text: 'Sign in, open the gear menu in the top-right corner and choose “Delete account”.',
+      text: 'Sign in, open the menu in the top-right corner and choose “Delete account”.',
     },
     operator: {
       title: 'Operator and contacts',
