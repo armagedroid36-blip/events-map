@@ -106,12 +106,18 @@ function CityAutocomplete({
   const idx = Math.min(hl, Math.max(filtered.length - 1, 0));
 
   // Позиция списка: под полем; если не влезает вниз — над полем.
-  // Считается и для пустого списка (плашка «ничего не найдено»).
-  useEffect(() => {
-    if (!open) return;
+  // Пересчитывается на scroll/resize (клавиатура на мобильном, скролл
+  // панели) вместо закрытия — иначе список гаснет в момент фокуса, когда
+  // браузер подскролливает поле к клавиатуре. Если поле ушло за экран —
+  // список прячем (pos = null).
+  const updatePos = () => {
     const input = rootRef.current?.querySelector('input');
     if (!input) return;
     const rect = input.getBoundingClientRect();
+    if (rect.bottom < 0 || rect.top > window.innerHeight) {
+      setPos(null);
+      return;
+    }
     const estH = filtered.length === 0 ? 44 : Math.min(filtered.length * 34 + 10, 216);
     const spaceBelow = window.innerHeight - rect.bottom;
     const openUp = spaceBelow < estH + 8 && rect.top > estH + 8;
@@ -120,9 +126,17 @@ function CityAutocomplete({
       left: rect.left,
       width: rect.width,
     });
+  };
+  const updatePosRef = useRef(updatePos);
+  updatePosRef.current = updatePos;
+
+  useEffect(() => {
+    if (!open) return;
+    updatePosRef.current();
   }, [open, filtered.length]);
 
-  // Закрытие: клик/тап вне контрола и списка, скролл любого контейнера, resize
+  // Закрытие: клик/тап вне контрола и списка, Esc. Scroll/resize НЕ закрывают
+  // (см. updatePos) — они пересчитывают позицию списка.
   useEffect(() => {
     if (!open) return;
     const onDown = (e: PointerEvent) => {
@@ -130,14 +144,15 @@ function CityAutocomplete({
       if (rootRef.current?.contains(target) || listRef.current?.contains(target)) return;
       setOpen(false);
     };
-    const onScroll = () => setOpen(false);
+    const onScroll = () => updatePosRef.current();
+    const onResize = () => updatePosRef.current();
     document.addEventListener('pointerdown', onDown);
     document.addEventListener('scroll', onScroll, true);
-    window.addEventListener('resize', onScroll);
+    window.addEventListener('resize', onResize);
     return () => {
       document.removeEventListener('pointerdown', onDown);
       document.removeEventListener('scroll', onScroll, true);
-      window.removeEventListener('resize', onScroll);
+      window.removeEventListener('resize', onResize);
     };
   }, [open]);
 
