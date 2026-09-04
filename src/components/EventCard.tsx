@@ -129,7 +129,7 @@ interface Props {
   /** Текущий пользователь — владелец события (organizer) */
   isOwner?: boolean;
   onDelete?: (id: string) => void;
-  /** id событий в избранном; null — гость (сердечко скрыто) */
+  /** id событий в избранном; null — гость (сердечко показывается неактивным) */
   favoriteIds?: string[] | null;
   /** Переключить избранное (вызывается при клике на сердечко) */
   onToggleFavorite?: (id: string) => void;
@@ -582,10 +582,11 @@ export default function EventCard({ event, categories, onClose, isAdmin, isOwner
             url={`${window.location.origin}${window.location.pathname}#/?e=${encodeURIComponent(event.id)}`}
             title={title}
           />
-          {/* Сердечко — только для вошедших (favoriteIds !== null) */}
-          {favoriteIds !== null && onToggleFavorite && (
+          {/* Сердечко — для всех; гость (favoriteIds === null) видит его неактивным */}
+          {onToggleFavorite && (
             <FavoriteButton
-              active={favoriteIds.includes(event.id)}
+              active={favoriteIds?.includes(event.id) ?? false}
+              guest={favoriteIds === null}
               onToggle={() => onToggleFavorite(event.id)}
             />
           )}

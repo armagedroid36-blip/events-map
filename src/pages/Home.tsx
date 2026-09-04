@@ -10,6 +10,7 @@ import EventsList from '../components/EventsList';
 import EventCard from '../components/EventCard';
 import QuickLocations from '../components/QuickLocations';
 import EventForm from '../components/EventForm';
+import AuthModal from '../components/AuthModal';
 import { getApi } from '../lib/api';
 import { ruToEn } from '../lib/cities';
 import { geocodeAddress } from '../lib/geocode';
@@ -53,6 +54,8 @@ export default function Home() {
   const [center, setCenter] = useState<{ lat: number; lng: number } | null>(null);
   const [zoom, setZoom] = useState<number | undefined>(undefined);
   const [formOpen, setFormOpen] = useState(false);
+  // Окно входа: гость кликнул сердечко «в избранное»
+  const [authOpen, setAuthOpen] = useState(false);
   // Свёрнута ли левая панель фильтров (десктоп)
   const [filtersCollapsed, setFiltersCollapsed] = useState(false);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
@@ -456,7 +459,7 @@ export default function Home() {
               isOwner={user?.id === selected.owner_id}
               onDelete={handleDeleteEvent}
               favoriteIds={favoriteIds}
-              onToggleFavorite={user ? toggleFavorite : undefined}
+              onToggleFavorite={user ? toggleFavorite : () => setAuthOpen(true)}
             />
           </div>
           <button
@@ -511,7 +514,7 @@ export default function Home() {
             selectedId={selected?.id ?? null}
             onSelect={selectEvent}
             favoriteIds={favoriteIds}
-            onToggleFavorite={user ? toggleFavorite : undefined}
+            onToggleFavorite={user ? toggleFavorite : () => setAuthOpen(true)}
           />
         </div>
       )}
@@ -524,6 +527,11 @@ export default function Home() {
             loadData();
           }}
         />
+      )}
+
+      {/* Окно входа: гость кликнул сердечко «в избранное» (с пояснением) */}
+      {authOpen && (
+        <AuthModal onClose={() => setAuthOpen(false)} hint={t('auth.favoriteHint')} />
       )}
     </div>
   );

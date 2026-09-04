@@ -79,6 +79,8 @@ export default {
     consentTransfer:
       'Я согласен(на) на передачу моих данных за пределы страны (база данных и хостинг находятся в США).',
     consentRequired: 'Чтобы зарегистрироваться, подтвердите оба согласия.',
+    favoriteHint:
+      'Войдите или зарегистрируйтесь, чтобы добавлять события в избранное и подписываться на организаторов.',
   },
   myEvents: {
     title: 'Мои мероприятия',
@@ -232,6 +234,7 @@ export default {
     shareNative: 'Поделиться…',
     addToFavorites: 'В избранное',
     removeFromFavorites: 'Убрать из избранного',
+    favoriteLoginHint: 'Войдите, чтобы добавить в избранное',
     recurrenceDaily: 'Ежедневно',
     recurrenceWeekly: 'Каждую неделю: {{days}}',
     recurrenceUntil: 'до {{date}}',

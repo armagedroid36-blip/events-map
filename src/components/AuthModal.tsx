@@ -30,7 +30,14 @@ interface RegDraft {
 const DRAFT_KEY = 'events-map-reg-draft';
 const RESEND_SECONDS = 60;
 
-export default function AuthModal({ onClose }: { onClose: () => void }) {
+export default function AuthModal({
+  onClose,
+  hint,
+}: {
+  onClose: () => void;
+  /** Пояснение-плашка под заголовком (гость кликнул «в избранное») */
+  hint?: string;
+}) {
   const { t } = useTranslation();
   const { signIn, signUp, confirmSignup } = useAuth();
   const z = useRef(nextZ()).current;
@@ -297,6 +304,15 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
             ✕
           </button>
         </div>
+
+        {/* Пояснение для гостя (клик по сердечку «в избранное»): плашка под
+            заголовком, над переключателем режима; на шаге восстановления
+            пароля не показывается */}
+        {hint && mode !== 'forgot' && (
+          <p className="mb-4 rounded-lg bg-[#72D2CF]/15 px-3 py-2.5 text-sm text-gray-800">
+            {hint}
+          </p>
+        )}
 
         {/* Переключение режима (не показываем на шаге восстановления пароля) */}
         {mode !== 'forgot' && (

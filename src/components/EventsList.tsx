@@ -13,7 +13,7 @@ interface Props {
   categories: Category[];
   selectedId: string | null;
   onSelect: (ev: EventItem) => void;
-  /** id событий в избранном; null — гость (сердечко скрыто) */
+  /** id событий в избранном; null — гость (сердечко показывается неактивным) */
   favoriteIds?: string[] | null;
   /** Переключить избранное (вызывается при клике на сердечко) */
   onToggleFavorite?: (id: string) => void;
@@ -76,11 +76,12 @@ export default function EventsList({ events, categories, selectedId, onSelect, f
                     </div>
                   </div>
                 </button>
-                {/* Сердечко — только для вошедших (favoriteIds !== null) */}
-                {favoriteIds !== null && onToggleFavorite && (
+                {/* Сердечко — для всех; гость (favoriteIds === null) видит его неактивным */}
+                {onToggleFavorite && (
                   <div className="flex items-center">
                     <FavoriteButton
-                      active={favoriteIds.includes(ev.id)}
+                      active={favoriteIds?.includes(ev.id) ?? false}
+                      guest={favoriteIds === null}
                       onToggle={() => onToggleFavorite(ev.id)}
                     />
                   </div>

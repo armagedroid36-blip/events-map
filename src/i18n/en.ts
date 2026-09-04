@@ -79,6 +79,8 @@ export default {
     consentTransfer:
       'I agree to the transfer of my data abroad (database and hosting are located in the US).',
     consentRequired: 'To register, please confirm both consents.',
+    favoriteHint:
+      'Log in or sign up to save events to favorites and follow organizers.',
   },
   myEvents: {
     title: 'My events',
@@ -231,6 +233,7 @@ export default {
     shareNative: 'Share…',
     addToFavorites: 'Add to favorites',
     removeFromFavorites: 'Remove from favorites',
+    favoriteLoginHint: 'Log in to save to favorites',
     recurrenceDaily: 'Every day',
     recurrenceWeekly: 'Weekly: {{days}}',
     recurrenceUntil: 'until {{date}}',

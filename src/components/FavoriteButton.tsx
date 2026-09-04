@@ -1,6 +1,6 @@
 // Сердечко «в избранное»: переключатель сохранения события.
-// Показывается только вошедшим пользователям (гостям его не рисуют
-// родительские компоненты — FavoriteButton не содержит логики входа).
+// Гостю (guest=true) показывается неактивным: title/aria-label зовут войти,
+// клик обрабатывает вызывающий компонент (открывает окно входа) — не здесь.
 import { useTranslation } from 'react-i18next';
 
 interface Props {
@@ -8,11 +8,17 @@ interface Props {
   active: boolean;
   /** Переключить состояние (вызывающий компонент делает запрос в API) */
   onToggle: () => void;
+  /** Гость: сердечко неактивно, текст подсказки — «войдите, чтобы добавить» */
+  guest?: boolean;
 }
 
-export default function FavoriteButton({ active, onToggle }: Props) {
+export default function FavoriteButton({ active, onToggle, guest }: Props) {
   const { t } = useTranslation();
-  const label = active ? t('card.removeFromFavorites') : t('card.addToFavorites');
+  const label = guest
+    ? t('card.favoriteLoginHint')
+    : active
+      ? t('card.removeFromFavorites')
+      : t('card.addToFavorites');
   return (
     <button
       type="button"
