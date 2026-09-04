@@ -86,6 +86,23 @@ body {
   transform: translateX(-50%);
 }
 
+/* Мини-карта формы события: атрибуция НЕ центрируется — компактный контрол
+   (иконка ⓘ) в правом нижнем углу, как стандартный compact MapLibre.
+   Раскрытый список тоже компактный (мелкий шрифт, без раздутой полосы). */
+.map-mini .maplibregl-ctrl-bottom-right {
+  left: auto;
+  right: 0;
+  transform: none;
+}
+.map-mini .maplibregl-ctrl-attrib {
+  font-size: 10px;
+  line-height: 1.3;
+}
+.map-mini .maplibregl-ctrl-attrib .maplibregl-ctrl-attrib-button {
+  width: 22px;
+  height: 22px;
+}
+
 /* ============ Эффект «жидкого стекла» (glassmorphism) ============ */
 
 /* Стеклянная панель: прозрачность + размытие + объём */

@@ -75,6 +75,21 @@ function MiniMap({
       new maplibregl.AttributionControl({ compact: true, customAttribution: config.mapAttribution }),
       'bottom-right',
     );
+    // Compact-атрибуция maplibre сворачивается только повторным кликом по
+    // кнопке или drag карты. Тап по карте/фону оставляет её раскрытой —
+    // закрываем по клику вне контрола сами (класс compact-show снят =
+    // текст спрятан, остаётся иконка ⓘ).
+    const onDocPointerDown = (e: PointerEvent) => {
+      const ctrl = el.querySelector('.maplibregl-ctrl-attrib');
+      if (
+        ctrl &&
+        ctrl.classList.contains('maplibregl-compact-show') &&
+        !ctrl.contains(e.target as Node)
+      ) {
+        ctrl.classList.remove('maplibregl-compact-show');
+      }
+    };
+    document.addEventListener('pointerdown', onDocPointerDown);
     const markerEl = document.createElement('div');
     markerEl.innerHTML = formMarkerHtml;
     const marker = new maplibregl.Marker({
@@ -88,6 +103,7 @@ function MiniMap({
     mapRef.current = map;
     markerRef.current = marker;
     return () => {
+      document.removeEventListener('pointerdown', onDocPointerDown);
       map.remove();
       mapRef.current = null;
       markerRef.current = null;
@@ -984,7 +1000,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
           {/* Карта: отметка = точка события */}
           <div>
             <label className="mb-1 block text-sm text-gray-600">{t('form.mapHint')}</label>
-            <div className="h-96 overflow-hidden rounded-lg border border-gray-200">
+            <div className="map-mini h-96 overflow-hidden rounded-lg border border-gray-200">
               <MiniMap lat={lat} lng={lng} onMove={onMapClick} />
             </div>
             {err('map')}
