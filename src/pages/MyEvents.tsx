@@ -10,6 +10,7 @@ import { useAuth } from '../lib/auth';
 import type { Category, EventItem } from '../lib/types';
 import { formatDate } from '../lib/dates';
 import EventForm from '../components/EventForm';
+import EventCard from '../components/EventCard';
 
 export default function MyEvents() {
   const { t } = useTranslation();
@@ -21,6 +22,8 @@ export default function MyEvents() {
   const [repeat, setRepeat] = useState<EventItem | null>(null);
   // Редактирование существующей карточки (организатор)
   const [edit, setEdit] = useState<EventItem | null>(null);
+  // Просмотр полной карточки архивного события (модалка)
+  const [view, setView] = useState<EventItem | null>(null);
   const [loading, setLoading] = useState(true);
   // id события, которое сейчас удаляется (busy на кнопке-корзине)
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -38,6 +41,19 @@ export default function MyEvents() {
       setCategories(cats);
     } finally {
       setLoading(false);
+    }
+  }
+
+  // Удаление из открытой карточки архивного события: EventCard уже показал
+  // подтверждение — здесь только удаление, закрытие и перезагрузка списка.
+  async function handleDeleteFromCard(id: string) {
+    try {
+      await getApi().deleteEvent(id);
+      setView(null);
+      await load();
+    } catch (err) {
+      console.error('Не удалось удалить событие:', err);
+      alert('Не удалось удалить событие');
     }
   }
 
@@ -107,19 +123,32 @@ export default function MyEvents() {
 
     return (
       <div className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0 w-full sm:w-auto">
-          <p className="truncate font-medium text-gray-900">
-            {ev.title_ru || ev.title_en || ev.title}
-          </p>
-          <p className="text-xs text-gray-500">
-            {formatDate(ev.start_date)} {ev.end_date ? `— ${formatDate(ev.end_date)}` : ''} • {ev.city}
-          </p>
-          {!isArchive && (
+        {isArchive ? (
+          // Архивная строка: клик по заголовку — полная карточка события
+          <button
+            onClick={() => setView(ev)}
+            className="min-w-0 flex-1 text-left"
+          >
+            <span className="block truncate font-medium text-gray-900 hover:underline">
+              {ev.title_ru || ev.title_en || ev.title}
+            </span>
+            <span className="block text-xs text-gray-500">
+              {formatDate(ev.start_date)} {ev.end_date ? `— ${formatDate(ev.end_date)}` : ''} • {ev.city}
+            </span>
+          </button>
+        ) : (
+          <div className="min-w-0 w-full sm:w-auto">
+            <p className="truncate font-medium text-gray-900">
+              {ev.title_ru || ev.title_en || ev.title}
+            </p>
+            <p className="text-xs text-gray-500">
+              {formatDate(ev.start_date)} {ev.end_date ? `— ${formatDate(ev.end_date)}` : ''} • {ev.city}
+            </p>
             <p className="mt-0.5 text-xs">
               <StatusTag ev={ev} />
             </p>
-          )}
-        </div>
+          </div>
+        )}
         <div className="flex shrink-0 flex-wrap gap-2 sm:flex-nowrap">
           {isArchive ? (
             <button
@@ -231,6 +260,36 @@ export default function MyEvents() {
             load();
           }}
         />
+      )}
+
+      {/* Просмотр полной карточки архивного события */}
+      {view && (
+        <div
+          className="fixed inset-0 z-[2000] overflow-y-auto bg-black/40 p-4"
+          onClick={() => setView(null)}
+        >
+          <div
+            className="glass-strong relative mx-auto my-6 w-full max-w-lg rounded-xl p-4 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setView(null)}
+              className="absolute -right-3 -top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white text-gray-700 shadow-lg hover:bg-gray-100"
+              aria-label={t('common.close')}
+            >
+              ✕
+            </button>
+            <EventCard
+              event={view}
+              categories={categories}
+              onClose={() => setView(null)}
+              isAdmin={false}
+              isOwner={true}
+              onDelete={handleDeleteFromCard}
+              favoriteIds={null}
+            />
+          </div>
+        </div>
       )}
       </div>
     </div>
