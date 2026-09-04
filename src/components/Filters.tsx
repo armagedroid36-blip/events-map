@@ -6,7 +6,7 @@ import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import type { Category, Filters } from '../lib/types';
 import { LANGUAGES } from '../lib/languages';
-import { COUNTRY_NAMES, KNOWN_COUNTRIES, detectCountry } from '../lib/countries';
+import { COUNTRY_NAMES, detectCountry } from '../lib/countries';
 import { cityMatches, ruToEn } from '../lib/cities';
 import { todayIso } from '../lib/dates';
 
@@ -287,9 +287,10 @@ export default function FiltersPanel({
     onChange({ ...filters, [key]: value });
   }
 
-  // Страны: известные + встреченные в базе, без повторов, с названием на
-  // языке интерфейса; «Другие» — события, страну которых не определили.
-  const countryList = [...new Set([...countries, ...KNOWN_COUNTRIES])].sort((a, b) => {
+  // Страны только из актуальных событий (проп countries), без повторов,
+  // с названием на языке интерфейса; «Другие» — события, страну которых
+  // не определили (присутствует, только если такие события есть в данных).
+  const countryList = [...new Set(countries)].sort((a, b) => {
     if (a === 'other') return 1;
     if (b === 'other') return -1;
     const na = COUNTRY_NAMES[a]?.[lang] ?? a;
