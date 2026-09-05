@@ -1,14 +1,21 @@
-// SEO-пререндер (beta 0.05): после `vite build` генерирует в dist/ физические
+// SEO-пререндер (beta 0.07): после `vite build` генерирует в dist/ физические
 // index.html для /bali, /da-nang, /nha-trang и каждого активного
-// /event/<id>/<slug> (в <head> — уникальные title/description + canonical),
-// чтобы глубокие URL отдавали HTTP 200, и перезаписывает dist/sitemap.xml
-// списком всех страниц. Источник данных — тот же RPC, что зовёт сайт:
+// /event/<id>/<slug> (в <head> — уникальные title/description, canonical и
+// Open Graph со хвостовым слэшем, на событиях — ещё JSON-LD Event), чтобы
+// глубокие URL отдавали HTTP 200, и перезаписывает dist/sitemap.xml списком
+// всех страниц. Источник данных — тот же RPC, что зовёт сайт:
 // db.rpc('list_active_events') (src/lib/api.ts) — прошлые/скрытые/события
 // заблокированных организаторов сюда не попадают автоматически.
 // Запуск: node scripts/seo-prerender.mjs (внутри "build" в package.json).
 // Ключи: VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY — из process.env (GHA)
 // или .env рядом с проектом (локальная сборка; подгружается сам, без
 // новых зависимостей).
+//
+// Правила URL: canonical/og:url и loc в sitemap для городов и событий —
+// СО слэшем (https://mypins.site/bali/, /event/<id>/<slug>/): физическая
+// страница лежит как <path>/index.html, GitHub Pages отдаёт 200 только со
+// слэшем (без слэша — 301). SPA-схему URL (pushState без слэша) НЕ трогаем —
+// клиентский normPath (src/App.tsx) срезает хвостовой слэш сам.
 
 import { createClient } from '@supabase/supabase-js';
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -18,6 +25,7 @@ import { dirname, join } from 'node:path';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = join(ROOT, 'dist');
 const SITE_URL = 'https://mypins.site';
+const LOGO_URL = `${SITE_URL}/logo.png`;
 
 // --- env: уже заданные (GHA) или .env проекта (локально) ---
 function loadDotEnv() {
@@ -96,7 +104,7 @@ const CITY_PAGES = [
 
 // --- Утилиты ---
 
-/** HTML/XML-экранирование (& < > " ') */
+/** HTML/XML-экранирование (& < > " ') — для значений АТРИБУТОВ meta/link */
 function esc(s) {
   return s
     .replace(/&/g, '&amp;')
@@ -104,6 +112,23 @@ function esc(s) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+/**
+ * JSON-LD в <script type="application/ld+json">: JSON.stringify + замена
+ * «<» на \u003c. JSON остаётся ВАЛИДНЫМ (парсится как есть), но строка
+ * </script> внутри текста невозможна. HTML-сущностями экранировать нельзя —
+ * сломает JSON (проверка приёмки парсит блок).
+ */
+function ldJson(obj) {
+  return JSON.stringify(obj).replace(/</g, '\\u003c');
+}
+
+/** photos[i] события: полный http(s)-URL — как есть; путь в bucket → storage-URL */
+function absPhoto(p) {
+  const s = String(p ?? '').trim();
+  if (!s) return '';
+  return /^https?:\/\//i.test(s) ? s : `${SUPABASE_URL}/storage/v1/object/public/photos/${s}`;
 }
 
 const RU_MONTHS = [
@@ -129,14 +154,19 @@ function cutSafe(s, max) {
   return code >= 0xd800 && code <= 0xdbff ? cut.slice(0, -1) : cut;
 }
 
-/** Вычистить HTML/переносы, обрезать по границе слова (title ~65, desc ~140) */
-function snippet(text, max) {
-  const clean = String(text ?? '')
+/** Убрать HTML-теги и схлопнуть пробелы/переносы (описания в meta и JSON-LD) */
+function cleanText(text) {
+  return String(text ?? '')
     .replace(/<[^>]*>/g, ' ')
     .replace(/&nbsp;/gi, ' ')
     .replace(/&amp;/gi, '&')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+/** Вычистить HTML/переносы, обрезать по границе слова (title ~65, desc ~140) */
+function snippet(text, max) {
+  const clean = cleanText(text);
   if (!clean) return '';
   if (clean.length <= max) return clean;
   const cut = cutSafe(clean, max);
@@ -148,19 +178,103 @@ function snippet(text, max) {
 }
 
 /**
- * Копия dist/index.html для URL-пути: заменить в <head> title и meta
- * description (если были), добавить canonical на этот же URL (без
- * хвостового слэша). Остальной head и тело не трогаем.
+ * JSON-LD Event для страницы события. Данные — из ответа list_active_events
+ * (как ev на сайте): название/описание на языке оригинала, координаты,
+ * адрес/город, первое фото, цена. url — канонический URL события (со слэшем).
+ */
+function eventJsonLd(ev, url) {
+  const city = typeof ev.city === 'string' ? ev.city.trim() : '';
+  const address = typeof ev.address === 'string' ? ev.address.trim() : '';
+  const country = typeof ev.country === 'string' ? ev.country.trim() : '';
+  const lat = Number(ev.lat);
+  const lng = Number(ev.lng);
+  // Как isValidCoords (src/lib/coords.ts): (0,0) и |lat|>90 / |lng|>180 — нет
+  const hasCoords =
+    ev.lat != null &&
+    ev.lng != null &&
+    !Number.isNaN(lat) &&
+    !Number.isNaN(lng) &&
+    !(lat === 0 && lng === 0) &&
+    Math.abs(lat) <= 90 &&
+    Math.abs(lng) <= 180;
+  const price = ev.price != null ? Number(ev.price) : 0;
+  const currency = (
+    typeof ev.currency === 'string' && ev.currency ? ev.currency : 'usd'
+  ).toUpperCase();
+  const lang = Array.isArray(ev.languages) && ev.languages[0]
+    ? ev.languages[0]
+    : ev.language || ev.source_lang || '';
+  const ruText = ev.description_ru || ev.description || ev.description_en || '';
+  const orgName =
+    typeof ev.org_display_name === 'string' ? ev.org_display_name.trim() : '';
+  const photo = Array.isArray(ev.photos) ? absPhoto(ev.photos[0]) : '';
+
+  const doc = {
+    '@context': 'https://schema.org',
+    '@type': 'Event',
+    name: String(ev.title ?? ''),
+    url,
+    startDate: ev.start_time
+      ? `${ev.start_date}T${ev.start_time}`
+      : ev.start_date,
+    eventStatus: 'https://schema.org/EventScheduled',
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    location: {
+      '@type': 'Place',
+      name: address || city,
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: city,
+        ...(address ? { streetAddress: address } : {}),
+        ...(country ? { addressCountry: country } : {}),
+      },
+      ...(hasCoords
+        ? { geo: { '@type': 'GeoCoordinates', latitude: lat, longitude: lng } }
+        : {}),
+    },
+    offers: {
+      '@type': 'Offer',
+      url,
+      price,
+      priceCurrency: currency,
+      ...(ev.donation ? { description: 'donation' } : {}),
+    },
+  };
+  if (ruText) doc.description = cleanText(ruText);
+  if (photo) doc.image = photo;
+  if (orgName) doc.organizer = { '@type': 'Organization', name: orgName };
+  if (lang) doc.inLanguage = lang;
+  return doc;
+}
+
+/**
+ * Копия dist/index.html для URL-пути: заменить <title>, meta description и
+ * canonical; базовые og:/twitter:-метки главной вычистить и пересобрать
+ * Open Graph для этой страницы (у события/города свои og:title/og:url/
+ * og:image); JSON-LD страницы (meta.jsonLd) добавить отдельным скриптом —
+ * базовый @graph WebSite/Organization из index.html остаётся на всех
+ * страницах. Остальной head и тело не трогаем.
  */
 function renderPage(baseHtml, meta) {
   let out = baseHtml.replace(/<title>[\s\S]*?<\/title>/i, () => `<title>${esc(meta.title)}</title>`);
   out = out.replace(/<meta\s+name=["']description["'][^>]*>/gi, '');
   out = out.replace(/<link\s+rel=["']canonical["'][^>]*\/?>/gi, '');
-  const block = [
+  out = out.replace(/<meta\s+(?:property|name)=["'](?:og|twitter):[^"']*["'][^>]*>/gi, '');
+  const lines = [
     `    <meta name="description" content="${esc(meta.description)}" />`,
     `    <link rel="canonical" href="${esc(meta.canonical)}" />`,
-  ].join('\n');
-  return out.replace(/<\/head>/i, `${block}\n  </head>`);
+    `    <meta property="og:site_name" content="MyPins" />`,
+    `    <meta property="og:type" content="website" />`,
+    `    <meta property="og:title" content="${esc(meta.ogTitle)}" />`,
+    `    <meta property="og:description" content="${esc(meta.ogDescription)}" />`,
+    `    <meta property="og:url" content="${esc(meta.ogUrl)}" />`,
+    `    <meta property="og:image" content="${esc(meta.ogImage)}" />`,
+    `    <meta name="twitter:card" content="summary_large_image" />`,
+  ];
+  if (meta.jsonLd) {
+    lines.push(`    <script type="application/ld+json">${ldJson(meta.jsonLd)}</script>`);
+  }
+  return out.replace(/<\/head>/i, `${lines.join('\n')}\n  </head>`);
 }
 
 /** Записать dist/<path>/index.html из шаблона */
@@ -188,14 +302,21 @@ async function main() {
   const baseHtml = readFileSync(join(DIST, 'index.html'), 'utf8');
   const locs = [`${SITE_URL}/`];
 
-  // Города
+  // Города: canonical/og:url — со слэшем (GitHub Pages отдаёт 200 только
+  // на /bali/, без слэша — 301)
   for (const c of CITY_PAGES) {
+    const url = `${SITE_URL}/${c.path}/`;
     writePage(baseHtml, c.path, {
       title: c.title,
       description: c.description,
-      canonical: `${SITE_URL}/${c.path}`,
+      canonical: url,
+      ogTitle: c.title,
+      ogDescription: c.description,
+      ogUrl: url,
+      ogImage: LOGO_URL,
+      jsonLd: null,
     });
-    locs.push(`${SITE_URL}/${c.path}`);
+    locs.push(url);
     console.log(`  /${c.path}/index.html`);
   }
 
@@ -205,7 +326,7 @@ async function main() {
   for (const ev of events) {
     if (!ev || typeof ev.id !== 'string' || typeof ev.title !== 'string') continue;
     const path = `event/${ev.id}/${slugify(ev.title)}`;
-    const url = `${SITE_URL}/${path}`;
+    const url = `${SITE_URL}/${path}/`;
     const title = snippet(`${ev.title} · ${ev.city ?? ''}`.trim(), 65) || 'Событие';
     const city = typeof ev.city === 'string' ? ev.city.trim() : '';
     // Текст, который видит русскоязычный посетитель (html lang="ru"),
@@ -214,7 +335,17 @@ async function main() {
     const date = ruDate(ev.start_date);
     const prefix = [city, date].filter(Boolean).join(', ');
     const description = snippet(prefix ? `${prefix}. ${ruText}` : ruText, 160);
-    writePage(baseHtml, path, { title, description, canonical: url });
+    const photo = Array.isArray(ev.photos) ? absPhoto(ev.photos[0]) : '';
+    writePage(baseHtml, path, {
+      title,
+      description,
+      canonical: url,
+      ogTitle: title,
+      ogDescription: description,
+      ogUrl: url,
+      ogImage: photo || LOGO_URL,
+      jsonLd: eventJsonLd(ev, url),
+    });
     locs.push(url);
     pageEvents.push(path);
   }
