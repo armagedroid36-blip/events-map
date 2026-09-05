@@ -17,13 +17,15 @@ import { geocodeAddress } from '../lib/geocode';
 import { eventCountry } from '../lib/countries';
 import { DEFAULT_FILTERS, eventMatchesFilters } from '../lib/eventFilters';
 import { navigate, slugify } from '../lib/navigate';
+import {
+  applyCityMeta,
+  applyEventMeta,
+  applyGenericMeta,
+  applyHomeMeta,
+} from '../lib/seo';
 import { config } from '../config';
 import { useAuth } from '../lib/auth';
 import type { Category, EventItem, Filters } from '../lib/types';
-
-// Заголовок вкладки по умолчанию (из index.html) — возвращаем при закрытии
-// карточки события и при размонтировании страницы
-const BASE_TITLE = document.title;
 
 /** Фильтры ещё не заданы (ничего не ограничивает) */
 function isDefaultFilters(f: Filters): boolean {
@@ -39,6 +41,19 @@ function isDefaultFilters(f: Filters): boolean {
     !f.city &&
     !f.query
   );
+}
+
+/** <head> под текущий маршрут (после закрытия карточки): город (/bali) или
+ * главная. На /event/<id>/... карточка закрывается переходом на '/', там
+ * мету поставит новый Home при монтировании. */
+function applyRouteMeta(): void {
+  const p = window.location.pathname;
+  const cityPath = config.quickLocations.find((q) => p === `/${slugify(q.labelEn)}`);
+  if (cityPath) {
+    applyCityMeta(slugify(cityPath.labelEn));
+  } else if (!p.startsWith('/event/')) {
+    applyHomeMeta();
+  }
 }
 
 export default function Home({ city, eventId }: { city?: string; eventId?: string }) {
@@ -168,7 +183,8 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
   // убираем её (и чистим старую hash-ссылку #/?e=, если вдруг осталась)
   function closeCard() {
     setSelected(null);
-    document.title = BASE_TITLE;
+    // <head>: возврат к мете текущего маршрута (город или главная)
+    applyRouteMeta();
     if (window.location.pathname.startsWith('/event/')) {
       navigate('/');
       return;
@@ -220,7 +236,9 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
             `/event/${encodeURIComponent(ev.id)}/${slugify(ev.title)}`,
           );
         } else {
-          // События нет (удалено/скрыто/завершено) — вместо карты заглушка
+          // События нет (удалено/скрыто/завершено) — вместо карты заглушка.
+          // Глубокий URL мёртв — мета базовая, canonical/og снимаем (404)
+          applyGenericMeta();
           setEventNotFound(true);
         }
       }
@@ -232,10 +250,22 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
     // страницы (App пересоздаёт Home по key при смене маршрута)
   }, [eventId]);
 
-  // Возврат исходного заголовка вкладки при размонтировании (смена маршрута)
+  // Мета <head> при монтировании: город (/bali) или главная. Маршрут события
+  // мету ставит сам после загрузки данных (selectEvent или «не найдено»)
+  useEffect(() => {
+    if (city) {
+      const ql = config.quickLocations.find((q) => q.labelEn === city);
+      if (ql) applyCityMeta(slugify(ql.labelEn));
+    } else if (!eventId) {
+      applyHomeMeta();
+    }
+  }, [city, eventId]);
+
+  // При размонтировании (смена маршрута) снимаем мету события/города — head
+  // доедет до верного состояния эффектами нового маршрута (новый Home/App)
   useEffect(() => {
     return () => {
-      document.title = BASE_TITLE;
+      applyGenericMeta();
     };
   }, []);
 
@@ -330,7 +360,9 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
   // возвращается исходный
   async function selectEvent(ev: EventItem) {
     setSelected(ev);
-    document.title = `${ev.title} · ${ev.city}`.trim();
+    // <head>: title «<название> · <город>», description, canonical и og —
+    // как у статического пре-рендера (src/lib/seo.ts)
+    applyEventMeta(ev);
     // На мобильном карточка поднимается до верха открытого списка
     // (список не сворачиваем — после закрытия карточки он снова виден)
     if (window.innerWidth < 1024) {

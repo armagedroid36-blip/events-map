@@ -17,6 +17,7 @@ import { getApi } from './lib/api';
 import { trackVisit } from './lib/trackVisit';
 import { config } from './config';
 import { navigate, slugify } from './lib/navigate';
+import { applyGenericMeta } from './lib/seo';
 
 // Страницы грузятся по требованию (code-split): тяжёлые зависимости
 // (карта, админка) уходят в отдельные чанки, основной чанк меньше.
@@ -97,6 +98,35 @@ export default function App() {
       window.removeEventListener('hashchange', onHash);
     };
   }, []);
+
+  useEffect(() => {
+    // Живые мета-теги head (src/lib/seo.ts). Home (карта/город/событие) ставит
+    // их сам — у него данные события и города; здесь — страницы вне списка
+    // (404, /org/<id>, личные hash-разделы): базовые title/description и БЕЗ
+    // canonical/og — чужой canonical с прошлой страницы не оставляем
+    // (в статическом index.html canonical/og нет вовсе).
+    if (recovery) {
+      applyGenericMeta();
+      return;
+    }
+    if (path !== '/') {
+      const isHomeRoute = path.startsWith('/event/') || CITY_ROUTES.has(path);
+      if (!isHomeRoute) applyGenericMeta();
+      return;
+    }
+    const isPrivateRoute =
+      route.startsWith('#/admin') ||
+      route.startsWith('#/my-events') ||
+      route.startsWith('#/history') ||
+      route.startsWith('#/privacy') ||
+      route.startsWith('#/contacts') ||
+      route.startsWith('#/profile') ||
+      route.startsWith('#/favorites') ||
+      route.startsWith('#/org/') ||
+      route.startsWith('#/unsubscribe');
+    if (isPrivateRoute) applyGenericMeta();
+    // Остальное на '/' — Home (карта/карточка события): мету ставит сам
+  }, [path, route, recovery]);
 
   // Hash-ссылки (<a href="#/privacy"> и т.п.) на чистом пути (например /bali)
   // не сработали бы: hash-логика App живёт только на '/'. Перехватываем клик
