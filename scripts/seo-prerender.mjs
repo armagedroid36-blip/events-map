@@ -1,15 +1,17 @@
-// SEO-пререндер (beta 0.12): после `vite build` генерирует в dist/ физические
+// SEO-пререндер (beta 0.14): после `vite build` генерирует в dist/ физические
 // index.html для /bali, /da-nang, /nha-trang, каждого активного
 // /event/<id>/<slug>, публичных профилей /org/<id>, блога /blog и статей
-// /blog/<slug> (в <head> — уникальные
+// /blog/<slug>, B2B-страницы «Для организаторов» /for-organizers (в <head> — уникальные
 // title/description, canonical и Open Graph со хвостовым слэшем, на событиях —
 // JSON-LD Event, на организаторах — ProfilePage+Organization, на статьях —
-// BlogPosting+BreadcrumbList, на /blog — Blog), чтобы
+// BlogPosting+BreadcrumbList, на /blog — Blog, на /for-organizers —
+// AboutPage+BreadcrumbList+FAQPage), чтобы
 // глубокие URL отдавали HTTP 200, и перезаписывает dist/sitemap.xml списком
 // всех страниц. Источник данных — тот же RPC, что зовёт сайт:
 // db.rpc('list_active_events') (src/lib/api.ts) — прошлые/скрытые/события
 // заблокированных организаторов сюда не попадают автоматически.
-// Статьи блога — src/content/articles.json (единый источник с SPA, не
+// Статьи блога — src/content/articles.json, «Для организаторов» —
+// src/content/forOrganizers.json (единые источники с SPA, не
 // дублировать тексты здесь).
 // Запуск: node scripts/seo-prerender.mjs (внутри "build" в package.json).
 // Ключи: VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY — из process.env (GHA)
@@ -194,6 +196,17 @@ function loadArticles() {
   return parsed;
 }
 
+/** Контент B2B-страницы «Для организаторов» из src/content/forOrganizers.json
+ * (readFileSync — единый источник с SPA src/pages/ForOrganizers.tsx) */
+function loadForOrganizers() {
+  const raw = readFileSync(join(ROOT, 'src/content/forOrganizers.json'), 'utf8');
+  const parsed = JSON.parse(raw);
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    throw new Error('forOrganizers.json: ожидался объект');
+  }
+  return parsed;
+}
+
 /**
  * Markdown-ссылки «[фраза](/путь)» → <a href="/путь">фраза</a>. Части текста
  * экранируются отдельно (esc), href — тоже; внешних ссылок в статьях нет,
@@ -263,6 +276,67 @@ function articleSeoHtml(article) {
     '</div>',
     '',
   ].join('\n');
+}
+
+/**
+ * Статический SEO-блок страницы «Для организаторов» (id=seo-b2b-block —
+ * как статьи/города: main.tsx удаляет его при монтировании SPA): h1 +
+ * интро + секции + FAQ (details/summary) + финальный CTA. Ровно один h1;
+ * секции рендерятся тем же кодом, что статьи (articleSectionsHtml /
+ * mdLinksToHtml — md-ссылки из forOrganizers.json превращаются в <a>).
+ */
+function forOrganizersSeoHtml(c) {
+  const faq = (c.faq ?? [])
+    .map(
+      (f) =>
+        `  <details><summary>${mdLinksToHtml(f.q)}</summary><p>${mdLinksToHtml(f.a)}</p></details>`,
+    )
+    .join('\n');
+  const lines = [
+    '<div id="seo-b2b-block">',
+    `  <h1>${esc(c.h1)}</h1>`,
+    `  <p>${mdLinksToHtml(c.intro ?? '')}</p>`,
+    articleSectionsHtml(c.sections),
+  ];
+  if (faq) lines.push(faq);
+  lines.push(`  <h2>${esc(c.final?.h2 ?? '')}</h2>`);
+  lines.push(`  <p>${mdLinksToHtml(c.final?.p ?? '')}</p>`);
+  lines.push('  <p><a href="/">Создать событие</a></p>');
+  lines.push('</div>', '');
+  return lines.join('\n');
+}
+
+/** JSON-LD страницы «Для организаторов»: AboutPage + BreadcrumbList
+ * («Главная > Для организаторов», как статьи) + FAQPage (4 Question/Answer
+ * из forOrganizers.json) в одном @graph. */
+function forOrganizersJsonLd(c, url) {
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'AboutPage',
+        name: c.h1,
+        description: c.description,
+        url,
+        inLanguage: 'ru',
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Главная', item: `${SITE_URL}/` },
+          { '@type': 'ListItem', position: 2, name: 'Для организаторов', item: url },
+        ],
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: (c.faq ?? []).map((f) => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a },
+        })),
+      },
+    ],
+  };
 }
 
 /** JSON-LD индекса: Blog со списком статей (blogPost) */
@@ -825,6 +899,26 @@ async function main() {
     console.log(`  /blog/${a.slug}/index.html`);
   }
   console.log(`  статей: ${blogArticles.length}, страниц всего: ${locs.length}`);
+
+  // B2B-страница «Для организаторов»: /for-organizers/ — контент из
+  // src/content/forOrganizers.json (единый источник с SPA, тексты здесь не
+  // дублируются). JSON-LD: AboutPage + BreadcrumbList + FAQPage.
+  const organizers = loadForOrganizers();
+  const organizersUrl = `${SITE_URL}/for-organizers/`;
+  writePage(baseHtml, 'for-organizers', {
+    title: String(organizers.title ?? ''),
+    description: String(organizers.description ?? ''),
+    canonical: organizersUrl,
+    ogTitle: String(organizers.title ?? ''),
+    ogDescription: String(organizers.description ?? ''),
+    ogUrl: organizersUrl,
+    ogImage: LOGO_URL,
+    jsonLd: forOrganizersJsonLd(organizers, organizersUrl),
+    bodySeo: forOrganizersSeoHtml(organizers),
+  });
+  locs.push(organizersUrl);
+  lastmods.set(organizersUrl, TODAY_ISO);
+  console.log('  /for-organizers/index.html');
 
   // sitemap.xml (перезапись). <lastmod> = дата сборки (TODAY_ISO) — сигнал
   // поисковикам, что контент страницы мог измениться; статьи блога несут

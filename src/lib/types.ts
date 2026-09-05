@@ -300,3 +300,37 @@ export interface Article {
   city: string | null;
   sections: ArticleSection[];
 }
+
+// --- Страница «Для организаторов» (src/content/forOrganizers.json — единый
+// источник для SPA src/pages/ForOrganizers.tsx и пре-рендера
+// scripts/seo-prerender.mjs) ---
+
+export interface FaqItem {
+  /** Вопрос (summary у details) */
+  q: string;
+  /** Ответ (p внутри details) */
+  a: string;
+}
+
+/** Финальный CTA-блок страницы: h2 «Начните прямо сейчас» + подводка к кнопке */
+export interface ForOrganizerFinal {
+  h2: string;
+  p: string;
+}
+
+export interface ForOrganizersContent {
+  /** <title> страницы */
+  title: string;
+  /** Заголовок h1 */
+  h1: string;
+  /** meta description */
+  description: string;
+  /** Вводный абзац под h1 */
+  intro: string;
+  /** Секции (типы как у статей: p/h2/ul) */
+  sections: ArticleSection[];
+  /** FAQ (рендерится details/summary; в статике — FAQPage JSON-LD) */
+  faq: FaqItem[];
+  /** Финальный CTA-блок (после FAQ) */
+  final: ForOrganizerFinal;
+}

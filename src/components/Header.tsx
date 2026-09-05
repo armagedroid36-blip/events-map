@@ -137,6 +137,12 @@ export default function Header({ onOpenForm }: HeaderProps) {
     setMenuOpen(false);
   }
 
+  /** Переход на B2B-страницу /for-organizers (публичный раздел, чистый URL) */
+  function goForOrganizers() {
+    navigate('/for-organizers');
+    setMenuOpen(false);
+  }
+
   // Страница без формы: «Создать событие» переходит на главную,
   // флаг в sessionStorage открывает там форму.
   const openForm = onOpenForm ?? (() => {
@@ -275,6 +281,14 @@ export default function Header({ onOpenForm }: HeaderProps) {
           >
             Блог
           </button>
+          {/* «Для организаторов» — публичная B2B-страница (та же видимость,
+              что у «Блога»: гостю на всех экранах, вошедшим с sm+) */}
+          <button
+            onClick={goForOrganizers}
+            className={`rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900${user ? ' hidden sm:block' : ''}`}
+          >
+            Для организаторов
+          </button>
           {/* Переключатель языка */}
           <button
             onClick={switchLang}
@@ -357,6 +371,12 @@ export default function Header({ onOpenForm }: HeaderProps) {
                       className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
                     >
                       Блог
+                    </button>
+                    <button
+                      onClick={goForOrganizers}
+                      className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      Для организаторов
                     </button>
                     <div className="my-1 border-t border-gray-100" />
                     {/* Политика и Контакты — видны в меню на мобильных (в шапке скрыты) */}
