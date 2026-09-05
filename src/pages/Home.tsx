@@ -608,6 +608,10 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
               onDelete={handleDeleteEvent}
               favoriteIds={favoriteIds}
               onToggleFavorite={user ? toggleFavorite : () => setAuthOpen(true)}
+              // Страница события /event/<id>/<slug>: единственный h1 —
+              // название открытой карточки (бренд и городской SEO-блок на
+              // этом маршруте не выводятся, см. Header.isBrandH1)
+              titleAsH1={window.location.pathname.startsWith('/event/')}
             />
           </div>
           <button

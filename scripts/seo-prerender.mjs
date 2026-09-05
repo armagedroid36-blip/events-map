@@ -423,6 +423,75 @@ function citySeoHtml(seo) {
   ].join('\n');
 }
 
+/**
+ * Статический SEO-блок события (RU) для вставки в <body> рядом с #root:
+ * ровно один h1 = название события (локализованное для RU — title_ru, иначе
+ * title, иначе title_en — как localizedText в src/lib/translate.ts с lang='ru')
+ * и под ним — дата/время, место, цена, описание и строка «Организатор:» со
+ * ссылкой на профиль (по заполненности полей; без фото). Дата — ближайшее
+ * БУДУЩЕЕ вхождение повторяющегося события, как в eventJsonLd
+ * (nextOccurrenceDate). Блок виден краулеру без JS; при живом React SPA
+ * удаляет его (main.tsx) и рисует карточку события сама — на странице
+ * остаётся ровно один h1.
+ */
+function eventSeoHtml(ev, url) {
+  const name = ev.title_ru || ev.title || ev.title_en || '';
+  const sd = nextOccurrenceDate(ev, TODAY_ISO);
+  const time = typeof ev.start_time === 'string' ? ev.start_time.trim() : '';
+  const city = typeof ev.city === 'string' ? ev.city.trim() : '';
+  const address = typeof ev.address === 'string' ? ev.address.trim() : '';
+  const price = ev.price != null ? Number(ev.price) : null;
+  const currency = (
+    typeof ev.currency === 'string' && ev.currency ? ev.currency : 'usd'
+  ).toUpperCase();
+  const donation = Boolean(ev.donation);
+  const ruText = ev.description_ru || ev.description || ev.description_en || '';
+  const orgName =
+    typeof ev.org_display_name === 'string' ? ev.org_display_name.trim() : '';
+  const ownerId = typeof ev.owner_id === 'string' ? ev.owner_id.trim() : '';
+
+  const lines = ['<div id="seo-event-block">'];
+  if (name) lines.push(`  <h1>${esc(name)}</h1>`);
+  if (sd) {
+    const dateText = time ? `${ruDate(sd)}, ${time}` : ruDate(sd);
+    const datetime = time ? `${sd}T${time}` : sd;
+    lines.push(`  <p><time datetime="${esc(datetime)}">${esc(dateText)}</time></p>`);
+  }
+  // Место: адрес и город, если заполнены (страна в событиях — код, не
+  // название). Адрес сборщика часто уже заканчивается городом
+  // («Lila Coffee, Нячанг») — город не дублируем.
+  let place = address;
+  if (!place) {
+    place = city;
+  } else if (
+    city &&
+    !place.toLowerCase().endsWith(`, ${city.toLowerCase()}`) &&
+    place.toLowerCase() !== city.toLowerCase()
+  ) {
+    place = `${place}, ${city}`;
+  }
+  if (place) lines.push(`  <address>${esc(place)}</address>`);
+  // Цена: платная — «{price} {currency}»; price 0 (или не указана) + donation —
+  // «Донат»; 0 — «Бесплатно»; не указана (null) — строку не выводим (в SPA
+  // «Цену уточняйте у организатора» — см. card.priceUnknown в ru.ts)
+  let priceText = '';
+  if (price != null && price > 0) {
+    priceText = `${price} ${currency}`;
+  } else if (donation) {
+    priceText = 'Донат';
+  } else if (price === 0) {
+    priceText = 'Бесплатно';
+  }
+  if (priceText) lines.push(`  <p>${esc(priceText)}</p>`);
+  if (ruText) lines.push(`  <p>${esc(ruText)}</p>`);
+  if (orgName && ownerId) {
+    const orgUrl = `${SITE_URL}/org/${encodeURIComponent(ownerId)}/`;
+    lines.push(`  <p>Организатор: <a href="${esc(orgUrl)}">${esc(orgName)}</a></p>`);
+  }
+  lines.push('</div>', '');
+  return lines.join('\n');
+}
+
 // --- Главный ход ---
 
 async function main() {
@@ -487,6 +556,7 @@ async function main() {
       ogUrl: url,
       ogImage: photo || LOGO_URL,
       jsonLd: eventJsonLd(ev, url),
+      bodySeo: eventSeoHtml(ev, url),
     });
     locs.push(url);
     pageEvents.push(path);
@@ -561,14 +631,15 @@ async function main() {
   }
   console.log(`  организаторов: ${pageOrgs}, страниц всего: ${locs.length}`);
 
-  // sitemap.xml (перезапись)
+  // sitemap.xml (перезапись). <lastmod> = дата сборки (TODAY_ISO) — сигнал
+  // поисковикам, что контент страницы мог измениться
   const xml = [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
     ...locs
       .slice()
       .sort((a, b) => a.localeCompare(b))
-      .map((u) => `  <url><loc>${esc(u)}</loc></url>`),
+      .map((u) => `  <url><loc>${esc(u)}</loc><lastmod>${TODAY_ISO}</lastmod></url>`),
     '</urlset>',
     '',
   ].join('\n');

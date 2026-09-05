@@ -134,6 +134,9 @@ interface Props {
   favoriteIds?: string[] | null;
   /** Переключить избранное (вызывается при клике на сердечко) */
   onToggleFavorite?: (id: string) => void;
+  /** Заголовок как h1 вместо h3 — на странице события /event/<id>/<slug>,
+   *  где это единственный h1 (бренд и городской SEO-блок там скрыты). */
+  titleAsH1?: boolean;
 }
 
 /** Полный URL фото: загруженные файлы хранятся как пути в хранилище */
@@ -519,7 +522,17 @@ function ShareButton({ url, title }: { url: string; title: string }) {
   );
 }
 
-export default function EventCard({ event, categories, onClose, isAdmin, isOwner, onDelete, favoriteIds = null, onToggleFavorite }: Props) {
+export default function EventCard({
+  event,
+  categories,
+  onClose,
+  isAdmin,
+  isOwner,
+  onDelete,
+  favoriteIds = null,
+  onToggleFavorite,
+  titleAsH1,
+}: Props) {
   const { t, i18n } = useTranslation();
   const [lightbox, setLightbox] = useState<number | null>(null);
   // Индексы фото с битыми ссылками (onError) — скрываем их, не пряча молча
@@ -570,7 +583,11 @@ export default function EventCard({ event, categories, onClose, isAdmin, isOwner
     <div className="rounded-lg p-4">
       <div className="mb-2 flex items-start justify-between gap-2">
         <div className="flex-1">
-          <h3 className="text-base font-semibold leading-snug text-gray-900">{title}</h3>
+          {titleAsH1 ? (
+            <h1 className="text-base font-semibold leading-snug text-gray-900">{title}</h1>
+          ) : (
+            <h3 className="text-base font-semibold leading-snug text-gray-900">{title}</h3>
+          )}
           {event.is_international && (
             <span className="mt-1 inline-block rounded-full bg-[#72D2CF]/25 px-2 py-0.5 text-[10px] font-semibold text-[#0F766E]">
               {t('card.international')}
