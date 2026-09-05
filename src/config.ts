@@ -22,7 +22,7 @@ export const config = {
   demoMode: false,
 
   // Версия сборки — показывается в шапке мелким текстом для сверки
-  buildVersion: 'beta 0.05',
+  buildVersion: 'beta 0.06',
 
   // Push-уведомления: ПУБЛИЧНЫЙ VAPID-ключ (приватный — в GitHub secrets,
   // VAPID_PRIVATE_KEY; рассылка — scripts/notify-push.mjs в GHA)
@@ -33,7 +33,7 @@ export const config = {
   privacyPolicyVersion,
 
   // Адрес сайта (для ссылок восстановления пароля Supabase)
-  siteUrl: 'https://armagedroid36-blip.github.io/events-map/',
+  siteUrl: 'https://mypins.site/',
 
   // --- Карта ---
   // Центр по умолчанию — Юго-Восточная Азия (используется, если посетитель
