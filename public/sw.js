@@ -55,3 +55,39 @@ self.addEventListener('notificationclick', (event) => {
     })(),
   );
 });
+
+// base64url -> Uint8Array (applicationServerKey для переподписки).
+// VAPID public key дублирует config.vapidPublicKey (публичный, не секрет) —
+// sw.js не бандлится, импортировать из src нельзя.
+const VAPID_PUBLIC_KEY =
+  'BETuziM1TY17y3z_rCvYbP5hbmqEfIomCX1BYLUnrFAZSLLGypumv9OuSAfTYYpFquJZ07xFo5x8oc9NJOY7CUY';
+function urlBase64ToUint8Array(base64) {
+  const padding = '='.repeat((4 - (base64.length % 4)) % 4);
+  const b64 = (base64 + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const raw = atob(b64);
+  const arr = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+  return arr;
+}
+
+// Push-сервис перевыпустил подписку (endpoint устарел): подписываемся заново
+// с тем же VAPID-ключом и сообщаем открытым вкладкам — они обновят endpoint
+// в базе (страницы сами пишут в БД: у них есть сессия/ключи).
+self.addEventListener('pushsubscriptionchange', (event) => {
+  event.waitUntil(
+    (async () => {
+      try {
+        const sub = await self.registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+        });
+        const clients = await self.clients.matchAll({ type: 'window' });
+        for (const c of clients) {
+          c.postMessage({ type: 'push-subscription-changed', endpoint: sub.endpoint });
+        }
+      } catch (err) {
+        console.error('Resubscribe failed:', err);
+      }
+    })(),
+  );
+});

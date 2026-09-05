@@ -222,6 +222,21 @@ export class DemoApi {
 
   async unsubscribeOrg(_token: string): Promise<void> {}
 
+  async subscribePush(
+    _orgId: string,
+    _sub: { endpoint: string; p256dh: string; auth: string },
+    _lang: string,
+    _siteOrigin: string,
+  ): Promise<string> {
+    return 'subscribed';
+  }
+
+  async unsubscribePush(_orgId: string, _endpoint: string): Promise<void> {}
+
+  async isPushSubscribed(_orgId: string, _endpoint: string): Promise<boolean> {
+    return false;
+  }
+
   // --- Админка (в демо-режиме доступна без входа) ---
 
   async listApplications(): Promise<Application[]> {

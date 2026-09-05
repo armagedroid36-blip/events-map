@@ -83,6 +83,17 @@ export interface DataApi {
   subscribeOrg(orgId: string, email: string): Promise<string>;
   /** Отписаться по токену из письма */
   unsubscribeOrg(token: string): Promise<void>;
+  /** Браузерная push-подписка на организатора: 'subscribed' | 'already' */
+  subscribePush(
+    orgId: string,
+    sub: { endpoint: string; p256dh: string; auth: string },
+    lang: string,
+    siteOrigin: string,
+  ): Promise<string>;
+  /** Убрать push-подписку этого браузера на организатора */
+  unsubscribePush(orgId: string, endpoint: string): Promise<void>;
+  /** Подписан ли endpoint этого браузера на организатора */
+  isPushSubscribed(orgId: string, endpoint: string): Promise<boolean>;
 
   // --- Авторизация ---
   signUp(
@@ -465,6 +476,39 @@ class SupabaseApi implements DataApi {
   async unsubscribeOrg(token: string): Promise<void> {
     const { error } = await this.db.rpc('unsubscribe_org', { p_token: token });
     if (error) throw error;
+  }
+
+  async subscribePush(
+    orgId: string,
+    sub: { endpoint: string; p256dh: string; auth: string },
+    lang: string,
+    siteOrigin: string,
+  ): Promise<string> {
+    const { data, error } = await this.db.rpc('subscribe_push', {
+      p_org_id: orgId,
+      p_sub: sub,
+      p_lang: lang,
+      p_site_origin: siteOrigin,
+    });
+    if (error) throw error;
+    return (data as string) ?? 'subscribed';
+  }
+
+  async unsubscribePush(orgId: string, endpoint: string): Promise<void> {
+    const { error } = await this.db.rpc('unsubscribe_push', {
+      p_org_id: orgId,
+      p_endpoint: endpoint,
+    });
+    if (error) throw error;
+  }
+
+  async isPushSubscribed(orgId: string, endpoint: string): Promise<boolean> {
+    const { data, error } = await this.db.rpc('is_push_subscribed', {
+      p_org_id: orgId,
+      p_endpoint: endpoint,
+    });
+    if (error) throw error;
+    return Boolean(data);
   }
 
   async getMyProfile(): Promise<Profile | null> {

@@ -251,6 +251,14 @@ export default {
     notFound: 'Organizer not found',
     invalidEmail: 'Enter a valid email',
     gallery: 'Gallery',
+    // Browser push notifications (block next to the email subscription)
+    pushSubscribeTitle: 'Browser notifications',
+    pushSubscribeButton: 'Subscribe to browser notifications about new events',
+    pushUnsubscribeButton: 'Unsubscribe from notifications',
+    pushSubscribed: "You are subscribed to this organizer's notifications.",
+    pushDenied: 'Notifications are blocked — allow them in your browser settings.',
+    pushUnsupported: 'Your browser does not support notifications.',
+    pushError: 'Could not subscribe. Please try again.',
     // Unsubscribe page (#/unsubscribe?token=...)
     unsubscribed: 'You have unsubscribed from this organizer\'s mailing.',
     unsubError: 'Could not unsubscribe. Check the link from the email.',

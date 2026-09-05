@@ -8,6 +8,8 @@ import Header from '../components/Header';
 import { getApi, photoUrl } from '../lib/api';
 import { formatDate } from '../lib/dates';
 import { localizedText } from '../lib/translate';
+import { config } from '../config';
+import { pushSupported, getBrowserSubscription, subscriptionData, urlBase64ToUint8Array } from '../lib/push';
 import type { OrgProfile, EventItem, Category, GalleryPhoto } from '../lib/types';
 
 /** Ссылки на мессенджеры из произвольного формата ввода (как в EventCard) */
@@ -345,6 +347,10 @@ export default function OrgProfilePage({ orgId }: Props) {
           {subMsg && <p className="rounded-md bg-green-50 px-3 py-2 text-sm text-green-800">{subMsg}</p>}
           {subErr && <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{subErr}</p>}
         </form>
+
+        {/* Браузерные push-уведомления о новых событиях организатора.
+            Отдельная карточка; не пересекается с email-подпиской выше */}
+        <OrgPushBlock orgId={orgId} />
       </div>
 
       {/* Лайтбокс: просмотр фото, стрелки ← →, Escape, клик по фону/крестик */}
@@ -388,6 +394,119 @@ export default function OrgProfilePage({ orgId }: Props) {
             {lightbox + 1} / {photos.length}
           </span>
         </div>
+      )}
+    </div>
+  );
+}
+
+/** Браузерные push-уведомления организатора (#/org/<id>): подписка/отписка
+ *  по клику (разрешение НЕ запрашивается при загрузке страницы). Работает и
+ *  для гостей. Механика отдельная от email-подписки и от общего диджеста в
+ *  профиле (push_subscriptions) — здесь подписка привязана к организатору. */
+function OrgPushBlock({ orgId }: { orgId: string }) {
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
+  const supported = pushSupported();
+  const [subscribed, setSubscribed] = useState(false);
+  const [denied, setDenied] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState('');
+
+  // Текущее состояние при открытии страницы: разрешение + подписка в БД.
+  // Никаких запросов разрешения — только чтение.
+  useEffect(() => {
+    if (!supported) return;
+    let alive = true;
+    (async () => {
+      if (Notification.permission === 'denied') {
+        if (alive) setDenied(true);
+        return;
+      }
+      try {
+        const sub = await getBrowserSubscription();
+        if (!alive || !sub) return;
+        const ok = await getApi().isPushSubscribed(orgId, sub.endpoint).catch(() => false);
+        if (alive) setSubscribed(ok);
+      } catch {
+        // сетевые ошибки: остаёмся на кнопке «Подписаться»
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [supported, orgId]);
+
+  async function onSubscribe() {
+    setBusy(true);
+    setErr('');
+    try {
+      const perm = await Notification.requestPermission();
+      if (perm !== 'granted') {
+        setErr(t('org.pushDenied'));
+        return;
+      }
+      // Регистрация SW: работает и в корне (mypins.site), и в подпапке
+      // (github.io/events-map) — путь строится от текущего URL.
+      const reg = await navigator.serviceWorker.register(new URL('sw.js', window.location.href));
+      await navigator.serviceWorker.ready;
+      const sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(config.vapidPublicKey),
+      });
+      const { endpoint, p256dh, auth } = subscriptionData(sub);
+      // База страницы без hash: на неё вешает клик по уведомлению (#/?e=<id>)
+      const base = window.location.href.split('#')[0] || window.location.origin;
+      const res = await getApi().subscribePush(orgId, { endpoint, p256dh, auth }, lang, base);
+      if (res === 'Organizer not found') {
+        setErr(t('org.notFound'));
+        return;
+      }
+      setSubscribed(true);
+    } catch {
+      setErr(t('org.pushError'));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onUnsubscribe() {
+    setBusy(true);
+    setErr('');
+    try {
+      const sub = await getBrowserSubscription();
+      if (sub) {
+        await getApi().unsubscribePush(orgId, sub.endpoint);
+      }
+      // Браузерную подписку НЕ гасим глобально: endpoint может использоваться
+      // другими организаторами и диджест-подпиской в профиле
+      setSubscribed(false);
+    } catch {
+      setErr(t('org.pushError'));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (!supported) return null; // нет Web Push (напр. iOS Safari < 16.4) — блок скрыт
+
+  return (
+    <div className="mt-4 rounded-lg border border-gray-200 bg-white p-4 text-sm">
+      <h2 className="font-semibold text-gray-900">{t('org.pushSubscribeTitle')}</h2>
+      {denied ? (
+        <p className="mt-2 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{t('org.pushDenied')}</p>
+      ) : (
+        <>
+          <button
+            type="button"
+            onClick={subscribed ? onUnsubscribe : onSubscribe}
+            disabled={busy}
+            className="mt-3 w-full rounded-md bg-gray-900 px-3 py-2.5 text-sm font-semibold text-white hover:bg-gray-700 disabled:opacity-50"
+          >
+            {busy ? '...' : subscribed ? t('org.pushUnsubscribeButton') : t('org.pushSubscribeButton')}
+          </button>
+          {subscribed && <p className="mt-2 rounded-md bg-green-50 px-3 py-2 text-sm text-green-800">{t('org.pushSubscribed')}</p>}
+          {!subscribed && err && <p className="mt-2 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{err}</p>}
+        </>
       )}
     </div>
   );
