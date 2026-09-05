@@ -3,9 +3,9 @@
 // /event/<id>/<slug>, публичных профилей /org/<id>, блога /blog и статей
 // /blog/<slug>, B2B-страницы «Для организаторов» /for-organizers (в <head> — уникальные
 // title/description, canonical и Open Graph со хвостовым слэшем, на событиях —
-// JSON-LD Event, на организаторах — ProfilePage+Organization, на статьях —
-// BlogPosting+BreadcrumbList, на /blog — Blog, на /for-organizers —
-// AboutPage+BreadcrumbList+FAQPage), чтобы
+// JSON-LD Event+BreadcrumbList, на организаторах — ProfilePage+Organization+
+// BreadcrumbList, на статьях — BlogPosting+BreadcrumbList, на /blog — Blog,
+// на /for-organizers — AboutPage+BreadcrumbList+FAQPage), чтобы
 // глубокие URL отдавали HTTP 200, и перезаписывает dist/sitemap.xml списком
 // всех страниц. Источник данных — тот же RPC, что зовёт сайт:
 // db.rpc('list_active_events') (src/lib/api.ts) — прошлые/скрытые/события
@@ -504,7 +504,34 @@ function snippet(text, max) {
 }
 
 /**
- * JSON-LD Event для страницы события. Данные — из ответа list_active_events
+ * Распознавание города события по ev.city → русское имя и путь городской
+ * страницы для хлебной крошки. Регистронезависимо, поиск подстроки в
+ * lowercase-строке. Районы Бали (Убуд, Чангу, Семиньяк, Кута, Денпасар,
+ * Гианьяр) и «Bali»/«бали» → Бали. Не распознано → null (крошка из 2 звеньев).
+ */
+function cityCrumb(rawCity) {
+  const city = String(rawCity ?? '').toLowerCase();
+  if (!city) return null;
+  if (city.includes('нячанг') || city.includes('nha trang')) {
+    return { name: 'Нячанг', path: 'nha-trang' };
+  }
+  if (city.includes('дананг') || city.includes('da nang') || city.includes('danang')) {
+    return { name: 'Дананг', path: 'da-nang' };
+  }
+  const baliKeys = [
+    'бали', 'bali', 'ubud', 'убуд', 'canggu', 'чангу',
+    'seminyak', 'семиньяк', 'kuta', 'кута', 'denpasar', 'gianyar',
+  ];
+  if (baliKeys.some((k) => city.includes(k))) {
+    return { name: 'Бали', path: 'bali' };
+  }
+  return null;
+}
+
+/**
+ * JSON-LD Event для страницы события: @graph из Event (поля как раньше) и
+ * BreadcrumbList (Главная > город, если распознан > название события как в
+ * h1 статического блока). Данные — из ответа list_active_events
  * (как ev на сайте): название/описание на языке оригинала, координаты,
  * адрес/город, первое фото, цена. url — канонический URL события (со слэшем).
  */
@@ -541,7 +568,6 @@ function eventJsonLd(ev, url) {
   const sd = nextOccurrenceDate(ev, TODAY_ISO);
 
   const doc = {
-    '@context': 'https://schema.org',
     '@type': 'Event',
     name: String(ev.title ?? ''),
     url,
@@ -573,7 +599,36 @@ function eventJsonLd(ev, url) {
   if (photo) doc.image = photo;
   if (orgName) doc.organizer = { '@type': 'Organization', name: orgName };
   if (lang) doc.inLanguage = lang;
-  return doc;
+
+  // Хлебная крошка: Главная > город (если распознан по ev.city) > название
+  // события как в h1 статического блока (eventSeoHtml: title_ru || title ||
+  // title_en). @graph — как у статей (articleJsonLd), чтобы ld+json остался
+  // одним блоком на странице.
+  const items = [
+    { '@type': 'ListItem', position: 1, name: 'Главная', item: `${SITE_URL}/` },
+  ];
+  const crumb = cityCrumb(ev.city);
+  if (crumb) {
+    items.push({
+      '@type': 'ListItem',
+      position: 2,
+      name: crumb.name,
+      item: `${SITE_URL}/${crumb.path}/`,
+    });
+  }
+  items.push({
+    '@type': 'ListItem',
+    position: items.length + 1,
+    name: ev.title_ru || ev.title || ev.title_en || '',
+    item: url,
+  });
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      doc,
+      { '@type': 'BreadcrumbList', itemListElement: items },
+    ],
+  };
 }
 
 /**
@@ -850,15 +905,26 @@ async function main() {
       ogImage: image,
       jsonLd: {
         '@context': 'https://schema.org',
-        '@type': 'ProfilePage',
-        url,
-        mainEntity: {
-          '@type': 'Organization',
-          name,
-          url,
-          logo: image,
-          ...(bio ? { description: bio } : {}),
-        },
+        '@graph': [
+          {
+            '@type': 'ProfilePage',
+            url,
+            mainEntity: {
+              '@type': 'Organization',
+              name,
+              url,
+              logo: image,
+              ...(bio ? { description: bio } : {}),
+            },
+          },
+          {
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Главная', item: `${SITE_URL}/` },
+              { '@type': 'ListItem', position: 2, name, item: url },
+            ],
+          },
+        ],
       },
       bodySeo,
     });
