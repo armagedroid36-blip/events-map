@@ -6,12 +6,14 @@ import './index.css';
 import App from './App';
 import { AuthProvider } from './lib/auth';
 
-// Статический SEO-блок города (h1+интро+FAQ, RU) кладёт в HTML пре-рендер
-// (scripts/seo-prerender.mjs) — его видит краулер без JS. При живом React
-// городскую страницу рисует сам Home (тот же текст из i18n, локализованный),
-// поэтому статический блок удаляем — на странице должен остаться ровно один
-// h1. Элемент есть только на городских страницах (bali/da-nang/nha-trang).
-document.getElementById('seo-city-block')?.remove();
+// Статические SEO-блоки кладёт в HTML пре-рендер (scripts/seo-prerender.mjs):
+// городские страницы (h1+интро+FAQ, id=seo-city-block) и профили
+// организаторов (h1+bio, id=seo-org-block) — их видит краулер без JS. При
+// живом React страницу рисует сам SPA (Home — городской текст из i18n,
+// OrgProfilePage — свой h1), поэтому статические блоки удаляем — на странице
+// должен остаться ровно один h1. Элементы есть только на пре-рендеренных
+// страницах (bali/da-nang/nha-trang, /org/<id>).
+document.querySelectorAll('#seo-city-block, #seo-org-block').forEach((el) => el.remove());
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

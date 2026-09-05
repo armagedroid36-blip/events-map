@@ -1,7 +1,8 @@
-// SEO-пререндер (beta 0.07): после `vite build` генерирует в dist/ физические
-// index.html для /bali, /da-nang, /nha-trang и каждого активного
-// /event/<id>/<slug> (в <head> — уникальные title/description, canonical и
-// Open Graph со хвостовым слэшем, на событиях — ещё JSON-LD Event), чтобы
+// SEO-пререндер (beta 0.10): после `vite build` генерирует в dist/ физические
+// index.html для /bali, /da-nang, /nha-trang, каждого активного
+// /event/<id>/<slug> и публичных профилей /org/<id> (в <head> — уникальные
+// title/description, canonical и Open Graph со хвостовым слэшем, на событиях —
+// JSON-LD Event, на организаторах — ProfilePage+Organization), чтобы
 // глубокие URL отдавали HTTP 200, и перезаписывает dist/sitemap.xml списком
 // всех страниц. Источник данных — тот же RPC, что зовёт сайт:
 // db.rpc('list_active_events') (src/lib/api.ts) — прошлые/скрытые/события
@@ -11,11 +12,12 @@
 // или .env рядом с проектом (локальная сборка; подгружается сам, без
 // новых зависимостей).
 //
-// Правила URL: canonical/og:url и loc в sitemap для городов и событий —
-// СО слэшем (https://mypins.site/bali/, /event/<id>/<slug>/): физическая
-// страница лежит как <path>/index.html, GitHub Pages отдаёт 200 только со
-// слэшем (без слэша — 301). SPA-схему URL (pushState без слэша) НЕ трогаем —
-// клиентский normPath (src/App.tsx) срезает хвостовой слэш сам.
+// Правила URL: canonical/og:url и loc в sitemap для городов, событий и
+// организаторов — СО слэшем (https://mypins.site/bali/, /event/<id>/<slug>/,
+// /org/<id>/): физическая страница лежит как <path>/index.html, GitHub Pages
+// отдаёт 200 только со слэшем (без слэша — 301). SPA-схему URL (pushState без
+// слэша) НЕ трогаем — клиентский normPath (src/App.tsx) срезает хвостовой
+// слэш сам.
 
 import { createClient } from '@supabase/supabase-js';
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -490,6 +492,74 @@ async function main() {
     pageEvents.push(path);
   }
   console.log(`  событий: ${pageEvents.length}, страниц всего: ${locs.length}`);
+
+  // Организаторы: /org/<id> — публичные профили организаторов, у которых в
+  // списке событий выше есть owner_id. Профиль — из публичного RPC
+  // get_org_profile (как src/lib/api.ts:443-451). Страница пишется только
+  // если display_name непустой И (у org есть активные события || bio
+  // непустой) — пустышки остаются 404 и в sitemap не попадают.
+  // КОНТАКТЫ (телефон/email/telegram/instagram и пр.) в статический HTML и
+  // JSON-LD не выводятся НИКОГДА — даже при contacts_public=true: индексация
+  // профиля не должна публиковать личные данные, их покажет живой React.
+  const orgIds = [
+    ...new Set(
+      events.map((ev) => ev.owner_id).filter((id) => typeof id === 'string' && id.length > 0),
+    ),
+  ];
+  let pageOrgs = 0;
+  for (const id of orgIds) {
+    const { data, error } = await db
+      .rpc('get_org_profile', { p_org_id: id })
+      .maybeSingle();
+    if (error) {
+      console.log(`  /org/${id}: пропущен (${error.message})`);
+      continue;
+    }
+    const profile = data ?? null;
+    const name = typeof profile?.display_name === 'string' ? profile.display_name.trim() : '';
+    const bio = typeof profile?.bio === 'string' ? profile.bio.trim() : '';
+    const hasEvents = events.some((ev) => ev.owner_id === id);
+    if (!name || (!hasEvents && !bio)) continue;
+    const url = `${SITE_URL}/org/${encodeURIComponent(id)}/`;
+    const title = `${snippet(name, 40)}: события и афиша | MyPins`;
+    const description = bio
+      ? snippet(bio, 155)
+      : `${name} — организатор событий. Актуальная афиша на карте MyPins: даты, места и цены.`;
+    const avatar =
+      typeof profile.avatar_url === 'string' && profile.avatar_url.trim()
+        ? profile.avatar_url.trim()
+        : '';
+    const image = avatar ? absPhoto(avatar) : LOGO_URL;
+    const bodySeo = `<div id="seo-org-block">\n  <h1>${esc(name)}</h1>${
+      bio ? `\n  <p>${esc(bio)}</p>` : ''
+    }\n</div>`;
+    writePage(baseHtml, `org/${encodeURIComponent(id)}`, {
+      title,
+      description,
+      canonical: url,
+      ogTitle: title,
+      ogDescription: description,
+      ogUrl: url,
+      ogImage: image,
+      jsonLd: {
+        '@context': 'https://schema.org',
+        '@type': 'ProfilePage',
+        url,
+        mainEntity: {
+          '@type': 'Organization',
+          name,
+          url,
+          logo: image,
+          ...(bio ? { description: bio } : {}),
+        },
+      },
+      bodySeo,
+    });
+    locs.push(url);
+    pageOrgs += 1;
+    console.log(`  /org/${id}/index.html`);
+  }
+  console.log(`  организаторов: ${pageOrgs}, страниц всего: ${locs.length}`);
 
   // sitemap.xml (перезапись)
   const xml = [

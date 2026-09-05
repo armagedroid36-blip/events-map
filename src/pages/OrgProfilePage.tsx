@@ -9,6 +9,7 @@ import { getApi, photoUrl } from '../lib/api';
 import { formatDate } from '../lib/dates';
 import { localizedText } from '../lib/translate';
 import { config } from '../config';
+import { applyGenericMeta, applyOrgMeta } from '../lib/seo';
 import { pushSupported, getBrowserSubscription, subscriptionData, urlBase64ToUint8Array } from '../lib/push';
 import { navigate } from '../lib/navigate';
 import type { OrgProfile, EventItem, Category, GalleryPhoto } from '../lib/types';
@@ -106,6 +107,16 @@ export default function OrgProfilePage({ orgId }: Props) {
       alive = false;
     };
   }, [orgId]);
+
+  // Мета-теги страницы (SEO, src/lib/seo.ts): App при входе на /org/<id>
+  // ставит generic (App.tsx), здесь — поверх после загрузки данных:
+  // найден организатор → applyOrgMeta (title/description/canonical/OG),
+  // не найден/сетевая ошибка → applyGenericMeta остаётся (без canonical).
+  useEffect(() => {
+    if (loading) return;
+    if (profile) applyOrgMeta(profile);
+    else applyGenericMeta();
+  }, [loading, profile, orgId]);
 
   // Escape закрывает лайтбокс
   useEffect(() => {

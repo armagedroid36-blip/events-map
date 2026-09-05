@@ -16,7 +16,7 @@
 import { config } from '../config';
 import { photoUrl } from './api';
 import { slugify } from './navigate';
-import type { EventItem } from './types';
+import type { EventItem, OrgProfile } from './types';
 
 /** Адрес сайта без хвостового слэша (config.siteUrl = 'https://mypins.site/') */
 const SITE_URL = config.siteUrl.replace(/\/+$/, '');
@@ -198,6 +198,46 @@ export function applyEventMeta(ev: EventItem): void {
     ? photo.startsWith('http')
       ? photo
       : photoUrl(photo)
+    : `${SITE_URL}/logo.png`;
+  apply({
+    title,
+    description,
+    canonical,
+    og: {
+      'og:title': title,
+      'og:description': description,
+      'og:url': canonical,
+      'og:image': image,
+    },
+  });
+}
+
+/**
+ * Организатор (/org/<id>): title/description/OG как в пре-рендере
+ * (seo-prerender.mjs, блок /org/<id>), canonical со слэшем. og:image —
+ * аватарка (абсолютный URL через photoUrl) или логотип сайта. Контакты
+ * (телефон/email/telegram и пр.) в мету и og НЕ попадают никогда — даже при
+ * contacts_public=true (их показывает только живая страница).
+ */
+export function applyOrgMeta(profile: OrgProfile): void {
+  const name = (profile.display_name ?? '').trim();
+  // Профиль-пустышка без названия: как 404 — базовые title/description без
+  // canonical/og (статической страницы у такого org нет, индексировать нечего).
+  if (!name) {
+    applyGenericMeta();
+    return;
+  }
+  const bio = (profile.bio ?? '').trim();
+  const title = `${snippet(name, 40)}: события и афиша | MyPins`;
+  const description = bio
+    ? snippet(bio, 155)
+    : `${name} — организатор событий. Актуальная афиша на карте MyPins: даты, места и цены.`;
+  const canonical = `${SITE_URL}/org/${encodeURIComponent(profile.id)}/`;
+  const avatar = (profile.avatar_url ?? '').trim();
+  const image = avatar
+    ? avatar.startsWith('http')
+      ? avatar
+      : photoUrl(avatar)
     : `${SITE_URL}/logo.png`;
   apply({
     title,
