@@ -640,6 +640,21 @@ function citySeoHtml(seo) {
   ].join('\n');
 }
 
+/** JSON-LD FAQPage городской страницы: те же вопросы и ответы, что в
+ * видимом блоке <details><summary> (citySeoHtml). Отдельный ld+json-скрипт —
+ * базовый @graph WebSite/Organization из index.html остаётся первым. */
+function faqPageJsonLd(faq) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  };
+}
+
 /**
  * Статический SEO-блок события (RU) для вставки в <body> рядом с #root:
  * ровно один h1 = название события (локализованное для RU — title_ru, иначе
@@ -736,6 +751,8 @@ async function main() {
   for (const c of CITY_PAGES) {
     const url = `${SITE_URL}/${c.path}/`;
     const seo = CITY_SEO[c.path];
+    // FAQPage (отдельным ld+json-скриптом) — только если у города есть faq
+    const faqLd = seo?.faq?.length ? faqPageJsonLd(seo.faq) : null;
     writePage(baseHtml, c.path, {
       title: c.title,
       description: c.description,
@@ -744,7 +761,7 @@ async function main() {
       ogDescription: c.description,
       ogUrl: url,
       ogImage: LOGO_URL,
-      jsonLd: null,
+      jsonLd: faqLd,
       bodySeo: seo ? citySeoHtml(seo) : null,
     });
     locs.push(url);
