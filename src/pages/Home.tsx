@@ -4,7 +4,8 @@
 import { lazy, Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
-import MapView, { type MapBounds } from '../components/MapView';
+import type { MapBounds } from '../components/MapView';
+const MapView = lazy(() => import('../components/MapView'));
 import FiltersPanel from '../components/Filters';
 import EventsList from '../components/EventsList';
 import EventCard from '../components/EventCard';
@@ -13,7 +14,6 @@ const EventForm = lazy(() => import('../components/EventForm'));
 import AuthModal from '../components/AuthModal';
 import { getApi } from '../lib/api';
 import { ruToEn } from '../lib/cities';
-import { geocodeAddress } from '../lib/geocode';
 import { eventCountry } from '../lib/countries';
 import { DEFAULT_FILTERS, eventMatchesFilters } from '../lib/eventFilters';
 import { navigate, slugify } from '../lib/navigate';
@@ -338,7 +338,8 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
     const c = city.trim();
     if (!c) return;
     geocodeCityRef.current = c;
-    geocodeAddress(ruToEn(c))
+    import('../lib/geocode')
+      .then((m) => m.geocodeAddress(ruToEn(c)))
       .then((coords) => {
         if (coords && geocodeCityRef.current === c) {
           setCenter(coords);
@@ -445,19 +446,21 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
     <div className="relative h-screen w-full overflow-hidden bg-white">
       {/* КАРТА НА ВЕСЬ ЭКРАН — фон сайта */}
       <div className="absolute inset-0">
-        <MapView
-          events={visible}
-          categories={categories}
-          onSelect={selectEvent}
-          center={center}
-          zoom={zoom}
-          onBoundsChange={setBounds}
-          favoriteIds={favoriteIds}
-          onMapClick={() => {
-            closeCard();
-            setListOpen(false);
-          }}
-        />
+        <Suspense fallback={<div className="absolute inset-0 bg-white" />}>
+          <MapView
+            events={visible}
+            categories={categories}
+            onSelect={selectEvent}
+            center={center}
+            zoom={zoom}
+            onBoundsChange={setBounds}
+            favoriteIds={favoriteIds}
+            onMapClick={() => {
+              closeCard();
+              setListOpen(false);
+            }}
+          />
+        </Suspense>
       </div>
 
       {/* Шапка поверх карты — плавающая, с закруглёнными краями.
