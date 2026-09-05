@@ -32,6 +32,8 @@ const Favorites = lazy(() => import('./pages/Favorites'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const OrgProfilePage = lazy(() => import('./pages/OrgProfilePage'));
 const UnsubscribePage = lazy(() => import('./pages/UnsubscribePage'));
+const BlogIndex = lazy(() => import('./pages/Blog').then((m) => ({ default: m.BlogIndex })));
+const ArticlePage = lazy(() => import('./pages/Blog').then((m) => ({ default: m.ArticlePage })));
 
 // Пути городов из быстрых кнопок: labelEn 'Bali'/'Da Nang'/'Nha Trang'
 // → '/bali', '/da-nang', '/nha-trang'
@@ -110,7 +112,9 @@ export default function App() {
       return;
     }
     if (path !== '/') {
-      const isHomeRoute = path.startsWith('/event/') || CITY_ROUTES.has(path);
+      const isHomeRoute =
+        path.startsWith('/event/') || CITY_ROUTES.has(path) || path === '/blog' || path.startsWith('/blog/');
+      // /blog и статьи мету ставят сами (BlogIndex/ArticlePage), как Home
       if (!isHomeRoute) applyGenericMeta();
       return;
     }
@@ -128,9 +132,11 @@ export default function App() {
     // Остальное на '/' — Home (карта/карточка события): мету ставит сам
   }, [path, route, recovery]);
 
-  // Hash-ссылки (<a href="#/privacy"> и т.п.) на чистом пути (например /bali)
-  // не сработали бы: hash-логика App живёт только на '/'. Перехватываем клик
-  // и уходим на '/' с этим hash. На '/' — обычное поведение браузера.
+  // Внутренние ссылки в SPA: hash-ссылки (#/...) на чистом пути (например
+  // /bali) не сработали бы — hash-логика App живёт только на '/'. Перехватываем
+  // клик и уходим на '/' с этим hash. На '/' — обычное поведение браузера.
+  // Плюс чистые внутренние ссылки (href="/bali", "/blog/..." — тексты статей
+  // блога, карточки /blog): открываем navigate() без перезагрузки страницы.
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
       if (
@@ -146,7 +152,14 @@ export default function App() {
       const a = (e.target as Element | null)?.closest?.('a');
       if (!a || a.target === '_blank') return;
       const href = a.getAttribute('href');
-      if (!href || !href.startsWith('#/')) return;
+      if (!href) return;
+      if (href.startsWith('/') && !href.startsWith('//') && !href.startsWith('/#')) {
+        // Внутренний чистый путь (город, статья блога, событие) — SPA-переход
+        e.preventDefault();
+        navigate(href);
+        return;
+      }
+      if (!href.startsWith('#/')) return;
       if (window.location.pathname === '/') return; // на '/' hash работает как раньше
       e.preventDefault();
       navigate(href === '#/' ? '/' : `/${href}`);
@@ -167,13 +180,21 @@ export default function App() {
       const orgM = path.match(/^\/org\/([^/]+)$/);
       if (orgM) {
         page = <OrgProfilePage key={`org:${orgM[1]}`} orgId={decodeURIComponent(orgM[1])} />;
+      } else if (path === '/blog') {
+        page = <BlogIndex key="blog" />;
       } else {
-        const cityLabel = CITY_ROUTES.get(path);
-        page = cityLabel ? (
-          <Home key={`city:${cityLabel}`} city={cityLabel} />
-        ) : (
-          <NotFound key="404" />
-        );
+        const artM = path.match(/^\/blog\/([^/]+)$/);
+        if (artM) {
+          // Неизвестный slug: ArticlePage сам рисует заглушку 404
+          page = <ArticlePage key={`article:${artM[1]}`} slug={decodeURIComponent(artM[1])} />;
+        } else {
+          const cityLabel = CITY_ROUTES.get(path);
+          page = cityLabel ? (
+            <Home key={`city:${cityLabel}`} city={cityLabel} />
+          ) : (
+            <NotFound key="404" />
+          );
+        }
       }
     }
   } else if (route.startsWith('#/admin')) {

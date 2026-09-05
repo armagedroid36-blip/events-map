@@ -277,3 +277,26 @@ export interface GalleryPhoto {
   photo_path: string;
   created_at: string;
 }
+
+// --- Блог (src/content/articles.json — единый источник для SPA и пре-рендера) ---
+
+export type ArticleSection =
+  | { type: 'p' | 'h2'; text: string }
+  | { type: 'ul'; items: string[] };
+
+export interface Article {
+  /** URL-часть: /blog/<slug>/ */
+  slug: string;
+  /** <title> статьи (<=60 символов) */
+  title: string;
+  /** Заголовок h1 */
+  h1: string;
+  /** meta description (140-160 символов) */
+  description: string;
+  datePublished: string;
+  dateModified: string;
+  lang: 'ru' | 'en';
+  /** Город статьи: nha-trang | bali | null (общая тема) */
+  city: string | null;
+  sections: ArticleSection[];
+}

@@ -16,7 +16,7 @@
 import { config } from '../config';
 import { photoUrl } from './api';
 import { slugify } from './navigate';
-import type { EventItem, OrgProfile } from './types';
+import type { Article, EventItem, OrgProfile } from './types';
 
 /** Адрес сайта без хвостового слэша (config.siteUrl = 'https://mypins.site/') */
 const SITE_URL = config.siteUrl.replace(/\/+$/, '');
@@ -53,7 +53,7 @@ const RU_MONTHS = [
 ];
 
 /** «2026-09-05» → «5 сентября 2026» (русские месяцы вручную, без TZ-сюрпризов Intl) */
-function ruDate(iso: string | null | undefined): string {
+export function ruDate(iso: string | null | undefined): string {
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso ?? '');
   if (!m) return iso ?? '';
   const month = RU_MONTHS[Number(m[2]) - 1];
@@ -248,6 +248,47 @@ export function applyOrgMeta(profile: OrgProfile): void {
       'og:description': description,
       'og:url': canonical,
       'og:image': image,
+    },
+  });
+}
+
+// --- Блог: /blog и /blog/<slug> ---
+// Title/description — как в пре-рендере (scripts/seo-prerender.mjs, блок
+// «Блог» ниже main()): держать синхронно при правке текстов.
+
+const BLOG_META = {
+  title: 'Блог MyPins: гиды по событиям и афиша | MyPins',
+  description:
+    'Гиды по событийной жизни Бали, Нячанга и Дананга: куда сходить, что посмотреть, сколько стоят события. Подборки от команды MyPins.',
+};
+
+/** /blog: список статей. canonical со слэшем, og — логотип сайта. */
+export function applyBlogMeta(): void {
+  apply({
+    title: BLOG_META.title,
+    description: BLOG_META.description,
+    canonical: `${SITE_URL}/blog/`,
+    og: {
+      'og:title': BLOG_META.title,
+      'og:description': BLOG_META.description,
+      'og:url': `${SITE_URL}/blog/`,
+      'og:image': `${SITE_URL}/logo.png`,
+    },
+  });
+}
+
+/** /blog/<slug>: мета статьи из articles.json (как статический пре-рендер). */
+export function applyArticleMeta(article: Article): void {
+  const canonical = `${SITE_URL}/blog/${article.slug}/`;
+  apply({
+    title: article.title,
+    description: article.description,
+    canonical,
+    og: {
+      'og:title': article.title,
+      'og:description': article.description,
+      'og:url': canonical,
+      'og:image': `${SITE_URL}/logo.png`,
     },
   });
 }

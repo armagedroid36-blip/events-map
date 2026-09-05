@@ -131,6 +131,12 @@ export default function Header({ onOpenForm }: HeaderProps) {
     if (window.location.hash !== '#/') window.location.hash = '#/';
   }
 
+  /** Переход в блог /blog (публичный раздел, чистый URL) */
+  function goBlog() {
+    navigate('/blog');
+    setMenuOpen(false);
+  }
+
   // Страница без формы: «Создать событие» переходит на главную,
   // флаг в sessionStorage открывает там форму.
   const openForm = onOpenForm ?? (() => {
@@ -261,6 +267,14 @@ export default function Header({ onOpenForm }: HeaderProps) {
               {n.label}
             </button>
           ))}
+          {/* Блог — публичные статьи. Гостю (без меню-бургера) виден на всех
+              экранах; вошедшим на узких экранах скрыт — пункт есть в меню */}
+          <button
+            onClick={goBlog}
+            className={`rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900${user ? ' hidden sm:block' : ''}`}
+          >
+            Блог
+          </button>
           {/* Переключатель языка */}
           <button
             onClick={switchLang}
@@ -338,6 +352,12 @@ export default function Header({ onOpenForm }: HeaderProps) {
                         {n.label}
                       </button>
                     ))}
+                    <button
+                      onClick={goBlog}
+                      className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      Блог
+                    </button>
                     <div className="my-1 border-t border-gray-100" />
                     {/* Политика и Контакты — видны в меню на мобильных (в шапке скрыты) */}
                     <button

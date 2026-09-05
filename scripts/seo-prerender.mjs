@@ -1,20 +1,25 @@
-// SEO-пререндер (beta 0.10): после `vite build` генерирует в dist/ физические
+// SEO-пререндер (beta 0.12): после `vite build` генерирует в dist/ физические
 // index.html для /bali, /da-nang, /nha-trang, каждого активного
-// /event/<id>/<slug> и публичных профилей /org/<id> (в <head> — уникальные
+// /event/<id>/<slug>, публичных профилей /org/<id>, блога /blog и статей
+// /blog/<slug> (в <head> — уникальные
 // title/description, canonical и Open Graph со хвостовым слэшем, на событиях —
-// JSON-LD Event, на организаторах — ProfilePage+Organization), чтобы
+// JSON-LD Event, на организаторах — ProfilePage+Organization, на статьях —
+// BlogPosting+BreadcrumbList, на /blog — Blog), чтобы
 // глубокие URL отдавали HTTP 200, и перезаписывает dist/sitemap.xml списком
 // всех страниц. Источник данных — тот же RPC, что зовёт сайт:
 // db.rpc('list_active_events') (src/lib/api.ts) — прошлые/скрытые/события
 // заблокированных организаторов сюда не попадают автоматически.
+// Статьи блога — src/content/articles.json (единый источник с SPA, не
+// дублировать тексты здесь).
 // Запуск: node scripts/seo-prerender.mjs (внутри "build" в package.json).
 // Ключи: VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY — из process.env (GHA)
 // или .env рядом с проектом (локальная сборка; подгружается сам, без
 // новых зависимостей).
 //
-// Правила URL: canonical/og:url и loc в sitemap для городов, событий и
-// организаторов — СО слэшем (https://mypins.site/bali/, /event/<id>/<slug>/,
-// /org/<id>/): физическая страница лежит как <path>/index.html, GitHub Pages
+// Правила URL: canonical/og:url и loc в sitemap для городов, событий,
+// организаторов и статей — СО слэшем (https://mypins.site/bali/,
+// /event/<id>/<slug>/, /org/<id>/, /blog/<slug>/): физическая страница лежит
+// как <path>/index.html, GitHub Pages
 // отдаёт 200 только со слэшем (без слэша — 301). SPA-схему URL (pushState без
 // слэша) НЕ трогаем — клиентский normPath (src/App.tsx) срезает хвостовой
 // слэш сам.
@@ -170,6 +175,142 @@ const CITY_SEO = {
     ],
   },
 };
+
+// --- Блог: /blog и /blog/<slug>. Тексты статей — в src/content/articles.json
+// (единый источник с SPA src/pages/Blog.tsx — здесь НЕ дублируются, только
+// читаются). Title/description индекса синхронны с BLOG_META в
+// src/lib/seo.ts — держать синхронно при правке.
+const BLOG_META = {
+  title: 'Блог MyPins: гиды по событиям и афиша | MyPins',
+  description:
+    'Гиды по событийной жизни Бали, Нячанга и Дананга: куда сходить, что посмотреть, сколько стоят события. Подборки от команды MyPins.',
+};
+
+/** Статьи блога из src/content/articles.json (readFileSync — единый источник) */
+function loadArticles() {
+  const raw = readFileSync(join(ROOT, 'src/content/articles.json'), 'utf8');
+  const parsed = JSON.parse(raw);
+  if (!Array.isArray(parsed)) throw new Error('articles.json: ожидался массив статей');
+  return parsed;
+}
+
+/**
+ * Markdown-ссылки «[фраза](/путь)» → <a href="/путь">фраза</a>. Части текста
+ * экранируются отдельно (esc), href — тоже; внешних ссылок в статьях нет,
+ * пути внутренние (в SPA их перехватывает App.tsx, в статике GitHub Pages
+ * отдаёт физическую страницу).
+ */
+function mdLinksToHtml(text) {
+  const parts = String(text).split(/\[([^\]]+)\]\(([^)]+)\)/);
+  let out = esc(parts[0] ?? '');
+  for (let i = 1; i + 1 < parts.length; i += 2) {
+    const label = parts[i] ?? '';
+    const href = parts[i + 1] ?? '';
+    const rest = parts[i + 2] ?? '';
+    out += `<a href="${esc(href)}">${esc(label)}</a>${esc(rest)}`;
+  }
+  return out;
+}
+
+/** Секции статьи (p/h2/ul) в статический HTML — видно краулеру без JS */
+function articleSectionsHtml(sections) {
+  return (sections ?? [])
+    .map((s) => {
+      if (s.type === 'h2') return `  <h2>${esc(s.text)}</h2>`;
+      if (s.type === 'ul') {
+        const items = (s.items ?? [])
+          .map((it) => `    <li>${mdLinksToHtml(it)}</li>`)
+          .join('\n');
+        return `  <ul>\n${items}\n  </ul>`;
+      }
+      return `  <p>${mdLinksToHtml(s.text ?? '')}</p>`;
+    })
+    .join('\n');
+}
+
+/**
+ * Статический SEO-блок индекса блога (id=seo-article-block — как у статей:
+ * main.tsx удаляет его при монтировании SPA): h1 «Блог MyPins…» + карточки
+ * статей (заголовок-ссылка на /blog/<slug>/, дата, description). Ровно один
+ * h1; ссылки на обе статьи видны в HTML без JS.
+ */
+function blogIndexSeoHtml(articles) {
+  const cards = [...articles]
+    .sort((a, b) => String(b.datePublished).localeCompare(String(a.datePublished)))
+    .map((a) => {
+      const url = `${SITE_URL}/blog/${a.slug}/`;
+      return [
+        '  <article>',
+        `    <h2><a href="${esc(url)}">${esc(a.h1)}</a></h2>`,
+        `    <p>${esc(ruDate(a.datePublished))}</p>`,
+        `    <p>${esc(a.description)}</p>`,
+        '  </article>',
+      ].join('\n');
+    })
+    .join('\n');
+  return ['<div id="seo-article-block">', '  <h1>Блог MyPins: гиды по событиям</h1>', cards, '</div>', ''].join('\n');
+}
+
+/** Статический SEO-блок статьи: h1 + дата публикации + секции (без JS) */
+function articleSeoHtml(article) {
+  return [
+    '<div id="seo-article-block">',
+    `  <h1>${esc(article.h1)}</h1>`,
+    `  <p><time datetime="${esc(article.datePublished)}">${esc(ruDate(article.datePublished))}</time></p>`,
+    articleSectionsHtml(article.sections),
+    '</div>',
+    '',
+  ].join('\n');
+}
+
+/** JSON-LD индекса: Blog со списком статей (blogPost) */
+function blogIndexJsonLd(articles) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    name: 'Блог MyPins',
+    url: `${SITE_URL}/blog/`,
+    blogPost: articles.map((a) => ({
+      '@type': 'BlogPosting',
+      url: `${SITE_URL}/blog/${a.slug}/`,
+      headline: a.h1,
+      datePublished: a.datePublished,
+    })),
+  };
+}
+
+/** JSON-LD статьи: BlogPosting (автор — команда MyPins) + BreadcrumbList */
+function articleJsonLd(article, url) {
+  const blogUrl = `${SITE_URL}/blog/`;
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'BlogPosting',
+        headline: article.h1,
+        description: article.description,
+        datePublished: article.datePublished,
+        dateModified: article.dateModified,
+        inLanguage: article.lang || 'ru',
+        url,
+        mainEntityOfPage: url,
+        author: {
+          '@type': 'Organization',
+          name: 'MyPins',
+          url: `${SITE_URL}/`,
+        },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Главная', item: `${SITE_URL}/` },
+          { '@type': 'ListItem', position: 2, name: 'Блог', item: blogUrl },
+          { '@type': 'ListItem', position: 3, name: article.h1, item: url },
+        ],
+      },
+    ],
+  };
+}
 
 // --- Утилиты ---
 
@@ -509,6 +650,9 @@ async function main() {
 
   const baseHtml = readFileSync(join(DIST, 'index.html'), 'utf8');
   const locs = [`${SITE_URL}/`];
+  // <lastmod> для sitemap: по умолчанию дата сборки (TODAY_ISO); статьи блога
+  // и /blog/ перекрываются датой публикации статьи (lastmods.set ниже)
+  const lastmods = new Map();
 
   // Города: canonical/og:url — со слэшем (GitHub Pages отдаёт 200 только
   // на /bali/, без слэша — 301). Плюс видимый SEO-блок в body (RU) — тот же
@@ -631,15 +775,65 @@ async function main() {
   }
   console.log(`  организаторов: ${pageOrgs}, страниц всего: ${locs.length}`);
 
+  // Блог: /blog/ + /blog/<slug>/ — статьи из src/content/articles.json
+  // (единый источник с SPA src/pages/Blog.tsx; тексты дословно, здесь не
+  // дублируются). URL со слэшем, как у городов/событий. <lastmod> статей в
+  // sitemap = datePublished, у /blog/ — дата свежей статьи.
+  const blogArticles = loadArticles();
+  if (!blogArticles.length) {
+    console.error('seo-prerender: articles.json пуст — блог не публикуем.');
+    process.exit(1);
+  }
+  const blogUrl = `${SITE_URL}/blog/`;
+  const blogLastmod = [...blogArticles]
+    .map((a) => a.datePublished)
+    .filter(Boolean)
+    .sort()
+    .at(-1);
+  writePage(baseHtml, 'blog', {
+    title: BLOG_META.title,
+    description: BLOG_META.description,
+    canonical: blogUrl,
+    ogTitle: BLOG_META.title,
+    ogDescription: BLOG_META.description,
+    ogUrl: blogUrl,
+    ogImage: LOGO_URL,
+    jsonLd: blogIndexJsonLd(blogArticles),
+    bodySeo: blogIndexSeoHtml(blogArticles),
+  });
+  locs.push(blogUrl);
+  if (blogLastmod) lastmods.set(blogUrl, blogLastmod);
+  console.log('  /blog/index.html');
+  for (const a of blogArticles) {
+    if (!a || typeof a.slug !== 'string' || !a.slug) continue;
+    const url = `${SITE_URL}/blog/${a.slug}/`;
+    writePage(baseHtml, `blog/${a.slug}`, {
+      title: String(a.title ?? ''),
+      description: String(a.description ?? ''),
+      canonical: url,
+      ogTitle: String(a.title ?? ''),
+      ogDescription: String(a.description ?? ''),
+      ogUrl: url,
+      ogImage: LOGO_URL,
+      jsonLd: articleJsonLd(a, url),
+      bodySeo: articleSeoHtml(a),
+    });
+    locs.push(url);
+    if (a.datePublished) lastmods.set(url, a.datePublished);
+    console.log(`  /blog/${a.slug}/index.html`);
+  }
+  console.log(`  статей: ${blogArticles.length}, страниц всего: ${locs.length}`);
+
   // sitemap.xml (перезапись). <lastmod> = дата сборки (TODAY_ISO) — сигнал
-  // поисковикам, что контент страницы мог измениться
+  // поисковикам, что контент страницы мог измениться; статьи блога несут
+  // <lastmod> = datePublished (см. lastmods)
   const xml = [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
     ...locs
       .slice()
       .sort((a, b) => a.localeCompare(b))
-      .map((u) => `  <url><loc>${esc(u)}</loc><lastmod>${TODAY_ISO}</lastmod></url>`),
+      .map((u) => `  <url><loc>${esc(u)}</loc><lastmod>${lastmods.get(u) ?? TODAY_ISO}</lastmod></url>`),
     '</urlset>',
     '',
   ].join('\n');

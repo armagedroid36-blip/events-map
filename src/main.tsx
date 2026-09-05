@@ -8,15 +8,19 @@ import { AuthProvider } from './lib/auth';
 
 // Статические SEO-блоки кладёт в HTML пре-рендер (scripts/seo-prerender.mjs):
 // городские страницы (h1+интро+FAQ, id=seo-city-block), профили
-// организаторов (h1+bio, id=seo-org-block) и страницы событий (h1+дата+место+
-// цена+описание, id=seo-event-block) — их видит краулер без JS. При
+// организаторов (h1+bio, id=seo-org-block), страницы событий (h1+дата+место+
+// цена+описание, id=seo-event-block) и страницы блога (h1+секции статьи,
+// id=seo-article-block) — их видит краулер без JS. При
 // живом React страницу рисует сам SPA (Home — городской текст из i18n,
-// OrgProfilePage — свой h1, EventCard — h1 события), поэтому статические
+// OrgProfilePage — свой h1, EventCard — h1 события, BlogIndex/ArticlePage —
+// заголовок блога/статьи), поэтому статические
 // блоки удаляем — на странице должен остаться ровно один h1. Элементы есть
 // только на пре-рендеренных страницах (bali/da-nang/nha-trang, /org/<id>,
-// /event/<id>/<slug>).
+// /event/<id>/<slug>, /blog и /blog/<slug>).
 document
-  .querySelectorAll('#seo-city-block, #seo-org-block, #seo-event-block')
+  .querySelectorAll(
+    '#seo-city-block, #seo-org-block, #seo-event-block, #seo-article-block',
+  )
   .forEach((el) => el.remove());
 
 createRoot(document.getElementById('root')!).render(
