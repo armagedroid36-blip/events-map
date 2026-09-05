@@ -26,6 +26,9 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = join(ROOT, 'dist');
 const SITE_URL = 'https://mypins.site';
 const LOGO_URL = `${SITE_URL}/logo.png`;
+// «Сегодня» для startDate повторяющихся событий — фиксируется один раз на
+// сборку (UTC; toISOString даёт YYYY-MM-DD, без часовых поясов)
+const TODAY_ISO = new Date().toISOString().slice(0, 10);
 
 // --- env: уже заданные (GHA) или .env проекта (локально) ---
 function loadDotEnv() {
@@ -145,6 +148,46 @@ function ruDate(iso) {
   return month ? `${Number(d)} ${month} ${y}` : iso;
 }
 
+/** +N дней к ISO-дате (Date.UTC нормализует переполнение месяца/года) */
+function addDaysIso(iso, n) {
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10);
+}
+
+/** ISO-дата (YYYY-MM-DD) -> день недели по ISO: 1=Пн … 7=Вс (UTC, без TZ) */
+function isoDayOfWeek(iso) {
+  const [y, m, d] = iso.split('-').map(Number);
+  const js = new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+  return js === 0 ? 7 : js;
+}
+
+/**
+ * Ближайшее БУДУЩЕЕ вхождение повторяющегося события для JSON-LD startDate.
+ * Семантика как в src/lib/recurrence.ts (recurrenceMatchesDate, isoDayOfWeek),
+ * но ищем от max(start_date, todayIso) ВПЕРЁД: разовое событие (нет
+ * recurrence) — start_date как есть; daily — первый же день; weekly — первый
+ * день, чей день недели в days; горизонт — end_date (включительно) или +90
+ * дней от todayIso для бессрочных серий. Вхождение не найдено (серия
+ * кончилась / нужного дня недели нет) — fallback на start_date (как раньше).
+ */
+function nextOccurrenceDate(ev, todayIso) {
+  const r = ev.recurrence && typeof ev.recurrence === 'object' ? ev.recurrence : null;
+  const first = typeof ev.start_date === 'string' && ev.start_date ? ev.start_date : '';
+  if (!r || !first) return first || todayIso;
+  const from = first > todayIso ? first : todayIso;
+  const hasEnd = typeof ev.end_date === 'string' && ev.end_date.length > 0;
+  const horizon = hasEnd ? ev.end_date : addDaysIso(todayIso, 90);
+  let d = from;
+  let guard = 0;
+  while (d <= horizon && guard < 10000) {
+    if (r.freq === 'daily') return d;
+    if ((r.days ?? []).includes(isoDayOfWeek(d))) return d;
+    d = addDaysIso(d, 1);
+    guard += 1;
+  }
+  return first;
+}
+
 /** Обрезка без разрыва суррогатной пары (эмодзи) */
 function cutSafe(s, max) {
   if (s.length <= max) return s;
@@ -209,14 +252,17 @@ function eventJsonLd(ev, url) {
     typeof ev.org_display_name === 'string' ? ev.org_display_name.trim() : '';
   const photo = Array.isArray(ev.photos) ? absPhoto(ev.photos[0]) : '';
 
+  // startDate повторяющихся событий — ближайшее БУДУЩЕЕ вхождение на дату
+  // сборки (иначе в JSON-LD уходит первое вхождение серии, часто в прошлом,
+  // и Google не показывает rich-результат). Разовые — как раньше (start_date).
+  const sd = nextOccurrenceDate(ev, TODAY_ISO);
+
   const doc = {
     '@context': 'https://schema.org',
     '@type': 'Event',
     name: String(ev.title ?? ''),
     url,
-    startDate: ev.start_time
-      ? `${ev.start_date}T${ev.start_time}`
-      : ev.start_date,
+    startDate: ev.start_time ? `${sd}T${ev.start_time}` : sd,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
     location: {
