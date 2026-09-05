@@ -203,7 +203,9 @@ function loadArticles() {
 function mdLinksToHtml(text) {
   const parts = String(text).split(/\[([^\]]+)\]\(([^)]+)\)/);
   let out = esc(parts[0] ?? '');
-  for (let i = 1; i + 1 < parts.length; i += 2) {
+  // split c захватывающими группами отдаёт [до, label, href, rest, label2, href2, rest2, …] —
+  // каждая итерация потребляет ТРИ элемента, шаг 3 (баг i += 2 ломал 2-ю и последующие ссылки)
+  for (let i = 1; i + 1 < parts.length; i += 3) {
     const label = parts[i] ?? '';
     const href = parts[i + 1] ?? '';
     const rest = parts[i + 2] ?? '';
