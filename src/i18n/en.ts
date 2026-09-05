@@ -563,6 +563,68 @@ export default {
     email: 'Email us',
     telegram: 'Message us on Telegram',
   },
+  // City SEO pages: visible text for /bali, /da-nang, /nha-trang (SPA only;
+  // RU source of truth: ru.ts citySeo.* + CITY_SEO in scripts/seo-prerender.mjs)
+  citySeo: {
+    faqTitle: 'FAQ',
+    bali: {
+      h1: 'Events in Bali',
+      intro:
+        "Bali is one of the most event-packed places in Southeast Asia — travellers, digital nomads and expats cross paths here all year round. MyPins is a live map of Bali events: parties and concerts, yoga and retreats, markets, festivals and expat meetups. Organizers publish their own events, so the list stays fresh. Filter by date, category or price, or zoom the map to your area — Canggu, Ubud, Seminyak, Kuta — to see what is happening nearby.",
+      faq: [
+        {
+          q: 'What events are happening in Bali?',
+          a: "On MyPins, organizers publish their own events: parties, concerts, yoga classes, markets, festivals and expat meetups. Every pin on the map shows the date, venue and price.",
+        },
+        {
+          q: 'How do I find events in Canggu, Ubud or another area?',
+          a: "Zoom the map to the area you need — the list shows events on the visible part of the map. You can also filter by category, date, price and event language.",
+        },
+        {
+          q: 'Are there free events in Bali?',
+          a: 'Yes. Use the price filter and choose “Free” or “Donation” — free entry with an optional contribution. Every event card shows the price: free, donation or an amount in the event’s currency.',
+        },
+      ],
+    },
+    'da-nang': {
+      h1: 'Events in Da Nang',
+      intro:
+        "Da Nang is one of Vietnam's fastest-growing cities, home to a large community of expats and travellers. MyPins shows what is on in Da Nang right now: parties and concerts, sports and yoga, markets and expat meetups. Organizers publish events themselves, so the listings stay fresh. Use filters for date, category, price and language to plan your evening or weekend.",
+      faq: [
+        {
+          q: 'What events are happening in Da Nang?',
+          a: "On MyPins, Da Nang events are published by organizers themselves: concerts, parties, yoga, sports, markets and expat meetups. The map shows the date, venue and price of every event.",
+        },
+        {
+          q: 'What to do in Da Nang today or tomorrow?',
+          a: 'In the date filter choose “Today” or “Tomorrow” to see events for those days. For the weekend, browse the whole map — there are more events to choose from.',
+        },
+        {
+          q: 'How much do events in Da Nang cost?',
+          a: "Every event card shows the price: free, donation or an amount in the event's currency. The price filter can show only free events.",
+        },
+      ],
+    },
+    'nha-trang': {
+      h1: 'Events in Nha Trang',
+      intro:
+        "Nha Trang is Vietnam's main beach resort and a popular winter spot for travellers and expats. MyPins maps what is happening in Nha Trang: concerts and parties, speaking clubs and meetups, yoga, shows and markets. Organizers add events directly, so you always see current dates, venues and prices. Filter by date, category or price to decide where to go.",
+      faq: [
+        {
+          q: 'What events are happening in Nha Trang?',
+          a: 'Organizers publish them themselves: parties, concerts, speaking clubs, yoga, shows and markets. Every event on the map has a date, venue and price.',
+        },
+        {
+          q: 'Are there expat meetups or speaking clubs in Nha Trang?',
+          a: "Yes — for example, the SmallTalk speaking club, whose events happen regularly in Nha Trang and are on the map. To stay updated, enable push notifications about new events in your profile.",
+        },
+        {
+          q: 'How much do events in Nha Trang cost?',
+          a: "The event card shows the price: free, donation or an amount in the event's currency. The price filter can show only free events if you need.",
+        },
+      ],
+    },
+  },
   common: {
     cancel: 'Cancel',
     save: 'Save',

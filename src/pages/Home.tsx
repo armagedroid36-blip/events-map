@@ -422,6 +422,25 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
     );
   }
 
+  // Городской SEO-блок (h1 + интро + FAQ) — видимый текст страницы города
+  // в SPA. RU-тексты ДУБЛИРУЮТ CITY_SEO в scripts/seo-prerender.mjs
+  // (держать синхронно, секция ru.ts citySeo.*); EN — только интерфейс.
+  const citySeo = (() => {
+    if (!city) return null;
+    const slug = slugify(city);
+    const block = t(`citySeo.${slug}`, {
+      returnObjects: true,
+    }) as unknown;
+    if (!block || typeof block === 'string') return null;
+    const { h1, intro, faq } = block as {
+      h1: string;
+      intro: string;
+      faq: { q: string; a: string }[];
+    };
+    if (!h1 || !intro || !Array.isArray(faq)) return null;
+    return { h1, intro, faq };
+  })();
+
   return (
     <div className="relative h-screen w-full overflow-hidden bg-white">
       {/* КАРТА НА ВЕСЬ ЭКРАН — фон сайта */}
@@ -542,6 +561,32 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
               onReset={resetFilters}
             />
           </div>
+        </div>
+      )}
+
+      {/* Городской SEO-блок (h1 + интро + FAQ) — видимый текст страницы
+          /bali, /da-nang, /nha-trang. Единственный h1 городской страницы:
+          бренд в шапке на city-путях не h1 (Header.tsx). Скрывается, когда
+          открыты список событий / карточка / модалки — там свой контент.
+          FAQ в <details>: вопросы видны, ответы раскрываются по клику. */}
+      {citySeo && !selected && !listOpen && !mobileFiltersOpen && !formOpen && !authOpen && (
+        <div
+          id="city-seo-block"
+          className="glass absolute inset-x-2 bottom-36 z-[1140] mx-auto max-h-[42vh] w-auto max-w-xl overflow-y-auto rounded-xl p-3 shadow-xl thin-scroll lg:inset-x-auto lg:right-4 lg:mx-0 lg:w-[400px] lg:max-w-[calc(100vw-2rem)] lg:bottom-24"
+        >
+          <h1 className="text-lg font-extrabold tracking-tight text-gray-900">{citySeo.h1}</h1>
+          <p className="mt-1 text-sm leading-relaxed text-gray-700">{citySeo.intro}</p>
+          <h2 className="mt-2 text-xs font-bold uppercase tracking-wider text-gray-500">
+            {t('citySeo.faqTitle')}
+          </h2>
+          {citySeo.faq.map((f) => (
+            <details key={f.q} className="mt-1.5">
+              <summary className="cursor-pointer text-sm font-semibold text-gray-800 hover:text-gray-900">
+                {f.q}
+              </summary>
+              <p className="mt-1 text-sm leading-relaxed text-gray-600">{f.a}</p>
+            </details>
+          ))}
         </div>
       )}
 

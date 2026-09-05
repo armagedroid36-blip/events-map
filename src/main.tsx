@@ -6,6 +6,13 @@ import './index.css';
 import App from './App';
 import { AuthProvider } from './lib/auth';
 
+// Статический SEO-блок города (h1+интро+FAQ, RU) кладёт в HTML пре-рендер
+// (scripts/seo-prerender.mjs) — его видит краулер без JS. При живом React
+// городскую страницу рисует сам Home (тот же текст из i18n, локализованный),
+// поэтому статический блок удаляем — на странице должен остаться ровно один
+// h1. Элемент есть только на городских страницах (bali/da-nang/nha-trang).
+document.getElementById('seo-city-block')?.remove();
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>

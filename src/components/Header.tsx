@@ -37,6 +37,17 @@ export default function Header({ onOpenForm }: HeaderProps) {
   const [badge, setBadge] = useState(0);
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
 
+  // Путь без хвостового слэша (нормализация как normPath в App.tsx). Бренд —
+  // h1 только на главной «/»: на городских страницах (/bali, /da-nang,
+  // /nha-trang) единственный h1 даёт городской SEO-блок (видимый текст
+  // в Home.tsx), иначе на странице было бы два h1. Побочный эффект: на
+  // /event/... и /org/... бренд тоже не h1 — там своих h1 пока нет.
+  const cleanPath =
+    window.location.pathname === '/index.html'
+      ? '/'
+      : window.location.pathname.replace(/\/+$/, '') || '/';
+  const isBrandH1 = cleanPath === '/';
+
   // Бейдж уведомлений: org — движение по его событиям («Мои события»),
   // admin — события на модерации. Пересчитывается: при монтировании,
   // каждые 30 сек, при возврате вкладки и фокусе окна, по событиям
@@ -223,10 +234,17 @@ export default function Header({ onOpenForm }: HeaderProps) {
               h-12 + py-1.5 контейнера: пин почти во всю высоту шапки
               (48 + 12 = 60px — как раньше h-9 + py-3), шапка не растёт. */}
           <img src="/logo-mark.png" alt="" className="h-12 w-auto shrink-0 rounded object-contain" />
-          <h1 className="truncate text-xl font-extrabold tracking-tight text-gray-900">
-            {t('app.brand')}{' '}
-            <span className="text-[10px] font-normal text-gray-400">{config.buildVersion}</span>
-          </h1>
+          {isBrandH1 ? (
+            <h1 className="truncate text-xl font-extrabold tracking-tight text-gray-900">
+              {t('app.brand')}{' '}
+              <span className="text-[10px] font-normal text-gray-400">{config.buildVersion}</span>
+            </h1>
+          ) : (
+            <span className="block truncate text-xl font-extrabold tracking-tight text-gray-900">
+              {t('app.brand')}{' '}
+              <span className="text-[10px] font-normal text-gray-400">{config.buildVersion}</span>
+            </span>
+          )}
         </a>
 
         <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-1 sm:gap-2">
