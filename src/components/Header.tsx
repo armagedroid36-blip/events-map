@@ -10,6 +10,7 @@ import { useAuth } from '../lib/auth';
 import AuthModal from './AuthModal';
 import { getApi } from '../lib/api';
 import { config } from '../config';
+import { navigate } from '../lib/navigate';
 
 interface HeaderProps {
   /** Открыть форму создания события. Если не передано (страница без формы) —
@@ -109,11 +110,21 @@ export default function Header({ onOpenForm }: HeaderProps) {
     };
   }, []);
 
+  /** Возврат на главную (карту): с чистого пути — navigate('/'),
+   *  на '/' — hash '#/' как раньше */
+  function goHome() {
+    if (window.location.pathname !== '/' && window.location.pathname !== '/index.html') {
+      navigate('/');
+      return;
+    }
+    if (window.location.hash !== '#/') window.location.hash = '#/';
+  }
+
   // Страница без формы: «Создать событие» переходит на главную,
   // флаг в sessionStorage открывает там форму.
   const openForm = onOpenForm ?? (() => {
     sessionStorage.setItem('events-map-open-form', '1');
-    window.location.hash = '#/';
+    goHome();
   });
 
   // Аккордеон: открытие меню закрывает панели главной
@@ -133,8 +144,15 @@ export default function Header({ onOpenForm }: HeaderProps) {
     localStorage.setItem('events-map-lang', next);
   }
 
+  // Переход в личный (hash-)раздел: #/profile, #/admin и т.п.
+  // С чистого пути (например /bali) сначала уходим на '/' с этим hash —
+  // hash-логика App работает только на '/'
   function go(hash: string) {
-    window.location.hash = hash;
+    if (window.location.pathname !== '/' && window.location.pathname !== '/index.html') {
+      navigate(`/${hash}`);
+    } else {
+      window.location.hash = hash;
+    }
     setMenuOpen(false);
   }
 
@@ -168,7 +186,7 @@ export default function Header({ onOpenForm }: HeaderProps) {
     setBusyDelete(true);
     try {
       await deleteAccount();
-      if (window.location.hash !== '#/') window.location.hash = '#/';
+      goHome();
     } catch {
       window.alert(t('menu.deleteAccountError'));
     } finally {
@@ -183,16 +201,28 @@ export default function Header({ onOpenForm }: HeaderProps) {
             flex-1 min-w-0: при появлении бейджа уведомлений (колокольчик)
             правый блок становится шире — название сжимается (truncate),
             шапка остаётся в одну строку. */}
-        <a href="#/" className="flex min-w-0 flex-1 items-center gap-[3px]">
+        <a
+          href="#/"
+          onClick={(e) => {
+            // С чистого пути (например /bali или /event/...) — возврат на
+            // главную через navigate('/'); на '/' работает обычный hash-переход
+            if (window.location.pathname !== '/' && window.location.pathname !== '/index.html') {
+              e.preventDefault();
+              navigate('/');
+            }
+          }}
+          className="flex min-w-0 flex-1 items-center gap-[3px]"
+        >
           {/* Логотип — клик тоже возвращает на карту (внутри ссылки).
-              Относительный путь: сайт на GitHub Pages живёт в подпапке,
-              src="/logo.png" с ведущим слэшем уходил в корень домена (404).
+              Абсолютный путь от корня: сайт живёт на корневом домене
+              (mypins.site), а на вложенных чистых URL (/bali, /event/<id>/...)
+              относительный src ушёл бы в подпапку маршрута и дал 404.
               logo-mark.png — логотип БЕЗ прозрачных полей (обрезан по пину):
               в logo.png пин занимает лишь ~34% ширины файла, из-за полей
               визуальный зазор до надписи не зависит от gap.
               h-12 + py-1.5 контейнера: пин почти во всю высоту шапки
               (48 + 12 = 60px — как раньше h-9 + py-3), шапка не растёт. */}
-          <img src="logo-mark.png" alt="" className="h-12 w-auto shrink-0 rounded object-contain" />
+          <img src="/logo-mark.png" alt="" className="h-12 w-auto shrink-0 rounded object-contain" />
           <h1 className="truncate text-xl font-extrabold tracking-tight text-gray-900">
             {t('app.brand')}{' '}
             <span className="text-[10px] font-normal text-gray-400">{config.buildVersion}</span>
@@ -314,7 +344,7 @@ export default function Header({ onOpenForm }: HeaderProps) {
                       onClick={() => {
                         setMenuOpen(false);
                         signOut();
-                        if (window.location.hash !== '#/') window.location.hash = '#/';
+                        goHome();
                       }}
                       className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50"
                     >

@@ -13,6 +13,7 @@ import { recurrenceLabel } from '../lib/recurrence';
 import { photoUrl } from '../lib/api';
 import { isValidCoords } from '../lib/coords';
 import { nextZ } from '../lib/zindex';
+import { navigate, slugify } from '../lib/navigate';
 import FavoriteButton from './FavoriteButton';
 
 /** Символы валют */
@@ -579,7 +580,7 @@ export default function EventCard({ event, categories, onClose, isAdmin, isOwner
         <div className="flex shrink-0 items-center gap-1">
           {/* Поделиться — доступно всем, в т.ч. гостям */}
           <ShareButton
-            url={`${window.location.origin}${window.location.pathname}#/?e=${encodeURIComponent(event.id)}`}
+            url={`${window.location.origin}/event/${event.id}/${slugify(event.title)}`}
             title={title}
           />
           {/* Сердечко — для всех; гость (favoriteIds === null) видит его неактивным */}
@@ -691,7 +692,9 @@ export default function EventCard({ event, categories, onClose, isAdmin, isOwner
               type="button"
               onClick={() => {
                 onClose();
-                window.location.hash = `#/org/${encodeURIComponent(event.owner_id ?? '')}`;
+                // Чистый URL профиля организатора (/org/<id>); Home/App сами
+                // разберут маршрут
+                navigate(`/org/${encodeURIComponent(event.owner_id ?? '')}`);
               }}
               title={t('card.organizer')}
               aria-label={t('card.organizer')}

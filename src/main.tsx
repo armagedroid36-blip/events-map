@@ -14,12 +14,13 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 );
 
-// Service worker (push-уведомления) — только production; путь строится от
-// document.baseURI, поэтому работает и в корне домена, и в подпапке /events-map/.
+// Service worker (push-уведомления) — только production. Путь абсолютный от
+// корня: на вложенных чистых URL (/event/<id>/...) относительная регистрация
+// ушла бы в подпапку маршрута. Сайт развёрнут на корневом домене (mypins.site).
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
-      .register(new URL('sw.js', document.baseURI).href)
+      .register('/sw.js')
       .catch((err) => console.error('SW registration failed:', err));
   });
 }

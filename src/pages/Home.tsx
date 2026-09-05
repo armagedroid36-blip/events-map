@@ -16,8 +16,14 @@ import { ruToEn } from '../lib/cities';
 import { geocodeAddress } from '../lib/geocode';
 import { eventCountry } from '../lib/countries';
 import { DEFAULT_FILTERS, eventMatchesFilters } from '../lib/eventFilters';
+import { navigate, slugify } from '../lib/navigate';
+import { config } from '../config';
 import { useAuth } from '../lib/auth';
 import type { Category, EventItem, Filters } from '../lib/types';
+
+// Заголовок вкладки по умолчанию (из index.html) — возвращаем при закрытии
+// карточки события и при размонтировании страницы
+const BASE_TITLE = document.title;
 
 /** Фильтры ещё не заданы (ничего не ограничивает) */
 function isDefaultFilters(f: Filters): boolean {
@@ -35,14 +41,18 @@ function isDefaultFilters(f: Filters): boolean {
   );
 }
 
-export default function Home() {
-  const { t } = useTranslation();
+export default function Home({ city, eventId }: { city?: string; eventId?: string }) {
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
+  const ru = i18n.language.startsWith('ru');
 
   // --- Данные ---
   const [events, setEvents] = useState<EventItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  // Прямая ссылка /event/<id>/... на событие, которого нет (удалено/скрыто):
+  // вместо карты показываем блок «не найдено»
+  const [eventNotFound, setEventNotFound] = useState(false);
 
   // --- Состояние интерфейса ---
   // filters — активные фильтры. Применяются МГНОВЕННО при любом изменении
@@ -153,10 +163,16 @@ export default function Home() {
     setLoading(false);
   }
 
-  // Закрытие карточки: убираем параметр e= из адресной строки,
-  // чтобы глубокая ссылка не висела в hash
+  // Закрытие карточки: на чистом URL события (/event/<id>/...) возвращаемся
+  // на главную; в остальных случаях URL карточку не кодирует — просто
+  // убираем её (и чистим старую hash-ссылку #/?e=, если вдруг осталась)
   function closeCard() {
     setSelected(null);
+    document.title = BASE_TITLE;
+    if (window.location.pathname.startsWith('/event/')) {
+      navigate('/');
+      return;
+    }
     if (window.location.hash.includes('e=')) window.location.hash = '#/';
   }
 
@@ -182,11 +198,11 @@ export default function Home() {
       setEvents(evs);
       setCategories(cats);
       setLoading(false);
-      // Глубокая ссылка #/?e=<id>: открыть карточку события независимо
-      // от фильтров; события нет (скрыто/удалено) — молча игнорируем
-      const m = window.location.hash.match(/[?&]e=([^&]+)/);
-      if (m) {
-        const ev = evs.find((x) => x.id === decodeURIComponent(m[1]));
+      // Прямая ссылка /event/<id>/<slug> (или старая #/?e=<id>, App передаёт
+      // eventId): открыть карточку события независимо от фильтров и заменить
+      // URL на чистый /event/<id>/<slugify(title)>.
+      if (eventId) {
+        const ev = evs.find((x) => x.id === eventId);
         if (ev) {
           selectEvent(ev);
           // Deep link: летим к координатам события, чтобы маркер был виден
@@ -196,11 +212,30 @@ export default function Home() {
             setCenter({ lat: ev.lat, lng: ev.lng });
             setZoom(15);
           }
+          // URL уже чистый? Всё равно replaceState — убирает старый hash из
+          // ссылки #/?e= и приводит slug к актуальному названию события
+          window.history.replaceState(
+            null,
+            '',
+            `/event/${encodeURIComponent(ev.id)}/${slugify(ev.title)}`,
+          );
+        } else {
+          // События нет (удалено/скрыто/завершено) — вместо карты заглушка
+          setEventNotFound(true);
         }
       }
     })();
     return () => {
       alive = false;
+    };
+    // Эффект первичной загрузки: событие ищется только при первом показе
+    // страницы (App пересоздаёт Home по key при смене маршрута)
+  }, [eventId]);
+
+  // Возврат исходного заголовка вкладки при размонтировании (смена маршрута)
+  useEffect(() => {
+    return () => {
+      document.title = BASE_TITLE;
     };
   }, []);
 
@@ -213,9 +248,11 @@ export default function Home() {
     }
   }, []);
 
-  // Геолокация: центр на посетителе; при отказе — Юго-Восточная Азия
+  // Геолокация: центр на посетителе; при отказе — Юго-Восточная Азия.
+  // На чистых маршрутах (/bali, /event/<id>) не трогаем: там центр и zoom
+  // задаёт маршрут (город или координаты события)
   useEffect(() => {
-    if (!navigator.geolocation) return;
+    if (!navigator.geolocation || city || eventId) return;
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setCenter({ lat: pos.coords.latitude, lng: pos.coords.longitude });
@@ -224,7 +261,17 @@ export default function Home() {
       () => {},
       { timeout: 5000 },
     );
-  }, []);
+  }, [city, eventId]);
+
+  // Чистый URL города (/bali, /da-nang, /nha-trang): фильтр города + центр/zoom
+  useEffect(() => {
+    if (!city) return;
+    const ql = config.quickLocations.find((q) => q.labelEn === city);
+    if (!ql) return;
+    setFilters((f) => ({ ...f, city: ql.labelEn }));
+    setCenter({ lat: ql.lat, lng: ql.lng });
+    setZoom(ql.zoom);
+  }, [city]);
 
   // Применение фильтров: категория, период, город, ключевые слова
   const visible = useMemo(() => events.filter((ev) => eventMatchesFilters(ev, filters)), [
@@ -278,9 +325,12 @@ export default function Home() {
     geocodeCityRef.current = '';
   }
 
-  // Выбор события: карточка + запись в историю просмотров + счётчик просмотров
+  // Выбор события: карточка + запись в историю просмотров + счётчик просмотров.
+  // Заголовок вкладки — «<название> · <город>» (SEO), при закрытии/уходе
+  // возвращается исходный
   async function selectEvent(ev: EventItem) {
     setSelected(ev);
+    document.title = `${ev.title} · ${ev.city}`.trim();
     // На мобильном карточка поднимается до верха открытого списка
     // (список не сворачиваем — после закрытия карточки он снова виден)
     if (window.innerWidth < 1024) {
@@ -314,6 +364,27 @@ export default function Home() {
         <Header onOpenForm={() => setFormOpen(true)} />
         <div className="flex flex-1 items-center justify-center text-sm text-gray-500">
           {t('common.loading')}
+        </div>
+      </div>
+    );
+  }
+
+  // Прямая ссылка на событие, которого нет (удалено/скрыто/завершено):
+  // вместо карты — блок со ссылкой на главную
+  if (eventNotFound) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <Header onOpenForm={() => setFormOpen(true)} />
+        <div className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center">
+          <p className="text-sm font-medium text-gray-700">
+            {ru ? 'Событие не найдено или уже завершено' : 'Event not found or already over'}
+          </p>
+          <button
+            onClick={() => navigate('/')}
+            className="rounded-md bg-[#72D2CF] px-4 py-2 text-sm font-semibold text-black shadow hover:bg-[#61B2B0]"
+          >
+            {ru ? 'На главную' : 'Back to map'}
+          </button>
         </div>
       </div>
     );

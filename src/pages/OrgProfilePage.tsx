@@ -10,6 +10,7 @@ import { formatDate } from '../lib/dates';
 import { localizedText } from '../lib/translate';
 import { config } from '../config';
 import { pushSupported, getBrowserSubscription, subscriptionData, urlBase64ToUint8Array } from '../lib/push';
+import { navigate } from '../lib/navigate';
 import type { OrgProfile, EventItem, Category, GalleryPhoto } from '../lib/types';
 
 /** Ссылки на мессенджеры из произвольного формата ввода (как в EventCard) */
@@ -116,9 +117,11 @@ export default function OrgProfilePage({ orgId }: Props) {
     return () => window.removeEventListener('keydown', onKey);
   }, [lightbox]);
 
-  /** Клик по событию: главная + открытие карточки по deep link #/?e=<id> */
+  /** Клик по событию: карта + карточка события по чистому URL.
+   *  Slug из названия подставит Home после загрузки события
+   *  (replaceState на /event/<id>/<slugify(title)>). */
   function openEvent(id: string) {
-    window.location.hash = `#/?e=${encodeURIComponent(id)}`;
+    navigate(`/event/${encodeURIComponent(id)}`);
   }
 
   /** Подписка на рассылку (валидация на фронте, ответ RPC показываем как есть) */
@@ -445,17 +448,18 @@ function OrgPushBlock({ orgId }: { orgId: string }) {
         setErr(t('org.pushDenied'));
         return;
       }
-      // Регистрация SW: работает и в корне (mypins.site), и в подпапке
-      // (github.io/events-map) — путь строится от текущего URL.
-      const reg = await navigator.serviceWorker.register(new URL('sw.js', window.location.href));
+      // Регистрация SW: путь от корня — страница /org/<id> вложенная,
+      // относительный 'sw.js' ушёл бы в /org/sw.js
+      const reg = await navigator.serviceWorker.register('/sw.js');
       await navigator.serviceWorker.ready;
       const sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(config.vapidPublicKey),
       });
       const { endpoint, p256dh, auth } = subscriptionData(sub);
-      // База страницы без hash: на неё вешает клик по уведомлению (#/?e=<id>)
-      const base = window.location.href.split('#')[0] || window.location.origin;
+      // База для ссылки из уведомления — корень сайта: страница /org/<id>
+      // вложенная, hash-глубинная ссылка (#/?e=<id>) там не сработает
+      const base = window.location.origin + '/';
       const res = await getApi().subscribePush(orgId, { endpoint, p256dh, auth }, lang, base);
       if (res === 'Organizer not found') {
         setErr(t('org.notFound'));
