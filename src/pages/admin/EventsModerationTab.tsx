@@ -1,11 +1,11 @@
 // Вкладка «Модерация событий»: события организаторов, ожидающие решения.
 // Клик по событию — просмотр полной карточки; принять/отклонить.
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getApi } from '../../lib/api';
 import { formatDate } from '../../lib/dates';
 import EventCard from '../../components/EventCard';
-import EventForm from '../../components/EventForm';
+const EventForm = lazy(() => import('../../components/EventForm'));
 import { isValidCoords } from '../../lib/coords';
 import type { Category, EventItem } from '../../lib/types';
 
@@ -334,14 +334,26 @@ export default function EventsModerationTab({ onChanged }: Props) {
 
       {/* Форма редактирования события (админ) */}
       {editEvent && (
-        <EventForm
-          categories={categories}
-          editEvent={editEvent}
-          onClose={() => {
-            setEditEvent(null);
-            onChanged();
-          }}
-        />
+        <Suspense
+          fallback={
+            <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/25 p-4">
+              <div className="flex min-h-full items-center justify-center">
+                <div className="w-full max-w-2xl rounded-xl bg-white p-6 text-center shadow-2xl">
+                  <p className="text-sm text-gray-500">{t('common.loading')}</p>
+                </div>
+              </div>
+            </div>
+          }
+        >
+          <EventForm
+            categories={categories}
+            editEvent={editEvent}
+            onClose={() => {
+              setEditEvent(null);
+              onChanged();
+            }}
+          />
+        </Suspense>
       )}
     </div>
   );

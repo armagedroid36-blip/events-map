@@ -2,14 +2,14 @@
 // Вкладки: активные (и их статус) и архив (прошедшие).
 // «Повторить» открывает форму со всеми данными события — организатор
 // правит что хочет и отправляет на модерацию.
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
 import { getApi } from '../lib/api';
 import { useAuth } from '../lib/auth';
 import type { Category, EventItem } from '../lib/types';
 import { formatDate } from '../lib/dates';
-import EventForm from '../components/EventForm';
+const EventForm = lazy(() => import('../components/EventForm'));
 import EventCard from '../components/EventCard';
 
 export default function MyEvents() {
@@ -240,26 +240,50 @@ export default function MyEvents() {
 
       {/* Форма повтора с данными события */}
       {repeat && (
-        <EventForm
-          categories={categories}
-          event={repeat}
-          onClose={() => {
-            setRepeat(null);
-            load();
-          }}
-        />
+        <Suspense
+          fallback={
+            <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/25 p-4">
+              <div className="flex min-h-full items-center justify-center">
+                <div className="w-full max-w-2xl rounded-xl bg-white p-6 text-center shadow-2xl">
+                  <p className="text-sm text-gray-500">{t('common.loading')}</p>
+                </div>
+              </div>
+            </div>
+          }
+        >
+          <EventForm
+            categories={categories}
+            event={repeat}
+            onClose={() => {
+              setRepeat(null);
+              load();
+            }}
+          />
+        </Suspense>
       )}
 
       {/* Редактирование карточки организатором (сохраняется на модерацию) */}
       {edit && (
-        <EventForm
-          categories={categories}
-          editEvent={edit}
-          onClose={() => {
-            setEdit(null);
-            load();
-          }}
-        />
+        <Suspense
+          fallback={
+            <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/25 p-4">
+              <div className="flex min-h-full items-center justify-center">
+                <div className="w-full max-w-2xl rounded-xl bg-white p-6 text-center shadow-2xl">
+                  <p className="text-sm text-gray-500">{t('common.loading')}</p>
+                </div>
+              </div>
+            </div>
+          }
+        >
+          <EventForm
+            categories={categories}
+            editEvent={edit}
+            onClose={() => {
+              setEdit(null);
+              load();
+            }}
+          />
+        </Suspense>
       )}
 
       {/* Просмотр полной карточки архивного события */}

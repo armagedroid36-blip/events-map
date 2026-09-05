@@ -1,7 +1,7 @@
 // Главная (публичная) страница: карта на ВЕСЬ экран (фон сайта),
 // поверх неё — плавающие панели: шапка, фильтры, карточка события,
 // кнопка «События на карте» с списком событий видимой области.
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
 import MapView, { type MapBounds } from '../components/MapView';
@@ -9,7 +9,7 @@ import FiltersPanel from '../components/Filters';
 import EventsList from '../components/EventsList';
 import EventCard from '../components/EventCard';
 import QuickLocations from '../components/QuickLocations';
-import EventForm from '../components/EventForm';
+const EventForm = lazy(() => import('../components/EventForm'));
 import AuthModal from '../components/AuthModal';
 import { getApi } from '../lib/api';
 import { ruToEn } from '../lib/cities';
@@ -672,13 +672,25 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
       )}
 
       {formOpen && (
-        <EventForm
-          categories={categories}
-          onClose={() => {
-            setFormOpen(false);
-            loadData();
-          }}
-        />
+        <Suspense
+          fallback={
+            <div className="fixed inset-0 z-[2000] overflow-y-auto bg-black/25 p-4">
+              <div className="flex min-h-full items-center justify-center">
+                <div className="w-full max-w-2xl rounded-xl bg-white p-6 text-center shadow-2xl">
+                  <p className="text-sm text-gray-500">{t('common.loading')}</p>
+                </div>
+              </div>
+            </div>
+          }
+        >
+          <EventForm
+            categories={categories}
+            onClose={() => {
+              setFormOpen(false);
+              loadData();
+            }}
+          />
+        </Suspense>
       )}
 
       {/* Окно входа: гость кликнул сердечко «в избранное» (с пояснением) */}
