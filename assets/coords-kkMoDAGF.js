@@ -1,0 +1,1 @@
+function e(e,t){return e==null||t==null||e===0&&t===0?!1:Math.abs(e)<=90&&Math.abs(t)<=180}export{e as t};
