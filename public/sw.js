@@ -91,3 +91,8 @@ self.addEventListener('pushsubscriptionchange', (event) => {
     })(),
   );
 });
+
+self.addEventListener('fetch', () => {
+  // PWA installability: обработчик fetch требуется для установки. Сеть НЕ
+  // перехватываем: контент всегда свежий, кэш GitHub Pages не ломаем.
+});
