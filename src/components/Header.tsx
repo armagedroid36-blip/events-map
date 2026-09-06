@@ -280,12 +280,12 @@ export default function Header({ onOpenForm }: HeaderProps) {
               Абсолютный путь от корня: сайт живёт на корневом домене
               (mypins.site), а на вложенных чистых URL (/bali, /event/<id>/...)
               относительный src ушёл бы в подпапку маршрута и дал 404.
-              logo-mark.png — логотип БЕЗ прозрачных полей (обрезан по пину):
+              logo-mark.webp — логотип БЕЗ прозрачных полей (обрезан по пину):
               в logo.png пин занимает лишь ~34% ширины файла, из-за полей
               визуальный зазор до надписи не зависит от gap.
               h-12 + py-1.5 контейнера: пин почти во всю высоту шапки
               (48 + 12 = 60px — как раньше h-9 + py-3), шапка не растёт. */}
-          <img src="/logo-mark.png" alt="" className="h-12 w-auto shrink-0 rounded object-contain" />
+          <img src="/logo-mark.webp" alt="" className="h-12 w-auto shrink-0 rounded object-contain" />
           {isBrandH1 ? (
             <h1 className="truncate text-xl font-extrabold tracking-tight text-gray-900">
               {t('app.brand')}{' '}

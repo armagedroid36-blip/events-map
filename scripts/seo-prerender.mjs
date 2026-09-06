@@ -930,6 +930,24 @@ function renderPage(baseHtml, meta) {
   if (meta.bodySeo) {
     out = out.replace(/<div id="root"><\/div>/i, () => `<div id="root"></div>\n${meta.bodySeo}`);
   }
+  // Мобильное интро карточных страниц (только они передают meta.introPreview
+  // = URL превью карты) — вставляется ВНУТРЬ <div id="root">, в отличие от
+  // seo-блоков (они идут ПОСЛЕ #root). В статике #root пуст, а absolute
+  // inset-0 схлопнулся бы в нулевую высоту — интро оборачивается в контейнер
+  // с высотой экрана. React монтируется через createRoot().render()
+  // (src/main.tsx) и при гидрации целиком заменит содержимое #root своей
+  // разметкой — статический интро не «склеится» с React-интро, дублей
+  // h2/кнопок после гидрации не будет.
+  if (meta.introPreview) {
+    out = out.replace(
+      /<div id="root"><\/div>/i,
+      () =>
+        `<div id="root"><div style="position:relative;height:100vh;min-height:560px;overflow:hidden">\n${mapIntroSeoHtml(
+          meta.introPreview,
+          lang,
+        )}\n    </div></div>`,
+    );
+  }
   return out;
 }
 
@@ -1033,6 +1051,51 @@ function homeSeoHtmlEn() {
     `  <p>Browse events ${link('bali', 'in Bali')}, ${link('da-nang', 'in Da Nang')}, ${link('nha-trang', 'in Nha Trang')}. Guides and event round-ups — ${link('blog', 'on the MyPins blog')}.</p>`,
     '</div>',
     '',
+  ].join('\n');
+}
+
+// --- Тексты мобильного интро-экрана карточных страниц (главная и города).
+// СИНХРОННО с src/i18n/ru.ts | en.ts, ключ mapIntro (title/subtitle/open/imgAlt)
+// и с src/components/MobileMapIntro.tsx (классы разметки). При правке менять
+// все три места.
+const MAP_INTRO_TEXT = {
+  ru: {
+    title: 'События для туристов и экспатов',
+    subtitle: 'Концерты, вечеринки, йога, маркеты и встречи — Бали, Дананг, Нячанг',
+    open: 'Открыть карту',
+    imgAlt: 'Карта событий — Бали, Дананг, Нячанг',
+  },
+  en: {
+    title: 'Events for travelers and expats',
+    subtitle: 'Concerts, parties, yoga, markets and meetups — Bali, Da Nang, Nha Trang',
+    open: 'Open the map',
+    imgAlt: 'Event map — Bali, Da Nang, Nha Trang',
+  },
+};
+
+/**
+ * Статическая разметка мобильного интро-экрана (LCP-элемент карточных
+ * страниц) — 1:1 с React-компонентом src/components/MobileMapIntro.tsx:19-54
+ * (className → class, fetchPriority → fetchpriority): фон-превью карты
+ * (fetchpriority=high), градиент, h2-заголовок, подзаголовок и кнопка.
+ * Вставляется ВНУТРЬ <div id="root"> (не рядом, как seo-блоки): краулер и
+ * браузер видят интро в первичном HTML до загрузки JS — LCP случается без
+ * ожидания бандла; React при монтировании целиком заменит содержимое #root
+ * своей разметкой, дублей h2/кнопок после гидрации не будет. lang='en' —
+ * EN-тексты (для /en/).
+ */
+function mapIntroSeoHtml(previewUrl, lang = 'ru') {
+  const t = MAP_INTRO_TEXT[lang === 'en' ? 'en' : 'ru'];
+  return [
+    '    <div class="absolute inset-0 z-[1180] overflow-hidden bg-[#faf7f2] transition-opacity duration-500 ease-out md:hidden opacity-100">',
+    `      <img src="${esc(previewUrl)}" alt="${esc(t.imgAlt)}" fetchpriority="high" class="absolute inset-0 h-full w-full object-cover" />`,
+    '      <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/10"></div>',
+    '      <div class="absolute inset-x-0 bottom-0 px-6" style="padding-bottom: calc(2.25rem + env(safe-area-inset-bottom, 0px))">',
+    `        <h2 class="max-w-[19rem] text-[27px] font-extrabold leading-tight tracking-tight text-white drop-shadow-md">${esc(t.title)}</h2>`,
+    `        <p class="mt-2.5 max-w-[17.5rem] text-[15px] leading-snug text-white/90 drop-shadow">${esc(t.subtitle)}</p>`,
+    `        <button type="button" class="mt-6 rounded-full bg-[#E66343] px-7 py-3.5 text-base font-semibold text-white shadow-[0_8px_24px_rgba(230,99,67,0.45)] transition hover:bg-[#d4553a] active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">${esc(t.open)}</button>`,
+    '      </div>',
+    '    </div>',
   ].join('\n');
 }
 
@@ -1254,6 +1317,9 @@ async function main() {
         { hreflang: 'x-default', href: enRoot },
       ],
       bodySeo: seo ? citySeoHtml(seo, cityEvs) : null,
+      // Мобильное интро в статике: превью карты города (как в SPA
+      // Home.tsx: slugify(city) — для этих городов совпадает с c.path)
+      introPreview: `/images/map-preview-${c.path}.webp`,
     });
     locs.push(url);
     hreflangPairs.set(url, enUrl);
@@ -1300,6 +1366,8 @@ async function main() {
         { hreflang: 'x-default', href: enRoot },
       ],
       bodySeo: seo ? citySeoHtmlEn(seo, cityEvs) : null,
+      // Мобильное интро (EN-версия текстов по lang='en'), то же превью карты
+      introPreview: `/images/map-preview-${c.path}.webp`,
     });
     locs.push(url);
     console.log(`  /en/${c.path}/index.html (EN-событий в блоке: ${cityEvs.length})`);
@@ -1733,6 +1801,7 @@ async function main() {
         { hreflang: 'x-default', href: enRoot },
       ],
       bodySeo: homeSeoHtml(),
+      introPreview: '/images/map-preview-main.webp',
     }),
   );
   hreflangPairs.set(`${SITE_URL}/`, enRoot);
@@ -1760,6 +1829,7 @@ async function main() {
         { hreflang: 'x-default', href: enRoot },
       ],
       bodySeo: homeSeoHtmlEn(),
+      introPreview: '/images/map-preview-main.webp',
     }),
   );
   console.log('  dist/en/index.html: seo-home-block EN (главная /en/)');
