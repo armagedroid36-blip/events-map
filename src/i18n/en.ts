@@ -559,7 +559,7 @@ export default {
     },
     operator: {
       title: 'Operator and contacts',
-      text: 'For questions about the site, listing events and feedback: email dima.armagedroid@yandex.ru or Telegram bot @Eventsmap_feedback_bot.',
+      text: 'For questions about the site, listing events and feedback: email armagedroid36@gmail.com or Telegram bot @Eventsmap_feedback_bot.',
     },
   },
   contacts: {

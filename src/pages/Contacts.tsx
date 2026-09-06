@@ -3,7 +3,7 @@
 import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
 
-const FEEDBACK_EMAIL = 'dima.armagedroid@yandex.ru';
+const FEEDBACK_EMAIL = 'armagedroid36@gmail.com';
 const FEEDBACK_BOT = 'https://t.me/Eventsmap_feedback_bot';
 
 export default function Contacts() {

@@ -560,7 +560,7 @@ export default {
     },
     operator: {
       title: 'Оператор и контакты',
-      text: 'По вопросам работы сайта, размещения событий и обратной связи: почта dima.armagedroid@yandex.ru или Telegram-бот @Eventsmap_feedback_bot.',
+      text: 'По вопросам работы сайта, размещения событий и обратной связи: почта armagedroid36@gmail.com или Telegram-бот @Eventsmap_feedback_bot.',
     },
   },
   contacts: {
