@@ -751,6 +751,14 @@ function cityCrumb(rawCity) {
   return null;
 }
 
+/** EN-имя города для EN-версий (крошка, title/description событий): ключ =
+ * path городской страницы cityCrumb, значение — как labelEn в config. */
+const CITY_NAME_EN = {
+  bali: 'Bali',
+  'da-nang': 'Da Nang',
+  'nha-trang': 'Nha Trang',
+};
+
 /**
  * JSON-LD Event для страницы события: @graph из Event (поля как раньше) и
  * BreadcrumbList (Главная > город, если распознан > название события как в
@@ -830,7 +838,12 @@ function eventJsonLd(ev, url, lang = 'ru') {
   if (text) doc.description = cleanText(text);
   if (photo) doc.image = photo;
   if (orgName) doc.organizer = { '@type': 'Organization', name: orgName };
-  if (langField) doc.inLanguage = langField;
+  // inLanguage = язык СТРАНИЦЫ, а не источника события: EN-версия
+  // (/en/event/*, name/description уже EN) всегда 'en', даже если оригинал
+  // события RU. RU-страницы — как раньше (languages[0] || language ||
+  // source_lang).
+  if (en) doc.inLanguage = 'en';
+  else if (langField) doc.inLanguage = langField;
 
   // Хлебная крошка: Главная/Home > город (если распознан по ev.city) >
   // название события как в h1 статического блока. @graph — как у статей
@@ -841,8 +854,8 @@ function eventJsonLd(ev, url, lang = 'ru') {
   ];
   const crumb = cityCrumb(ev.city);
   if (crumb) {
-    // EN-имя города для крошки: Bali/Da Nang/Nha Trang (как labelEn в config)
-    const cityNameEn = { bali: 'Bali', 'da-nang': 'Da Nang', 'nha-trang': 'Nha Trang' }[crumb.path] || crumb.name;
+    // EN-имя города для крошки: Bali/Da Nang/Nha Trang (CITY_NAME_EN)
+    const cityNameEn = CITY_NAME_EN[crumb.path] || crumb.name;
     items.push({
       '@type': 'ListItem',
       position: 2,
@@ -1338,17 +1351,22 @@ async function main() {
     // EN-версия события — только если у события есть перевод/англ. оригинал
     if (hasEn) {
       const nameEn = ev.title_en || ev.title || '';
-      const enCity = typeof ev.city === 'string' ? ev.city.trim() : '';
+      // EN-имя города той же логикой, что в крошке (crumb выше): распознан —
+      // CITY_NAME_EN (Нячанг→Nha Trang, Дананг→Da Nang, Бали/районы→Bali),
+      // не распознан — суффикса города нет (prefixEn = только дата)
+      const crumb = cityCrumb(ev.city);
+      const cityEn = crumb ? CITY_NAME_EN[crumb.path] || crumb.name : '';
       const enText = ev.description_en || ev.description || ev.description_ru || '';
       const dateEn = enDate(ev.start_date);
-      const prefixEn = [enCity, dateEn].filter(Boolean).join(', ');
+      const prefixEn = [cityEn, dateEn].filter(Boolean).join(', ');
       const descriptionEn = snippet(prefixEn ? `${prefixEn}. ${enText}` : enText, 160);
+      const titleEn = snippet(cityEn ? `${nameEn} · ${cityEn}` : nameEn, 65) || 'Event';
       writePage(baseHtml, enPath, {
         lang: 'en',
-        title: snippet(`${nameEn} · ${enCity ?? ''}`.trim(), 65) || 'Event',
+        title: titleEn,
         description: descriptionEn,
         canonical: enUrl,
-        ogTitle: snippet(`${nameEn} · ${enCity ?? ''}`.trim(), 65) || 'Event',
+        ogTitle: titleEn,
         ogDescription: descriptionEn,
         ogUrl: enUrl,
         ogImage: photo || LOGO_URL,

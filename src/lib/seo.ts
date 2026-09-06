@@ -326,6 +326,29 @@ export function applyCityMeta(path: string): void {
   });
 }
 
+/** EN-имя города события для EN-меты — копия cityCrumb + CITY_NAME_EN из
+ * seo-prerender.mjs (держать синхронно): «Нячанг»/«Nha Trang» → Nha Trang,
+ * «Дананг»/«Da Nang» → Da Nang, Бали и его районы (Убуд, Чангу, Семиньяк,
+ * Кута, Денпасар, Гианьяр) → Bali. Не распознано → '' (EN-суффикс опускается). */
+function cityNameEn(rawCity: string | null | undefined): string {
+  const city = String(rawCity ?? '').toLowerCase();
+  if (!city) return '';
+  if (city.includes('нячанг') || city.includes('nha trang')) return 'Nha Trang';
+  if (
+    city.includes('дананг') ||
+    city.includes('da nang') ||
+    city.includes('danang')
+  ) {
+    return 'Da Nang';
+  }
+  const baliKeys = [
+    'бали', 'bali', 'ubud', 'убуд', 'canggu', 'чангу',
+    'seminyak', 'семиньяк', 'kuta', 'кута', 'denpasar', 'gianyar',
+  ];
+  if (baliKeys.some((k) => city.includes(k))) return 'Bali';
+  return '';
+}
+
 /** Событие (карточка открыта / /event/<id>/<slug>): title/description как в
  * пре-рендере (seo-prerender.mjs), canonical и og со слэшем; og:image — первое
  * фото (абсолютный URL) или логотип сайта. Данные только из объекта события —
@@ -341,17 +364,26 @@ export function applyEventMeta(ev: EventItem): void {
   const en = p.startsWith('/en/event/');
   const hasEn = Boolean(ev.title_en) || ev.source_lang === 'en';
   const useEn = en && hasEn;
+  const city = typeof ev.city === 'string' ? ev.city.trim() : '';
+  const titleName = useEn ? ev.title_en || ev.title : ev.title;
+  // Город в мете — на языке страницы: EN-версия локализует той же логикой,
+  // что крошка пре-рендера (cityNameEn: Нячанг→Nha Trang, Дананг→Da Nang,
+  // Бали/районы→Bali); нераспознанный город — суффикс опущен. RU — как раньше.
+  const enCity = useEn ? cityNameEn(ev.city) : '';
   const title = snippet(
-    `${useEn ? ev.title_en || ev.title : ev.title} · ${ev.city ?? ''}`.trim(),
+    useEn
+      ? enCity
+        ? `${titleName} · ${enCity}`
+        : titleName
+      : `${titleName} · ${city ?? ''}`.trim(),
     65,
   ) || 'Событие';
-  const city = typeof ev.city === 'string' ? ev.city.trim() : '';
   // Текст, который видит посетитель этой версии (как localizedText)
   const text = useEn
     ? ev.description_en || ev.description
     : ev.description_ru || ev.description || ev.description_en || '';
   const date = useEn ? enDate(ev.start_date) : ruDate(ev.start_date);
-  const prefix = [city, date].filter(Boolean).join(', ');
+  const prefix = [useEn ? enCity : city, date].filter(Boolean).join(', ');
   const description = snippet(prefix ? `${prefix}. ${text}` : text, 160);
   const canonical = eventUrl(ev, useEn);
   const photo = ev.photos?.[0];
