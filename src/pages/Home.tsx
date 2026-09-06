@@ -264,7 +264,10 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
       setLoading(false);
       // Прямая ссылка /event/<id>/<slug> (или старая #/?e=<id>, App передаёт
       // eventId): открыть карточку события независимо от фильтров и заменить
-      // URL на чистый /event/<id>/<slugify(title)>.
+      // URL на чистый /event/<id>/<slugify(title)> (или EN-версию
+      // /en/event/<id>/<slugify(title_en||title)>/, если открыт EN-путь и у
+      // события есть перевод; событие без EN-перевода по /en/event/... —
+      // показываем как есть, canonical на RU URL ставит applyEventMeta)
       if (eventId) {
         const ev = evs.find((x) => x.id === eventId);
         if (ev) {
@@ -277,12 +280,24 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
             setZoom(15);
           }
           // URL уже чистый? Всё равно replaceState — убирает старый hash из
-          // ссылки #/?e= и приводит slug к актуальному названию события
-          window.history.replaceState(
-            null,
-            '',
-            `/event/${encodeURIComponent(ev.id)}/${slugify(ev.title)}`,
-          );
+          // ссылки #/?e= и приводит slug к актуальному названию события.
+          const enPath = window.location.pathname.startsWith('/en');
+          const hasEn = Boolean(ev.title_en) || ev.source_lang === 'en';
+          if (enPath && hasEn) {
+            window.history.replaceState(
+              null,
+              '',
+              `/en/event/${encodeURIComponent(ev.id)}/${slugify(ev.title_en || ev.title)}`,
+            );
+          } else if (!enPath) {
+            window.history.replaceState(
+              null,
+              '',
+              `/event/${encodeURIComponent(ev.id)}/${slugify(ev.title)}`,
+            );
+          }
+          // enPath && !hasEn: URL не трогаем (EN-версии события нет —
+          // canonical на RU URL ставит applyEventMeta)
         } else {
           // События нет (удалено/скрыто/завершено) — вместо карты заглушка.
           // Глубокий URL мёртв — мета базовая, canonical/og снимаем (404)

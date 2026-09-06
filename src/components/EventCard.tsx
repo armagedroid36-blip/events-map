@@ -548,6 +548,15 @@ export default function EventCard({
   const cat = categories.find((c) => c.id === event.category_id);
 
   const title = localizedText(event.title, event.title_ru, event.title_en, event.source_lang, lang);
+
+  // URL события для «Поделиться» и клика по названию: при EN-интерфейсе и
+  // наличии EN-версии события (title_en или исходник en) — /en/event/<id>/…,
+  // иначе RU /event/<id>/… (п. 1.2/2.4 промпта R)
+  const hasEnVersion = Boolean(event.title_en) || event.source_lang === 'en';
+  const shareUrl =
+    lang === 'en' && hasEnVersion
+      ? `${window.location.origin}/en/event/${event.id}/${slugify(event.title_en || event.title)}`
+      : `${window.location.origin}/event/${event.id}/${slugify(event.title)}`;
   const description = localizedText(
     event.description,
     event.description_ru,
@@ -596,10 +605,7 @@ export default function EventCard({
         </div>
         <div className="flex shrink-0 items-center gap-1">
           {/* Поделиться — доступно всем, в т.ч. гостям */}
-          <ShareButton
-            url={`${window.location.origin}/event/${event.id}/${slugify(event.title)}`}
-            title={title}
-          />
+          <ShareButton url={shareUrl} title={title} />
           {/* Сердечко — для всех; гость (favoriteIds === null) видит его неактивным */}
           {onToggleFavorite && (
             <FavoriteButton

@@ -757,8 +757,11 @@ function cityCrumb(rawCity) {
  * h1 статического блока). Данные — из ответа list_active_events
  * (как ev на сайте): название/описание на языке оригинала, координаты,
  * адрес/город, первое фото, цена. url — канонический URL события (со слэшем).
+ * lang='en' (для /en/event/...): name = title_en||title, описание =
+ * description_en||description, Breadcrumb Home > <City EN> > title_en.
  */
-function eventJsonLd(ev, url) {
+function eventJsonLd(ev, url, lang = 'ru') {
+  const en = lang === 'en';
   const city = typeof ev.city === 'string' ? ev.city.trim() : '';
   const address = typeof ev.address === 'string' ? ev.address.trim() : '';
   const country = typeof ev.country === 'string' ? ev.country.trim() : '';
@@ -777,10 +780,16 @@ function eventJsonLd(ev, url) {
   const currency = (
     typeof ev.currency === 'string' && ev.currency ? ev.currency : 'usd'
   ).toUpperCase();
-  const lang = Array.isArray(ev.languages) && ev.languages[0]
+  const langField = Array.isArray(ev.languages) && ev.languages[0]
     ? ev.languages[0]
     : ev.language || ev.source_lang || '';
-  const ruText = ev.description_ru || ev.description || ev.description_en || '';
+  // Текст и имя версии страницы (как eventSeoHtml/localizedText)
+  const name = en
+    ? ev.title_en || ev.title || ''
+    : ev.title_ru || ev.title || ev.title_en || '';
+  const text = en
+    ? ev.description_en || ev.description || ev.description_ru || ''
+    : ev.description_ru || ev.description || ev.description_en || '';
   const orgName =
     typeof ev.org_display_name === 'string' ? ev.org_display_name.trim() : '';
   const photo = Array.isArray(ev.photos) ? absPhoto(ev.photos[0]) : '';
@@ -792,7 +801,7 @@ function eventJsonLd(ev, url) {
 
   const doc = {
     '@type': 'Event',
-    name: String(ev.title ?? ''),
+    name,
     url,
     startDate: ev.start_time ? `${sd}T${ev.start_time}` : sd,
     eventStatus: 'https://schema.org/EventScheduled',
@@ -818,31 +827,33 @@ function eventJsonLd(ev, url) {
       ...(ev.donation ? { description: 'donation' } : {}),
     },
   };
-  if (ruText) doc.description = cleanText(ruText);
+  if (text) doc.description = cleanText(text);
   if (photo) doc.image = photo;
   if (orgName) doc.organizer = { '@type': 'Organization', name: orgName };
-  if (lang) doc.inLanguage = lang;
+  if (langField) doc.inLanguage = langField;
 
-  // Хлебная крошка: Главная > город (если распознан по ev.city) > название
-  // события как в h1 статического блока (eventSeoHtml: title_ru || title ||
-  // title_en). @graph — как у статей (articleJsonLd), чтобы ld+json остался
-  // одним блоком на странице.
+  // Хлебная крошка: Главная/Home > город (если распознан по ev.city) >
+  // название события как в h1 статического блока. @graph — как у статей
+  // (articleJsonLd), чтобы ld+json остался одним блоком на странице.
+  const homeName = en ? 'Home' : 'Главная';
   const items = [
-    { '@type': 'ListItem', position: 1, name: 'Главная', item: `${SITE_URL}/` },
+    { '@type': 'ListItem', position: 1, name: homeName, item: `${SITE_URL}${en ? '/en' : ''}/` },
   ];
   const crumb = cityCrumb(ev.city);
   if (crumb) {
+    // EN-имя города для крошки: Bali/Da Nang/Nha Trang (как labelEn в config)
+    const cityNameEn = { bali: 'Bali', 'da-nang': 'Da Nang', 'nha-trang': 'Nha Trang' }[crumb.path] || crumb.name;
     items.push({
       '@type': 'ListItem',
       position: 2,
-      name: crumb.name,
-      item: `${SITE_URL}/${crumb.path}/`,
+      name: en ? cityNameEn : crumb.name,
+      item: `${SITE_URL}${en ? '/en' : ''}/${crumb.path}/`,
     });
   }
   items.push({
     '@type': 'ListItem',
     position: items.length + 1,
-    name: ev.title_ru || ev.title || ev.title_en || '',
+    name,
     item: url,
   });
   return {
@@ -1017,10 +1028,9 @@ function homeSeoHtmlEn() {
  * что у RU — SPA удаляет оба): h1/intro/FAQ EN (CITY_SEO_EN — синхронно
  * с en.ts:574-633), строка «Updated: …» (аналог «Афиша обновлена»), блок
  * ближайших событий — только события с EN-версией (title_en непуст ИЛИ
- * source_lang='en'): имя = title_en||title, ссылка в Фазе 1 — на ЖИВУЮ
- * RU-страницу /event/<id>/<slugify(title)>/ (EN-страницы событий появятся
- * в Фазе 2; битых ссылок после деплоя Фазы 1 быть не должно — выбрано в
- * коммите Фазы 1, в Фазе 2 ссылка меняется на /en/event/<id>/…).
+ * source_lang='en'): имя = title_en||title, ссылка на ЖИВУЮ EN-страницу
+ * события /en/event/<id>/<slugify(title_en||title)>/ (п. 2.3: страницы
+ * сгенерированы пре-рендером — битых ссылок нет).
  */
 function citySeoHtmlEn(seo, evs) {
   const faq = seo.faq
@@ -1041,7 +1051,9 @@ function citySeoHtmlEn(seo, evs) {
     lines.push(`  <h2>Upcoming events in ${esc(where)}</h2>`, '  <ul>');
     for (const ev of evs) {
       const sd = nextOccurrenceDate(ev, TODAY_ISO);
-      const url = `${SITE_URL}/event/${ev.id}/${slugify(ev.title)}/`; // RU-страница (Фаза 1)
+      // EN-версия события (Фаза 2: страница /en/event/<id>/<slugify(title_en||title)>/
+      // сгенерирована пре-рендером — ссылка живая)
+      const url = `${SITE_URL}/en/event/${ev.id}/${slugify(ev.title_en || ev.title)}/`;
       const name = ev.title_en || ev.title || '';
       const price = ev.price != null ? Number(ev.price) : null;
       const currency = (
@@ -1083,18 +1095,23 @@ function faqPageJsonLd(faq) {
 }
 
 /**
- * Статический SEO-блок события (RU) для вставки в <body> рядом с #root:
- * ровно один h1 = название события (локализованное для RU — title_ru, иначе
- * title, иначе title_en — как localizedText в src/lib/translate.ts с lang='ru')
- * и под ним — дата/время, место, цена, описание и строка «Организатор:» со
- * ссылкой на профиль (по заполненности полей; без фото). Дата — ближайшее
- * БУДУЩЕЕ вхождение повторяющегося события, как в eventJsonLd
- * (nextOccurrenceDate). Блок виден краулеру без JS; при живом React SPA
- * удаляет его (main.tsx) и рисует карточку события сама — на странице
- * остаётся ровно один h1.
+ * Статический SEO-блок события для вставки в <body> рядом с #root: ровно
+ * один h1 = название события (локализованное для RU — title_ru, иначе title,
+ * иначе title_en; для EN — title_en, иначе title — как localizedText в
+ * src/lib/translate.ts) и под ним — дата/время, место, цена, описание и
+ * строка «Организатор:»/«Organizer:» со ссылкой на профиль (по заполненности
+ * полей; без фото). Дата — ближайшее БУДУЩЕЕ вхождение повторяющегося
+ * события, как в eventJsonLd (nextOccurrenceDate). Блок виден краулеру без
+ * JS; при живом React SPA удаляет его (main.tsx) и рисует карточку события
+ * сама — на странице остаётся ровно один h1.
+ * lang='en' (для /en/event/...): EN-имя/описание, EN-даты (12-часовое время),
+ * «Free»/«Donation», «Organizer:», ссылка на RU-профиль /org/<id>/.
  */
-function eventSeoHtml(ev, url) {
-  const name = ev.title_ru || ev.title || ev.title_en || '';
+function eventSeoHtml(ev, url, lang = 'ru') {
+  const en = lang === 'en';
+  const name = en
+    ? ev.title_en || ev.title || ''
+    : ev.title_ru || ev.title || ev.title_en || '';
   const sd = nextOccurrenceDate(ev, TODAY_ISO);
   const time = typeof ev.start_time === 'string' ? ev.start_time.trim() : '';
   const city = typeof ev.city === 'string' ? ev.city.trim() : '';
@@ -1104,7 +1121,9 @@ function eventSeoHtml(ev, url) {
     typeof ev.currency === 'string' && ev.currency ? ev.currency : 'usd'
   ).toUpperCase();
   const donation = Boolean(ev.donation);
-  const ruText = ev.description_ru || ev.description || ev.description_en || '';
+  const text = en
+    ? ev.description_en || ev.description || ev.description_ru || ''
+    : ev.description_ru || ev.description || ev.description_en || '';
   const orgName =
     typeof ev.org_display_name === 'string' ? ev.org_display_name.trim() : '';
   const ownerId = typeof ev.owner_id === 'string' ? ev.owner_id.trim() : '';
@@ -1112,7 +1131,7 @@ function eventSeoHtml(ev, url) {
   const lines = ['<div id="seo-event-block">'];
   if (name) lines.push(`  <h1>${esc(name)}</h1>`);
   if (sd) {
-    const dateText = time ? `${ruDate(sd)}, ${time}` : ruDate(sd);
+    const dateText = time ? localizedDateTime(sd, time, lang) : (en ? enDate(sd) : ruDate(sd));
     const datetime = time ? `${sd}T${time}` : sd;
     lines.push(`  <p><time datetime="${esc(datetime)}">${esc(dateText)}</time></p>`);
   }
@@ -1131,21 +1150,23 @@ function eventSeoHtml(ev, url) {
   }
   if (place) lines.push(`  <address>${esc(place)}</address>`);
   // Цена: платная — «{price} {currency}»; price 0 (или не указана) + donation —
-  // «Донат»; 0 — «Бесплатно»; не указана (null) — строку не выводим (в SPA
-  // «Цену уточняйте у организатора» — см. card.priceUnknown в ru.ts)
+  // «Донат»/«Donation»; 0 — «Бесплатно»/«Free»; не указана (null) — строку не
+  // выводим (в SPA «Цену уточняйте у организатора» — см. card.priceUnknown)
   let priceText = '';
   if (price != null && price > 0) {
     priceText = `${price} ${currency}`;
   } else if (donation) {
-    priceText = 'Донат';
+    priceText = en ? 'Donation' : 'Донат';
   } else if (price === 0) {
-    priceText = 'Бесплатно';
+    priceText = en ? 'Free' : 'Бесплатно';
   }
   if (priceText) lines.push(`  <p>${esc(priceText)}</p>`);
-  if (ruText) lines.push(`  <p>${esc(ruText)}</p>`);
+  if (text) lines.push(`  <p>${esc(text)}</p>`);
   if (orgName && ownerId) {
     const orgUrl = `${SITE_URL}/org/${encodeURIComponent(ownerId)}/`;
-    lines.push(`  <p>Организатор: <a href="${esc(orgUrl)}">${esc(orgName)}</a></p>`);
+    lines.push(
+      `  <p>${en ? 'Organizer:' : 'Организатор:'} <a href="${esc(orgUrl)}">${esc(orgName)}</a></p>`,
+    );
   }
   lines.push('</div>', '');
   return lines.join('\n');
@@ -1272,12 +1293,19 @@ async function main() {
   }
 
   // События: URL должен совпадать с тем, что строит SPA, —
-  // /event/<id>/<slugify(title)> (src/pages/Home.tsx replaceState)
+  // /event/<id>/<slugify(title)> (src/pages/Home.tsx replaceState).
+  // События с EN-версией (title_en непуст ИЛИ source_lang='en') получают
+  // пару /en/event/<id>/<slugify(title_en||title)>/ (п. 2.3): RU-страница —
+  // hreflang на EN, EN-страница — свой h1/описание/JSON-LD и hreflang на RU.
   const pageEvents = [];
+  let pageEnEvents = 0;
   for (const ev of events) {
     if (!ev || typeof ev.id !== 'string' || typeof ev.title !== 'string') continue;
+    const hasEn = Boolean(ev.title_en) || ev.source_lang === 'en';
     const path = `event/${ev.id}/${slugify(ev.title)}`;
     const url = `${SITE_URL}/${path}/`;
+    const enPath = `en/event/${ev.id}/${slugify(hasEn ? ev.title_en || ev.title : ev.title)}`;
+    const enUrl = `${SITE_URL}/${enPath}/`;
     const title = snippet(`${ev.title} · ${ev.city ?? ''}`.trim(), 65) || 'Событие';
     const city = typeof ev.city === 'string' ? ev.city.trim() : '';
     // Текст, который видит русскоязычный посетитель (html lang="ru"),
@@ -1287,6 +1315,12 @@ async function main() {
     const prefix = [city, date].filter(Boolean).join(', ');
     const description = snippet(prefix ? `${prefix}. ${ruText}` : ruText, 160);
     const photo = Array.isArray(ev.photos) ? absPhoto(ev.photos[0]) : '';
+    const hreflangRu = hasEn
+      ? [
+          { hreflang: 'en', href: enUrl },
+          { hreflang: 'x-default', href: enRoot },
+        ]
+      : undefined;
     writePage(baseHtml, path, {
       title,
       description,
@@ -1296,12 +1330,43 @@ async function main() {
       ogUrl: url,
       ogImage: photo || LOGO_URL,
       jsonLd: eventJsonLd(ev, url),
+      ...(hasEn ? { hreflang: hreflangRu } : {}),
       bodySeo: eventSeoHtml(ev, url),
     });
     locs.push(url);
     pageEvents.push(path);
+    // EN-версия события — только если у события есть перевод/англ. оригинал
+    if (hasEn) {
+      const nameEn = ev.title_en || ev.title || '';
+      const enCity = typeof ev.city === 'string' ? ev.city.trim() : '';
+      const enText = ev.description_en || ev.description || ev.description_ru || '';
+      const dateEn = enDate(ev.start_date);
+      const prefixEn = [enCity, dateEn].filter(Boolean).join(', ');
+      const descriptionEn = snippet(prefixEn ? `${prefixEn}. ${enText}` : enText, 160);
+      writePage(baseHtml, enPath, {
+        lang: 'en',
+        title: snippet(`${nameEn} · ${enCity ?? ''}`.trim(), 65) || 'Event',
+        description: descriptionEn,
+        canonical: enUrl,
+        ogTitle: snippet(`${nameEn} · ${enCity ?? ''}`.trim(), 65) || 'Event',
+        ogDescription: descriptionEn,
+        ogUrl: enUrl,
+        ogImage: photo || LOGO_URL,
+        jsonLd: eventJsonLd(ev, enUrl, 'en'),
+        hreflang: [
+          { hreflang: 'ru', href: url },
+          { hreflang: 'x-default', href: enRoot },
+        ],
+        bodySeo: eventSeoHtml(ev, enUrl, 'en'),
+      });
+      locs.push(enUrl);
+      hreflangPairs.set(url, enUrl);
+      pageEnEvents += 1;
+    }
   }
-  console.log(`  событий: ${pageEvents.length}, страниц всего: ${locs.length}`);
+  console.log(
+    `  событий: ${pageEvents.length}, EN-событий: ${pageEnEvents}, страниц всего: ${locs.length}`,
+  );
 
   // Организаторы: /org/<id> — публичные профили организаторов, у которых в
   // списке событий выше есть owner_id. Профиль — из публичного RPC
