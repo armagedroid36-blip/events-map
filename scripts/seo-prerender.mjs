@@ -184,6 +184,90 @@ const CITY_SEO = {
   },
 };
 
+// --- EN-версии городских SEO-текстов: держать синхронно с en.ts:574-633
+// (citySeo.bali/da-nang/nha-trang: h1/intro/faq), как CITY_SEO~ru.ts.
+const CITY_SEO_EN = {
+  bali: {
+    h1: 'Events in Bali',
+    intro:
+      "Bali is one of the most event-packed places in Southeast Asia — travellers, digital nomads and expats cross paths here all year round. MyPins is a live map of Bali events: parties and concerts, yoga and retreats, markets, festivals and expat meetups. Organizers publish their own events, so the list stays fresh. Filter by date, category or price, or zoom the map to your area — Canggu, Ubud, Seminyak, Kuta — to see what is happening nearby.",
+    faq: [
+      {
+        q: 'What events are happening in Bali?',
+        a: "On MyPins, organizers publish their own events: parties, concerts, yoga classes, markets, festivals and expat meetups. Every pin on the map shows the date, venue and price.",
+      },
+      {
+        q: 'How do I find events in Canggu, Ubud or another area?',
+        a: "Zoom the map to the area you need — the list shows events on the visible part of the map. You can also filter by category, date, price and event language.",
+      },
+      {
+        q: 'Are there free events in Bali?',
+        a: 'Yes. Use the price filter and choose “Free” or “Donation” — free entry with an optional contribution. Every event card shows the price: free, donation or an amount in the event’s currency.',
+      },
+    ],
+  },
+  'da-nang': {
+    h1: 'Events in Da Nang',
+    intro:
+      "Da Nang is one of Vietnam's fastest-growing cities, home to a large community of expats and travellers. MyPins shows what is on in Da Nang right now: parties and concerts, sports and yoga, markets and expat meetups. Organizers publish events themselves, so the listings stay fresh. Use filters for date, category, price and language to plan your evening or weekend.",
+    faq: [
+      {
+        q: 'What events are happening in Da Nang?',
+        a: "On MyPins, Da Nang events are published by organizers themselves: concerts, parties, yoga, sports, markets and expat meetups. The map shows the date, venue and price of every event.",
+      },
+      {
+        q: 'What to do in Da Nang today or tomorrow?',
+        a: 'In the date filter choose “Today” or “Tomorrow” to see events for those days. For the weekend, browse the whole map — there are more events to choose from.',
+      },
+      {
+        q: 'How much do events in Da Nang cost?',
+        a: "Every event card shows the price: free, donation or an amount in the event's currency. The price filter can show only free events.",
+      },
+    ],
+  },
+  'nha-trang': {
+    h1: 'Events in Nha Trang',
+    intro:
+      "Nha Trang is Vietnam's main beach resort and a popular winter spot for travellers and expats. MyPins maps what is happening in Nha Trang: concerts and parties, speaking clubs and meetups, yoga, shows and markets. Organizers add events directly, so you always see current dates, venues and prices. Filter by date, category or price to decide where to go.",
+    faq: [
+      {
+        q: 'What events are happening in Nha Trang?',
+        a: 'Organizers publish them themselves: parties, concerts, speaking clubs, yoga, shows and markets. Every event on the map has a date, venue and price.',
+      },
+      {
+        q: 'Are there expat meetups or speaking clubs in Nha Trang?',
+        a: "Yes — for example, the SmallTalk speaking club, whose events happen regularly in Nha Trang and are on the map. To stay updated, enable push notifications about new events in your profile.",
+      },
+      {
+        q: 'How much do events in Nha Trang cost?',
+        a: "The event card shows the price: free, donation or an amount in the event's currency. The price filter can show only free events if you need.",
+      },
+    ],
+  },
+};
+
+// EN-версии title/description городских страниц (для /en/<city>/).
+const CITY_PAGES_EN = [
+  {
+    path: 'bali',
+    title: 'Events in Bali: concerts, parties and festivals | MyPins',
+    description:
+      'Bali events map for travellers and expats: concerts, parties, yoga, markets and festivals with dates, venues and prices.',
+  },
+  {
+    path: 'da-nang',
+    title: 'Events in Da Nang: parties, concerts and meetups | MyPins',
+    description:
+      'Da Nang events map for expats and travellers: parties, concerts, yoga and meetups with dates, venues and prices.',
+  },
+  {
+    path: 'nha-trang',
+    title: 'Events in Nha Trang: concerts, shows and parties | MyPins',
+    description:
+      'Nha Trang events map for travellers and expats: concerts, shows, parties and speaking clubs with dates, venues and prices.',
+  },
+];
+
 // --- Блог: /blog и /blog/<slug>. Тексты статей — в src/content/articles.json
 // (единый источник с SPA src/pages/Blog.tsx — здесь НЕ дублируются, только
 // читаются). Title/description индекса синхронны с BLOG_META в
@@ -265,33 +349,55 @@ function articleSectionsHtml(sections) {
  * main.tsx удаляет его при монтировании SPA): h1 «Блог MyPins…» + карточки
  * статей (заголовок-ссылка на /blog/<slug>/, дата, description). Ровно один
  * h1; ссылки на обе статьи видны в HTML без JS.
+ * lang='en' (для /en/blog/): h1 «MyPins Blog…», карточки из *_en полей,
+ * даты английские, ссылки SITE_URL/en/blog/<slug>/.
  */
-function blogIndexSeoHtml(articles) {
+function blogIndexSeoHtml(articles, lang = 'ru') {
+  const en = lang === 'en';
   const cards = [...articles]
     .sort((a, b) => String(b.datePublished).localeCompare(String(a.datePublished)))
     .map((a) => {
-      const url = `${SITE_URL}/blog/${a.slug}/`;
+      const h1 = en ? a.h1_en || a.h1 : a.h1;
+      const desc = en ? a.description_en || a.description : a.description;
+      const url = `${SITE_URL}${en ? '/en' : ''}/blog/${a.slug}/`;
       return [
         '  <article>',
-        `    <h2><a href="${esc(url)}">${esc(a.h1)}</a></h2>`,
-        `    <p>${esc(ruDate(a.datePublished))}</p>`,
-        `    <p>${esc(a.description)}</p>`,
+        `    <h2><a href="${esc(url)}">${esc(h1)}</a></h2>`,
+        `    <p>${esc(en ? enDate(a.datePublished) : ruDate(a.datePublished))}</p>`,
+        `    <p>${esc(desc)}</p>`,
         '  </article>',
       ].join('\n');
     })
     .join('\n');
-  return ['<div id="seo-article-block">', '  <h1>Блог MyPins: гиды по событиям</h1>', cards, '</div>', ''].join('\n');
+  const h1 = en ? 'MyPins Blog: guides to events and listings' : 'Блог MyPins: гиды по событиям';
+  return ['<div id="seo-article-block">', `  <h1>${h1}</h1>`, cards, '</div>', ''].join('\n');
 }
 
-/** Статический SEO-блок статьи: h1 + дата публикации + секции + подпись
- * редакции (E-E-A-T: авторство «Редакция MyPins» со ссылкой на /about/) */
-function articleSeoHtml(article) {
+/** Подпись редакции (E-E-A-T) в конце блока статьи — по языку страницы */
+function articleBylineHtml(lang = 'ru') {
+  if (lang === 'en') {
+    return `  <p class="article-byline">MyPins Editorial · <a href="${SITE_URL}/en/about/">About the project</a></p>`;
+  }
+  return `  <p class="article-byline">Редакция MyPins · <a href="${SITE_URL}/about/">О проекте и контакты</a></p>`;
+}
+
+/**
+ * Статический SEO-блок статьи: h1 + дата публикации + секции + подпись
+ * редакции (E-E-A-T: авторство «Редакция MyPins» со ссылкой на /about/).
+ * lang='en' — h1/description/секции из *_en полей статьи.
+ */
+function articleSeoHtml(article, lang = 'ru') {
+  const en = lang === 'en';
+  const h1 = en ? article.h1_en || article.h1 : article.h1;
+  const sections = en ? article.sections_en || article.sections : article.sections;
   return [
     '<div id="seo-article-block">',
-    `  <h1>${esc(article.h1)}</h1>`,
-    `  <p><time datetime="${esc(article.datePublished)}">${esc(ruDate(article.datePublished))}</time></p>`,
-    articleSectionsHtml(article.sections),
-    `  <p class="article-byline">Редакция MyPins · <a href="${SITE_URL}/about/">О проекте и контакты</a></p>`,
+    `  <h1>${esc(h1)}</h1>`,
+    `  <p><time datetime="${esc(article.datePublished)}">${esc(
+      en ? enDate(article.datePublished) : ruDate(article.datePublished),
+    )}</time></p>`,
+    articleSectionsHtml(sections),
+    articleBylineHtml(lang),
     '</div>',
     '',
   ].join('\n');
@@ -303,52 +409,61 @@ function articleSeoHtml(article) {
  * интро + секции + FAQ (details/summary) + финальный CTA. Ровно один h1;
  * секции рендерятся тем же кодом, что статьи (articleSectionsHtml /
  * mdLinksToHtml — md-ссылки из forOrganizers.json превращаются в <a>).
+ * lang='en' (для /en/for-organizers/) — из *_en полей (заголовки, intro,
+ * sections_en, faq_en, final_en; CTA «Create event»).
  */
-function forOrganizersSeoHtml(c) {
-  const faq = (c.faq ?? [])
+function forOrganizersSeoHtml(c, lang = 'ru') {
+  const en = lang === 'en';
+  const pick = (field, fieldEn) => (en ? c[fieldEn] || c[field] : c[field]);
+  const faq = (en ? c.faq_en || c.faq : c.faq ?? [])
     .map(
       (f) =>
         `  <details><summary>${mdLinksToHtml(f.q)}</summary><p>${mdLinksToHtml(f.a)}</p></details>`,
     )
     .join('\n');
+  const finalH2 = pick('final', 'final_en')?.h2 ?? '';
+  const finalP = pick('final', 'final_en')?.p ?? '';
+  const cta = en ? 'Create event' : 'Создать событие';
   const lines = [
     '<div id="seo-b2b-block">',
-    `  <h1>${esc(c.h1)}</h1>`,
-    `  <p>${mdLinksToHtml(c.intro ?? '')}</p>`,
-    articleSectionsHtml(c.sections),
+    `  <h1>${esc(pick('h1', 'h1_en'))}</h1>`,
+    `  <p>${mdLinksToHtml(pick('intro', 'intro_en') ?? '')}</p>`,
+    articleSectionsHtml(en ? c.sections_en || c.sections : c.sections),
   ];
   if (faq) lines.push(faq);
-  lines.push(`  <h2>${esc(c.final?.h2 ?? '')}</h2>`);
-  lines.push(`  <p>${mdLinksToHtml(c.final?.p ?? '')}</p>`);
-  lines.push('  <p><a href="/">Создать событие</a></p>');
+  lines.push(`  <h2>${esc(finalH2)}</h2>`);
+  lines.push(`  <p>${mdLinksToHtml(finalP)}</p>`);
+  lines.push(`  <p><a href="${en ? SITE_URL + '/en/' : '/'}">${cta}</a></p>`);
   lines.push('</div>', '');
   return lines.join('\n');
 }
 
 /** JSON-LD страницы «Для организаторов»: AboutPage + BreadcrumbList
  * («Главная > Для организаторов», как статьи) + FAQPage (4 Question/Answer
- * из forOrganizers.json) в одном @graph. */
-function forOrganizersJsonLd(c, url) {
+ * из forOrganizers.json) в одном @graph. lang='en' — имена/описание и
+ * FAQ из *_en полей, Breadcrumb Home > For organizers. */
+function forOrganizersJsonLd(c, url, lang = 'ru') {
+  const en = lang === 'en';
   return {
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'AboutPage',
-        name: c.h1,
-        description: c.description,
+        name: en ? c.h1_en || c.h1 : c.h1,
+        description: en ? c.description_en || c.description : c.description,
         url,
-        inLanguage: 'ru',
+        inLanguage: en ? 'en' : 'ru',
       },
       {
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Главная', item: `${SITE_URL}/` },
-          { '@type': 'ListItem', position: 2, name: 'Для организаторов', item: url },
+          { '@type': 'ListItem', position: 1, name: en ? 'Home' : 'Главная', item: `${SITE_URL}${en ? '/en' : ''}/` },
+          { '@type': 'ListItem', position: 2, name: en ? 'For organizers' : 'Для организаторов', item: url },
         ],
       },
       {
         '@type': 'FAQPage',
-        mainEntity: (c.faq ?? []).map((f) => ({
+        mainEntity: (en ? c.faq_en || c.faq : c.faq ?? []).map((f) => ({
           '@type': 'Question',
           name: f.q,
           acceptedAnswer: { '@type': 'Answer', text: f.a },
@@ -363,12 +478,14 @@ function forOrganizersJsonLd(c, url) {
  * b2b/статьи: main.tsx удаляет его при монтировании SPA): h1 + секции
  * (articleSectionsHtml / mdLinksToHtml — md-ссылки из about.json на города,
  * блог, /for-organizers, почту и Telegram-бот превращаются в <a>).
+ * lang='en' (для /en/about/) — секции из sections_en.
  */
-function aboutSeoHtml(c) {
+function aboutSeoHtml(c, lang = 'ru') {
+  const en = lang === 'en';
   return [
     '<div id="seo-about-block">',
-    `  <h1>${esc(c.h1)}</h1>`,
-    articleSectionsHtml(c.sections),
+    `  <h1>${esc(en ? c.h1_en || c.h1 : c.h1)}</h1>`,
+    articleSectionsHtml(en ? c.sections_en || c.sections : c.sections),
     '</div>',
     '',
   ].join('\n');
@@ -380,65 +497,71 @@ function aboutSeoHtml(c) {
  * показан в видимом блоке) + BreadcrumbList («Главная > О проекте») в одном
  * @graph. Базовый @graph WebSite/Organization из index.html остаётся первым
  * скриптом — на странице /about два ld+json блока (как на остальных).
+ * lang='en' (для /en/about/) — name/description из *_en, Breadcrumb Home.
  */
-function aboutJsonLd(c, url) {
+function aboutJsonLd(c, url, lang = 'ru') {
+  const en = lang === 'en';
   return {
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'AboutPage',
-        name: c.h1,
-        description: c.description,
+        name: en ? c.h1_en || c.h1 : c.h1,
+        description: en ? c.description_en || c.description : c.description,
         url,
-        inLanguage: 'ru',
+        inLanguage: en ? 'en' : 'ru',
       },
       {
         '@type': 'Organization',
         name: 'MyPins',
-        url: `${SITE_URL}/`,
+        url: `${SITE_URL}${en ? '/en' : ''}/`,
         logo: LOGO_URL,
         email: typeof c.email === 'string' && c.email ? c.email : '',
       },
       {
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Главная', item: `${SITE_URL}/` },
-          { '@type': 'ListItem', position: 2, name: 'О проекте', item: url },
+          { '@type': 'ListItem', position: 1, name: en ? 'Home' : 'Главная', item: `${SITE_URL}${en ? '/en' : ''}/` },
+          { '@type': 'ListItem', position: 2, name: en ? 'About' : 'О проекте', item: url },
         ],
       },
     ],
   };
 }
 
-/** JSON-LD индекса: Blog со списком статей (blogPost) */
-function blogIndexJsonLd(articles) {
+/** JSON-LD индекса: Blog со списком статей (blogPost). lang='en' — из *_en. */
+function blogIndexJsonLd(articles, lang = 'ru') {
+  const en = lang === 'en';
   return {
     '@context': 'https://schema.org',
     '@type': 'Blog',
-    name: 'Блог MyPins',
-    url: `${SITE_URL}/blog/`,
+    name: en ? 'MyPins Blog' : 'Блог MyPins',
+    url: `${SITE_URL}${en ? '/en' : ''}/blog/`,
     blogPost: articles.map((a) => ({
       '@type': 'BlogPosting',
-      url: `${SITE_URL}/blog/${a.slug}/`,
-      headline: a.h1,
+      url: `${SITE_URL}${en ? '/en' : ''}/blog/${a.slug}/`,
+      headline: en ? a.h1_en || a.h1 : a.h1,
       datePublished: a.datePublished,
     })),
   };
 }
 
-/** JSON-LD статьи: BlogPosting (автор — команда MyPins) + BreadcrumbList */
-function articleJsonLd(article, url) {
-  const blogUrl = `${SITE_URL}/blog/`;
+/** JSON-LD статьи: BlogPosting (автор — команда MyPins) + BreadcrumbList.
+ * lang='en' (для /en/blog/<slug>) — headline/description из *_en полей,
+ * inLanguage 'en', Breadcrumb Home > Blog. */
+function articleJsonLd(article, url, lang = 'ru') {
+  const en = lang === 'en';
+  const blogUrl = `${SITE_URL}${en ? '/en' : ''}/blog/`;
   return {
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'BlogPosting',
-        headline: article.h1,
-        description: article.description,
+        headline: en ? article.h1_en || article.h1 : article.h1,
+        description: en ? article.description_en || article.description : article.description,
         datePublished: article.datePublished,
         dateModified: article.dateModified,
-        inLanguage: article.lang || 'ru',
+        inLanguage: en ? 'en' : article.lang || 'ru',
         url,
         mainEntityOfPage: url,
         author: {
@@ -450,9 +573,9 @@ function articleJsonLd(article, url) {
       {
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Главная', item: `${SITE_URL}/` },
-          { '@type': 'ListItem', position: 2, name: 'Блог', item: blogUrl },
-          { '@type': 'ListItem', position: 3, name: article.h1, item: url },
+          { '@type': 'ListItem', position: 1, name: en ? 'Home' : 'Главная', item: `${SITE_URL}${en ? '/en' : ''}/` },
+          { '@type': 'ListItem', position: 2, name: en ? 'Blog' : 'Блог', item: blogUrl },
+          { '@type': 'ListItem', position: 3, name: en ? article.h1_en || article.h1 : article.h1, item: url },
         ],
       },
     ],
@@ -493,6 +616,11 @@ const RU_MONTHS = [
   'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря',
 ];
 
+const EN_MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+
 /** «2026-09-05» → «5 сентября 2026» (без часовых поясов) */
 function ruDate(iso) {
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso ?? '');
@@ -500,6 +628,30 @@ function ruDate(iso) {
   const [, y, mo, d] = m;
   const month = RU_MONTHS[Number(mo) - 1];
   return month ? `${Number(d)} ${month} ${y}` : iso;
+}
+
+/** «2026-09-05» → «September 5, 2026» (EN, без часовых поясов) */
+function enDate(iso) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso ?? '');
+  if (!m) return iso;
+  const [, y, mo, d] = m;
+  const month = EN_MONTHS[Number(mo) - 1];
+  return month ? `${month} ${Number(d)}, ${y}` : iso;
+}
+
+/** Дата+время на языке страницы: «5 сентября 2026, 17:00» / «September 5, 2026, 5:00 PM» */
+function localizedDateTime(iso, time, lang) {
+  const date = lang === 'en' ? enDate(iso) : ruDate(iso);
+  if (!time) return date;
+  if (lang !== 'en') return `${date}, ${time}`;
+  // 24-часовое время из БД → 12-часовое для EN (как в SPA en.ts)
+  const m = /^(\d{1,2}):(\d{2})/.exec(time);
+  if (!m) return `${date}, ${time}`;
+  let h = Number(m[1]);
+  const min = m[2];
+  const ap = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  return `${date}, ${h}:${min} ${ap}`;
 }
 
 /** +N дней к ISO-дате (Date.UTC нормализует переполнение месяца/года) */
@@ -710,16 +862,29 @@ function eventJsonLd(ev, url) {
  * базовый @graph WebSite/Organization из index.html остаётся на всех
  * страницах. Если meta.bodySeo задан (городские страницы) — вставить
  * видимый SEO-текст в <body> рядом с #root.
+ *
+ * Локализация (EN-версии /en/*): meta.lang ('ru'|'en') — заменяет
+ * <html lang="ru"> на язык страницы и добавляет og:locale
+ * (ru_RU|en_US); meta.hreflang — массив {hreflang, href} парных страниц:
+ * <link rel="alternate" hreflang=... /> вставляется в head. Без hreflang
+ * старые hreflang-теги вычищаются (страница без пары). meta.canonical/
+ * ogUrl уже должны указывать на версию языка (SITE_URL + /en для EN).
  */
 function renderPage(baseHtml, meta) {
-  let out = baseHtml.replace(/<title>[\s\S]*?<\/title>/i, () => `<title>${esc(meta.title)}</title>`);
+  const lang = meta.lang === 'en' ? 'en' : 'ru';
+  const locale = lang === 'en' ? 'en_US' : 'ru_RU';
+  let out = baseHtml
+    .replace(/<title>[\s\S]*?<\/title>/i, () => `<title>${esc(meta.title)}</title>`)
+    .replace(/<html\s+lang=["'][^"']*["']/i, `<html lang="${lang}"`);
   out = out.replace(/<meta\s+name=["']description["'][^>]*>/gi, '');
   out = out.replace(/<link\s+rel=["']canonical["'][^>]*\/?>/gi, '');
+  out = out.replace(/<link\s+rel=["']alternate["'][^>]*\/?>/gi, '');
   out = out.replace(/<meta\s+(?:property|name)=["'](?:og|twitter):[^"']*["'][^>]*>/gi, '');
   const lines = [
     `    <meta name="description" content="${esc(meta.description)}" />`,
     `    <link rel="canonical" href="${esc(meta.canonical)}" />`,
     `    <meta property="og:site_name" content="MyPins" />`,
+    `    <meta property="og:locale" content="${locale}" />`,
     `    <meta property="og:type" content="website" />`,
     `    <meta property="og:title" content="${esc(meta.ogTitle)}" />`,
     `    <meta property="og:description" content="${esc(meta.ogDescription)}" />`,
@@ -727,6 +892,13 @@ function renderPage(baseHtml, meta) {
     `    <meta property="og:image" content="${esc(meta.ogImage)}" />`,
     `    <meta name="twitter:card" content="summary_large_image" />`,
   ];
+  // Парные страницы: <link rel="alternate" hreflang="ru|en|..."> (взаимные
+  // ссылки на версии языка) — перед canonical-тегом, как рекомендует Google.
+  for (const h of meta.hreflang ?? []) {
+    lines.push(
+      `    <link rel="alternate" hreflang="${esc(String(h.hreflang))}" href="${esc(h.href)}" />`,
+    );
+  }
   if (meta.jsonLd) {
     lines.push(`    <script type="application/ld+json">${ldJson(meta.jsonLd)}</script>`);
   }
@@ -820,6 +992,79 @@ function homeSeoHtml() {
     '</div>',
     '',
   ].join('\n');
+}
+
+/** EN-версия статического SEO-блока главной для /en/ (id=seo-home-block):
+ * тот же смысл и прямые ответы, что в RU homeSeoHtml (п. 1.1 промпта R):
+ * h1 «Events on the Map: Bali, Da Nang, Nha Trang», 4 абзаца + ссылки на
+ * EN-версии /en/bali/ /en/da-nang/ /en/nha-trang/ /en/blog/. */
+function homeSeoHtmlEn() {
+  const link = (path, label) => `<a href="${SITE_URL}/en/${path}/">${esc(label)}</a>`;
+  return [
+    '<div id="seo-home-block">',
+    '  <h1>Events on the Map: Bali, Da Nang, Nha Trang</h1>',
+    '  <p>MyPins is an events map for travellers and expats in Southeast Asia: concerts, parties, yoga, markets and speaking clubs, published by the organizers themselves.</p>',
+    '  <p>Every event is shown on the map with its date, venue and price — from free meetups and donation parties to big concerts. Filters by category, date and price plus a city search help you find something for today or for the weekend, and zooming the map shows events in the area you need: Canggu, Ubud or Seminyak in Bali, central Da Nang or the Nha Trang promenade.</p>',
+    '  <p>The listings are live: organizers publish events themselves and the map updates every day, so there is always something to check out today or on the weekend.</p>',
+    `  <p>Browse events ${link('bali', 'in Bali')}, ${link('da-nang', 'in Da Nang')}, ${link('nha-trang', 'in Nha Trang')}. Guides and event round-ups — ${link('blog', 'on the MyPins blog')}.</p>`,
+    '</div>',
+    '',
+  ].join('\n');
+}
+
+/**
+ * EN-версия статического SEO-блока города для /en/<city>/ (тот же id,
+ * что у RU — SPA удаляет оба): h1/intro/FAQ EN (CITY_SEO_EN — синхронно
+ * с en.ts:574-633), строка «Updated: …» (аналог «Афиша обновлена»), блок
+ * ближайших событий — только события с EN-версией (title_en непуст ИЛИ
+ * source_lang='en'): имя = title_en||title, ссылка в Фазе 1 — на ЖИВУЮ
+ * RU-страницу /event/<id>/<slugify(title)>/ (EN-страницы событий появятся
+ * в Фазе 2; битых ссылок после деплоя Фазы 1 быть не должно — выбрано в
+ * коммите Фазы 1, в Фазе 2 ссылка меняется на /en/event/<id>/…).
+ */
+function citySeoHtmlEn(seo, evs) {
+  const faq = seo.faq
+    .map(
+      (f) =>
+        `    <details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`,
+    )
+    .join('\n');
+  const lines = [
+    '<div id="seo-city-block">',
+    `  <h1>${esc(seo.h1)}</h1>`,
+    `  <p>${esc(seo.intro)}</p>`,
+    `  <p class="seo-updated">Updated: <time datetime="${TODAY_ISO}">${enDate(TODAY_ISO)}</time></p>`,
+  ];
+  if (Array.isArray(evs) && evs.length) {
+    // «Events in Bali» → «Upcoming events in Bali» (суффикс h1 переиспользуется)
+    const where = seo.h1.replace(/^Events in\s+/, '');
+    lines.push(`  <h2>Upcoming events in ${esc(where)}</h2>`, '  <ul>');
+    for (const ev of evs) {
+      const sd = nextOccurrenceDate(ev, TODAY_ISO);
+      const url = `${SITE_URL}/event/${ev.id}/${slugify(ev.title)}/`; // RU-страница (Фаза 1)
+      const name = ev.title_en || ev.title || '';
+      const price = ev.price != null ? Number(ev.price) : null;
+      const currency = (
+        typeof ev.currency === 'string' && ev.currency ? ev.currency : 'usd'
+      ).toUpperCase();
+      let priceText = '';
+      if (price != null && price > 0) {
+        priceText = `${price} ${currency}`;
+      } else if (Boolean(ev.donation)) {
+        priceText = 'Donation';
+      } else if (price === 0) {
+        priceText = 'Free';
+      }
+      const parts = [];
+      if (sd) parts.push(`<time datetime="${esc(sd)}">${esc(enDate(sd))}</time>`);
+      if (name) parts.push(`<a href="${esc(url)}">${esc(name)}</a>`);
+      if (priceText) parts.push(`<span>${esc(priceText)}</span>`);
+      lines.push(`    <li>${parts.join(' — ')}</li>`);
+    }
+    lines.push('  </ul>');
+  }
+  lines.push('  <h2>FAQ</h2>', faq, '</div>', '');
+  return lines.join('\n');
 }
 
 /** JSON-LD FAQPage городской страницы: те же вопросы и ответы, что в
@@ -934,8 +1179,14 @@ async function main() {
   // распознаётся cityCrumb(ev.city) (тот же путь, что у городской страницы,
   // не распознано → событие в блоки не попадает), сортировка по дате
   // ближайшего вхождения (nextOccurrenceDate, как в JSON-LD).
+  // Парные страницы (RU↔EN) получают hreflang-блок (п. 1.1 промпта R):
+  // RU-версия → <link hreflang="en" href="/en/<path>/"> + x-default /en/.
+  const enRoot = `${SITE_URL}/en/`;
+  // Пары для sitemap-xhtml: ruUrl -> enUrl (заполняются по ходу)
+  const hreflangPairs = new Map();
   for (const c of CITY_PAGES) {
     const url = `${SITE_URL}/${c.path}/`;
+    const enUrl = `${SITE_URL}/en/${c.path}/`;
     const seo = CITY_SEO[c.path];
     const cityEvs = events
       .filter(
@@ -955,6 +1206,7 @@ async function main() {
     // FAQPage (отдельным ld+json-скриптом) — только если у города есть faq
     const faqLd = seo?.faq?.length ? faqPageJsonLd(seo.faq) : null;
     writePage(baseHtml, c.path, {
+      lang: 'ru',
       title: c.title,
       description: c.description,
       canonical: url,
@@ -963,10 +1215,60 @@ async function main() {
       ogUrl: url,
       ogImage: LOGO_URL,
       jsonLd: faqLd,
+      hreflang: [
+        { hreflang: 'en', href: enUrl },
+        { hreflang: 'x-default', href: enRoot },
+      ],
       bodySeo: seo ? citySeoHtml(seo, cityEvs) : null,
     });
     locs.push(url);
+    hreflangPairs.set(url, enUrl);
     console.log(`  /${c.path}/index.html (событий в блоке: ${cityEvs.length})`);
+  }
+
+  // EN-версии городов: /en/<path>/ — lang="en", EN-тексты (CITY_SEO_EN
+  // синхронно с en.ts:574-633), EN-блок ближайших событий (только события
+  // с EN-версией: title_en непуст ИЛИ source_lang='en'; ссылки в Фазе 1 —
+  // на живые RU-страницы события, см. citySeoHtmlEn). hreflang: ru → RU-версия.
+  for (const c of CITY_PAGES_EN) {
+    const url = `${SITE_URL}/en/${c.path}/`;
+    const ruUrl = `${SITE_URL}/${c.path}/`;
+    const seo = CITY_SEO_EN[c.path];
+    const cityEvs = events
+      .filter(
+        (ev) =>
+          ev &&
+          typeof ev.id === 'string' &&
+          typeof ev.title === 'string' &&
+          ev.title &&
+          cityCrumb(ev.city)?.path === c.path &&
+          ((typeof ev.title_en === 'string' && ev.title_en) || ev.source_lang === 'en'),
+      )
+      .sort((a, b) =>
+        String(nextOccurrenceDate(a, TODAY_ISO)).localeCompare(
+          String(nextOccurrenceDate(b, TODAY_ISO)),
+        ),
+      )
+      .slice(0, MAX_CITY_EVENTS);
+    const faqLd = seo?.faq?.length ? faqPageJsonLd(seo.faq) : null;
+    writePage(baseHtml, `en/${c.path}`, {
+      lang: 'en',
+      title: c.title,
+      description: c.description,
+      canonical: url,
+      ogTitle: c.title,
+      ogDescription: c.description,
+      ogUrl: url,
+      ogImage: LOGO_URL,
+      jsonLd: faqLd,
+      hreflang: [
+        { hreflang: 'ru', href: ruUrl },
+        { hreflang: 'x-default', href: enRoot },
+      ],
+      bodySeo: seo ? citySeoHtmlEn(seo, cityEvs) : null,
+    });
+    locs.push(url);
+    console.log(`  /en/${c.path}/index.html (EN-событий в блоке: ${cityEvs.length})`);
   }
 
   // События: URL должен совпадать с тем, что строит SPA, —
@@ -1090,11 +1392,13 @@ async function main() {
     process.exit(1);
   }
   const blogUrl = `${SITE_URL}/blog/`;
+  const enBlogUrl = `${SITE_URL}/en/blog/`;
   const blogLastmod = [...blogArticles]
     .map((a) => a.datePublished)
     .filter(Boolean)
     .sort()
     .at(-1);
+  // Индекс блога RU (hreflang-пара на /en/blog/) + EN (контент из *_en полей)
   writePage(baseHtml, 'blog', {
     title: BLOG_META.title,
     description: BLOG_META.description,
@@ -1104,14 +1408,41 @@ async function main() {
     ogUrl: blogUrl,
     ogImage: LOGO_URL,
     jsonLd: blogIndexJsonLd(blogArticles),
+    hreflang: [
+      { hreflang: 'en', href: enBlogUrl },
+      { hreflang: 'x-default', href: enRoot },
+    ],
     bodySeo: blogIndexSeoHtml(blogArticles),
   });
   locs.push(blogUrl);
+  hreflangPairs.set(blogUrl, enBlogUrl);
   if (blogLastmod) lastmods.set(blogUrl, blogLastmod);
   console.log('  /blog/index.html');
+  writePage(baseHtml, 'en/blog', {
+    lang: 'en',
+    title: 'MyPins Blog: event guides for Bali, Da Nang and Nha Trang | MyPins',
+    description:
+      'Guides to the event scenes of Nha Trang, Bali and Da Nang: where to go, what to see and how much events cost. Round-ups by the MyPins team.',
+    canonical: enBlogUrl,
+    ogTitle: 'MyPins Blog: event guides for Bali, Da Nang and Nha Trang | MyPins',
+    ogDescription:
+      'Guides to the event scenes of Nha Trang, Bali and Da Nang: where to go, what to see and how much events cost. Round-ups by the MyPins team.',
+    ogUrl: enBlogUrl,
+    ogImage: LOGO_URL,
+    jsonLd: blogIndexJsonLd(blogArticles, 'en'),
+    hreflang: [
+      { hreflang: 'ru', href: blogUrl },
+      { hreflang: 'x-default', href: enRoot },
+    ],
+    bodySeo: blogIndexSeoHtml(blogArticles, 'en'),
+  });
+  locs.push(enBlogUrl);
+  if (blogLastmod) lastmods.set(enBlogUrl, blogLastmod);
+  console.log('  /en/blog/index.html');
   for (const a of blogArticles) {
     if (!a || typeof a.slug !== 'string' || !a.slug) continue;
     const url = `${SITE_URL}/blog/${a.slug}/`;
+    const enUrl = `${SITE_URL}/en/blog/${a.slug}/`;
     writePage(baseHtml, `blog/${a.slug}`, {
       title: String(a.title ?? ''),
       description: String(a.description ?? ''),
@@ -1121,9 +1452,39 @@ async function main() {
       ogUrl: url,
       ogImage: LOGO_URL,
       jsonLd: articleJsonLd(a, url),
+      hreflang: [
+        { hreflang: 'en', href: enUrl },
+        { hreflang: 'x-default', href: enRoot },
+      ],
       bodySeo: articleSeoHtml(a),
     });
     locs.push(url);
+    hreflangPairs.set(url, enUrl);
+    // EN-версия статьи — только если есть *_en контент (иначе 404, SPA
+    // покажет RU-статью с переводом UI — см. 1.3 промпта R)
+    if (a.h1_en || a.sections_en) {
+      const titleEn = a.title_en || a.title;
+      const descEn = a.description_en || a.description;
+      writePage(baseHtml, `en/blog/${a.slug}`, {
+        lang: 'en',
+        title: String(titleEn ?? ''),
+        description: String(descEn ?? ''),
+        canonical: enUrl,
+        ogTitle: String(titleEn ?? ''),
+        ogDescription: String(descEn ?? ''),
+        ogUrl: enUrl,
+        ogImage: LOGO_URL,
+        jsonLd: articleJsonLd(a, enUrl, 'en'),
+        hreflang: [
+          { hreflang: 'ru', href: url },
+          { hreflang: 'x-default', href: enRoot },
+        ],
+        bodySeo: articleSeoHtml(a, 'en'),
+      });
+      locs.push(enUrl);
+      if (a.datePublished) lastmods.set(enUrl, a.datePublished);
+      console.log(`  /en/blog/${a.slug}/index.html`);
+    }
     if (a.datePublished) lastmods.set(url, a.datePublished);
     console.log(`  /blog/${a.slug}/index.html`);
   }
@@ -1132,8 +1493,11 @@ async function main() {
   // B2B-страница «Для организаторов»: /for-organizers/ — контент из
   // src/content/forOrganizers.json (единый источник с SPA, тексты здесь не
   // дублируются). JSON-LD: AboutPage + BreadcrumbList + FAQPage.
+  // EN-версия /en/for-organizers/ — из *_en полей (заголовки, intro_en,
+  // sections_en, faq_en, final_en).
   const organizers = loadForOrganizers();
   const organizersUrl = `${SITE_URL}/for-organizers/`;
+  const enOrganizersUrl = `${SITE_URL}/en/for-organizers/`;
   writePage(baseHtml, 'for-organizers', {
     title: String(organizers.title ?? ''),
     description: String(organizers.description ?? ''),
@@ -1143,17 +1507,42 @@ async function main() {
     ogUrl: organizersUrl,
     ogImage: LOGO_URL,
     jsonLd: forOrganizersJsonLd(organizers, organizersUrl),
+    hreflang: [
+      { hreflang: 'en', href: enOrganizersUrl },
+      { hreflang: 'x-default', href: enRoot },
+    ],
     bodySeo: forOrganizersSeoHtml(organizers),
   });
   locs.push(organizersUrl);
+  hreflangPairs.set(organizersUrl, enOrganizersUrl);
   lastmods.set(organizersUrl, TODAY_ISO);
   console.log('  /for-organizers/index.html');
+  writePage(baseHtml, 'en/for-organizers', {
+    lang: 'en',
+    title: String((organizers.title_en || organizers.title) ?? ''),
+    description: String((organizers.description_en || organizers.description) ?? ''),
+    canonical: enOrganizersUrl,
+    ogTitle: String((organizers.title_en || organizers.title) ?? ''),
+    ogDescription: String((organizers.description_en || organizers.description) ?? ''),
+    ogUrl: enOrganizersUrl,
+    ogImage: LOGO_URL,
+    jsonLd: forOrganizersJsonLd(organizers, enOrganizersUrl, 'en'),
+    hreflang: [
+      { hreflang: 'ru', href: organizersUrl },
+      { hreflang: 'x-default', href: enRoot },
+    ],
+    bodySeo: forOrganizersSeoHtml(organizers, 'en'),
+  });
+  locs.push(enOrganizersUrl);
+  lastmods.set(enOrganizersUrl, TODAY_ISO);
+  console.log('  /en/for-organizers/index.html');
 
   // Страница «О проекте»: /about/ — контент из src/content/about.json (единый
   // источник с SPA, тексты здесь не дублируются). JSON-LD: AboutPage +
-  // Organization (контакт редакции) + BreadcrumbList.
+  // Organization (контакт редакции) + BreadcrumbList. EN — /en/about/ из *_en.
   const about = loadAbout();
   const aboutUrl = `${SITE_URL}/about/`;
+  const enAboutUrl = `${SITE_URL}/en/about/`;
   writePage(baseHtml, 'about', {
     title: String(about.title ?? ''),
     description: String(about.description ?? ''),
@@ -1163,22 +1552,71 @@ async function main() {
     ogUrl: aboutUrl,
     ogImage: LOGO_URL,
     jsonLd: aboutJsonLd(about, aboutUrl),
+    hreflang: [
+      { hreflang: 'en', href: enAboutUrl },
+      { hreflang: 'x-default', href: enRoot },
+    ],
     bodySeo: aboutSeoHtml(about),
   });
   locs.push(aboutUrl);
+  hreflangPairs.set(aboutUrl, enAboutUrl);
   lastmods.set(aboutUrl, TODAY_ISO);
   console.log('  /about/index.html');
+  writePage(baseHtml, 'en/about', {
+    lang: 'en',
+    title: String((about.title_en || about.title) ?? ''),
+    description: String((about.description_en || about.description) ?? ''),
+    canonical: enAboutUrl,
+    ogTitle: String((about.title_en || about.title) ?? ''),
+    ogDescription: String((about.description_en || about.description) ?? ''),
+    ogUrl: enAboutUrl,
+    ogImage: LOGO_URL,
+    jsonLd: aboutJsonLd(about, enAboutUrl, 'en'),
+    hreflang: [
+      { hreflang: 'ru', href: aboutUrl },
+      { hreflang: 'x-default', href: enRoot },
+    ],
+    bodySeo: aboutSeoHtml(about, 'en'),
+  });
+  locs.push(enAboutUrl);
+  lastmods.set(enAboutUrl, TODAY_ISO);
+  console.log('  /en/about/index.html');
+
+  // Главная (RU / + EN /en/) регистрируется в sitemap ЗДЕСЬ (до его записи);
+  // сами файлы пишутся в самом конце main() из baseHtml (см. ниже).
+  hreflangPairs.set(`${SITE_URL}/`, enRoot);
+  locs.push(enRoot);
 
   // sitemap.xml (перезапись). <lastmod> = дата сборки (TODAY_ISO) — сигнал
   // поисковикам, что контент страницы мог измениться; статьи блога несут
-  // <lastmod> = datePublished (см. lastmods)
+  // <lastmod> = datePublished (см. lastmods). У парных <url> (RU↔EN) — по два
+  // <xhtml:link rel="alternate" hreflang="ru|en"> + x-default на главную /en/
+  // (один urlset, xmlns:xhtml объявлен).
+  const pairLinks = (u) => {
+    const isEn = u.startsWith(`${SITE_URL}/en/`);
+    // RU-версия: прямая пара из map; EN-версия: ищем RU по значению
+    let ruUrl = hreflangPairs.get(u) ? u : null;
+    if (isEn) {
+      ruUrl = [...hreflangPairs.entries()].find(([, v]) => v === u)?.[0] ?? null;
+    } else if (!hreflangPairs.has(u)) {
+      return ''; // непарная страница (событие без перевода, org и т.п.)
+    }
+    if (!ruUrl) return '';
+    const enUrl = isEn ? u : hreflangPairs.get(u);
+    const selfRu = `    <xhtml:link rel="alternate" hreflang="ru" href="${esc(ruUrl)}" />\n`;
+    const selfEn = `    <xhtml:link rel="alternate" hreflang="en" href="${esc(enUrl)}" />\n`;
+    return `\n${selfRu}${selfEn}    <xhtml:link rel="alternate" hreflang="x-default" href="${esc(enRoot)}" />`;
+  };
   const xml = [
     '<?xml version="1.0" encoding="UTF-8"?>',
-    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
     ...locs
       .slice()
       .sort((a, b) => a.localeCompare(b))
-      .map((u) => `  <url><loc>${esc(u)}</loc><lastmod>${lastmods.get(u) ?? TODAY_ISO}</lastmod></url>`),
+      .map(
+        (u) =>
+          `  <url><loc>${esc(u)}</loc><lastmod>${lastmods.get(u) ?? TODAY_ISO}</lastmod>${pairLinks(u)}\n  </url>`,
+      ),
     '</urlset>',
     '',
   ].join('\n');
@@ -1199,6 +1637,7 @@ async function main() {
   writeFileSync(
     join(DIST, 'index.html'),
     renderPage(baseHtml, {
+      lang: 'ru',
       title: homeTitle,
       description: homeDescription,
       canonical: `${SITE_URL}/`,
@@ -1206,10 +1645,41 @@ async function main() {
       ogDescription: homeDescription,
       ogUrl: `${SITE_URL}/`,
       ogImage: LOGO_URL,
+      hreflang: [
+        { hreflang: 'en', href: enRoot },
+        { hreflang: 'x-default', href: enRoot },
+      ],
       bodySeo: homeSeoHtml(),
     }),
   );
+  hreflangPairs.set(`${SITE_URL}/`, enRoot);
   console.log('  dist/index.html: seo-home-block (главная)');
+
+  // EN-главная /en/: dist/en/index.html — из того же baseHtml, lang="en",
+  // EN-title/description, canonical/og:url /en/, hreflang-пара на / + x-default
+  // (на себя — x-default /en/ — как у всех EN-страниц), EN-блок #seo-home-block.
+  const homeTitleEn = 'Events on the Map: Bali, Da Nang, Nha Trang | MyPins';
+  const homeDescriptionEn =
+    'MyPins is an events map for travellers and expats in Southeast Asia: concerts, parties, yoga, markets and speaking clubs in Bali, Da Nang and Nha Trang with dates, venues and prices.';
+  writeFileSync(
+    join(DIST, 'en/index.html'),
+    renderPage(baseHtml, {
+      lang: 'en',
+      title: homeTitleEn,
+      description: homeDescriptionEn,
+      canonical: enRoot,
+      ogTitle: homeTitleEn,
+      ogDescription: homeDescriptionEn,
+      ogUrl: enRoot,
+      ogImage: LOGO_URL,
+      hreflang: [
+        { hreflang: 'ru', href: `${SITE_URL}/` },
+        { hreflang: 'x-default', href: enRoot },
+      ],
+      bodySeo: homeSeoHtmlEn(),
+    }),
+  );
+  console.log('  dist/en/index.html: seo-home-block EN (главная /en/)');
 }
 
 main().catch((e) => {

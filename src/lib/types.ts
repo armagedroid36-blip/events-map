@@ -291,7 +291,7 @@ export interface Article {
   title: string;
   /** Заголовок h1 */
   h1: string;
-  /** meta description (140-160 символов) */
+  /** meta description (~150 знаков) */
   description: string;
   datePublished: string;
   dateModified: string;
@@ -299,6 +299,12 @@ export interface Article {
   /** Город статьи: nha-trang | bali | null (общая тема) */
   city: string | null;
   sections: ArticleSection[];
+  // EN-версия (промпт R, 1.3): *_en поля опциональны — если их нет, EN-страница
+  // статьи не генерируется, SPA на /en/blog/<slug> показывает RU-контент (404)
+  title_en?: string;
+  h1_en?: string;
+  description_en?: string;
+  sections_en?: ArticleSection[];
 }
 
 // --- Страница «Для организаторов» (src/content/forOrganizers.json — единый
@@ -333,6 +339,14 @@ export interface ForOrganizersContent {
   faq: FaqItem[];
   /** Финальный CTA-блок (после FAQ) */
   final: ForOrganizerFinal;
+  // EN-версия (промпт R, 1.3): поля *_en опциональны
+  title_en?: string;
+  h1_en?: string;
+  description_en?: string;
+  intro_en?: string;
+  sections_en?: ArticleSection[];
+  faq_en?: FaqItem[];
+  final_en?: ForOrganizerFinal;
 }
 
 // --- Страница «О проекте» (src/content/about.json — единый источник для SPA
@@ -350,4 +364,9 @@ export interface AboutContent {
   email: string;
   /** Секции (типы как у статей: p/h2/ul, md-ссылки) */
   sections: ArticleSection[];
+  // EN-версия (промпт R, 1.3): поля *_en опциональны
+  title_en?: string;
+  h1_en?: string;
+  description_en?: string;
+  sections_en?: ArticleSection[];
 }

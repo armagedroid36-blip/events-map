@@ -36,17 +36,23 @@ export default function Header({ onOpenForm }: HeaderProps) {
   // Бейдж «движение по заявкам»: сколько событий организатора изменилось
   const [badge, setBadge] = useState(0);
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
+  // Публичные пункты навигации — на языке интерфейса (EN-версии страниц
+  // живут на /en/*; кнопки ведут на версию текущего языка — см. goBlog и др.)
+  const navBlogLabel = lang === 'ru' ? 'Блог' : 'Blog';
+  const navForOrgLabel = lang === 'ru' ? 'Для организаторов' : 'For organizers';
+  const navAboutLabel = lang === 'ru' ? 'О проекте' : 'About';
 
   // Путь без хвостового слэша (нормализация как normPath в App.tsx). Бренд —
-  // h1 только на главной «/»: на городских страницах (/bali, /da-nang,
-  // /nha-trang) единственный h1 даёт городской SEO-блок (видимый текст
-  // в Home.tsx), иначе на странице было бы два h1. Побочный эффект: на
-  // /event/... и /org/... бренд тоже не h1 — там своих h1 пока нет.
+  // h1 только на главной «/» (и EN-главной «/en»): на городских страницах
+  // (/bali, /da-nang, /nha-trang, их EN-версиях) единственный h1 даёт
+  // городской SEO-блок (видимый текст в Home.tsx), иначе на странице было бы
+  // два h1. Побочный эффект: на /event/... и /org/... бренд тоже не h1 —
+  // там своих h1 пока нет.
   const cleanPath =
     window.location.pathname === '/index.html'
       ? '/'
       : window.location.pathname.replace(/\/+$/, '') || '/';
-  const isBrandH1 = cleanPath === '/';
+  const isBrandH1 = cleanPath === '/' || cleanPath === '/en';
 
   // Бейдж уведомлений: org — движение по его событиям («Мои события»),
   // admin — события на модерации. Пересчитывается: при монтировании,
@@ -121,31 +127,31 @@ export default function Header({ onOpenForm }: HeaderProps) {
     };
   }, []);
 
-  /** Возврат на главную (карту): с чистого пути — navigate('/'),
-   *  на '/' — hash '#/' как раньше */
+  /** Возврат на главную (карту): с чистого пути — navigate на главную
+   *  ТЕКУЩЕГО языка ('/en' при EN-интерфейсе), на '/' — hash '#/' как раньше */
   function goHome() {
     if (window.location.pathname !== '/' && window.location.pathname !== '/index.html') {
-      navigate('/');
+      navigate(lang === 'en' ? '/en' : '/');
       return;
     }
     if (window.location.hash !== '#/') window.location.hash = '#/';
   }
 
-  /** Переход в блог /blog (публичный раздел, чистый URL) */
+  /** Переход в блог: на /en/blog при EN-интерфейсе, иначе /blog */
   function goBlog() {
-    navigate('/blog');
+    navigate(lang === 'en' ? '/en/blog' : '/blog');
     setMenuOpen(false);
   }
 
-  /** Переход на B2B-страницу /for-organizers (публичный раздел, чистый URL) */
+  /** Переход на B2B-страницу: /en/for-organizers при EN, иначе /for-organizers */
   function goForOrganizers() {
-    navigate('/for-organizers');
+    navigate(lang === 'en' ? '/en/for-organizers' : '/for-organizers');
     setMenuOpen(false);
   }
 
-  /** Переход на страницу /about (публичный раздел, чистый URL) */
+  /** Переход на страницу /about (EN — /en/about) */
   function goAbout() {
-    navigate('/about');
+    navigate(lang === 'en' ? '/en/about' : '/about');
     setMenuOpen(false);
   }
 
@@ -167,10 +173,37 @@ export default function Header({ onOpenForm }: HeaderProps) {
     return () => window.removeEventListener('close-gear-menu', h);
   }, []);
 
+  /** Переключение языка: EN-версии публичных страниц живут на /en/*, поэтому
+   *  на путях с парой меняем URL (navigate) + язык интерфейса; пути без
+   *  EN-версии (личные hash-разделы на '/', /org/<id>, RU-событие без
+   *  перевода) — только i18n.changeLanguage, URL не трогаем. Автонавигации
+   *  по языку браузера НЕТ — только явный клик переключателя. */
   function switchLang() {
     const next = lang === 'ru' ? 'en' : 'ru';
+    const path = window.location.pathname;
+    const hash = window.location.hash;
+    const isEnNow = path === '/en' || path.startsWith('/en/');
     i18n.changeLanguage(next);
     localStorage.setItem('events-map-lang', next);
+    // Личные hash-разделы (#/profile и пр.) и события/организаторы без
+    // EN-версии: переключаем только язык интерфейса, URL не трогаем.
+    // '/' с картой (hash пуст или '#/') — публичная RU-главная, у неё есть
+    // EN-версия /en — меняем URL.
+    const isPrivateHash = hash.startsWith('#/') && hash !== '#/' && hash !== '#';
+    if ((path === '/' || path === '/index.html') && !isPrivateHash) {
+      if (next === 'en') navigate('/en');
+      return;
+    }
+    if (path === '/' || path === '/index.html' || path.startsWith('/event/') || path.startsWith('/org/')) {
+      return;
+    }
+    // Публичный путь с EN-версией: убираем/добавляем префикс /en
+    if (!isEnNow && next === 'en') {
+      navigate(`/en${path}`);
+    } else if (isEnNow && next === 'ru') {
+      const target = path.replace(/^\/en/, '');
+      navigate(target === '' ? '/' : target);
+    }
   }
 
   // Переход в личный (hash-)раздел: #/profile, #/admin и т.п.
@@ -234,10 +267,11 @@ export default function Header({ onOpenForm }: HeaderProps) {
           href="#/"
           onClick={(e) => {
             // С чистого пути (например /bali или /event/...) — возврат на
-            // главную через navigate('/'); на '/' работает обычный hash-переход
+            // главную ТЕКУЩЕГО языка через navigate (EN — /en); на '/'
+            // работает обычный hash-переход
             if (window.location.pathname !== '/' && window.location.pathname !== '/index.html') {
               e.preventDefault();
-              navigate('/');
+              navigate(lang === 'en' ? '/en' : '/');
             }
           }}
           className="flex min-w-0 flex-1 items-center gap-[3px]"
@@ -279,7 +313,7 @@ export default function Header({ onOpenForm }: HeaderProps) {
               {n.label}
             </button>
           ))}
-          {/* Блог — публичные статьи. На <640px скрыт здесь: пункты публичной
+          {/* «Блог» — публичные статьи. На <640px скрыт здесь: пункты публичной
               навигации вынесены в нижнюю строку шапки (см. ряд 2 ниже),
               иначе кнопки не помещаются рядом с брендом и flex-wrap
               переносит их вразнобой. С sm+ — виден всегда. */}
@@ -287,7 +321,7 @@ export default function Header({ onOpenForm }: HeaderProps) {
             onClick={goBlog}
             className="hidden rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900 sm:block"
           >
-            Блог
+            {navBlogLabel}
           </button>
           {/* «Для организаторов» — публичная B2B-страница (та же видимость,
               что у «Блога»: скрыт на <640px, в нижней строке) */}
@@ -295,7 +329,7 @@ export default function Header({ onOpenForm }: HeaderProps) {
             onClick={goForOrganizers}
             className="hidden rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900 sm:block"
           >
-            Для организаторов
+            {navForOrgLabel}
           </button>
           {/* «О проекте» — публичная E-E-A-T-страница (та же видимость,
               что у «Блога»: скрыт на <640px, в нижней строке) */}
@@ -303,7 +337,7 @@ export default function Header({ onOpenForm }: HeaderProps) {
             onClick={goAbout}
             className="hidden rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900 sm:block"
           >
-            О проекте
+            {navAboutLabel}
           </button>
           {/* Переключатель языка */}
           <button
@@ -390,19 +424,19 @@ export default function Header({ onOpenForm }: HeaderProps) {
                       onClick={goBlog}
                       className="hidden w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 sm:block"
                     >
-                      Блог
+                      {navBlogLabel}
                     </button>
                     <button
                       onClick={goForOrganizers}
                       className="hidden w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 sm:block"
                     >
-                      Для организаторов
+                      {navForOrgLabel}
                     </button>
                     <button
                       onClick={goAbout}
                       className="hidden w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 sm:block"
                     >
-                      О проекте
+                      {navAboutLabel}
                     </button>
                     <div className="my-1 border-t border-gray-100" />
                     {/* Политика и Контакты — видны в меню на мобильных (в шапке скрыты) */}
@@ -467,19 +501,19 @@ export default function Header({ onOpenForm }: HeaderProps) {
           onClick={goBlog}
           className="rounded-md px-2 py-1 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900"
         >
-          Блог
+          {navBlogLabel}
         </button>
         <button
           onClick={goForOrganizers}
           className="rounded-md px-2 py-1 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900"
         >
-          Для организаторов
+          {navForOrgLabel}
         </button>
         <button
           onClick={goAbout}
           className="rounded-md px-2 py-1 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900"
         >
-          О проекте
+          {navAboutLabel}
         </button>
       </div>
 

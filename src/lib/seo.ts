@@ -5,14 +5,23 @@
 // логика описания события — функции snippet/ruDate/cutSafe ниже, копия из
 // скрипта). При правке шаблонов менять оба места.
 //
+// ЯЗЫК ПУБЛИЧНОЙ СТРАНИЦЫ = язык из URL (промпт R): /en/* — 'en', корневые
+// пути — 'ru'. Все apply* определяют его сами (isEnPath) и строят
+// canonical/og:url с префиксом /en; на парных страницах (главная, города,
+// blog/статьи, for-organizers, about) выставляется link rel=alternate
+// hreflang (ru/en + x-default = https://mypins.site/en/), на непарных
+// (событие без перевода, 404, /org/<id>, личные hash-разделы) hreflang-теги
+// удаляются.
+//
 // Маршруты:
-//   '/'                     — базовые (как в index.html), canonical https://mypins.site/
-//   /bali, /da-nang, ...    — CITY_PAGES, canonical https://mypins.site/<city>/ (со слэшем)
-//   /event/<id>/<slug>      — «<title> · <city>», описание «Город, дата. текст»,
-//                             canonical https://mypins.site/event/<id>/<slug>/ + og:*
+//   '/' / '/en'           — базовые (RU/EN), canonical https://mypins.site(/en)/
+//   /bali, /da-nang, ...  — CITY_PAGES, canonical https://mypins.site/<city>/ (со слэшем)
+//   /event/<id>/<slug>    — «<title> · <city>», описание «Город, дата. текст»,
+//                           canonical https://mypins.site/event/<id>/<slug>/ + og:*;
+//                           EN-версия (title_en) — canonical /en/event/...
 //   вне списка (404, /org/<id>, hash-разделы) — базовые title/description,
-//                             canonical и og:url УДАЛЯЮТСЯ (как в статике, где
-//                             их в index.html нет)
+//                           canonical и og:url УДАЛЯЮТСЯ (как в статике, где
+//                           их в index.html нет)
 import { config } from '../config';
 import { photoUrl } from './api';
 import { slugify } from './navigate';
@@ -27,14 +36,35 @@ import type {
 /** Адрес сайта без хвостового слэша (config.siteUrl = 'https://mypins.site/') */
 const SITE_URL = config.siteUrl.replace(/\/+$/, '');
 
-// Базовые title/description — как в index.html (статическая версия главной
-// и 404). Держать синхронно с index.html.
-const BASE_TITLE = document.title;
+/** Публичный путь начинается с /en → EN-версия страницы (единственный
+ * источник языка публичных путей — URL; браузер/localStorage не учитываем) */
+export function isEnPath(p: string): boolean {
+  return p === '/en' || p.startsWith('/en/');
+}
+
+/** Путь БЕЗ языкового префикса: '/en/bali' → '/bali', '/en' → '/' */
+export function stripLangPrefix(p: string): string {
+  if (!isEnPath(p)) return p;
+  const s = p.replace(/^\/en/, '');
+  return s === '' ? '/' : s;
+}
+
+// Базовые title/description главной — синхронно с index.html (RU) и с
+// EN-версией пре-рендера dist/en/index.html (EN). НЕ читать из DOM при
+// загрузке модуля: SPA может стартовать на /en (document.title уже EN),
+// и RU-версия '/' получила бы чужие EN-значения. Константы обеих версий.
+const BASE_TITLE =
+  'События на карте — Events on the Map';
 const BASE_DESCRIPTION =
-  document.querySelector<HTMLMetaElement>('meta[name="description"]')?.content ?? '';
+  'Конференции, концерты, выставки и вечеринки на карте Бали и Юго-Восточной Азии. Conferences, concerts, exhibitions and parties on the map of Bali and Southeast Asia.';
+
+// EN-версия главной /en/ — синхронно с пре-рендером (homeTitleEn в main()).
+const BASE_TITLE_EN = 'Events on the Map: Bali, Da Nang, Nha Trang | MyPins';
+const BASE_DESCRIPTION_EN =
+  'MyPins is an events map for travellers and expats in Southeast Asia: concerts, parties, yoga, markets and speaking clubs in Bali, Da Nang and Nha Trang with dates, venues and prices.';
 
 // Города — ровно те, что в CITY_PAGES (scripts/seo-prerender.mjs:76-95);
-// путь = slugify(labelEn) из config.quickLocations.
+// путь = slugify(labelEn) из config.quickLocations. EN-версии — CITY_PAGES_EN.
 const CITY_META: Record<string, { title: string; description: string }> = {
   bali: {
     title: 'События на Бали: афиша и куда сходить | Events in Bali',
@@ -53,9 +83,33 @@ const CITY_META: Record<string, { title: string; description: string }> = {
   },
 };
 
+// EN-версии title/description городов — синхронно с CITY_PAGES_EN пре-рендера.
+const CITY_META_EN: Record<string, { title: string; description: string }> = {
+  bali: {
+    title: 'Events in Bali: concerts, parties and festivals | MyPins',
+    description:
+      'Bali events map for travellers and expats: concerts, parties, yoga, markets and festivals with dates, venues and prices.',
+  },
+  'da-nang': {
+    title: 'Events in Da Nang: parties, concerts and meetups | MyPins',
+    description:
+      'Da Nang events map for expats and travellers: parties, concerts, yoga and meetups with dates, venues and prices.',
+  },
+  'nha-trang': {
+    title: 'Events in Nha Trang: concerts, shows and parties | MyPins',
+    description:
+      'Nha Trang events map for travellers and expats: concerts, shows, parties and speaking clubs with dates, venues and prices.',
+  },
+};
+
 const RU_MONTHS = [
   'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
   'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря',
+];
+
+const EN_MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
 ];
 
 /** «2026-09-05» → «5 сентября 2026» (русские месяцы вручную, без TZ-сюрпризов Intl) */
@@ -64,6 +118,19 @@ export function ruDate(iso: string | null | undefined): string {
   if (!m) return iso ?? '';
   const month = RU_MONTHS[Number(m[2]) - 1];
   return month ? `${Number(m[3])} ${month} ${m[1]}` : (iso ?? '');
+}
+
+/** «2026-09-05» → «September 5, 2026» (EN, без TZ-сюрпризов Intl) */
+export function enDate(iso: string | null | undefined): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso ?? '');
+  if (!m) return iso ?? '';
+  const month = EN_MONTHS[Number(m[2]) - 1];
+  return month ? `${month} ${Number(m[3])}, ${m[1]}` : (iso ?? '');
+}
+
+/** Дата на языке интерфейса (страницы): для публичных страниц язык = из URL */
+export function lDate(iso: string | null | undefined, lang: 'ru' | 'en'): string {
+  return lang === 'en' ? enDate(iso) : ruDate(iso);
 }
 
 /** Обрезка без разрыва суррогатной пары (эмодзи) — иначе в строке U+FFFD */
@@ -96,13 +163,51 @@ function snippet(text: string | null | undefined, max: number): string {
 interface HeadMeta {
   title: string;
   description: string;
+  /** 'en' для /en/* (язык публичной страницы = язык из URL) */
+  lang?: 'ru' | 'en';
   /** null — canonical удаляется (маршрут вне списка/404) */
   canonical: string | null;
   /** null — og-теги удаляются; на обычных страницах их нет (как в index.html) */
   og: Record<string, string> | null;
+  /**
+   * hreflang-пары парной страницы (RU↔EN). null/undefined — hreflang-теги
+   * удаляются (страница без пары: org, RU-событие без перевода, 404 и пр.).
+   * На EN-версиях пары ВКЛЮЧАЮТ и саму EN-ссылку? Нет: Google рекомендует
+   * каждой версии ссылаться на все версии, включая себя, поэтому обе версии
+   * несут полный список (ru + en + x-default); пре-рендер ставит на RU-версии
+   * en+x-default, а здесь SPA выставляет тот же набор для обеих.
+   */
+  hreflang: { hreflang: string; href: string }[] | null;
 }
 
 const OG_PROPS = ['og:title', 'og:description', 'og:url', 'og:image'] as const;
+
+/** hreflang на парной странице: ru/en + x-default = /en/. Вызывается во всех
+ * apply*: парные страницы передают пары, непарные — null (теги удаляются). */
+function setHreflang(pairs: { hreflang: string; href: string }[] | null): void {
+  document.head
+    .querySelectorAll('link[rel="alternate"][hreflang]')
+    .forEach((el) => el.remove());
+  for (const p of pairs ?? []) {
+    const link = document.createElement('link');
+    link.rel = 'alternate';
+    link.hreflang = p.hreflang;
+    link.href = p.href;
+    document.head.appendChild(link);
+  }
+}
+
+/** Хвост URL события по языку: slug по имени на языке UI */
+function eventTail(ev: EventItem, en: boolean): string {
+  const name = en && (ev.title_en || ev.source_lang === 'en') ? ev.title_en || ev.title : ev.title;
+  return slugify(name);
+}
+
+/** Полный URL события на языке страницы (en → /en/event/... при EN-версии) */
+function eventUrl(ev: EventItem, en: boolean): string {
+  const tail = eventTail(ev, en);
+  return `${SITE_URL}${en ? '/en' : ''}/event/${encodeURIComponent(ev.id)}/${tail}/`;
+}
 
 function setMetaDescription(content: string): void {
   let el = document.head.querySelector<HTMLMetaElement>('meta[name="description"]');
@@ -151,28 +256,62 @@ function setOgTags(og: Record<string, string> | null): void {
 
 function apply(meta: HeadMeta): void {
   document.title = meta.title;
+  // Язык публичной страницы отражается и в <html lang> (SPA-переходы
+  // между /en/* и корневыми путями не перезагружают документ)
+  document.documentElement.lang = meta.lang ?? 'ru';
   setMetaDescription(meta.description);
   setCanonical(meta.canonical);
   setOgTags(meta.og);
+  setHreflang(meta.hreflang ?? null);
 }
 
-/** Главная карта '/': базовые title/description, canonical https://mypins.site/ */
+/** hreflang-пары пары (главная/город/статья/…): полный набор для обеих версий */
+function hreflangPairsFor(ruUrl: string, enUrl: string): { hreflang: string; href: string }[] {
+  return [
+    { hreflang: 'ru', href: ruUrl },
+    { hreflang: 'en', href: enUrl },
+    { hreflang: 'x-default', href: `${SITE_URL}/en/` },
+  ];
+}
+
+/** Главная карта '/': базовые title/description, canonical https://mypins.site/.
+ * EN-версия (/en): EN-title/description, canonical https://mypins.site/en/. */
 export function applyHomeMeta(): void {
-  apply({ title: BASE_TITLE, description: BASE_DESCRIPTION, canonical: `${SITE_URL}/`, og: null });
+  const en = isEnPath(window.location.pathname);
+  const url = `${SITE_URL}${en ? '/en' : ''}/`;
+  apply({
+    title: en ? BASE_TITLE_EN : BASE_TITLE,
+    description: en ? BASE_DESCRIPTION_EN : BASE_DESCRIPTION,
+    lang: en ? 'en' : 'ru',
+    canonical: url,
+    og: null,
+    hreflang: hreflangPairsFor(`${SITE_URL}/`, `${SITE_URL}/en/`),
+  });
 }
 
 /**
  * Маршруты вне списка (404-заглушка, /org/<id>, hash-разделы #/profile и пр.):
  * базовые title/description, canonical и og-теги удаляются — нельзя оставлять
- * canonical/og предыдущей страницы на 404 или чужом маршруте.
+ * canonical/og предыдущей страницы на 404 или чужом маршруте. hreflang тоже
+ * удаляется (у этих страниц нет EN-версии).
  */
 export function applyGenericMeta(): void {
-  apply({ title: BASE_TITLE, description: BASE_DESCRIPTION, canonical: null, og: null });
+  const en = isEnPath(window.location.pathname);
+  apply({
+    title: en ? BASE_TITLE_EN : BASE_TITLE,
+    description: en ? BASE_DESCRIPTION_EN : BASE_DESCRIPTION,
+    lang: en ? 'en' : 'ru',
+    canonical: null,
+    og: null,
+    hreflang: null,
+  });
 }
 
-/** Город (/bali и т.п.): title/description как в CITY_PAGES, canonical со слэшем */
+/** Город (/bali и т.п.): title/description как в CITY_PAGES, canonical со слэшем.
+ * EN-версия (/en/bali): CITY_META_EN, canonical https://mypins.site/en/<city>/. */
 export function applyCityMeta(path: string): void {
-  const city = CITY_META[path];
+  const en = isEnPath(window.location.pathname);
+  const city = en ? CITY_META_EN[path] : CITY_META[path];
   if (!city) {
     applyGenericMeta();
     return;
@@ -180,25 +319,41 @@ export function applyCityMeta(path: string): void {
   apply({
     title: city.title,
     description: city.description,
-    canonical: `${SITE_URL}/${path}/`,
+    lang: en ? 'en' : 'ru',
+    canonical: `${SITE_URL}${en ? '/en' : ''}/${path}/`,
     og: null,
+    hreflang: hreflangPairsFor(`${SITE_URL}/${path}/`, `${SITE_URL}/en/${path}/`),
   });
 }
 
 /** Событие (карточка открыта / /event/<id>/<slug>): title/description как в
  * пре-рендере (seo-prerender.mjs), canonical и og со слэшем; og:image — первое
  * фото (абсолютный URL) или логотип сайта. Данные только из объекта события —
- * никаких новых запросов. */
+ * никаких новых запросов. EN-версия (/en/event/... с переводом события):
+ * имя/текст = title_en/description_en, canonical на /en/...; событие без
+ * EN-перевода, открытое по /en/event/... — мета RU-версии с canonical на RU
+ * URL (как ТЗ 2.4: показать как есть, canonical на RU URL). */
 export function applyEventMeta(ev: EventItem): void {
-  const title = snippet(`${ev.title} · ${ev.city ?? ''}`.trim(), 65) || 'Событие';
+  const p = window.location.pathname;
+  // EN-версия реально существует, только когда открыт /en/event/... У
+  // события с переводом. Карточка поверх городской EN-карты URL не меняет —
+  // canonical остаётся на RU-версии события (живой URL).
+  const en = p.startsWith('/en/event/');
+  const hasEn = Boolean(ev.title_en) || ev.source_lang === 'en';
+  const useEn = en && hasEn;
+  const title = snippet(
+    `${useEn ? ev.title_en || ev.title : ev.title} · ${ev.city ?? ''}`.trim(),
+    65,
+  ) || 'Событие';
   const city = typeof ev.city === 'string' ? ev.city.trim() : '';
-  // Текст русскоязычного посетителя (index.html lang="ru"), как localizedText:
-  // перевод или оригинал
-  const ruText = ev.description_ru || ev.description || ev.description_en || '';
-  const date = ruDate(ev.start_date);
+  // Текст, который видит посетитель этой версии (как localizedText)
+  const text = useEn
+    ? ev.description_en || ev.description
+    : ev.description_ru || ev.description || ev.description_en || '';
+  const date = useEn ? enDate(ev.start_date) : ruDate(ev.start_date);
   const prefix = [city, date].filter(Boolean).join(', ');
-  const description = snippet(prefix ? `${prefix}. ${ruText}` : ruText, 160);
-  const canonical = `${SITE_URL}/event/${encodeURIComponent(ev.id)}/${slugify(ev.title)}/`;
+  const description = snippet(prefix ? `${prefix}. ${text}` : text, 160);
+  const canonical = eventUrl(ev, useEn);
   const photo = ev.photos?.[0];
   const image = photo
     ? photo.startsWith('http')
@@ -208,6 +363,7 @@ export function applyEventMeta(ev: EventItem): void {
   apply({
     title,
     description,
+    lang: useEn ? 'en' : 'ru',
     canonical,
     og: {
       'og:title': title,
@@ -215,6 +371,10 @@ export function applyEventMeta(ev: EventItem): void {
       'og:url': canonical,
       'og:image': image,
     },
+    // hreflang-пара только если у события есть обе версии (после Фазы 2)
+    hreflang: hasEn
+      ? hreflangPairsFor(eventUrl(ev, false), eventUrl(ev, true))
+      : null,
   });
 }
 
@@ -255,6 +415,9 @@ export function applyOrgMeta(profile: OrgProfile): void {
       'og:url': canonical,
       'og:image': image,
     },
+    // У /org/<id> нет EN-версии (в этот промпт /en/org/* не входит)
+    lang: 'ru',
+    hreflang: null,
   });
 }
 
@@ -268,73 +431,113 @@ const BLOG_META = {
     'Гиды по событийной жизни Бали, Нячанга и Дананга: куда сходить, что посмотреть, сколько стоят события. Подборки от команды MyPins.',
 };
 
-/** /blog: список статей. canonical со слэшем, og — логотип сайта. */
-export function applyBlogMeta(): void {
-  apply({
-    title: BLOG_META.title,
-    description: BLOG_META.description,
-    canonical: `${SITE_URL}/blog/`,
-    og: {
-      'og:title': BLOG_META.title,
-      'og:description': BLOG_META.description,
-      'og:url': `${SITE_URL}/blog/`,
-      'og:image': `${SITE_URL}/logo.png`,
-    },
-  });
-}
+// EN-версия /en/blog/ — синхронно с пре-рендером (main()).
+const BLOG_META_EN = {
+  title: 'MyPins Blog: event guides for Bali, Da Nang and Nha Trang | MyPins',
+  description:
+    'Guides to the event scenes of Nha Trang, Bali and Da Nang: where to go, what to see and how much events cost. Round-ups by the MyPins team.',
+};
 
-/** /blog/<slug>: мета статьи из articles.json (как статический пре-рендер). */
-export function applyArticleMeta(article: Article): void {
-  const canonical = `${SITE_URL}/blog/${article.slug}/`;
+/** /blog: список статей. canonical со слэшем, og — логотип сайта.
+ * EN-версия (/en/blog): EN-title/description, canonical /en/blog/. */
+export function applyBlogMeta(): void {
+  const en = isEnPath(window.location.pathname);
+  const meta = en ? BLOG_META_EN : BLOG_META;
+  const canonical = `${SITE_URL}${en ? '/en' : ''}/blog/`;
   apply({
-    title: article.title,
-    description: article.description,
+    title: meta.title,
+    description: meta.description,
+    lang: en ? 'en' : 'ru',
     canonical,
     og: {
-      'og:title': article.title,
-      'og:description': article.description,
+      'og:title': meta.title,
+      'og:description': meta.description,
       'og:url': canonical,
       'og:image': `${SITE_URL}/logo.png`,
     },
+    hreflang: hreflangPairsFor(`${SITE_URL}/blog/`, `${SITE_URL}/en/blog/`),
+  });
+}
+
+/** /blog/<slug>: мета статьи из articles.json (как статический пре-рендер).
+ * EN-версия (/en/blog/<slug>): *_en поля, canonical /en/blog/<slug>/. */
+export function applyArticleMeta(article: Article): void {
+  const en = isEnPath(window.location.pathname);
+  const title = en ? article.title_en || article.title : article.title;
+  const description = en ? article.description_en || article.description : article.description;
+  const canonical = `${SITE_URL}${en ? '/en' : ''}/blog/${article.slug}/`;
+  apply({
+    title,
+    description,
+    lang: en ? 'en' : 'ru',
+    canonical,
+    og: {
+      'og:title': title,
+      'og:description': description,
+      'og:url': canonical,
+      'og:image': `${SITE_URL}/logo.png`,
+    },
+    hreflang: hreflangPairsFor(
+      `${SITE_URL}/blog/${article.slug}/`,
+      `${SITE_URL}/en/blog/${article.slug}/`,
+    ),
   });
 }
 
 /**
  * Страница «Для организаторов» (/for-organizers): title/description из
  * forOrganizers.json (единый источник — как статьи из articles.json),
- * canonical и og со слэшем, og:image — логотип сайта.
+ * canonical и og со слэшем, og:image — логотип сайта. EN (/en/for-organizers):
+ * *_en поля контента, canonical /en/for-organizers/.
  */
 export function applyForOrganizersMeta(content: ForOrganizersContent): void {
-  const canonical = `${SITE_URL}/for-organizers/`;
+  const en = isEnPath(window.location.pathname);
+  const title = en ? content.title_en || content.title : content.title;
+  const description = en
+    ? content.description_en || content.description
+    : content.description;
+  const canonical = `${SITE_URL}${en ? '/en' : ''}/for-organizers/`;
   apply({
-    title: content.title,
-    description: content.description,
+    title,
+    description,
+    lang: en ? 'en' : 'ru',
     canonical,
     og: {
-      'og:title': content.title,
-      'og:description': content.description,
+      'og:title': title,
+      'og:description': description,
       'og:url': canonical,
       'og:image': `${SITE_URL}/logo.png`,
     },
+    hreflang: hreflangPairsFor(
+      `${SITE_URL}/for-organizers/`,
+      `${SITE_URL}/en/for-organizers/`,
+    ),
   });
 }
 
 /**
  * Страница «О проекте» (/about): title/description из about.json (единый
  * источник — как статьи из articles.json), canonical и og со слэшем,
- * og:image — логотип сайта.
+ * og:image — логотип сайта. EN (/en/about): *_en поля, canonical /en/about/.
  */
 export function applyAboutMeta(content: AboutContent): void {
-  const canonical = `${SITE_URL}/about/`;
+  const en = isEnPath(window.location.pathname);
+  const title = en ? content.title_en || content.title : content.title;
+  const description = en
+    ? content.description_en || content.description
+    : content.description;
+  const canonical = `${SITE_URL}${en ? '/en' : ''}/about/`;
   apply({
-    title: content.title,
-    description: content.description,
+    title,
+    description,
+    lang: en ? 'en' : 'ru',
     canonical,
     og: {
-      'og:title': content.title,
-      'og:description': content.description,
+      'og:title': title,
+      'og:description': description,
       'og:url': canonical,
       'og:image': `${SITE_URL}/logo.png`,
     },
+    hreflang: hreflangPairsFor(`${SITE_URL}/about/`, `${SITE_URL}/en/about/`),
   });
 }

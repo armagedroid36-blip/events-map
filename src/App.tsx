@@ -20,7 +20,7 @@ import { getApi } from './lib/api';
 import { trackVisit } from './lib/trackVisit';
 import { config } from './config';
 import { navigate, slugify } from './lib/navigate';
-import { applyGenericMeta } from './lib/seo';
+import { applyGenericMeta, isEnPath, stripLangPrefix } from './lib/seo';
 
 // Страницы грузятся по требованию (code-split): тяжёлые зависимости
 // (карта, админка) уходят в отдельные чанки, основной чанк меньше.
@@ -73,7 +73,7 @@ function NotFound() {
 }
 
 export default function App() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   // path — чистый маршрут (pathname), route — hash (личные разделы на '/')
   const [path, setPath] = useState(() => normPath(window.location.pathname));
   const [route, setRoute] = useState(() => window.location.hash);
@@ -111,21 +111,24 @@ export default function App() {
     // их сам — у него данные события и города; здесь — страницы вне списка
     // (404, /org/<id>, личные hash-разделы): базовые title/description и БЕЗ
     // canonical/og — чужой canonical с прошлой страницы не оставляем
-    // (в статическом index.html canonical/og нет вовсе).
+    // (в статическом index.html canonical/og нет вовсе). EN-маршруты (/en/*)
+    // разбираются по пути БЕЗ префикса (isHomeRoute одинаков для обеих версий).
     if (recovery) {
       applyGenericMeta();
       return;
     }
     if (path !== '/') {
+      const pub = stripLangPrefix(path);
       const isHomeRoute =
-        path.startsWith('/event/') ||
-        CITY_ROUTES.has(path) ||
-        path === '/blog' ||
-        path.startsWith('/blog/') ||
-        path === '/for-organizers' ||
-        path === '/about';
-      // /blog, статьи, «Для организаторов» и «О проекте» мету ставят сами
-      // (как Home)
+        pub.startsWith('/event/') ||
+        CITY_ROUTES.has(pub) ||
+        pub === '/blog' ||
+        pub.startsWith('/blog/') ||
+        pub === '/for-organizers' ||
+        pub === '/about' ||
+        pub === '/';
+      // /blog, статьи, «Для организаторов», «О проекте» и карты (включая
+      // EN-главную /en) мету ставят сами (как Home)
       if (!isHomeRoute) applyGenericMeta();
       return;
     }
@@ -142,6 +145,20 @@ export default function App() {
     if (isPrivateRoute) applyGenericMeta();
     // Остальное на '/' — Home (карта/карточка события): мету ставит сам
   }, [path, route, recovery]);
+
+  // Язык публичного пути = язык из URL (промпт R): /en/* → en; корневые
+  // публичные пути (кроме '/' с личными hash-разделами) → ru. Синхронизируем
+  // i18n при клиентских переходах (navigate не трогает язык сам по себе).
+  useEffect(() => {
+    const lang = i18n.language;
+    if (isEnPath(path)) {
+      if (!lang.startsWith('en')) i18n.changeLanguage('en');
+    } else if (path !== '/' && path !== '/index.html') {
+      if (lang.startsWith('en')) i18n.changeLanguage('ru');
+    }
+    // На '/' язык не трогаем: там личные hash-разделы со своим выбором
+    // (localStorage) и карта RU.
+  }, [path, i18n]);
 
   // Внутренние ссылки в SPA: hash-ссылки (#/...) на чистом пути (например
   // /bali) не сработали бы — hash-логика App живёт только на '/'. Перехватываем
@@ -184,32 +201,47 @@ export default function App() {
     page = <ResetPassword onFinish={() => setRecovery(false)} />;
   } else if (path !== '/') {
     // --- Чистые URL: публичные страницы ---
-    const evM = path.match(/^\/event\/([^/]+)(?:\/[^/]+)?$/);
+    // /en/* — EN-версия той же страницы (та же логика, путь БЕЗ /en);
+    // префикс участвует в ключах, чтобы компонент перемонтировался при
+    // смене языка (RU ↔ EN — разный контент и разная мета в head)
+    const en = isEnPath(path);
+    const pub = stripLangPrefix(path);
+    const evM = pub.match(/^\/event\/([^/]+)(?:\/[^/]+)?$/);
     if (evM) {
-      page = <Home key={`event:${evM[1]}`} eventId={decodeURIComponent(evM[1])} />;
+      page = <Home key={`${en ? 'en:' : ''}event:${evM[1]}`} eventId={decodeURIComponent(evM[1])} />;
+    } else if (pub === '/') {
+      // EN-главная /en (как RU '/', но интерфейс EN)
+      page = <Home key={en ? 'home:en' : 'home'} />;
     } else {
-      const orgM = path.match(/^\/org\/([^/]+)$/);
+      // /org/<id> EN-версии НЕ имеет (промпт R: /en/org/* не входит) —
+      // под /en путь организатора = 404
+      const orgM = !en ? pub.match(/^\/org\/([^/]+)$/) : null;
       if (orgM) {
         page = <OrgProfilePage key={`org:${orgM[1]}`} orgId={decodeURIComponent(orgM[1])} />;
-      } else if (path === '/blog') {
-        page = <BlogIndex key="blog" />;
+      } else if (pub === '/blog') {
+        page = <BlogIndex key={`${en ? 'en:' : ''}blog`} />;
       } else {
-        const artM = path.match(/^\/blog\/([^/]+)$/);
+        const artM = pub.match(/^\/blog\/([^/]+)$/);
         if (artM) {
           // Неизвестный slug: ArticlePage сам рисует заглушку 404
-          page = <ArticlePage key={`article:${artM[1]}`} slug={decodeURIComponent(artM[1])} />;
-        } else if (path === '/for-organizers') {
+          page = (
+            <ArticlePage
+              key={`${en ? 'en:' : ''}article:${artM[1]}`}
+              slug={decodeURIComponent(artM[1])}
+            />
+          );
+        } else if (pub === '/for-organizers') {
           // «Для организаторов» — отдельная B2B-страница (контент в
           // forOrganizers.json), до проверки CITY_ROUTES
-          page = <ForOrganizers key="for-organizers" />;
-        } else if (path === '/about') {
+          page = <ForOrganizers key={`${en ? 'en:' : ''}for-organizers`} />;
+        } else if (pub === '/about') {
           // «О проекте» — E-E-A-T-страница (контент в about.json),
           // до проверки CITY_ROUTES
-          page = <About key="about" />;
+          page = <About key={`${en ? 'en:' : ''}about`} />;
         } else {
-          const cityLabel = CITY_ROUTES.get(path);
+          const cityLabel = CITY_ROUTES.get(pub);
           page = cityLabel ? (
-            <Home key={`city:${cityLabel}`} city={cityLabel} />
+            <Home key={`${en ? 'en:' : ''}city:${cityLabel}`} city={cityLabel} />
           ) : (
             <NotFound key="404" />
           );

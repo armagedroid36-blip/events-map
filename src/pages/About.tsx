@@ -6,6 +6,7 @@
 // Секции — как в статьях (p/h2/ul с md-ссылками).
 import { useEffect } from 'react';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
 import { applyAboutMeta, applyGenericMeta } from '../lib/seo';
 import type { AboutContent, ArticleSection } from '../lib/types';
@@ -81,21 +82,35 @@ function Sections({ sections }: { sections: ArticleSection[] }) {
   );
 }
 
-/** /about — E-E-A-T-страница «О проекте» (h1 + секции из about.json) */
+/** /about — E-E-A-T-страница «О проекте» (h1 + секции из about.json).
+ * EN-версия /en/about: язык = из URL (публичный путь) — *_en поля контента
+ * и подписи. Мета-теги head ставит сама страница (applyAboutMeta видит /en). */
 export default function About() {
+  const { i18n } = useTranslation();
+  const en = i18n.language.startsWith('en');
+  // Контент языка (как localizedText): *_en поля, иначе RU
+  const c = en
+    ? {
+        ...content,
+        h1: content.h1_en || content.h1,
+        sections: content.sections_en || content.sections,
+      }
+    : content;
   useEffect(() => {
     applyAboutMeta(content);
     // Назад с /about: страница ставит свою мету заново
     return () => applyGenericMeta();
+    // Мета языка зависит от URL (/en/about), не от i18n-переключения вживую
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
       <Header />
       <main className="mx-auto w-full max-w-2xl flex-1 p-4">
-        <h1 className="text-xl font-semibold text-gray-900">{content.h1}</h1>
+        <h1 className="text-xl font-semibold text-gray-900">{c.h1}</h1>
         <div className="mt-2">
-          <Sections sections={content.sections} />
+          <Sections sections={c.sections} />
         </div>
       </main>
     </div>

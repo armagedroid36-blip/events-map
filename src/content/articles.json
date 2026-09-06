@@ -85,6 +85,87 @@
         "type": "p",
         "text": "Кроме Нячанга на карте есть события на Бали и в Дананге. Если планируете путешествие по Юго-Восточной Азии — загляните в афишу этих городов: [события на Бали](/bali) и [события в Дананге](/da-nang). А в нашем блоге мы публикуем гиды по событийной жизни городов — например, эту статью о том, куда сходить в Нячанге."
       }
+    ],
+    "title_en": "What to Do in Nha Trang: Events and what’s on",
+    "h1_en": "What to Do in Nha Trang: Events and what’s on",
+    "description_en": "Events in Nha Trang on the MyPins map: speaking club, yoga, quizzes, film screenings, concerts, and parties. Current dates, venues and prices.",
+    "sections_en": [
+      {
+        "type": "p",
+        "text": "Nha Trang is a beach resort in Vietnam where Russian-speaking travelers and expats live and stay for long periods. The city is small, but its event life is rich: almost every evening something happens — speaking clubs, film screenings, quizzes, yoga, concerts, and parties. The problem is different: the listings are scattered across dozens of Telegram channels, stories, and cafe announcements, and it's easy to miss an interesting event even if it's happening in the next building."
+      },
+      {
+        "type": "p",
+        "text": "MyPins is an event map that gathers Nha Trang's event listings in one place. The map shows what's happening in the city today and in the coming weeks: date, time, venue, price, and organizer. No registration needed — just open and look."
+      },
+      {
+        "type": "h2",
+        "text": "What events take place in Nha Trang"
+      },
+      {
+        "type": "p",
+        "text": "According to our map, the most frequently searched and posted formats in Nha Trang are:"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Speaking clubs — there are several in the city, the most famous is SmallTalk: one-on-one communication, a new conversation partner every 15 minutes, and after the meeting participants have dinner together. A great way to practice English and meet people.",
+          "Yoga and health — morning and evening practices by the sea, breathing sessions, qigong, stretching.",
+          "Games and quizzes — team trivia in cafes and bars, board games.",
+          "Film club — group screenings with discussions.",
+          "Workshops — from cooking to creative activities.",
+          "Concerts and parties — live performances, DJ sets on weekends.",
+          "Food and drinks — gastro meetups and tastings."
+        ]
+      },
+      {
+        "type": "p",
+        "text": "Current dates and venues change every week, so it's better not to rely on old posts but to open the live listings: [events in Nha Trang](/en/nha-trang) on the map."
+      },
+      {
+        "type": "h2",
+        "text": "Where to look for events in Nha Trang"
+      },
+      {
+        "type": "p",
+        "text": "There are three working ways, and we recommend combining the first two:"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "MyPins map: filters by category (\"Speaking Club,\" \"Yoga and Health,\" \"Games and Quizzes,\" and others), by price — you can filter only free or \"donation\" events, by date. Each event is shown on the city map with address and price.",
+          "Telegram channels and organizer chats: they publish urgent changes — rescheduling, cancellation, \"still spots available today.\" If you're going to an event, check the organizer's channel before heading out.",
+          "Announcements in cafes and coworking spaces: some small events exist only on paper flyers, but they also appear on the map."
+        ]
+      },
+      {
+        "type": "p",
+        "text": "Events in Nha Trang are easy to search on the map: they are grouped by date, and you can see what's happening today and what's next week."
+      },
+      {
+        "type": "h2",
+        "text": "How much do events cost"
+      },
+      {
+        "type": "p",
+        "text": "Many events in Nha Trang are free or work on a donation basis. On the map, there's a \"Free\" filter for this. Paid events show a price — for example, speaking clubs usually charge a small entry fee. If no price is listed, the organizer asks you to confirm when booking: almost all events require registration via direct messages — this helps the organizer plan the meeting."
+      },
+      {
+        "type": "h2",
+        "text": "Where events take place"
+      },
+      {
+        "type": "p",
+        "text": "Most events are in cafes and spaces in the city center and on the first line near the beach. The exact address and coordinates are listed in each event's card on the map — you can immediately see if it's far from you."
+      },
+      {
+        "type": "h2",
+        "text": "What else to see on MyPins"
+      },
+      {
+        "type": "p",
+        "text": "Besides Nha Trang, the map has events in Bali and Da Nang. If you're planning a trip through Southeast Asia, check out what's on in these cities: [events in Bali](/en/bali) and [events in Da Nang](/en/da-nang). And in our blog, we publish guides to city event life — for example, this article about what to do in Nha Trang."
+      }
     ]
   },
   {
@@ -168,6 +249,83 @@
       {
         "type": "p",
         "text": "Карта работает не только на Бали. Если вы планируете Вьетнам — смотрите [события в Нячанге](/nha-trang) и [в Дананге](/da-nang). Гиды и подборки мы публикуем в [блоге MyPins](/blog)."
+      }
+    ],
+    "title_en": "Events in Bali: where tourists and expats should go",
+    "h1_en": "Events in Bali: where tourists and expats should go",
+    "description_en": "Bali event guide on the MyPins map: concerts, yoga and wellness, markets, festivals, and parties in Canggu, Ubud, Seminyak, and Kuta. Dates, venues, prices.",
+    "sections_en": [
+      {
+        "type": "p",
+        "text": "Bali has long ceased to be just a beach resort. The island is one of the main hubs for digital nomads and expats in Southeast Asia, and the event scene here runs every day: sunrise yoga, weekend markets, concerts, parties, retreats, and networking meetups."
+      },
+      {
+        "type": "p",
+        "text": "The challenge is that Bali is not a city but an island: events are scattered across areas 10–40 minutes apart by car, and you can't just 'check the listings'. MyPins shows events directly on a map — you can see what's happening near you and what's worth traveling for."
+      },
+      {
+        "type": "h2",
+        "text": "What events are most searched for in Bali"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Yoga and wellness: practices, breathwork sessions, meditations, women's circles.",
+          "Markets and food events: designer stalls, gastro festivals, street food.",
+          "Parties and concerts: from DJ sets in Canggu to live performances.",
+          "Masterclasses and workshops: crafts, creativity, cooking.",
+          "Meetups and networking: expat meetups, interest clubs.",
+          "Festivals: from music to culture — Bali hosts many of them."
+        ]
+      },
+      {
+        "type": "p",
+        "text": "The full list of formats and current events this week is on the map: [events in Bali](/en/bali)."
+      },
+      {
+        "type": "h2",
+        "text": "What happens where: island areas"
+      },
+      {
+        "type": "p",
+        "text": "Each area of Bali has its own character, and this is reflected in the events:"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Canggu — the party and most 'nomadic' area: the most parties, concerts, and networking, many events for expats.",
+          "Ubud — the cultural heart of the island: yoga, retreats, meditations, handmade markets, and festivals.",
+          "Seminyak and Kuta — beach classics: bars, concerts, oceanfront parties.",
+          "Less touristy areas host events less often — but they are also visible on the map."
+        ]
+      },
+      {
+        "type": "p",
+        "text": "If you've just arrived and don't know where to stay based on the event scene, the map will help: see which area has what interests you."
+      },
+      {
+        "type": "h2",
+        "text": "When to go: event seasonality"
+      },
+      {
+        "type": "p",
+        "text": "In the dry season (roughly April–October), Bali has more outdoor events: beach markets, poolside parties, festivals. In the rainy season, life doesn't stop — it just moves indoors: film clubs, workshops, lectures, and yoga studios run year-round. Always check exact dates for specific events on the map — the listings are constantly updated, and past events are removed."
+      },
+      {
+        "type": "h2",
+        "text": "How to use the MyPins map in Bali"
+      },
+      {
+        "type": "p",
+        "text": "Open the Bali map, enable the categories you're interested in, and filter by price (free / paid / donation). Each event is a pin on the map with the date, time, address, and organizer contact. If an event is recurring (e.g., morning yoga), the card shows the nearest date, and check the repeat schedule with the organizer."
+      },
+      {
+        "type": "h2",
+        "text": "What else to see on MyPins"
+      },
+      {
+        "type": "p",
+        "text": "The map works not only in Bali. If you're planning Vietnam, check out [events in Nha Trang](/en/nha-trang) and [in Da Nang](/en/da-nang). We publish guides and roundups in the [MyPins blog](/en/blog)."
       }
     ]
   },
@@ -271,6 +429,102 @@
       {
         "type": "p",
         "text": "Карта MyPins работает не только в Дананге. Если путешествуете по Вьетнаму — смотрите [события в Нячанге](/nha-trang), а для отдыха на островах — [афишу Бали](/bali). Другие гиды по событийной жизни городов мы публикуем в [блоге MyPins](/blog)."
+      }
+    ],
+    "title_en": "Where to Go in Da Nang: Events and what’s on",
+    "h1_en": "Where to Go in Da Nang: Events and what’s on",
+    "description_en": "Events in Da Nang on the MyPins map: shows, yoga, board games, quizzes, master classes, and networking for expats. Current dates, venues, and prices.",
+    "sections_en": [
+      {
+        "type": "p",
+        "text": "Da Nang is Vietnam's third-largest city and one of the fastest-growing: wide beaches, a new waterfront, and many expats and digital nomads who choose it for its warm winters and low prices. Along with the people, the event scene is growing too: Da Nang hosts regular shows, yoga studios, film clubs, and conversation meetups, and in the evenings cafes host board games and Mafia."
+      },
+      {
+        "type": "p",
+        "text": "The main feature of the local event scene is that it's almost invisible from the street: events are announced in Telegram channels and chats, making them hard for newcomers to find. MyPins gathers Da Nang events on one map—with date, time, address, price, and organizer—so you don't have to plan your evening from scratch."
+      },
+      {
+        "type": "h2",
+        "text": "What Events Are Held in Da Nang"
+      },
+      {
+        "type": "p",
+        "text": "According to our map, the most frequently posted formats in Da Nang are:"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "Regular shows—cultural performances in central theaters: Vietnamese costumes, music, and national flavor. They run almost every day.",
+          "Yoga, qigong, and fitness—morning practices in studios and on the beach, classes for adults and teens.",
+          "Board games and Mafia—regular meetups in cafes and restaurants, from classic Mafia to One Night and board games for beginners.",
+          "Quizzes and movie parties—team trivia and group film screenings with discussions.",
+          "Master classes—from tote bag painting and candle making to floristry and solid perfume.",
+          "Networking and meetups—business breakfasts, book clubs, women's circles, and psychological sessions."
+        ]
+      },
+      {
+        "type": "p",
+        "text": "The current what is on in the coming days is always visible on the map: [events in Da Nang](/en/da-nang) with filters by category, price, and date."
+      },
+      {
+        "type": "h2",
+        "text": "Where to Find Events in Da Nang"
+      },
+      {
+        "type": "p",
+        "text": "If you're new to the city, here are three working ways not to miss something interesting:"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "MyPins map: Da Nang events are grouped by date and category, each with an address and price. It's convenient to see what's happening near your area.",
+          "Organizers' Telegram channels: most events in Da Nang are announced there, including urgent reschedules and cancellations. Before heading out, it's worth checking the channel—'still spots today' is also posted there.",
+          "Word of mouth in cafes and coworking spaces: some meetups live only in the chats of the My An and An Thuong districts, where expats settle."
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "How Much Do Events Cost"
+      },
+      {
+        "type": "p",
+        "text": "Prices in Da Nang are noticeably lower than in Bali: most paid events cost 100–300 thousand dong (roughly $4–12). Many meetups are free or work on a donation basis—the map has a 'Free' filter for this. If the price isn't listed, it's confirmed with the organizer when signing up: some events require registration so the organizer knows the number of guests."
+      },
+      {
+        "type": "h2",
+        "text": "Where Events Take Place"
+      },
+      {
+        "type": "p",
+        "text": "Da Nang's event life is concentrated in two areas. First, the My An district and An Thuong streets near My Khe beach—this is the heart of expat Da Nang: here you'll find most yoga studios, cafes with board games and quizzes, and networking breakfasts. Second, the city center, Hai Chau—there are theaters hosting regular shows and large concert venues. The exact address of each event is listed on its card on the map."
+      },
+      {
+        "type": "h2",
+        "text": "Upcoming Events in Da Nang"
+      },
+      {
+        "type": "p",
+        "text": "Here are a few events happening in Da Nang right now (the lineup updates—see the full listings on the map):"
+      },
+      {
+        "type": "ul",
+        "items": [
+          "[Ao Dai Show in Da Nang](/event/513d9371-e071-4d9b-8489-42d2af1e2ee9/shou-ao-dai-v-danange/)—a national costume show, daily, Trung Vuong Theatre, Hai Chau center. Price to be confirmed with the organizer.",
+          "[Charming Danang Show in Da Nang](/event/fdf56fce-c81d-4a79-bee3-c8664127c1b0/shou-charming-danang-v-danange/)—another regular show, daily, Culture House of Labor Da Nang, Hai Chau.",
+          "[Board Game Evening at Restaurant 369](/event/68d6a795-c172-48d3-a421-2ef5817a3827/zavtra-vecher-nastolok-v-restorane-369/)—free board games on Saturdays at 7:00 PM, Family Restaurant 369, My An. A good way to meet people.",
+          "[Classic Mafia Predictor Classic](/event/949b1352-65c0-4f05-839b-61fa25cc5e72/predictor-classic-klassicheskaya-mafiya-v-danange/)—Wednesdays at 6:30 PM at Loboo Cafe, My An, 200,000 dong.",
+          "[Business Breakfast and Networking](/event/9bd3fe49-dd6f-44fc-8223-34c794739dfe/biznes-zavtrak-i-netvorking/)—Thursdays at 11:00 AM at Eco Green Cafe & Bistro, My An, 100,000 dong.",
+          "[Movie Party](/event/05d8ecea-082e-4343-ba86-ddab60229220/kinovecherinka/)—group film screening on Fridays at 6:00 PM, Tổ càphê coffee shop, 100,000 dong.",
+          "[Yoga 'Straight Back' for Teens](/event/d0354cd2-3058-46d0-846a-46e36190369f/yoga-rovnaya-spina-dlya-podrostkov-9-15-let/)—a class for teens aged 9–15, YOGA Club Da Nang, 100,000 dong."
+        ]
+      },
+      {
+        "type": "h2",
+        "text": "What Else to See on MyPins"
+      },
+      {
+        "type": "p",
+        "text": "The MyPins map works not only in Da Nang. If you're traveling through Vietnam, check out [events in Nha Trang](/en/nha-trang), and for island vacations, see [events in Bali](/en/bali). We publish other city event guides in the [MyPins blog](/en/blog)."
       }
     ]
   }

@@ -48,22 +48,25 @@ function isDefaultFilters(f: Filters): boolean {
 // сбросить показ при изменении дизайна/текстов: смена суффикса _vN)
 const MAP_INTRO_KEY = 'map_intro_dismissed_v1';
 
-// Интро-экран допустим только на страницах с картой (главная и города).
-// На /event/*, /org/*, /blog/*, /for-organizers не показываем.
+// Интро-экран допустим только на страницах с картой (главная и города,
+// RU и EN: '/en' и '/en/<city>' — как '/' и '/<city>').
 function introEligiblePath(path: string): boolean {
   if (path === '/') return true;
   return config.quickLocations.some((q) => path === `/${slugify(q.labelEn)}`);
 }
 
-/** <head> под текущий маршрут (после закрытия карточки): город (/bali) или
- * главная. На /event/<id>/... карточка закрывается переходом на '/', там
- * мету поставит новый Home при монтировании. */
+/** <head> под текущий маршрут (после закрытия карточки): город (/bali,
+ *  /en/bali) или главная. На /event/<id>/... карточка закрывается переходом
+ *  на '/', там мету поставит новый Home при монтировании. Язык страницы —
+ *  из URL: префикс /en срезается только для поиска города, мета-функции
+ *  (applyCityMeta/applyHomeMeta) сами видят /en в pathname. */
 function applyRouteMeta(): void {
   const p = window.location.pathname;
-  const cityPath = config.quickLocations.find((q) => p === `/${slugify(q.labelEn)}`);
+  const pub = p.startsWith('/en') ? p.replace(/^\/en/, '') || '/' : p;
+  const cityPath = config.quickLocations.find((q) => pub === `/${slugify(q.labelEn)}`);
   if (cityPath) {
     applyCityMeta(slugify(cityPath.labelEn));
-  } else if (!p.startsWith('/event/')) {
+  } else if (!pub.startsWith('/event/')) {
     applyHomeMeta();
   }
 }
@@ -222,15 +225,16 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
     setLoading(false);
   }
 
-  // Закрытие карточки: на чистом URL события (/event/<id>/...) возвращаемся
-  // на главную; в остальных случаях URL карточку не кодирует — просто
+  // Закрытие карточки: на чистом URL события (/event/<id>/... или
+  // /en/event/<id>/...) возвращаемся на главную ТЕКУЩЕГО языка (/en при
+  // EN-версии); в остальных случаях URL карточку не кодирует — просто
   // убираем её (и чистим старую hash-ссылку #/?e=, если вдруг осталась)
   function closeCard() {
     setSelected(null);
     // <head>: возврат к мете текущего маршрута (город или главная)
     applyRouteMeta();
     if (window.location.pathname.startsWith('/event/')) {
-      navigate('/');
+      navigate(window.location.pathname.startsWith('/en/') ? '/en' : '/');
       return;
     }
     if (window.location.hash.includes('e=')) window.location.hash = '#/';
@@ -323,10 +327,14 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
   }, []);
 
   // --- Мобильный интро-экран: видимость и превью ---
-  // Путь нормализуем (deep-link /bali/ со слэшем = тот же маршрут, что /bali)
+  // Путь нормализуем (deep-link /bali/ со слэшем = тот же маршрут, что /bali);
+  // EN-версии (/en, /en/bali) — те же «карты», что RU (/ и /bali)
   const introRawPath = window.location.pathname;
-  const introPath =
+  const introNorm =
     introRawPath.length > 1 ? introRawPath.replace(/\/+$/, '') : introRawPath;
+  const introPath = introNorm.startsWith('/en')
+    ? introNorm.replace(/^\/en/, '') || '/'
+    : introNorm;
   const introPathEligible =
     !eventId &&
     !introPath.startsWith('/event/') &&
@@ -499,7 +507,7 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
             {ru ? 'Событие не найдено или уже завершено' : 'Event not found or already over'}
           </p>
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate(window.location.pathname.startsWith('/en') ? '/en' : '/')}
             className="rounded-md bg-[#72D2CF] px-4 py-2 text-sm font-semibold text-black shadow hover:bg-[#61B2B0]"
           >
             {ru ? 'На главную' : 'Back to map'}
@@ -510,8 +518,9 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
   }
 
   // Городской SEO-блок (h1 + интро + FAQ) — видимый текст страницы города
-  // в SPA. RU-тексты ДУБЛИРУЮТ CITY_SEO в scripts/seo-prerender.mjs
-  // (держать синхронно, секция ru.ts citySeo.*); EN — только интерфейс.
+  // в SPA. Тексты ДУБЛИРУЮТ CITY_SEO/CITY_SEO_EN в scripts/seo-prerender.mjs
+  // (держать синхронно: RU — ru.ts citySeo.* / CITY_SEO, EN — en.ts
+  // citySeo.* / CITY_SEO_EN).
   const citySeo = (() => {
     if (!city) return null;
     const slug = slugify(city);
@@ -715,10 +724,14 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
               onDelete={handleDeleteEvent}
               favoriteIds={favoriteIds}
               onToggleFavorite={user ? toggleFavorite : () => setAuthOpen(true)}
-              // Страница события /event/<id>/<slug>: единственный h1 —
-              // название открытой карточки (бренд и городской SEO-блок на
-              // этом маршруте не выводятся, см. Header.isBrandH1)
-              titleAsH1={window.location.pathname.startsWith('/event/')}
+              // Страница события /event/<id>/<slug> (и EN /en/event/...):
+              // единственный h1 — название открытой карточки (бренд и
+              // городской SEO-блок на этом маршруте не выводятся,
+              // см. Header.isBrandH1)
+              titleAsH1={
+                window.location.pathname.startsWith('/event/') ||
+                window.location.pathname.startsWith('/en/event/')
+              }
             />
           </div>
           <button

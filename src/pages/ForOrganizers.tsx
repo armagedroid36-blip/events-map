@@ -7,6 +7,7 @@
 // как в городских страницах (Home.tsx, citySeo).
 import { useEffect } from 'react';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
 import { navigate } from '../lib/navigate';
 import { applyForOrganizersMeta, applyGenericMeta } from '../lib/seo';
@@ -78,26 +79,43 @@ function Sections({ sections }: { sections: ArticleSection[] }) {
   );
 }
 
-/** /for-organizers — B2B-страница «Для организаторов» (h1 + intro + секции + FAQ + CTA) */
+/** /for-organizers — B2B-страница «Для организаторов» (h1 + intro + секции + FAQ + CTA).
+ * EN-версия /en/for-organizers: контент из *_en полей (title_en/h1_en/
+ * intro_en/sections_en/faq_en/final_en), CTA «Create event» ведёт на /en/. */
 export default function ForOrganizers() {
+  const { i18n } = useTranslation();
+  const en = i18n.language.startsWith('en');
+  // Контент языка (как localizedText): *_en поля, иначе RU
+  const c = en
+    ? {
+        ...content,
+        h1: content.h1_en || content.h1,
+        intro: content.intro_en || content.intro,
+        sections: content.sections_en || content.sections,
+        faq: content.faq_en || content.faq,
+        final: content.final_en || content.final,
+      }
+    : content;
   useEffect(() => {
     applyForOrganizersMeta(content);
     // Назад с B2B-страницы: /for-organizers ставит свою мету заново
     return () => applyGenericMeta();
+    // Мета языка зависит от URL (/en/for-organizers), не от i18n-переключения
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
       <Header />
       <main className="mx-auto w-full max-w-2xl flex-1 p-4">
-        <h1 className="text-xl font-semibold text-gray-900">{content.h1}</h1>
-        <p className="mt-3 text-sm leading-relaxed text-gray-700">{renderMd(content.intro)}</p>
+        <h1 className="text-xl font-semibold text-gray-900">{c.h1}</h1>
+        <p className="mt-3 text-sm leading-relaxed text-gray-700">{renderMd(c.intro)}</p>
         <div className="mt-2">
-          <Sections sections={content.sections} />
+          <Sections sections={c.sections} />
         </div>
 
         {/* FAQ — <details><summary>: вопросы видны, ответы раскрываются по клику */}
-        {content.faq.map((f) => (
+        {c.faq.map((f) => (
           <details key={f.q} className="mt-3">
             <summary className="cursor-pointer text-sm font-semibold text-gray-800 hover:text-gray-900">
               {f.q}
@@ -109,17 +127,17 @@ export default function ForOrganizers() {
         {/* Финальный CTA-блок: h2 + подводка + кнопка «Создать событие» → главная,
             где гость увидит вход/регистрацию (форма создания — после входа) */}
         <div className="mt-6 border-t border-gray-100 pt-4">
-          <h2 className="text-base font-semibold text-gray-900">{content.final.h2}</h2>
-          <p className="mt-2 text-sm leading-relaxed text-gray-700">{renderMd(content.final.p)}</p>
+          <h2 className="text-base font-semibold text-gray-900">{c.final.h2}</h2>
+          <p className="mt-2 text-sm leading-relaxed text-gray-700">{renderMd(c.final.p)}</p>
           <a
-            href="/"
+            href={en ? '/en' : '/'}
             onClick={(e) => {
               e.preventDefault();
-              navigate('/');
+              navigate(en ? '/en' : '/');
             }}
             className="mt-3 inline-block rounded-md bg-[#72D2CF] px-4 py-2 text-sm font-semibold text-black shadow hover:bg-[#61B2B0]"
           >
-            Создать событие
+            {en ? 'Create event' : 'Создать событие'}
           </a>
         </div>
       </main>
