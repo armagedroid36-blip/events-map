@@ -700,7 +700,7 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
           бренд в шапке на city-путях не h1 (Header.tsx). Скрывается, когда
           открыты список событий / карточка / модалки — там свой контент.
           FAQ в <details>: вопросы видны, ответы раскрываются по клику. */}
-      {citySeo && !selected && !listOpen && !mobileFiltersOpen && !formOpen && !authOpen && (
+      {citySeo && !introActive && !selected && !listOpen && !mobileFiltersOpen && !formOpen && !authOpen && (
         <div
           id="city-seo-block"
           className="glass absolute inset-x-2 bottom-36 z-[1140] mx-auto max-h-[42vh] w-auto max-w-xl overflow-y-auto rounded-xl p-3 shadow-xl thin-scroll lg:inset-x-auto lg:right-4 lg:mx-0 lg:w-[400px] lg:max-w-[calc(100vw-2rem)] lg:bottom-24"
