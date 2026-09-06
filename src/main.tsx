@@ -7,7 +7,8 @@ import App from './App';
 import { AuthProvider } from './lib/auth';
 
 // Статические SEO-блоки кладёт в HTML пре-рендер (scripts/seo-prerender.mjs):
-// городские страницы (h1+интро+FAQ, id=seo-city-block), профили
+// главная (h1+абзацы+ссылки, id=seo-home-block), городские страницы
+// (h1+интро+события+FAQ, id=seo-city-block), профили
 // организаторов (h1+bio, id=seo-org-block), страницы событий (h1+дата+место+
 // цена+описание, id=seo-event-block), страницы блога (h1+секции статьи,
 // id=seo-article-block) и B2B-страница «Для организаторов» (h1+интро+секции+
@@ -16,11 +17,11 @@ import { AuthProvider } from './lib/auth';
 // OrgProfilePage — свой h1, EventCard — h1 события, BlogIndex/ArticlePage —
 // заголовок блога/статьи, ForOrganizers — свой h1), поэтому статические
 // блоки удаляем — на странице должен остаться ровно один h1. Элементы есть
-// только на пре-рендеренных страницах (bali/da-nang/nha-trang, /org/<id>,
+// только на пре-рендеренных страницах (/ и bali/da-nang/nha-trang, /org/<id>,
 // /event/<id>/<slug>, /blog, /blog/<slug> и /for-organizers).
 document
   .querySelectorAll(
-    '#seo-city-block, #seo-org-block, #seo-event-block, #seo-article-block, #seo-b2b-block',
+    '#seo-home-block, #seo-city-block, #seo-org-block, #seo-event-block, #seo-article-block, #seo-b2b-block',
   )
   .forEach((el) => el.remove());
 

@@ -35,6 +35,9 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = join(ROOT, 'dist');
 const SITE_URL = 'https://mypins.site';
 const LOGO_URL = `${SITE_URL}/logo.png`;
+// Сколько ближайших событий города показывать в статическом блоке городской
+// страницы (план SEO п.4.1.2 «5–15»; на карте сейчас событий мало — до 8)
+const MAX_CITY_EVENTS = 8;
 // «Сегодня» для startDate повторяющихся событий — фиксируется один раз на
 // сборку (UTC; toISOString даёт YYYY-MM-DD, без часовых поясов)
 const TODAY_ISO = new Date().toISOString().slice(0, 10);
@@ -674,22 +677,75 @@ function writePage(baseHtml, path, meta) {
 }
 
 /** Статический SEO-блок города (RU) для вставки в <body> рядом с #root:
- * видимый h1 + интро + FAQ. Виден краулеру без JS; при живом React SPA
- * удаляет его (main.tsx) и рисует свой локализованный блок. Контент
- * вопросов-ответов остаётся в DOM (details). */
-function citySeoHtml(seo) {
+ * видимый h1 + интро + блок ближайших событий (до MAX_CITY_EVENTS,
+ * дата ближайшего вхождения + RU-название ссылкой /event/<id>/<slug>/ +
+ * цена; сортировка по дате) + FAQ. Виден краулеру без JS; при живом React
+ * SPA удаляет его (main.tsx) и рисует свой локализованный блок. Контент
+ * вопросов-ответов остаётся в DOM (details). evs — уже отфильтрованные и
+ * отсортированные события города; пусто → секции событий нет. */
+function citySeoHtml(seo, evs) {
   const faq = seo.faq
     .map(
       (f) =>
         `    <details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`,
     )
     .join('\n');
-  return [
+  const lines = [
     '<div id="seo-city-block">',
     `  <h1>${esc(seo.h1)}</h1>`,
     `  <p>${esc(seo.intro)}</p>`,
-    '  <h2>Частые вопросы</h2>',
-    faq,
+  ];
+  if (Array.isArray(evs) && evs.length) {
+    // «События на Бали» → «Ближайшие события на Бали», «События в Дананге»
+    // → «Ближайшие события в Дананге» (падежная часть h1 переиспользуется)
+    const where = seo.h1.replace(/^События\s+/, '');
+    lines.push(`  <h2>Ближайшие события ${esc(where)}</h2>`, '  <ul>');
+    for (const ev of evs) {
+      const sd = nextOccurrenceDate(ev, TODAY_ISO);
+      const url = `${SITE_URL}/event/${ev.id}/${slugify(ev.title)}/`;
+      // RU-название: как в h1 статического блока события (eventSeoHtml)
+      const name = ev.title_ru || ev.title || ev.title_en || '';
+      // Цена — те же правила, что в eventSeoHtml (764-772)
+      const price = ev.price != null ? Number(ev.price) : null;
+      const currency = (
+        typeof ev.currency === 'string' && ev.currency ? ev.currency : 'usd'
+      ).toUpperCase();
+      let priceText = '';
+      if (price != null && price > 0) {
+        priceText = `${price} ${currency}`;
+      } else if (Boolean(ev.donation)) {
+        priceText = 'Донат';
+      } else if (price === 0) {
+        priceText = 'Бесплатно';
+      }
+      const parts = [];
+      if (sd) parts.push(`<time datetime="${esc(sd)}">${esc(ruDate(sd))}</time>`);
+      if (name) parts.push(`<a href="${esc(url)}">${esc(name)}</a>`);
+      if (priceText) parts.push(`<span>${esc(priceText)}</span>`);
+      lines.push(`    <li>${parts.join(' — ')}</li>`);
+    }
+    lines.push('  </ul>');
+  }
+  lines.push('  <h2>Частые вопросы</h2>', faq, '</div>', '');
+  return lines.join('\n');
+}
+
+/** Статический SEO-блок главной (id=seo-home-block, RU) для вставки в
+ * <body> рядом с #root: видимый h1 + абзацы (~120–160 слов; прямой ответ —
+ * «MyPins — это карта событий…» — в первых 40–60 словах) + ссылки на
+ * городские страницы и блог. Виден краулеру без JS; при живом React SPA
+ * удаляет его (main.tsx) и рисует свою главную (у неё свой h1 — бренд).
+ * Формулировки — предложение SEO-плана (п.4.1.2); владелец может править
+ * текст без изменения структуры (h1 / прямой ответ в начале / ссылки). */
+function homeSeoHtml() {
+  const link = (path, label) => `<a href="${SITE_URL}/${path}/">${esc(label)}</a>`;
+  return [
+    '<div id="seo-home-block">',
+    '  <h1>События на карте: Бали, Дананг и Нячанг</h1>',
+    '  <p>MyPins — это карта событий для туристов и экспатов в Юго-Восточной Азии: концерты, вечеринки, йога, маркеты и speaking-клубы, которые публикуют сами организаторы.</p>',
+    '  <p>Каждое событие показано на карте с датой, местом и ценой — от бесплатных встреч и донат-вечеринок до крупных концертов. Фильтры по категории, дате и цене и поиск по городу помогут найти занятие на сегодня или на выходные, а приближение карты покажет события в нужном районе: Чангу, Убуде или Семиньяке на Бали, в центре Дананга или на набережной Нячанга.</p>',
+    '  <p>Афиша живая: организаторы публикуют события сами, а карта обновляется каждый день, поэтому здесь всегда есть что посмотреть сегодня или на выходных.</p>',
+    `  <p>Смотреть события: ${link('bali', 'на Бали')}, ${link('da-nang', 'в Дананге')}, ${link('nha-trang', 'в Нячанге')}. Подборки и гиды по событиям — ${link('blog', 'в блоге MyPins')}.</p>`,
     '</div>',
     '',
   ].join('\n');
@@ -803,9 +859,28 @@ async function main() {
   // Города: canonical/og:url — со слэшем (GitHub Pages отдаёт 200 только
   // на /bali/, без слэша — 301). Плюс видимый SEO-блок в body (RU) — тот же
   // текст, что SPA рисует из i18n (citySeo.<path>.*) на городском виде.
+  // В блоке — ближайшие события города (до MAX_CITY_EVENTS): город события
+  // распознаётся cityCrumb(ev.city) (тот же путь, что у городской страницы,
+  // не распознано → событие в блоки не попадает), сортировка по дате
+  // ближайшего вхождения (nextOccurrenceDate, как в JSON-LD).
   for (const c of CITY_PAGES) {
     const url = `${SITE_URL}/${c.path}/`;
     const seo = CITY_SEO[c.path];
+    const cityEvs = events
+      .filter(
+        (ev) =>
+          ev &&
+          typeof ev.id === 'string' &&
+          typeof ev.title === 'string' &&
+          ev.title &&
+          cityCrumb(ev.city)?.path === c.path,
+      )
+      .sort((a, b) =>
+        String(nextOccurrenceDate(a, TODAY_ISO)).localeCompare(
+          String(nextOccurrenceDate(b, TODAY_ISO)),
+        ),
+      )
+      .slice(0, MAX_CITY_EVENTS);
     // FAQPage (отдельным ld+json-скриптом) — только если у города есть faq
     const faqLd = seo?.faq?.length ? faqPageJsonLd(seo.faq) : null;
     writePage(baseHtml, c.path, {
@@ -817,10 +892,10 @@ async function main() {
       ogUrl: url,
       ogImage: LOGO_URL,
       jsonLd: faqLd,
-      bodySeo: seo ? citySeoHtml(seo) : null,
+      bodySeo: seo ? citySeoHtml(seo, cityEvs) : null,
     });
     locs.push(url);
-    console.log(`  /${c.path}/index.html`);
+    console.log(`  /${c.path}/index.html (событий в блоке: ${cityEvs.length})`);
   }
 
   // События: URL должен совпадать с тем, что строит SPA, —
@@ -1018,6 +1093,32 @@ async function main() {
   ].join('\n');
   writeFileSync(join(DIST, 'sitemap.xml'), xml);
   console.log(`  dist/sitemap.xml: ${locs.length} URL`);
+
+  // Главная — в САМУЮ ПОСЛЕДНЮЮ очередь и из того же baseHtml (он не
+  // менялся: renderPage возвращает новую строку, а dist/index.html
+  // перезаписывается только здесь): в body добавляется статический видимый
+  // блок #seo-home-block, в head — canonical https://mypins.site/
+  // (в базовом index.html canonical не было). Остальные страницы уже
+  // отрендерены, поэтому блок главной на них не попадает. Писать главную
+  // раньше — значит отдать renderPage index.html с блоком на все страницы.
+  // writePage не подходит: пустой path не создаст файл.
+  const homeTitle = /<title>([\s\S]*?)<\/title>/i.exec(baseHtml)?.[1] ?? '';
+  const homeDescription =
+    /<meta\s+name=["']description["'][^>]*content=["']([^"']*)["']/i.exec(baseHtml)?.[1] ?? '';
+  writeFileSync(
+    join(DIST, 'index.html'),
+    renderPage(baseHtml, {
+      title: homeTitle,
+      description: homeDescription,
+      canonical: `${SITE_URL}/`,
+      ogTitle: homeTitle,
+      ogDescription: homeDescription,
+      ogUrl: `${SITE_URL}/`,
+      ogImage: LOGO_URL,
+      bodySeo: homeSeoHtml(),
+    }),
+  );
+  console.log('  dist/index.html: seo-home-block (главная)');
 }
 
 main().catch((e) => {
