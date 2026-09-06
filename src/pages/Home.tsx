@@ -10,6 +10,7 @@ import FiltersPanel from '../components/Filters';
 import EventsList from '../components/EventsList';
 import EventCard from '../components/EventCard';
 import QuickLocations from '../components/QuickLocations';
+import MobileMapIntro from '../components/MobileMapIntro';
 const EventForm = lazy(() => import('../components/EventForm'));
 import AuthModal from '../components/AuthModal';
 import { getApi } from '../lib/api';
@@ -41,6 +42,17 @@ function isDefaultFilters(f: Filters): boolean {
     !f.city &&
     !f.query
   );
+}
+
+// localStorage-ключ «мобильный интро-экран показан» (версионируется, чтобы
+// сбросить показ при изменении дизайна/текстов: смена суффикса _vN)
+const MAP_INTRO_KEY = 'map_intro_dismissed_v1';
+
+// Интро-экран допустим только на страницах с картой (главная и города).
+// На /event/*, /org/*, /blog/*, /for-organizers не показываем.
+function introEligiblePath(path: string): boolean {
+  if (path === '/') return true;
+  return config.quickLocations.some((q) => path === `/${slugify(q.labelEn)}`);
 }
 
 /** <head> под текущий маршрут (после закрытия карточки): город (/bali) или
@@ -143,6 +155,38 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
         isFav ? (prev ? [...prev, id] : [id]) : (prev ?? []).filter((x) => x !== id),
       );
     });
+  }
+
+  // Мобильный интро-экран (вместо живой карты на <768px до клика по кнопке).
+  // dismissed — пользователь открыл карту (localStorage), gone — анимация
+  // затухания завершена, экран можно размонтировать.
+  const [introDismissed, setIntroDismissed] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(MAP_INTRO_KEY) === '1';
+    } catch {
+      return false;
+    }
+  });
+  const [introGone, setIntroGone] = useState<boolean>(introDismissed);
+  const [isMobile, setIsMobile] = useState<boolean>(() =>
+    window.matchMedia('(max-width: 767px)').matches,
+  );
+  useEffect(() => {
+    const m = window.matchMedia('(max-width: 767px)');
+    const onViewport = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    m.addEventListener('change', onViewport);
+    return () => m.removeEventListener('change', onViewport);
+  }, []);
+
+  // Открыть живую карту: плавно скрыть интро и запомнить выбор
+  function dismissIntro() {
+    setIntroDismissed(true);
+    try {
+      localStorage.setItem(MAP_INTRO_KEY, '1');
+    } catch {
+      // localStorage недоступен (приватный режим) — просто скрываем до конца визита
+    }
+    window.setTimeout(() => setIntroGone(true), 550);
   }
 
   // Аккордеон: открытие панели на главной закрывает меню шестерёнки;
@@ -278,11 +322,29 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
     }
   }, []);
 
+  // --- Мобильный интро-экран: видимость и превью ---
+  // Путь нормализуем (deep-link /bali/ со слэшем = тот же маршрут, что /bali)
+  const introRawPath = window.location.pathname;
+  const introPath =
+    introRawPath.length > 1 ? introRawPath.replace(/\/+$/, '') : introRawPath;
+  const introPathEligible =
+    !eventId &&
+    !introPath.startsWith('/event/') &&
+    introEligiblePath(introPath) &&
+    !formOpen;
+  const introShown = isMobile && !introGone && introPathEligible;
+  const introActive = introShown && !introDismissed;
+  // Статичное превью карты под текущую страницу: своё на город, общее — на главную
+  const introPreview = city
+    ? `/images/map-preview-${slugify(city)}.webp`
+    : '/images/map-preview-main.webp';
+
   // Геолокация: центр на посетителе; при отказе — Юго-Восточная Азия.
   // На чистых маршрутах (/bali, /event/<id>) не трогаем: там центр и zoom
-  // задаёт маршрут (город или координаты события)
+  // задаёт маршрут (город или координаты события). Пока активен интро-экран,
+  // разрешение не запрашиваем — геопереход случится после открытия карты.
   useEffect(() => {
-    if (!navigator.geolocation || city || eventId) return;
+    if (!navigator.geolocation || city || eventId || introActive) return;
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setCenter({ lat: pos.coords.latitude, lng: pos.coords.longitude });
@@ -291,7 +353,7 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
       () => {},
       { timeout: 5000 },
     );
-  }, [city, eventId]);
+  }, [city, eventId, introActive]);
 
   // Чистый URL города (/bali, /da-nang, /nha-trang): фильтр города + центр/zoom
   useEffect(() => {
@@ -392,6 +454,30 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
   );
 
   if (loading) {
+    // Пока грузятся данные, на мобильных сразу показываем интро-экран
+    // (первый кадр не ждёт Supabase — это и есть быстрый LCP). Живая карта
+    // не монтируется до клика по кнопке.
+    if (introShown) {
+      return (
+        <div className="relative h-screen w-full overflow-hidden bg-white">
+          <div className="absolute inset-0 bg-white" />
+          <div
+            ref={headerRef}
+            className="glass absolute inset-x-3 top-2 z-[1200] rounded-2xl shadow-lg"
+            style={{ background: 'rgba(255, 255, 255, 0.32)' }}
+          >
+            <Header onOpenForm={() => setFormOpen(true)} />
+          </div>
+          {introShown && (
+            <MobileMapIntro
+              previewUrl={introPreview}
+              leaving={introDismissed}
+              onOpen={dismissIntro}
+            />
+          )}
+        </div>
+      );
+    }
     return (
       <div className="flex min-h-screen flex-col">
         <Header onOpenForm={() => setFormOpen(true)} />
@@ -444,23 +530,31 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-white">
-      {/* КАРТА НА ВЕСЬ ЭКРАН — фон сайта */}
+      {/* КАРТА НА ВЕСЬ ЭКРАН — фон сайта.
+          Пока активен мобильный интро-экран, MapView (maplibre) НЕ монтируем:
+          чанк карты и тайлы не запрашиваются до клика по кнопке (мобильный
+          CWV). На десктопе (>=768px) интро не показывается — карта грузится
+          как раньше. */}
       <div className="absolute inset-0">
-        <Suspense fallback={<div className="absolute inset-0 bg-white" />}>
-          <MapView
-            events={visible}
-            categories={categories}
-            onSelect={selectEvent}
-            center={center}
-            zoom={zoom}
-            onBoundsChange={setBounds}
-            favoriteIds={favoriteIds}
-            onMapClick={() => {
-              closeCard();
-              setListOpen(false);
-            }}
-          />
-        </Suspense>
+        {introActive ? (
+          <div className="absolute inset-0 bg-white" />
+        ) : (
+          <Suspense fallback={<div className="absolute inset-0 bg-white" />}>
+            <MapView
+              events={visible}
+              categories={categories}
+              onSelect={selectEvent}
+              center={center}
+              zoom={zoom}
+              onBoundsChange={setBounds}
+              favoriteIds={favoriteIds}
+              onMapClick={() => {
+                closeCard();
+                setListOpen(false);
+              }}
+            />
+          </Suspense>
+        )}
       </div>
 
       {/* Шапка поверх карты — плавающая, с закруглёнными краями.
@@ -472,6 +566,16 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
       >
         <Header onOpenForm={() => setFormOpen(true)} />
       </div>
+
+      {/* Мобильный интро-экран: статичный скриншот карты + баннер с кнопкой.
+          Пока он на экране — живая карта не смонтирована (см. выше). */}
+      {introShown && (
+        <MobileMapIntro
+          previewUrl={introPreview}
+          leaving={introDismissed}
+          onOpen={dismissIntro}
+        />
+      )}
 
       {/* Кнопка открытия фильтров на мобильных */}
       <button

@@ -6,6 +6,12 @@ export default {
     tagline: 'Conferences, concerts, exhibitions and parties — on the world map',
     login: 'Sign in',
   },
+  mapIntro: {
+    title: 'Events for travelers and expats',
+    subtitle: 'Concerts, parties, yoga, markets and meetups — Bali, Da Nang, Nha Trang',
+    open: 'Open the map',
+    imgAlt: 'Event map — Bali, Da Nang, Nha Trang',
+  },
   menu: {
     title: 'Menu',
     addEvent: 'Create an event',
