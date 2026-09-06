@@ -16,7 +16,13 @@
 import { config } from '../config';
 import { photoUrl } from './api';
 import { slugify } from './navigate';
-import type { Article, EventItem, ForOrganizersContent, OrgProfile } from './types';
+import type {
+  AboutContent,
+  Article,
+  EventItem,
+  ForOrganizersContent,
+  OrgProfile,
+} from './types';
 
 /** Адрес сайта без хвостового слэша (config.siteUrl = 'https://mypins.site/') */
 const SITE_URL = config.siteUrl.replace(/\/+$/, '');
@@ -300,6 +306,26 @@ export function applyArticleMeta(article: Article): void {
  */
 export function applyForOrganizersMeta(content: ForOrganizersContent): void {
   const canonical = `${SITE_URL}/for-organizers/`;
+  apply({
+    title: content.title,
+    description: content.description,
+    canonical,
+    og: {
+      'og:title': content.title,
+      'og:description': content.description,
+      'og:url': canonical,
+      'og:image': `${SITE_URL}/logo.png`,
+    },
+  });
+}
+
+/**
+ * Страница «О проекте» (/about): title/description из about.json (единый
+ * источник — как статьи из articles.json), canonical и og со слэшем,
+ * og:image — логотип сайта.
+ */
+export function applyAboutMeta(content: AboutContent): void {
+  const canonical = `${SITE_URL}/about/`;
   apply({
     title: content.title,
     description: content.description,

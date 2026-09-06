@@ -5,7 +5,8 @@
 //   /event/<id>/<slug>    — карточка события,
 //   /org/<id>             — публичный профиль организатора,
 //   /blog, /blog/<slug>   — блог и статья,
-//   /for-organizers       — B2B-страница «Для организаторов».
+//   /for-organizers       — B2B-страница «Для организаторов»,
+//   /about                — страница «О проекте».
 // Личные разделы остаются на hash: #/admin, #/my-events, #/profile,
 // #/favorites, #/history, #/privacy, #/contacts, #/unsubscribe и recovery
 // (#access_token). На пути '/' работает прежняя hash-логика; старые публичные
@@ -37,6 +38,7 @@ const UnsubscribePage = lazy(() => import('./pages/UnsubscribePage'));
 const BlogIndex = lazy(() => import('./pages/Blog').then((m) => ({ default: m.BlogIndex })));
 const ArticlePage = lazy(() => import('./pages/Blog').then((m) => ({ default: m.ArticlePage })));
 const ForOrganizers = lazy(() => import('./pages/ForOrganizers'));
+const About = lazy(() => import('./pages/About'));
 
 // Пути городов из быстрых кнопок: labelEn 'Bali'/'Da Nang'/'Nha Trang'
 // → '/bali', '/da-nang', '/nha-trang'
@@ -120,8 +122,10 @@ export default function App() {
         CITY_ROUTES.has(path) ||
         path === '/blog' ||
         path.startsWith('/blog/') ||
-        path === '/for-organizers';
-      // /blog, статьи и «Для организаторов» мету ставят сами (как Home)
+        path === '/for-organizers' ||
+        path === '/about';
+      // /blog, статьи, «Для организаторов» и «О проекте» мету ставят сами
+      // (как Home)
       if (!isHomeRoute) applyGenericMeta();
       return;
     }
@@ -198,6 +202,10 @@ export default function App() {
           // «Для организаторов» — отдельная B2B-страница (контент в
           // forOrganizers.json), до проверки CITY_ROUTES
           page = <ForOrganizers key="for-organizers" />;
+        } else if (path === '/about') {
+          // «О проекте» — E-E-A-T-страница (контент в about.json),
+          // до проверки CITY_ROUTES
+          page = <About key="about" />;
         } else {
           const cityLabel = CITY_ROUTES.get(path);
           page = cityLabel ? (

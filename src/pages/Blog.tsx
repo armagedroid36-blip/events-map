@@ -159,6 +159,15 @@ export function ArticlePage({ slug }: { slug: string }) {
         <div className="mt-4">
           <Sections sections={article.sections} />
         </div>
+        {/* Подпись редакции (E-E-A-T): авторство + ссылка на страницу /about.
+            Как и datePublished — текст-xs; внутренний /about перехватывает
+            document-обработчик App.tsx (navigate, без перезагрузки) */}
+        <p className="mt-4 border-t border-gray-100 pt-3 text-xs text-gray-400">
+          Редакция MyPins ·{' '}
+          <a href="/about" className="font-medium text-[#E66343] decoration-[#E66343]/40 underline-offset-2 hover:underline">
+            О проекте и контакты
+          </a>
+        </p>
       </main>
     </div>
   );

@@ -334,3 +334,20 @@ export interface ForOrganizersContent {
   /** Финальный CTA-блок (после FAQ) */
   final: ForOrganizerFinal;
 }
+
+// --- Страница «О проекте» (src/content/about.json — единый источник для SPA
+// src/pages/About.tsx и пре-рендера scripts/seo-prerender.mjs) ---
+
+export interface AboutContent {
+  /** <title> страницы */
+  title: string;
+  /** Заголовок h1 */
+  h1: string;
+  /** meta description (~150 знаков) */
+  description: string;
+  /** Реальный контакт редакции (показывается в секции «Редакция и контакты»
+   * и попадает в JSON-LD Organization; не выдумывать) */
+  email: string;
+  /** Секции (типы как у статей: p/h2/ul, md-ссылки) */
+  sections: ArticleSection[];
+}

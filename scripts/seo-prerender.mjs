@@ -1,17 +1,20 @@
 // SEO-пререндер (beta 0.14): после `vite build` генерирует в dist/ физические
 // index.html для /bali, /da-nang, /nha-trang, каждого активного
 // /event/<id>/<slug>, публичных профилей /org/<id>, блога /blog и статей
-// /blog/<slug>, B2B-страницы «Для организаторов» /for-organizers (в <head> — уникальные
+// /blog/<slug>, B2B-страницы «Для организаторов» /for-organizers и страницы
+// «О проекте» /about (в <head> — уникальные
 // title/description, canonical и Open Graph со хвостовым слэшем, на событиях —
 // JSON-LD Event+BreadcrumbList, на организаторах — ProfilePage+Organization+
 // BreadcrumbList, на статьях — BlogPosting+BreadcrumbList, на /blog — Blog,
-// на /for-organizers — AboutPage+BreadcrumbList+FAQPage), чтобы
+// на /for-organizers и /about — AboutPage+BreadcrumbList (на B2B ещё FAQPage,
+// на /about — Organization с контактами)), чтобы
 // глубокие URL отдавали HTTP 200, и перезаписывает dist/sitemap.xml списком
 // всех страниц. Источник данных — тот же RPC, что зовёт сайт:
 // db.rpc('list_active_events') (src/lib/api.ts) — прошлые/скрытые/события
 // заблокированных организаторов сюда не попадают автоматически.
 // Статьи блога — src/content/articles.json, «Для организаторов» —
-// src/content/forOrganizers.json (единые источники с SPA, не
+// src/content/forOrganizers.json, «О проекте» — src/content/about.json
+// (единые источники с SPA, не
 // дублировать тексты здесь).
 // Запуск: node scripts/seo-prerender.mjs (внутри "build" в package.json).
 // Ключи: VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY — из process.env (GHA)
@@ -210,6 +213,17 @@ function loadForOrganizers() {
   return parsed;
 }
 
+/** Контент страницы «О проекте» из src/content/about.json (readFileSync —
+ * единый источник с SPA src/pages/About.tsx) */
+function loadAbout() {
+  const raw = readFileSync(join(ROOT, 'src/content/about.json'), 'utf8');
+  const parsed = JSON.parse(raw);
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    throw new Error('about.json: ожидался объект');
+  }
+  return parsed;
+}
+
 /**
  * Markdown-ссылки «[фраза](/путь)» → <a href="/путь">фраза</a>. Части текста
  * экранируются отдельно (esc), href — тоже; внешних ссылок в статьях нет,
@@ -269,13 +283,15 @@ function blogIndexSeoHtml(articles) {
   return ['<div id="seo-article-block">', '  <h1>Блог MyPins: гиды по событиям</h1>', cards, '</div>', ''].join('\n');
 }
 
-/** Статический SEO-блок статьи: h1 + дата публикации + секции (без JS) */
+/** Статический SEO-блок статьи: h1 + дата публикации + секции + подпись
+ * редакции (E-E-A-T: авторство «Редакция MyPins» со ссылкой на /about/) */
 function articleSeoHtml(article) {
   return [
     '<div id="seo-article-block">',
     `  <h1>${esc(article.h1)}</h1>`,
     `  <p><time datetime="${esc(article.datePublished)}">${esc(ruDate(article.datePublished))}</time></p>`,
     articleSectionsHtml(article.sections),
+    `  <p class="article-byline">Редакция MyPins · <a href="${SITE_URL}/about/">О проекте и контакты</a></p>`,
     '</div>',
     '',
   ].join('\n');
@@ -337,6 +353,58 @@ function forOrganizersJsonLd(c, url) {
           name: f.q,
           acceptedAnswer: { '@type': 'Answer', text: f.a },
         })),
+      },
+    ],
+  };
+}
+
+/**
+ * Статический SEO-блок страницы «О проекте» (id=seo-about-block — как
+ * b2b/статьи: main.tsx удаляет его при монтировании SPA): h1 + секции
+ * (articleSectionsHtml / mdLinksToHtml — md-ссылки из about.json на города,
+ * блог, /for-organizers, почту и Telegram-бот превращаются в <a>).
+ */
+function aboutSeoHtml(c) {
+  return [
+    '<div id="seo-about-block">',
+    `  <h1>${esc(c.h1)}</h1>`,
+    articleSectionsHtml(c.sections),
+    '</div>',
+    '',
+  ].join('\n');
+}
+
+/**
+ * JSON-LD страницы «О проекте»: AboutPage + Organization (команда MyPins —
+ * только реальные факты из about.json: url сайта и email редакции, который
+ * показан в видимом блоке) + BreadcrumbList («Главная > О проекте») в одном
+ * @graph. Базовый @graph WebSite/Organization из index.html остаётся первым
+ * скриптом — на странице /about два ld+json блока (как на остальных).
+ */
+function aboutJsonLd(c, url) {
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'AboutPage',
+        name: c.h1,
+        description: c.description,
+        url,
+        inLanguage: 'ru',
+      },
+      {
+        '@type': 'Organization',
+        name: 'MyPins',
+        url: `${SITE_URL}/`,
+        logo: LOGO_URL,
+        email: typeof c.email === 'string' && c.email ? c.email : '',
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Главная', item: `${SITE_URL}/` },
+          { '@type': 'ListItem', position: 2, name: 'О проекте', item: url },
+        ],
       },
     ],
   };
@@ -694,6 +762,9 @@ function citySeoHtml(seo, evs) {
     '<div id="seo-city-block">',
     `  <h1>${esc(seo.h1)}</h1>`,
     `  <p>${esc(seo.intro)}</p>`,
+    // Свежесть афиши (E-E-A-T): видимая дата обновления на дату сборки.
+    // Только статика — живое SPA приложение обновляется само.
+    `  <p class="seo-updated">Афиша обновлена: <time datetime="${TODAY_ISO}">${ruDate(TODAY_ISO)}</time></p>`,
   ];
   if (Array.isArray(evs) && evs.length) {
     // «События на Бали» → «Ближайшие события на Бали», «События в Дананге»
@@ -1077,6 +1148,26 @@ async function main() {
   locs.push(organizersUrl);
   lastmods.set(organizersUrl, TODAY_ISO);
   console.log('  /for-organizers/index.html');
+
+  // Страница «О проекте»: /about/ — контент из src/content/about.json (единый
+  // источник с SPA, тексты здесь не дублируются). JSON-LD: AboutPage +
+  // Organization (контакт редакции) + BreadcrumbList.
+  const about = loadAbout();
+  const aboutUrl = `${SITE_URL}/about/`;
+  writePage(baseHtml, 'about', {
+    title: String(about.title ?? ''),
+    description: String(about.description ?? ''),
+    canonical: aboutUrl,
+    ogTitle: String(about.title ?? ''),
+    ogDescription: String(about.description ?? ''),
+    ogUrl: aboutUrl,
+    ogImage: LOGO_URL,
+    jsonLd: aboutJsonLd(about, aboutUrl),
+    bodySeo: aboutSeoHtml(about),
+  });
+  locs.push(aboutUrl);
+  lastmods.set(aboutUrl, TODAY_ISO);
+  console.log('  /about/index.html');
 
   // sitemap.xml (перезапись). <lastmod> = дата сборки (TODAY_ISO) — сигнал
   // поисковикам, что контент страницы мог измениться; статьи блога несут

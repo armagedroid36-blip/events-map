@@ -143,6 +143,12 @@ export default function Header({ onOpenForm }: HeaderProps) {
     setMenuOpen(false);
   }
 
+  /** Переход на страницу /about (публичный раздел, чистый URL) */
+  function goAbout() {
+    navigate('/about');
+    setMenuOpen(false);
+  }
+
   // Страница без формы: «Создать событие» переходит на главную,
   // флаг в sessionStorage открывает там форму.
   const openForm = onOpenForm ?? (() => {
@@ -289,6 +295,14 @@ export default function Header({ onOpenForm }: HeaderProps) {
           >
             Для организаторов
           </button>
+          {/* «О проекте» — публичная E-E-A-T-страница (та же видимость,
+              что у «Блога»: гостю на всех экранах, вошедшим с sm+) */}
+          <button
+            onClick={goAbout}
+            className={`rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900${user ? ' hidden sm:block' : ''}`}
+          >
+            О проекте
+          </button>
           {/* Переключатель языка */}
           <button
             onClick={switchLang}
@@ -377,6 +391,12 @@ export default function Header({ onOpenForm }: HeaderProps) {
                       className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
                     >
                       Для организаторов
+                    </button>
+                    <button
+                      onClick={goAbout}
+                      className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      О проекте
                     </button>
                     <div className="my-1 border-t border-gray-100" />
                     {/* Политика и Контакты — видны в меню на мобильных (в шапке скрыты) */}
