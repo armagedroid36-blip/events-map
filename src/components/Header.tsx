@@ -279,27 +279,29 @@ export default function Header({ onOpenForm }: HeaderProps) {
               {n.label}
             </button>
           ))}
-          {/* Блог — публичные статьи. Гостю (без меню-бургера) виден на всех
-              экранах; вошедшим на узких экранах скрыт — пункт есть в меню */}
+          {/* Блог — публичные статьи. На <640px скрыт здесь: пункты публичной
+              навигации вынесены в нижнюю строку шапки (см. ряд 2 ниже),
+              иначе кнопки не помещаются рядом с брендом и flex-wrap
+              переносит их вразнобой. С sm+ — виден всегда. */}
           <button
             onClick={goBlog}
-            className={`rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900${user ? ' hidden sm:block' : ''}`}
+            className="hidden rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900 sm:block"
           >
             Блог
           </button>
           {/* «Для организаторов» — публичная B2B-страница (та же видимость,
-              что у «Блога»: гостю на всех экранах, вошедшим с sm+) */}
+              что у «Блога»: скрыт на <640px, в нижней строке) */}
           <button
             onClick={goForOrganizers}
-            className={`rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900${user ? ' hidden sm:block' : ''}`}
+            className="hidden rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900 sm:block"
           >
             Для организаторов
           </button>
           {/* «О проекте» — публичная E-E-A-T-страница (та же видимость,
-              что у «Блога»: гостю на всех экранах, вошедшим с sm+) */}
+              что у «Блога»: скрыт на <640px, в нижней строке) */}
           <button
             onClick={goAbout}
-            className={`rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900${user ? ' hidden sm:block' : ''}`}
+            className="hidden rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900 sm:block"
           >
             О проекте
           </button>
@@ -380,21 +382,25 @@ export default function Header({ onOpenForm }: HeaderProps) {
                         {n.label}
                       </button>
                     ))}
+                    {/* Публичные пункты на <640px скрыты: они в нижней
+                        строке шапки (ряд 2) — дублей на одном экране нет.
+                        С sm+ видны в меню как раньше (в шапке они тоже
+                        видны — так было до переноса) */}
                     <button
                       onClick={goBlog}
-                      className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+                      className="hidden w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 sm:block"
                     >
                       Блог
                     </button>
                     <button
                       onClick={goForOrganizers}
-                      className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+                      className="hidden w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 sm:block"
                     >
                       Для организаторов
                     </button>
                     <button
                       onClick={goAbout}
-                      className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+                      className="hidden w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 sm:block"
                     >
                       О проекте
                     </button>
@@ -445,6 +451,36 @@ export default function Header({ onOpenForm }: HeaderProps) {
             </>
           )}
         </div>
+      </div>
+
+      {/* Ряд 2 — только на <640px (sm:hidden): публичная навигация
+          «Блог» / «Для организаторов» / «О проекте». Видна гостю и
+          вошедшему (у вошедшего эти пункты на мобильном из бургер-меню
+          убраны — без дублей на одном экране). Ряд 1 остаётся в одну
+          строку: бренд слева (truncate), справа только язык + «Войти»
+          либо язык + колокольчик/бургер. С sm+ ряд 2 скрыт, а пункты
+          снова в правой группе шапки (см. выше). Высота шапки меряется
+          ResizeObserver'ом в useLayoutEffect — бургер-меню и панели
+          Home позиционируются по --header-bottom ниже ОБЕИХ строк. */}
+      <div className="flex flex-wrap items-center justify-center gap-1 px-2 pb-2 sm:hidden">
+        <button
+          onClick={goBlog}
+          className="rounded-md px-2 py-1 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900"
+        >
+          Блог
+        </button>
+        <button
+          onClick={goForOrganizers}
+          className="rounded-md px-2 py-1 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900"
+        >
+          Для организаторов
+        </button>
+        <button
+          onClick={goAbout}
+          className="rounded-md px-2 py-1 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900"
+        >
+          О проекте
+        </button>
       </div>
 
       {authOpen && <AuthModal onClose={() => setAuthOpen(false)} />}
