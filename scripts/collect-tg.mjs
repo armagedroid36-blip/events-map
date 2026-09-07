@@ -9,6 +9,7 @@ import { extractCategory } from './category-llm.mjs';
 import { extractTime } from './time-llm.mjs';
 import { extractAddressLLM } from './address-llm.mjs';
 import { extractAddress } from './address-regex.mjs';
+import { findCityZone } from './city-zones.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -553,7 +554,33 @@ async function main() {
           const g = await geocode(llmOrRegex, ch.city, ch.country, ch.fallback);
           if (g) { lat = g.lat; lng = g.lng; address = llmOrRegex; }
         }
-        // Если адрес не геокодируется или его нет — ставим центр города:
+        // Сырые координаты в адресе («16.0428842,108.2518050» — Google ?q=...):
+        // это ТОЧНОЕ место, геокодить/зонировать не нужно.
+        if ((lat == null || lng == null) && address) {
+          const cm = address.match(/([-+]?\d{1,3}\.\d{3,})\s*[,;]\s*([-+]?\d{1,3}\.\d{3,})/);
+          if (cm) {
+            const clat = parseFloat(cm[1]);
+            const clng = parseFloat(cm[2]);
+            if (Math.abs(clat) <= 90 && Math.abs(clng) <= 180) {
+              lat = clat;
+              lng = clng;
+              console.log(`  [координаты из адреса] ${title.slice(0, 45)}`);
+            }
+          }
+        }
+        // Зона города: точного адреса нет или он не геокодировался, но текст
+        // указывает на часть города («север Нячанга», «южный пляж», «район
+        // My Gia») — ставим якорные координаты зоны, а не центр города.
+        // Текст для анализа: адрес (если есть) + пост.
+        if (lat == null || lng == null) {
+          const zone = findCityZone(ch.city, `${address || ''} ${post.text}`);
+          if (zone) {
+            lat = zone.lat;
+            lng = zone.lng;
+            console.log(`  [зона: ${zone.zone}] ${title.slice(0, 45)} | ${(address || post.text).slice(0, 40)}`);
+          }
+        }
+        // Если зона не найдена — ставим центр города:
         // событие видно на карте, а в карточке будет «место уточнить у организатора».
         if (lat == null || lng == null) {
           lat = ch.fallback.lat;
