@@ -240,6 +240,12 @@ export function photoUrl(path: string): string {
  */
 class SupabaseApi implements DataApi {
   private db: SupabaseClient;
+  // Кэш публичного списка событий (в памяти, 30 с): list_active_events —
+  // тяжёлый RPC (сотни КБ), а при навигации по сайту (карта → список →
+  // обратно) список перезапрашивается многократно. 30 секунд свежести
+  // достаточно: публикации редки, страница всё равно обновляется вручную.
+  private static EVENTS_TTL_MS = 30_000;
+  private eventsCache: { at: number; data: EventItem[] } | null = null;
 
   constructor() {
     this.db = createClient(config.supabaseUrl, config.supabaseAnonKey);
@@ -248,11 +254,17 @@ class SupabaseApi implements DataApi {
   // --- Публичная часть ---
 
   async listEvents(): Promise<EventItem[]> {
+    const now = Date.now();
+    if (this.eventsCache && now - this.eventsCache.at < SupabaseApi.EVENTS_TTL_MS) {
+      return this.eventsCache.data;
+    }
     // Публичный список — через security definer RPC: события заблокированных
     // организаторов скрыты, работает и для анонимов
     const { data, error } = await this.db.rpc('list_active_events');
     if (error) throw error;
-    return (data ?? []) as EventItem[];
+    const events = (data ?? []) as EventItem[];
+    this.eventsCache = { at: now, data: events };
+    return events;
   }
 
   async listAllEvents(): Promise<EventItem[]> {

@@ -1263,6 +1263,29 @@ async function main() {
     process.exit(1);
   }
 
+  // RPC list_active_events отдаёт description* обрезанным до 500 символов
+  // (перф: жирный ответ карты). SEO-страницам нужен полный текст — дозагружаем
+  // его напрямую из events (RLS разрешает anon читать активные события).
+  if (events.length) {
+    const ids = events.map((e) => e.id);
+    const { data: full, error: fullErr } = await db
+      .from('events')
+      .select('id, description, description_ru, description_en')
+      .in('id', ids);
+    if (!fullErr && full && full.length) {
+      const byId = new Map(full.map((e) => [e.id, e]));
+      for (const ev of events) {
+        const f = byId.get(ev.id);
+        if (!f) continue;
+        ev.description = f.description ?? ev.description;
+        ev.description_ru = f.description_ru ?? ev.description_ru;
+        ev.description_en = f.description_en ?? ev.description_en;
+      }
+    } else if (fullErr) {
+      console.error(`seo-prerender: дозагрузка полных описаний: ${fullErr.message}`);
+    }
+  }
+
   const baseHtml = readFileSync(join(DIST, 'index.html'), 'utf8');
   const locs = [`${SITE_URL}/`];
   // <lastmod> для sitemap: по умолчанию дата сборки (TODAY_ISO); статьи блога
