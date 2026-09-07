@@ -9,6 +9,7 @@ import { extractCategory } from './category-llm.mjs';
 import { extractTime } from './time-llm.mjs';
 import { extractAddressLLM } from './address-llm.mjs';
 import { extractAddress } from './address-regex.mjs';
+import { extractDateLLM } from './date-llm.mjs';
 import { findCityZone } from './city-zones.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -455,8 +456,18 @@ async function main() {
         if (!post.pid || !post.text) continue;
         const cleanText = decodeEntities(post.text);
 
-        // Событие должно содержать дату в будущем
-        const when = parseDate(post.text);
+        // Событие должно содержать дату в будущем. Сначала regex (дёшево, для
+        // всех постов); если не нашёл, а пост длинный — LLM ловит нестандартные
+        // формулировки («в следующую пятницу», «29 сентября в 19:00»).
+        // LLM зовём ТОЛЬКО для постов без regex-даты (экономия токенов).
+        let when = parseDate(post.text);
+        if (!when && post.text.length >= 80) {
+          const llmDate = await extractDateLLM(post.text, ch.tzMin);
+          if (llmDate?.start_date) {
+            when = { date: llmDate.start_date, time: llmDate.start_time || null };
+            console.log(`  ${post.pid}: дата через LLM — ${when.date}${when.time ? ' ' + when.time : ''}`);
+          }
+        }
         if (!when) {
           console.log(`  - ${post.pid}: нет даты — пропуск`);
           continue;
