@@ -46,6 +46,11 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
+      - name: Сбор театральных представлений (Убуд, Улувату, Do Theatre)
+        run: node scripts/collect-theatres.mjs
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
       - name: Архивация прошедших событий
         run: node scripts/archive-past.mjs
         env:
