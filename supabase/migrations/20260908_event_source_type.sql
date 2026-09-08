@@ -23,6 +23,10 @@ comment on column public.events.source_type is
 
 -- Модерация по источнику: параметр p_source фильтрует список,
 -- без параметра — все (старое поведение, шапка-счётчики).
+-- ВАЖНО: drop перед create — PostgREST НЕ умеет выбирать между перегрузками
+-- f() и f(text default null): вызов без параметров даёт PGRST203 «could not
+-- choose the best candidate» (бесконечная загрузка модерации, баг 0.32).
+drop function if exists public.list_moderation_events();
 create or replace function public.list_moderation_events(p_source text default null)
 returns setof events
 language plpgsql
