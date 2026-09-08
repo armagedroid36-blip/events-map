@@ -22,7 +22,7 @@ export const config = {
   demoMode: false,
 
   // Версия сборки — показывается в шапке мелким текстом для сверки
-  buildVersion: 'beta 0.31',
+  buildVersion: 'beta 0.32',
 
   // Push-уведомления: ПУБЛИЧНЫЙ VAPID-ключ (приватный — в GitHub secrets,
   // VAPID_PRIVATE_KEY; рассылка — scripts/notify-push.mjs в GHA)
@@ -74,6 +74,7 @@ export const config = {
     { id: 'workshop', name_ru: 'Мастер-классы', name_en: 'Workshops', emoji: '🎨' },
     { id: 'games', name_ru: 'Игры и квизы', name_en: 'Games & Quizzes', emoji: '🎲' },
     { id: 'meetup', name_ru: 'Встречи и нетворкинг', name_en: 'Meetups & Networking', emoji: '🤝' },
+    { id: 'theatre', name_ru: 'Театры и шоу', name_en: 'Theatres & Shows', emoji: '🎭' },
     { id: 'tour', name_ru: 'Экскурсии и туры', name_en: 'Tours & Excursions', emoji: '🗺️' },
     { id: 'speaking', name_ru: 'Разговорный клуб', name_en: 'Speaking Club', emoji: '💬' },
   ],

@@ -221,7 +221,7 @@ async function main() {
       address: s.address,
       lat: s.lat,
       lng: s.lng,
-      category_id: 'show',
+      category_id: 'theatre',
       website: s.website,
       contact: null,
       photos: s.photos.slice(0, 3),
@@ -231,6 +231,7 @@ async function main() {
       recurrence:
         s.days.length === 7 ? { freq: 'daily' } : { freq: 'weekly', days: s.days },
       status: 'moderation',
+      source_type: 'theatre',
     };
     const { error } = DRY_RUN ? { error: null } : await db.from('events').insert(row);
     if (error) {

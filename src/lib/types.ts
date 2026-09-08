@@ -85,6 +85,8 @@ export interface EventItem {
   status: EventStatus;
   /** Владелец-организатор (если событие создано через аккаунт) */
   owner_id?: string;
+  /** Источник: collector (автосбор), theatre (постоянные шоу), organizer */
+  source_type?: string | null;
   /** Аватарка организатора (из profiles, в публичном списке событий) */
   org_avatar_url?: string | null;
   /** Имя организатора (из profiles, в публичном списке событий) */

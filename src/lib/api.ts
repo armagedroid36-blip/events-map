@@ -656,6 +656,7 @@ class SupabaseApi implements DataApi {
         recurrence: data.recurrence ?? null,
         owner_id: me.id,
         status: 'moderation',
+        source_type: 'organizer',
       })
       .select()
       .single();
@@ -707,6 +708,7 @@ class SupabaseApi implements DataApi {
         recurrence: src.recurrence ?? null,
         owner_id: me.id,
         status: 'moderation',
+        source_type: 'organizer',
       })
       .select()
       .single();

@@ -634,6 +634,7 @@ async function main() {
           currency: p?.currency ?? null,
           donation: !!p?.donation,
           status: 'moderation',
+          source_type: 'collector',
         };
 
         const { error } = DRY_RUN ? { error: null } : await db.from('events').insert(row);

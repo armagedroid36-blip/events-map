@@ -428,6 +428,9 @@ export default {
     eventsModeration: {
       title: 'Events awaiting review',
       empty: 'No events awaiting review',
+      sourceAuto: 'Auto-collected',
+      sourceTheatre: 'Theatres & shows',
+      sourceOrganizer: 'Organizers',
     },
     archive: {
       empty: 'The archive is empty. Finished events appear here automatically.',

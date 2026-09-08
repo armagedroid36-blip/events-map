@@ -29,6 +29,19 @@ export default function EventsModerationTab({ onChanged }: Props) {
   // Отклонение с комментарием
   const [rejectTarget, setRejectTarget] = useState<EventItem | null>(null);
   const [rejectReason, setRejectReason] = useState('');
+  // Активная под-вкладка источника: collector | theatre | organizer
+  const [source, setSource] = useState<'collector' | 'theatre' | 'organizer'>('collector');
+
+  /** Источник события: source_type; у старых событий — по owner_id */
+  function sourceOf(ev: EventItem): 'collector' | 'theatre' | 'organizer' {
+    if (ev.source_type === 'theatre' || ev.source_type === 'organizer') return ev.source_type;
+    if (ev.source_type === 'collector') return 'collector';
+    return ev.owner_id ? 'organizer' : 'collector';
+  }
+  // Списки по источникам (один запрос к RPC, разбивка на клиенте)
+  const groups: Record<'collector' | 'theatre' | 'organizer', EventItem[]> = { collector: [], theatre: [], organizer: [] };
+  for (const ev of events) groups[sourceOf(ev)].push(ev);
+  const visible = groups[source];
 
   useEffect(() => {
     let alive = true;
@@ -102,11 +115,40 @@ export default function EventsModerationTab({ onChanged }: Props) {
       <h2 className="mb-2 text-sm font-semibold text-gray-900">
         {t('admin.eventsModeration.title')}
       </h2>
+      {/* Под-вкладки по источнику: автосбор / театры и шоу / организаторы */}
+      <div className="mb-3 flex flex-wrap gap-1">
+        {(
+          [
+            ['collector', t('admin.eventsModeration.sourceAuto')],
+            ['theatre', t('admin.eventsModeration.sourceTheatre')],
+            ['organizer', t('admin.eventsModeration.sourceOrganizer')],
+          ] as const
+        ).map(([id, label]) => (
+          <button
+            key={id}
+            onClick={() => setSource(id)}
+            className={`flex items-center rounded-md px-3 py-1.5 text-sm font-medium ${
+              source === id ? 'bg-gray-900 text-white' : 'text-gray-600 hover:bg-gray-100'
+            }`}
+          >
+            {label}
+            {groups[id].length > 0 && (
+              <span
+                className={`ml-1.5 inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full px-1 text-[10px] font-bold leading-none ${
+                  source === id ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-600'
+                }`}
+              >
+                {groups[id].length > 99 ? '99+' : groups[id].length}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
       {/* Удалить все (с подтверждением) */}
       {events.length > 0 && (
         <div className="mb-3 flex items-center justify-between gap-2">
           <span className="text-sm text-gray-500">
-            {t('admin.moderation.title')}: {events.length}
+            {t('admin.moderation.title')}: {visible.length}
           </span>
           {!confirmDelete ? (
             <button
@@ -149,8 +191,13 @@ export default function EventsModerationTab({ onChanged }: Props) {
         </div>
       )}
 
+      {visible.length === 0 ? (
+        <p className="rounded-lg border border-dashed border-gray-300 bg-white p-6 text-center text-sm text-gray-500">
+          {t('admin.eventsModeration.empty')}
+        </p>
+      ) : (
       <div className="space-y-2">
-        {events.map((ev) => {
+        {visible.map((ev) => {
           const cat = categories.find((c) => c.id === ev.category_id);
           const issues = getIssues(ev);
           return (
@@ -218,6 +265,7 @@ export default function EventsModerationTab({ onChanged }: Props) {
           );
         })}
       </div>
+      )}
 
       {/* Просмотр полной карточки события */}
       {selected && (

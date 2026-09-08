@@ -129,7 +129,7 @@ async function main() {
       address: s.address,
       lat: s.lat,
       lng: s.lng,
-      category_id: 'show',
+      category_id: 'theatre',
       website: s.website,
       contact: null,
       photos: s.photos.slice(0, 3),
@@ -139,6 +139,7 @@ async function main() {
       // Ежедневное представление без даты окончания — архив его не тронет
       recurrence: { freq: 'daily' },
       status: 'moderation',
+      source_type: 'theatre',
     };
     const { error } = DRY_RUN ? { error: null } : await db.from('events').insert(row);
     if (error) {

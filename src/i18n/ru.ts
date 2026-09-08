@@ -429,6 +429,9 @@ export default {
     eventsModeration: {
       title: 'Мероприятия на модерации',
       empty: 'Нет мероприятий, ожидающих решения',
+      sourceAuto: 'Автосбор',
+      sourceTheatre: 'Театры и шоу',
+      sourceOrganizer: 'Организаторы',
     },
     archive: {
       empty: 'Архив пуст. Завершившиеся мероприятия попадают сюда автоматически.',

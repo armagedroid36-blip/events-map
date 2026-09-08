@@ -44,7 +44,11 @@ function buildText(events, total) {
     const title = cleanLine(ev.title_ru || ev.title_en || ev.title || 'Без названия');
     const city = ev.city || '';
     const date = ev.start_date || '';
-    const parts = [esc(title)];
+    // Источник события: [автосбор] / [театры и шоу] / [организатор]
+    const src =
+      ev.source_type === 'theatre' ? '[театры и шоу]' : ev.source_type === 'organizer' ? '[организатор]' : '[автосбор]';
+    const parts = [esc(src)];
+    if (title) parts.push(esc(title));
     if (city) parts.push(esc(city));
     if (date) parts.push(esc(date));
     lines.push(`• ${parts.join(' — ')}`);
@@ -127,7 +131,7 @@ async function main() {
 
   let listQ = db
     .from('events')
-    .select('id,title_ru,title_en,title,city,start_date')
+    .select('id,title_ru,title_en,title,city,start_date,source_type')
     .eq('status', 'moderation')
     .order('updated_at', { ascending: false })
     .limit(MAX_ITEMS);

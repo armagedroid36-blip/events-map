@@ -368,6 +368,7 @@ async function main() {
         donation: !!p?.donation,
         is_international: isInternational,
         status: 'moderation',
+        source_type: 'collector',
       };
 
       const { error } = DRY_RUN ? { error: null } : await db.from('events').insert(row);
