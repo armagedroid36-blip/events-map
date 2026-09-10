@@ -1,0 +1,27 @@
+name: Theatre scout
+
+# Недельная разведка новых площадок и афиш для театрального сбора.
+# Отдельно от ежедневного сбора (collect-events.yml), чтобы не тормозить его.
+# Понедельник 05:00 UTC = 13:00 по Бали (WITA) / 12:00 по Вьетнаму.
+# Добавление источников в реестр — только вручную, после одобрения человеком.
+on:
+  schedule:
+    - cron: '0 5 * * 1'
+  workflow_dispatch: {}
+
+jobs:
+  scout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci --no-audit --no-fund || npm install --no-audit --no-fund
+      - name: Разведка площадок и афиш (Overpass + DuckDuckGo + LLM-фильтр)
+        run: node scripts/theatre-scout.mjs
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
