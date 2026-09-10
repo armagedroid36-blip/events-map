@@ -21,7 +21,7 @@ import { LANGUAGES } from '../lib/languages';
 import { contactErrors, normalizeContacts } from '../lib/contacts';
 import { detectCountry } from '../lib/countries';
 import { isValidCoords } from '../lib/coords';
-import { todayIso } from '../lib/dates';
+import { formatTimeHM, todayIso } from '../lib/dates';
 import { config } from '../config';
 import { useAuth } from '../lib/auth';
 
@@ -286,8 +286,8 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
   const [description, setDescription] = useState(event?.description ?? '');
   const [startDate, setStartDate] = useState(event?.start_date ?? '');
   const [endDate, setEndDate] = useState(event?.end_date ?? '');
-  const [startTime, setStartTime] = useState(event?.start_time ?? '');
-  const [endTime, setEndTime] = useState(event?.end_time ?? '');
+  const [startTime, setStartTime] = useState(formatTimeHM(event?.start_time));
+  const [endTime, setEndTime] = useState(formatTimeHM(event?.end_time));
   // Повторение: разовое / каждый день / по дням недели (из recurrence события)
   const [repeatMode, setRepeatMode] = useState<'once' | 'daily' | 'weekly'>(
     event?.recurrence?.freq === 'daily' ? 'daily' : event?.recurrence?.freq === 'weekly' ? 'weekly' : 'once',

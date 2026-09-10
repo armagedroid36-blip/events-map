@@ -643,7 +643,11 @@ function enDate(iso) {
 function localizedDateTime(iso, time, lang) {
   const date = lang === 'en' ? enDate(iso) : ruDate(iso);
   if (!time) return date;
-  if (lang !== 'en') return `${date}, ${time}`;
+  if (lang !== 'en') {
+    // RU: 24-часовое время БЕЗ секунд — «19:00:00» → «19:00»
+    const rh = /^(\d{1,2}):(\d{2})/.exec(time);
+    return `${date}, ${rh ? `${rh[1]}:${rh[2]}` : time}`;
+  }
   // 24-часовое время из БД → 12-часовое для EN (как в SPA en.ts)
   const m = /^(\d{1,2}):(\d{2})/.exec(time);
   if (!m) return `${date}, ${time}`;
@@ -1267,13 +1271,25 @@ async function main() {
   // (перф: жирный ответ карты). SEO-страницам нужен полный текст — дозагружаем
   // его напрямую из events (RLS разрешает anon читать активные события).
   if (events.length) {
+    // .in() с 400+ UUID раздувает URL запроса до ~16 КБ — запрос падает
+    // («fetch failed»), и страницы событий уезжают с обрезанным на 500
+    // символов описанием. Поэтому грузим пачками по 50 id и мержим.
     const ids = events.map((e) => e.id);
-    const { data: full, error: fullErr } = await db
-      .from('events')
-      .select('id, description, description_ru, description_en')
-      .in('id', ids);
-    if (!fullErr && full && full.length) {
-      const byId = new Map(full.map((e) => [e.id, e]));
+    const CHUNK = 50;
+    const byId = new Map();
+    let fullErr = null;
+    for (let i = 0; i < ids.length; i += CHUNK) {
+      const { data: full, error: err } = await db
+        .from('events')
+        .select('id, description, description_ru, description_en')
+        .in('id', ids.slice(i, i + CHUNK));
+      if (err) {
+        fullErr = err;
+        continue;
+      }
+      for (const e of full ?? []) byId.set(e.id, e);
+    }
+    if (byId.size) {
       for (const ev of events) {
         const f = byId.get(ev.id);
         if (!f) continue;
@@ -1281,7 +1297,8 @@ async function main() {
         ev.description_ru = f.description_ru ?? ev.description_ru;
         ev.description_en = f.description_en ?? ev.description_en;
       }
-    } else if (fullErr) {
+    }
+    if (fullErr) {
       console.error(`seo-prerender: дозагрузка полных описаний: ${fullErr.message}`);
     }
   }

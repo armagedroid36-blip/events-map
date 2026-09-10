@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import type { Category, EventItem } from '../lib/types';
 import { localizedText } from '../lib/translate';
 import { languageName } from '../lib/languages';
-import { formatDate } from '../lib/dates';
+import { formatDate, formatTimeHM } from '../lib/dates';
 import { recurrenceLabel } from '../lib/recurrence';
 import { photoUrl } from '../lib/api';
 import { isValidCoords } from '../lib/coords';
@@ -574,9 +574,10 @@ export default function EventCard({
         })
       : t('card.dateSingle', { start: formatDate(event.start_date, lang) });
 
-  // Точное время, если указано
+  // Точное время, если указано (без секунд: БД отдаёт HH:MM:SS)
+  const startTime = formatTimeHM(event.start_time);
   const timeLabel =
-    event.start_time && (event.end_time ? `${event.start_time} – ${event.end_time}` : event.start_time);
+    startTime && (event.end_time ? `${startTime} – ${formatTimeHM(event.end_time)}` : startTime);
 
   const photos = (event.photos ?? []).filter((p) => p);
 

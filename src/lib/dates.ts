@@ -11,6 +11,13 @@ export function formatDate(iso: string, lang?: 'ru' | 'en'): string {
   });
 }
 
+/** Время HH:MM без секунд: «19:00:00» → «19:00», «19:00» как есть; пусто — '' */
+export function formatTimeHM(t?: string | null): string {
+  if (!t) return '';
+  const m = /^(\d{1,2}:\d{2})/.exec(t);
+  return m ? m[1] : t;
+}
+
 /** Сегодняшняя дата в формате YYYY-MM-DD (в часовом поясе пользователя) */
 export function todayIso(): string {
   const d = new Date();

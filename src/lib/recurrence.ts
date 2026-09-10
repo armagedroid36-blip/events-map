@@ -26,6 +26,40 @@ export function recurrenceMatchesDate(
   return (r.days ?? []).includes(isoDayOfWeek(isoDate));
 }
 
+/** +N дней к ISO-дате (Date.UTC нормализует переполнение месяца/года) */
+export function addDaysIso(iso: string, n: number): string {
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10);
+}
+
+/**
+ * Ближайшее БУДУЩЕЕ вхождение события (единый источник правды):
+ * для recurring — по правилу повтора от max(start_date, today) вперёд
+ * (горизонт end_date или +90 дней от today для бессрочных серий; не
+ * найдено — fallback на start_date); для разового — start_date как есть.
+ * Зеркальная копия логики — nextOccurrenceDate в scripts/seo-prerender.mjs
+ * (JSON-LD startDate): при изменении править оба файла.
+ */
+export function nextOccurrenceDate(
+  ev: { recurrence?: Recurrence | null; start_date?: string; end_date?: string | null },
+  todayIsoDate: string,
+): string {
+  const r = ev.recurrence;
+  const first = ev.start_date;
+  if (!r || !first) return first || todayIsoDate;
+  const from = first > todayIsoDate ? first : todayIsoDate;
+  const horizon = ev.end_date ?? addDaysIso(todayIsoDate, 90);
+  let d = from;
+  let guard = 0;
+  while (d <= horizon && guard < 10000) {
+    if (r.freq === 'daily') return d;
+    if ((r.days ?? []).includes(isoDayOfWeek(d))) return d;
+    d = addDaysIso(d, 1);
+    guard += 1;
+  }
+  return first;
+}
+
 /** Человеческий текст повтора для карточки/списка; null — разовое событие. */
 export function recurrenceLabel(
   ev: { recurrence?: Recurrence | null; end_date?: string },
