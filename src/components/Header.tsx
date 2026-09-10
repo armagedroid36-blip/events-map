@@ -285,7 +285,9 @@ export default function Header({ onOpenForm }: HeaderProps) {
               визуальный зазор до надписи не зависит от gap.
               h-12 + py-1.5 контейнера: пин почти во всю высоту шапки
               (48 + 12 = 60px — как раньше h-9 + py-3), шапка не растёт. */}
-          <img src="/logo-mark.webp" alt="" className="h-12 w-auto shrink-0 rounded object-contain" />
+          <span className="logo-hop-wrap">
+            <img src="/logo-mark.webp" alt="" className="logo-hop h-12 w-auto shrink-0 rounded object-contain" />
+          </span>
           {isBrandH1 ? (
             <h1 className="truncate text-xl font-extrabold tracking-tight text-gray-900">
               {t('app.brand')}{' '}

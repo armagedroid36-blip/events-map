@@ -220,3 +220,83 @@ body {
   -webkit-backdrop-filter: blur(28px) saturate(170%);
   backdrop-filter: blur(28px) saturate(170%);
 }
+
+/* Логотип в шапке (только десктоп): лёгкое подпрыгивание + мягкая тень под
+   пином. На узких экранах и при prefers-reduced-motion логотип статичен. */
+.logo-hop-wrap {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+.logo-hop-wrap::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -1px;
+  width: 46%;
+  height: 5px;
+  border-radius: 9999px;
+  background: radial-gradient(closest-side, rgba(26, 26, 26, 0.34), rgba(26, 26, 26, 0) 100%);
+  transform: translateX(-50%) scaleX(1);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (min-width: 1024px) and (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .logo-hop {
+    animation: logo-hop 4.2s ease-in-out infinite;
+    will-change: transform;
+  }
+  .logo-hop-wrap::after {
+    animation: logo-hop-shadow 4.2s ease-in-out infinite;
+  }
+}
+
+@keyframes logo-hop {
+  0%,
+  30%,
+  62%,
+  100% {
+    transform: translateY(0);
+  }
+  36% {
+    transform: translateY(-4.5px);
+  }
+  42% {
+    transform: translateY(0);
+  }
+  48% {
+    transform: translateY(-2px);
+  }
+  53% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes logo-hop-shadow {
+  0%,
+  30%,
+  62%,
+  100% {
+    opacity: 0.32;
+    transform: translateX(-50%) scaleX(1);
+  }
+  36% {
+    opacity: 0.1;
+    transform: translateX(-50%) scaleX(0.74);
+  }
+  42% {
+    opacity: 0.32;
+    transform: translateX(-50%) scaleX(1);
+  }
+  48% {
+    opacity: 0.18;
+    transform: translateX(-50%) scaleX(0.86);
+  }
+  53% {
+    opacity: 0.32;
+    transform: translateX(-50%) scaleX(1);
+  }
+}
