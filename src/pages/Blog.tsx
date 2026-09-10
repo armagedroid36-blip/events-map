@@ -5,11 +5,12 @@
 // русские hardcoded-строки (блог RU-only, решение по EN — позже).
 // Мета-теги head ставит сама страница (как Home): при клиентском переходе
 // App-эффект не перебивает — блог-маршруты исключены из applyGenericMeta.
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
 import { navigate } from '../lib/navigate';
+import { getApi } from '../lib/api';
 import { applyArticleMeta, applyBlogMeta, applyGenericMeta, enDate, ruDate } from '../lib/seo';
 import type { Article, ArticleSection } from '../lib/types';
 // Каст через unknown: resolveJsonModule выводит точный литеральный тип,
@@ -38,14 +39,39 @@ function ArticleNotFound() {
 }
 
 const MD_LINK_RE = /\[([^\]]+)\]\(([^)]+)\)/g;
+/** То же, но для сканирования текста (matchAll клонирует regexp — lastIndex
+ *  общего MD_LINK_RE не портится). */
+const MD_LINK_SCAN_RE = /\[[^\]]+\]\(([^)]+)\)/g;
+/** href внутренней ссылки на событие: /event/<uuid>/… (или /en/event/<uuid>/…) */
+const EVENT_HREF_RE = /^(?:\/en)?\/event\/([0-9a-f-]{36})\//i;
+
+/** id событий, на которые ссылаются секции статьи (в нижнем регистре) */
+function eventIdsInSections(sections: ArticleSection[]): Set<string> {
+  const ids = new Set<string>();
+  for (const s of sections) {
+    const texts = s.type === 'ul' ? s.items : [s.text];
+    for (const t of texts) {
+      for (const m of String(t).matchAll(MD_LINK_SCAN_RE)) {
+        const id = EVENT_HREF_RE.exec(m[1])?.[1];
+        if (id) ids.add(id.toLowerCase());
+      }
+    }
+  }
+  return ids;
+}
 
 /**
  * Рендер текста секции с markdown-ссылками: «[события на Бали](/bali)» →
  * <a href="/bali">. Внутренние относительные ссылки перехватывает
  * document-обработчик App.tsx (navigate, без перезагрузки); внешних ссылок
  * в статьях нет.
+ *
+ * activeIds: набор активных id событий. Если он передан и id из ссылки
+ * /event/<uuid>/… в нём отсутствует (событие заархивировано/удалено в БД) —
+ * фраза рендерится обычным текстом без <a>, чтобы не вести на 404.
+ * null/undefined (данные ещё не пришли или запрос упал) — прежнее поведение.
  */
-function renderMd(text: string): ReactNode[] {
+function renderMd(text: string, activeIds?: Set<string> | null): ReactNode[] {
   const nodes: ReactNode[] = [];
   let last = 0;
   let key = 0;
@@ -53,15 +79,20 @@ function renderMd(text: string): ReactNode[] {
   let m: RegExpExecArray | null;
   while ((m = MD_LINK_RE.exec(text))) {
     if (m.index > last) nodes.push(text.slice(last, m.index));
-    nodes.push(
-      <a
-        key={key++}
-        href={m[2]}
-        className="font-medium text-[#E66343] underline decoration-[#E66343]/40 underline-offset-2 hover:decoration-[#E66343]"
-      >
-        {m[1]}
-      </a>,
-    );
+    const evId = activeIds ? (EVENT_HREF_RE.exec(m[2])?.[1]?.toLowerCase() ?? null) : null;
+    if (activeIds && evId && !activeIds.has(evId)) {
+      nodes.push(m[1]);
+    } else {
+      nodes.push(
+        <a
+          key={key++}
+          href={m[2]}
+          className="font-medium text-[#E66343] underline decoration-[#E66343]/40 underline-offset-2 hover:decoration-[#E66343]"
+        >
+          {m[1]}
+        </a>,
+      );
+    }
     last = m.index + m[0].length;
   }
   if (last < text.length) nodes.push(text.slice(last));
@@ -69,7 +100,13 @@ function renderMd(text: string): ReactNode[] {
 }
 
 /** Секции статьи: абзацы/заголовки/списки (тексты дословно из articles.json) */
-function Sections({ sections }: { sections: ArticleSection[] }) {
+function Sections({
+  sections,
+  activeIds,
+}: {
+  sections: ArticleSection[];
+  activeIds?: Set<string> | null;
+}) {
   return (
     <>
       {sections.map((s, i) => {
@@ -84,14 +121,14 @@ function Sections({ sections }: { sections: ArticleSection[] }) {
           return (
             <ul key={i} className="mt-3 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-gray-700">
               {s.items.map((item, j) => (
-                <li key={j}>{renderMd(item)}</li>
+                <li key={j}>{renderMd(item, activeIds)}</li>
               ))}
             </ul>
           );
         }
         return (
           <p key={i} className="mt-3 text-sm leading-relaxed text-gray-700">
-            {renderMd(s.text)}
+            {renderMd(s.text, activeIds)}
           </p>
         );
       })}
@@ -169,6 +206,34 @@ export function ArticlePage({ slug }: { slug: string }) {
         sections: en ? article.sections_en || article.sections : article.sections,
       }
     : null;
+  // Гард от «мёртвых» ссылок на события: если в секциях есть /event/-ссылки,
+  // один раз берём активные id (api.listEvents, у него кэш 30 с) и передаём
+  // набор в renderMd. Пока данные не пришли или запрос упал — activeIds=null,
+  // ссылки рендерятся как прежде (деградация без регрессий).
+  const [activeIds, setActiveIds] = useState<Set<string> | null>(null);
+  useEffect(() => {
+    const sections = article
+      ? en
+        ? article.sections_en || article.sections
+        : article.sections
+      : null;
+    const refIds = sections ? eventIdsInSections(sections) : null;
+    if (!refIds || refIds.size === 0) return;
+    let alive = true;
+    getApi()
+      .listEvents()
+      .then((events) => {
+        if (alive) setActiveIds(new Set(events.map((e) => String(e.id).toLowerCase())));
+      })
+      .catch(() => {
+        // Список событий недоступен — оставляем ссылки как есть
+      });
+    return () => {
+      alive = false;
+    };
+    // Статья неизменна (JSON), язык — единственная реальная зависимость
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [article, en]);
   useEffect(() => {
     if (article) {
       applyArticleMeta(article);
@@ -195,7 +260,7 @@ export function ArticlePage({ slug }: { slug: string }) {
           {en ? enDate(article.datePublished) : ruDate(article.datePublished)}
         </p>
         <div className="mt-4">
-          <Sections sections={view!.sections} />
+          <Sections sections={view!.sections} activeIds={activeIds} />
         </div>
         {/* Подпись редакции (E-E-A-T): авторство + ссылка на страницу /about.
             Как и datePublished — текст-xs; внутренний /about перехватывает

@@ -309,12 +309,33 @@ function loadAbout() {
 }
 
 /**
+ * Мёртвые /event/-ссылки из контента (id нет в активном наборе): собираются
+ * в mdLinksToHtml и печатаются в конце сборки. Сборка НЕ падает (exit 0),
+ * чтобы ночной CI не блокировался из-за устаревшего контента статьи.
+ */
+const deadEventLinks = [];
+
+/** id события из внутренней ссылки /event/<uuid>/… (или /en/event/…); иначе null */
+const EVENT_HREF_RE = /^(?:\/en)?\/event\/([0-9a-f-]{36})\//i;
+
+function eventIdFromHref(href) {
+  const m = EVENT_HREF_RE.exec(String(href));
+  return m ? m[1].toLowerCase() : null;
+}
+
+/**
  * Markdown-ссылки «[фраза](/путь)» → <a href="/путь">фраза</a>. Части текста
  * экранируются отдельно (esc), href — тоже; внешних ссылок в статьях нет,
  * пути внутренние (в SPA их перехватывает App.tsx, в статике GitHub Pages
  * отдаёт физическую страницу).
+ *
+ * ctx = { activeIds, context }: ссылка на событие, id которого нет в активном
+ * наборе, рендерится обычным текстом (без <a> — иначе 404 в статике) и
+ * попадает в deadEventLinks. Ссылки на города/блог/внешние не проверяются.
+ * Без ctx (activeIds не передан) поведение прежнее — все ссылки как <a>.
  */
-function mdLinksToHtml(text) {
+function mdLinksToHtml(text, ctx = {}) {
+  const { activeIds, context } = ctx;
   const parts = String(text).split(/\[([^\]]+)\]\(([^)]+)\)/);
   let out = esc(parts[0] ?? '');
   // split c захватывающими группами отдаёт [до, label, href, rest, label2, href2, rest2, …] —
@@ -323,23 +344,30 @@ function mdLinksToHtml(text) {
     const label = parts[i] ?? '';
     const href = parts[i + 1] ?? '';
     const rest = parts[i + 2] ?? '';
+    const evId = activeIds ? eventIdFromHref(href) : null;
+    if (evId && !activeIds.has(evId)) {
+      // Текст пункта сохраняем, ссылку снимаем — мёртвый href не должен жить в HTML
+      deadEventLinks.push({ context: context ?? '-', href, label });
+      out += esc(label) + esc(rest);
+      continue;
+    }
     out += `<a href="${esc(href)}">${esc(label)}</a>${esc(rest)}`;
   }
   return out;
 }
 
 /** Секции статьи (p/h2/ul) в статический HTML — видно краулеру без JS */
-function articleSectionsHtml(sections) {
+function articleSectionsHtml(sections, ctx = {}) {
   return (sections ?? [])
     .map((s) => {
       if (s.type === 'h2') return `  <h2>${esc(s.text)}</h2>`;
       if (s.type === 'ul') {
         const items = (s.items ?? [])
-          .map((it) => `    <li>${mdLinksToHtml(it)}</li>`)
+          .map((it) => `    <li>${mdLinksToHtml(it, ctx)}</li>`)
           .join('\n');
         return `  <ul>\n${items}\n  </ul>`;
       }
-      return `  <p>${mdLinksToHtml(s.text ?? '')}</p>`;
+      return `  <p>${mdLinksToHtml(s.text ?? '', ctx)}</p>`;
     })
     .join('\n');
 }
@@ -386,7 +414,7 @@ function articleBylineHtml(lang = 'ru') {
  * редакции (E-E-A-T: авторство «Редакция MyPins» со ссылкой на /about/).
  * lang='en' — h1/description/секции из *_en полей статьи.
  */
-function articleSeoHtml(article, lang = 'ru') {
+function articleSeoHtml(article, lang = 'ru', ctx = {}) {
   const en = lang === 'en';
   const h1 = en ? article.h1_en || article.h1 : article.h1;
   const sections = en ? article.sections_en || article.sections : article.sections;
@@ -396,7 +424,7 @@ function articleSeoHtml(article, lang = 'ru') {
     `  <p><time datetime="${esc(article.datePublished)}">${esc(
       en ? enDate(article.datePublished) : ruDate(article.datePublished),
     )}</time></p>`,
-    articleSectionsHtml(sections),
+    articleSectionsHtml(sections, ctx),
     articleBylineHtml(lang),
     '</div>',
     '',
@@ -412,13 +440,13 @@ function articleSeoHtml(article, lang = 'ru') {
  * lang='en' (для /en/for-organizers/) — из *_en полей (заголовки, intro,
  * sections_en, faq_en, final_en; CTA «Create event»).
  */
-function forOrganizersSeoHtml(c, lang = 'ru') {
+function forOrganizersSeoHtml(c, lang = 'ru', ctx = {}) {
   const en = lang === 'en';
   const pick = (field, fieldEn) => (en ? c[fieldEn] || c[field] : c[field]);
   const faq = (en ? c.faq_en || c.faq : c.faq ?? [])
     .map(
       (f) =>
-        `  <details><summary>${mdLinksToHtml(f.q)}</summary><p>${mdLinksToHtml(f.a)}</p></details>`,
+        `  <details><summary>${mdLinksToHtml(f.q, ctx)}</summary><p>${mdLinksToHtml(f.a, ctx)}</p></details>`,
     )
     .join('\n');
   const finalH2 = pick('final', 'final_en')?.h2 ?? '';
@@ -427,12 +455,12 @@ function forOrganizersSeoHtml(c, lang = 'ru') {
   const lines = [
     '<div id="seo-b2b-block">',
     `  <h1>${esc(pick('h1', 'h1_en'))}</h1>`,
-    `  <p>${mdLinksToHtml(pick('intro', 'intro_en') ?? '')}</p>`,
-    articleSectionsHtml(en ? c.sections_en || c.sections : c.sections),
+    `  <p>${mdLinksToHtml(pick('intro', 'intro_en') ?? '', ctx)}</p>`,
+    articleSectionsHtml(en ? c.sections_en || c.sections : c.sections, ctx),
   ];
   if (faq) lines.push(faq);
   lines.push(`  <h2>${esc(finalH2)}</h2>`);
-  lines.push(`  <p>${mdLinksToHtml(finalP)}</p>`);
+  lines.push(`  <p>${mdLinksToHtml(finalP, ctx)}</p>`);
   lines.push(`  <p><a href="${en ? SITE_URL + '/en/' : '/'}">${cta}</a></p>`);
   lines.push('</div>', '');
   return lines.join('\n');
@@ -480,12 +508,12 @@ function forOrganizersJsonLd(c, url, lang = 'ru') {
  * блог, /for-organizers, почту и Telegram-бот превращаются в <a>).
  * lang='en' (для /en/about/) — секции из sections_en.
  */
-function aboutSeoHtml(c, lang = 'ru') {
+function aboutSeoHtml(c, lang = 'ru', ctx = {}) {
   const en = lang === 'en';
   return [
     '<div id="seo-about-block">',
     `  <h1>${esc(en ? c.h1_en || c.h1 : c.h1)}</h1>`,
-    articleSectionsHtml(en ? c.sections_en || c.sections : c.sections),
+    articleSectionsHtml(en ? c.sections_en || c.sections : c.sections, ctx),
     '</div>',
     '',
   ].join('\n');
@@ -1478,6 +1506,12 @@ async function main() {
     }
   }
 
+  // Активные id событий (нижний регистр): mdLinksToHtml снимает ссылки на
+  // события, которых уже нет в наборе (архивация/дедупликация в БД) — иначе
+  // такая ссылка отдаёт 404 в статике и в SPA.
+  const activeIds = new Set(events.map((e) => String(e.id).toLowerCase()));
+  const linkCtx = (context) => ({ activeIds, context });
+
   const baseHtml = readFileSync(join(DIST, 'index.html'), 'utf8');
   const locs = [`${SITE_URL}/`];
   // <lastmod> для sitemap: по умолчанию дата сборки (TODAY_ISO); статьи блога
@@ -1840,7 +1874,7 @@ async function main() {
         { hreflang: 'en', href: enUrl },
         { hreflang: 'x-default', href: enRoot },
       ],
-      bodySeo: articleSeoHtml(a),
+      bodySeo: articleSeoHtml(a, 'ru', linkCtx(`/blog/${a.slug}/`)),
     });
     locs.push(url);
     hreflangPairs.set(url, enUrl);
@@ -1863,7 +1897,7 @@ async function main() {
           { hreflang: 'ru', href: url },
           { hreflang: 'x-default', href: enRoot },
         ],
-        bodySeo: articleSeoHtml(a, 'en'),
+        bodySeo: articleSeoHtml(a, 'en', linkCtx(`/en/blog/${a.slug}/`)),
       });
       locs.push(enUrl);
       if (a.datePublished) lastmods.set(enUrl, a.datePublished);
@@ -1895,7 +1929,7 @@ async function main() {
       { hreflang: 'en', href: enOrganizersUrl },
       { hreflang: 'x-default', href: enRoot },
     ],
-    bodySeo: forOrganizersSeoHtml(organizers),
+    bodySeo: forOrganizersSeoHtml(organizers, 'ru', linkCtx('/for-organizers/')),
   });
   locs.push(organizersUrl);
   hreflangPairs.set(organizersUrl, enOrganizersUrl);
@@ -1915,7 +1949,7 @@ async function main() {
       { hreflang: 'ru', href: organizersUrl },
       { hreflang: 'x-default', href: enRoot },
     ],
-    bodySeo: forOrganizersSeoHtml(organizers, 'en'),
+    bodySeo: forOrganizersSeoHtml(organizers, 'en', linkCtx('/en/for-organizers/')),
   });
   locs.push(enOrganizersUrl);
   lastmods.set(enOrganizersUrl, TODAY_ISO);
@@ -1940,7 +1974,7 @@ async function main() {
       { hreflang: 'en', href: enAboutUrl },
       { hreflang: 'x-default', href: enRoot },
     ],
-    bodySeo: aboutSeoHtml(about),
+    bodySeo: aboutSeoHtml(about, 'ru', linkCtx('/about/')),
   });
   locs.push(aboutUrl);
   hreflangPairs.set(aboutUrl, enAboutUrl);
@@ -1960,7 +1994,7 @@ async function main() {
       { hreflang: 'ru', href: aboutUrl },
       { hreflang: 'x-default', href: enRoot },
     ],
-    bodySeo: aboutSeoHtml(about, 'en'),
+    bodySeo: aboutSeoHtml(about, 'en', linkCtx('/en/about/')),
   });
   locs.push(enAboutUrl);
   lastmods.set(enAboutUrl, TODAY_ISO);
@@ -2066,6 +2100,14 @@ async function main() {
     }),
   );
   console.log('  dist/en/index.html: seo-home-block EN (главная /en/)');
+
+  // Итог по мёртвым /event/-ссылкам в контенте (статьи, /about/, /for-organizers/):
+  // ссылка снята, текст пункта сохранён. Сборку не прерываем (exit 0) — контент
+  // мог устареть, а ночной CI-деплой блокировать нельзя.
+  for (const d of deadEventLinks) {
+    console.log(`SEO: мёртвая ссылка ${d.href} на странице ${d.context}`);
+  }
+  console.log(`SEO: битых ссылок на события в контенте: ${deadEventLinks.length}`);
 }
 
 main().catch((e) => {
