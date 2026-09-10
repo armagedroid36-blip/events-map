@@ -1,8 +1,9 @@
-// Backfill переводов событий (промпт R, п. 2.2): находит активные события
-// с русским оригиналом (source_lang='ru' ИЛИ кириллица в title) и пустыми
-// title_en/description_en, переводит title и description и обновляет поля
-// через service role. Возобновляемый: повторный запуск добивает оставшиеся
-// (уже переведённые не трогает — идемпотентно).
+// Backfill переводов событий (промпт R, п. 2.2): находит события активные и
+// ждущие публикации (moderation, needs_changes) с русским оригиналом
+// (source_lang='ru' ИЛИ кириллица в title/описании) и без EN-текста
+// (или с битым — кириллица в EN), переводит title и description и обновляет
+// поля через service role. Возобновляемый: повторный запуск добивает
+// оставшиеся (уже переведённые не трогает — идемпотентно).
 //
 // Перевод: DeepSeek напрямую (DEEPSEEK_API_KEY, промпт — копия Edge Function
 // translate) либо, если ключа нет, через Edge Function translate (anon-ключ —
@@ -165,8 +166,11 @@ async function main() {
   const { data, error } = await db
     .from('events')
     .select('id, title, description, title_ru, description_ru, title_en, description_en, source_lang')
-    .eq('status', 'active')
-    .limit(1000);
+    // Переводим не только опубликованные, но и ждущие модерации/правок:
+    // иначе одобренное событие попадает на сайт (и в следующий деплой) без
+    // EN-версии до следующего запуска сбора. Архив/отклонённые не трогаем.
+    .in('status', ['active', 'moderation', 'needs_changes'])
+    .limit(2000);
   if (error) throw error;
 
   const rows = (data || []).filter((ev) => {
