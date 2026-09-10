@@ -1174,6 +1174,158 @@ function faqPageJsonLd(faq) {
   };
 }
 
+// --- Серии событий: одно название + одно место, много дат (промпт SEO-Гуру) ---
+
+// Сколько ближайших дат серии показывать в блоке «Другие даты серии»
+// (компромисс «полезно/не спамить»; поднимать по запросу владельца)
+const SERIES_MAX_DATES = 5;
+// Округление координат до 3 знаков = «то же место» ~110 м (промпт: в пределах 100 м)
+const SERIES_COORD_DECIMALS = 3;
+
+/** Нормализация названия для ключа серии: регистр и пробелы не важны */
+function normTitleKey(v) {
+  return String(v ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
+}
+
+/** Ключ места события: округлённые координаты, без координат — адрес; нет
+ * ни того, ни другого — null (серию по такому событию не собрать).
+ * Валидность координат — как isValidCoords (src/lib/coords.ts): (0,0) и
+ * выход за диапазон считаются отсутствием места. */
+function seriesPlaceKey(ev) {
+  const lat = Number(ev.lat);
+  const lng = Number(ev.lng);
+  if (
+    ev.lat != null &&
+    ev.lng != null &&
+    Number.isFinite(lat) &&
+    Number.isFinite(lng) &&
+    !(lat === 0 && lng === 0) &&
+    Math.abs(lat) <= 90 &&
+    Math.abs(lng) <= 180
+  ) {
+    return `${lat.toFixed(SERIES_COORD_DECIMALS)},${lng.toFixed(SERIES_COORD_DECIMALS)}`;
+  }
+  const addr = normTitleKey(ev.address);
+  return addr ? `addr:${addr}` : null;
+}
+
+/** Все варианты названия карточки (RU и EN) — логика titleAliases из
+ * scripts/dedupe-events.mjs: у копий одного события совпадает хоть один */
+function titleAliases(ev) {
+  const out = new Set();
+  for (const t of [ev.title_ru, ev.title, ev.title_en]) {
+    const n = normTitleKey(t);
+    if (n) out.add(n);
+  }
+  return [...out];
+}
+
+/** Дата вхождения события для сравнения серий (как JSON-LD startDate) */
+function occurrence(ev) {
+  return String(nextOccurrenceDate(ev, TODAY_ISO));
+}
+
+/**
+ * Серии событий — ОДИН раз на сборку, по всему массиву events. Событие
+ * попадает в серию, если совпало место (seriesPlaceKey) И любой вариант
+ * названия (titleAliases) с другим событием, у которых РАЗНЫЕ даты
+ * вхождения. Группы склеиваются объединением по общим ключам (событие с
+ * RU- и EN-названием не выпадает из серии, если у копий заполнено только
+ * одно из полей).
+ * Возвращает: byId — Map(id события → массив соседей серии, отсортированный
+ * по дате вхождения, не длиннее SERIES_MAX_DATES), seriesCount и
+ * pagesWithBlock — для лога сборки.
+ */
+function buildSeries(events) {
+  const parent = new Map();
+  const ensure = (k) => {
+    if (!parent.has(k)) parent.set(k, k);
+  };
+  const find = (k) => {
+    ensure(k);
+    let r = k;
+    while (parent.get(r) !== r) r = parent.get(r);
+    while (parent.get(k) !== r) {
+      const next = parent.get(k);
+      parent.set(k, r);
+      k = next;
+    }
+    return r;
+  };
+  const union = (a, b) => {
+    const ra = find(a);
+    const rb = find(b);
+    if (ra !== rb) parent.set(rb, ra);
+  };
+
+  const node = (i) => `e:${i}`;
+  const key = (place, alias) => `k:${place}|${alias}`;
+  events.forEach((ev, i) => {
+    if (!ev || typeof ev.id !== 'string') return;
+    const place = seriesPlaceKey(ev);
+    if (!place) return;
+    ensure(node(i));
+    for (const alias of titleAliases(ev)) union(node(i), key(place, alias));
+  });
+
+  const comps = new Map();
+  events.forEach((ev, i) => {
+    if (!ev || typeof ev.id !== 'string' || !parent.has(node(i))) return;
+    const root = find(node(i));
+    if (!comps.has(root)) comps.set(root, []);
+    comps.get(root).push(ev);
+  });
+
+  const byId = new Map();
+  let seriesCount = 0;
+  let pagesWithBlock = 0;
+  for (const group of comps.values()) {
+    // Серия — минимум ДВЕ разные даты вхождения: копии с одной датой это
+    // дубли (их разводит scripts/dedupe-events.mjs), а не серия
+    if (new Set(group.map(occurrence)).size < 2) continue;
+    seriesCount += 1;
+    const sorted = [...group].sort((a, b) => occurrence(a).localeCompare(occurrence(b)));
+    for (const ev of sorted) {
+      const sibs = sorted
+        .filter((o) => o.id !== ev.id && occurrence(o) !== occurrence(ev))
+        .slice(0, SERIES_MAX_DATES);
+      if (!sibs.length) continue;
+      byId.set(ev.id, sibs);
+      pagesWithBlock += 1;
+    }
+  }
+  return { byId, seriesCount, pagesWithBlock };
+}
+
+/**
+ * Блок «Другие даты серии»/«Other dates in this series» — видимые внутренние
+ * ссылки на страницы того же события в другие даты (Фаза 2 промпта).
+ * Ссылки относительные (/event/… и /en/event/…), как и сами страницы;
+ * сама страница в списке не участвует, EN-блок ссылается только на события
+ * с существующей EN-страницей (title_en непуст ИЛИ source_lang='en').
+ * Пусто (нет соседей) — блока нет.
+ */
+function seriesDatesHtml(sibs, lang = 'ru') {
+  const en = lang === 'en';
+  const items = (sibs ?? [])
+    .filter((s) => s && typeof s.id === 'string' && typeof s.title === 'string')
+    .filter((s) => !en || Boolean(s.title_en) || s.source_lang === 'en')
+    .map((s) => {
+      const date = occurrence(s);
+      const slug = en ? slugify(s.title_en || s.title) : slugify(s.title);
+      const href = en ? `/en/event/${s.id}/${slug}/` : `/event/${s.id}/${slug}/`;
+      const text = en ? enDate(date) : ruDate(date);
+      return `    <li><a href="${esc(href)}"><time datetime="${esc(date)}">${esc(text)}</time></a></li>`;
+    });
+  if (!items.length) return '';
+  return [
+    `  <p>${en ? 'Other dates in this series:' : 'Другие даты серии:'}</p>`,
+    '  <ul>',
+    ...items,
+    '  </ul>',
+  ].join('\n');
+}
+
 /**
  * Статический SEO-блок события для вставки в <body> рядом с #root: ровно
  * один h1 = название события (локализованное для RU — title_ru, иначе title,
@@ -1186,8 +1338,11 @@ function faqPageJsonLd(faq) {
  * сама — на странице остаётся ровно один h1.
  * lang='en' (для /en/event/...): EN-имя/описание, EN-даты (12-часовое время),
  * «Free»/«Donation», «Organizer:», ссылка на RU-профиль /org/<id>/.
+ * sibs — соседи серии (другие даты того же события, см. buildSeries): в конце
+ * блока добавляется список «Другие даты серии»/«Other dates in this series»
+ * со ссылками на их страницы.
  */
-function eventSeoHtml(ev, url, lang = 'ru') {
+function eventSeoHtml(ev, url, lang = 'ru', sibs = []) {
   const en = lang === 'en';
   const name = en
     ? ev.title_en || ev.title || ''
@@ -1248,6 +1403,8 @@ function eventSeoHtml(ev, url, lang = 'ru') {
       `  <p>${en ? 'Organizer:' : 'Организатор:'} <a href="${esc(orgUrl)}">${esc(orgName)}</a></p>`,
     );
   }
+  const series = seriesDatesHtml(sibs, lang);
+  if (series) lines.push(series);
   lines.push('</div>', '');
   return lines.join('\n');
 }
@@ -1418,6 +1575,13 @@ async function main() {
   // События с EN-версией (title_en непуст ИЛИ source_lang='en') получают
   // пару /en/event/<id>/<slugify(title_en||title)>/ (п. 2.3): RU-страница —
   // hreflang на EN, EN-страница — свой h1/описание/JSON-LD и hreflang на RU.
+  // Пары «одно название + одно место, много дат» (Фаза 2): считаются один раз
+  // по всему активному набору, сюда приходит только Map id → соседи серии.
+  const series = buildSeries(events);
+  console.log(
+    `  серии: ${series.seriesCount}, страниц с блоком дат: ${series.pagesWithBlock}`,
+  );
+
   const pageEvents = [];
   let pageEnEvents = 0;
   for (const ev of events) {
@@ -1427,8 +1591,15 @@ async function main() {
     const url = `${SITE_URL}/${path}/`;
     const enPath = `en/event/${ev.id}/${slugify(hasEn ? ev.title_en || ev.title : ev.title)}`;
     const enUrl = `${SITE_URL}/${enPath}/`;
-    const title = snippet(`${ev.title} · ${ev.city ?? ''}`.trim(), 65) || 'Событие';
     const city = typeof ev.city === 'string' ? ev.city.trim() : '';
+    const sibs = series.byId.get(ev.id) ?? [];
+    // Дата ближайшего вхождения — в title/og:title: внутри серии («одно
+    // название + одно место, много дат») заголовки без даты совпадали.
+    // Дата идёт ДО города — при обрезке snippet(…, 65) город режется первым.
+    const occRu = occurrence(ev);
+    const title =
+      snippet([`${ev.title} — ${ruDate(occRu)}`, city].filter(Boolean).join(' · '), 65) ||
+      'Событие';
     // Текст, который видит русскоязычный посетитель (html lang="ru"),
     // как localizedText(description, description_ru, …): перевод или оригинал
     const ruText = ev.description_ru || ev.description || ev.description_en || '';
@@ -1452,7 +1623,7 @@ async function main() {
       ogImage: photo || LOGO_URL,
       jsonLd: eventJsonLd(ev, url),
       ...(hasEn ? { hreflang: hreflangRu } : {}),
-      bodySeo: eventSeoHtml(ev, url),
+      bodySeo: eventSeoHtml(ev, url, 'ru', sibs),
     });
     locs.push(url);
     pageEvents.push(path);
@@ -1468,7 +1639,11 @@ async function main() {
       const dateEn = enDate(ev.start_date);
       const prefixEn = [cityEn, dateEn].filter(Boolean).join(', ');
       const descriptionEn = snippet(prefixEn ? `${prefixEn}. ${enText}` : enText, 160);
-      const titleEn = snippet(cityEn ? `${nameEn} · ${cityEn}` : nameEn, 65) || 'Event';
+      // Дата ближайшего вхождения — в EN title/og:title (та же логика, что в RU)
+      const occEn = occurrence(ev);
+      const titleEn =
+        snippet([`${nameEn} — ${enDate(occEn)}`, cityEn].filter(Boolean).join(' · '), 65) ||
+        'Event';
       writePage(baseHtml, enPath, {
         lang: 'en',
         title: titleEn,
@@ -1483,7 +1658,7 @@ async function main() {
           { hreflang: 'ru', href: url },
           { hreflang: 'x-default', href: enRoot },
         ],
-        bodySeo: eventSeoHtml(ev, enUrl, 'en'),
+        bodySeo: eventSeoHtml(ev, enUrl, 'en', sibs),
       });
       locs.push(enUrl);
       hreflangPairs.set(url, enUrl);

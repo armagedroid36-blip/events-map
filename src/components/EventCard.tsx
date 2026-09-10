@@ -14,6 +14,7 @@ import { photoUrl } from '../lib/api';
 import { isValidCoords } from '../lib/coords';
 import { nextZ } from '../lib/zindex';
 import { navigate, slugify } from '../lib/navigate';
+import { occurrenceDate } from '../lib/series';
 import FavoriteButton from './FavoriteButton';
 
 /** Символы валют */
@@ -137,6 +138,10 @@ interface Props {
   /** Заголовок как h1 вместо h3 — на странице события /event/<id>/<slug>,
    *  где это единственный h1 (бренд и городской SEO-блок там скрыты). */
   titleAsH1?: boolean;
+  /** Другие даты той же серии (то же название + то же место, другая дата) —
+   *  список уже отсортирован по дате (lib/series.seriesSiblings). Не передан
+   *  или пуст — блока «Другие даты серии» нет. */
+  seriesEvents?: EventItem[];
 }
 
 /** Полный URL фото: загруженные файлы хранятся как пути в хранилище */
@@ -532,6 +537,7 @@ export default function EventCard({
   favoriteIds = null,
   onToggleFavorite,
   titleAsH1,
+  seriesEvents,
 }: Props) {
   const { t, i18n } = useTranslation();
   const [lightbox, setLightbox] = useState<number | null>(null);
@@ -557,6 +563,12 @@ export default function EventCard({
     lang === 'en' && hasEnVersion
       ? `${window.location.origin}/en/event/${event.id}/${slugify(event.title_en || event.title)}`
       : `${window.location.origin}/event/${event.id}/${slugify(event.title)}`;
+  // Ссылка на страницу события из списка дат серии — та же схема URL, что у
+  // shareUrl: язык интерфейса + наличие EN-версии у самого события серии
+  const eventPath = (ev: EventItem) =>
+    lang === 'en' && (Boolean(ev.title_en) || ev.source_lang === 'en')
+      ? `/en/event/${ev.id}/${slugify(ev.title_en || ev.title)}`
+      : `/event/${ev.id}/${slugify(ev.title)}`;
   const description = localizedText(
     event.description,
     event.description_ru,
@@ -677,6 +689,24 @@ export default function EventCard({
           </>
         ) : null}
       </div>
+
+      {/* Другие даты серии: то же название и место, другая дата (список
+          приходит из Home — lib/series.seriesSiblings, запросов нет).
+          Внутренние ссылки на страницы события — как в статике
+          (scripts/seo-prerender.mjs, seriesDatesHtml). */}
+      {seriesEvents?.length ? (
+        <p className="mb-2 text-sm text-gray-600">
+          <span className="font-medium">{t('card.seriesDates')}</span>{' '}
+          {seriesEvents.map((ev, i) => (
+            <span key={ev.id}>
+              {i > 0 && <span className="text-gray-300"> · </span>}
+              <a href={eventPath(ev)} className="text-[#0F766E] hover:underline">
+                {formatDate(occurrenceDate(ev), lang)}
+              </a>
+            </span>
+          ))}
+        </p>
+      ) : null}
 
       {/* Адрес: клик открывает Google Maps. Если адреса нет, но координаты есть
           (центр города от сборщика) — показываем «место уточнить у организатора» */}

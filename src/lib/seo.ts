@@ -16,7 +16,8 @@
 // Маршруты:
 //   '/' / '/en'           — базовые (RU/EN), canonical https://mypins.site(/en)/
 //   /bali, /da-nang, ...  — CITY_PAGES, canonical https://mypins.site/<city>/ (со слэшем)
-//   /event/<id>/<slug>    — «<title> · <city>», описание «Город, дата. текст»,
+//   /event/<id>/<slug>    — «<название> — <дата ближайшего вхождения> · <город>»,
+//                           описание «Город, дата. текст»,
 //                           canonical https://mypins.site/event/<id>/<slug>/ + og:*;
 //                           EN-версия (title_en) — canonical /en/event/...
 //   вне списка (404, /org/<id>, hash-разделы) — базовые title/description,
@@ -24,7 +25,9 @@
 //                           их в index.html нет)
 import { config } from '../config';
 import { photoUrl } from './api';
+import { todayIso } from './dates';
 import { slugify } from './navigate';
+import { nextOccurrenceDate } from './recurrence';
 import type {
   AboutContent,
   Article,
@@ -370,12 +373,15 @@ export function applyEventMeta(ev: EventItem): void {
   // что крошка пре-рендера (cityNameEn: Нячанг→Nha Trang, Дананг→Da Nang,
   // Бали/районы→Bali); нераспознанный город — суффикс опущен. RU — как раньше.
   const enCity = useEn ? cityNameEn(ev.city) : '';
+  // Дата ближайшего вхождения в title/og:title (та же, что в JSON-LD статики:
+  // nextOccurrenceDate) — внутри серии «одно название + одно место, много дат»
+  // заголовки без даты совпадали. Шаблон синхронен с seo-prerender.mjs:
+  // дата идёт ДО города, чтобы при обрезке snippet(…, 65) город резался первым.
+  const occDate = useEn
+    ? enDate(nextOccurrenceDate(ev, todayIso()))
+    : ruDate(nextOccurrenceDate(ev, todayIso()));
   const title = snippet(
-    useEn
-      ? enCity
-        ? `${titleName} · ${enCity}`
-        : titleName
-      : `${titleName} · ${city ?? ''}`.trim(),
+    [titleName, `— ${occDate}`, useEn ? enCity : city].filter(Boolean).join(' · '),
     65,
   ) || 'Событие';
   // Текст, который видит посетитель этой версии (как localizedText)

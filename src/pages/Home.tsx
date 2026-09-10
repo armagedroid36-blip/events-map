@@ -18,6 +18,7 @@ import { ruToEn } from '../lib/cities';
 import { eventCountry } from '../lib/countries';
 import { DEFAULT_FILTERS, eventMatchesFilters } from '../lib/eventFilters';
 import { navigate, slugify } from '../lib/navigate';
+import { seriesSiblings } from '../lib/series';
 import {
   applyCityMeta,
   applyEventMeta,
@@ -394,6 +395,14 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
     filters,
   ]);
 
+  // Другие даты серии для открытой карточки (то же название + то же место,
+  // другая дата): считаем по уже загруженному списку, без запросов —
+  // api.listEvents кэширует (lib/series, логика как в seo-prerender.mjs)
+  const selectedSeries = useMemo(
+    () => (selected ? seriesSiblings(selected, events) : []),
+    [selected, events],
+  );
+
   // События на видимом участке карты (bounds) + фильтры.
   // Без лимита: список и счётчик кнопки показывают ВСЕ события области.
   const onMapEvents = useMemo(() => {
@@ -747,6 +756,7 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
                 window.location.pathname.startsWith('/event/') ||
                 window.location.pathname.startsWith('/en/event/')
               }
+              seriesEvents={selectedSeries}
             />
           </div>
           <button

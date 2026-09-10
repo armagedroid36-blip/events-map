@@ -243,6 +243,7 @@ export default {
     recurrenceDaily: 'Every day',
     recurrenceWeekly: 'Weekly: {{days}}',
     recurrenceUntil: 'until {{date}}',
+    seriesDates: 'Other dates in this series:',
   },
   // Public organizer profile (#/org/<id>) and subscription
   org: {

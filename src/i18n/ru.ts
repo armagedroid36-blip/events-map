@@ -244,6 +244,7 @@ export default {
     recurrenceDaily: 'Ежедневно',
     recurrenceWeekly: 'Каждую неделю: {{days}}',
     recurrenceUntil: 'до {{date}}',
+    seriesDates: 'Другие даты серии:',
   },
   // Публичный профиль организатора (#/org/<id>) и подписка
   org: {
