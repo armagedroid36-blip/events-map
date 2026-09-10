@@ -411,14 +411,27 @@ function tokens(s) {
   );
 }
 
-/** Совпадение площадок: название/адрес из источника содержится в адресе карточки. */
+/** Слова-«шум»: встречаются почти в любом адресе города, для сопоставления площадок
+ *  бесполезны (иначе «Bale Banjar Ubud Kelod» совпадает с любой карточкой Убуда,
+ *  а «Legong» — с концертом на Jl. Penestanan Kelod). */
+const PLACE_STOP = new Set([
+  'jalan', 'street', 'road', 'avenue', 'kecamatan', 'kabupaten', 'kelod', 'kaja',
+  'utara', 'selatan', 'timur', 'barat', 'indonesia', 'индонезия', 'vietnam', 'вьетнам',
+  'ubud', 'bali', 'denpasar', 'canggu', 'чангу', 'kuta', 'sayan', 'nyuh', 'danang',
+  'nang', 'nha', 'trang', 'нячанг', 'дананг', 'city', 'center', 'centre', 'beach',
+  'пляж', 'district', 'ward', 'phuong', 'quan', 'huyen', 'tinh', 'province', 'island',
+]);
+
+/** Совпадение площадок: хотя бы один РЕДКИЙ (не город и не служебное слово) токен
+ *  названия/адреса из источника найден в адресе карточки. Общие городские слова
+ *  («Ubud», «Kelod») совпадением не считаются — иначе достаётся чужим карточкам. */
 function placeMatches(existingAddress, evPlace) {
-  const a = tokens(evPlace);
-  if (a.size === 0) return false;
+  const a = [...tokens(evPlace)].filter((t) => !PLACE_STOP.has(t));
+  if (a.length === 0) return false;
   const b = tokens(existingAddress);
   let common = 0;
   for (const t of a) if (b.has(t)) common++;
-  return common >= 2 && common >= Math.ceil(a.size / 2);
+  return common >= 1 && common >= Math.ceil(a.length / 2);
 }
 
 /** Общие слова в названиях шоу — для сравнения не годятся. */
@@ -591,7 +604,10 @@ async function main() {
 
   /** Найти существующую карточку: URL → ключ title+venue → площадка/название.
    *  URL самого ЛИСТИНГА игнорируем как ключ — иначе все события такой страницы
-   *  схлопнулись бы в одну карточку (kind='listing'). */
+   *  схлопнулись бы в одну карточку (kind='listing').
+   *  Нечёткое сопоставление (площадка/название) идёт ТОЛЬКО по театральным
+   *  карточкам: иначе театральные данные дозаполняют чужое событие (был баг —
+   *  «Legong» дозаполнил концерт Ghetto Kumbé по общему слову «Ubud/Kelod»). */
   function findExisting(ev, city, src) {
     const urlUsable = ev.website && !(src && src.kind === 'listing' && normUrl(ev.website) === normUrl(src.url));
     const byUrl = urlUsable ? byWebsite.get(normUrl(ev.website)) : null;
@@ -621,6 +637,8 @@ async function main() {
     let count = 0;
     for (const e of live) {
       if (e.city !== city) continue;
+      // Чужие карточки (сбор/организатор) нечётко не сопоставляем и не правим
+      if (e.source_type !== 'theatre' && e.category_id !== 'theatre') continue;
       const s = score(e);
       if (!s) continue;
       count++;
@@ -680,6 +698,13 @@ async function main() {
       const existing = findExisting(ev, src.city, src);
 
       if (existing) {
+        // Защита: театральный сбор не правит карточки других источников
+        // (сборщик/организатор) — даже при совпадении URL
+        if (existing.source_type !== 'theatre' && existing.category_id !== 'theatre') {
+          console.log(`  ! «${ev.title.slice(0, 40)}» совпало с нетеатральной карточкой «${existing.title.slice(0, 35)}» (${existing.source_type}) — пропуск`);
+          totals.skipped++;
+          continue;
+        }
         // Дозаполнение пустых полей; координаты — только если адрес уже есть/получен
         if (existing.lat == null && (ev.address || ev.venue)) {
           const g = await geocodeEvent({ address: ev.address, venue: ev.venue, city: src.city, country: src.country });
