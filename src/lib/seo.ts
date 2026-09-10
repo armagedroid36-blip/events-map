@@ -381,7 +381,7 @@ export function applyEventMeta(ev: EventItem): void {
     ? enDate(nextOccurrenceDate(ev, todayIso()))
     : ruDate(nextOccurrenceDate(ev, todayIso()));
   const title = snippet(
-    [titleName, `— ${occDate}`, useEn ? enCity : city].filter(Boolean).join(' · '),
+    [`${titleName} — ${occDate}`, useEn ? enCity : city].filter(Boolean).join(' · '),
     65,
   ) || 'Событие';
   // Текст, который видит посетитель этой версии (как localizedText)
