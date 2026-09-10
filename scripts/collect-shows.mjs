@@ -11,6 +11,7 @@
 // (Charming Danang Show, Ao Dai Show).
 // Запускается в GitHub Actions после collect-bali.mjs; статус — «на модерации».
 import { createClient } from '@supabase/supabase-js';
+import { selectAll } from './db-rows.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -99,9 +100,14 @@ const SHOWS = [
 
 /** Есть ли уже живое событие с таким website (постоянные шоу не дублируются) */
 async function existingWebsites() {
-  const { data, error } = await db.from('events').select('website').in('status', ['active', 'moderation']);
-  if (error) {
-    console.error('Ошибка чтения дублей:', error.message);
+  let data;
+  try {
+    // Постранично: PostgREST отдаёт максимум 1000 строк на запрос.
+    data = await selectAll(db, 'events', 'website', {
+      filter: (q) => q.in('status', ['active', 'moderation']),
+    });
+  } catch (e) {
+    console.error('Ошибка чтения дублей:', e.message);
     return new Set();
   }
   return new Set((data || []).map((e) => e.website).filter(Boolean));

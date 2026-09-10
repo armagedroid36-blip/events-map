@@ -8,6 +8,7 @@
 // существующие карточки НЕ удаляются и НЕ архивируются, непустые поля не
 // перезаписываются, недоступный источник — лог и пропуск.
 import { createClient } from '@supabase/supabase-js';
+import { selectAll } from './db-rows.mjs';
 import { extractTheatreEvents } from './theatre-llm.mjs';
 import { SOURCES } from './theatre-sources.mjs';
 
@@ -477,12 +478,14 @@ function isoDay(iso) {
 // ===== Чтение БД =====
 
 async function loadLive() {
-  const { data, error } = await db
-    .from('events')
-    .select('id,title,title_en,title_ru,city,website,status,source_type,category_id,address,start_date,start_time,end_time,price,currency,photos,lat,lng,description,description_ru,description_en,recurrence,contact,source_lang')
-    .in('status', ['active', 'moderation', 'needs_changes']);
-  if (error) throw new Error(`чтение событий: ${error.message}`);
-  return data || [];
+  // Постранично: PostgREST отдаёт максимум 1000 строк на запрос — иначе часть
+  // живых карточек не видна и сборщик создаёт дубли.
+  return selectAll(
+    db,
+    'events',
+    'id,title,title_en,title_ru,city,website,status,source_type,category_id,address,start_date,start_time,end_time,price,currency,photos,lat,lng,description,description_ru,description_en,recurrence,contact,source_lang',
+    { filter: (q) => q.in('status', ['active', 'moderation', 'needs_changes']) },
+  );
 }
 
 // ===== Запись =====

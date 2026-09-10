@@ -2,6 +2,7 @@
 // Запускается по расписанию в GitHub Actions (или вручную).
 // API Балифорума открытый, без ключа. Переменные окружения: SUPABASE_URL, SUPABASE_SERVICE_ROLE.
 import { createClient } from '@supabase/supabase-js';
+import { selectAll } from './db-rows.mjs';
 import { extractPrice } from './price-llm.mjs';
 import { extractCategory } from './category-llm.mjs';
 import { isInternationalArtist } from './intl-llm.mjs';
@@ -229,9 +230,13 @@ function normKey(title, date) {
 
 /** Загрузка ключей дублей + живых ссылок Балифорума (для защиты от повторов по slug) */
 async function existingKeys() {
-  const { data, error } = await db.from('events').select('title, start_date, website, status');
-  if (error) {
-    console.error('Ошибка чтения дублей:', error.message);
+  let data;
+  try {
+    // Постранично: PostgREST отдаёт максимум 1000 строк на запрос, иначе ключи
+    // части событий не загружаются и те же карточки вставляются заново.
+    data = await selectAll(db, 'events', 'title, start_date, website, status');
+  } catch (e) {
+    console.error('Ошибка чтения дублей:', e.message);
     return { seen: new Set(), liveWebsites: [] };
   }
   const seen = new Set();

@@ -2,6 +2,7 @@
 // Запускается по расписанию в GitHub Actions (или вручную).
 // Переменные окружения: TICKETMASTER_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE.
 import { createClient } from '@supabase/supabase-js';
+import { selectAll } from './db-rows.mjs';
 
 const API_KEY = process.env.TICKETMASTER_API_KEY;
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -233,7 +234,9 @@ function normKey(title, date) {
 }
 
 async function existingKeys() {
-  const { data } = await db.from('events').select('title, start_date');
+  // Постранично: PostgREST отдаёт максимум 1000 строк на запрос, иначе ключи
+  // части событий не загружаются и те же карточки вставляются заново.
+  const data = await selectAll(db, 'events', 'title, start_date');
   return new Set((data || []).map((e) => normKey(e.title, e.start_date)));
 }
 

@@ -4,6 +4,7 @@
 // контакты организатора (t.me), цена (если в тексте), ссылка на пост.
 // Запускается в GitHub Actions ежедневно; статус событий — «на модерации».
 import { createClient } from '@supabase/supabase-js';
+import { selectAll } from './db-rows.mjs';
 import { extractPrice } from './price-llm.mjs';
 import { extractCategory } from './category-llm.mjs';
 import { extractTime } from './time-llm.mjs';
@@ -393,11 +394,17 @@ function sameTitleKey(title, city) {
 
 /** Загрузка ключей дублей + живых событий (для объединения повторных анонсов) */
 async function existingKeys() {
-  const { data, error } = await db
-    .from('events')
-    .select('id, title, start_date, end_date, recurrence, website, status, city');
-  if (error) {
-    console.error('Ошибка чтения дублей:', error.message);
+  let data;
+  try {
+    // Постранично: PostgREST отдаёт максимум 1000 строк на запрос, иначе ключи
+    // части событий не загружаются и те же карточки вставляются заново.
+    data = await selectAll(
+      db,
+      'events',
+      'id, title, start_date, end_date, recurrence, website, status, city',
+    );
+  } catch (e) {
+    console.error('Ошибка чтения дублей:', e.message);
     return { seen: new Set(), liveByTitle: new Map() };
   }
   const seen = new Set();
