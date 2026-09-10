@@ -154,8 +154,16 @@ async function overpass(lat, lng) {
   throw new Error(lastErr);
 }
 
-/** DuckDuckGo HTML: результаты по запросу (ссылка + заголовок + сниппет). */
+/** DuckDuckGo HTML: результаты по запросу (ссылка + заголовок).
+ *  Если html-эндпоинт отдал 0 (бот-стена: из IP GitHub Actions он почти всегда
+ *  пуст) — пробуем lite-эндпоинт, он отдаёт обычные ссылки. */
 async function ddg(query) {
+  const primary = await ddgHtml(query);
+  if (primary.length) return primary;
+  return ddgLite(query);
+}
+
+async function ddgHtml(query) {
   const res = await fetch(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`, {
     headers: { 'User-Agent': UA, 'Accept-Language': 'en-US,en;q=0.9' },
   });
@@ -167,6 +175,25 @@ async function ddg(query) {
     let href = m[1];
     const u = href.match(/[?&]uddg=([^&]+)/);
     if (u) href = decodeURIComponent(u[1]);
+    const title = m[2].replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').trim();
+    out.push({ url: href, name: title });
+  }
+  return out;
+}
+
+async function ddgLite(query) {
+  const res = await fetch(`https://lite.duckduckgo.com/lite/?q=${encodeURIComponent(query)}`, {
+    headers: { 'User-Agent': UA, 'Accept-Language': 'en-US,en;q=0.9', Accept: 'text/html' },
+  });
+  if (!res.ok) throw new Error(`DDG lite HTTP ${res.status}`);
+  const html = await res.text();
+  const out = [];
+  const re = /<a[^>]+class=['"]result-link['"][^>]*href=['"]([^'"]+)['"][^>]*>([\s\S]*?)<\/a>/gi;
+  for (const m of html.matchAll(re)) {
+    let href = m[1].replace(/&amp;/g, '&');
+    const u = href.match(/[?&]uddg=([^&]+)/);
+    if (u) href = decodeURIComponent(u[1]);
+    if (!/^https?:\/\//i.test(href)) continue;
     const title = m[2].replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').trim();
     out.push({ url: href, name: title });
   }
