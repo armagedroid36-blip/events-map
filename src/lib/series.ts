@@ -55,12 +55,21 @@ export function occurrenceDate(ev: EventItem): string {
   return nextOccurrenceDate(ev, todayIso());
 }
 
+/** Разница дат в днях (ISO YYYY-MM-DD): b − a; нечисловая дата — «далеко» */
+function dayGap(a: string, b: string): number {
+  const diff = (Date.parse(`${a}T00:00:00Z`) - Date.parse(`${b}T00:00:00Z`)) / 86_400_000;
+  return Number.isFinite(diff) ? Math.round(diff) : Number.MAX_SAFE_INTEGER;
+}
+
 /**
  * Другие даты серии для события: то же место (округлённые координаты или
- * адрес) + любое общее название, но другая дата вхождения. Отсортировано по
- * дате, не длиннее SERIES_MAX_DATES. Пустой массив — событие не в серии.
+ * адрес) + любое общее название, но другая дата вхождения. В блок попадают
+ * SERIES_MAX_DATES дат, ближайших по времени к дате вхождения самого
+ * события (при равной разнице — более поздняя дата первой), а вывод внутри
+ * блока — по возрастанию даты. Пустой массив — событие не в серии.
  * events — уже загруженный список (api.listEvents, кэш 30 c); запросов здесь
- * нет, рендер карточки не блокируется.
+ * нет, рендер карточки не блокируется. Логика зеркальна buildSeries в
+ * scripts/seo-prerender.mjs — менять синхронно.
  */
 export function seriesSiblings(event: EventItem, events: EventItem[]): EventItem[] {
   const place = seriesPlaceKey(event);
@@ -77,6 +86,15 @@ export function seriesSiblings(event: EventItem, events: EventItem[]): EventItem
         occurrenceDate(ev) !== own &&
         titleAliases(ev).some((a) => mine.includes(a)),
     )
-    .sort((a, b) => occurrenceDate(a).localeCompare(occurrenceDate(b)))
-    .slice(0, SERIES_MAX_DATES);
+    .map((ev) => ({ ev, occ: occurrenceDate(ev) }))
+    .sort((a, b) => {
+      const da = Math.abs(dayGap(a.occ, own));
+      const db = Math.abs(dayGap(b.occ, own));
+      if (da !== db) return da - db;
+      // Равная разница (например ±7 дней) — первой идёт более поздняя дата
+      return b.occ.localeCompare(a.occ);
+    })
+    .slice(0, SERIES_MAX_DATES)
+    .sort((a, b) => a.occ.localeCompare(b.occ))
+    .map((x) => x.ev);
 }

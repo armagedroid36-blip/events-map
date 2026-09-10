@@ -1225,6 +1225,12 @@ function occurrence(ev) {
   return String(nextOccurrenceDate(ev, TODAY_ISO));
 }
 
+/** Разница дат в днях (ISO YYYY-MM-DD): b − a; нечисловая дата — «далеко» */
+function dayGap(a, b) {
+  const diff = (Date.parse(`${a}T00:00:00Z`) - Date.parse(`${b}T00:00:00Z`)) / 86400000;
+  return Number.isFinite(diff) ? Math.round(diff) : Number.MAX_SAFE_INTEGER;
+}
+
 /**
  * Серии событий — ОДИН раз на сборку, по всему массиву events. Событие
  * попадает в серию, если совпало место (seriesPlaceKey) И любой вариант
@@ -1282,13 +1288,25 @@ function buildSeries(events) {
   for (const group of comps.values()) {
     // Серия — минимум ДВЕ разные даты вхождения: копии с одной датой это
     // дубли (их разводит scripts/dedupe-events.mjs), а не серия
-    if (new Set(group.map(occurrence)).size < 2) continue;
+    const occ = new Map(group.map((ev) => [ev, occurrence(ev)]));
+    if (new Set(occ.values()).size < 2) continue;
     seriesCount += 1;
-    const sorted = [...group].sort((a, b) => occurrence(a).localeCompare(occurrence(b)));
+    const sorted = [...group].sort((a, b) => occ.get(a).localeCompare(occ.get(b)));
     for (const ev of sorted) {
+      const own = occ.get(ev);
+      // Ближайшие к дате вхождения самой страницы даты серии, при равной
+      // разнице (±N дней) первой идёт более поздняя дата; в HTML блок
+      // выводится по возрастанию даты (см. seriesDatesHtml)
       const sibs = sorted
-        .filter((o) => o.id !== ev.id && occurrence(o) !== occurrence(ev))
-        .slice(0, SERIES_MAX_DATES);
+        .filter((o) => o.id !== ev.id && occ.get(o) !== own)
+        .sort((a, b) => {
+          const da = Math.abs(dayGap(occ.get(a), own));
+          const db = Math.abs(dayGap(occ.get(b), own));
+          if (da !== db) return da - db;
+          return occ.get(b).localeCompare(occ.get(a));
+        })
+        .slice(0, SERIES_MAX_DATES)
+        .sort((a, b) => occ.get(a).localeCompare(occ.get(b)));
       if (!sibs.length) continue;
       byId.set(ev.id, sibs);
       pagesWithBlock += 1;
