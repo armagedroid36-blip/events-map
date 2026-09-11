@@ -38,6 +38,11 @@ const MAX_CANDIDATES = Number(process.env.MAX_CANDIDATES || 40); // предох
 const MAX_QUERIES = Number(process.env.MAX_QUERIES || 12);       // предохранитель: поисковых запросов
 const MIN_PAGE_BYTES = 5120;                                     // «живая» страница: 200 и > 5 КБ
 const FAIL_ALERT_RUNS = 3;                                       // столько провалов подряд = алерт
+// Таймауты сети: без них зависшее соединение (Overpass 504/DDG-бот-стена) останавливает
+// прогон навсегда — в логе одна строка и тишина до лимита job'а.
+const OVERPASS_TIMEOUT_MS = 60000;
+const DDG_TIMEOUT_MS = 20000;
+const PAGE_TIMEOUT_MS = 15000;
 const MAX_REPORT = Number(process.env.MAX_REPORT || 15);         // строк в отчёте Telegram
 const MAX_OSM_CITIES = Number(process.env.MAX_OSM_CITIES || 8);
 
@@ -134,6 +139,7 @@ async function overpass(lat, lng) {
           Accept: 'application/json',
         },
         body: `data=${encodeURIComponent(query)}`,
+        signal: AbortSignal.timeout(OVERPASS_TIMEOUT_MS),
       });
       if (!res.ok) {
         lastErr = `HTTP ${res.status}`;
@@ -166,6 +172,7 @@ async function ddg(query) {
 async function ddgHtml(query) {
   const res = await fetch(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`, {
     headers: { 'User-Agent': UA, 'Accept-Language': 'en-US,en;q=0.9' },
+    signal: AbortSignal.timeout(DDG_TIMEOUT_MS),
   });
   if (!res.ok) throw new Error(`DDG HTTP ${res.status}`);
   const html = await res.text();
@@ -184,6 +191,7 @@ async function ddgHtml(query) {
 async function ddgLite(query) {
   const res = await fetch(`https://lite.duckduckgo.com/lite/?q=${encodeURIComponent(query)}`, {
     headers: { 'User-Agent': UA, 'Accept-Language': 'en-US,en;q=0.9', Accept: 'text/html' },
+    signal: AbortSignal.timeout(DDG_TIMEOUT_MS),
   });
   if (!res.ok) throw new Error(`DDG lite HTTP ${res.status}`);
   const html = await res.text();
@@ -203,7 +211,7 @@ async function ddgLite(query) {
 /** Название источника с сайта (title), если LLM/поиск не дали осмысленного. */
 async function pageTitle(url) {
   try {
-    const res = await fetch(url, { headers: { 'User-Agent': UA }, redirect: 'follow' });
+    const res = await fetch(url, { headers: { 'User-Agent': UA }, redirect: 'follow', signal: AbortSignal.timeout(PAGE_TIMEOUT_MS) });
     if (!res.ok) return null;
     const html = await res.text();
     const m = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);

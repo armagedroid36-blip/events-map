@@ -327,7 +327,7 @@ async function nominatim(query, rejectNear) {
   try {
     const res = await fetch(
       `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`,
-      { headers: { 'User-Agent': UA, Accept: 'application/json' } },
+      { headers: { 'User-Agent': UA, Accept: 'application/json' }, signal: AbortSignal.timeout(15000) },
     );
     if (!res.ok) return null;
     const data = await res.json();
