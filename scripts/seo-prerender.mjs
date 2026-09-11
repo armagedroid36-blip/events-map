@@ -557,7 +557,10 @@ function aboutJsonLd(c, url, lang = 'ru') {
   };
 }
 
-/** JSON-LD индекса: Blog со списком статей (blogPost). lang='en' — из *_en. */
+/** JSON-LD индекса: Blog со списком статей (blogPost). lang='en' — из *_en.
+ * blogPost несёт обязательные для Article-разметки поля: image (дефолт —
+ * логотип сайта) и author (Organization MyPins) — без них у статей нет права
+ * на Article rich-результат. */
 function blogIndexJsonLd(articles, lang = 'ru') {
   const en = lang === 'en';
   return {
@@ -570,13 +573,22 @@ function blogIndexJsonLd(articles, lang = 'ru') {
       url: `${SITE_URL}${en ? '/en' : ''}/blog/${a.slug}/`,
       headline: en ? a.h1_en || a.h1 : a.h1,
       datePublished: a.datePublished,
+      image: LOGO_URL,
+      author: {
+        '@type': 'Organization',
+        name: 'MyPins',
+        url: `${SITE_URL}/`,
+      },
     })),
   };
 }
 
-/** JSON-LD статьи: BlogPosting (автор — команда MyPins) + BreadcrumbList.
+/** JSON-LD статьи: BlogPosting (автор и издатель — MyPins) + BreadcrumbList.
  * lang='en' (для /en/blog/<slug>) — headline/description из *_en полей,
- * inLanguage 'en', Breadcrumb Home > Blog. */
+ * inLanguage 'en', Breadcrumb Home > Blog.
+ * image — тот же дефолт, что у og:image статьи (src/lib/seo.ts,
+ * applyArticleMeta): логотип сайта. publisher обязателен для Article
+ * rich-результата. */
 function articleJsonLd(article, url, lang = 'ru') {
   const en = lang === 'en';
   const blogUrl = `${SITE_URL}${en ? '/en' : ''}/blog/`;
@@ -592,10 +604,20 @@ function articleJsonLd(article, url, lang = 'ru') {
         inLanguage: en ? 'en' : article.lang || 'ru',
         url,
         mainEntityOfPage: url,
+        image: LOGO_URL,
         author: {
           '@type': 'Organization',
           name: 'MyPins',
           url: `${SITE_URL}/`,
+        },
+        publisher: {
+          '@type': 'Organization',
+          name: 'MyPins',
+          url: `${SITE_URL}/`,
+          logo: {
+            '@type': 'ImageObject',
+            url: LOGO_URL,
+          },
         },
       },
       {
@@ -655,20 +677,29 @@ function urlHost(u) {
   }
 }
 
-/** Telegram CDN (cdn4/cdn5.telesco.pe и др.): ссылки ПОДПИСАННЫЕ и истекают —
- * основной источник мёртвых og:image. Такие URL заменяются на LOGO_URL БЕЗ
- * пробы: «живой сейчас» ничего не гарантирует (проверено — ссылка отдавала
- * 200/ image/* во время сборки и 404 через минуты). */
-function isTelegramCdn(url) {
+/** Хосты картинок, ссылки которых ВСЕГДА (или почти всегда) мёртвые в мете:
+ * подписанные ссылки Telegram CDN истекают («живой сейчас» ничего не
+ * гарантирует — URL отдавал 200/ image/* во время сборки и 404 через минуты),
+ * ubudcenter.com отдаёт анти-бот заглушку (202 text/html). Такие URL
+ * заменяются на LOGO_URL БЕЗ пробы.
+ * ВАЖНО: список общий для статики и SPA — держать синхронно с зеркалом
+ * isDeadImageHost в src/lib/seo.ts. */
+const DEAD_IMAGE_HOSTS = ['telesco.pe', 'ubudcenter.com'];
+
+/** Хост URL входит в DEAD_IMAGE_HOSTS (равен или поддомен через точку) */
+function isDeadImageHost(url) {
   const host = urlHost(url);
-  return host === 'telesco.pe' || host.endsWith('.telesco.pe');
+  if (!host) return false;
+  return DEAD_IMAGE_HOSTS.some((h) => host === h || host.endsWith(`.${h}`));
 }
 
 /**
  * Проба доступности картинки: GET с Range: bytes=0-0 (сервер отдаёт заголовки
  * и минимум тела) и таймаутом IMAGE_PROBE_TIMEOUT_MS. Живая = статус 2xx И
- * Content-Type image/*. Сетевая ошибка/таймаут — один повтор (частая причина —
- * обрыв соединения, а не мёртвый URL). Возврат {ok, net, status}.
+ * Content-Type image/* ИЛИ binary/octet-stream (частый ответ CDN, напр.
+ * cdn.evbuc.com отдаёт живые картинки именно так). Сетевая ошибка/таймаут —
+ * один повтор (частая причина — обрыв соединения, а не мёртвый URL).
+ * Возврат {ok, net, status}.
  */
 async function probeImage(url) {
   let last;
@@ -690,7 +721,9 @@ async function probeImage(url) {
       const status = res.status;
       const contentType = String(res.headers.get('content-type') || '').toLowerCase();
       if (status < 200 || status >= 300) return { ok: false, net: false, status };
-      if (!contentType.startsWith('image/')) return { ok: false, net: false, status };
+      const liveType =
+        contentType.startsWith('image/') || contentType.startsWith('binary/octet-stream');
+      if (!liveType) return { ok: false, net: false, status };
       return { ok: true, net: false, status };
     } catch (e) {
       last = e;
@@ -703,9 +736,10 @@ async function probeImage(url) {
 /**
  * Карта «URL картинки → живой URL» по всем событиям сборки. Ключ — абсолютный
  * URL, как его видит страница (absPhoto: http(s) как есть, путь в bucket →
- * storage-URL). Живые ссылки остаются собой; пустое фото, ссылки Telegram CDN
- * (без пробы — см. isTelegramCdn) и провалившие пробу → LOGO_URL. Пробы только
- * для УНИКАЛЬНЫХ URL, конкурентность IMAGE_PROBE_CONCURRENCY.
+ * storage-URL). Живые ссылки остаются собой; пустое фото, ссылки мёртвых
+ * хостов (DEAD_IMAGE_HOSTS, без пробы — см. isDeadImageHost) и провалившие
+ * пробу → LOGO_URL. Пробы только для УНИКАЛЬНЫХ URL, конкурентность
+ * IMAGE_PROBE_CONCURRENCY.
  * Защита: если >=80% проб упали сетевой ошибкой (в сборке нет внешней сети) —
  * возвращаем null: подмена в ЭТОМ билде отключена (прежнее поведение: фото как
  * есть, пусто → логотип), в лог warning.
@@ -717,13 +751,13 @@ async function resolveEventImages(events) {
     if (abs) urls.add(abs);
   }
   const map = new Map();
-  const telegram = [];
+  const deadHost = [];
   const toProbe = [];
   for (const url of urls) {
-    if (isTelegramCdn(url)) telegram.push(url);
+    if (isDeadImageHost(url)) deadHost.push(url);
     else toProbe.push(url);
   }
-  for (const url of telegram) map.set(url, LOGO_URL);
+  for (const url of deadHost) map.set(url, LOGO_URL);
   let dead = 0;
   let netErrors = 0;
   let next = 0;
@@ -743,7 +777,7 @@ async function resolveEventImages(events) {
   };
   await Promise.all(Array.from({ length: IMAGE_PROBE_CONCURRENCY }, worker));
   console.log(
-    `[images] probed ${toProbe.length} unique, dead ${dead + telegram.length} -> LOGO_URL (Telegram CDN без пробы: ${telegram.length}, из них провал пробы: ${dead})`,
+    `[images] probed ${toProbe.length} unique, dead ${dead + deadHost.length} -> LOGO_URL (мёртвый хост без пробы: ${deadHost.length}, из них провал пробы: ${dead})`,
   );
   if (toProbe.length >= 10 && netErrors / toProbe.length >= 0.8) {
     console.warn(

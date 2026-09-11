@@ -331,17 +331,24 @@ export function applyCityMeta(path: string): void {
 }
 
 /**
- * Ссылка на Telegram CDN (cdn4/cdn5.telesco.pe и др.): в мете события такие
- * фото ВСЕГДА мёртвые — ссылки подписанные и истекают (отдают 404 text/html).
- * Синхронно со статикой (scripts/seo-prerender.mjs, isTelegramCdn).
+ * Хосты картинок, ссылки которых ВСЕГДА мёртвые в мете: Telegram CDN
+ * (cdn4/cdn5.telesco.pe и др.) — ссылки подписанные и истекают (отдают 404
+ * text/html), ubudcenter.com — анти-бот заглушка (202 text/html).
+ * Синхронно со статикой: scripts/seo-prerender.mjs, isDeadImageHost /
+ * DEAD_IMAGE_HOSTS — список менять в ОБОИХ файлах.
  */
-function isTelegramCdn(url: string): boolean {
+/** Список мёртвых хостов (см. комментарий выше): держать синхронно со статикой */
+const DEAD_IMAGE_HOSTS = ['telesco.pe', 'ubudcenter.com'];
+
+/** Хост URL входит в DEAD_IMAGE_HOSTS (равен или поддомен через точку) */
+function isDeadImageHost(url: string): boolean {
+  let host = '';
   try {
-    const host = new URL(url).hostname.toLowerCase();
-    return host === 'telesco.pe' || host.endsWith('.telesco.pe');
+    host = new URL(url).hostname.toLowerCase();
   } catch {
     return false;
   }
+  return DEAD_IMAGE_HOSTS.some((h) => host === h || host.endsWith(`.${h}`));
 }
 
 /** Событие (карточка открыта / /event/<id>/<slug>): title/description как в
@@ -390,11 +397,12 @@ export function applyEventMeta(ev: EventItem): void {
       ? photo
       : photoUrl(photo)
     : '';
-  // og:image события — только живой URL: пустое фото или ссылка Telegram CDN
-  // (подписанная, уже истекла) → логотип сайта. Остальные фото — как есть (без
-  // сетевых проб в браузере); синхронно с пре-рендером (resolveEventImages).
+  // og:image события — только живой URL: пустое фото или ссылка мёртвого хоста
+  // (DEAD_IMAGE_HOSTS — telesco.pe, ubudcenter.com) → логотип сайта. Остальные
+  // фото — как есть (без сетевых проб в браузере); синхронно с пре-рендером
+  // (resolveEventImages: он ДОПОЛНИТЕЛЬНО пробит остальные фото при сборке).
   const image =
-    !absolute || isTelegramCdn(absolute) ? `${SITE_URL}/logo.png` : absolute;
+    !absolute || isDeadImageHost(absolute) ? `${SITE_URL}/logo.png` : absolute;
   apply({
     title,
     description,
