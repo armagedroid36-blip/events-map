@@ -9,10 +9,14 @@
 // Проверено и СОЗНАТЕЛЬНО не используется (чтобы не выдумывать данные):
 // - nagikubalitour.com/dance-performance-schedule-ubud — 200, но расписание в
 //   блоге без подтверждённых площадок: LLM извлёк 0 событий;
-// - vinwonders.com/en/shows/ — 0 событий; страницы /en/tata-show/ и
-//   /en/once-show/ описывают разные парки (Once Show → VinWonders Phu Quoc),
-//   для Нячанга точного времени нет — время и цена этих карточек остаются пустыми
-//   (по источнику шоу включено в билет парка);
+// - vinwonders.com/en/shows/ — 0 событий (общая страница парка);
+// - vinwonders.com/en/once-show/ — НЕ используется: страница описывает Once Show
+//   в VinWonders PHU QUOC («Fire Phoenix Square, 18:45 - 19:05 every day»), а не
+//   нячангскую карточку; цены на странице нет — шоу включено в билет парка;
+// - vinwonders.com/en/tata-show/ — ДОБАВЛЕН: страница прямо указывает
+//   «Luminary Square, VinWonders Nha Trang 19:30 - 20:10, included in admission
+//   ticket» (проверено 11.09.26) — из неё дозаполняется время карточки Tata Show;
+//   цены нет (входит в билет парка), поэтому price карточки остаётся пустым;
 // - balerungbali.com, waterpuppetnhatrang.com — домены не резолвятся;
 // - ubudcommunity.com, balispirit.com — JS-челлендж Cloudflare/бот-стена (202);
 // - nowbali.co.id/events/, thebalibible.com/events/, bali.com/events/ — 404.
@@ -36,6 +40,11 @@ export const SOURCES = [
     name: 'Đó Theatre / Life Puppets — Нячанг',
     url: 'https://dotheatre.vn/en/home',
     city: 'Нячанг', country: 'Vietnam', tzMin: 420, kind: 'listing',
+  },
+  {
+    name: 'VinWonders Nha Trang — Tata Show',
+    url: 'https://vinwonders.com/en/tata-show/',
+    city: 'Нячанг', country: 'Vietnam', tzMin: 420, kind: 'schedule',
   },
   {
     name: 'Da Nang Fantasticity — Charming Danang Show',
