@@ -24,7 +24,7 @@ import { nextOccurrenceDate } from '../lib/recurrence';
 import { todayIso } from '../lib/dates';
 import { cityPath } from '../lib/address';
 import type { CityPath } from '../lib/address';
-import { MAP_INTRO_KEY, MOBILE_INTRO_QUERY, dropIntroSeoBlocks } from '../lib/mobileIntro';
+import { MAP_INTRO_KEY, MOBILE_INTRO_QUERY, HOME_PANEL_QUERY, dropIntroSeoBlocks, setHomePanelHidden } from '../lib/mobileIntro';
 import {
   categoriesBlockTitle,
   categoryCells,
@@ -193,6 +193,23 @@ export default function Home({
     const onViewport = (e: MediaQueryListEvent) => setIsMobile(e.matches);
     m.addEventListener('change', onViewport);
     return () => m.removeEventListener('change', onViewport);
+  }, []);
+
+  // Десктопная ширина (lg, 1024px): только с неё показываем видимую панель
+  // блока главной — на меньших ширинах её место занимают карта и панели Home
+  // (см. lib/mobileIntro.ts, HOME_PANEL_QUERY). Ширину читаем из matchMedia
+  // ПРЯМО в момент пересчёта (в состоянии она может отстать: в headless-CDP
+  // событие change медиазапроса не приходит), пересчёт — по resize окна.
+  const [panelTick, setPanelTick] = useState(0);
+  useEffect(() => {
+    const onResize = () => setPanelTick((n) => n + 1);
+    const m = window.matchMedia(HOME_PANEL_QUERY);
+    window.addEventListener('resize', onResize);
+    m.addEventListener('change', onResize);
+    return () => {
+      window.removeEventListener('resize', onResize);
+      m.removeEventListener('change', onResize);
+    };
   }, []);
 
   // Открыть живую карту: плавно скрыть интро и запомнить выбор
@@ -470,6 +487,29 @@ export default function Home({
   useEffect(() => {
     if (!introActive) dropIntroSeoBlocks();
   }, [introActive]);
+  // Видимая панель блока главной (десктоп, beta 0.57): в DOM живёт статический
+  // #seo-home-block, перенесённый main.tsx в #seo-home-panel. Показываем её
+  // ровно тем же условием, что у городского блока (#city-seo-block ниже),
+  // плюс требование десктопной ширины: на мобильном/планшете панель не нужна.
+  useEffect(() => {
+    setHomePanelHidden(
+      !window.matchMedia(HOME_PANEL_QUERY).matches ||
+        introActive ||
+        !!selected ||
+        listOpen ||
+        mobileFiltersOpen ||
+        formOpen ||
+        authOpen,
+    );
+  }, [
+    panelTick,
+    introActive,
+    selected,
+    listOpen,
+    mobileFiltersOpen,
+    formOpen,
+    authOpen,
+  ]);
   // Статичное превью карты под текущую страницу: своё на город, общее — на главную
   const introPreview = city
     ? `/images/map-preview-${slugify(city)}.webp`

@@ -173,6 +173,32 @@ body {
   bottom: max(4.5rem, calc(1.25rem + env(safe-area-inset-bottom)));
 }
 
+/* Видимая панель блока главной (#seo-home-panel, beta 0.57). В SPA сюда
+   приезжает СТАТИЧЕСКАЯ разметка пре-рендера (#seo-home-block: h2 + <p> + <a>
+   без классов) — оформляем её здесь теми же размерами/цветами, что у
+   городского SEO-блока (#city-seo-block в Home.tsx: text-lg font-extrabold,
+   text-sm leading-relaxed, ссылки #0F766E). Показ/скрытие панели — Home
+   (lib/mobileIntro.setHomePanelHidden). */
+#seo-home-panel h2 {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: #111827;
+}
+#seo-home-panel p {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  line-height: 1.625;
+  color: #374151;
+}
+#seo-home-panel a {
+  color: #0f766e;
+}
+#seo-home-panel a:hover {
+  text-decoration: underline;
+}
+
 /* Плавное появление фото при перелистывании в карусели */
 @keyframes lightbox-fade {
   from {
