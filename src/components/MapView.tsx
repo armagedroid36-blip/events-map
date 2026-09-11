@@ -86,21 +86,6 @@ export default function MapView({
       new maplibregl.AttributionControl({ compact: true, customAttribution: config.mapAttribution }),
       'bottom-right',
     );
-    // На узких экранах (<640px) раскрытая атрибуция занимает ДВЕ строки
-    // (44px) и налезает на плашки «Политика/Контакты» у нижнего края карты
-    // (они стоят на bottom-9 = 21px). Сворачиваем контрол в иконку ⓘ — текст
-    // раскрывается тапом; тот же приём уже используется в EventForm.
-    const narrowAttrib = window.matchMedia('(max-width: 639px)');
-    const collapseAttribution = () => {
-      if (!narrowAttrib.matches) return;
-      map
-        .getContainer()
-        .querySelector('.maplibregl-ctrl-attrib')
-        ?.classList.remove('maplibregl-compact-show');
-    };
-    collapseAttribution();
-    map.on('load', collapseAttribution);
-    narrowAttrib.addEventListener('change', collapseAttribution);
     mapRef.current = map;
 
     // Источник событий + слои кластеров создаются при загрузке стиля
@@ -230,8 +215,6 @@ export default function MapView({
     });
 
     return () => {
-      narrowAttrib.removeEventListener('change', collapseAttribution);
-      map.off('load', collapseAttribution);
       markersRef.current = [];
       map.remove();
       mapRef.current = null;
@@ -473,7 +456,7 @@ export default function MapView({
     <div className="relative h-full w-full" style={{ minHeight: 320 }}>
       <div ref={containerRef} className="h-full w-full" />
       {/* Ссылки «Политика» и «Контакты» — по центру внизу, над атрибуцией */}
-      <div className="absolute bottom-9 left-1/2 z-[1000] flex -translate-x-1/2 gap-2">
+      <div className="absolute bottom-12 left-1/2 z-[1000] flex -translate-x-1/2 gap-2 sm:bottom-9">
         <a
           href="#/privacy"
           className="rounded-md bg-white/80 px-2 py-0.5 text-[11px] font-medium text-gray-600 shadow-sm hover:text-gray-900"
