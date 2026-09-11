@@ -16,8 +16,14 @@
 // остаётся в DOM для краулера, а вёрстку и LCP не трогает — контейнер
 // display:none, картинки внутри не загружаются. Как только интро закрыто
 // (клик «Открыть карту» на мобильном или окно расширено до десктопа), SPA
-// рисует свои блоки, а перенесённый контейнер удаляется — иначе на странице
-// было бы ДВА h1.
+// рисует свои блоки, а перенесённый контейнер удаляется.
+//
+// ОДИН h1 НА СТРАНИЦУ. На главной («/» и «/en») бренд шапки (Header.tsx,
+// isBrandH1) — уже h1, поэтому у переносимого #seo-home-block заголовок
+// ПОНИЖАЕТСЯ до h2 (тег, классы и текст сохраняются, статика пре-рендера не
+// трогается — правится только JS-копия). Иначе в DOM мобильной главной было
+// бы два h1. На городских страницах бренд не h1, перенесённый городской h1 —
+// единственный, понижать его НЕЛЬЗЯ.
 //
 // Прочие статические блоки (#seo-category-block, #seo-org-block, #seo-event-block,
 // #seo-article-block, #seo-b2b-block, #seo-about-block) удаляются как раньше:
@@ -47,6 +53,26 @@ export const SEO_BLOCK_SELECTOR =
  *  (страницы, где интро вообще показывается: главная и города) */
 const KEEP_IDS = ['#seo-home-block', '#seo-city-block'];
 
+/** Путь главной без хвостового слэша (как cleanPath в Header.tsx: '/en/' → '/en').
+ *  Только на главной бренд шапки — h1, поэтому только здесь понижается h1
+ *  перенесённого блока главной. */
+function isHomePath(pathname: string): boolean {
+  const clean = pathname === '/index.html' ? '/' : pathname.replace(/\/+$/, '') || '/';
+  return clean === '/' || clean === '/en';
+}
+
+/** Заголовок перенесённого блока главной: h1 → h2 (тег меняется, классы и
+ *  содержимое сохраняются — статика пре-рендера не трогается). Других h1
+ *  внутри блока главной нет; querySelectorAll — на случай будущих правок. */
+function demoteHeadings(root: Element): void {
+  root.querySelectorAll('h1').forEach((old) => {
+    const h2 = document.createElement('h2');
+    Array.from(old.attributes).forEach((attr) => h2.setAttribute(attr.name, attr.value));
+    while (old.firstChild) h2.appendChild(old.firstChild);
+    old.replaceWith(h2);
+  });
+}
+
 /** Активен ли мобильный интро-режим (расчёт как в Home.tsx: мобильная ширина
  *  и интро ещё не закрыто). localStorage может быть недоступен (приватный
  *  режим) — тогда считаем, что интро активно (как Home при ошибке чтения) */
@@ -69,9 +95,13 @@ export function isMobileIntroActive(): boolean {
  */
 export function keepSeoBlocksForIntro(): void {
   const keepForIntro = isMobileIntroActive();
+  // На главной бренд шапки — h1 (Header.isBrandH1), поэтому у переносимого
+  // блока главной заголовок понижается: на странице остаётся ровно один h1.
+  const demoteHome = keepForIntro && isHomePath(window.location.pathname);
   const kept: Element[] = [];
   document.querySelectorAll(SEO_BLOCK_SELECTOR).forEach((el) => {
     if (keepForIntro && KEEP_IDS.includes(`#${el.id}`)) {
+      if (demoteHome && el.id === 'seo-home-block') demoteHeadings(el);
       kept.push(el);
       return;
     }

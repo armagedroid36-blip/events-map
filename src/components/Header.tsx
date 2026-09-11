@@ -296,10 +296,16 @@ export default function Header({ onOpenForm }: HeaderProps) {
             <img src="/logo-mark.webp" alt="" className="logo-hop h-12 w-auto shrink-0 rounded object-contain" />
           </span>
           {isBrandH1 ? (
-            <h1 className="truncate text-xl font-extrabold tracking-tight text-gray-900">
-              {t('app.brand')}{' '}
-              <span className="text-[10px] font-normal text-gray-400">{config.buildVersion}</span>
-            </h1>
+            <>
+              {/* Версия сборки — ВНЕ h1 (SEO: в тексте h1 не должно быть
+                  «beta 0.xx»); визуально остаётся рядом с названием, зазор
+                  даёт gap-[3px] flex-контейнера ссылки. shrink-0 — при
+                  сжатии шапки усекается название, версия видна всегда. */}
+              <h1 className="min-w-0 truncate text-xl font-extrabold tracking-tight text-gray-900">
+                {t('app.brand')}
+              </h1>
+              <span className="shrink-0 text-[10px] font-normal text-gray-400">{config.buildVersion}</span>
+            </>
           ) : (
             <span className="block truncate text-xl font-extrabold tracking-tight text-gray-900">
               {t('app.brand')}{' '}
