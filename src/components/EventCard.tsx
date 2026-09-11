@@ -12,6 +12,7 @@ import { formatDate, formatTimeHM } from '../lib/dates';
 import { recurrenceLabel } from '../lib/recurrence';
 import { photoUrl } from '../lib/api';
 import { isValidCoords } from '../lib/coords';
+import { placeLabel } from '../lib/address';
 import { nextZ } from '../lib/zindex';
 import { navigate, slugify } from '../lib/navigate';
 import { occurrenceDate } from '../lib/series';
@@ -717,7 +718,7 @@ export default function EventCard({
           rel="noopener noreferrer"
           className="mb-2 block text-sm text-gray-600 hover:text-gray-900 hover:underline"
         >
-          📍 {event.address}
+          📍 {placeLabel(event.address, event.city, lang)}
         </a>
       ) : isValidCoords(event.lat, event.lng) || event.address ? (
         <p className="mb-2 block text-sm text-gray-600">📍 {t('card.placeUnknown')}</p>

@@ -28,6 +28,7 @@ import { photoUrl } from './api';
 import { todayIso } from './dates';
 import { slugify } from './navigate';
 import { nextOccurrenceDate } from './recurrence';
+import { cityNameEn } from './address';
 import type {
   AboutContent,
   Article,
@@ -327,29 +328,6 @@ export function applyCityMeta(path: string): void {
     og: null,
     hreflang: hreflangPairsFor(`${SITE_URL}/${path}/`, `${SITE_URL}/en/${path}/`),
   });
-}
-
-/** EN-имя города события для EN-меты — копия cityCrumb + CITY_NAME_EN из
- * seo-prerender.mjs (держать синхронно): «Нячанг»/«Nha Trang» → Nha Trang,
- * «Дананг»/«Da Nang» → Da Nang, Бали и его районы (Убуд, Чангу, Семиньяк,
- * Кута, Денпасар, Гианьяр) → Bali. Не распознано → '' (EN-суффикс опускается). */
-function cityNameEn(rawCity: string | null | undefined): string {
-  const city = String(rawCity ?? '').toLowerCase();
-  if (!city) return '';
-  if (city.includes('нячанг') || city.includes('nha trang')) return 'Nha Trang';
-  if (
-    city.includes('дананг') ||
-    city.includes('da nang') ||
-    city.includes('danang')
-  ) {
-    return 'Da Nang';
-  }
-  const baliKeys = [
-    'бали', 'bali', 'ubud', 'убуд', 'canggu', 'чангу',
-    'seminyak', 'семиньяк', 'kuta', 'кута', 'denpasar', 'gianyar',
-  ];
-  if (baliKeys.some((k) => city.includes(k))) return 'Bali';
-  return '';
 }
 
 /** Событие (карточка открыта / /event/<id>/<slug>): title/description как в

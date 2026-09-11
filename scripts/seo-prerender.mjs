@@ -805,6 +805,101 @@ function cityLabel(rawCity, lang) {
   return (crumb && CITY_NAME_EN[crumb.path]) || raw;
 }
 
+/** RU→EN названия стран/регионов, которые встречаются ВНУТРИ свободного
+ * текста адреса (сборщик пишет их по-русски: «…, Bali 80361, Индонезия»).
+ * Замена на EN-страницах — по границам слов, регистронезависимо. */
+const COUNTRY_NAME_EN = {
+  индонезия: 'Indonesia',
+  вьетнам: 'Vietnam',
+  мьянма: 'Myanmar',
+  малайзия: 'Malaysia',
+  таиланд: 'Thailand',
+  камбоджа: 'Cambodia',
+  сингапур: 'Singapore',
+  филиппины: 'Philippines',
+};
+
+/** Признак остаточной кириллицы в строке адреса */
+const CYRILLIC_RE = /[\u0400-\u04FF]/;
+
+/** Показывать на EN-странице только EN-имя города, если RU-фрагмент адреса
+ * перевести нечем: город распознан (cityCrumb), а в строке после замены
+ * названий стран осталась кириллица. false — сохранять RU-фрагмент как есть. */
+const EN_DROP_UNTRANSLATED_ADDRESS = true;
+
+/** Есть ли needle в hay как отдельное слово (границы — не буквы, регистр не
+ * важен): «Bali» находится в «…, Bali 80361», но не в «Balinese». */
+function hasWord(hay, needle) {
+  if (!hay || !needle) return false;
+  const esc = String(needle).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`(?<![\\p{L}])${esc}(?![\\p{L}])`, 'iu').test(String(hay));
+}
+
+/** Локализует RU-названия стран внутри адреса: «…, Индонезия» → «…, Indonesia» */
+function localizeCountryNames(text) {
+  let out = String(text ?? '');
+  for (const [ru, en] of Object.entries(COUNTRY_NAME_EN)) {
+    out = out.replace(new RegExp(`(?<![\\p{L}])${ru}(?![\\p{L}])`, 'giu'), en);
+  }
+  return out;
+}
+
+/** Убирает ХВОСТОВОЙ повтор города в адресе, если город уже назван раньше
+ * («Culture House of Labor Da Nang, …, Hai Chau, Da Nang» → «…, Hai Chau»;
+ * «Vega City Nha Trang, …, Vinh Hoa Ward, Nha Trang City» → «…, Vinh Hoa
+ * Ward»). Дубли приходят из данных: сборщик приписывал город к адресу.
+ * Сегмент убирается, только если это последний сегмент, он содержит EN-имя
+ * города И имя города есть до него — адрес без города не остаётся. */
+function stripRedundantCityTail(text, city) {
+  if (!city || !text) return text;
+  const i = text.lastIndexOf(',');
+  if (i < 0) return text;
+  const head = text.slice(0, i).trim();
+  const tail = text.slice(i + 1).trim();
+  if (!hasWord(tail, city) || !hasWord(head, city)) return text;
+  return head;
+}
+
+/**
+ * Адрес для показа/разметки на странице языка lang (адрес, ev, язык).
+ * RU — как раньше: строка адреса из данных; город приписывается, если его
+ * там ещё нет (сравнение по хвосту строки), свободный текст не трогаем.
+ * EN — (a) RU-названия стран внутри адреса локализуются (localizeCountryNames);
+ * (b) EN-город НЕ приписывается, если уже есть в строке отдельным словом
+ * (убирает двойной «…, Indonesia, Bali»); (c) если после (a)-(b) осталась
+ * кириллица И город распознан (cityCrumb) — возвращается только EN-имя города
+ * (EN_DROP_UNTRANSLATED_ADDRESS), RU-фрагмент не выводится; (d) город не
+ * распознан — строка как в данных. Пустой адрес → город (как раньше).
+ * Один и тот же результат идут в <address> (eventSeoHtml) и в JSON-LD
+ * (location.name и location.address.streetAddress).
+ */
+function placeLabel(address, ev, lang) {
+  const raw = String(address ?? '').trim();
+  const cityL = cityLabel(ev ? ev.city : '', lang);
+  if (lang !== 'en') {
+    if (!raw) return cityL;
+    if (
+      cityL &&
+      !raw.toLowerCase().endsWith(`, ${cityL.toLowerCase()}`) &&
+      raw.toLowerCase() !== cityL.toLowerCase()
+    ) {
+      return `${raw}, ${cityL}`;
+    }
+    return raw;
+  }
+  let place = localizeCountryNames(raw);
+  place = stripRedundantCityTail(place, cityL);
+  if (cityL && !hasWord(place, cityL)) {
+    place = place ? `${place}, ${cityL}` : cityL;
+  }
+  if (EN_DROP_UNTRANSLATED_ADDRESS && CYRILLIC_RE.test(place)) {
+    const crumb = cityCrumb(ev ? ev.city : '');
+    const enCity = (crumb && CITY_NAME_EN[crumb.path]) || '';
+    if (enCity) place = enCity;
+  }
+  return place;
+}
+
 /**
  * JSON-LD Event для страницы события: @graph из Event (поля как раньше) и
  * BreadcrumbList (Главная > город, если распознан > название события как в
@@ -818,6 +913,10 @@ function eventJsonLd(ev, url, lang = 'ru') {
   const en = lang === 'en';
   const city = cityLabel(ev.city, lang);
   const address = typeof ev.address === 'string' ? ev.address.trim() : '';
+  // Адрес для разметки: на EN-страницах — локализованный (placeLabel: страны
+  // RU→EN, без дубля города, без нетронутого RU-фрагмента), на RU — строка из
+  // данных, как раньше. Пустой адрес → streetAddress не выводим (как было).
+  const place = !address ? '' : en ? placeLabel(address, ev, 'en') : address;
   const country = typeof ev.country === 'string' ? ev.country.trim() : '';
   const lat = Number(ev.lat);
   const lng = Number(ev.lng);
@@ -862,11 +961,11 @@ function eventJsonLd(ev, url, lang = 'ru') {
     eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
     location: {
       '@type': 'Place',
-      name: address || city,
+      name: place || city,
       address: {
         '@type': 'PostalAddress',
         addressLocality: city,
-        ...(address ? { streetAddress: address } : {}),
+        ...(place ? { streetAddress: place } : {}),
         ...(country ? { addressCountry: country } : {}),
       },
       ...(hasCoords
@@ -1433,18 +1532,14 @@ function eventSeoHtml(ev, url, lang = 'ru', sibs = []) {
     lines.push(`  <p><time datetime="${esc(datetime)}">${esc(dateText)}</time></p>`);
   }
   // Место: адрес и город, если заполнены (страна в событиях — код, не
-  // название). Адрес сборщика часто уже заканчивается городом
-  // («Lila Coffee, Нячанг» / EN: «Lila Coffee, Nha Trang») — город не
-  // дублируем. Сравнение — с локализованным именем города (cityL).
-  let place = address;
+  // название). Логика адреса — placeLabel: RU-страницы как раньше; EN —
+  // RU-названия стран внутри адреса → EN, EN-город не дублируется
+  // («…, Indonesia, Bali» → «…, Indonesia»), при остаточной кириллице и
+  // распознанном городе выводится только EN-имя города. Тот же результат идёт
+  // в JSON-LD (eventJsonLd: location.name / streetAddress).
+  let place = address ? placeLabel(address, ev, lang) : '';
   if (!place) {
     place = cityL;
-  } else if (
-    cityL &&
-    !place.toLowerCase().endsWith(`, ${cityL.toLowerCase()}`) &&
-    place.toLowerCase() !== cityL.toLowerCase()
-  ) {
-    place = `${place}, ${cityL}`;
   }
   if (place) lines.push(`  <address>${esc(place)}</address>`);
   // Цена: платная — «{price} {currency}»; price 0 (или не указана) + donation —
