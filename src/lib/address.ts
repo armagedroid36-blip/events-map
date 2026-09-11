@@ -23,6 +23,50 @@ const COUNTRY_NAME_EN: Record<string, string> = {
 /** Признак кириллицы (остаточный RU-фрагмент адреса) */
 const CYRILLIC_RE = /[\u0400-\u04FF]/;
 
+/** Путь городской страницы события (как slugify(labelEn) в config.quickLocations) */
+export type CityPath = 'bali' | 'da-nang' | 'nha-trang';
+
+/** RU-имена городов по пути — как в JSON-LD BreadcrumbList (cityCrumb.name) */
+const CITY_NAME_RU: Record<CityPath, string> = {
+  bali: 'Бали',
+  'da-nang': 'Дананг',
+  'nha-trang': 'Нячанг',
+};
+
+/** EN-имена городов по пути — как labelEn в config / CITY_NAME_EN пре-рендера */
+const CITY_NAME_BY_PATH: Record<CityPath, string> = {
+  bali: 'Bali',
+  'da-nang': 'Da Nang',
+  'nha-trang': 'Nha Trang',
+};
+
+/**
+ * Город события по свободному тексту ev.city → путь городской страницы:
+ * Бали и его районы (Убуд, Чангу, Семиньяк, Кута, Денпасар, Гианьяр) → bali,
+ * «Дананг»/«Da Nang»/«Danang» → da-nang, «Нячанг»/«Nha Trang» → nha-trang.
+ * Регистронезависимо, поиск подстроки. Не распознано → null: ссылку на
+ * несуществующую городскую страницу не создаём (зеркало cityCrumb в
+ * scripts/seo-prerender.mjs — менять синхронно).
+ */
+export function cityPath(rawCity: string | null | undefined): CityPath | null {
+  const city = String(rawCity ?? '').toLowerCase();
+  if (!city) return null;
+  if (city.includes('нячанг') || city.includes('nha trang')) return 'nha-trang';
+  if (
+    city.includes('дананг') ||
+    city.includes('da nang') ||
+    city.includes('danang')
+  ) {
+    return 'da-nang';
+  }
+  const baliKeys = [
+    'бали', 'bali', 'ubud', 'убуд', 'canggu', 'чангу',
+    'seminyak', 'семиньяк', 'kuta', 'кута', 'denpasar', 'gianyar',
+  ];
+  if (baliKeys.some((k) => city.includes(k))) return 'bali';
+  return null;
+}
+
 /**
  * EN-имя города события: «Нячанг»/«Nha Trang» → Nha Trang,
  * «Дананг»/«Da Nang»/«Danang» → Da Nang, Бали и его районы (Убуд, Чангу,
@@ -30,22 +74,30 @@ const CYRILLIC_RE = /[\u0400-\u04FF]/;
  * строка = город неизвестен, EN-имя подставлять нельзя).
  */
 export function cityNameEn(rawCity: string | null | undefined): string {
-  const city = String(rawCity ?? '').toLowerCase();
-  if (!city) return '';
-  if (city.includes('нячанг') || city.includes('nha trang')) return 'Nha Trang';
-  if (
-    city.includes('дананг') ||
-    city.includes('da nang') ||
-    city.includes('danang')
-  ) {
-    return 'Da Nang';
-  }
-  const baliKeys = [
-    'бали', 'bali', 'ubud', 'убуд', 'canggu', 'чангу',
-    'seminyak', 'семиньяк', 'kuta', 'кута', 'denpasar', 'gianyar',
-  ];
-  if (baliKeys.some((k) => city.includes(k))) return 'Bali';
-  return '';
+  const path = cityPath(rawCity);
+  return path ? CITY_NAME_BY_PATH[path] : '';
+}
+
+/** Локализованное имя города для видимой хлебной крошки (как name в JSON-LD
+ * BreadcrumbList). Город не распознан → '' (крошка без звена города). */
+export function cityCrumbLabel(
+  rawCity: string | null | undefined,
+  lang: 'ru' | 'en',
+): string {
+  const path = cityPath(rawCity);
+  if (!path) return '';
+  return lang === 'en' ? CITY_NAME_BY_PATH[path] : CITY_NAME_RU[path];
+}
+
+/** Относительный href городской страницы своего языка: '/bali/' (RU) или
+ * '/en/bali/' (EN) — как страницы sitemap; null — город не распознан. */
+export function cityPageHref(
+  rawCity: string | null | undefined,
+  lang: 'ru' | 'en',
+): string | null {
+  const path = cityPath(rawCity);
+  if (!path) return null;
+  return `${lang === 'en' ? '/en' : ''}/${path}/`;
 }
 
 /** Локализует RU-названия стран внутри адреса: «…, Индонезия» → «…, Indonesia».

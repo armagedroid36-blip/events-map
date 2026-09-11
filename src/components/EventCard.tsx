@@ -12,7 +12,7 @@ import { formatDate, formatTimeHM } from '../lib/dates';
 import { recurrenceLabel } from '../lib/recurrence';
 import { photoUrl } from '../lib/api';
 import { isValidCoords } from '../lib/coords';
-import { cityNameEn, placeLabel } from '../lib/address';
+import { cityCrumbLabel, cityNameEn, cityPageHref, placeLabel } from '../lib/address';
 import { nextZ } from '../lib/zindex';
 import { navigate, slugify } from '../lib/navigate';
 import { occurrenceDate } from '../lib/series';
@@ -561,6 +561,16 @@ export default function EventCard({
   // Не распознан — исходная строка (не пустая), как в placeLabel.
   const cityLabel = lang === 'ru' ? event.city : (cityNameEn(event.city) || event.city);
 
+  // Видимая хлебная крошка страницы события (титул как h1 = /event/ и
+  // /en/event/): «Главная › город › название» — та же иерархия, что
+  // BreadcrumbList в JSON-LD (src/lib/address.cityCrumbLabel). Ссылки
+  // относительные на городскую страницу СВОЕГО языка (/bali/ и /en/bali/);
+  // клик перехватывает document-обработчик App (SPA-переход). Город не
+  // распознан → cityHref/cityCrumb пусты, крошка не выводится.
+  const cityHref = cityPageHref(event.city, lang);
+  const cityCrumb = cityCrumbLabel(event.city, lang);
+  const homeHref = lang === 'ru' ? '/' : '/en/';
+
   // URL события для «Поделиться» и клика по названию: при EN-интерфейсе и
   // наличии EN-версии события (title_en или исходник en) — /en/event/<id>/…,
   // иначе RU /event/<id>/… (п. 1.2/2.4 промпта R)
@@ -611,6 +621,29 @@ export default function EventCard({
     <div className="rounded-lg p-4">
       <div className="mb-2 flex items-start justify-between gap-2">
         <div className="flex-1">
+          {/* Хлебная крошка страницы события (только на /event/ и /en/event/):
+              Главная › Город › Название. Иерархия и город те же, что в JSON-LD
+              BreadcrumbList; ссылка ведёт на афишу города своего языка */}
+          {titleAsH1 && cityHref && (
+            <nav
+              aria-label={t('card.breadcrumbs')}
+              className="mb-1 flex flex-wrap items-center gap-1 text-xs text-gray-500"
+            >
+              <a href={homeHref} className="hover:text-gray-900 hover:underline">
+                {t('card.crumbHome')}
+              </a>
+              <span aria-hidden="true" className="text-gray-300">
+                ›
+              </span>
+              <a href={cityHref} className="hover:text-gray-900 hover:underline">
+                {cityCrumb}
+              </a>
+              <span aria-hidden="true" className="text-gray-300">
+                ›
+              </span>
+              <span className="text-gray-600">{title}</span>
+            </nav>
+          )}
           {titleAsH1 ? (
             <h1 className="text-base font-semibold leading-snug text-gray-900">{title}</h1>
           ) : (
@@ -695,6 +728,17 @@ export default function EventCard({
           </>
         ) : null}
       </div>
+
+      {/* Ссылка на афишу города (страница события): «Ещё события в <город>:
+          афиша» — как в статике (eventBreadcrumbHtml) */}
+      {titleAsH1 && cityHref && (
+        <p className="mb-2 text-xs text-gray-500">
+          {t('card.moreInCity', { city: cityCrumb })}{' '}
+          <a href={cityHref} className="text-[#0F766E] hover:underline">
+            {t('card.cityPoster')}
+          </a>
+        </p>
+      )}
 
       {/* Другие даты серии: то же название и место, другая дата (список
           приходит из Home — lib/series.seriesSiblings, запросов нет).

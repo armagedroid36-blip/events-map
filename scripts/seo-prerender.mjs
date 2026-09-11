@@ -966,6 +966,38 @@ function cityLabel(rawCity, lang) {
   return (crumb && CITY_NAME_EN[crumb.path]) || raw;
 }
 
+/**
+ * Ссылка на городскую страницу события для видимой хлебной крошки и строки
+ * «Ещё события в <город>»: локализованное имя города по языку страницы
+ * (RU — crumb.name, EN — CITY_NAME_EN) и ОТНОСИТЕЛЬНЫЙ href городской
+ * страницы своего языка (/bali/ для RU, /en/bali/ для EN — как страницы
+ * sitemap). Город не распознан → null: ссылку на несуществующую городскую
+ * страницу не создаём.
+ */
+function cityCrumbLink(rawCity, lang) {
+  const crumb = cityCrumb(rawCity);
+  if (!crumb) return null;
+  const en = lang === 'en';
+  const name = en ? CITY_NAME_EN[crumb.path] || crumb.name : crumb.name;
+  return { name, href: `${en ? '/en' : ''}/${crumb.path}/` };
+}
+
+/** Подписи видимой хлебной крошки (как в JSON-LD: Home/Главная) */
+const CRUMB_TEXT = {
+  ru: {
+    aria: 'Хлебные крошки',
+    home: 'Главная',
+    more: 'Ещё события в',
+    poster: 'афиша',
+  },
+  en: {
+    aria: 'Breadcrumbs',
+    home: 'Home',
+    more: 'More events in',
+    poster: "what's on",
+  },
+};
+
 /** RU→EN названия стран/регионов, которые встречаются ВНУТРИ свободного
  * текста адреса (сборщик пишет их по-русски: «…, Bali 80361, Индонезия»).
  * Замена на EN-страницах — по границам слов, регистронезависимо. */
@@ -1650,6 +1682,37 @@ function seriesDatesHtml(sibs, lang = 'ru') {
 }
 
 /**
+ * Видимая хлебная крошка страницы события: <nav> с ТОЙ ЖЕ иерархией, что
+ * BreadcrumbList в JSON-LD этой же страницы — «Главная/Home» > город (только
+ * если cityCrumb его распознал) > название события (текст, не ссылка);
+ * разделитель «›». Ссылки относительные (/ , /en/ , /<path>/ , /en/<path>/) —
+ * как у блока «Другие даты серии». Дополнительно (город распознан) — строка
+ * «Ещё события в <город>: <a>афиша</a>» со ссылкой на афишу города.
+ * Город не распознан → крошка из 2 звеньев, ссылка только на главную своего
+ * языка; ссылок на несуществующие городские страницы не бывает.
+ */
+function eventBreadcrumbHtml(ev, lang = 'ru', name = '') {
+  const txt = lang === 'en' ? CRUMB_TEXT.en : CRUMB_TEXT.ru;
+  const home = { name: txt.home, href: lang === 'en' ? '/en/' : '/' };
+  const city = cityCrumbLink(ev.city, lang);
+  const links = [home, ...(city ? [city] : [])]
+    .map((i) => `<a href="${esc(i.href)}">${esc(i.name)}</a>`)
+    .join(' <span aria-hidden="true">›</span> ');
+  const title = String(name ?? '').trim();
+  const lines = [
+    `  <nav aria-label="${esc(txt.aria)}">`,
+    `    <p>${links}${title ? ` <span aria-hidden="true">›</span> <span>${esc(title)}</span>` : ''}</p>`,
+  ];
+  if (city) {
+    lines.push(
+      `    <p>${esc(txt.more)} ${esc(city.name)}: <a href="${esc(city.href)}">${esc(txt.poster)}</a></p>`,
+    );
+  }
+  lines.push('  </nav>');
+  return lines.join('\n');
+}
+
+/**
  * Статический SEO-блок события для вставки в <body> рядом с #root: ровно
  * один h1 = название события (локализованное для RU — title_ru, иначе title,
  * иначе title_en; для EN — title_en, иначе title — как localizedText в
@@ -1725,6 +1788,9 @@ function eventSeoHtml(ev, url, lang = 'ru', sibs = []) {
       `  <p>${en ? 'Organizer:' : 'Организатор:'} <a href="${esc(orgUrl)}">${esc(orgName)}</a></p>`,
     );
   }
+  // Видимая хлебная крошка (Главная > город > событие) — та же иерархия, что
+  // BreadcrumbList в JSON-LD этой страницы; вставляется перед блоком серии.
+  lines.push(eventBreadcrumbHtml(ev, lang, name));
   const series = seriesDatesHtml(sibs, lang);
   if (series) lines.push(series);
   lines.push('</div>', '');

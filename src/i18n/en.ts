@@ -244,6 +244,10 @@ export default {
     recurrenceWeekly: 'Weekly: {{days}}',
     recurrenceUntil: 'until {{date}}',
     seriesDates: 'Other dates in this series:',
+    breadcrumbs: 'Breadcrumbs',
+    crumbHome: 'Home',
+    moreInCity: 'More events in {{city}}:',
+    cityPoster: "what's on",
   },
   // Public organizer profile (#/org/<id>) and subscription
   org: {

@@ -245,6 +245,10 @@ export default {
     recurrenceWeekly: 'Каждую неделю: {{days}}',
     recurrenceUntil: 'до {{date}}',
     seriesDates: 'Другие даты серии:',
+    breadcrumbs: 'Хлебные крошки',
+    crumbHome: 'Главная',
+    moreInCity: 'Ещё события в {{city}}:',
+    cityPoster: 'афиша',
   },
   // Публичный профиль организатора (#/org/<id>) и подписка
   org: {
