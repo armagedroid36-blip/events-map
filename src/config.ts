@@ -22,7 +22,7 @@ export const config = {
   demoMode: false,
 
   // Версия сборки — показывается в шапке мелким текстом для сверки
-  buildVersion: 'beta 0.58',
+  buildVersion: 'beta 0.59',
 
   // Push-уведомления: ПУБЛИЧНЫЙ VAPID-ключ (приватный — в GitHub secrets,
   // VAPID_PRIVATE_KEY; рассылка — scripts/notify-push.mjs в GHA)
