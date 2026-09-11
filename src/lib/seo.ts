@@ -330,6 +330,20 @@ export function applyCityMeta(path: string): void {
   });
 }
 
+/**
+ * Ссылка на Telegram CDN (cdn4/cdn5.telesco.pe и др.): в мете события такие
+ * фото ВСЕГДА мёртвые — ссылки подписанные и истекают (отдают 404 text/html).
+ * Синхронно со статикой (scripts/seo-prerender.mjs, isTelegramCdn).
+ */
+function isTelegramCdn(url: string): boolean {
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    return host === 'telesco.pe' || host.endsWith('.telesco.pe');
+  } catch {
+    return false;
+  }
+}
+
 /** Событие (карточка открыта / /event/<id>/<slug>): title/description как в
  * пре-рендере (seo-prerender.mjs), canonical и og со слэшем; og:image — первое
  * фото (абсолютный URL) или логотип сайта. Данные только из объекта события —
@@ -371,11 +385,16 @@ export function applyEventMeta(ev: EventItem): void {
   const description = snippet(prefix ? `${prefix}. ${text}` : text, 160);
   const canonical = eventUrl(ev, useEn);
   const photo = ev.photos?.[0];
-  const image = photo
+  const absolute = photo
     ? photo.startsWith('http')
       ? photo
       : photoUrl(photo)
-    : `${SITE_URL}/logo.png`;
+    : '';
+  // og:image события — только живой URL: пустое фото или ссылка Telegram CDN
+  // (подписанная, уже истекла) → логотип сайта. Остальные фото — как есть (без
+  // сетевых проб в браузере); синхронно с пре-рендером (resolveEventImages).
+  const image =
+    !absolute || isTelegramCdn(absolute) ? `${SITE_URL}/logo.png` : absolute;
   apply({
     title,
     description,

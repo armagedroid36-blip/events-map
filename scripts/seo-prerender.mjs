@@ -639,6 +639,133 @@ function absPhoto(p) {
   return /^https?:\/\//i.test(s) ? s : `${SUPABASE_URL}/storage/v1/object/public/photos/${s}`;
 }
 
+// --- Картинки событий: только ЖИВЫЕ URL в og:image и JSON-LD image ---
+
+// Параллельность проб доступности фотографий (см. resolveEventImages)
+const IMAGE_PROBE_CONCURRENCY = 8;
+// Таймаут одной пробы, мс (дольше — картинка считается зависшей/мёртвой)
+const IMAGE_PROBE_TIMEOUT_MS = 6000;
+
+/** hostname URL в нижнем регистре ('' при невалидном URL) */
+function urlHost(u) {
+  try {
+    return new URL(u).hostname.toLowerCase();
+  } catch {
+    return '';
+  }
+}
+
+/** Telegram CDN (cdn4/cdn5.telesco.pe и др.): ссылки ПОДПИСАННЫЕ и истекают —
+ * основной источник мёртвых og:image. Такие URL заменяются на LOGO_URL БЕЗ
+ * пробы: «живой сейчас» ничего не гарантирует (проверено — ссылка отдавала
+ * 200/ image/* во время сборки и 404 через минуты). */
+function isTelegramCdn(url) {
+  const host = urlHost(url);
+  return host === 'telesco.pe' || host.endsWith('.telesco.pe');
+}
+
+/**
+ * Проба доступности картинки: GET с Range: bytes=0-0 (сервер отдаёт заголовки
+ * и минимум тела) и таймаутом IMAGE_PROBE_TIMEOUT_MS. Живая = статус 2xx И
+ * Content-Type image/*. Сетевая ошибка/таймаут — один повтор (частая причина —
+ * обрыв соединения, а не мёртвый URL). Возврат {ok, net, status}.
+ */
+async function probeImage(url) {
+  let last;
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const res = await fetch(url, {
+        method: 'GET',
+        redirect: 'follow',
+        headers: { Range: 'bytes=0-0', Accept: 'image/*,*/*;q=0.8' },
+        signal: AbortSignal.timeout(IMAGE_PROBE_TIMEOUT_MS),
+      });
+      // Тело не нужно (Range 0-0; часть серверов игнорирует Range и шлёт файл
+      // целиком) — сразу закрываем поток, чтобы не тянуть мегабайты.
+      try {
+        await res.body?.cancel();
+      } catch {
+        /* поток уже закрыт — не важно */
+      }
+      const status = res.status;
+      const contentType = String(res.headers.get('content-type') || '').toLowerCase();
+      if (status < 200 || status >= 300) return { ok: false, net: false, status };
+      if (!contentType.startsWith('image/')) return { ok: false, net: false, status };
+      return { ok: true, net: false, status };
+    } catch (e) {
+      last = e;
+      if (attempt === 0) await new Promise((r) => setTimeout(r, 300));
+    }
+  }
+  return { ok: false, net: true, status: null, error: last };
+}
+
+/**
+ * Карта «URL картинки → живой URL» по всем событиям сборки. Ключ — абсолютный
+ * URL, как его видит страница (absPhoto: http(s) как есть, путь в bucket →
+ * storage-URL). Живые ссылки остаются собой; пустое фото, ссылки Telegram CDN
+ * (без пробы — см. isTelegramCdn) и провалившие пробу → LOGO_URL. Пробы только
+ * для УНИКАЛЬНЫХ URL, конкурентность IMAGE_PROBE_CONCURRENCY.
+ * Защита: если >=80% проб упали сетевой ошибкой (в сборке нет внешней сети) —
+ * возвращаем null: подмена в ЭТОМ билде отключена (прежнее поведение: фото как
+ * есть, пусто → логотип), в лог warning.
+ */
+async function resolveEventImages(events) {
+  const urls = new Set();
+  for (const ev of events) {
+    const abs = absPhoto(Array.isArray(ev.photos) ? ev.photos[0] : '');
+    if (abs) urls.add(abs);
+  }
+  const map = new Map();
+  const telegram = [];
+  const toProbe = [];
+  for (const url of urls) {
+    if (isTelegramCdn(url)) telegram.push(url);
+    else toProbe.push(url);
+  }
+  for (const url of telegram) map.set(url, LOGO_URL);
+  let dead = 0;
+  let netErrors = 0;
+  let next = 0;
+  const worker = async () => {
+    while (next < toProbe.length) {
+      const url = toProbe[next];
+      next += 1;
+      const r = await probeImage(url);
+      if (r.ok) {
+        map.set(url, url);
+      } else {
+        map.set(url, LOGO_URL);
+        dead += 1;
+        if (r.net) netErrors += 1;
+      }
+    }
+  };
+  await Promise.all(Array.from({ length: IMAGE_PROBE_CONCURRENCY }, worker));
+  console.log(
+    `[images] probed ${toProbe.length} unique, dead ${dead + telegram.length} -> LOGO_URL (Telegram CDN без пробы: ${telegram.length}, из них провал пробы: ${dead})`,
+  );
+  if (toProbe.length >= 10 && netErrors / toProbe.length >= 0.8) {
+    console.warn(
+      `[images] ${netErrors}/${toProbe.length} проб — сетевые ошибки: похоже, в сборке нет внешней сети. Подмена картинок ОТКЛЮЧЕНА (прежнее поведение).`,
+    );
+    return null;
+  }
+  return map;
+}
+
+/**
+ * og:image и JSON-LD image события — ОДИН и тот же URL: результат проб
+ * (resolveEventImages). Пустое фото → LOGO_URL. map === null (сеть недоступна в
+ * сборке) → прежнее поведение (абсолютный URL фото как есть, пусто → логотип).
+ */
+function eventImage(ev, map) {
+  const abs = absPhoto(Array.isArray(ev.photos) ? ev.photos[0] : '');
+  if (!abs) return LOGO_URL;
+  if (!map) return abs;
+  return map.get(abs) || abs;
+}
+
 const RU_MONTHS = [
   'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
   'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря',
@@ -908,8 +1035,10 @@ function placeLabel(address, ev, lang) {
  * адрес/город, первое фото, цена. url — канонический URL события (со слэшем).
  * lang='en' (для /en/event/...): name = title_en||title, описание =
  * description_en||description, Breadcrumb Home > <City EN> > title_en.
+ * image — картинка для JSON-LD (ЖИВОЙ URL из resolveEventImages: og:image и
+ * image — один и тот же URL); не передан → прежнее поведение absPhoto(photos[0]).
  */
-function eventJsonLd(ev, url, lang = 'ru') {
+function eventJsonLd(ev, url, lang = 'ru', image = null) {
   const en = lang === 'en';
   const city = cityLabel(ev.city, lang);
   const address = typeof ev.address === 'string' ? ev.address.trim() : '';
@@ -945,7 +1074,8 @@ function eventJsonLd(ev, url, lang = 'ru') {
     : ev.description_ru || ev.description || ev.description_en || '';
   const orgName =
     typeof ev.org_display_name === 'string' ? ev.org_display_name.trim() : '';
-  const photo = Array.isArray(ev.photos) ? absPhoto(ev.photos[0]) : '';
+  const photo =
+    image != null ? image : Array.isArray(ev.photos) ? absPhoto(ev.photos[0]) : '';
 
   // startDate повторяющихся событий — ближайшее БУДУЩЕЕ вхождение на дату
   // сборки (иначе в JSON-LD уходит первое вхождение серии, часто в прошлом,
@@ -1624,6 +1754,13 @@ async function main() {
   const activeIds = new Set(events.map((e) => String(e.id).toLowerCase()));
   const linkCtx = (context) => ({ activeIds, context });
 
+  // Картинки событий: og:image и JSON-LD image должны указывать на ЖИВОЕ
+  // изображение (мёртвая ссылка = пустое превью при шаринге и Event без
+  // картинки в rich-результате). Пробы — ДО генерации страниц, только для
+  // уникальных URL: [images] probed N unique, dead M -> LOGO_URL. null —
+  // сборка без внешней сети, подмена отключена (см. resolveEventImages).
+  const imageMap = await resolveEventImages(events);
+
   const baseHtml = readFileSync(join(DIST, 'index.html'), 'utf8');
   const locs = [`${SITE_URL}/`];
   // <lastmod> для sitemap: по умолчанию дата сборки (TODAY_ISO); статьи блога
@@ -1778,7 +1915,9 @@ async function main() {
     const date = ruDate(ev.start_date);
     const prefix = [city, date].filter(Boolean).join(', ');
     const description = snippet(prefix ? `${prefix}. ${ruText}` : ruText, 160);
-    const photo = Array.isArray(ev.photos) ? absPhoto(ev.photos[0]) : '';
+    // og:image и JSON-LD image — ОДИН и тот же ЖИВОЙ URL (resolveEventImages):
+    // мёртвое фото (telesco.pe, 404, не image/*) → логотип сайта
+    const evImage = eventImage(ev, imageMap);
     const hreflangRu = hasEn
       ? [
           { hreflang: 'ru', href: url },
@@ -1793,8 +1932,8 @@ async function main() {
       ogTitle: title,
       ogDescription: description,
       ogUrl: url,
-      ogImage: photo || LOGO_URL,
-      jsonLd: eventJsonLd(ev, url),
+      ogImage: evImage,
+      jsonLd: eventJsonLd(ev, url, 'ru', evImage),
       ...(hasEn ? { hreflang: hreflangRu } : {}),
       bodySeo: eventSeoHtml(ev, url, 'ru', sibs),
     });
@@ -1825,8 +1964,8 @@ async function main() {
         ogTitle: titleEn,
         ogDescription: descriptionEn,
         ogUrl: enUrl,
-        ogImage: photo || LOGO_URL,
-        jsonLd: eventJsonLd(ev, enUrl, 'en'),
+        ogImage: evImage,
+        jsonLd: eventJsonLd(ev, enUrl, 'en', evImage),
         hreflang: [
           { hreflang: 'en', href: enUrl },
           { hreflang: 'ru', href: url },
