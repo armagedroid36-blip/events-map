@@ -245,6 +245,7 @@ export default {
     recurrenceWeekly: 'Каждую неделю: {{days}}',
     recurrenceUntil: 'до {{date}}',
     seriesDates: 'Другие даты серии:',
+    similarEvents: 'Похожие события',
     breadcrumbs: 'Хлебные крошки',
     crumbHome: 'Главная',
     moreInCity: 'Ещё события в {{city}}:',

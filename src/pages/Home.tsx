@@ -19,6 +19,7 @@ import { eventCountry } from '../lib/countries';
 import { DEFAULT_FILTERS, eventMatchesFilters } from '../lib/eventFilters';
 import { navigate, slugify } from '../lib/navigate';
 import { seriesSiblings } from '../lib/series';
+import { similarEvents } from '../lib/similar';
 import { nextOccurrenceDate } from '../lib/recurrence';
 import { todayIso } from '../lib/dates';
 import { cityPath } from '../lib/address';
@@ -544,6 +545,15 @@ export default function Home({
     [selected, events],
   );
 
+  // Похожие события для открытой карточки (тот же город + та же категория):
+  // считаем по уже загруженному списку, без запросов (lib/similar — зеркало
+  // логики scripts/seo-prerender.mjs, гейт MIN_SIMILAR внутри). Блок
+  // выводится только на странице события (EventCard, titleAsH1).
+  const selectedSimilar = useMemo(
+    () => (selected ? similarEvents(selected, events, seoLang) : []),
+    [selected, events, seoLang],
+  );
+
   // События на видимом участке карты (bounds) + фильтры.
   // Без лимита: список и счётчик кнопки показывают ВСЕ события области.
   const onMapEvents = useMemo(() => {
@@ -975,6 +985,7 @@ export default function Home({
               // что в статике: <MIN_CATEGORY_EVENTS событий — страницы нет)
               categoryLink={selectedCategoryLink}
               seriesEvents={selectedSeries}
+              similarEvents={selectedSimilar}
             />
           </div>
           <button

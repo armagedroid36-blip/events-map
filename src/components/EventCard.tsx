@@ -149,6 +149,12 @@ interface Props {
    *  MIN_CATEGORY_EVENTS считает Home по загруженному набору). Не передан —
    *  ссылки нет (карточки в админке, избранном и списках). */
   categoryLink?: { href: string; label: string } | null;
+  /** Похожие события — другие активные события того же города И той же
+   *  категории (lib/similar.similarEvents, порядок — по возрастанию даты).
+   *  Блок «Похожие события» выводится только на странице события
+   *  (titleAsH1), как в статике (scripts/seo-prerender.mjs). Не передан или
+   *  пуст — блока нет. */
+  similarEvents?: EventItem[];
 }
 
 /** Полный URL фото: загруженные файлы хранятся как пути в хранилище */
@@ -546,6 +552,7 @@ export default function EventCard({
   titleAsH1,
   seriesEvents,
   categoryLink,
+  similarEvents,
 }: Props) {
   const { t, i18n } = useTranslation();
   const [lightbox, setLightbox] = useState<number | null>(null);
@@ -773,6 +780,28 @@ export default function EventCard({
             </span>
           ))}
         </p>
+      ) : null}
+
+      {/* Похожие события: тот же город + та же категория (список приходит из
+          Home — lib/similar, запросов нет). Только на странице события
+          (titleAsH1) — как в статике (scripts/seo-prerender.mjs,
+          similarEventsHtml): h2 + список со ссылкой и <time datetime>. */}
+      {titleAsH1 && similarEvents?.length ? (
+        <div className="mb-2">
+          <h2 className="text-sm font-medium text-gray-600">{t('card.similarEvents')}</h2>
+          <ul className="mt-1 space-y-0.5">
+            {similarEvents.map((ev) => (
+              <li key={ev.id}>
+                <a href={eventPath(ev)} className="text-sm text-[#0F766E] hover:underline">
+                  {localizedText(ev.title, ev.title_ru, ev.title_en, ev.source_lang, lang)}{' '}
+                  <time dateTime={occurrenceDate(ev)} className="text-gray-500">
+                    {formatDate(occurrenceDate(ev), lang)}
+                  </time>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
       ) : null}
 
       {/* Адрес: клик открывает Google Maps. Если адреса нет, но координаты есть

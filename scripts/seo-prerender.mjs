@@ -1685,6 +1685,99 @@ function seriesDatesHtml(sibs, lang = 'ru') {
   ].join('\n');
 }
 
+// --- Похожие события: тот же город + та же категория (промпт Z, план §4.1.4) ---
+// Внутренняя перелинковка говорящих соседей: на странице события — блок
+// «Похожие события»/«Similar events» со ссылками на другие активные события
+// того же города (cityCrumb) И той же категории.
+
+// Сколько похожих событий максимум в блоке
+const MAX_SIMILAR = 6;
+// Минимум кандидатов, при котором блок выводится (анти-тонкий контент)
+const MIN_SIMILAR = 3;
+
+/** Группы «город × категория» по всему активному набору: Map(cellKey → события).
+ * Те же требования к событию, что у посадочных категорий: распознанный город
+ * (cityCrumb), заполненная категория и непустое название. */
+function buildSimilarGroups(events) {
+  const groups = new Map();
+  for (const ev of events) {
+    if (!ev || typeof ev.id !== 'string') continue;
+    if (typeof ev.title !== 'string' || !ev.title) continue;
+    const crumb = cityCrumb(ev.city);
+    if (!crumb || typeof ev.category_id !== 'string' || !ev.category_id) continue;
+    const k = cellKey(crumb.path, ev.category_id);
+    if (!groups.has(k)) groups.set(k, []);
+    groups.get(k).push(ev);
+  }
+  return groups;
+}
+
+/**
+ * Похожие события для страницы события: другие активные события того же
+ * города И той же категории, кроме самого события и дат его серии (sibs —
+ * они уже показаны в блоке «Другие даты серии»). Кандидаты сортируются по
+ * близости даты вхождения к дате страницы (при равной разнице — более ранняя
+ * дата первой), берётся не больше MAX_SIMILAR, а вывод идёт по возрастанию
+ * даты (см. similarEventsHtml). Меньше MIN_SIMILAR кандидатов — пусто.
+ * lang='en' — только события с EN-страницей (иначе ссылка вела бы в 404 на
+ * /en/event/…). Логика зеркальна src/lib/similar.ts — менять синхронно.
+ */
+function similarItems(ev, lang, groups, sibs) {
+  const crumb = cityCrumb(ev.city);
+  if (!crumb || typeof ev.category_id !== 'string' || !ev.category_id) return [];
+  const group = groups.get(cellKey(crumb.path, ev.category_id)) ?? [];
+  const skip = new Set((sibs ?? []).map((s) => s.id));
+  const own = occurrence(ev);
+  const en = lang === 'en';
+  const items = group
+    .filter(
+      (o) =>
+        o.id !== ev.id &&
+        !skip.has(o.id) &&
+        (!en || Boolean(o.title_en) || o.source_lang === 'en'),
+    )
+    .map((o) => ({ ev: o, occ: occurrence(o) }));
+  if (items.length < MIN_SIMILAR) return [];
+  return items
+    .sort((a, b) => {
+      const da = Math.abs(dayGap(a.occ, own));
+      const db = Math.abs(dayGap(b.occ, own));
+      if (da !== db) return da - db;
+      return a.occ.localeCompare(b.occ);
+    })
+    .slice(0, MAX_SIMILAR)
+    .sort((a, b) => a.occ.localeCompare(b.occ))
+    .map((x) => x.ev);
+}
+
+/**
+ * Блок «Похожие события»/«Similar events» — h2 + <ul><li><a><time> (разметка
+ * как у блока «Другие даты серии»): название события-цели и дата его
+ * ближайшего вхождения. Ссылки относительные своего языка (/event/… и
+ * /en/event/…) — все ведут на существующие страницы (гейт MIN_SIMILAR + фильтр
+ * EN-версии в similarItems). Пусто — блока нет.
+ */
+function similarEventsHtml(items, lang = 'ru') {
+  const en = lang === 'en';
+  if (!items || !items.length) return '';
+  const rows = items.map((s) => {
+    const date = occurrence(s);
+    const slug = en ? slugify(s.title_en || s.title) : slugify(s.title);
+    const href = en ? `/en/event/${s.id}/${slug}/` : `/event/${s.id}/${slug}/`;
+    const name = en
+      ? s.title_en || s.title || ''
+      : s.title_ru || s.title || s.title_en || '';
+    const text = en ? enDate(date) : ruDate(date);
+    return `    <li><a href="${esc(href)}">${esc(name)} <time datetime="${esc(date)}">${esc(text)}</time></a></li>`;
+  });
+  return [
+    `  <h2>${en ? 'Similar events' : 'Похожие события'}</h2>`,
+    '  <ul>',
+    ...rows,
+    '  </ul>',
+  ].join('\n');
+}
+
 /** Блок перелинковки на городской странице: «Категории в городе» — ссылки на
  * посадочные категорий, прошедшие гейт (только существующие страницы, все
  * отдают 200). Пусто → блока нет. */
@@ -1757,8 +1850,11 @@ function eventBreadcrumbHtml(ev, lang = 'ru', name = '', catLink = null) {
  * sibs — соседи серии (другие даты того же события, см. buildSeries): в конце
  * блока добавляется список «Другие даты серии»/«Other dates in this series»
  * со ссылками на их страницы.
+ * similar — похожие события (тот же город + та же категория, см. similarItems):
+ * после серии добавляется блок «Похожие события»/«Similar events» со ссылками
+ * на них; пусто — блока нет.
  */
-function eventSeoHtml(ev, url, lang = 'ru', sibs = [], catLink = null) {
+function eventSeoHtml(ev, url, lang = 'ru', sibs = [], catLink = null, similar = []) {
   const en = lang === 'en';
   const name = en
     ? ev.title_en || ev.title || ''
@@ -1823,6 +1919,9 @@ function eventSeoHtml(ev, url, lang = 'ru', sibs = [], catLink = null) {
   lines.push(eventBreadcrumbHtml(ev, lang, name, catLink));
   const series = seriesDatesHtml(sibs, lang);
   if (series) lines.push(series);
+  // Похожие события (тот же город + та же категория) — после блока серии
+  const similarHtml = similarEventsHtml(similar, lang);
+  if (similarHtml) lines.push(similarHtml);
   lines.push('</div>', '');
   return lines.join('\n');
 }
@@ -2910,6 +3009,11 @@ async function main() {
   console.log(
     `  серии: ${series.seriesCount}, страниц с блоком дат: ${series.pagesWithBlock}`,
   );
+  // Похожие события (промпт Z): группы «город × категория» считаются один раз
+  // по всему активному набору, сюда приходит только готовый список для страницы
+  const similarGroups = buildSimilarGroups(events);
+  let similarRuPages = 0;
+  let similarEnPages = 0;
 
   const pageEvents = [];
   let pageEnEvents = 0;
@@ -2922,6 +3026,10 @@ async function main() {
     const enUrl = `${SITE_URL}/${enPath}/`;
     const city = typeof ev.city === 'string' ? ev.city.trim() : '';
     const sibs = series.byId.get(ev.id) ?? [];
+    // Похожие события ЭТОГО языка: EN-страница ссылается только на события с
+    // EN-версией (иначе 404), гейт MIN_SIMILAR внутри similarItems
+    const similarRu = similarItems(ev, 'ru', similarGroups, sibs);
+    if (similarRu.length) similarRuPages += 1;
     // Дата ближайшего вхождения — в title/og:title: внутри серии («одно
     // название + одно место, много дат») заголовки без даты совпадали.
     // Дата идёт ДО города — при обрезке snippet(…, 65) город режется первым.
@@ -2955,7 +3063,7 @@ async function main() {
       ogImage: evImage,
       jsonLd: eventJsonLd(ev, url, 'ru', evImage),
       ...(hasEn ? { hreflang: hreflangRu } : {}),
-      bodySeo: eventSeoHtml(ev, url, 'ru', sibs, eventCategoryLink(ev, 'ru', cells)),
+      bodySeo: eventSeoHtml(ev, url, 'ru', sibs, eventCategoryLink(ev, 'ru', cells), similarRu),
     });
     locs.push(url);
     pageEvents.push(path);
@@ -2976,6 +3084,8 @@ async function main() {
       const titleEn =
         snippet([`${nameEn} — ${enDate(occEn)}`, cityEn].filter(Boolean).join(' · '), 65) ||
         'Event';
+      const similarEn = similarItems(ev, 'en', similarGroups, sibs);
+      if (similarEn.length) similarEnPages += 1;
       writePage(baseHtml, enPath, {
         lang: 'en',
         title: titleEn,
@@ -2991,7 +3101,7 @@ async function main() {
           { hreflang: 'ru', href: url },
           { hreflang: 'x-default', href: enRoot },
         ],
-        bodySeo: eventSeoHtml(ev, enUrl, 'en', sibs, eventCategoryLink(ev, 'en', cells)),
+        bodySeo: eventSeoHtml(ev, enUrl, 'en', sibs, eventCategoryLink(ev, 'en', cells), similarEn),
       });
       locs.push(enUrl);
       hreflangPairs.set(url, enUrl);
@@ -3000,6 +3110,9 @@ async function main() {
   }
   console.log(
     `  событий: ${pageEvents.length}, EN-событий: ${pageEnEvents}, страниц всего: ${locs.length}`,
+  );
+  console.log(
+    `  похожие события: страниц с блоком RU ${similarRuPages}, EN ${similarEnPages}`,
   );
 
   // Организаторы: /org/<id> — публичные профили организаторов, у которых в

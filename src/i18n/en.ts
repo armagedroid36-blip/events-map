@@ -244,6 +244,7 @@ export default {
     recurrenceWeekly: 'Weekly: {{days}}',
     recurrenceUntil: 'until {{date}}',
     seriesDates: 'Other dates in this series:',
+    similarEvents: 'Similar events',
     breadcrumbs: 'Breadcrumbs',
     crumbHome: 'Home',
     moreInCity: 'More events in {{city}}:',
