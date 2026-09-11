@@ -792,6 +792,20 @@ const CITY_NAME_EN = {
 };
 
 /**
+ * Имя города для страницы языка lang: RU — как в данных (ev.city), EN — из
+ * CITY_NAME_EN по распознанному cityCrumb (Нячанг→Nha Trang, Дананг→Da Nang,
+ * Бали и районы→Bali). Город не распознан → возвращаем исходную строку
+ * (не пустую), локализуется только название города, свободный текст адреса
+ * (улица/заведение) остаётся как в данных.
+ */
+function cityLabel(rawCity, lang) {
+  const raw = String(rawCity ?? '').trim();
+  if (lang !== 'en') return raw;
+  const crumb = cityCrumb(rawCity);
+  return (crumb && CITY_NAME_EN[crumb.path]) || raw;
+}
+
+/**
  * JSON-LD Event для страницы события: @graph из Event (поля как раньше) и
  * BreadcrumbList (Главная > город, если распознан > название события как в
  * h1 статического блока). Данные — из ответа list_active_events
@@ -802,7 +816,7 @@ const CITY_NAME_EN = {
  */
 function eventJsonLd(ev, url, lang = 'ru') {
   const en = lang === 'en';
-  const city = typeof ev.city === 'string' ? ev.city.trim() : '';
+  const city = cityLabel(ev.city, lang);
   const address = typeof ev.address === 'string' ? ev.address.trim() : '';
   const country = typeof ev.country === 'string' ? ev.country.trim() : '';
   const lat = Number(ev.lat);
@@ -1395,7 +1409,9 @@ function eventSeoHtml(ev, url, lang = 'ru', sibs = []) {
     : ev.title_ru || ev.title || ev.title_en || '';
   const sd = nextOccurrenceDate(ev, TODAY_ISO);
   const time = typeof ev.start_time === 'string' ? ev.start_time.trim() : '';
-  const city = typeof ev.city === 'string' ? ev.city.trim() : '';
+  // Город для видимого блока места: RU — как в данных, EN — английское имя
+  // (Нячанг→Nha Trang, Дананг→Da Nang, Бали/районы→Bali), см. cityLabel.
+  const cityL = cityLabel(ev.city, lang);
   const address = typeof ev.address === 'string' ? ev.address.trim() : '';
   const price = ev.price != null ? Number(ev.price) : null;
   const currency = (
@@ -1418,16 +1434,17 @@ function eventSeoHtml(ev, url, lang = 'ru', sibs = []) {
   }
   // Место: адрес и город, если заполнены (страна в событиях — код, не
   // название). Адрес сборщика часто уже заканчивается городом
-  // («Lila Coffee, Нячанг») — город не дублируем.
+  // («Lila Coffee, Нячанг» / EN: «Lila Coffee, Nha Trang») — город не
+  // дублируем. Сравнение — с локализованным именем города (cityL).
   let place = address;
   if (!place) {
-    place = city;
+    place = cityL;
   } else if (
-    city &&
-    !place.toLowerCase().endsWith(`, ${city.toLowerCase()}`) &&
-    place.toLowerCase() !== city.toLowerCase()
+    cityL &&
+    !place.toLowerCase().endsWith(`, ${cityL.toLowerCase()}`) &&
+    place.toLowerCase() !== cityL.toLowerCase()
   ) {
-    place = `${place}, ${city}`;
+    place = `${place}, ${cityL}`;
   }
   if (place) lines.push(`  <address>${esc(place)}</address>`);
   // Цена: платная — «{price} {currency}»; price 0 (или не указана) + donation —
