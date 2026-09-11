@@ -12,7 +12,7 @@ import { formatDate, formatTimeHM } from '../lib/dates';
 import { recurrenceLabel } from '../lib/recurrence';
 import { photoUrl } from '../lib/api';
 import { isValidCoords } from '../lib/coords';
-import { placeLabel } from '../lib/address';
+import { cityNameEn, placeLabel } from '../lib/address';
 import { nextZ } from '../lib/zindex';
 import { navigate, slugify } from '../lib/navigate';
 import { occurrenceDate } from '../lib/series';
@@ -556,6 +556,11 @@ export default function EventCard({
 
   const title = localizedText(event.title, event.title_ru, event.title_en, event.source_lang, lang);
 
+  // Город в строке метаданных: RU — как в данных, EN — английское имя
+  // (Нячанг→Nha Trang, Дананг→Da Nang, Бали/районы→Bali), см. lib/address.
+  // Не распознан — исходная строка (не пустая), как в placeLabel.
+  const cityLabel = lang === 'ru' ? event.city : (cityNameEn(event.city) || event.city);
+
   // URL события для «Поделиться» и клика по названию: при EN-интерфейсе и
   // наличии EN-версии события (title_en или исходник en) — /en/event/<id>/…,
   // иначе RU /event/<id>/… (п. 1.2/2.4 промпта R)
@@ -669,7 +674,7 @@ export default function EventCard({
           </>
         )}
         <span className="text-gray-300">•</span>
-        <span>{event.city}</span>
+        <span>{cityLabel}</span>
         {cat && (
           <>
             <span className="text-gray-300">•</span>

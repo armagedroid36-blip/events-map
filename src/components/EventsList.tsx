@@ -7,6 +7,7 @@ import type { ReactNode } from 'react';
 import type { Category, EventItem } from '../lib/types';
 import { localizedText } from '../lib/translate';
 import { formatTimeHM, todayIso } from '../lib/dates';
+import { cityNameEn } from '../lib/address';
 import { nextOccurrenceDate } from '../lib/recurrence';
 import FavoriteButton from './FavoriteButton';
 
@@ -164,7 +165,11 @@ export default function EventsList({ events, categories, selectedId, onSelect, f
           const cat = categories.find((c) => c.id === ev.category_id);
           const title = localizedText(ev.title, ev.title_ru, ev.title_en, ev.source_lang, lang);
           const isSelected = ev.id === selectedId;
-          const meta = [occurrenceLine(occ, ev.start_time, lang, weekdayNames), ev.city]
+          // Город в мета-строке: RU — как в данных, EN — английское имя
+          // (Нячанг→Nha Trang, Дананг→Da Nang, Бали/районы→Bali); не
+          // распознан — исходная строка (fallback, не пустая) — lib/address.
+          const cityText = lang === 'ru' ? ev.city : (cityNameEn(ev.city) || ev.city);
+          const meta = [occurrenceLine(occ, ev.start_time, lang, weekdayNames), cityText]
             .filter(Boolean)
             .join(' • ');
           return (
