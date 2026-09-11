@@ -24,6 +24,7 @@ import { nextOccurrenceDate } from '../lib/recurrence';
 import { todayIso } from '../lib/dates';
 import { cityPath } from '../lib/address';
 import type { CityPath } from '../lib/address';
+import { MAP_INTRO_KEY, MOBILE_INTRO_QUERY, dropIntroSeoBlocks } from '../lib/mobileIntro';
 import {
   categoriesBlockTitle,
   categoryCells,
@@ -65,9 +66,9 @@ function isDefaultFilters(f: Filters): boolean {
   );
 }
 
-// localStorage-ключ «мобильный интро-экран показан» (версионируется, чтобы
-// сбросить показ при изменении дизайна/текстов: смена суффикса _vN)
-const MAP_INTRO_KEY = 'map_intro_dismissed_v1';
+// localStorage-ключ «мобильный интро-экран показан» и медиазапрос мобильного
+// интро живут в lib/mobileIntro.ts — от того же расчёта зависит судьба
+// статических SEO-блоков (они остаются в DOM, пока интро активно).
 
 // Интро-экран допустим только на страницах с картой (главная и города,
 // RU и EN: '/en' и '/en/<city>' — как '/' и '/<city>').
@@ -185,10 +186,10 @@ export default function Home({
   });
   const [introGone, setIntroGone] = useState<boolean>(introDismissed);
   const [isMobile, setIsMobile] = useState<boolean>(() =>
-    window.matchMedia('(max-width: 767px)').matches,
+    window.matchMedia(MOBILE_INTRO_QUERY).matches,
   );
   useEffect(() => {
-    const m = window.matchMedia('(max-width: 767px)');
+    const m = window.matchMedia(MOBILE_INTRO_QUERY);
     const onViewport = (e: MediaQueryListEvent) => setIsMobile(e.matches);
     m.addEventListener('change', onViewport);
     return () => m.removeEventListener('change', onViewport);
@@ -461,6 +462,14 @@ export default function Home({
     !formOpen;
   const introShown = isMobile && !introGone && introPathEligible;
   const introActive = introShown && !introDismissed;
+  // Пока интро активно, в DOM живут перенесённые main.tsx статические
+  // SEO-блоки главной/города (h1 + городской текст + внутренние ссылки — их
+  // видит краулер; см. lib/mobileIntro.ts). Как только интро закрыто (клик
+  // «Открыть карту») или окно стало десктопным, SPA рисует свои блоки, а
+  // перенесённые удаляем — иначе на странице было бы два h1.
+  useEffect(() => {
+    if (!introActive) dropIntroSeoBlocks();
+  }, [introActive]);
   // Статичное превью карты под текущую страницу: своё на город, общее — на главную
   const introPreview = city
     ? `/images/map-preview-${slugify(city)}.webp`

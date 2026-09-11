@@ -5,6 +5,7 @@ import './i18n';
 import './index.css';
 import App from './App';
 import { AuthProvider } from './lib/auth';
+import { keepSeoBlocksForIntro } from './lib/mobileIntro';
 
 // Статические SEO-блоки кладёт в HTML пре-рендер (scripts/seo-prerender.mjs):
 // главная (h1+абзацы+ссылки, id=seo-home-block), городские страницы
@@ -20,11 +21,13 @@ import { AuthProvider } from './lib/auth';
 // блоки удаляем — на странице должен остаться ровно один h1. Элементы есть
 // только на пре-рендеренных страницах (/ и bali/da-nang/nha-trang, /org/<id>,
 // /event/<id>/<slug>, /blog, /blog/<slug>, /for-organizers и /about).
-document
-  .querySelectorAll(
-    '#seo-home-block, #seo-city-block, #seo-category-block, #seo-org-block, #seo-event-block, #seo-article-block, #seo-b2b-block, #seo-about-block',
-  )
-  .forEach((el) => el.remove());
+//
+// ИСКЛЮЧЕНИЕ — мобильный интро-экран: краулер Googlebot smartphone ходит на
+// ~411px с пустым localStorage, а SPA в этом режиме не рисует ни городской
+// блок, ни главный. Тогда блоки главной/города не удаляются, а переезжают в
+// скрытый контейнер в конце <body> (см. lib/mobileIntro.ts) — Home удаляет их,
+// как только интро закрыто.
+keepSeoBlocksForIntro();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

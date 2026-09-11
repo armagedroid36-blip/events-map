@@ -41,6 +41,13 @@ export default function Header({ onOpenForm }: HeaderProps) {
   const navBlogLabel = lang === 'ru' ? 'Блог' : 'Blog';
   const navForOrgLabel = lang === 'ru' ? 'Для организаторов' : 'For organizers';
   const navAboutLabel = lang === 'ru' ? 'О проекте' : 'About';
+  // href публичных пунктов — КАНОНИЧЕСКИЕ URL страниц (со слэшем, как
+  // canonical в статике): настоящая ссылка нужна краулеру, который обходит DOM
+  // и <button> не видит. Переход по клику остаётся SPA-шным (navigate, без
+  // перезагрузки) — href и адрес клика совпадают.
+  const blogHref = lang === 'ru' ? '/blog/' : '/en/blog/';
+  const forOrgHref = lang === 'ru' ? '/for-organizers/' : '/en/for-organizers/';
+  const aboutHref = lang === 'ru' ? '/about/' : '/en/about/';
 
   // Путь без хвостового слэша (нормализация как normPath в App.tsx). Бренд —
   // h1 только на главной «/» (и EN-главной «/en»): на городских страницах
@@ -137,21 +144,21 @@ export default function Header({ onOpenForm }: HeaderProps) {
     if (window.location.hash !== '#/') window.location.hash = '#/';
   }
 
-  /** Переход в блог: на /en/blog при EN-интерфейсе, иначе /blog */
+  /** Переход в блог: на /en/blog/ при EN-интерфейсе, иначе /blog/ */
   function goBlog() {
-    navigate(lang === 'en' ? '/en/blog' : '/blog');
+    navigate(blogHref);
     setMenuOpen(false);
   }
 
-  /** Переход на B2B-страницу: /en/for-organizers при EN, иначе /for-organizers */
+  /** Переход на B2B-страницу: /en/for-organizers/ при EN, иначе /for-organizers/ */
   function goForOrganizers() {
-    navigate(lang === 'en' ? '/en/for-organizers' : '/for-organizers');
+    navigate(forOrgHref);
     setMenuOpen(false);
   }
 
-  /** Переход на страницу /about (EN — /en/about) */
+  /** Переход на страницу /about/ (EN — /en/about/) */
   function goAbout() {
-    navigate(lang === 'en' ? '/en/about' : '/about');
+    navigate(aboutHref);
     setMenuOpen(false);
   }
 
@@ -319,28 +326,40 @@ export default function Header({ onOpenForm }: HeaderProps) {
               навигации вынесены в нижнюю строку шапки (см. ряд 2 ниже),
               иначе кнопки не помещаются рядом с брендом и flex-wrap
               переносит их вразнобой. С sm+ — виден всегда. */}
-          <button
-            onClick={goBlog}
+          <a
+            href={blogHref}
+            onClick={(e) => {
+              e.preventDefault();
+              goBlog();
+            }}
             className="hidden rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900 sm:block"
           >
             {navBlogLabel}
-          </button>
+          </a>
           {/* «Для организаторов» — публичная B2B-страница (та же видимость,
               что у «Блога»: скрыт на <640px, в нижней строке) */}
-          <button
-            onClick={goForOrganizers}
+          <a
+            href={forOrgHref}
+            onClick={(e) => {
+              e.preventDefault();
+              goForOrganizers();
+            }}
             className="hidden rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900 sm:block"
           >
             {navForOrgLabel}
-          </button>
+          </a>
           {/* «О проекте» — публичная E-E-A-T-страница (та же видимость,
               что у «Блога»: скрыт на <640px, в нижней строке) */}
-          <button
-            onClick={goAbout}
+          <a
+            href={aboutHref}
+            onClick={(e) => {
+              e.preventDefault();
+              goAbout();
+            }}
             className="hidden rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900 sm:block"
           >
             {navAboutLabel}
-          </button>
+          </a>
           {/* Переключатель языка */}
           <button
             onClick={switchLang}
@@ -422,24 +441,36 @@ export default function Header({ onOpenForm }: HeaderProps) {
                         строке шапки (ряд 2) — дублей на одном экране нет.
                         С sm+ видны в меню как раньше (в шапке они тоже
                         видны — так было до переноса) */}
-                    <button
-                      onClick={goBlog}
+                    <a
+                      href={blogHref}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        goBlog();
+                      }}
                       className="hidden w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 sm:block"
                     >
                       {navBlogLabel}
-                    </button>
-                    <button
-                      onClick={goForOrganizers}
+                    </a>
+                    <a
+                      href={forOrgHref}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        goForOrganizers();
+                      }}
                       className="hidden w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 sm:block"
                     >
                       {navForOrgLabel}
-                    </button>
-                    <button
-                      onClick={goAbout}
+                    </a>
+                    <a
+                      href={aboutHref}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        goAbout();
+                      }}
                       className="hidden w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 sm:block"
                     >
                       {navAboutLabel}
-                    </button>
+                    </a>
                     <div className="my-1 border-t border-gray-100" />
                     {/* Политика и Контакты — видны в меню на мобильных (в шапке скрыты) */}
                     <button
@@ -499,24 +530,36 @@ export default function Header({ onOpenForm }: HeaderProps) {
           ResizeObserver'ом в useLayoutEffect — бургер-меню и панели
           Home позиционируются по --header-bottom ниже ОБЕИХ строк. */}
       <div className="flex flex-wrap items-center justify-center gap-1 px-2 pb-2 sm:hidden">
-        <button
-          onClick={goBlog}
+        <a
+          href={blogHref}
+          onClick={(e) => {
+            e.preventDefault();
+            goBlog();
+          }}
           className="rounded-md px-2 py-1 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900"
         >
           {navBlogLabel}
-        </button>
-        <button
-          onClick={goForOrganizers}
+        </a>
+        <a
+          href={forOrgHref}
+          onClick={(e) => {
+            e.preventDefault();
+            goForOrganizers();
+          }}
           className="rounded-md px-2 py-1 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900"
         >
           {navForOrgLabel}
-        </button>
-        <button
-          onClick={goAbout}
+        </a>
+        <a
+          href={aboutHref}
+          onClick={(e) => {
+            e.preventDefault();
+            goAbout();
+          }}
           className="rounded-md px-2 py-1 text-sm font-medium text-gray-700 hover:bg-white/70 hover:text-gray-900"
         >
           {navAboutLabel}
-        </button>
+        </a>
       </div>
 
       {authOpen && <AuthModal onClose={() => setAuthOpen(false)} />}
