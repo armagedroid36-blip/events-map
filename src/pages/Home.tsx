@@ -19,14 +19,34 @@ import { eventCountry } from '../lib/countries';
 import { DEFAULT_FILTERS, eventMatchesFilters } from '../lib/eventFilters';
 import { navigate, slugify } from '../lib/navigate';
 import { seriesSiblings } from '../lib/series';
+import { nextOccurrenceDate } from '../lib/recurrence';
+import { todayIso } from '../lib/dates';
+import { cityPath } from '../lib/address';
+import type { CityPath } from '../lib/address';
 import {
+  categoriesBlockTitle,
+  categoryCells,
+  categoryCityName,
+  categoryFaq,
+  categoryH1,
+  categoryIntro,
+  categoryPageExists,
+  categoryPageHref,
+  cellFacts,
+  cellItems,
+  otherCategoriesTitle,
+} from '../lib/categoryPages';
+import {
+  applyCategoryMeta,
   applyCityMeta,
   applyEventMeta,
   applyGenericMeta,
   applyHomeMeta,
+  isEnPath,
 } from '../lib/seo';
 import { config } from '../config';
 import { useAuth } from '../lib/auth';
+import NotFound from '../components/NotFound';
 import type { Category, EventItem, Filters } from '../lib/types';
 
 /** Фильтры ещё не заданы (ничего не ограничивает) */
@@ -56,23 +76,15 @@ function introEligiblePath(path: string): boolean {
   return config.quickLocations.some((q) => path === `/${slugify(q.labelEn)}`);
 }
 
-/** <head> под текущий маршрут (после закрытия карточки): город (/bali,
- *  /en/bali) или главная. На /event/<id>/... карточка закрывается переходом
- *  на '/', там мету поставит новый Home при монтировании. Язык страницы —
- *  из URL: префикс /en срезается только для поиска города, мета-функции
- *  (applyCityMeta/applyHomeMeta) сами видят /en в pathname. */
-function applyRouteMeta(): void {
-  const p = window.location.pathname;
-  const pub = p.startsWith('/en') ? p.replace(/^\/en/, '') || '/' : p;
-  const cityPath = config.quickLocations.find((q) => pub === `/${slugify(q.labelEn)}`);
-  if (cityPath) {
-    applyCityMeta(slugify(cityPath.labelEn));
-  } else if (!pub.startsWith('/event/')) {
-    applyHomeMeta();
-  }
-}
-
-export default function Home({ city, eventId }: { city?: string; eventId?: string }) {
+export default function Home({
+  city,
+  eventId,
+  categoryId,
+}: {
+  city?: string;
+  eventId?: string;
+  categoryId?: string;
+}) {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const ru = i18n.language.startsWith('ru');
@@ -232,8 +244,8 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
   // убираем её (и чистим старую hash-ссылку #/?e=, если вдруг осталась)
   function closeCard() {
     setSelected(null);
-    // <head>: возврат к мете текущего маршрута (город или главная)
-    applyRouteMeta();
+    // <head>: возврат к мете текущего маршрута (категория, город или главная)
+    applyCurrentMeta();
     if (window.location.pathname.startsWith('/event/')) {
       navigate(window.location.pathname.startsWith('/en/') ? '/en' : '/');
       return;
@@ -250,6 +262,101 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
     } catch (err) {
       console.error('Не удалось удалить событие:', err);
       alert('Не удалось удалить событие');
+    }
+  }
+
+  // --- Посадочные страницы «город × категория» (/bali/party/, Фаза 4) ---
+  // Язык публичной страницы = из URL (как в пре-рендере), не из i18n.
+  const seoLang: 'ru' | 'en' = isEnPath(window.location.pathname) ? 'en' : 'ru';
+  /** Путь города текущего маршрута (bali|da-nang|nha-trang) */
+  const pageCityPath: CityPath | null = city ? (cityPath(city) as CityPath | null) : null;
+  /** Счётчики ячеек «город × категория» по активному набору */
+  const cells = useMemo(() => categoryCells(events), [events]);
+  /** Категория маршрута (null — маршрут не категорийный или категории нет) */
+  const category = useMemo(
+    () => (categoryId ? (categories.find((c) => c.id === categoryId) ?? null) : null),
+    [categories, categoryId],
+  );
+  /** События ячейки, отсортированные по ближайшему вхождению */
+  const categoryCellItems = useMemo(
+    () =>
+      pageCityPath && categoryId
+        ? cellItems(events, pageCityPath, categoryId, (ev) => nextOccurrenceDate(ev, todayIso()))
+        : [],
+    [events, pageCityPath, categoryId],
+  );
+  /** Факты ячейки — из них собираются тексты и description (lib/categoryPages) */
+  const categoryFacts = useMemo(
+    () => (categoryCellItems.length ? cellFacts(categoryCellItems, seoLang) : null),
+    [categoryCellItems, seoLang],
+  );
+  /** Гейт MIN_CATEGORY_EVENTS: страница пары существует только с 3+ событиями */
+  const categoryPageOk =
+    !categoryId ||
+    (pageCityPath !== null && category !== null && categoryPageExists(cells, pageCityPath, categoryId));
+  // Пары без набора событий страницы не имеют — существующая 404-заглушка
+  const categoryNotFound = Boolean(categoryId) && !loading && !categoryPageOk;
+  /** Видимый блок ячейки (h1 + интро + FAQ) — как статический seo-category-block */
+  const categorySeo = useMemo(() => {
+    if (!pageCityPath || !category || !categoryFacts) return null;
+    return {
+      h1: categoryH1(category, pageCityPath, seoLang),
+      intro: categoryIntro(category, pageCityPath, seoLang, categoryFacts),
+      faq: categoryFaq(category, pageCityPath, seoLang, categoryFacts),
+      siblings: otherCategoriesTitle(pageCityPath, seoLang),
+    };
+  }, [pageCityPath, category, categoryFacts, seoLang]);
+  /** Категории города, прошедшие гейт (перелинковка hub/spoke: город → категории) */
+  const cityCategoryLinks = useMemo(
+    () =>
+      pageCityPath
+        ? categories
+            .filter((c) => categoryPageExists(cells, pageCityPath, c.id))
+            .map((c) => ({
+              id: c.id,
+              href: categoryPageHref(pageCityPath, c.id, seoLang),
+              label: `${c.emoji} ${seoLang === 'en' ? c.name_en : c.name_ru}`.trim(),
+            }))
+        : [],
+    [categories, cells, pageCityPath, seoLang],
+  );
+  /** Ссылка на категорию события (страница события) — только если страница
+   *  пары (город, категория) существует (тот же гейт, что в статике) */
+  const selectedCategoryLink = useMemo(() => {
+    if (!selected) return null;
+    // Ссылка живёт рядом со строкой «Ещё события в <город>: афиша» — она есть
+    // только на странице события (/event/ и /en/event/), как titleAsH1
+    const onEventPage =
+      window.location.pathname.startsWith('/event/') ||
+      window.location.pathname.startsWith('/en/event/');
+    if (!onEventPage) return null;
+    const cp = cityPath(selected.city) as CityPath | null;
+    const cat = categories.find((c) => c.id === selected.category_id);
+    if (!cp || !cat || !categoryPageExists(cells, cp, cat.id)) return null;
+    return {
+      href: categoryPageHref(cp, cat.id, seoLang),
+      label: `${cat.emoji} ${seoLang === 'en' ? cat.name_en : cat.name_ru}`.trim(),
+    };
+  }, [selected, categories, cells, seoLang]);
+
+  /** Мета текущего маршрута: категория (Фаза 4) → город → главная.
+   *  Категорийный маршрут без набора событий (гейт MIN_CATEGORY_EVENTS не
+   *  пройден) — страница отдаёт 404-заглушку, мета базовая (canonical/og
+   *  снимаются), как у неизвестных путей. */
+  function applyCurrentMeta(): void {
+    if (categoryId) {
+      if (pageCityPath && category && categoryFacts && categoryPageOk) {
+        applyCategoryMeta(pageCityPath, category, categoryFacts);
+      } else if (!loading) {
+        applyGenericMeta();
+      }
+      return;
+    }
+    if (city) {
+      const ql = config.quickLocations.find((q) => q.labelEn === city);
+      if (ql) applyCityMeta(slugify(ql.labelEn));
+    } else if (!eventId) {
+      applyHomeMeta();
     }
   }
 
@@ -314,16 +421,13 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
     // страницы (App пересоздаёт Home по key при смене маршрута)
   }, [eventId]);
 
-  // Мета <head> при монтировании: город (/bali) или главная. Маршрут события
-  // мету ставит сам после загрузки данных (selectEvent или «не найдено»)
+  // Мета <head> при монтировании: категория (/bali/party/, Фаза 4), город
+  // (/bali) или главная. Маршрут события мету ставит сам после загрузки данных
+  // (selectEvent или «не найдено»)
   useEffect(() => {
-    if (city) {
-      const ql = config.quickLocations.find((q) => q.labelEn === city);
-      if (ql) applyCityMeta(slugify(ql.labelEn));
-    } else if (!eventId) {
-      applyHomeMeta();
-    }
-  }, [city, eventId]);
+    applyCurrentMeta();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [city, eventId, categoryId, category, categoryFacts, categoryPageOk, loading]);
 
   // При размонтировании (смена маршрута) снимаем мету события/города — head
   // доедет до верного состояния эффектами нового маршрута (новый Home/App)
@@ -379,15 +483,54 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
     );
   }, [city, eventId, introActive]);
 
-  // Чистый URL города (/bali, /da-nang, /nha-trang): фильтр города + центр/zoom
+  // Чистый URL города (/bali, /da-nang, /nha-trang) или пары «город ×
+  // категория» (/bali/party/, Фаза 4): фильтр города + категории + центр/zoom.
+  // Категория ставится как фильтр ДО проверки гейта — если страницы пары нет,
+  // Home отдаёт 404-заглушку (проверка categoryNotFound ниже).
   useEffect(() => {
     if (!city) return;
     const ql = config.quickLocations.find((q) => q.labelEn === city);
     if (!ql) return;
-    setFilters((f) => ({ ...f, city: ql.labelEn }));
+    setFilters((f) => ({ ...f, city: ql.labelEn, ...(categoryId ? { categoryId } : {}) }));
     setCenter({ lat: ql.lat, lng: ql.lng });
     setZoom(ql.zoom);
-  }, [city]);
+  }, [city, categoryId]);
+
+  // Смена фильтров на «странице-посадке» (город или город × категория)
+  // обновляет URL — как требуют посадочные Фазы 4: сняли категорию → вернулись
+  // на афишу города, сменили город → URL другого города. replaceState, а не
+  // navigate: Home не перемонтируется (номер страницы для поисковиков уже
+  // статический), состояние фильтров и карты сохраняется.
+  // Первый прогон после загрузки пропускаем (флажок): к этому моменту фильтры
+  // маршрута ещё не применены (эффект выше только поставил их в очередь), и
+  // синхронизация по пустым фильтрам увела бы URL посадки на '/'.
+  const syncArmed = useRef(false);
+  useEffect(() => {
+    if (loading || selected || formOpen) return;
+    if (!syncArmed.current) {
+      syncArmed.current = true;
+      return;
+    }
+    const path = window.location.pathname;
+    const pub = isEnPath(path) ? path.replace(/^\/en/, '') || '/' : path;
+    // Только сами посадки: /<city>/ и /<city>/<category>/ (без /event/)
+    if (!/^\/[a-z0-9-]+(\/[a-z0-9-]+)?\/?$/.test(pub)) return;
+    if (!config.quickLocations.some((q) => pub === `/${slugify(q.labelEn)}` ||
+      pub.startsWith(`/${slugify(q.labelEn)}/`))) {
+      return;
+    }
+    const cp = cityPath(filters.city ?? '') as CityPath | null;
+    let next = seoLang === 'en' ? '/en' : '/';
+    if (cp) {
+      const catId = filters.categoryId && categoryPageExists(cells, cp, filters.categoryId)
+        ? filters.categoryId
+        : null;
+      next = catId ? categoryPageHref(cp, catId as string, seoLang) : `/${seoLang === 'en' ? 'en/' : ''}${cp}/`;
+    }
+    if (window.location.pathname !== next) {
+      window.history.replaceState(null, '', next);
+    }
+  }, [filters.city, filters.categoryId, cells, loading, selected, formOpen, seoLang]);
 
   // Применение фильтров: категория, период, город, ключевые слова
   const visible = useMemo(() => events.filter((ev) => eventMatchesFilters(ev, filters)), [
@@ -518,6 +661,13 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
         </div>
       </div>
     );
+  }
+
+  // Посадочная страница «город × категория» без набора событий (пара не прошла
+  // гейт MIN_CATEGORY_EVENTS) — существующая 404-заглушка, как у неизвестных
+  // путей: страницы у такой пары нет и в статике (вне sitemap).
+  if (categoryNotFound) {
+    return <NotFound />;
   }
 
   // Прямая ссылка на событие, которого нет (удалено/скрыто/завершено):
@@ -704,12 +854,14 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
         </div>
       )}
 
-      {/* Городской SEO-блок (h1 + интро + FAQ) — видимый текст страницы
-          /bali, /da-nang, /nha-trang. Единственный h1 городской страницы:
-          бренд в шапке на city-путях не h1 (Header.tsx). Скрывается, когда
-          открыты список событий / карточка / модалки — там свой контент.
-          FAQ в <details>: вопросы видны, ответы раскрываются по клику. */}
-      {citySeo && !introActive && !selected && !listOpen && !mobileFiltersOpen && !formOpen && !authOpen && (
+      {/* Городской SEO-блок (h1 + интро + FAQ + ссылки на категории) — видимый
+          текст страницы /bali, /da-nang, /nha-trang. Единственный h1 городской
+          страницы: бренд в шапке на city-путях не h1 (Header.tsx). Скрывается,
+          когда открыты список событий / карточка / модалки — там свой контент.
+          FAQ в <details>: вопросы видны, ответы раскрываются по клику.
+          На маршруте «город × категория» городского блока нет — вместо него
+          блок категории ниже (один h1 на страницу). */}
+      {citySeo && pageCityPath && !categoryId && !introActive && !selected && !listOpen && !mobileFiltersOpen && !formOpen && !authOpen && (
         <div
           id="city-seo-block"
           className="glass absolute inset-x-2 bottom-36 z-[1140] mx-auto max-h-[42vh] w-auto max-w-xl overflow-y-auto rounded-xl p-3 shadow-xl thin-scroll lg:inset-x-auto lg:right-4 lg:mx-0 lg:w-[400px] lg:max-w-[calc(100vw-2rem)] lg:bottom-24"
@@ -727,6 +879,83 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
               <p className="mt-1 text-sm leading-relaxed text-gray-600">{f.a}</p>
             </details>
           ))}
+          {/* Перелинковка hub/spoke: категории этого города, прошедшие гейт
+              (страницы существуют — битых ссылок нет). Ссылки как в статике
+              (citySeoHtml: блок «Категории в городе»). */}
+          {cityCategoryLinks.length > 0 && (
+            <p className="mt-2 text-xs leading-relaxed text-gray-600">
+              <span className="font-semibold text-gray-700">
+                {categoriesBlockTitle(pageCityPath, seoLang)}:
+              </span>{' '}
+              {cityCategoryLinks.map((l, i) => (
+                <span key={l.id}>
+                  {i > 0 && <span className="text-gray-300"> · </span>}
+                  <a href={l.href} className="text-[#0F766E] hover:underline">
+                    {l.label}
+                  </a>
+                </span>
+              ))}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* SEO-блок посадочной страницы «город × категория» (/bali/party/,
+          /en/bali/party/, Фаза 4): видимая крошка «Главная › город ›
+          категория» (та же иерархия, что BreadcrumbList в JSON-LD статики),
+          h1, интро и FAQ — тексты из единого источника lib/categoryPages
+          (те же строки пишет статический блок id=seo-category-block).
+          Один h1 на страницу: городской блок на этом маршруте скрыт. */}
+      {categorySeo && pageCityPath && category && !introActive && !selected && !listOpen && !mobileFiltersOpen && !formOpen && !authOpen && (
+        <div
+          id="seo-category-block"
+          className="glass absolute inset-x-2 bottom-36 z-[1140] mx-auto max-h-[42vh] w-auto max-w-xl overflow-y-auto rounded-xl p-3 shadow-xl thin-scroll lg:inset-x-auto lg:right-4 lg:mx-0 lg:w-[400px] lg:max-w-[calc(100vw-2rem)] lg:bottom-24"
+        >
+          <nav aria-label={seoLang === 'en' ? 'Breadcrumbs' : 'Хлебные крошки'}>
+            <p className="mb-1 text-xs text-gray-500">
+              <a href={seoLang === 'en' ? '/en/' : '/'} className="text-[#0F766E] hover:underline">
+                {seoLang === 'en' ? 'Home' : 'Главная'}
+              </a>
+              <span aria-hidden="true"> › </span>
+              <a
+                href={`/${seoLang === 'en' ? 'en/' : ''}${pageCityPath}/`}
+                className="text-[#0F766E] hover:underline"
+              >
+                {categoryCityName(pageCityPath, seoLang)}
+              </a>
+              <span aria-hidden="true"> › </span>
+              <span>{seoLang === 'en' ? category.name_en : category.name_ru}</span>
+            </p>
+          </nav>
+          <h1 className="text-lg font-extrabold tracking-tight text-gray-900">{categorySeo.h1}</h1>
+          <p className="mt-1 text-sm leading-relaxed text-gray-700">{categorySeo.intro}</p>
+          <h2 className="mt-2 text-xs font-bold uppercase tracking-wider text-gray-500">
+            {t('citySeo.faqTitle')}
+          </h2>
+          {categorySeo.faq.map((f) => (
+            <details key={f.q} className="mt-1.5">
+              <summary className="cursor-pointer text-sm font-semibold text-gray-800 hover:text-gray-900">
+                {f.q}
+              </summary>
+              <p className="mt-1 text-sm leading-relaxed text-gray-600">{f.a}</p>
+            </details>
+          ))}
+          {/* Другие категории этого города (только существующие страницы) */}
+          {cityCategoryLinks.filter((l) => l.id !== category.id).length > 0 && (
+            <p className="mt-2 text-xs leading-relaxed text-gray-600">
+              <span className="font-semibold text-gray-700">{categorySeo.siblings}:</span>{' '}
+              {cityCategoryLinks
+                .filter((l) => l.id !== category.id)
+                .map((l, i) => (
+                  <span key={l.id}>
+                    {i > 0 && <span className="text-gray-300"> · </span>}
+                    <a href={l.href} className="text-[#0F766E] hover:underline">
+                      {l.label}
+                    </a>
+                  </span>
+                ))}
+            </p>
+          )}
         </div>
       )}
 
@@ -756,6 +985,10 @@ export default function Home({ city, eventId }: { city?: string; eventId?: strin
                 window.location.pathname.startsWith('/event/') ||
                 window.location.pathname.startsWith('/en/event/')
               }
+              // Ссылка на посадочную категории этого события — только если
+              // страница пары (город, категория) существует (тот же гейт,
+              // что в статике: <MIN_CATEGORY_EVENTS событий — страницы нет)
+              categoryLink={selectedCategoryLink}
               seriesEvents={selectedSeries}
             />
           </div>

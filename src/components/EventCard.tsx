@@ -143,6 +143,12 @@ interface Props {
    *  список уже отсортирован по дате (lib/series.seriesSiblings). Не передан
    *  или пуст — блока «Другие даты серии» нет. */
   seriesEvents?: EventItem[];
+  /** Посадочная страница категории этого события (/bali/party/ и EN-версия):
+   *  {href, label} — выводится рядом со строкой «Ещё события в <город>:
+   *  афиша» ТОЛЬКО если страница пары (город, категория) существует (гейт
+   *  MIN_CATEGORY_EVENTS считает Home по загруженному набору). Не передан —
+   *  ссылки нет (карточки в админке, избранном и списках). */
+  categoryLink?: { href: string; label: string } | null;
 }
 
 /** Полный URL фото: загруженные файлы хранятся как пути в хранилище */
@@ -539,6 +545,7 @@ export default function EventCard({
   onToggleFavorite,
   titleAsH1,
   seriesEvents,
+  categoryLink,
 }: Props) {
   const { t, i18n } = useTranslation();
   const [lightbox, setLightbox] = useState<number | null>(null);
@@ -730,13 +737,23 @@ export default function EventCard({
       </div>
 
       {/* Ссылка на афишу города (страница события): «Ещё события в <город>:
-          афиша» — как в статике (eventBreadcrumbHtml) */}
+          афиша» — как в статике (eventBreadcrumbHtml). Рядом — ссылка на
+          посадочную категории ЭТОГО события (Фаза 4): приходит только при
+          существующей странице пары (город, категория) — битых ссылок нет. */}
       {titleAsH1 && cityHref && (
         <p className="mb-2 text-xs text-gray-500">
           {t('card.moreInCity', { city: cityCrumb })}{' '}
           <a href={cityHref} className="text-[#0F766E] hover:underline">
             {t('card.cityPoster')}
           </a>
+          {categoryLink && (
+            <>
+              <span className="text-gray-300"> · </span>
+              <a href={categoryLink.href} className="text-[#0F766E] hover:underline">
+                {categoryLink.label}
+              </a>
+            </>
+          )}
         </p>
       )}
 

@@ -1306,7 +1306,7 @@ function writePage(baseHtml, path, meta) {
  * SPA удаляет его (main.tsx) и рисует свой локализованный блок. Контент
  * вопросов-ответов остаётся в DOM (details). evs — уже отфильтрованные и
  * отсортированные события города; пусто → секции событий нет. */
-function citySeoHtml(seo, evs) {
+function citySeoHtml(seo, evs, categoriesHtml = '') {
   const faq = seo.faq
     .map(
       (f) =>
@@ -1352,7 +1352,9 @@ function citySeoHtml(seo, evs) {
     }
     lines.push('  </ul>');
   }
-  lines.push('  <h2>Частые вопросы</h2>', faq, '</div>', '');
+  lines.push('  <h2>Частые вопросы</h2>', faq);
+  if (categoriesHtml) lines.push(categoriesHtml);
+  lines.push('</div>', '');
   return lines.join('\n');
 }
 
@@ -1449,7 +1451,7 @@ function mapIntroSeoHtml(previewUrl, lang = 'ru') {
  * события /en/event/<id>/<slugify(title_en||title)>/ (п. 2.3: страницы
  * сгенерированы пре-рендером — битых ссылок нет).
  */
-function citySeoHtmlEn(seo, evs) {
+function citySeoHtmlEn(seo, evs, categoriesHtml = '') {
   const faq = seo.faq
     .map(
       (f) =>
@@ -1492,7 +1494,9 @@ function citySeoHtmlEn(seo, evs) {
     }
     lines.push('  </ul>');
   }
-  lines.push('  <h2>FAQ</h2>', faq, '</div>', '');
+  lines.push('  <h2>FAQ</h2>', faq);
+  if (categoriesHtml) lines.push(categoriesHtml);
+  lines.push('</div>', '');
   return lines.join('\n');
 }
 
@@ -1681,6 +1685,28 @@ function seriesDatesHtml(sibs, lang = 'ru') {
   ].join('\n');
 }
 
+/** Блок перелинковки на городской странице: «Категории в городе» — ссылки на
+ * посадочные категорий, прошедшие гейт (только существующие страницы, все
+ * отдают 200). Пусто → блока нет. */
+function cityCategoriesHtml(path, lang, cells) {
+  const en = lang === 'en';
+  const list = [...cells.values()].filter((c) => c.path === path);
+  if (!list.length) return { text: '', html: null };
+  const title = categoriesBlockTitle(path, lang);
+  const links = list
+    .map((c) => {
+      const label = `${typeof c.cat.emoji === 'string' ? c.cat.emoji : ''} ${
+        en ? c.cat.name_en : c.cat.name_ru
+      }`.trim();
+      return `<a href="${esc(`${en ? '/en' : ''}/${path}/${c.cat.id}/`)}">${esc(label)}</a>`;
+    })
+    .join(' · ');
+  return {
+    text: `${title}:`,
+    html: `  <h2>${esc(title)}</h2>\n  <p>${links}</p>`,
+  };
+}
+
 /**
  * Видимая хлебная крошка страницы события: <nav> с ТОЙ ЖЕ иерархией, что
  * BreadcrumbList в JSON-LD этой же страницы — «Главная/Home» > город (только
@@ -1691,7 +1717,7 @@ function seriesDatesHtml(sibs, lang = 'ru') {
  * Город не распознан → крошка из 2 звеньев, ссылка только на главную своего
  * языка; ссылок на несуществующие городские страницы не бывает.
  */
-function eventBreadcrumbHtml(ev, lang = 'ru', name = '') {
+function eventBreadcrumbHtml(ev, lang = 'ru', name = '', catLink = null) {
   const txt = lang === 'en' ? CRUMB_TEXT.en : CRUMB_TEXT.ru;
   const home = { name: txt.home, href: lang === 'en' ? '/en/' : '/' };
   const city = cityCrumbLink(ev.city, lang);
@@ -1704,9 +1730,13 @@ function eventBreadcrumbHtml(ev, lang = 'ru', name = '') {
     `    <p>${links}${title ? ` <span aria-hidden="true">›</span> <span>${esc(title)}</span>` : ''}</p>`,
   ];
   if (city) {
-    lines.push(
-      `    <p>${esc(txt.more)} ${esc(city.name)}: <a href="${esc(city.href)}">${esc(txt.poster)}</a></p>`,
-    );
+    // Ссылка на посадочную категории ЭТОГО события (/bali/party/ или
+    // /en/bali/party/) — только если страница пары существует (тот же гейт
+    // MIN_CATEGORY_EVENTS); иначе ссылку не выводим (битых быть не должно)
+    const more = catLink
+      ? `${esc(txt.more)} ${esc(city.name)}: <a href="${esc(city.href)}">${esc(txt.poster)}</a> · <a href="${esc(catLink.href)}">${esc(catLink.label)}</a>`
+      : `${esc(txt.more)} ${esc(city.name)}: <a href="${esc(city.href)}">${esc(txt.poster)}</a>`;
+    lines.push(`    <p>${more}</p>`);
   }
   lines.push('  </nav>');
   return lines.join('\n');
@@ -1728,7 +1758,7 @@ function eventBreadcrumbHtml(ev, lang = 'ru', name = '') {
  * блока добавляется список «Другие даты серии»/«Other dates in this series»
  * со ссылками на их страницы.
  */
-function eventSeoHtml(ev, url, lang = 'ru', sibs = []) {
+function eventSeoHtml(ev, url, lang = 'ru', sibs = [], catLink = null) {
   const en = lang === 'en';
   const name = en
     ? ev.title_en || ev.title || ''
@@ -1790,11 +1820,813 @@ function eventSeoHtml(ev, url, lang = 'ru', sibs = []) {
   }
   // Видимая хлебная крошка (Главная > город > событие) — та же иерархия, что
   // BreadcrumbList в JSON-LD этой страницы; вставляется перед блоком серии.
-  lines.push(eventBreadcrumbHtml(ev, lang, name));
+  lines.push(eventBreadcrumbHtml(ev, lang, name, catLink));
   const series = seriesDatesHtml(sibs, lang);
   if (series) lines.push(series);
   lines.push('</div>', '');
   return lines.join('\n');
+}
+
+// --- Посадочные страницы «город × категория» (/<city>/<category>/, Фаза 4) ---
+// Единый источник текстов и формул — src/lib/categoryPages.ts (SPA): здесь
+// ПОСИМВОЛЬНАЯ копия (обычный JS, импорт TS невозможен). При правке текстов,
+// формул title/description или порядка вариантов менять ОБА файла —
+// расхождение ловится скриптом scripts/check-category-pages.py скилла
+// events-map-site (паритет текстов статики и SPA + все критерии приёмки).
+//
+// Гейт: страница пары (город, категория) существует, только если в городе
+// >= MIN_CATEGORY_EVENTS активных событий этой категории (тот же набор
+// list_active_events, что грузит SPA) — иначе страницы нет, она вне sitemap.
+const MIN_CATEGORY_EVENTS = 3;
+
+/** RU/EN названия городов по пути (как в JSON-LD и городских страницах) */
+const CAT_CITY_NAME_EN = { bali: 'Bali', 'da-nang': 'Da Nang', 'nha-trang': 'Nha Trang' };
+/** Предлог + город в предложном падеже (RU): «на Бали», «в Дананге» */
+const CAT_CITY_WHERE_RU = { bali: 'на Бали', 'da-nang': 'в Дананге', 'nha-trang': 'в Нячанге' };
+/** RU-имя города для крошки/ссылок (как CITY_PAGES) */
+const CAT_CITY_CRUMB_RU = { bali: 'Бали', 'da-nang': 'Дананг', 'nha-trang': 'Нячанг' };
+
+/** «на Бали» / «в Дананге» (RU), «in Bali» (EN) */
+function catWhere(path, lang) {
+  return lang === 'en' ? `in ${CAT_CITY_NAME_EN[path]}` : CAT_CITY_WHERE_RU[path];
+}
+
+/** Ключ ячейки «город × категория» */
+function cellKey(path, categoryId) {
+  return `${path}|${categoryId}`;
+}
+
+/** Стабильный «отпечаток» ячейки (0..999) — выбор вариантов шаблонных фраз */
+function cellSeed(path, categoryId) {
+  const key = cellKey(path, categoryId);
+  let sum = 0;
+  for (let i = 0; i < key.length; i += 1) sum = (sum * 31 + key.charCodeAt(i)) % 997;
+  return sum;
+}
+
+/** Вариант фразы номер k для ячейки (3 варианта в каждом наборе) */
+function cellVariant(seed, k) {
+  return (seed + k * 7) % 3;
+}
+
+/** «2026-09-11» → «11 сентября 2026» (как ruDate) */
+function catRuDay(iso) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso ?? '');
+  if (!m) return iso ?? '';
+  const month = RU_MONTHS[Number(m[2]) - 1];
+  return month ? `${Number(m[3])} ${month} ${m[1]}` : iso;
+}
+
+/** «2026-09-11» → «September 11, 2026» (как enDate) */
+function catEnDay(iso) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso ?? '');
+  if (!m) return iso ?? '';
+  const month = EN_MONTHS[Number(m[2]) - 1];
+  return month ? `${month} ${Number(m[3])}, ${m[1]}` : iso;
+}
+
+function catDay(iso, lang) {
+  return lang === 'en' ? catEnDay(iso) : catRuDay(iso);
+}
+
+/** Короткая дата (день и месяц, без года) для списка ближайших */
+function catShortDay(iso, lang) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso ?? '');
+  if (!m) return iso ?? '';
+  return lang === 'en'
+    ? `${EN_MONTHS[Number(m[2]) - 1]} ${Number(m[3])}`
+    : `${Number(m[3])} ${RU_MONTHS[Number(m[2]) - 1]}`;
+}
+
+/** Русское склонение: 3 события, 5 событий */
+function catPluralRu(n, forms) {
+  const a = Math.abs(n) % 100;
+  const b = a % 10;
+  if (a > 10 && a < 20) return forms[2];
+  if (b > 1 && b < 5) return forms[1];
+  if (b === 1) return forms[0];
+  return forms[2];
+}
+
+/** «5 событий» / «5 events» */
+function catEventsWord(n, lang) {
+  return lang === 'en'
+    ? `${n} ${n === 1 ? 'event' : 'events'}`
+    : `${n} ${catPluralRu(n, ['событие', 'события', 'событий'])}`;
+}
+
+/** Название для текста: обрезка по границе слова (без разрыва суррогатной пары) */
+function catShortName(title, max = 46) {
+  const clean = String(title ?? '').replace(/\s+/g, ' ').trim();
+  if (clean.length <= max) return clean;
+  const cut = clean.slice(0, max);
+  const i = cut.lastIndexOf(' ');
+  let head = i > max * 0.6 ? cut.slice(0, i) : cut;
+  const code = head.charCodeAt(head.length - 1);
+  if (code >= 0xd800 && code <= 0xdbff) head = head.slice(0, -1);
+  return `${head.replace(/[\s,.;:—–-]+$/, '')}…`;
+}
+
+/** Городская справка: 3 варианта на город (выбор — cellVariant, k=0) */
+const CAT_CITY_BLURB = {
+  bali: {
+    ru: [
+      'Бали — самый событийный остров Юго-Восточной Азии: Чангу, Убуд, Семиньяк и Кута.',
+      'На Бали афиша не затихает: Чангу, Убуд, Семиньяк и Кута — четыре главных событийных района острова.',
+      'Бали живёт событиями круглый год: от Убуда и Чангу до Семиньяка и Куты.',
+    ],
+    en: [
+      'Bali is the busiest events island in Southeast Asia: Canggu, Ubud, Seminyak and Kuta.',
+      'In Bali the listings never stop: Canggu, Ubud, Seminyak and Kuta are the four main event districts.',
+      'Bali runs on events all year round: from Ubud and Canggu to Seminyak and Kuta.',
+    ],
+  },
+  'da-nang': {
+    ru: [
+      'Дананг — компактный город у моря: центр, район Ми Ан и набережная реки Хан.',
+      'Дананг небольшой, и всё событийное — рядом: центр, Ми Ан и набережная Хан.',
+      'В Дананге три главных точки событий: центр города, Ми Ан и набережная реки Хан.',
+    ],
+    en: [
+      'Da Nang is a compact city by the sea: the centre, My An and the Han riverside.',
+      'Da Nang is small, and everything happens nearby: the centre, My An and the Han riverfront.',
+      'Da Nang has three main event spots: the city centre, My An and the Han riverside.',
+    ],
+  },
+  'nha-trang': {
+    ru: [
+      'Нячанг — курортная столица юга Вьетнама: набережная, центр и север города.',
+      'В Нячанге события собираются вдоль набережной, в центре и на севере города.',
+      'Нячанг живёт у моря: главные точки событий — набережная и север города.',
+    ],
+    en: [
+      'Nha Trang is the resort capital of southern Vietnam: the promenade, the centre and the north of the city.',
+      'In Nha Trang the events cluster along the promenade, in the centre and in the north of the city.',
+      'Nha Trang lives by the sea: the promenade and the north of the city are the main event spots.',
+    ],
+  },
+};
+
+/** Категорийный блок (по id категории; неизвестная — CAT_DEFAULT_BLURB) */
+const CAT_BLURB = {
+  party: {
+    ru: 'Вечеринки — главный ночной жанр: клубные ночи, пляжные сеты и вечеринки с диджеями.',
+    en: 'Parties are the main night genre: club nights, beach sets and DJ evenings.',
+  },
+  concert: {
+    ru: 'Концерты — живые выступления: акустика в кафе, большие сцены и джем-сейшены.',
+    en: 'Concerts bring live music: acoustic sets in cafes, big stages and jam sessions.',
+  },
+  wellness: {
+    ru: 'Йога и здоровье — утренние практики, дыхательные сессии, звуковые ванны и ретриты.',
+    en: 'Yoga and wellness: morning practices, breathwork, sound baths and retreats.',
+  },
+  workshop: {
+    ru: 'Мастер-классы — практические занятия: гончарное дело, кулинария, танцы и ремёсла.',
+    en: 'Workshops are hands-on classes: pottery, cooking, dance and crafts with local makers.',
+  },
+  festival: {
+    ru: 'Фестивали — многодневные события с музыкой, едой, маркетами и локальной культурой.',
+    en: 'Festivals are multi-day events with music, food, markets and local culture.',
+  },
+  games: {
+    ru: 'Игры и квизы — командные квизы, настолки, вечера мафии и турниры.',
+    en: 'Games and quizzes: team quizzes, board games, mafia nights and tournaments.',
+  },
+  theatre: {
+    ru: 'Театры и шоу — сценические постановки, национальные танцы, огненные шоу.',
+    en: 'Theatres and shows: stage productions, traditional dance and fire shows.',
+  },
+  show: {
+    ru: 'Шоу и представления — сценические программы: танцы, музыка, огонь и костюмы.',
+    en: 'Shows and performances: stage programmes with dance, music, fire and costumes.',
+  },
+  meetup: {
+    ru: 'Встречи и нетворкинг — неформальные сходы экспатов, языковые обмены и сообщества.',
+    en: 'Meetups and networking: informal get-togethers of expats, language exchanges and communities.',
+  },
+  exhibition: {
+    ru: 'Выставки — живопись, фотография, инсталляции и арт-пространства художников.',
+    en: 'Exhibitions: painting, photography, installations and art spaces of local artists.',
+  },
+  sport: {
+    ru: 'Спорт — забеги, тренировки, единоборства, футбол и активные выходные.',
+    en: 'Sports: runs, training sessions, martial arts, football and active weekends.',
+  },
+  tour: {
+    ru: 'Экскурсии и туры — поездки к водопадам, в джунгли, на острова и в парки с гидом.',
+    en: 'Tours and excursions: guided trips to waterfalls, jungles, islands and nature parks.',
+  },
+  speaking: {
+    ru: 'Разговорный клуб — практика английского и других языков в кафе и коворкингах.',
+    en: 'Speaking clubs: English and other language practice in cafes and coworkings.',
+  },
+  cinema: {
+    ru: 'Киноклуб — показы классики и новых фильмов, документальное кино и обсуждения.',
+    en: 'Cinema clubs: classics and new releases, documentaries and after-screening talks.',
+  },
+  food: {
+    ru: 'Еда и напитки — гастро-ужины, дегустации, кулинарные вечера и маркеты.',
+    en: 'Food and drink: tasting dinners, cooking nights and markets with local produce.',
+  },
+  lecture: {
+    ru: 'Лекции — разговоры об истории, науке, технологиях и путешествиях со спикерами.',
+    en: 'Lectures: talks on history, science, technology and travel with invited speakers.',
+  },
+  conference: {
+    ru: 'Конференции — деловые встречи, воркшопы и нетворкинг для специалистов.',
+    en: 'Conferences: business meetups, workshops and networking for professionals.',
+  },
+};
+
+/** Блок категории по умолчанию (id без своего текста) */
+const CAT_DEFAULT_BLURB = {
+  ru: 'Афиша этой категории обновляется организаторами каждый день: даты, места и цены — в карточках.',
+  en: 'This category is refreshed by organizers every day: dates, venues and prices are in the event cards.',
+};
+
+/** Служебные слова, по которым сегмент адреса не считается названием места */
+const CAT_PLACE_SKIP = [
+  'индонезия', 'indonesia', 'вьетнам', 'vietnam', 'бали', 'bali', 'дананг', 'da nang',
+  'нячанг', 'nha trang', 'малайзия', 'malaysia', 'таиланд', 'thailand',
+  'камбоджа', 'сингапур', 'филиппины', 'центр', 'район', 'city', 'город', 'улица',
+];
+
+/** Первое слово сегмента — признак улицы/адреса, а не названия места */
+const CAT_STREET_WORDS = /^(jl|jalan|gang|gg|duong|đường|street|str|st|улица|ул|проспект|пер)[.\s]/i;
+
+/** Названия площадок из адресов ячейки (до 3, порядок стабильный) */
+function catTopVenues(items) {
+  const out = [];
+  const seen = new Set();
+  for (const { ev } of items) {
+    const raw = String(ev.address ?? '').split(',')[0]?.trim() ?? '';
+    if (!raw) continue;
+    if (raw.length < 4 || raw.length > 28) continue;
+    if (/\d/.test(raw) || /[:()"°]/.test(raw) || raw.endsWith('.')) continue;
+    if (!/[A-Za-z\u0400-\u04FF]/.test(raw)) continue;
+    if (!/[A-ZА-ЯЁ]/.test(raw) || !/[a-zа-яё]/.test(raw)) continue;
+    if (CAT_STREET_WORDS.test(raw)) continue;
+    const low = raw.toLowerCase();
+    if (CAT_PLACE_SKIP.some((w) => low === w || low.startsWith(`${w} `))) continue;
+    if (seen.has(low)) continue;
+    seen.add(low);
+    out.push(raw);
+    if (out.length >= 3) break;
+  }
+  return out;
+}
+
+/** Число с разделителем тысяч: 100000 → «100 000» */
+function catFmtNum(n) {
+  return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
+
+/** Факты ячейки — основа уникального текста (числа, даты, названия, цены) */
+function catCellFacts(items, lang) {
+  const evs = items.map((i) => i.ev);
+  const dates = items.map((i) => i.date).filter(Boolean).sort();
+  const prices = evs
+    .map((e) => (e.price != null ? Number(e.price) : 0))
+    .filter((p) => p > 0);
+  const currencies = evs
+    .map((e) => (typeof e.currency === 'string' && e.currency ? e.currency : 'usd').toUpperCase())
+    .filter((c) => c);
+  const nameOf = (ev) =>
+    lang === 'en'
+      ? ev.title_en || ev.title || ''
+      : ev.title_ru || ev.title || ev.title_en || '';
+  const upcoming = items.slice(0, 5).map((i) => ({
+    name: catShortName(nameOf(i.ev)),
+    date: i.date,
+  }));
+  const lastItem = items[items.length - 1];
+  return {
+    count: evs.length,
+    nearest: dates[0] ?? '',
+    last: dates[dates.length - 1] ?? '',
+    freeCount: evs.filter((e) => !(e.price != null && Number(e.price) > 0)).length,
+    priceFrom: prices.length ? Math.min(...prices) : null,
+    priceTo: prices.length ? Math.max(...prices) : null,
+    currency: currencies[0] ?? 'USD',
+    venues: catTopVenues(items),
+    upcoming,
+    lastName: lastItem ? catShortName(nameOf(lastItem.ev)) : '',
+  };
+}
+
+/** Фраза с датами афиши: 3 варианта (k=1) */
+function catDatesPhrase(f, lang, v) {
+  const en = lang === 'en';
+  const d1 = catDay(f.nearest, lang);
+  const d2 = catDay(f.last, lang);
+  const single = !f.nearest || !f.last || f.last === f.nearest;
+  if (en) {
+    if (single) {
+      return [
+        ` The next one is on ${d1}.`,
+        ` The next event is on ${d1}.`,
+        ` Every event here is on ${d1}.`,
+      ][v];
+    }
+    return [
+      ` The next one is on ${d1}, the last one in this list on ${d2}.`,
+      ` The listing runs from ${d1} to ${d2}.`,
+      ` The first event in the list is on ${d1} and the last one on ${d2}.`,
+    ][v];
+  }
+  if (single) {
+    return [` Ближайшее — ${d1}.`, ` Ближайшее событие — ${d1}.`, ` Все события подборки — ${d1}.`][v];
+  }
+  return [
+    ` Ближайшее — ${d1}, последнее в подборке — ${d2}.`,
+    ` Первое событие списка — ${d1}, последнее — ${d2}.`,
+    ` Афиша охватывает период с ${d1} по ${d2}.`,
+  ][v];
+}
+
+/** Фраза о ценах: 3 варианта (k=2) */
+function catPricePhrase(f, lang, v) {
+  const en = lang === 'en';
+  const free = ` ${f.freeCount} ${en ? 'of' : 'из'} ${f.count} ${en ? 'events are' : 'событий'} ${
+    en ? 'free or donation-based.' : 'бесплатные или за донат.'
+  }`;
+  if (f.priceFrom == null) {
+    return en
+      ? [
+          ' Entry is free or donation-based; the exact price is always shown in the event card.',
+          ' You do not have to pay: entry is free or donation-based.',
+          ' Admission is free or by donation — details are in the event card.',
+        ][v]
+      : [
+          ' Вход бесплатный или за донат; точная цена всегда указана в карточке события.',
+          ' Платить не обязательно: вход бесплатный или за донат.',
+          ' Вход свободный или за донат — подробности в карточке события.',
+        ][v];
+  }
+  if (f.freeCount === f.count) {
+    return en
+      ? [
+          ' All of them are free or donation-based.',
+          ' None of them is paid: free entry and donations only.',
+          ' Every event here is free or donation-based.',
+        ][v]
+      : [
+          ' Все события бесплатные или за донат.',
+          ' Платных среди них нет: только свободный вход и донат.',
+          ' Каждое событие — бесплатное или за донат.',
+        ][v];
+  }
+  if (f.priceFrom === f.priceTo) {
+    const p = `${catFmtNum(f.priceFrom)} ${f.currency}`;
+    return en
+      ? [` Tickets are ${p},${free}`, ` The ticket price is ${p};${free}`, ` Admission costs ${p}.${free}`][v]
+      : [` Билеты — ${p},${free}`, ` Цена билета — ${p};${free}`, ` Вход стоит ${p}.${free}`][v];
+  }
+  const range = `${catFmtNum(f.priceFrom)}–${catFmtNum(f.priceTo)} ${f.currency}`;
+  const rangeText = en
+    ? `${catFmtNum(f.priceFrom)} to ${catFmtNum(f.priceTo)} ${f.currency}`
+    : `от ${catFmtNum(f.priceFrom)} до ${catFmtNum(f.priceTo)} ${f.currency}`;
+  return en
+    ? [
+        ` Tickets cost from ${rangeText},${free}`,
+        ` Prices for tickets range from ${rangeText};${free}`,
+        ` Tickets are ${range}.${free}`,
+      ][v]
+    : [
+        ` Билеты — от ${catFmtNum(f.priceFrom)} до ${catFmtNum(f.priceTo)} ${f.currency},${free}`,
+        ` Цены на билеты — ${rangeText};${free}`,
+        ` Билеты стоят ${range}.${free}`,
+      ][v];
+}
+
+/** Вступление ячейки (>=300 знаков) — те же строки, что categoryIntro в SPA */
+function categoryIntro(cat, path, lang, f) {
+  const en = lang === 'en';
+  const seed = cellSeed(path, cat.id);
+  const name = en ? cat.name_en : cat.name_ru;
+  const blurb = (CAT_BLURB[cat.id] ?? CAT_DEFAULT_BLURB)[en ? 'en' : 'ru'];
+  const city = CAT_CITY_BLURB[path][en ? 'en' : 'ru'][cellVariant(seed, 0)];
+  const where = catWhere(path, lang);
+  const head = `${name} ${where}: ${catEventsWord(f.count, lang)} ${en ? 'on the map.' : 'в афише.'}`;
+  const venues = f.venues.length
+    ? en
+      ? [
+          ` Most events take place at ${f.venues.join(', ')}.`,
+          ` The usual venues: ${f.venues.join(', ')}.`,
+          ` You will find them at ${f.venues.join(', ')}.`,
+        ][cellVariant(seed, 3)]
+      : [
+          ` Чаще всего события проходят здесь: ${f.venues.join(', ')}.`,
+          ` Обычные площадки: ${f.venues.join(', ')}.`,
+          ` Ждём вас здесь: ${f.venues.join(', ')}.`,
+        ][cellVariant(seed, 3)]
+    : '';
+  const dates = catDatesPhrase(f, lang, cellVariant(seed, 1));
+  const lead = en
+    ? [' Coming up:', ' Next events:', ' On the schedule:'][cellVariant(seed, 4)]
+    : [' События на ближайшие дни:', ' Ближайшие события:', ' Что происходит в ближайшие дни:'][
+        cellVariant(seed, 4)
+      ];
+  const upcoming = f.upcoming.length
+    ? ` ${lead} ${f.upcoming
+        .map((u) =>
+          en ? `“${u.name}” on ${catShortDay(u.date, lang)}` : `«${u.name}» — ${catShortDay(u.date, lang)}`,
+        )
+        .join(', ')}.`
+    : '';
+  const price = catPricePhrase(f, lang, cellVariant(seed, 2));
+  return `${head} ${blurb} ${city}${venues}${dates}${upcoming}${price}`.replace(/\s{2,}/g, ' ');
+}
+
+/** Вопросы-ответы ячейки (3 шт.) — те же строки, что categoryFaq в SPA */
+function categoryFaq(cat, path, lang, f) {
+  const en = lang === 'en';
+  const seed = cellSeed(path, cat.id);
+  const name = en ? cat.name_en : cat.name_ru;
+  const where = catWhere(path, lang);
+  const next = f.upcoming[0];
+  const v0 = cellVariant(seed, 5);
+  const v1 = cellVariant(seed, 6);
+  const v2 = cellVariant(seed, 7);
+  const tailList = en
+    ? [
+        ' The full list is on this page and is updated every day.',
+        ' The whole list is on this page; it is refreshed every day.',
+        ' All of them are listed on this page and updated every day.',
+      ]
+    : [
+        ' Полный список — на этой странице, он обновляется каждый день.',
+        ' Весь список — ниже на этой странице, он обновляется каждый день.',
+        ' Все события собраны на этой странице и обновляются каждый день.',
+      ];
+  const dateTailList = en
+    ? [
+        ' Dates and start times are in the event cards.',
+        ' Exact dates and start times are in the event cards.',
+        ' Check the event cards for dates and start times.',
+      ]
+    : [
+        ' Даты и время начала указаны в карточках событий.',
+        ' Точные даты и время начала — в карточках событий.',
+        ' Даты и время смотрите в карточках событий.',
+      ];
+  const q1 = en
+    ? [
+        `How many ${name} events are there ${where} right now?`,
+        `How many ${name} events can I find ${where}?`,
+        `What is on in the ${name} category ${where}?`,
+      ][v0]
+    : [
+        `Сколько событий в категории «${name}» ${where} сейчас?`,
+        `Сколько событий категории «${name}» ${where}?`,
+        `Что сейчас идёт в категории «${name}» ${where}?`,
+      ][v0];
+  const a1 = en
+    ? `There are ${catEventsWord(f.count, 'en')}: from “${next ? next.name : ''}” on ${
+        next ? catShortDay(next.date, 'en') : ''
+      } to “${f.lastName}” on ${catShortDay(f.last, 'en')}.${tailList[v1]}`
+    : `Сейчас ${catEventsWord(f.count, 'ru')}: от «${next ? next.name : ''}» ${
+        next ? catShortDay(next.date, 'ru') : ''
+      } до «${f.lastName}» ${catShortDay(f.last, 'ru')}.${tailList[v1]}`;
+  const q2 = next
+    ? en
+      ? [
+          `When is the next ${name} event?`,
+          `When does the next ${name} event take place?`,
+          `What is the nearest ${name} event?`,
+        ][v1]
+      : [
+          `Когда ближайшее событие в категории «${name}»?`,
+          `Когда проходит ближайшее событие категории «${name}»?`,
+          `Какое событие категории «${name}» ближайшее?`,
+        ][v1]
+    : null;
+  const a2 = next
+    ? en
+      ? `“${next.name}” — ${catDay(next.date, 'en')}${
+          f.venues[0] ? `, ${f.venues[0]}` : ''
+        }.${dateTailList[v2]}`
+      : `«${next.name}» — ${catDay(next.date, 'ru')}${
+          f.venues[0] ? `, ${f.venues[0]}` : ''
+        }.${dateTailList[v2]}`
+    : null;
+  const q3 =
+    f.priceFrom == null || f.freeCount === f.count
+      ? en
+        ? ['Are these events free?', 'Do I need to buy a ticket?', 'Is entry free?'][v2]
+        : ['Есть ли бесплатные события?', 'Нужно ли покупать билет?', 'Вход бесплатный?'][v2]
+      : en
+        ? ['How much do tickets cost?', 'What are the ticket prices?', 'How much is entry?'][v2]
+        : ['Сколько стоит вход?', 'Какие цены на билеты?', 'Сколько стоят билеты?'][v2];
+  const a3 =
+    f.priceFrom == null || f.freeCount === f.count
+      ? en
+        ? 'Entry is free or donation-based; the exact price is always shown in the event card.'
+        : 'Вход бесплатный или за донат; точная цена всегда указана в карточке события.'
+      : f.priceFrom === f.priceTo
+        ? en
+          ? `${catFmtNum(f.priceFrom)} ${f.currency}; ${f.freeCount} of ${f.count} events are free or donation-based.`
+          : `${catFmtNum(f.priceFrom)} ${f.currency}; ${f.freeCount} из ${f.count} событий бесплатные или за донат.`
+        : en
+          ? `From ${catFmtNum(f.priceFrom)} to ${catFmtNum(f.priceTo)} ${f.currency}; ${f.freeCount} of ${f.count} events are free or donation-based.`
+          : `От ${catFmtNum(f.priceFrom)} до ${catFmtNum(f.priceTo)} ${f.currency}; ${f.freeCount} из ${f.count} событий бесплатные или за донат.`;
+  const list = [{ q: q1, a: a1 }, q2 && a2 ? { q: q2, a: a2 } : null, { q: q3, a: a3 }];
+  return list.filter(Boolean);
+}
+
+/** h1 ячейки: «Вечеринки на Бали: афиша событий» / «Parties in Bali: what's on» */
+function categoryH1(cat, path, lang) {
+  return lang === 'en'
+    ? `${cat.name_en} in ${CAT_CITY_NAME_EN[path]}: what's on`
+    : `${cat.name_ru} ${CAT_CITY_WHERE_RU[path]}: афиша событий`;
+}
+
+/** Длина строки ПОСЛЕ HTML-экранирования (esc: & → &amp;, ' → &#39;,
+ * " → &quot;, < > → &lt;/&gt;) — лимиты title/description считаются по ней. */
+function catEscLen(s) {
+  let n = s.length;
+  for (const ch of s) {
+    if (ch === '&' || ch === "'") n += 4;
+    else if (ch === '"') n += 5;
+    else if (ch === '<' || ch === '>') n += 3;
+  }
+  return n;
+}
+
+/** title страницы (<=60 знаков; длинное имя категории — короткий шаблон) */
+function categoryTitle(cat, path, lang) {
+  if (lang === 'en') {
+    const full = `${cat.name_en} in ${CAT_CITY_NAME_EN[path]}: what's on | MyPins`;
+    if (catEscLen(full) <= 60) return full;
+    return `${cat.name_en} in ${CAT_CITY_NAME_EN[path]} | MyPins`;
+  }
+  const full = `${cat.name_ru} ${CAT_CITY_WHERE_RU[path]}: афиша и куда сходить | MyPins`;
+  if (catEscLen(full) <= 60) return full;
+  return `${cat.name_ru} ${CAT_CITY_WHERE_RU[path]}: афиша событий | MyPins`;
+}
+
+/** Концовки и добивки description (140–160 знаков) — как в SPA */
+const CAT_DESC_TAILS_RU = [
+  ' Афиша обновляется каждый день, а события публикуют сами организаторы.',
+  ' Даты, места и цены — на живой карте MyPins.',
+  ' Даты и цены — в карточках событий.',
+];
+const CAT_DESC_FILL_RU = [
+  ' Смотрите даты, места и цены в карточках.',
+  ' События публикуют сами организаторы.',
+  ' Выбирайте дату и место на карте.',
+  ' Даты и цены в карточках.',
+  ' Все события на карте.',
+  ' Живая афиша MyPins.',
+];
+const CAT_DESC_TAILS_EN = [
+  ' The map is updated every day by the organizers themselves.',
+  ' Dates, venues and prices are on the live MyPins map.',
+  ' Dates and prices are in the event cards.',
+];
+const CAT_DESC_FILL_EN = [
+  ' See dates, venues and prices in the event cards.',
+  ' Organizers publish their events themselves.',
+  ' Pick a date and a venue on the map.',
+  ' Dates and prices in the cards.',
+  ' All events on the map.',
+  ' The live MyPins map.',
+];
+
+/** Добивает строку до 140–160 знаков (обе границы — по длине ПОСЛЕ
+ * HTML-экранирования: сырой meta content тоже обязан в них укладываться) */
+function catFitDescription(lead, tails, fills) {
+  const delta = catEscLen(lead) - lead.length;
+  const maxLen = 160 - delta;
+  let out = lead;
+  for (const t of tails) {
+    if ((lead + t).length <= maxLen) {
+      out = lead + t;
+      break;
+    }
+  }
+  for (const f of fills) {
+    if (out.length >= 140) break;
+    if ((out + f).length <= maxLen) out += f;
+  }
+  if (out.length > maxLen) out = out.slice(0, maxLen).replace(/\s+\S*$/, '');
+  return out;
+}
+
+/** description страницы ячейки (140–160 знаков) */
+function categoryDescription(cat, path, lang, f) {
+  if (lang === 'en') {
+    const lead = `${cat.name_en} in ${CAT_CITY_NAME_EN[path]}: ${catEventsWord(f.count, 'en')} and what is on this month.`;
+    return catFitDescription(lead, CAT_DESC_TAILS_EN, CAT_DESC_FILL_EN);
+  }
+  const lead = `${cat.name_ru} ${CAT_CITY_WHERE_RU[path]}: ${catEventsWord(f.count, 'ru')} и афиша с датами, местами и ценами.`;
+  return catFitDescription(lead, CAT_DESC_TAILS_RU, CAT_DESC_FILL_RU);
+}
+
+/** Заголовок блока перелинковки на городской странице */
+function categoriesBlockTitle(path, lang) {
+  return lang === 'en' ? `Categories in ${CAT_CITY_NAME_EN[path]}` : `Категории ${CAT_CITY_WHERE_RU[path]}`;
+}
+
+/** Заголовок блока «другие категории» на странице категории */
+function otherCategoriesTitle(path, lang) {
+  return lang === 'en' ? `Other categories ${catWhere(path, 'en')}` : `Другие категории ${CAT_CITY_WHERE_RU[path]}`;
+}
+
+/** Категории из БД тем же anon-ключом, что RPC. Ошибка сети/прав — страницы
+ * категорий просто не генерируются (сборка НЕ падает, как с превью картинок) */
+async function loadCategories(db) {
+  try {
+    const { data, error } = await db.from('categories').select('*').order('id');
+    if (error) throw new Error(error.message);
+    return Array.isArray(data) ? data : [];
+  } catch (e) {
+    console.warn(`seo-prerender: категории недоступны (${e.message}) — страницы категорий пропущены.`);
+    return [];
+  }
+}
+
+/**
+ * Ячейки «город × категория», прошедшие гейт MIN_CATEGORY_EVENTS:
+ * Map ключ cellKey(path, categoryId) → { path, cat, items } (items —
+ * отсортированы по ближайшему вхождению, как в SPA: nextOccurrenceDate).
+ */
+function buildCategoryCells(events, categories) {
+  const cells = new Map();
+  for (const c of CITY_PAGES) {
+    for (const cat of categories) {
+      if (!cat || typeof cat.id !== 'string' || !cat.id) continue;
+      const items = events
+        .filter(
+          (ev) =>
+            ev &&
+            typeof ev.id === 'string' &&
+            typeof ev.title === 'string' &&
+            ev.title &&
+            cityCrumb(ev.city)?.path === c.path &&
+            ev.category_id === cat.id,
+        )
+        .map((ev) => ({ ev, date: String(nextOccurrenceDate(ev, TODAY_ISO) ?? '') }))
+        .sort((a, b) => a.date.localeCompare(b.date));
+      if (items.length < MIN_CATEGORY_EVENTS) continue;
+      cells.set(cellKey(c.path, cat.id), { path: c.path, cat, items });
+    }
+  }
+  return cells;
+}
+
+/** Ссылка на посадочную категории события для его страницы (null — пары нет) */
+function eventCategoryLink(ev, lang, cells) {
+  const crumb = cityCrumb(ev.city);
+  if (!crumb || !ev.category_id) return null;
+  const cell = cells.get(cellKey(crumb.path, ev.category_id));
+  if (!cell) return null;
+  const en = lang === 'en';
+  const name = en ? cell.cat.name_en : cell.cat.name_ru;
+  const emoji = typeof cell.cat.emoji === 'string' ? cell.cat.emoji : '';
+  return {
+    href: `${en ? '/en' : ''}/${crumb.path}/${cell.cat.id}/`,
+    label: `${emoji} ${name}`.trim(),
+  };
+}
+
+/** Статический SEO-блок страницы «город × категория» (id=seo-category-block):
+ * видимая крошка «Главная › город › категория», h1, интро (>=300 знаков),
+ * строка обновления, ПОЛНЫЙ список активных событий ячейки (<time datetime> +
+ * ссылка на карточку своего языка + цена), FAQ по ячейке (3 <details>) и
+ * ссылки на другие категории города, прошедшие гейт. Виден краулеру без JS;
+ * SPA удаляет блок (main.tsx) и рисует свой из тех же текстов. */
+function categorySeoHtml(cell, lang, cells) {
+  const en = lang === 'en';
+  const { path, cat, items } = cell;
+  const f = catCellFacts(items, lang);
+  const txt = CRUMB_TEXT[en ? 'en' : 'ru'];
+  const cityName = en ? CAT_CITY_NAME_EN[path] : CAT_CITY_CRUMB_RU[path];
+  const catName = en ? cat.name_en : cat.name_ru;
+  const homeHref = en ? '/en/' : '/';
+  const cityHref = `${en ? '/en' : ''}/${path}/`;
+  const faq = categoryFaq(cat, path, lang, f)
+    .map((q) => `    <details><summary>${esc(q.q)}</summary><p>${esc(q.a)}</p></details>`)
+    .join('\n');
+  const lines = [
+    '<div id="seo-category-block">',
+    `  <nav aria-label="${esc(txt.aria)}">`,
+    `    <p><a href="${esc(homeHref)}">${esc(txt.home)}</a> <span aria-hidden="true">›</span> <a href="${esc(cityHref)}">${esc(cityName)}</a> <span aria-hidden="true">›</span> <span>${esc(catName)}</span></p>`,
+    '  </nav>',
+    `  <h1>${esc(categoryH1(cat, path, lang))}</h1>`,
+    `  <p>${esc(categoryIntro(cat, path, lang, f))}</p>`,
+    `  <p class="seo-updated">${
+      en ? 'Updated' : 'Афиша обновлена'
+    }: <time datetime="${TODAY_ISO}">${en ? enDate(TODAY_ISO) : ruDate(TODAY_ISO)}</time></p>`,
+  ];
+  // Полный список активных событий ячейки: своя дата ближайшего вхождения,
+  // ссылка на карточку СВОЕГО языка (обе версии сгенерированы пре-рендером —
+  // битых ссылок нет) и цена/«Бесплатно»/«Донат»
+  if (items.length) {
+    lines.push(`  <h2>${en ? `Upcoming events: ${esc(catName)}` : `Ближайшие события: ${esc(catName)}`}</h2>`, '  <ul>');
+    for (const { ev, date } of items) {
+      const slug = en ? slugify(ev.title_en || ev.title) : slugify(ev.title);
+      const url = `${SITE_URL}${en ? '/en' : ''}/event/${ev.id}/${slug}/`;
+      const name = en
+        ? ev.title_en || ev.title || ''
+        : ev.title_ru || ev.title || ev.title_en || '';
+      const price = ev.price != null ? Number(ev.price) : null;
+      const currency = (
+        typeof ev.currency === 'string' && ev.currency ? ev.currency : 'usd'
+      ).toUpperCase();
+      let priceText = '';
+      if (price != null && price > 0) priceText = `${price} ${currency}`;
+      else if (Boolean(ev.donation)) priceText = en ? 'Donation' : 'Донат';
+      else if (price === 0) priceText = en ? 'Free' : 'Бесплатно';
+      const parts = [];
+      if (date) {
+        parts.push(
+          `<time datetime="${esc(date)}">${esc(en ? enDate(date) : ruDate(date))}</time>`,
+        );
+      }
+      if (name) parts.push(`<a href="${esc(url)}">${esc(name)}</a>`);
+      if (priceText) parts.push(`<span>${esc(priceText)}</span>`);
+      lines.push(`    <li>${parts.join(' — ')}</li>`);
+    }
+    lines.push('  </ul>');
+  }
+  lines.push(`  <h2>${en ? 'FAQ' : 'Частые вопросы'}</h2>`, faq);
+  // Перелинковка: другие категории этого города, прошедшие гейт
+  const siblings = [...cells.values()].filter((c) => c.path === path && c.cat.id !== cat.id);
+  if (siblings.length) {
+    const links = siblings
+      .map((c) => {
+        const label = `${typeof c.cat.emoji === 'string' ? c.cat.emoji : ''} ${
+          en ? c.cat.name_en : c.cat.name_ru
+        }`.trim();
+        return `<a href="${esc(`${en ? '/en' : ''}/${path}/${c.cat.id}/`)}">${esc(label)}</a>`;
+      })
+      .join(' · ');
+    lines.push(`  <p>${esc(otherCategoriesTitle(path, lang))}: ${links}</p>`);
+  }
+  lines.push('</div>', '');
+  return lines.join('\n');
+}
+
+/** JSON-LD страницы «город × категория»: @graph [CollectionPage, ItemList
+ * (позиции → URL ВСЕХ активных событий ячейки), BreadcrumbList «Главная >
+ * Город > Категория»] — та же иерархия, что у видимой крошки; на EN-версии
+ * inLanguage=en. */
+function categoryJsonLd(cell, lang) {
+  const en = lang === 'en';
+  const { path, cat, items } = cell;
+  const url = `${SITE_URL}${en ? '/en' : ''}/${path}/${cat.id}/`;
+  const cityName = en ? CAT_CITY_NAME_EN[path] : CAT_CITY_CRUMB_RU[path];
+  const catName = en ? cat.name_en : cat.name_ru;
+  const homeName = en ? 'Home' : 'Главная';
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'CollectionPage',
+        url,
+        name: categoryH1(cat, path, lang),
+        inLanguage: en ? 'en' : 'ru',
+        isPartOf: {
+          '@type': 'WebSite',
+          name: 'MyPins',
+          url: `${SITE_URL}${en ? '/en' : ''}/`,
+        },
+      },
+      {
+        '@type': 'ItemList',
+        numberOfItems: items.length,
+        itemListOrder: 'https://schema.org/ItemListOrderAscending',
+        itemListElement: items.map((item, i) => {
+          const ev = item.ev;
+          const slug = en ? slugify(ev.title_en || ev.title) : slugify(ev.title);
+          const name = en
+            ? ev.title_en || ev.title || ''
+            : ev.title_ru || ev.title || ev.title_en || '';
+          return {
+            '@type': 'ListItem',
+            position: i + 1,
+            name,
+            url: `${SITE_URL}${en ? '/en' : ''}/event/${ev.id}/${slug}/`,
+          };
+        }),
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: homeName, item: `${SITE_URL}${en ? '/en' : ''}/` },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: cityName,
+            item: `${SITE_URL}${en ? '/en' : ''}/${path}/`,
+          },
+          { '@type': 'ListItem', position: 3, name: catName, item: url },
+        ],
+      },
+    ],
+  };
 }
 
 // --- Главный ход ---
@@ -1863,6 +2695,16 @@ async function main() {
 
   const baseHtml = readFileSync(join(DIST, 'index.html'), 'utf8');
   const locs = [`${SITE_URL}/`];
+
+  // Категории из БД (тот же anon-ключ) и ячейки «город × категория» (Фаза 4):
+  // нужны и для посадочных страниц, и для блока «Категории в городе» на
+  // городских страницах, и для ссылки на категорию со страницы события.
+  // Недоступны категории — страниц категорий нет, сборка не падает.
+  const categories = await loadCategories(db);
+  const cells = buildCategoryCells(events, categories);
+  console.log(
+    `  категорий: ${categories.length}, ячеек «город × категория» (>=${MIN_CATEGORY_EVENTS}): ${cells.size}`,
+  );
   // <lastmod> для sitemap: по умолчанию дата сборки (TODAY_ISO); статьи блога
   // и /blog/ перекрываются датой публикации статьи (lastmods.set ниже)
   const lastmods = new Map();
@@ -1921,7 +2763,7 @@ async function main() {
         { hreflang: 'en', href: enUrl },
         { hreflang: 'x-default', href: enRoot },
       ],
-      bodySeo: seo ? citySeoHtml(seo, cityEvs) : null,
+      bodySeo: seo ? citySeoHtml(seo, cityEvs, cityCategoriesHtml(c.path, 'ru', cells).html) : null,
       // Мобильное интро в статике: превью карты города (как в SPA
       // Home.tsx: slugify(city) — для этих городов совпадает с c.path)
       introPreview: `/images/map-preview-${c.path}.webp`,
@@ -1971,13 +2813,94 @@ async function main() {
         { hreflang: 'ru', href: ruUrl },
         { hreflang: 'x-default', href: enRoot },
       ],
-      bodySeo: seo ? citySeoHtmlEn(seo, cityEvs) : null,
+      bodySeo: seo ? citySeoHtmlEn(seo, cityEvs, cityCategoriesHtml(c.path, 'en', cells).html) : null,
       // Мобильное интро (EN-версия текстов по lang='en'), то же превью карты
       introPreview: `/images/map-preview-${c.path}.webp`,
     });
     locs.push(url);
     console.log(`  /en/${c.path}/index.html (EN-событий в блоке: ${cityEvs.length})`);
   }
+
+  // Посадочные страницы «город × категория» (Фаза 4, батч 1): RU /<city>/<cat>/
+  // и EN /en/<city>/<cat>/ для каждой ячейки с >= MIN_CATEGORY_EVENTS активными
+  // событиями (ячейки собраны выше из того же набора list_active_events).
+  // Список событий и ItemList — ТОЛЬКО события с EN-версией на EN-странице
+  // (их карточки сгенерированы пре-рендером → все ссылки отдают 200; событие
+  // без перевода на EN-странице не выводим). EN-страница создаётся, если после
+  // этого фильтра осталось >= MIN_CATEGORY_EVENTS событий, иначе её нет.
+  let pageCategories = 0;
+  let pageCategoriesEn = 0;
+  const cellList = [...cells.values()].sort((a, b) =>
+    `${a.path}/${a.cat.id}`.localeCompare(`${b.path}/${b.cat.id}`),
+  );
+  for (const cell of cellList) {
+    const ruUrl = `${SITE_URL}/${cell.path}/${cell.cat.id}/`;
+    const enUrl = `${SITE_URL}/en/${cell.path}/${cell.cat.id}/`;
+    const ruTitle = categoryTitle(cell.cat, cell.path, 'ru');
+    const ruDescription = categoryDescription(cell.cat, cell.path, 'ru', catCellFacts(cell.items, 'ru'));
+    writePage(baseHtml, `${cell.path}/${cell.cat.id}`, {
+      lang: 'ru',
+      title: ruTitle,
+      description: ruDescription,
+      canonical: ruUrl,
+      ogTitle: ruTitle,
+      ogDescription: ruDescription,
+      ogUrl: ruUrl,
+      ogImage: LOGO_URL,
+      jsonLd: categoryJsonLd(cell, 'ru'),
+      hreflang: [
+        { hreflang: 'ru', href: ruUrl },
+        { hreflang: 'en', href: enUrl },
+        { hreflang: 'x-default', href: enRoot },
+      ],
+      bodySeo: categorySeoHtml(cell, 'ru', cells),
+    });
+    locs.push(ruUrl);
+    hreflangPairs.set(ruUrl, enUrl);
+    pageCategories += 1;
+    console.log(
+      `  /${cell.path}/${cell.cat.id}/index.html (событий: ${cell.items.length})`,
+    );
+
+    // EN-версия: только события с EN-версией (иначе ссылка ушла бы на 404)
+    const itemsEn = cell.items.filter(
+      ({ ev }) => Boolean(ev.title_en) || ev.source_lang === 'en',
+    );
+    if (itemsEn.length < MIN_CATEGORY_EVENTS) {
+      console.warn(
+        `seo-prerender: EN-страница /en/${cell.path}/${cell.cat.id}/ пропущена (EN-событий ${itemsEn.length} < ${MIN_CATEGORY_EVENTS}).`,
+      );
+      continue;
+    }
+    const cellEn = { path: cell.path, cat: cell.cat, items: itemsEn };
+    const enTitle = categoryTitle(cell.cat, cell.path, 'en');
+    const enDescription = categoryDescription(cell.cat, cell.path, 'en', catCellFacts(itemsEn, 'en'));
+    writePage(baseHtml, `en/${cell.path}/${cell.cat.id}`, {
+      lang: 'en',
+      title: enTitle,
+      description: enDescription,
+      canonical: enUrl,
+      ogTitle: enTitle,
+      ogDescription: enDescription,
+      ogUrl: enUrl,
+      ogImage: LOGO_URL,
+      jsonLd: categoryJsonLd(cellEn, 'en'),
+      hreflang: [
+        { hreflang: 'en', href: enUrl },
+        { hreflang: 'ru', href: ruUrl },
+        { hreflang: 'x-default', href: enRoot },
+      ],
+      bodySeo: categorySeoHtml(cellEn, 'en', cells),
+    });
+    locs.push(enUrl);
+    pageCategoriesEn += 1;
+    console.log(
+      `  /en/${cell.path}/${cell.cat.id}/index.html (EN-событий: ${itemsEn.length})`,
+    );
+  }
+  console.log(
+    `  посадочных «город × категория»: ${pageCategories} RU + ${pageCategoriesEn} EN, страниц всего: ${locs.length}`,
+  );
 
   // События: URL должен совпадать с тем, что строит SPA, —
   // /event/<id>/<slugify(title)> (src/pages/Home.tsx replaceState).
@@ -2035,7 +2958,7 @@ async function main() {
       ogImage: evImage,
       jsonLd: eventJsonLd(ev, url, 'ru', evImage),
       ...(hasEn ? { hreflang: hreflangRu } : {}),
-      bodySeo: eventSeoHtml(ev, url, 'ru', sibs),
+      bodySeo: eventSeoHtml(ev, url, 'ru', sibs, eventCategoryLink(ev, 'ru', cells)),
     });
     locs.push(url);
     pageEvents.push(path);
@@ -2071,7 +2994,7 @@ async function main() {
           { hreflang: 'ru', href: url },
           { hreflang: 'x-default', href: enRoot },
         ],
-        bodySeo: eventSeoHtml(ev, enUrl, 'en', sibs),
+        bodySeo: eventSeoHtml(ev, enUrl, 'en', sibs, eventCategoryLink(ev, 'en', cells)),
       });
       locs.push(enUrl);
       hreflangPairs.set(url, enUrl);

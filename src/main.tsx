@@ -22,7 +22,7 @@ import { AuthProvider } from './lib/auth';
 // /event/<id>/<slug>, /blog, /blog/<slug>, /for-organizers и /about).
 document
   .querySelectorAll(
-    '#seo-home-block, #seo-city-block, #seo-org-block, #seo-event-block, #seo-article-block, #seo-b2b-block, #seo-about-block',
+    '#seo-home-block, #seo-city-block, #seo-category-block, #seo-org-block, #seo-event-block, #seo-article-block, #seo-b2b-block, #seo-about-block',
   )
   .forEach((el) => el.remove());
 

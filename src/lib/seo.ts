@@ -29,9 +29,13 @@ import { todayIso } from './dates';
 import { slugify } from './navigate';
 import { nextOccurrenceDate } from './recurrence';
 import { cityNameEn } from './address';
+import type { CityPath } from './address';
+import { categoryDescription, categoryPageHref, categoryTitle } from './categoryPages';
+import type { CellFacts } from './categoryPages';
 import type {
   AboutContent,
   Article,
+  Category,
   EventItem,
   ForOrganizersContent,
   OrgProfile,
@@ -327,6 +331,42 @@ export function applyCityMeta(path: string): void {
     canonical: `${SITE_URL}${en ? '/en' : ''}/${path}/`,
     og: null,
     hreflang: hreflangPairsFor(`${SITE_URL}/${path}/`, `${SITE_URL}/en/${path}/`),
+  });
+}
+
+/**
+ * Посадочная страница «город × категория» (/bali/party/, /en/bali/party/):
+ * title/description по формулам src/lib/categoryPages (те же тексты пишет
+ * пре-рендер в статический HTML), canonical со слэшем, hreflang self+пара+
+ * x-default, og:title/description/url. Факты ячейки (число событий, даты,
+ * цены) считает вызывающая сторона по уже загруженному набору событий.
+ */
+export function applyCategoryMeta(
+  path: CityPath,
+  category: Category,
+  facts: CellFacts,
+): void {
+  const en = isEnPath(window.location.pathname);
+  const lang = en ? 'en' : 'ru';
+  const title = categoryTitle(category, path, lang);
+  const description = categoryDescription(category, path, lang, facts);
+  const href = categoryPageHref(path, category.id, lang);
+  const url = `${SITE_URL}${href}`;
+  apply({
+    title,
+    description,
+    lang,
+    canonical: url,
+    og: {
+      'og:title': title,
+      'og:description': description,
+      'og:url': url,
+      'og:image': `${SITE_URL}/logo.png`,
+    },
+    hreflang: hreflangPairsFor(
+      `${SITE_URL}${categoryPageHref(path, category.id, 'ru')}`,
+      `${SITE_URL}${categoryPageHref(path, category.id, 'en')}`,
+    ),
   });
 }
 

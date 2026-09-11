@@ -21,6 +21,7 @@ import { trackVisit } from './lib/trackVisit';
 import { config } from './config';
 import { navigate, slugify } from './lib/navigate';
 import { applyGenericMeta, isEnPath, stripLangPrefix } from './lib/seo';
+import NotFound from './components/NotFound';
 
 // Страницы грузятся по требованию (code-split): тяжёлые зависимости
 // (карта, админка) уходят в отдельные чанки, основной чанк меньше.
@@ -53,23 +54,18 @@ function normPath(p: string): string {
   return s === '' ? '/' : s;
 }
 
-/** Заглушка 404: неизвестный путь — простая страница, карта не показывается */
-function NotFound() {
-  const { i18n } = useTranslation();
-  const ru = i18n.language.startsWith('ru');
-  return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-white px-4 text-center">
-      <div className="text-lg font-semibold text-gray-900">
-        {ru ? '404 — страница не найдена' : '404 — page not found'}
-      </div>
-      <button
-        onClick={() => navigate('/')}
-        className="rounded-md bg-[#72D2CF] px-4 py-2 text-sm font-semibold text-black shadow hover:bg-[#61B2B0]"
-      >
-        {ru ? 'На главную' : 'Back to map'}
-      </button>
-    </div>
-  );
+/**
+ * Посадочная страница «город × категория» (Фаза 4): /bali/party/ или
+ * /en/bali/party/. Возвращает город (labelEn из CITY_ROUTES) и id категории;
+ * null — не этот маршрут (или город не из быстрых кнопок). Существует ли пара
+ * на самом деле (>= MIN_CATEGORY_EVENTS активных событий) — решает Home по
+ * загруженному набору: нет набора → существующая 404-заглушка.
+ */
+function categoryRoute(pub: string): { city: string; categoryId: string } | null {
+  const m = /^\/([a-z0-9-]+)\/([a-z0-9-]+)$/.exec(pub);
+  if (!m) return null;
+  const label = CITY_ROUTES.get(`/${m[1]}`);
+  return label ? { city: label, categoryId: m[2] } : null;
 }
 
 export default function App() {
@@ -122,6 +118,7 @@ export default function App() {
       const isHomeRoute =
         pub.startsWith('/event/') ||
         CITY_ROUTES.has(pub) ||
+        categoryRoute(pub) !== null ||
         pub === '/blog' ||
         pub.startsWith('/blog/') ||
         pub === '/for-organizers' ||
@@ -240,8 +237,15 @@ export default function App() {
           page = <About key={`${en ? 'en:' : ''}about`} />;
         } else {
           const cityLabel = CITY_ROUTES.get(pub);
+          const cat = categoryRoute(pub);
           page = cityLabel ? (
             <Home key={`${en ? 'en:' : ''}city:${cityLabel}`} city={cityLabel} />
+          ) : cat ? (
+            <Home
+              key={`${en ? 'en:' : ''}city:${cat.city}:${cat.categoryId}`}
+              city={cat.city}
+              categoryId={cat.categoryId}
+            />
           ) : (
             <NotFound key="404" />
           );
