@@ -1525,8 +1525,14 @@ async function main() {
   // распознаётся cityCrumb(ev.city) (тот же путь, что у городской страницы,
   // не распознано → событие в блоки не попадает), сортировка по дате
   // ближайшего вхождения (nextOccurrenceDate, как в JSON-LD).
-  // Парные страницы (RU↔EN) получают hreflang-блок (п. 1.1 промпта R):
-  // RU-версия → <link hreflang="en" href="/en/<path>/"> + x-default /en/.
+  // Парные страницы (RU↔EN) получают hreflang-блок из ТРЁХ аннотаций в
+  // порядке self → пара → x-default (как SPA: src/lib/seo.ts hreflangPairsFor,
+  // и как xhtml:link в sitemap). Google и Яндекс требуют ссылку страницы на
+  // саму себя в блоке hreflang, поэтому в КАЖДЫЙ массив ниже первым идёт
+  // self: hreflang языка страницы + href = canonical этой же страницы.
+  // Непарные страницы (событие без перевода, /org/<id>/, 404) hreflang не
+  // передают — блока на них нет (поведение не менялось).
+  // Пример RU-версии: ru → сама страница, en → /en/<path>/, x-default → /en/.
   const enRoot = `${SITE_URL}/en/`;
   // Пары для sitemap-xhtml: ruUrl -> enUrl (заполняются по ходу)
   const hreflangPairs = new Map();
@@ -1562,6 +1568,7 @@ async function main() {
       ogImage: LOGO_URL,
       jsonLd: faqLd,
       hreflang: [
+        { hreflang: 'ru', href: url },
         { hreflang: 'en', href: enUrl },
         { hreflang: 'x-default', href: enRoot },
       ],
@@ -1611,6 +1618,7 @@ async function main() {
       ogImage: LOGO_URL,
       jsonLd: faqLd,
       hreflang: [
+        { hreflang: 'en', href: url },
         { hreflang: 'ru', href: ruUrl },
         { hreflang: 'x-default', href: enRoot },
       ],
@@ -1661,6 +1669,7 @@ async function main() {
     const photo = Array.isArray(ev.photos) ? absPhoto(ev.photos[0]) : '';
     const hreflangRu = hasEn
       ? [
+          { hreflang: 'ru', href: url },
           { hreflang: 'en', href: enUrl },
           { hreflang: 'x-default', href: enRoot },
         ]
@@ -1707,6 +1716,7 @@ async function main() {
         ogImage: photo || LOGO_URL,
         jsonLd: eventJsonLd(ev, enUrl, 'en'),
         hreflang: [
+          { hreflang: 'en', href: enUrl },
           { hreflang: 'ru', href: url },
           { hreflang: 'x-default', href: enRoot },
         ],
@@ -1827,6 +1837,7 @@ async function main() {
     ogImage: LOGO_URL,
     jsonLd: blogIndexJsonLd(blogArticles),
     hreflang: [
+      { hreflang: 'ru', href: blogUrl },
       { hreflang: 'en', href: enBlogUrl },
       { hreflang: 'x-default', href: enRoot },
     ],
@@ -1849,6 +1860,7 @@ async function main() {
     ogImage: LOGO_URL,
     jsonLd: blogIndexJsonLd(blogArticles, 'en'),
     hreflang: [
+      { hreflang: 'en', href: enBlogUrl },
       { hreflang: 'ru', href: blogUrl },
       { hreflang: 'x-default', href: enRoot },
     ],
@@ -1871,6 +1883,7 @@ async function main() {
       ogImage: LOGO_URL,
       jsonLd: articleJsonLd(a, url),
       hreflang: [
+        { hreflang: 'ru', href: url },
         { hreflang: 'en', href: enUrl },
         { hreflang: 'x-default', href: enRoot },
       ],
@@ -1894,6 +1907,7 @@ async function main() {
         ogImage: LOGO_URL,
         jsonLd: articleJsonLd(a, enUrl, 'en'),
         hreflang: [
+          { hreflang: 'en', href: enUrl },
           { hreflang: 'ru', href: url },
           { hreflang: 'x-default', href: enRoot },
         ],
@@ -1926,6 +1940,7 @@ async function main() {
     ogImage: LOGO_URL,
     jsonLd: forOrganizersJsonLd(organizers, organizersUrl),
     hreflang: [
+      { hreflang: 'ru', href: organizersUrl },
       { hreflang: 'en', href: enOrganizersUrl },
       { hreflang: 'x-default', href: enRoot },
     ],
@@ -1946,6 +1961,7 @@ async function main() {
     ogImage: LOGO_URL,
     jsonLd: forOrganizersJsonLd(organizers, enOrganizersUrl, 'en'),
     hreflang: [
+      { hreflang: 'en', href: enOrganizersUrl },
       { hreflang: 'ru', href: organizersUrl },
       { hreflang: 'x-default', href: enRoot },
     ],
@@ -1971,6 +1987,7 @@ async function main() {
     ogImage: LOGO_URL,
     jsonLd: aboutJsonLd(about, aboutUrl),
     hreflang: [
+      { hreflang: 'ru', href: aboutUrl },
       { hreflang: 'en', href: enAboutUrl },
       { hreflang: 'x-default', href: enRoot },
     ],
@@ -1991,6 +2008,7 @@ async function main() {
     ogImage: LOGO_URL,
     jsonLd: aboutJsonLd(about, enAboutUrl, 'en'),
     hreflang: [
+      { hreflang: 'en', href: enAboutUrl },
       { hreflang: 'ru', href: aboutUrl },
       { hreflang: 'x-default', href: enRoot },
     ],
@@ -2064,6 +2082,7 @@ async function main() {
       ogUrl: `${SITE_URL}/`,
       ogImage: LOGO_URL,
       hreflang: [
+        { hreflang: 'ru', href: `${SITE_URL}/` },
         { hreflang: 'en', href: enRoot },
         { hreflang: 'x-default', href: enRoot },
       ],
@@ -2092,6 +2111,7 @@ async function main() {
       ogUrl: enRoot,
       ogImage: LOGO_URL,
       hreflang: [
+        { hreflang: 'en', href: enRoot },
         { hreflang: 'ru', href: `${SITE_URL}/` },
         { hreflang: 'x-default', href: enRoot },
       ],
