@@ -190,6 +190,7 @@ body {
    text-sm leading-relaxed, ссылки #0F766E). Показ/скрытие панели — Home
    (lib/mobileIntro.setHomePanelHidden). */
 #seo-home-panel h2 {
+  padding-right: 1.75rem; /* не заезжать под крестик закрытия */
   font-size: 1.125rem;
   line-height: 1.75rem;
   font-weight: 800;
@@ -207,6 +208,32 @@ body {
 }
 #seo-home-panel a:hover {
   text-decoration: underline;
+}
+/* Крестик закрытия панели главной (beta 0.61). Панель — стеклянное окно в
+   правом нижнем углу, закрыть его было нечем: выглядело как «зависшее окно».
+   Кнопка лежит в самой панели (не в теле с прокруткой — не уезжает при
+   скролле) и закрывает панель навсегда: флаг в localStorage
+   (lib/mobileIntro.dismissHomePanel / HOME_PANEL_KEY). */
+#seo-home-panel .seo-home-panel-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  height: 1.5rem;
+  width: 1.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 0.75);
+  color: #6b7280;
+  font-size: 1.125rem;
+  line-height: 1;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.12);
+  cursor: pointer;
+}
+#seo-home-panel .seo-home-panel-close:hover {
+  background: #fff;
+  color: #111827;
 }
 
 /* Плавное появление фото при перелистывании в карусели */

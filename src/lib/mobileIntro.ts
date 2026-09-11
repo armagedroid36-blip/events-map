@@ -67,15 +67,30 @@ export const HOME_PANEL_ID = 'seo-home-panel';
  *  при активном интро — он живёт в #seo-intro-keep). */
 export const HOME_PANEL_QUERY = '(min-width: 1024px)';
 
+/** localStorage-ключ «панель главной закрыта крестиком» (beta 0.61). Пока
+ *  флага нет — панель показывается как раньше; после клика по крестику больше
+ *  не появляется на / и /en (сбрасывается только очисткой localStorage или
+ *  сменой версии ключа _vN). */
+export const HOME_PANEL_KEY = 'home_panel_dismissed_v1';
+
 /** Классы видимой панели главной — те же, что у городского SEO-блока
- *  (#city-seo-block в Home.tsx): стекло, на lg — правый нижний угол 400px,
- *  скролл внутри. Отличие одно: bottom-32 на lg (вместо bottom-24) — на
- *  ширине 1024px панель иначе срезает центрированную кнопку «События списком»
- *  (bottom-safe = 4.5rem). Менять синхронно с Home.tsx. */
+ *  (#city-seo-block в Home.tsx): стекло, на lg — правый нижний угол 400px.
+ *  Отличие одно: bottom-32 на lg (вместо bottom-24) — на ширине 1024px панель
+ *  иначе срезает центрированную кнопку «События списком» (bottom-safe =
+ *  4.5rem). Менять синхронно с Home.tsx.
+ *  Прокрутка и отступы переехали на внутренний #seo-home-panel-body
+ *  (beta 0.61): крестик закрытия лежит в самой панели и не должен
+ *  уезжать при прокрутке текста. */
 const HOME_PANEL_CLASS =
-  'glass absolute inset-x-2 bottom-36 z-[1140] mx-auto max-h-[42vh] w-auto ' +
-  'max-w-xl overflow-y-auto rounded-xl p-3 shadow-xl thin-scroll ' +
+  'glass absolute inset-x-2 bottom-36 z-[1140] mx-auto w-auto ' +
+  'max-w-xl rounded-xl shadow-xl ' +
   'lg:inset-x-auto lg:right-4 lg:mx-0 lg:w-[400px] lg:max-w-[calc(100vw-2rem)] lg:bottom-32';
+
+/** Классы внутреннего контейнера панели главной: скролл + отступы */
+const HOME_PANEL_BODY_CLASS = 'thin-scroll max-h-[42vh] overflow-y-auto p-3';
+
+/** id внутреннего контейнера панели главной (в него кладут статический блок) */
+export const HOME_PANEL_BODY_ID = 'seo-home-panel-body';
 
 /** Все статические SEO-блоки пре-рендера (главная, города, категории,
  *  организаторы, события, блог/статьи, B2B, «О проекте») */
@@ -123,24 +138,85 @@ export function isMobileIntroActive(): boolean {
 /** Видимая панель главной: контейнер-обёртка в конце <body> (React им не
  *  управляет). Создаётся один раз, по умолчанию скрыта — показывает Home
  *  через setHomePanelHidden, когда нет открытых карточек/панелей и ширина
- *  десктопная. */
+ *  десктопная. Внутри — крестик закрытия (beta 0.61), см. dismissHomePanel. */
 function ensureHomePanel(): HTMLElement {
   const existing = document.getElementById(HOME_PANEL_ID);
   if (existing) return existing;
   const panel = document.createElement('div');
   panel.id = HOME_PANEL_ID;
   panel.className = `${HOME_PANEL_CLASS} hidden`;
+  panel.appendChild(createPanelClose());
   document.body.appendChild(panel);
   return panel;
+}
+
+/** Внутренний контейнер панели главной (скролл + отступы). Статический блок
+ *  главной кладём ИМЕННО сюда — крестик остаётся в панели и не скроллится. */
+function homePanelBody(): HTMLElement {
+  const panel = ensureHomePanel();
+  const existing = document.getElementById(HOME_PANEL_BODY_ID);
+  if (existing) return existing;
+  const body = document.createElement('div');
+  body.id = HOME_PANEL_BODY_ID;
+  body.className = HOME_PANEL_BODY_CLASS;
+  panel.appendChild(body);
+  return body;
+}
+
+/** Подпись крестика на языке страницы (панель живёт на / и /en/) */
+function closeLabel(): string {
+  return document.documentElement.lang.toLowerCase().startsWith('en') ? 'Close' : 'Закрыть';
+}
+
+/** Крестик закрытия панели главной: оформление — src/index.css
+ *  (#seo-home-panel .seo-home-panel-close). Панель не модалка, но закрыть её
+ *  было нечем — выглядела как «зависшее окно». */
+function createPanelClose(): HTMLButtonElement {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'seo-home-panel-close';
+  btn.setAttribute('aria-label', closeLabel());
+  btn.title = closeLabel();
+  btn.textContent = '\u00d7';
+  btn.addEventListener('click', () => dismissHomePanel());
+  return btn;
 }
 
 /**
  * Показать/скрыть видимую панель блока главной (зовёт Home при изменении
  * состояния карточки/списка/фильтров/форм и ширины окна). Панель есть только
  * на путях главной — на остальных страницах вызов ничего не делает.
+ * Закрытую крестиком панель (HOME_PANEL_KEY) не показываем даже когда
+ * оверлеев нет — решение пользователя важнее состояния страницы.
  */
 export function setHomePanelHidden(hidden: boolean): void {
-  document.getElementById(HOME_PANEL_ID)?.classList.toggle('hidden', hidden);
+  document
+    .getElementById(HOME_PANEL_ID)
+    ?.classList.toggle('hidden', hidden || isHomePanelDismissed());
+}
+
+/** Панель главной закрыта крестиком (флаг в localStorage) */
+export function isHomePanelDismissed(): boolean {
+  let dismissed = false;
+  try {
+    dismissed = localStorage.getItem(HOME_PANEL_KEY) === '1';
+  } catch {
+    // localStorage недоступен (приватный режим) — считаем, что не закрыта
+    dismissed = false;
+  }
+  return dismissed;
+}
+
+/** Закрыть панель главной крестиком: спрятать сейчас и не показывать в
+ *  последующих визитах (флаг в localStorage). Контент при этом остаётся в
+ *  DOM скрытым — статический блок главной по-прежнему виден краулерам. */
+export function dismissHomePanel(): void {
+  try {
+    localStorage.setItem(HOME_PANEL_KEY, '1');
+  } catch {
+    // приватный режим: скрываем до конца визита
+  }
+  document.getElementById(HOME_PANEL_ID)?.classList.add('hidden');
 }
 
 /**
@@ -186,7 +262,7 @@ export function keepSeoBlocksForIntro(): void {
     kept.forEach((el) => holder.appendChild(el));
     document.body.appendChild(holder);
   }
-  if (homePanelBlock) ensureHomePanel().appendChild(homePanelBlock);
+  if (homePanelBlock) homePanelBody().appendChild(homePanelBlock);
 }
 
 /** Интро закрыто (клик «Открыть карту» или десктопная ширина) — перенесённые
@@ -198,7 +274,7 @@ export function dropIntroSeoBlocks(): void {
   if (!holder) return;
   const homeBlock = holder.querySelector('#seo-home-block');
   if (homeBlock && isHomePath(window.location.pathname)) {
-    ensureHomePanel().appendChild(homeBlock);
+    homePanelBody().appendChild(homeBlock);
   }
   holder.remove();
 }
