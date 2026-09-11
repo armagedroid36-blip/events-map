@@ -33,6 +33,16 @@ const CITY_NAME_RU: Record<CityPath, string> = {
   'nha-trang': 'Нячанг',
 };
 
+/** RU-имя города в ПРЕДЛОЖНОМ падеже для строки «Ещё события {{city}}: афиша»
+ * (предлог хранится в самой метке целиком — у «Бали» он «на», а не «в»).
+ * Зеркало CITY_NAME_RU_LOCATIVE в scripts/seo-prerender.mjs — менять синхронно.
+ * Новый город добавлять сюда же; нераспознанный → пустой локатив (блока нет). */
+const CITY_NAME_RU_LOCATIVE: Record<CityPath, string> = {
+  bali: 'на Бали',
+  'da-nang': 'в Дананге',
+  'nha-trang': 'в Нячанге',
+};
+
 /** EN-имена городов по пути — как labelEn в config / CITY_NAME_EN пре-рендера */
 const CITY_NAME_BY_PATH: Record<CityPath, string> = {
   bali: 'Bali',
@@ -87,6 +97,19 @@ export function cityCrumbLabel(
   const path = cityPath(rawCity);
   if (!path) return '';
   return lang === 'en' ? CITY_NAME_BY_PATH[path] : CITY_NAME_RU[path];
+}
+
+/** Имя города в предложном падеже для строки «Ещё события {{city}}: афиша»
+ * (RU): «на Бали», «в Дананге», «в Нячанге». Точное зеркало cityCrumbLabel:
+ * город не распознан → '' — строка не выводится (как и сейчас, блока нет).
+ * EN-вариант не нужен: в en.moreInCity предлог английский («in Nha Trang»),
+ * а имя города даёт cityCrumbLabel. */
+export function cityCrumbLabelLocative(
+  rawCity: string | null | undefined,
+): string {
+  const path = cityPath(rawCity);
+  if (!path) return '';
+  return CITY_NAME_RU_LOCATIVE[path];
 }
 
 /** Относительный href городской страницы своего языка: '/bali/' (RU) или

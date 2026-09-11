@@ -952,6 +952,16 @@ const CITY_NAME_EN = {
   'nha-trang': 'Nha Trang',
 };
 
+/** RU-имя города в ПРЕДЛОЖНОМ падеже для строки «Ещё события <город>: афиша»
+ * (предлог хранится в метке целиком — у «Бали» он «на», а не «в»). Зеркало
+ * CITY_NAME_RU_LOCATIVE в src/lib/address.ts — менять синхронно. Новый город
+ * добавлять сюда же; нераспознанный город → блока нет (cityCrumbLink = null). */
+const CITY_NAME_RU_LOCATIVE = {
+  bali: 'на Бали',
+  'da-nang': 'в Дананге',
+  'nha-trang': 'в Нячанге',
+};
+
 /**
  * Имя города для страницы языка lang: RU — как в данных (ev.city), EN — из
  * CITY_NAME_EN по распознанному cityCrumb (Нячанг→Nha Trang, Дананг→Da Nang,
@@ -979,7 +989,7 @@ function cityCrumbLink(rawCity, lang) {
   if (!crumb) return null;
   const en = lang === 'en';
   const name = en ? CITY_NAME_EN[crumb.path] || crumb.name : crumb.name;
-  return { name, href: `${en ? '/en' : ''}/${crumb.path}/` };
+  return { name, path: crumb.path, href: `${en ? '/en' : ''}/${crumb.path}/` };
 }
 
 /** Подписи видимой хлебной крошки (как в JSON-LD: Home/Главная) */
@@ -987,7 +997,7 @@ const CRUMB_TEXT = {
   ru: {
     aria: 'Хлебные крошки',
     home: 'Главная',
-    more: 'Ещё события в',
+    more: 'Ещё события',
     poster: 'афиша',
   },
   en: {
@@ -1823,12 +1833,16 @@ function eventBreadcrumbHtml(ev, lang = 'ru', name = '', catLink = null) {
     `    <p>${links}${title ? ` <span aria-hidden="true">›</span> <span>${esc(title)}</span>` : ''}</p>`,
   ];
   if (city) {
+    // Город в строке «Ещё события …»: RU — предложный падеж из
+    // CITY_NAME_RU_LOCATIVE («в Нячанге», «на Бали»), EN — как раньше
+    // (предлог в CRUMB_TEXT.en, имя города из CITY_NAME_EN).
+    const cityMore = lang === 'en' ? city.name : CITY_NAME_RU_LOCATIVE[city.path] || city.name;
     // Ссылка на посадочную категории ЭТОГО события (/bali/party/ или
     // /en/bali/party/) — только если страница пары существует (тот же гейт
     // MIN_CATEGORY_EVENTS); иначе ссылку не выводим (битых быть не должно)
     const more = catLink
-      ? `${esc(txt.more)} ${esc(city.name)}: <a href="${esc(city.href)}">${esc(txt.poster)}</a> · <a href="${esc(catLink.href)}">${esc(catLink.label)}</a>`
-      : `${esc(txt.more)} ${esc(city.name)}: <a href="${esc(city.href)}">${esc(txt.poster)}</a>`;
+      ? `${esc(txt.more)} ${esc(cityMore)}: <a href="${esc(city.href)}">${esc(txt.poster)}</a> · <a href="${esc(catLink.href)}">${esc(catLink.label)}</a>`
+      : `${esc(txt.more)} ${esc(cityMore)}: <a href="${esc(city.href)}">${esc(txt.poster)}</a>`;
     lines.push(`    <p>${more}</p>`);
   }
   lines.push('  </nav>');

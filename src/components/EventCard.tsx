@@ -12,7 +12,13 @@ import { formatDate, formatTimeHM } from '../lib/dates';
 import { recurrenceLabel } from '../lib/recurrence';
 import { photoUrl } from '../lib/api';
 import { isValidCoords } from '../lib/coords';
-import { cityCrumbLabel, cityNameEn, cityPageHref, placeLabel } from '../lib/address';
+import {
+  cityCrumbLabel,
+  cityCrumbLabelLocative,
+  cityNameEn,
+  cityPageHref,
+  placeLabel,
+} from '../lib/address';
 import { nextZ } from '../lib/zindex';
 import { navigate, slugify } from '../lib/navigate';
 import { occurrenceDate } from '../lib/series';
@@ -583,6 +589,10 @@ export default function EventCard({
   // распознан → cityHref/cityCrumb пусты, крошка не выводится.
   const cityHref = cityPageHref(event.city, lang);
   const cityCrumb = cityCrumbLabel(event.city, lang);
+  // Город в предложном падеже для строки «Ещё события <город>: афиша» на RU
+  // («в Нячанге», но «на Бали» — предлог хранится в метке целиком); EN-ветка
+  // не менялась: предлог английский, имя города даёт cityCrumb.
+  const cityCrumbRu = cityCrumbLabelLocative(event.city);
   const homeHref = lang === 'ru' ? '/' : '/en/';
 
   // URL события для «Поделиться» и клика по названию: при EN-интерфейсе и
@@ -749,7 +759,7 @@ export default function EventCard({
           существующей странице пары (город, категория) — битых ссылок нет. */}
       {titleAsH1 && cityHref && (
         <p className="mb-2 text-xs text-gray-500">
-          {t('card.moreInCity', { city: cityCrumb })}{' '}
+          {t('card.moreInCity', { city: lang === 'ru' ? cityCrumbRu : cityCrumb })}{' '}
           <a href={cityHref} className="text-[#0F766E] hover:underline">
             {t('card.cityPoster')}
           </a>

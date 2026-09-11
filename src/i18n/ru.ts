@@ -248,7 +248,7 @@ export default {
     similarEvents: 'Похожие события',
     breadcrumbs: 'Хлебные крошки',
     crumbHome: 'Главная',
-    moreInCity: 'Ещё события в {{city}}:',
+    moreInCity: 'Ещё события {{city}}:',
     cityPoster: 'афиша',
   },
   // Публичный профиль организатора (#/org/<id>) и подписка
