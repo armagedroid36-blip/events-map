@@ -180,42 +180,43 @@ function shortName(title: string, max = 46): string {
   return `${head.replace(/[\s,.;:—–-]+$/, '')}…`;
 }
 
-/** Городская справка: 3 варианта на город (выбор — cellVariant, k=0) */
+/** Городская справка: 3 КОРОТКИХ варианта на город (выбор — cellVariant, k=0).
+ * Основную уникальность дают факты ячейки, поэтому общий текст держим минимальным */
 const CITY_BLURB: Record<CityPath, { ru: string[]; en: string[] }> = {
   bali: {
     ru: [
-      'Бали — самый событийный остров Юго-Восточной Азии: Чангу, Убуд, Семиньяк и Кута.',
-      'На Бали афиша не затихает: Чангу, Убуд, Семиньяк и Кута — четыре главных событийных района острова.',
-      'Бали живёт событиями круглый год: от Убуда и Чангу до Семиньяка и Куты.',
+      'Бали — событийный остров Юго-Восточной Азии.',
+      'На Бали афиша не затихает круглый год.',
+      'Бали живёт событиями: Чангу, Убуд, Семиньяк и Кута.',
     ],
     en: [
-      'Bali is the busiest events island in Southeast Asia: Canggu, Ubud, Seminyak and Kuta.',
-      'In Bali the listings never stop: Canggu, Ubud, Seminyak and Kuta are the four main event districts.',
-      'Bali runs on events all year round: from Ubud and Canggu to Seminyak and Kuta.',
+      'Bali is the busiest events island in Southeast Asia.',
+      'In Bali the listings never stop all year round.',
+      'Bali runs on events: Canggu, Ubud, Seminyak and Kuta.',
     ],
   },
   'da-nang': {
     ru: [
-      'Дананг — компактный город у моря: центр, район Ми Ан и набережная реки Хан.',
-      'Дананг небольшой, и всё событийное — рядом: центр, Ми Ан и набережная Хан.',
-      'В Дананге три главных точки событий: центр города, Ми Ан и набережная реки Хан.',
+      'Дананг — компактный город у моря.',
+      'Дананг небольшой, и всё событийное рядом.',
+      'В Дананге события собраны в центре, Ми Ане и на набережной.',
     ],
     en: [
-      'Da Nang is a compact city by the sea: the centre, My An and the Han riverside.',
-      'Da Nang is small, and everything happens nearby: the centre, My An and the Han riverfront.',
-      'Da Nang has three main event spots: the city centre, My An and the Han riverside.',
+      'Da Nang is a compact city by the sea.',
+      'Da Nang is small, and everything happens nearby.',
+      'Da Nang events cluster in the centre, My An and the riverside.',
     ],
   },
   'nha-trang': {
     ru: [
-      'Нячанг — курортная столица юга Вьетнама: набережная, центр и север города.',
-      'В Нячанге события собираются вдоль набережной, в центре и на севере города.',
-      'Нячанг живёт у моря: главные точки событий — набережная и север города.',
+      'Нячанг — курортная столица юга Вьетнама.',
+      'В Нячанге события идут вдоль набережной.',
+      'Нячанг живёт у моря: набережная и север города.',
     ],
     en: [
-      'Nha Trang is the resort capital of southern Vietnam: the promenade, the centre and the north of the city.',
-      'In Nha Trang the events cluster along the promenade, in the centre and in the north of the city.',
-      'Nha Trang lives by the sea: the promenade and the north of the city are the main event spots.',
+      'Nha Trang is the resort capital of southern Vietnam.',
+      'In Nha Trang events run along the promenade.',
+      'Nha Trang lives by the sea: the promenade and the north.',
     ],
   },
 };
@@ -310,23 +311,32 @@ const STREET_WORDS = /^(jl|jalan|gang|gg|duong|đường|street|str|st|улиц�
 
 const CYRILLIC_OR_LATIN = /[A-Za-z\u0400-\u04FF]/;
 
-/** Названия площадок из адресов ячейки (до 3, порядок стабильный): сегмент
- * адреса берём как имя места, только если он похож на название — есть
- * заглавная и строчная буквы, 4–28 знаков, без цифр, координат, «:», скобок,
- * без служебных слов (страны/города/улицы). Пусто → площадки не упоминаем. */
+/** Название площадки одного события (та же фильтрация, что у topVenues):
+ * первый сегмент адреса, похожий на имя места — заглавная и строчная буквы,
+ * 4–28 знаков, без цифр/координат/«:»/скобок и служебных слов. Пусто →
+ * площадка не определяется. */
+function venueOf(ev: EventItem): string {
+  const raw = String(ev.address ?? '').split(',')[0]?.trim() ?? '';
+  if (!raw) return '';
+  if (raw.length < 4 || raw.length > 28) return '';
+  if (/\d/.test(raw) || /[:()"°]/.test(raw) || raw.endsWith('.')) return '';
+  if (!CYRILLIC_OR_LATIN.test(raw)) return '';
+  if (!/[A-ZА-ЯЁ]/.test(raw) || !/[a-zа-яё]/.test(raw)) return '';
+  if (STREET_WORDS.test(raw)) return '';
+  const low = raw.toLowerCase();
+  if (PLACE_SKIP.some((w) => low === w || low.startsWith(`${w} `))) return '';
+  return raw;
+}
+
+/** Названия площадок из адресов ячейки (до 3, порядок стабильный).
+ * Пусто → площадки не упоминаем. */
 function topVenues(items: CellItem[]): string[] {
   const out: string[] = [];
   const seen = new Set<string>();
   for (const { ev } of items) {
-    const raw = String(ev.address ?? '').split(',')[0]?.trim() ?? '';
+    const raw = venueOf(ev);
     if (!raw) continue;
-    if (raw.length < 4 || raw.length > 28) continue;
-    if (/\d/.test(raw) || /[:()"°]/.test(raw) || raw.endsWith('.')) continue;
-    if (!CYRILLIC_OR_LATIN.test(raw)) continue;
-    if (!/[A-ZА-ЯЁ]/.test(raw) || !/[a-zа-яё]/.test(raw)) continue;
-    if (STREET_WORDS.test(raw)) continue;
     const low = raw.toLowerCase();
-    if (PLACE_SKIP.some((w) => low === w || low.startsWith(`${w} `))) continue;
     if (seen.has(low)) continue;
     seen.add(low);
     out.push(raw);
@@ -373,10 +383,30 @@ export interface CellFacts {
   priceTo: number | null;
   currency: string;
   venues: string[];
-  /** До пяти ближайших событий: локализованное название + дата */
-  upcoming: { name: string; date: string }[];
+  /** До восьми ближайших событий: название, дата, площадка (если определилась) */
+  upcoming: { name: string; date: string; venue: string }[];
   /** Название самого дальнего события в наборе (для FAQ) */
   lastName: string;
+  /** Фрагмент описания ближайшего события (уникальный текст страницы) */
+  nearestText: string;
+}
+
+/** Фрагмент описания для текста блока: без HTML и переносов, обрезка по слову */
+function shortText(text: string | null | undefined, max = 150): string {
+  const clean = String(text ?? '')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!clean) return '';
+  if (clean.length <= max) return clean;
+  const cut = clean.slice(0, max);
+  const i = cut.lastIndexOf(' ');
+  let head = i > max * 0.6 ? cut.slice(0, i) : cut;
+  const code = head.charCodeAt(head.length - 1);
+  if (code >= 0xd800 && code <= 0xdbff) head = head.slice(0, -1);
+  return `${head.replace(/[\s,.;:—–-]+$/, '')}…`;
 }
 
 /** Факты ячейки — основа уникального текста (числа, даты, названия, цены) */
@@ -393,11 +423,17 @@ export function cellFacts(items: CellItem[], lang: 'ru' | 'en'): CellFacts {
     lang === 'en'
       ? ev.title_en || ev.title || ''
       : ev.title_ru || ev.title || ev.title_en || '';
-  const upcoming = items.slice(0, 5).map((i) => ({
+  const textOf = (ev: EventItem): string =>
+    lang === 'en'
+      ? ev.description_en || ev.description || ev.description_ru || ''
+      : ev.description_ru || ev.description || ev.description_en || '';
+  const upcoming = items.slice(0, 8).map((i) => ({
     name: shortName(nameOf(i.ev)),
     date: i.date,
+    venue: venueOf(i.ev),
   }));
   const lastItem = items[items.length - 1];
+  const first = items[0];
   return {
     count: evs.length,
     nearest: dates[0] ?? '',
@@ -409,6 +445,7 @@ export function cellFacts(items: CellItem[], lang: 'ru' | 'en'): CellFacts {
     venues: topVenues(items),
     upcoming,
     lastName: lastItem ? shortName(nameOf(lastItem.ev)) : '',
+    nearestText: first ? shortText(textOf(first.ev)) : '',
   };
 }
 
@@ -551,12 +588,19 @@ export function categoryIntro(
   const upcoming = f.upcoming.length
     ? ` ${lead} ${f.upcoming
         .map((u) =>
-          en ? `“${u.name}” on ${shortDay(u.date, lang)}` : `«${u.name}» — ${shortDay(u.date, lang)}`,
+          en
+            ? `“${u.name}” on ${shortDay(u.date, lang)}${u.venue ? ` (${u.venue})` : ''}`
+            : `«${u.name}» — ${shortDay(u.date, lang)}${u.venue ? ` (${u.venue})` : ''}`,
         )
         .join(', ')}.`
     : '';
+  const details = f.nearestText
+    ? en
+      ? ` Details: ${f.nearestText}`
+      : ` Подробности: ${f.nearestText}`
+    : '';
   const price = pricePhrase(f, lang, cellVariant(seed, 2));
-  return `${head} ${blurb} ${city}${venues}${dates}${upcoming}${price}`.replace(/\s{2,}/g, ' ');
+  return `${head} ${blurb} ${city}${venues}${dates}${upcoming}${details}${price}`.replace(/\s{2,}/g, ' ');
 }
 
 /** Вопросы-ответы ячейки (3 шт.): ответы — с фактами ячейки (названия
@@ -579,28 +623,6 @@ export function categoryFaq(
   const v0 = cellVariant(seed, 5);
   const v1 = cellVariant(seed, 6);
   const v2 = cellVariant(seed, 7);
-  const tailList = en
-    ? [
-        ' The full list is on this page and is updated every day.',
-        ' The whole list is on this page; it is refreshed every day.',
-        ' All of them are listed on this page and updated every day.',
-      ]
-    : [
-        ' Полный список — на этой странице, он обновляется каждый день.',
-        ' Весь список — ниже на этой странице, он обновляется каждый день.',
-        ' Все события собраны на этой странице и обновляются каждый день.',
-      ];
-  const dateTailList = en
-    ? [
-        ' Dates and start times are in the event cards.',
-        ' Exact dates and start times are in the event cards.',
-        ' Check the event cards for dates and start times.',
-      ]
-    : [
-        ' Даты и время начала указаны в карточках событий.',
-        ' Точные даты и время начала — в карточках событий.',
-        ' Даты и время смотрите в карточках событий.',
-      ];
   const q1 = en
     ? [
         `How many ${name} events are there ${where} right now?`,
@@ -615,10 +637,10 @@ export function categoryFaq(
   const a1 = en
     ? `There are ${eventsWord(f.count, 'en')}: from “${next ? next.name : ''}” on ${
         next ? shortDay(next.date, 'en') : ''
-      } to “${f.lastName}” on ${shortDay(f.last, 'en')}.${tailList[v1]}`
+      } to “${f.lastName}” on ${shortDay(f.last, 'en')}.`
     : `Сейчас ${eventsWord(f.count, 'ru')}: от «${next ? next.name : ''}» ${
         next ? shortDay(next.date, 'ru') : ''
-      } до «${f.lastName}» ${shortDay(f.last, 'ru')}.${tailList[v1]}`;
+      } до «${f.lastName}» ${shortDay(f.last, 'ru')}.`;
   const q2 = next
     ? en
       ? [
@@ -634,12 +656,8 @@ export function categoryFaq(
     : null;
   const a2 = next
     ? en
-      ? `“${next.name}” — ${day(next.date, 'en')}${
-          f.venues[0] ? `, ${f.venues[0]}` : ''
-        }.${dateTailList[v2]}`
-      : `«${next.name}» — ${day(next.date, 'ru')}${
-          f.venues[0] ? `, ${f.venues[0]}` : ''
-        }.${dateTailList[v2]}`
+      ? `“${next.name}” on ${shortDay(next.date, 'en')}${f.venues[0] ? `, ${f.venues[0]}` : ''}.`
+      : `«${next.name}» — ${shortDay(next.date, 'ru')}${f.venues[0] ? `, ${f.venues[0]}` : ''}.`
     : null;
   const noPaid = from == null || to == null || f.freeCount === f.count;
   const q3 =
@@ -777,11 +795,4 @@ export function categoriesBlockTitle(path: CityPath, lang: 'ru' | 'en'): string 
   return lang === 'en'
     ? `Categories in ${CITY_NAME_EN[path]}`
     : `Категории ${CITY_WHERE_RU[path]}`;
-}
-
-/** Заголовок блока «другие категории» на странице категории */
-export function otherCategoriesTitle(path: CityPath, lang: 'ru' | 'en'): string {
-  return lang === 'en'
-    ? `Other categories ${categoryWhere(path, 'en')}`
-    : `Другие категории ${CITY_WHERE_RU[path]}`;
 }

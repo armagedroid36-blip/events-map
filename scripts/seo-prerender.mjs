@@ -1927,42 +1927,43 @@ function catShortName(title, max = 46) {
   return `${head.replace(/[\s,.;:—–-]+$/, '')}…`;
 }
 
-/** Городская справка: 3 варианта на город (выбор — cellVariant, k=0) */
+/** Городская справка: 3 КОРОТКИХ варианта на город (выбор — cellVariant, k=0).
+ * Основную уникальность дают факты ячейки, поэтому общий текст держим минимальным */
 const CAT_CITY_BLURB = {
   bali: {
     ru: [
-      'Бали — самый событийный остров Юго-Восточной Азии: Чангу, Убуд, Семиньяк и Кута.',
-      'На Бали афиша не затихает: Чангу, Убуд, Семиньяк и Кута — четыре главных событийных района острова.',
-      'Бали живёт событиями круглый год: от Убуда и Чангу до Семиньяка и Куты.',
+      'Бали — событийный остров Юго-Восточной Азии.',
+      'На Бали афиша не затихает круглый год.',
+      'Бали живёт событиями: Чангу, Убуд, Семиньяк и Кута.',
     ],
     en: [
-      'Bali is the busiest events island in Southeast Asia: Canggu, Ubud, Seminyak and Kuta.',
-      'In Bali the listings never stop: Canggu, Ubud, Seminyak and Kuta are the four main event districts.',
-      'Bali runs on events all year round: from Ubud and Canggu to Seminyak and Kuta.',
+      'Bali is the busiest events island in Southeast Asia.',
+      'In Bali the listings never stop all year round.',
+      'Bali runs on events: Canggu, Ubud, Seminyak and Kuta.',
     ],
   },
   'da-nang': {
     ru: [
-      'Дананг — компактный город у моря: центр, район Ми Ан и набережная реки Хан.',
-      'Дананг небольшой, и всё событийное — рядом: центр, Ми Ан и набережная Хан.',
-      'В Дананге три главных точки событий: центр города, Ми Ан и набережная реки Хан.',
+      'Дананг — компактный город у моря.',
+      'Дананг небольшой, и всё событийное рядом.',
+      'В Дананге события собраны в центре, Ми Ане и на набережной.',
     ],
     en: [
-      'Da Nang is a compact city by the sea: the centre, My An and the Han riverside.',
-      'Da Nang is small, and everything happens nearby: the centre, My An and the Han riverfront.',
-      'Da Nang has three main event spots: the city centre, My An and the Han riverside.',
+      'Da Nang is a compact city by the sea.',
+      'Da Nang is small, and everything happens nearby.',
+      'Da Nang events cluster in the centre, My An and the riverside.',
     ],
   },
   'nha-trang': {
     ru: [
-      'Нячанг — курортная столица юга Вьетнама: набережная, центр и север города.',
-      'В Нячанге события собираются вдоль набережной, в центре и на севере города.',
-      'Нячанг живёт у моря: главные точки событий — набережная и север города.',
+      'Нячанг — курортная столица юга Вьетнама.',
+      'В Нячанге события идут вдоль набережной.',
+      'Нячанг живёт у моря: набережная и север города.',
     ],
     en: [
-      'Nha Trang is the resort capital of southern Vietnam: the promenade, the centre and the north of the city.',
-      'In Nha Trang the events cluster along the promenade, in the centre and in the north of the city.',
-      'Nha Trang lives by the sea: the promenade and the north of the city are the main event spots.',
+      'Nha Trang is the resort capital of southern Vietnam.',
+      'In Nha Trang events run along the promenade.',
+      'Nha Trang lives by the sea: the promenade and the north.',
     ],
   },
 };
@@ -2055,20 +2056,28 @@ const CAT_PLACE_SKIP = [
 /** Первое слово сегмента — признак улицы/адреса, а не названия места */
 const CAT_STREET_WORDS = /^(jl|jalan|gang|gg|duong|đường|street|str|st|улица|ул|проспект|пер)[.\s]/i;
 
+/** Название площадки одного события (та же фильтрация, что у catTopVenues) */
+function catVenueOf(ev) {
+  const raw = String(ev.address ?? '').split(',')[0]?.trim() ?? '';
+  if (!raw) return '';
+  if (raw.length < 4 || raw.length > 28) return '';
+  if (/\d/.test(raw) || /[:()"°]/.test(raw) || raw.endsWith('.')) return '';
+  if (!/[A-Za-z\u0400-\u04FF]/.test(raw)) return '';
+  if (!/[A-ZА-ЯЁ]/.test(raw) || !/[a-zа-яё]/.test(raw)) return '';
+  if (CAT_STREET_WORDS.test(raw)) return '';
+  const low = raw.toLowerCase();
+  if (CAT_PLACE_SKIP.some((w) => low === w || low.startsWith(`${w} `))) return '';
+  return raw;
+}
+
 /** Названия площадок из адресов ячейки (до 3, порядок стабильный) */
 function catTopVenues(items) {
   const out = [];
   const seen = new Set();
   for (const { ev } of items) {
-    const raw = String(ev.address ?? '').split(',')[0]?.trim() ?? '';
+    const raw = catVenueOf(ev);
     if (!raw) continue;
-    if (raw.length < 4 || raw.length > 28) continue;
-    if (/\d/.test(raw) || /[:()"°]/.test(raw) || raw.endsWith('.')) continue;
-    if (!/[A-Za-z\u0400-\u04FF]/.test(raw)) continue;
-    if (!/[A-ZА-ЯЁ]/.test(raw) || !/[a-zа-яё]/.test(raw)) continue;
-    if (CAT_STREET_WORDS.test(raw)) continue;
     const low = raw.toLowerCase();
-    if (CAT_PLACE_SKIP.some((w) => low === w || low.startsWith(`${w} `))) continue;
     if (seen.has(low)) continue;
     seen.add(low);
     out.push(raw);
@@ -2080,6 +2089,24 @@ function catTopVenues(items) {
 /** Число с разделителем тысяч: 100000 → «100 000» */
 function catFmtNum(n) {
   return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
+
+/** Фрагмент описания для текста блока: без HTML и переносов, обрезка по слову */
+function catShortText(text, max = 150) {
+  const clean = String(text ?? '')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!clean) return '';
+  if (clean.length <= max) return clean;
+  const cut = clean.slice(0, max);
+  const i = cut.lastIndexOf(' ');
+  let head = i > max * 0.6 ? cut.slice(0, i) : cut;
+  const code = head.charCodeAt(head.length - 1);
+  if (code >= 0xd800 && code <= 0xdbff) head = head.slice(0, -1);
+  return `${head.replace(/[\s,.;:—–-]+$/, '')}…`;
 }
 
 /** Факты ячейки — основа уникального текста (числа, даты, названия, цены) */
@@ -2096,11 +2123,17 @@ function catCellFacts(items, lang) {
     lang === 'en'
       ? ev.title_en || ev.title || ''
       : ev.title_ru || ev.title || ev.title_en || '';
-  const upcoming = items.slice(0, 5).map((i) => ({
+  const textOf = (ev) =>
+    lang === 'en'
+      ? ev.description_en || ev.description || ev.description_ru || ''
+      : ev.description_ru || ev.description || ev.description_en || '';
+  const upcoming = items.slice(0, 8).map((i) => ({
     name: catShortName(nameOf(i.ev)),
     date: i.date,
+    venue: catVenueOf(i.ev),
   }));
   const lastItem = items[items.length - 1];
+  const first = items[0];
   return {
     count: evs.length,
     nearest: dates[0] ?? '',
@@ -2112,6 +2145,7 @@ function catCellFacts(items, lang) {
     venues: catTopVenues(items),
     upcoming,
     lastName: lastItem ? catShortName(nameOf(lastItem.ev)) : '',
+    nearestText: first ? catShortText(textOf(first.ev)) : '',
   };
 }
 
@@ -2231,12 +2265,19 @@ function categoryIntro(cat, path, lang, f) {
   const upcoming = f.upcoming.length
     ? ` ${lead} ${f.upcoming
         .map((u) =>
-          en ? `“${u.name}” on ${catShortDay(u.date, lang)}` : `«${u.name}» — ${catShortDay(u.date, lang)}`,
+          en
+            ? `“${u.name}” on ${catShortDay(u.date, lang)}${u.venue ? ` (${u.venue})` : ''}`
+            : `«${u.name}» — ${catShortDay(u.date, lang)}${u.venue ? ` (${u.venue})` : ''}`,
         )
         .join(', ')}.`
     : '';
+  const details = f.nearestText
+    ? en
+      ? ` Details: ${f.nearestText}`
+      : ` Подробности: ${f.nearestText}`
+    : '';
   const price = catPricePhrase(f, lang, cellVariant(seed, 2));
-  return `${head} ${blurb} ${city}${venues}${dates}${upcoming}${price}`.replace(/\s{2,}/g, ' ');
+  return `${head} ${blurb} ${city}${venues}${dates}${upcoming}${details}${price}`.replace(/\s{2,}/g, ' ');
 }
 
 /** Вопросы-ответы ячейки (3 шт.) — те же строки, что categoryFaq в SPA */
@@ -2249,28 +2290,6 @@ function categoryFaq(cat, path, lang, f) {
   const v0 = cellVariant(seed, 5);
   const v1 = cellVariant(seed, 6);
   const v2 = cellVariant(seed, 7);
-  const tailList = en
-    ? [
-        ' The full list is on this page and is updated every day.',
-        ' The whole list is on this page; it is refreshed every day.',
-        ' All of them are listed on this page and updated every day.',
-      ]
-    : [
-        ' Полный список — на этой странице, он обновляется каждый день.',
-        ' Весь список — ниже на этой странице, он обновляется каждый день.',
-        ' Все события собраны на этой странице и обновляются каждый день.',
-      ];
-  const dateTailList = en
-    ? [
-        ' Dates and start times are in the event cards.',
-        ' Exact dates and start times are in the event cards.',
-        ' Check the event cards for dates and start times.',
-      ]
-    : [
-        ' Даты и время начала указаны в карточках событий.',
-        ' Точные даты и время начала — в карточках событий.',
-        ' Даты и время смотрите в карточках событий.',
-      ];
   const q1 = en
     ? [
         `How many ${name} events are there ${where} right now?`,
@@ -2285,10 +2304,10 @@ function categoryFaq(cat, path, lang, f) {
   const a1 = en
     ? `There are ${catEventsWord(f.count, 'en')}: from “${next ? next.name : ''}” on ${
         next ? catShortDay(next.date, 'en') : ''
-      } to “${f.lastName}” on ${catShortDay(f.last, 'en')}.${tailList[v1]}`
+      } to “${f.lastName}” on ${catShortDay(f.last, 'en')}.`
     : `Сейчас ${catEventsWord(f.count, 'ru')}: от «${next ? next.name : ''}» ${
         next ? catShortDay(next.date, 'ru') : ''
-      } до «${f.lastName}» ${catShortDay(f.last, 'ru')}.${tailList[v1]}`;
+      } до «${f.lastName}» ${catShortDay(f.last, 'ru')}.`;
   const q2 = next
     ? en
       ? [
@@ -2304,12 +2323,8 @@ function categoryFaq(cat, path, lang, f) {
     : null;
   const a2 = next
     ? en
-      ? `“${next.name}” — ${catDay(next.date, 'en')}${
-          f.venues[0] ? `, ${f.venues[0]}` : ''
-        }.${dateTailList[v2]}`
-      : `«${next.name}» — ${catDay(next.date, 'ru')}${
-          f.venues[0] ? `, ${f.venues[0]}` : ''
-        }.${dateTailList[v2]}`
+      ? `“${next.name}” on ${catShortDay(next.date, 'en')}${f.venues[0] ? `, ${f.venues[0]}` : ''}.`
+      : `«${next.name}» — ${catShortDay(next.date, 'ru')}${f.venues[0] ? `, ${f.venues[0]}` : ''}.`
     : null;
   const q3 =
     f.priceFrom == null || f.freeCount === f.count
@@ -2427,11 +2442,6 @@ function categoryDescription(cat, path, lang, f) {
 /** Заголовок блока перелинковки на городской странице */
 function categoriesBlockTitle(path, lang) {
   return lang === 'en' ? `Categories in ${CAT_CITY_NAME_EN[path]}` : `Категории ${CAT_CITY_WHERE_RU[path]}`;
-}
-
-/** Заголовок блока «другие категории» на странице категории */
-function otherCategoriesTitle(path, lang) {
-  return lang === 'en' ? `Other categories ${catWhere(path, 'en')}` : `Другие категории ${CAT_CITY_WHERE_RU[path]}`;
 }
 
 /** Категории из БД тем же anon-ключом, что RPC. Ошибка сети/прав — страницы
@@ -2552,19 +2562,6 @@ function categorySeoHtml(cell, lang, cells) {
     lines.push('  </ul>');
   }
   lines.push(`  <h2>${en ? 'FAQ' : 'Частые вопросы'}</h2>`, faq);
-  // Перелинковка: другие категории этого города, прошедшие гейт
-  const siblings = [...cells.values()].filter((c) => c.path === path && c.cat.id !== cat.id);
-  if (siblings.length) {
-    const links = siblings
-      .map((c) => {
-        const label = `${typeof c.cat.emoji === 'string' ? c.cat.emoji : ''} ${
-          en ? c.cat.name_en : c.cat.name_ru
-        }`.trim();
-        return `<a href="${esc(`${en ? '/en' : ''}/${path}/${c.cat.id}/`)}">${esc(label)}</a>`;
-      })
-      .join(' · ');
-    lines.push(`  <p>${esc(otherCategoriesTitle(path, lang))}: ${links}</p>`);
-  }
   lines.push('</div>', '');
   return lines.join('\n');
 }

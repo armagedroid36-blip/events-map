@@ -34,7 +34,6 @@ import {
   categoryPageHref,
   cellFacts,
   cellItems,
-  otherCategoriesTitle,
 } from '../lib/categoryPages';
 import {
   applyCategoryMeta,
@@ -303,7 +302,6 @@ export default function Home({
       h1: categoryH1(category, pageCityPath, seoLang),
       intro: categoryIntro(category, pageCityPath, seoLang, categoryFacts),
       faq: categoryFaq(category, pageCityPath, seoLang, categoryFacts),
-      siblings: otherCategoriesTitle(pageCityPath, seoLang),
     };
   }, [pageCityPath, category, categoryFacts, seoLang]);
   /** Категории города, прошедшие гейт (перелинковка hub/spoke: город → категории) */
@@ -940,22 +938,9 @@ export default function Home({
               <p className="mt-1 text-sm leading-relaxed text-gray-600">{f.a}</p>
             </details>
           ))}
-          {/* Другие категории этого города (только существующие страницы) */}
-          {cityCategoryLinks.filter((l) => l.id !== category.id).length > 0 && (
-            <p className="mt-2 text-xs leading-relaxed text-gray-600">
-              <span className="font-semibold text-gray-700">{categorySeo.siblings}:</span>{' '}
-              {cityCategoryLinks
-                .filter((l) => l.id !== category.id)
-                .map((l, i) => (
-                  <span key={l.id}>
-                    {i > 0 && <span className="text-gray-300"> · </span>}
-                    <a href={l.href} className="text-[#0F766E] hover:underline">
-                      {l.label}
-                    </a>
-                  </span>
-                ))}
-            </p>
-          )}
+          {/* Другие категории этого города живут на афише города (ссылка в
+              крошке выше) — на странице категории их не дублируем: один h1,
+              фокус на своей категории. */}
         </div>
       )}
 
