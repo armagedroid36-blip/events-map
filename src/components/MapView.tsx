@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import type { Category, EventItem } from '../lib/types';
 import { isValidCoords } from '../lib/coords';
 import { config } from '../config';
-import { mapStyle } from '../lib/mapStyle';
+import { mapStyle, attachTilesFallback } from '../lib/mapStyle';
 
 // Акцентные цвета — только для категорий (по спецификации дизайна)
 const CATEGORY_COLORS = [
@@ -87,6 +87,7 @@ export default function MapView({
       'bottom-right',
     );
     mapRef.current = map;
+    attachTilesFallback(map);
 
     // Источник событий + слои кластеров создаются при загрузке стиля
     map.on('load', () => {

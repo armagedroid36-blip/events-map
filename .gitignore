@@ -31,3 +31,6 @@ dist-ssr
 org_*.json
 org-contacts.*
 supabase/.temp/
+
+# 3D-логотип: рабочие файлы Blender, в репозиторий не кладём
+logo3d/

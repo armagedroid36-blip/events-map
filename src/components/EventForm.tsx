@@ -10,7 +10,7 @@ import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { nextZ } from '../lib/zindex';
 import * as maplibregl from 'maplibre-gl';
-import { mapStyle } from '../lib/mapStyle';
+import { mapStyle, attachTilesFallback } from '../lib/mapStyle';
 import { z } from 'zod';
 import type { Category, EventItem, Recurrence } from '../lib/types';
 import { getApi, photoUrl } from '../lib/api';
@@ -75,6 +75,7 @@ function MiniMap({
       new maplibregl.AttributionControl({ compact: true, customAttribution: config.mapAttribution }),
       'bottom-right',
     );
+    attachTilesFallback(map);
     // Compact-атрибуция maplibre сворачивается только повторным кликом по
     // кнопке или drag карты. Тап по карте/фону оставляет её раскрытой —
     // закрываем по клику вне контрола сами (класс compact-show снят =

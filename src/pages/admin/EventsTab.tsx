@@ -9,7 +9,7 @@ import { geocodeAddress } from '../../lib/geocode';
 import { translateText, detectLang } from '../../lib/translate';
 import { formatDate } from '../../lib/dates';
 import { config } from '../../config';
-import { mapStyle } from '../../lib/mapStyle';
+import { mapStyle, attachTilesFallback } from '../../lib/mapStyle';
 import type { Category, EventItem } from '../../lib/types';
 
 const PAGE_SIZE = 20;
@@ -46,6 +46,7 @@ function EditMap({
       new maplibregl.AttributionControl({ compact: true, customAttribution: config.mapAttribution }),
       'bottom-right',
     );
+    attachTilesFallback(map);
     // Чёрный круг 📍 (как был editIcon на Leaflet)
     const markerEl = document.createElement('div');
     markerEl.className = 'event-marker';
