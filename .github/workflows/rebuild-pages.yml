@@ -1,0 +1,87 @@
+name: Rebuild GitHub Pages
+
+# Автосборка статики (пре-рендер + sitemap) и публикация в gh-pages по
+# расписанию, чтобы статика не отставала от живой БД: сборщик событий
+# (collect-events) наполняет БД дважды в сутки, а пре-рендер фиксирует снимок
+# на момент сборки — без пересборки в sitemap остаются URL прошедших событий,
+# а посадочные «город × категория» с упавшим числом событий (< MIN_CATEGORY_EVENTS)
+# продолжают отдаваться статикой, хотя SPA на них уже отдаёт 404.
+#
+# Расписание (UTC):
+#   00:15 — сразу после смены суток: снимает события с прошедшей датой
+#           (list_active_events: coalesce(end_date, start_date) >= current_date);
+#   17:20 — после дневного сбора collect-events (16:30 UTC), чтобы свежие
+#           события попали в статику и sitemap в тот же вечер.
+#
+# Только чтение main и запись gh-pages: main не коммитим, buildVersion
+# в src/config.ts НЕ бампаем (автосборка — не релиз, версия живёт в ручных
+# деплоях). Сборка идёт ровно тем же `npm run build`, что и локально.
+
+on:
+  schedule:
+    - cron: '15 0 * * *'
+    - cron: '20 17 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: rebuild-pages
+  cancel-in-progress: false
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Зависимости
+        run: npm ci --no-audit --no-fund
+
+      # Ключи нужны и Vite (VITE_* вшиваются в бандл), и пре-рендеру
+      # (scripts/seo-prerender.mjs читает VITE_SUPABASE_URL /
+      # VITE_SUPABASE_ANON_KEY из env; без них сборка падает на exit 1).
+      # Без pipefail шага бы не было: GitHub выполняет run через bash -eo pipefail,
+      # поэтому падение сборки валит шаг, а следующий (деплой) не запускается.
+      - name: Сборка (tsc + vite + пре-рендер + sitemap)
+        run: npm run build 2>&1 | tee build.log
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+
+      - name: Итоги сборки (счётчики)
+        run: |
+          echo "===== Итоги пре-рендера ====="
+          grep -E 'событий:|EN-событий|категорий:|ячеек|организаторов:|статей:|sitemap|битых ссылок' build.log || true
+          echo "===== Страницы в dist ====="
+          echo "всего index.html:      $(find dist -name index.html -not -name 404.html | wc -l)"
+          echo "страниц событий:       $(find dist/event -name index.html | wc -l) RU / $(find dist/en/event -name index.html | wc -l) EN"
+          echo "ячеек город×категория: $(for c in bali da-nang nha-trang; do find "dist/$c" -mindepth 2 -maxdepth 2 -name index.html; done | wc -l) RU / $(for c in bali da-nang nha-trang; do find "dist/en/$c" -mindepth 2 -maxdepth 2 -name index.html; done | wc -l) EN"
+          echo "URL в sitemap:         $(grep -c '<loc>' dist/sitemap.xml)"
+          echo "дата сборки в статике: $(grep -o 'Афиша обновлена: <time datetime=\"[0-9-]*\"' dist/bali/index.html | head -1)"
+
+      # Деплой строго ПОСЛЕ успешной сборки: если build упал, шаг не
+      # выполняется и прод остаётся прежним (частичный dist не публикуется).
+      # keep_files: false — ветка полностью заменяется содержимым dist
+      # (CNAME лежит в public/ и попадает в dist), поэтому снятые с публикации
+      # страницы исчезают из ветки и начинают отдавать 404.html с кодом 404.
+      - name: Публикация в gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
+          keep_files: false
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: 'Auto rebuild: prerender + sitemap'
