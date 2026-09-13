@@ -10,6 +10,7 @@ import { extractCategory } from './category-llm.mjs';
 import { extractTime } from './time-llm.mjs';
 import { extractAddressLLM } from './address-llm.mjs';
 import { extractAddress } from './address-regex.mjs';
+import { extractContacts } from './contacts-regex.mjs';
 import { extractDateLLM } from './date-llm.mjs';
 import { findCityZone } from './city-zones.mjs';
 
@@ -539,6 +540,10 @@ async function main() {
         const { mapLinks, tgLinks } = pickLinks(post.links, ch.username);
         const contacts = tgLinks.map(normalizeTg).filter(Boolean);
         const tgMain = contacts.find((c) => !c.includes('bot')) || contacts[0] || null;
+        // Контакты из ТЕКСТА поста: WhatsApp («пишите в WA: + 62 …»), телефон по
+        // метке, почта, инстаграм. Раньше в карточку уходил только t.me из ссылок,
+        // и если организатор указал лишь номер WhatsApp — контакта не было вовсе.
+        const textContacts = extractContacts(post.text, post.links);
 
         // Координаты: из карты или геокодом
         let lat = null;
@@ -634,7 +639,11 @@ async function main() {
           lng,
           category_id: llmCat || pickCategory(post.text),
           website,
-          contact_telegram: tgMain,
+          contact_telegram: tgMain || textContacts.telegram,
+          contact_whatsapp: textContacts.whatsapp,
+          contact_phone: textContacts.phone,
+          contact_email: textContacts.email,
+          contact_instagram: textContacts.instagram,
           photos: post.photos ? post.photos.slice(0, 3) : [],
           // free=true → price=0 («Бесплатно» на карточке); donation — отдельно (price остаётся null)
           price: p?.free ? 0 : (p?.price ?? null),
@@ -662,7 +671,7 @@ async function main() {
             status: 'moderation',
             city: ch.city,
           });
-          console.log(`  ${DRY_RUN ? '[dry] +' : '+'} ${title.slice(0, 45)} | ${when.date} ${when.time || ''} | ${ch.city} | ${row.category_id}${tgMain ? ' | ' + tgMain : ''}${address ? ' | ' + address.slice(0, 40) : ''}`);
+          console.log(`  ${DRY_RUN ? '[dry] +' : '+'} ${title.slice(0, 45)} | ${when.date} ${when.time || ''} | ${ch.city} | ${row.category_id}${tgMain ? ' | ' + tgMain : ''}${textContacts.whatsapp ? ' | wa:' + textContacts.whatsapp : ''}${address ? ' | ' + address.slice(0, 40) : ''}`);
         }
       }
     }

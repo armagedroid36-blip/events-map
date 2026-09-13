@@ -6,6 +6,7 @@ import { selectAll } from './db-rows.mjs';
 import { extractPrice } from './price-llm.mjs';
 import { extractCategory } from './category-llm.mjs';
 import { isInternationalArtist } from './intl-llm.mjs';
+import { extractContacts as extractSharedContacts } from './contacts-regex.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -214,6 +215,22 @@ function extractContacts(detail) {
       }
     }
   }
+  // WhatsApp и недостающие контакты — общим извлекателем (scripts/contacts-regex.mjs):
+  // у Балифорума свой разбор, но он не знает про «пишите в WA: + 62 …». Заполняем
+  // только ПУСТЫЕ поля, чтобы не перебивать приоритетный разбор.
+  const shared = extractSharedContacts(text);
+  const digits = (v) => String(v || '').replace(/\D/g, '');
+  if (shared.whatsapp) out.contact_whatsapp = shared.whatsapp;
+  if (!out.contact_telegram && shared.telegram) out.contact_telegram = `https://t.me/${shared.telegram.replace(/^@/, '')}`;
+  if (!out.contact_email && shared.email) out.contact_email = shared.email;
+  // Если тот же номер уже стоит телефоном — не дублируем его в телефон
+  if (!out.contact_phone && shared.phone && digits(shared.phone) !== digits(out.contact_whatsapp)) {
+    out.contact_phone = shared.phone;
+  }
+  if (out.contact_phone && out.contact_whatsapp && digits(out.contact_phone) === digits(out.contact_whatsapp)) {
+    delete out.contact_phone;
+  }
+  if (!out.contact_instagram && shared.instagram) out.contact_instagram = `https://www.instagram.com/${shared.instagram}/`;
   return out;
 }
 
@@ -363,6 +380,7 @@ async function main() {
         website,
         contact: contacts.contact || null,
         contact_telegram: contacts.contact_telegram || null,
+        contact_whatsapp: contacts.contact_whatsapp || null,
         contact_email: contacts.contact_email || null,
         contact_phone: contacts.contact_phone || null,
         contact_instagram: contacts.contact_instagram || null,
