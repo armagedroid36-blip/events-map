@@ -853,6 +853,39 @@ function addDaysIso(iso, n) {
   return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10);
 }
 
+/** Время к виду HH:MM:SS для СРАВНЕНИЯ (в вывод не идёт: в JSON-LD уходит
+ *  исходное значение поля, как у startDate). Не распозналось — пустая строка. */
+function normTime(t) {
+  const m = /^(\d{1,2}):(\d{2})(?::(\d{2}))?$/.exec(String(t ?? '').trim());
+  if (!m) return '';
+  return `${m[1].padStart(2, '0')}:${m[2]}:${m[3] ?? '00'}`;
+}
+
+/**
+ * Конец КОНКРЕТНОГО вхождения для JSON-LD endDate (без него Google считает
+ * событие однодневным и не показывает интервал).
+ *
+ * ВАЖНО: events.end_date здесь НЕ используется — это конец СЕРИИ/периода
+ * (см. src/lib/dates.ts: «серия закончилась»), а не конец вхождения. У 44
+ * активных событий end_date <> start_date (все — weekly-серии), и подстановка
+ * end_date дала бы в разметке «класс длится 12 дней».
+ *
+ * Правила (дата — sd = ближайшее вхождение, та же, что у startDate):
+ *   * end_time пусто / не разобралось / равно start_time (в данных это
+ *     заглушка «23:59:00») → null: ключ endDate не выводим вообще;
+ *   * end_time > start_time → "<sd>T<end_time>";
+ *   * end_time < start_time (переход через полночь) → "<sd + 1 день>T<end_time>".
+ * Нет start_time — длительность неопределима (startDate без времени) → null.
+ */
+function occurrenceEnd(sd, startTime, endTime) {
+  if (!sd) return null;
+  const st = normTime(startTime);
+  const et = normTime(endTime);
+  if (!st || !et || et === st) return null;
+  const raw = String(endTime).trim();
+  return et > st ? `${sd}T${raw}` : `${addDaysIso(sd, 1)}T${raw}`;
+}
+
 /** ISO-дата (YYYY-MM-DD) -> день недели по ISO: 1=Пн … 7=Вс (UTC, без TZ) */
 function isoDayOfWeek(iso) {
   const [y, m, d] = iso.split('-').map(Number);
@@ -1157,6 +1190,9 @@ function eventJsonLd(ev, url, lang = 'ru', image = null) {
   // сборки (иначе в JSON-LD уходит первое вхождение серии, часто в прошлом,
   // и Google не показывает rich-результат). Разовые — как раньше (start_date).
   const sd = nextOccurrenceDate(ev, TODAY_ISO);
+  // Конец вхождения (не путать с events.end_date — конец серии): null, когда
+  // длительность неизвестна (нет end_time или это заглушка «23:59:00»).
+  const ed = occurrenceEnd(sd, ev.start_time, ev.end_time);
 
   const doc = {
     '@type': 'Event',
@@ -1187,6 +1223,7 @@ function eventJsonLd(ev, url, lang = 'ru', image = null) {
     },
   };
   if (text) doc.description = cleanText(text);
+  if (ed) doc.endDate = ed;
   if (photo) doc.image = photo;
   if (orgName) doc.organizer = { '@type': 'Organization', name: orgName };
   // inLanguage = язык СТРАНИЦЫ, а не источника события: EN-версия
