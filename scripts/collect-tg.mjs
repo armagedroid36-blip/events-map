@@ -11,6 +11,7 @@ import { extractTime } from './time-llm.mjs';
 import { extractAddressLLM } from './address-llm.mjs';
 import { extractAddress } from './address-regex.mjs';
 import { extractContacts } from './contacts-regex.mjs';
+import { resolveAuthorContact, signatureOf } from './contact-author.mjs';
 import { extractDateLLM } from './date-llm.mjs';
 import { findCityZone } from './city-zones.mjs';
 
@@ -29,6 +30,10 @@ const MAX_EVENTS = Number(process.env.MAX_EVENTS || 300); // предохран�
 const MAX_POSTS = Number(process.env.MAX_POSTS || 200);   // максимум постов на одну страницу канала
 const MAX_PAGES_PER_CHANNEL = Number(process.env.MAX_PAGES_PER_CHANNEL || 5); // предохранитель: страниц на канал
 const DRY_RUN = process.env.DRY_RUN === '1';
+// Поиск аккаунта по подписи поста: кэш по подписи + лимит запросов к t.me за прогон
+const AUTHOR_LOOKUPS = Number(process.env.AUTHOR_LOOKUPS || 40);
+const authorCache = new Map();
+let authorLookups = 0;
 
 // Каналы: город, страна. fallback — координаты центра города, используются
 // ТОЛЬКО как эталон для отбраковки в geocode (геокодер «угадал» центр),
@@ -230,6 +235,11 @@ function parsePost(block) {
       .trim()
   );
   const links = [...new Set([...block.matchAll(/href="(https?:\/\/[^"]+)"/g)].map((m) => m[1]))];
+  // Якоря с текстом: нужны, чтобы понять, КУДА ведёт ссылка-имя («Пост от:
+  // Misha | MISH.REC» со ссылкой) — см. scripts/contact-author.mjs.
+  const anchors = [...block.matchAll(/<a[^>]*href="(https?:\/\/[^"]+)"[^>]*>(.*?)<\/a>/gis)]
+    .map((m) => ({ href: m[1], text: decodeEntities(m[2].replace(/<[^>]+>/g, '')).trim() }))
+    .filter((a, i, arr) => arr.findIndex((x) => x.href === a.href && x.text === a.text) === i);
   // Фото поста: обложки (background-image), <img> и постеры видео.
   // Оставляем только реальные фото (URL с «cdn»), отсекая иконки/логотипы telegram.org
   const photos = [
@@ -241,7 +251,7 @@ function parsePost(block) {
     .map((u) => (u.startsWith('//') ? `https:${u}` : u))
     .filter((u, i, arr) => arr.indexOf(u) === i)
     .slice(0, 5);
-  return { pid, dt, text, links, photos };
+  return { pid, dt, text, links, anchors, photos };
 }
 
 /** Ссылки goo.gl/maps и t.me из поста */
@@ -544,6 +554,24 @@ async function main() {
         // метке, почта, инстаграм. Раньше в карточку уходил только t.me из ссылок,
         // и если организатор указал лишь номер WhatsApp — контакта не было вовсе.
         const textContacts = extractContacts(post.text, post.links);
+        // Подпись автора («Пост от: Misha | MISH.REC») → аккаунт в Telegram.
+        // В HTML ссылки нет (в приложении имя кликабельно), поэтому: якорь с
+        // таким текстом, иначе проверка кандидатов-ников с сверкой display-name.
+        // Спрашиваем только когда контактов нет вовсе, и не чаще AUTHOR_LOOKUPS
+        // раз за прогон (каждая проверка — запрос к t.me).
+        let authorTg = null;
+        if (!tgMain && !textContacts.telegram && authorLookups < AUTHOR_LOOKUPS) {
+          const sig = signatureOf(post.text);
+          if (sig) {
+            if (authorCache.has(sig)) {
+              authorTg = authorCache.get(sig);
+            } else {
+              authorLookups++;
+              authorTg = await resolveAuthorContact({ text: post.text, anchors: post.anchors, log: console.log });
+              authorCache.set(sig, authorTg);
+            }
+          }
+        }
 
         // Координаты: из карты или геокодом
         let lat = null;
@@ -639,7 +667,7 @@ async function main() {
           lng,
           category_id: llmCat || pickCategory(post.text),
           website,
-          contact_telegram: tgMain || textContacts.telegram,
+          contact_telegram: tgMain || textContacts.telegram || authorTg,
           contact_whatsapp: textContacts.whatsapp,
           contact_phone: textContacts.phone,
           contact_email: textContacts.email,

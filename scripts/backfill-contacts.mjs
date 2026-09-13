@@ -13,6 +13,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { selectAll } from './db-rows.mjs';
 import { extractContacts } from './contacts-regex.mjs';
+import { resolveAuthorContact, signatureOf } from './contact-author.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -38,6 +39,11 @@ async function main() {
 
   let updated = 0;
   const counts = { whatsapp: 0, phone: 0, telegram: 0, email: 0, instagram: 0 };
+  // Поиск аккаунта по подписи «Пост от: …» — только когда контактов нет вовсе;
+  // лимит запросов к t.me за прогон (кэш по подписи).
+  const authorCache = new Map();
+  const AUTHOR_LOOKUPS = Number(process.env.AUTHOR_LOOKUPS || 25);
+  let authorLookups = 0;
 
   for (const ev of rows) {
     const text = [ev.description, ev.description_ru, ev.description_en].filter(Boolean).join('\n');
@@ -49,6 +55,21 @@ async function main() {
     if (found.telegram && !ev.contact_telegram) patch.contact_telegram = found.telegram;
     if (found.email && !ev.contact_email) patch.contact_email = found.email;
     if (found.instagram && !ev.contact_instagram) patch.contact_instagram = found.instagram;
+    // Совсем нет контактов + в описании подпись автора — ищем его аккаунт
+    const anyContact = ev.contact_telegram || ev.contact_whatsapp || ev.contact_phone ||
+      ev.contact_email || ev.contact_instagram;
+    if (!anyContact && !Object.keys(patch).length && authorLookups < AUTHOR_LOOKUPS) {
+      const sig = signatureOf(text);
+      if (sig) {
+        let tg = authorCache.get(sig);
+        if (tg === undefined) {
+          authorLookups++;
+          tg = await resolveAuthorContact({ text, log: (m) => console.log('   ' + m.trim()) });
+          authorCache.set(sig, tg);
+        }
+        if (tg) patch.contact_telegram = tg;
+      }
+    }
     if (!Object.keys(patch).length) continue;
 
     for (const [k, v] of Object.entries(patch)) {
