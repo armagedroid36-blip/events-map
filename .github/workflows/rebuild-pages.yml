@@ -85,3 +85,10 @@ jobs:
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
           commit_message: 'Auto rebuild: prerender + sitemap'
+
+      # Оповещаем Яндекс и Bing о свежих страницах (IndexNow): новые события,
+      # карточки и посадочные попадают в очередь обхода в тот же день.
+      # Ключ — публичный файл из dist, ничего секретного.
+      - name: IndexNow — оповестить поисковики
+        run: node scripts/indexnow.mjs
+        continue-on-error: true
