@@ -75,19 +75,19 @@ const BASE_DESCRIPTION_EN =
 // путь = slugify(labelEn) из config.quickLocations. EN-версии — CITY_PAGES_EN.
 const CITY_META: Record<string, { title: string; description: string }> = {
   bali: {
-    title: 'События на Бали: афиша и куда сходить | Events in Bali',
+    title: 'Мероприятия на Бали: афиша и куда сходить | Events in Bali',
     description:
-      'Концерты, вечеринки, йога, маркеты и фестивали на Бали: афиша с датами, местами и ценами. Events in Bali on the map: concerts, parties, yoga and festivals.',
+      'Мероприятия на Бали: концерты, вечеринки, йога, маркеты и фестивали. Афиша с датами, местами и ценами. Bali events on the map.',
   },
   'da-nang': {
-    title: 'События в Дананге: афиша и куда сходить | Da Nang Events',
+    title: 'Мероприятия в Дананге: афиша и куда сходить | Da Nang',
     description:
-      'Вечеринки, концерты и фестивали в Дананге: афиша для экспатов и туристов с датами, местами и ценами. Events in Da Nang on the map for expats and travellers.',
+      'Мероприятия в Дананге: концерты, вечеринки, йога и фестивали. Афиша для экспатов и туристов с датами, местами и ценами.',
   },
   'nha-trang': {
-    title: 'События в Нячанге: афиша и куда сходить | Nha Trang Events',
+    title: 'Мероприятия в Нячанге: афиша и куда сходить | Nha Trang',
     description:
-      'Вечеринки, концерты, шоу и встречи в Нячанге: афиша с датами, местами и ценами. Events in Nha Trang on the map: concerts, shows and parties.',
+      'Мероприятия в Нячанге: вечеринки, концерты, шоу и встречи. Афиша с датами, местами и ценами для туристов и экспатов.',
   },
 };
 

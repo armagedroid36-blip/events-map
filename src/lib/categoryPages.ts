@@ -22,8 +22,11 @@ import type { Category, EventItem } from './types';
 import { cityPath } from './address';
 import type { CityPath } from './address';
 
-/** Порог качества: страница ячейки существует с 3+ активными событиями */
-export const MIN_CATEGORY_EVENTS = 3;
+/** Порог качества: страница ячейки существует уже с 1 активным событием.
+ *  Было 3 — но у Дананга и Нячанга событий мало, и страницы категорий
+ *  («концерты в Дананге», «йога в Нячанге») не создавались вовсе; для
+ *  локального поиска выгоднее показать страницу с одним событием. */
+export const MIN_CATEGORY_EVENTS = 1;
 
 /** RU/EN названия городов по пути (как в JSON-LD и городских страницах) */
 const CITY_NAME_RU: Record<CityPath, string> = {
@@ -688,11 +691,11 @@ export function categoryFaq(
   return list.filter(Boolean) as { q: string; a: string }[];
 }
 
-/** h1 ячейки: «Вечеринки на Бали: афиша событий» / «Parties in Bali: what's on» */
+/** h1 ячейки: «Вечеринки на Бали: афиша и мероприятия» / «Parties in Bali: what's on» */
 export function categoryH1(cat: Category, path: CityPath, lang: 'ru' | 'en'): string {
   return lang === 'en'
     ? `${cat.name_en} in ${CITY_NAME_EN[path]}: what's on`
-    : `${cat.name_ru} ${CITY_WHERE_RU[path]}: афиша событий`;
+    : `${cat.name_ru} ${CITY_WHERE_RU[path]}: афиша и мероприятия`;
 }
 
 /** Длина строки ПОСЛЕ HTML-экранирования (esc в пре-рендере: & → &amp;,
@@ -786,7 +789,7 @@ export function categoryDescription(
     const lead = `${cat.name_en} in ${CITY_NAME_EN[path]}: ${eventsWord(f.count, 'en')} and what is on this month.`;
     return fitDescription(lead, DESC_TAILS_EN, DESC_FILL_EN);
   }
-  const lead = `${cat.name_ru} ${CITY_WHERE_RU[path]}: ${eventsWord(f.count, 'ru')} и афиша с датами, местами и ценами.`;
+  const lead = `${cat.name_ru} ${CITY_WHERE_RU[path]}: ${eventsWord(f.count, 'ru')} и афиша мероприятий с датами, местами и ценами.`;
   return fitDescription(lead, DESC_TAILS_RU, DESC_FILL_RU);
 }
 
