@@ -1137,6 +1137,33 @@ function placeLabel(address, ev, lang) {
 }
 
 /**
+ * Имя организации-источника, выводимое из website (Search Console хочет
+ * organizer, а аккаунтов-организаторов в базе нет — owner_id/org_display_name
+ * пустые у всех активных событий). Правила: baliforum.ru → «BaliForum»,
+ * t.me/<канал> → «Telegram @<канал>», иначе — домен без www. Ничего не
+ * выдумываем: берём только то, что читается из самого URL. Пусто/битый URL
+ * → null (тогда organizer не выводится).
+ */
+function organizerNameFromWebsite(website) {
+  const raw = String(website ?? '').trim();
+  if (!raw) return null;
+  let u;
+  try {
+    u = new URL(raw.includes('://') ? raw : `https://${raw}`);
+  } catch {
+    return null;
+  }
+  const host = u.hostname.replace(/^www\./i, '').toLowerCase();
+  if (!host) return null;
+  if (host === 't.me' || host === 'telegram.me' || host === 'telegram.dog') {
+    const channel = u.pathname.split('/').filter(Boolean)[0];
+    return channel ? `Telegram @${channel}` : 'Telegram';
+  }
+  if (/^baliforum\.ru$/i.test(host)) return 'BaliForum';
+  return host;
+}
+
+/**
  * JSON-LD Event для страницы события: @graph из Event (поля как раньше) и
  * BreadcrumbList (Главная > город, если распознан > название события как в
  * h1 статического блока). Данные — из ответа list_active_events
@@ -1183,6 +1210,11 @@ function eventJsonLd(ev, url, lang = 'ru', image = null) {
     : ev.description_ru || ev.description || ev.description_en || '';
   const orgName =
     typeof ev.org_display_name === 'string' ? ev.org_display_name.trim() : '';
+  const website = typeof ev.website === 'string' ? ev.website.trim() : '';
+  // Организатор: приоритет — аккаунт-организатор (org_display_name); иначе
+  // источник публикации, выводимый из website (BaliForum / Telegram @канал /
+  // домен). ФИО и названий, которых нет в данных, не придумываем.
+  const organizerName = orgName || organizerNameFromWebsite(website);
   const photo =
     image != null ? image : Array.isArray(ev.photos) ? absPhoto(ev.photos[0]) : '';
 
@@ -1193,6 +1225,36 @@ function eventJsonLd(ev, url, lang = 'ru', image = null) {
   // Конец вхождения (не путать с events.end_date — конец серии): null, когда
   // длительность неизвестна (нет end_time или это заглушка «23:59:00»).
   const ed = occurrenceEnd(sd, ev.start_time, ev.end_time);
+  // Прошедшее событие: страницы прошедших не индексируются, но функция может
+  // быть вызвана и для них — availability/endDate тогда не выводим, чтобы не
+  // регрессировать поведение индексации архива.
+  const isPast = !sd || sd < TODAY_ISO;
+  // endDate для БУДУЩИХ событий — всегда (требование Search Console):
+  //   1) end_time известен → конец вхождения с временем (occurrenceEnd);
+  //   2) end_time нет, РАЗОВОЕ событие на несколько дней → end_date без времени;
+  //   3) иначе (однодневное или серия) → дата начала, без времени: правдиво —
+  //      событие проходит в эту дату.
+  // Для СЕРИЙ (recurrence) end_date не берём: это конец серии, а не конец
+  // вхождения — weekly-класс «растянулся» бы в разметке на месяцы.
+  const seriesEvent =
+    ev.recurrence != null &&
+    !(typeof ev.recurrence === 'string' && ev.recurrence === 'null') &&
+    !(typeof ev.recurrence === 'object' && Object.keys(ev.recurrence).length === 0);
+  const endDateRaw = typeof ev.end_date === 'string' ? ev.end_date.slice(0, 10) : '';
+  const multiDay = !seriesEvent && !!endDateRaw && !!sd && endDateRaw > sd;
+  const endDateIso = ed || (multiDay ? endDateRaw : sd);
+  // availability — всегда: InStock (бесплатные, донатные, с ценой). SoldOut —
+  // только при явном признаке в данных (сейчас такого поля в events нет, но
+  // код к нему готов); PreOrder не используем, пока нет данных о предзаказе.
+  const availability = isPast
+    ? ''
+    : ev.sold_out === true || ev.availability === 'SoldOut'
+      ? 'https://schema.org/SoldOut'
+      : 'https://schema.org/InStock';
+  // validFrom — дата публикации карточки (events.created_at), ISO-дата. Пусто —
+  // не выводим. Публикация позже начала (битые данные) → берём дату начала.
+  const createdIso = typeof ev.created_at === 'string' ? ev.created_at.slice(0, 10) : '';
+  const validFrom = createdIso ? (sd && createdIso > sd ? sd : createdIso) : '';
 
   const doc = {
     '@type': 'Event',
@@ -1219,13 +1281,25 @@ function eventJsonLd(ev, url, lang = 'ru', image = null) {
       url,
       price,
       priceCurrency: currency,
+      ...(availability ? { availability } : {}),
+      ...(validFrom ? { validFrom } : {}),
       ...(ev.donation ? { description: 'donation' } : {}),
     },
   };
   if (text) doc.description = cleanText(text);
-  if (ed) doc.endDate = ed;
+  if (!isPast) doc.endDate = endDateIso;
   if (photo) doc.image = photo;
-  if (orgName) doc.organizer = { '@type': 'Organization', name: orgName };
+  if (organizerName) {
+    doc.organizer = {
+      '@type': 'Organization',
+      name: organizerName,
+      // url — только когда имя выведено из website. Для аккаунта-организатора
+      // URL источника не подставляем: это разные сущности.
+      ...(!orgName && website ? { url: website } : {}),
+    };
+  }
+  // performer намеренно НЕ выводим: в events нет данных об артистах
+  // (нет полей artists/lineup) — состав выдумывать нельзя.
   // inLanguage = язык СТРАНИЦЫ, а не источника события: EN-версия
   // (/en/event/*, name/description уже EN) всегда 'en', даже если оригинал
   // события RU. RU-страницы — как раньше (languages[0] || language ||
