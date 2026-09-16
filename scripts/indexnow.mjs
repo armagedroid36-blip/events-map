@@ -7,7 +7,10 @@ import path from "node:path";
 
 const DIST = process.env.DIST_DIR || "dist";
 const HOST = process.env.INDEXNOW_HOST || "mypins.site";
-const RU_ONLY = process.env.INDEXNOW_RU_ONLY !== "0";
+// RU_ONLY: true только при явном INDEXNOW_RU_ONLY=1 (опт-ин «только русская
+// половина»). По умолчанию оповещаем ВСЕ URL из sitemap — RU и EN (промпт B58:
+// раньше дефолт был «только RU», и вся EN-половина сайта не пинговалась).
+const RU_ONLY = process.env.INDEXNOW_RU_ONLY === "1";
 
 function findKey(dir) {
   for (const f of fs.readdirSync(dir)) {
@@ -33,6 +36,8 @@ if (!key) {
 let urls = [...fs.readFileSync(sitemapPath, "utf8").matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
 if (RU_ONLY) urls = urls.filter((u) => !u.includes("/en/"));
 urls = urls.slice(0, 10000);
+// Наблюдаемость для CI: эффект фильтра видно только по числу отправленных URL
+console.log(`indexnow: отправлено ${urls.length} URL`);
 
 const payload = {
   host: HOST,
@@ -53,4 +58,3 @@ for (const endpoint of ["https://api.indexnow.org/indexnow", "https://yandex.com
     console.log("indexnow:", endpoint, "→ ошибка:", e.message);
   }
 }
-console.log("indexnow: отправлено URL:", urls.length);

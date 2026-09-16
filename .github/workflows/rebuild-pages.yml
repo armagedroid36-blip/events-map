@@ -91,4 +91,7 @@ jobs:
       # Ключ — публичный файл из dist, ничего секретного.
       - name: IndexNow — оповестить поисковики
         run: node scripts/indexnow.mjs
+        env:
+          # оповещаем ВСЕ URL (RU + EN); INDEXNOW_RU_ONLY=1 — опт-ин «только RU»
+          INDEXNOW_RU_ONLY: "0"
         continue-on-error: true

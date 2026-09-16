@@ -1479,43 +1479,141 @@ function citySeoHtml(seo, evs, categoriesHtml = '') {
   return lines.join('\n');
 }
 
+/** Сколько ближайших событий показывать в блоке главной (план §4.1.1) */
+const MAX_HOME_EVENTS = 8;
+
+/**
+ * Отбор событий для блока главной «Ближайшие события»: только с БУДУЩИМ
+ * вхождением (nextOccurrenceDate >= TODAY_ISO — та же дата, что у startDate и
+ * у блоков городов), сортировка по дате вхождения, при равных датах — по id
+ * (стабильность сборки: один и тот же набор даёт один и тот же HTML).
+ * needEn — для /en/: только события с EN-версией (title_en непуст ИЛИ
+ * source_lang='en'), иначе ссылка вела бы на несуществующую EN-страницу.
+ * Источник — тот же активный набор (list_active_events), что у городских
+ * страниц: ссылка на архивное событие/404 в блок попасть не может.
+ */
+function homeEvents(events, needEn = false) {
+  return events
+    .filter(
+      (ev) =>
+        ev &&
+        typeof ev.id === 'string' &&
+        ev.id &&
+        ((typeof ev.title === 'string' && ev.title) ||
+          (typeof ev.title_en === 'string' && ev.title_en)),
+    )
+    .filter((ev) => nextOccurrenceDate(ev, TODAY_ISO) >= TODAY_ISO)
+    .filter(
+      (ev) =>
+        !needEn ||
+        (typeof ev.title_en === 'string' && ev.title_en) ||
+        ev.source_lang === 'en',
+    )
+    .sort((a, b) => {
+      const byDate = String(nextOccurrenceDate(a, TODAY_ISO)).localeCompare(
+        String(nextOccurrenceDate(b, TODAY_ISO)),
+      );
+      return byDate !== 0 ? byDate : String(a.id).localeCompare(String(b.id));
+    })
+    .slice(0, MAX_HOME_EVENTS);
+}
+
+/**
+ * Пункты списка событий для статических SEO-блоков главной — разметка 1:1
+ * с городским блоком (citySeoHtml): <li><time datetime="YYYY-MM-DD">дата</time>
+ * — <a href="URL">Название</a> — <span>цена</span></li>.
+ * lang='ru' — ссылка на RU-страницу события, дата ruDate, цена
+ * «Донат»/«Бесплатно»; lang='en' — на EN-страницу (/en/event/<id>/<EN-слаг>/),
+ * дата enDate, цена «Donation»/«Free». Цена по тем же правилам, что в
+ * eventSeoHtml: price > 0 → «{price} {CURRENCY}», donation → донат, price === 0
+ * → бесплатно.
+ */
+function eventListItemsHtml(evs, lang) {
+  const en = lang === 'en';
+  return evs.map((ev) => {
+    const sd = nextOccurrenceDate(ev, TODAY_ISO);
+    const url = en
+      ? `${SITE_URL}/en/event/${ev.id}/${slugify(ev.title_en || ev.title)}/`
+      : `${SITE_URL}/event/${ev.id}/${slugify(ev.title)}/`;
+    const name = en
+      ? ev.title_en || ev.title || ''
+      : ev.title_ru || ev.title || ev.title_en || '';
+    const price = ev.price != null ? Number(ev.price) : null;
+    const currency = (
+      typeof ev.currency === 'string' && ev.currency ? ev.currency : 'usd'
+    ).toUpperCase();
+    let priceText = '';
+    if (price != null && price > 0) {
+      priceText = `${price} ${currency}`;
+    } else if (Boolean(ev.donation)) {
+      priceText = en ? 'Donation' : 'Донат';
+    } else if (price === 0) {
+      priceText = en ? 'Free' : 'Бесплатно';
+    }
+    const parts = [];
+    if (sd) parts.push(`<time datetime="${esc(sd)}">${esc(en ? enDate(sd) : ruDate(sd))}</time>`);
+    if (name) parts.push(`<a href="${esc(url)}">${esc(name)}</a>`);
+    if (priceText) parts.push(`<span>${esc(priceText)}</span>`);
+    return `    <li>${parts.join(' — ')}</li>`;
+  });
+}
+
 /** Статический SEO-блок главной (id=seo-home-block, RU) для вставки в
  * <body> рядом с #root: видимый h1 + абзацы (~120–160 слов; прямой ответ —
  * «MyPins — это карта событий…» — в первых 40–60 словах) + ссылки на
- * городские страницы и блог. Виден краулеру без JS; при живом React SPA
- * удаляет его (main.tsx) и рисует свою главную (у неё свой h1 — бренд).
- * Формулировки — предложение SEO-плана (п.4.1.2); владелец может править
- * текст без изменения структуры (h1 / прямой ответ в начале / ссылки). */
-function homeSeoHtml() {
+ * городские страницы и блог + список ближайших событий (h2 + <ul>).
+ * Виден краулеру без JS; при живом React SPA переносит его в
+ * #seo-home-panel (десктоп) или #seo-intro-keep (моб. интро), поэтому ссылки
+ * живут и в браузере (main.tsx + src/lib/mobileIntro.ts). Формулировки —
+ * предложение SEO-плана (п.4.1.2); владелец может править текст без изменения
+ * структуры (h1 / прямой ответ в начале / ссылки). evs — ближайшие события
+ * (homeEvents): hub→spoke ссылки на карточки /event/<id>/<slug>/, без них
+ * ~690 событийных URL недостижимы по внутренним ссылкам (план §4.1.1, §2.8).
+ * Пусто (или нет активных событий) — секции событий нет. */
+function homeSeoHtml(evs = []) {
   const link = (path, label) => `<a href="${SITE_URL}/${path}/">${esc(label)}</a>`;
-  return [
+  const lines = [
     '<div id="seo-home-block">',
     '  <h1>События на карте: Бали, Дананг и Нячанг</h1>',
     '  <p>MyPins — это карта событий для туристов и экспатов в Юго-Восточной Азии: концерты, вечеринки, йога, маркеты и speaking-клубы, которые публикуют сами организаторы.</p>',
     '  <p>Каждое событие показано на карте с датой, местом и ценой — от бесплатных встреч и донат-вечеринок до крупных концертов. Фильтры по категории, дате и цене и поиск по городу помогут найти занятие на сегодня или на выходные, а приближение карты покажет события в нужном районе: Чангу, Убуде или Семиньяке на Бали, в центре Дананга или на набережной Нячанга.</p>',
     '  <p>Афиша живая: организаторы публикуют события сами, а карта обновляется каждый день, поэтому здесь всегда есть что посмотреть сегодня или на выходных.</p>',
     `  <p>Смотреть события: ${link('bali', 'на Бали')}, ${link('da-nang', 'в Дананге')}, ${link('nha-trang', 'в Нячанге')}. Подборки и гиды по событиям — ${link('blog', 'в блоге MyPins')}.</p>`,
-    '</div>',
-    '',
-  ].join('\n');
+  ];
+  // События — только h2: единственный h1 страницы остаётся у блока выше
+  if (Array.isArray(evs) && evs.length) {
+    lines.push('  <h2>Ближайшие события на карте</h2>', '  <ul>');
+    lines.push(...eventListItemsHtml(evs, 'ru'));
+    lines.push('  </ul>');
+  }
+  lines.push('</div>', '');
+  return lines.join('\n');
 }
 
 /** EN-версия статического SEO-блока главной для /en/ (id=seo-home-block):
  * тот же смысл и прямые ответы, что в RU homeSeoHtml (п. 1.1 промпта R):
  * h1 «Events on the Map: Bali, Da Nang, Nha Trang», 4 абзаца + ссылки на
- * EN-версии /en/bali/ /en/da-nang/ /en/nha-trang/ /en/blog/. */
-function homeSeoHtmlEn() {
+ * EN-версии /en/bali/ /en/da-nang/ /en/nha-trang/ /en/blog/ + список
+ * ближайших событий (h2 + <ul>), только события с EN-версией (homeEvents(evs,
+ * true)) — ссылки на /en/event/<id>/<EN-слаг>/ живые. Пусто — секции нет. */
+function homeSeoHtmlEn(evs = []) {
   const link = (path, label) => `<a href="${SITE_URL}/en/${path}/">${esc(label)}</a>`;
-  return [
+  const lines = [
     '<div id="seo-home-block">',
     '  <h1>Events on the Map: Bali, Da Nang, Nha Trang</h1>',
     '  <p>MyPins is an events map for travellers and expats in Southeast Asia: concerts, parties, yoga, markets and speaking clubs, published by the organizers themselves.</p>',
     '  <p>Every event is shown on the map with its date, venue and price — from free meetups and donation parties to big concerts. Filters by category, date and price plus a city search help you find something for today or for the weekend, and zooming the map shows events in the area you need: Canggu, Ubud or Seminyak in Bali, central Da Nang or the Nha Trang promenade.</p>',
     '  <p>The listings are live: organizers publish events themselves and the map updates every day, so there is always something to check out today or on the weekend.</p>',
     `  <p>Browse events ${link('bali', 'in Bali')}, ${link('da-nang', 'in Da Nang')}, ${link('nha-trang', 'in Nha Trang')}. Guides and event round-ups — ${link('blog', 'on the MyPins blog')}.</p>`,
-    '</div>',
-    '',
-  ].join('\n');
+  ];
+  // События — только h2: единственный h1 страницы остаётся у блока выше
+  if (Array.isArray(evs) && evs.length) {
+    lines.push('  <h2>Upcoming events on the map</h2>', '  <ul>');
+    lines.push(...eventListItemsHtml(evs, 'en'));
+    lines.push('  </ul>');
+  }
+  lines.push('</div>', '');
+  return lines.join('\n');
 }
 
 // --- Тексты мобильного интро-экрана карточных страниц (главная и города).
@@ -3595,7 +3693,7 @@ async function main() {
         { hreflang: 'en', href: enRoot },
         { hreflang: 'x-default', href: enRoot },
       ],
-      bodySeo: homeSeoHtml(),
+      bodySeo: homeSeoHtml(homeEvents(events)),
       introPreview: '/images/map-preview-main.webp',
     }),
   );
@@ -3624,7 +3722,7 @@ async function main() {
         { hreflang: 'ru', href: `${SITE_URL}/` },
         { hreflang: 'x-default', href: enRoot },
       ],
-      bodySeo: homeSeoHtmlEn(),
+      bodySeo: homeSeoHtmlEn(homeEvents(events, true)),
       introPreview: '/images/map-preview-main.webp',
     }),
   );
