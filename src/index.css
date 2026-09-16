@@ -197,6 +197,31 @@ body {
   letter-spacing: -0.025em;
   color: #111827;
 }
+/* Блок главной в панели: список «Ближайшие события» показываем СВЕРХУ, SEO-абзацы
+   уходят вниз под прокрутку. Порядок в DOM не меняем (в HTML «прямой ответ»
+   остаётся первым — важно для сниппетов), переставляем только визуально через
+   flex-order. Без этого список из 8 событий лежал в 378-пиксельной панели под
+   четырьмя абзацами — пользователь его не видел (16.09.2026). */
+#seo-home-panel #seo-home-block {
+  display: flex;
+  flex-direction: column;
+}
+#seo-home-panel #seo-home-block > ul {
+  order: -1;
+}
+#seo-home-panel #seo-home-block > h2:last-of-type {
+  order: -1;
+}
+#seo-home-panel #seo-home-block > ul li {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #374151;
+}
+#seo-home-panel #seo-home-block > ul li time {
+  color: #6b7280;
+  white-space: nowrap;
+}
 #seo-home-panel p {
   margin-top: 0.25rem;
   font-size: 0.875rem;
