@@ -582,6 +582,7 @@ export default {
   // RU source of truth: ru.ts citySeo.* + CITY_SEO in scripts/seo-prerender.mjs)
   citySeo: {
     faqTitle: 'FAQ',
+    upcomingTitle: 'Upcoming events in {{city}}',
     bali: {
       h1: 'Events in Bali',
       intro:

@@ -21,8 +21,8 @@ import { navigate, slugify } from '../lib/navigate';
 import { seriesSiblings } from '../lib/series';
 import { similarEvents } from '../lib/similar';
 import { nextOccurrenceDate } from '../lib/recurrence';
-import { todayIso } from '../lib/dates';
-import { cityPath } from '../lib/address';
+import { formatDate, todayIso } from '../lib/dates';
+import { cityCrumbLabel, cityCrumbLabelLocative, cityPath } from '../lib/address';
 import type { CityPath } from '../lib/address';
 import { MAP_INTRO_KEY, MOBILE_INTRO_QUERY, HOME_PANEL_QUERY, dropIntroSeoBlocks, setHomePanelHidden } from '../lib/mobileIntro';
 import {
@@ -75,6 +75,20 @@ function isDefaultFilters(f: Filters): boolean {
 function introEligiblePath(path: string): boolean {
   if (path === '/') return true;
   return config.quickLocations.some((q) => path === `/${slugify(q.labelEn)}`);
+}
+
+// Максимум ближайших событий города в городском SEO-блоке — ТО ЖЕ число, что
+// MAX_CITY_EVENTS в scripts/seo-prerender.mjs (статическая версия блока).
+const MAX_CITY_EVENTS = 8;
+
+/** Относительный href страницы события своего языка (схема URL как canonical
+ *  статики: /event/<id>/<slug>/ на RU, /en/event/<id>/<slug>/ на EN —
+ *  со СЛЭШЕМ на конце, без него GitHub Pages отдаёт 301 на каноникал).
+ *  Слаг — RU по title, EN по title_en||title (как EventCard.eventPath). */
+function cityEventHref(ev: EventItem, lang: 'ru' | 'en'): string {
+  return lang === 'en'
+    ? `/en/event/${encodeURIComponent(ev.id)}/${slugify(ev.title_en || ev.title)}/`
+    : `/event/${encodeURIComponent(ev.id)}/${slugify(ev.title)}/`;
 }
 
 export default function Home({
@@ -337,6 +351,43 @@ export default function Home({
         : [],
     [categories, cells, pageCityPath, seoLang],
   );
+  /** Ближайшие события города для городского SEO-блока (#city-seo-block):
+   *  до MAX_CITY_EVENTS, только БУДУЩИЕ вхождения (nextOccurrenceDate >= today),
+   *  по возрастанию даты — тот же отбор, что у статического блока города
+   *  (scripts/seo-prerender.mjs: citySeoHtml / citySeoHtmlEn). На EN-странице
+   *  остаются только события с EN-версией — иначе ссылка вела бы в 404.
+   *  Данные — уже загруженный список (api.listEvents, кэш), запросов нет. */
+  const cityUpcoming = useMemo(() => {
+    if (!pageCityPath) return [];
+    const today = todayIso();
+    const en = seoLang === 'en';
+    return events
+      .filter(
+        (ev) =>
+          ev &&
+          typeof ev.id === 'string' &&
+          Boolean(ev.title) &&
+          cityPath(ev.city) === pageCityPath &&
+          (!en || Boolean(ev.title_en) || ev.source_lang === 'en'),
+      )
+      .map((ev) => ({ ev, occ: nextOccurrenceDate(ev, today) }))
+      .filter((x) => Boolean(x.occ) && x.occ >= today)
+      .sort((a, b) => a.occ.localeCompare(b.occ) || a.ev.id.localeCompare(b.ev.id))
+      .slice(0, MAX_CITY_EVENTS)
+      .map((x) => x.ev);
+  }, [events, pageCityPath, seoLang]);
+  /** Цена для списка ближайших событий — правила статики (citySeoHtml):
+   *  price > 0 → «50 USD», donation → донат, price === 0 → бесплатно */
+  function listPriceText(ev: EventItem): string {
+    const price = ev.price != null ? Number(ev.price) : null;
+    if (price != null && price > 0) {
+      const code = (typeof ev.currency === 'string' && ev.currency ? ev.currency : 'usd').toUpperCase();
+      return `${price} ${code}`;
+    }
+    if (ev.donation) return t('form.donation');
+    if (price === 0) return t('card.free');
+    return '';
+  }
   /** Ссылка на категорию события (страница события) — только если страница
    *  пары (город, категория) существует (тот же гейт, что в статике) */
   const selectedCategoryLink = useMemo(() => {
@@ -925,6 +976,48 @@ export default function Home({
         >
           <h1 className="text-lg font-extrabold tracking-tight text-gray-900">{citySeo.h1}</h1>
           <p className="mt-1 text-sm leading-relaxed text-gray-700">{citySeo.intro}</p>
+          {/* Ближайшие события города: до MAX_CITY_EVENTS, только будущие
+              вхождения, по возрастанию даты — ссылки на страницы событий
+              своего языка (как в статическом блоке города,
+              scripts/seo-prerender.mjs: citySeoHtml / citySeoHtmlEn).
+              Событий нет — секции нет. */}
+          {cityUpcoming.length > 0 && (
+            <div className="mt-2">
+              <h2 className="text-sm font-medium text-gray-600">
+                {t('citySeo.upcomingTitle', {
+                  city:
+                    seoLang === 'en' ? cityCrumbLabel(city, 'en') : cityCrumbLabelLocative(city),
+                })}
+              </h2>
+              <ul className="mt-1 space-y-0.5">
+                {cityUpcoming.map((ev) => {
+                  const occ = nextOccurrenceDate(ev, todayIso());
+                  const name =
+                    seoLang === 'en'
+                      ? ev.title_en || ev.title
+                      : ev.title_ru || ev.title || ev.title_en;
+                  const price = listPriceText(ev);
+                  return (
+                    <li key={ev.id} className="text-sm leading-relaxed text-gray-700">
+                      <time dateTime={occ} className="text-gray-500">
+                        {formatDate(occ, seoLang)}
+                      </time>
+                      {' — '}
+                      <a href={cityEventHref(ev, seoLang)} className="text-[#0F766E] hover:underline">
+                        {name}
+                      </a>
+                      {price ? (
+                        <>
+                          {' — '}
+                          <span className="text-gray-500">{price}</span>
+                        </>
+                      ) : null}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
           <h2 className="mt-2 text-xs font-bold uppercase tracking-wider text-gray-500">
             {t('citySeo.faqTitle')}
           </h2>
