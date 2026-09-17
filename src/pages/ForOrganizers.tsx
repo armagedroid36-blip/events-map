@@ -130,7 +130,7 @@ export default function ForOrganizers() {
           <h2 className="text-base font-semibold text-gray-900">{c.final.h2}</h2>
           <p className="mt-2 text-sm leading-relaxed text-gray-700">{renderMd(c.final.p)}</p>
           <a
-            href={en ? '/en' : '/'}
+            href={en ? '/en/' : '/'}
             onClick={(e) => {
               e.preventDefault();
               navigate(en ? '/en' : '/');

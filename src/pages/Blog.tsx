@@ -173,7 +173,7 @@ export function BlogIndex() {
             >
               <h2 className="text-base font-semibold text-gray-900">
                 <a
-                  href={`${en ? '/en' : ''}/blog/${a.slug}`}
+                  href={`${en ? '/en' : ''}/blog/${a.slug}/`}
                   className="text-[#E66343] decoration-[#E66343]/40 underline-offset-2 hover:underline"
                 >
                   {h1}
@@ -249,7 +249,7 @@ export function ArticlePage({ slug }: { slug: string }) {
       <main className="mx-auto w-full max-w-2xl flex-1 p-4">
         <p className="text-sm">
           <a
-            href={`${en ? '/en' : ''}/blog`}
+            href={`${en ? '/en' : ''}/blog/`}
             className="font-medium text-[#E66343] decoration-[#E66343]/40 underline-offset-2 hover:underline"
           >
             {en ? '← Blog' : '← Блог'}
@@ -269,7 +269,7 @@ export function ArticlePage({ slug }: { slug: string }) {
         <p className="mt-4 border-t border-gray-100 pt-3 text-xs text-gray-400">
           {en ? 'MyPins Editorial · ' : 'Редакция MyPins · '}
           <a
-            href={en ? '/en/about' : '/about'}
+            href={en ? '/en/about/' : '/about/'}
             className="font-medium text-[#E66343] decoration-[#E66343]/40 underline-offset-2 hover:underline"
           >
             {en ? 'About the project' : 'О проекте и контакты'}

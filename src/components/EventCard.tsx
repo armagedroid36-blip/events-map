@@ -604,11 +604,14 @@ export default function EventCard({
       ? `${window.location.origin}/en/event/${event.id}/${slugify(event.title_en || event.title)}`
       : `${window.location.origin}/event/${event.id}/${slugify(event.title)}`;
   // Ссылка на страницу события из списка дат серии — та же схема URL, что у
-  // shareUrl: язык интерфейса + наличие EN-версии у самого события серии
+  // shareUrl: язык интерфейса + наличие EN-версии у самого события серии.
+  // Слэш на конце обязателен: canonical, sitemap и hreflang страниц событий —
+  // со слэшем, а без него GitHub Pages отдаёт 301, и Google помечает страницу
+  // «Страница с переадресацией» / «копия с другим каноническим» (17.09.2026).
   const eventPath = (ev: EventItem) =>
     lang === 'en' && (Boolean(ev.title_en) || ev.source_lang === 'en')
-      ? `/en/event/${ev.id}/${slugify(ev.title_en || ev.title)}`
-      : `/event/${ev.id}/${slugify(ev.title)}`;
+      ? `/en/event/${ev.id}/${slugify(ev.title_en || ev.title)}/`
+      : `/event/${ev.id}/${slugify(ev.title)}/`;
   const description = localizedText(
     event.description,
     event.description_ru,
