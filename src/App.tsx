@@ -11,8 +11,9 @@
 // #/favorites, #/history, #/privacy, #/contacts, #/unsubscribe и recovery
 // (#access_token). На пути '/' работает прежняя hash-логика; старые публичные
 // hash-ссылки (#/?e=<id>, #/org/<id>) редиректят на чистые URL.
-// Ограничение GitHub Pages: на неизвестные пути отдаётся 404.html (копия
-// index.html) с кодом 404 — для SPA это нормально, хостинг не чинить.
+// Ограничение GitHub Pages: на неизвестные пути отдаётся 404.html с кодом
+// 404 (SPA-оболочка без статики главной, noindex — scripts/build-404.mjs), для
+// SPA это нормально, хостинг не чинить.
 import { lazy, Suspense, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
