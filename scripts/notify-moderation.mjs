@@ -13,7 +13,7 @@ const SMTP_USER = process.env.SMTP_USER;
 const SMTP_PASS = process.env.SMTP_PASS;
 
 const MAX_ITEMS = 10;
-const ADMIN_URL = 'https://armagedroid36-blip.github.io/events-map/#/admin';
+const ADMIN_URL = 'https://mypins.site/#/admin';
 
 if (!SUPABASE_URL || !SERVICE_ROLE) {
   console.error('Нужны переменные: SUPABASE_URL, SUPABASE_SERVICE_ROLE');

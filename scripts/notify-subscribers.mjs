@@ -15,7 +15,7 @@ const SMTP_PASS = process.env.SMTP_PASS;
 
 // Период: события, созданные за последние N часов
 const PERIOD_HOURS = 24;
-const SITE_URL = 'https://armagedroid36-blip.github.io/events-map/';
+const SITE_URL = 'https://mypins.site/';
 
 if (!SUPABASE_URL || !SERVICE_ROLE) {
   console.error('Нужны переменные: SUPABASE_URL, SUPABASE_SERVICE_ROLE');
