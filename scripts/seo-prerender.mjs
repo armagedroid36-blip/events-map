@@ -2162,7 +2162,44 @@ function eventSeoHtml(ev, url, lang = 'ru', sibs = [], catLink = null, similar =
 // Гейт: страница пары (город, категория) существует, только если в городе
 // >= MIN_CATEGORY_EVENTS активных событий этой категории (тот же набор
 // list_active_events, что грузит SPA) — иначе страницы нет, она вне sitemap.
-const MIN_CATEGORY_EVENTS = 1;   // синхронно с src/lib/categoryPages.ts
+const MIN_CATEGORY_EVENTS = 3;   // синхронно с src/lib/categoryPages.ts
+
+/**
+ * Синхронность порога с SPA-модулем src/lib/categoryPages.ts.
+ * Значения обязаны совпадать: статика (этот скрипт) решает, какие ячейки
+ * «город × категория» получают физическую страницу и запись в sitemap, а SPA
+ * по своей константе решает, что показать на этом URL. При расхождении
+ * получается либо soft-404 (страницы нет в статике, но SPA её рисует), либо
+ * тонкие страницы с 1–2 событиями (правка порога 3→1 в одном файле прошла
+ * незамеченной — так в проде и появились 26 таких страниц). Поэтому при
+ * рассинхроне сборка падает (exit 1), а не печатает предупреждение.
+ */
+function assertMinCategoryEventsSync() {
+  const rel = 'src/lib/categoryPages.ts';
+  let src;
+  try {
+    src = readFileSync(join(ROOT, rel), 'utf8');
+  } catch (e) {
+    console.error(`seo-prerender: не читается ${rel} (${e.message}) — синхронность порога категорийных страниц не проверить.`);
+    process.exit(1);
+  }
+  const m = src.match(/export\s+const\s+MIN_CATEGORY_EVENTS\s*=\s*(\d+)/);
+  if (!m) {
+    console.error(`seo-prerender: в ${rel} не найден 'export const MIN_CATEGORY_EVENTS = <число>' — синхронность порога не проверить.`);
+    process.exit(1);
+  }
+  const spaValue = Number(m[1]);
+  if (spaValue !== MIN_CATEGORY_EVENTS) {
+    console.error(
+      `seo-prerender: РАССИНХРОН порога категорийных страниц: ${rel} = ${spaValue}, scripts/seo-prerender.mjs = ${MIN_CATEGORY_EVENTS}.`,
+    );
+    console.error('seo-prerender: значения обязаны совпадать (статика и SPA) — сборка остановлена.');
+    process.exit(1);
+  }
+  console.log(
+    `  порог категорийных страниц MIN_CATEGORY_EVENTS: ${MIN_CATEGORY_EVENTS} (синхронно с ${rel})`,
+  );
+}
 
 /** RU/EN названия городов по пути (как в JSON-LD и городских страницах) */
 const CAT_CITY_NAME_EN = { bali: 'Bali', 'da-nang': 'Da Nang', 'nha-trang': 'Nha Trang' };
@@ -2954,6 +2991,10 @@ function categoryJsonLd(cell, lang) {
 // --- Главный ход ---
 
 async function main() {
+  // Порог категорийных страниц обязан совпадать в статике и SPA — иначе
+  // сборка останавливается (см. assertMinCategoryEventsSync).
+  assertMinCategoryEventsSync();
+
   const db = createClient(SUPABASE_URL, ANON_KEY, { auth: { persistSession: false } });
   const { data, error } = await db.rpc('list_active_events');
   if (error) {
@@ -3158,6 +3199,19 @@ async function main() {
   for (const cell of cellList) {
     const ruUrl = `${SITE_URL}/${cell.path}/${cell.cat.id}/`;
     const enUrl = `${SITE_URL}/en/${cell.path}/${cell.cat.id}/`;
+    // EN-версия: только события с EN-версией (иначе ссылка ушла бы на 404).
+    // Решение принимается ДО записи RU-страницы: если EN-версии нет, RU-страница
+    // непарная и hreflang не выводит (иначе аннотация вела бы на несуществующий
+    // URL — как у событий без перевода, см. hreflangRu ниже).
+    const itemsEn = cell.items.filter(
+      ({ ev }) => Boolean(ev.title_en) || ev.source_lang === 'en',
+    );
+    const hasEnPage = itemsEn.length >= MIN_CATEGORY_EVENTS;
+    if (!hasEnPage) {
+      console.warn(
+        `seo-prerender: EN-страница /en/${cell.path}/${cell.cat.id}/ пропущена (EN-событий ${itemsEn.length} < ${MIN_CATEGORY_EVENTS}) — RU-страница без hreflang.`,
+      );
+    }
     const ruTitle = categoryTitle(cell.cat, cell.path, 'ru');
     const ruDescription = categoryDescription(cell.cat, cell.path, 'ru', catCellFacts(cell.items, 'ru'));
     writePage(baseHtml, `${cell.path}/${cell.cat.id}`, {
@@ -3170,30 +3224,25 @@ async function main() {
       ogUrl: ruUrl,
       ogImage: LOGO_URL,
       jsonLd: categoryJsonLd(cell, 'ru'),
-      hreflang: [
-        { hreflang: 'ru', href: ruUrl },
-        { hreflang: 'en', href: enUrl },
-        { hreflang: 'x-default', href: enRoot },
-      ],
+      ...(hasEnPage
+        ? {
+            hreflang: [
+              { hreflang: 'ru', href: ruUrl },
+              { hreflang: 'en', href: enUrl },
+              { hreflang: 'x-default', href: enRoot },
+            ],
+          }
+        : {}),
       bodySeo: categorySeoHtml(cell, 'ru', cells),
     });
     locs.push(ruUrl);
-    hreflangPairs.set(ruUrl, enUrl);
+    if (hasEnPage) hreflangPairs.set(ruUrl, enUrl);
     pageCategories += 1;
     console.log(
       `  /${cell.path}/${cell.cat.id}/index.html (событий: ${cell.items.length})`,
     );
 
-    // EN-версия: только события с EN-версией (иначе ссылка ушла бы на 404)
-    const itemsEn = cell.items.filter(
-      ({ ev }) => Boolean(ev.title_en) || ev.source_lang === 'en',
-    );
-    if (itemsEn.length < MIN_CATEGORY_EVENTS) {
-      console.warn(
-        `seo-prerender: EN-страница /en/${cell.path}/${cell.cat.id}/ пропущена (EN-событий ${itemsEn.length} < ${MIN_CATEGORY_EVENTS}).`,
-      );
-      continue;
-    }
+    if (!hasEnPage) continue;
     const cellEn = { path: cell.path, cat: cell.cat, items: itemsEn };
     const enTitle = categoryTitle(cell.cat, cell.path, 'en');
     const enDescription = categoryDescription(cell.cat, cell.path, 'en', catCellFacts(itemsEn, 'en'));
@@ -3221,7 +3270,7 @@ async function main() {
     );
   }
   console.log(
-    `  посадочных «город × категория»: ${pageCategories} RU + ${pageCategoriesEn} EN, страниц всего: ${locs.length}`,
+    `  посадочных «город × категория» (MIN_CATEGORY_EVENTS=${MIN_CATEGORY_EVENTS}): ${pageCategories} RU + ${pageCategoriesEn} EN, страниц всего: ${locs.length}`,
   );
 
   // События: URL должен совпадать с тем, что строит SPA, —
