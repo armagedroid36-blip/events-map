@@ -15,11 +15,6 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/bali/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/bali/cinema/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/bali/cinema/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/bali/cinema/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
   <url><loc>https://mypins.site/bali/concert/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/bali/concert/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/bali/concert/" />
@@ -35,19 +30,9 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/bali/festival/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/bali/food/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/bali/food/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/bali/food/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
   <url><loc>https://mypins.site/bali/games/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/bali/games/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/bali/games/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
-  <url><loc>https://mypins.site/bali/meetup/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/bali/meetup/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/bali/meetup/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/bali/party/</loc><lastmod>2026-09-18</lastmod>
@@ -100,49 +85,14 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/da-nang/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/da-nang/cinema/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/da-nang/cinema/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/da-nang/cinema/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
-  <url><loc>https://mypins.site/da-nang/concert/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/da-nang/concert/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/da-nang/concert/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
-  <url><loc>https://mypins.site/da-nang/festival/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/da-nang/festival/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/da-nang/festival/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
   <url><loc>https://mypins.site/da-nang/games/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/da-nang/games/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/da-nang/games/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/da-nang/lecture/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/da-nang/lecture/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/da-nang/lecture/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
   <url><loc>https://mypins.site/da-nang/meetup/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/da-nang/meetup/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/da-nang/meetup/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
-  <url><loc>https://mypins.site/da-nang/speaking/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/da-nang/speaking/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/da-nang/speaking/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
-  <url><loc>https://mypins.site/da-nang/sport/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/da-nang/sport/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/da-nang/sport/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
-  <url><loc>https://mypins.site/da-nang/theatre/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/da-nang/theatre/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/da-nang/theatre/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/da-nang/wellness/</loc><lastmod>2026-09-18</lastmod>
@@ -170,11 +120,6 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/bali/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/en/bali/cinema/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/bali/cinema/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/bali/cinema/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
   <url><loc>https://mypins.site/en/bali/concert/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/bali/concert/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/bali/concert/" />
@@ -190,19 +135,9 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/bali/festival/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/en/bali/food/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/bali/food/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/bali/food/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
   <url><loc>https://mypins.site/en/bali/games/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/bali/games/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/bali/games/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
-  <url><loc>https://mypins.site/en/bali/meetup/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/bali/meetup/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/bali/meetup/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/en/bali/party/</loc><lastmod>2026-09-18</lastmod>
@@ -255,49 +190,14 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/da-nang/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/en/da-nang/cinema/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/da-nang/cinema/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/da-nang/cinema/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
-  <url><loc>https://mypins.site/en/da-nang/concert/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/da-nang/concert/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/da-nang/concert/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
-  <url><loc>https://mypins.site/en/da-nang/festival/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/da-nang/festival/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/da-nang/festival/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
   <url><loc>https://mypins.site/en/da-nang/games/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/da-nang/games/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/da-nang/games/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/en/da-nang/lecture/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/da-nang/lecture/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/da-nang/lecture/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
   <url><loc>https://mypins.site/en/da-nang/meetup/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/da-nang/meetup/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/da-nang/meetup/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
-  <url><loc>https://mypins.site/en/da-nang/speaking/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/da-nang/speaking/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/da-nang/speaking/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
-  <url><loc>https://mypins.site/en/da-nang/sport/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/da-nang/sport/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/da-nang/sport/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
-  <url><loc>https://mypins.site/en/da-nang/theatre/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/da-nang/theatre/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/da-nang/theatre/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/en/da-nang/wellness/</loc><lastmod>2026-09-18</lastmod>
@@ -318,6 +218,11 @@
   <url><loc>https://mypins.site/en/event/01e20bc2-3c81-4f3d-9ac3-d9977d27516c/last-light-at-savaya-bali/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/01e20bc2-3c81-4f3d-9ac3-d9977d27516c/last-light-v-savaya-bali/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/01e20bc2-3c81-4f3d-9ac3-d9977d27516c/last-light-at-savaya-bali/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/en/event/02b79462-6137-4270-8e3c-c4a7b8864447/on-thursday-17-09-i-invite-you-to-enjoy-the-autumn-mood-and-draw-the-atmosphere-of-autumn-with-oil-pastels/</loc><lastmod>2026-09-18</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/02b79462-6137-4270-8e3c-c4a7b8864447/v-chetverg-17-09-priglashayu-vas-naslazhdatsya-osennim-nastroeniem-i-porisovat-maslyanoy-pastelyu-atmosferu-oseni/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/02b79462-6137-4270-8e3c-c4a7b8864447/on-thursday-17-09-i-invite-you-to-enjoy-the-autumn-mood-and-draw-the-atmosphere-of-autumn-with-oil-pastels/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/en/event/03fd0097-5f60-4f90-b1bd-a9d213f532a9/nha-trang-english-club/</loc><lastmod>2026-09-18</lastmod>
@@ -613,6 +518,11 @@
   <url><loc>https://mypins.site/en/event/35f7ecd2-e30c-4104-8cff-b0fc8d04507d/nail-bed-therapy/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/35f7ecd2-e30c-4104-8cff-b0fc8d04507d/gvozdeterapiya/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/35f7ecd2-e30c-4104-8cff-b0fc8d04507d/nail-bed-therapy/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/en/event/361df73e-07df-4c70-aab8-cad52efe3f67/cashflow/</loc><lastmod>2026-09-18</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/361df73e-07df-4c70-aab8-cad52efe3f67/cashflow/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/361df73e-07df-4c70-aab8-cad52efe3f67/cashflow/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/en/event/361e1518-b102-4ff5-b7ab-58c7e903fe0b/last-light-at-savaya-bali/</loc><lastmod>2026-09-18</lastmod>
@@ -948,6 +858,11 @@
   <url><loc>https://mypins.site/en/event/6e674853-8e64-4875-b7a8-f1b4728bdcc3/savaya-thursday-at-savaya-bali/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/6e674853-8e64-4875-b7a8-f1b4728bdcc3/savaya-thursday-v-savaya-bali/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/6e674853-8e64-4875-b7a8-f1b4728bdcc3/savaya-thursday-at-savaya-bali/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/en/event/6f105852-0f84-41d4-84c7-c5b8b46dc105/already-tomorrow-evening-by-tradition-board-games-at-restaurant-369/</loc><lastmod>2026-09-18</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/6f105852-0f84-41d4-84c7-c5b8b46dc105/uzhe-zavtra-vecherom-po-traditsii-nastolnye-igry-v-restorane-369/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/6f105852-0f84-41d4-84c7-c5b8b46dc105/already-tomorrow-evening-by-tradition-board-games-at-restaurant-369/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/en/event/6fa2f832-2668-41bd-a843-5418bd9c87f5/women-s-meetup/</loc><lastmod>2026-09-18</lastmod>
@@ -1360,6 +1275,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/b5116895-393a-4a22-a11e-27bf74c6a85d/savaya-tuesday-at-savaya-bali/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/en/event/b53c5378-e43e-4ab3-a1e0-33baa3b6ec6a/speaking-club/</loc><lastmod>2026-09-18</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/b53c5378-e43e-4ab3-a1e0-33baa3b6ec6a/speaking-club/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/b53c5378-e43e-4ab3-a1e0-33baa3b6ec6a/speaking-club/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/en/event/b59f8579-1f7e-4dcd-9aae-2fd01b16df16/savaya-friday-at-savaya-bali/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/b59f8579-1f7e-4dcd-9aae-2fd01b16df16/savaya-friday-v-savaya-bali/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/b59f8579-1f7e-4dcd-9aae-2fd01b16df16/savaya-friday-at-savaya-bali/" />
@@ -1485,6 +1405,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/c97b782e-64fa-4515-ad6c-d36ec03ded5b/open-lesson/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/en/event/caaba6a1-d5c7-48c8-a1d0-854b82f3abd1/joint-run-in-the-north/</loc><lastmod>2026-09-18</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/caaba6a1-d5c7-48c8-a1d0-854b82f3abd1/sovmestnaya-probezhka-na-severe/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/caaba6a1-d5c7-48c8-a1d0-854b82f3abd1/joint-run-in-the-north/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/en/event/cacd1652-92b7-481b-8cea-f9bd45241b95/yoga-lesson-a-healthy-body-through-simple-movements/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/cacd1652-92b7-481b-8cea-f9bd45241b95/urok-yogi-zdorovoe-telo-cherez-prostye-dvizheniya/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/cacd1652-92b7-481b-8cea-f9bd45241b95/yoga-lesson-a-healthy-body-through-simple-movements/" />
@@ -1498,6 +1423,11 @@
   <url><loc>https://mypins.site/en/event/cb5b7885-e155-4648-85d3-daac409874f5/lee-burridge-at-savaya-bali/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/cb5b7885-e155-4648-85d3-daac409874f5/lee-burridge-v-savaya-bali/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/cb5b7885-e155-4648-85d3-daac409874f5/lee-burridge-at-savaya-bali/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/en/event/cd883a4c-fb0d-4c27-bb6e-a6edec8ce7f4/transformational-game-lila-s-wisdom/</loc><lastmod>2026-09-18</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/cd883a4c-fb0d-4c27-bb6e-a6edec8ce7f4/transformatsionnaya-igra-mudrost-lily/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/cd883a4c-fb0d-4c27-bb6e-a6edec8ce7f4/transformational-game-lila-s-wisdom/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/en/event/ce0492a7-e6c6-49e8-a171-ac86bf592a3a/journey-to-n-i-ch-a-nature-reserve/</loc><lastmod>2026-09-18</lastmod>
@@ -1735,6 +1665,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/e8892b0d-5ba4-4214-a76b-00b458720bfe/mind-against-at-savaya-bali/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/en/event/e90cb0a4-2bee-469d-b3f1-ae062d0332de/children-s-league-easy-game-league/</loc><lastmod>2026-09-18</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/e90cb0a4-2bee-469d-b3f1-ae062d0332de/detskaya-liga-easy-game-league/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/e90cb0a4-2bee-469d-b3f1-ae062d0332de/children-s-league-easy-game-league/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/en/event/e9ff547c-54ac-4b6f-9267-0d446d208cc3/yoga-morning-practice-this-wednesday/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/e9ff547c-54ac-4b6f-9267-0d446d208cc3/yoga-utrennyaya-praktika-v-etu-sredu/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/e9ff547c-54ac-4b6f-9267-0d446d208cc3/yoga-morning-practice-this-wednesday/" />
@@ -1773,6 +1708,11 @@
   <url><loc>https://mypins.site/en/event/ee80820e-dde0-46d7-8591-4fc06c982d1a/mission-inner-peace/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/ee80820e-dde0-46d7-8591-4fc06c982d1a/mission-inner-peace/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/ee80820e-dde0-46d7-8591-4fc06c982d1a/mission-inner-peace/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/en/event/ee8d39b9-f1dd-4ff3-8e1e-8c0c3da9f2c6/yoga-teacher-training-course/</loc><lastmod>2026-09-18</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/ee8d39b9-f1dd-4ff3-8e1e-8c0c3da9f2c6/kurs-podgotovki-prepodavateley-yogi/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/ee8d39b9-f1dd-4ff3-8e1e-8c0c3da9f2c6/yoga-teacher-training-course/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/en/event/eede015d-487b-4bf1-96ad-99eba46aec98/grandma-luna/</loc><lastmod>2026-09-18</lastmod>
@@ -1910,29 +1850,14 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/nha-trang/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/en/nha-trang/concert/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/nha-trang/concert/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/nha-trang/concert/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
   <url><loc>https://mypins.site/en/nha-trang/games/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/nha-trang/games/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/nha-trang/games/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/en/nha-trang/lecture/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/nha-trang/lecture/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/nha-trang/lecture/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
   <url><loc>https://mypins.site/en/nha-trang/meetup/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/nha-trang/meetup/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/nha-trang/meetup/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
-  <url><loc>https://mypins.site/en/nha-trang/party/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/nha-trang/party/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/nha-trang/party/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/en/nha-trang/speaking/</loc><lastmod>2026-09-18</lastmod>
@@ -1973,6 +1898,11 @@
   <url><loc>https://mypins.site/event/01e20bc2-3c81-4f3d-9ac3-d9977d27516c/last-light-v-savaya-bali/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/01e20bc2-3c81-4f3d-9ac3-d9977d27516c/last-light-v-savaya-bali/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/01e20bc2-3c81-4f3d-9ac3-d9977d27516c/last-light-at-savaya-bali/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/event/02b79462-6137-4270-8e3c-c4a7b8864447/v-chetverg-17-09-priglashayu-vas-naslazhdatsya-osennim-nastroeniem-i-porisovat-maslyanoy-pastelyu-atmosferu-oseni/</loc><lastmod>2026-09-18</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/02b79462-6137-4270-8e3c-c4a7b8864447/v-chetverg-17-09-priglashayu-vas-naslazhdatsya-osennim-nastroeniem-i-porisovat-maslyanoy-pastelyu-atmosferu-oseni/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/02b79462-6137-4270-8e3c-c4a7b8864447/on-thursday-17-09-i-invite-you-to-enjoy-the-autumn-mood-and-draw-the-atmosphere-of-autumn-with-oil-pastels/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/event/03fd0097-5f60-4f90-b1bd-a9d213f532a9/nha-trang-english-club/</loc><lastmod>2026-09-18</lastmod>
@@ -2268,6 +2198,11 @@
   <url><loc>https://mypins.site/event/35f7ecd2-e30c-4104-8cff-b0fc8d04507d/gvozdeterapiya/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/35f7ecd2-e30c-4104-8cff-b0fc8d04507d/gvozdeterapiya/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/35f7ecd2-e30c-4104-8cff-b0fc8d04507d/nail-bed-therapy/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/event/361df73e-07df-4c70-aab8-cad52efe3f67/cashflow/</loc><lastmod>2026-09-18</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/361df73e-07df-4c70-aab8-cad52efe3f67/cashflow/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/361df73e-07df-4c70-aab8-cad52efe3f67/cashflow/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/event/361e1518-b102-4ff5-b7ab-58c7e903fe0b/last-light-v-savaya-bali/</loc><lastmod>2026-09-18</lastmod>
@@ -2603,6 +2538,11 @@
   <url><loc>https://mypins.site/event/6e674853-8e64-4875-b7a8-f1b4728bdcc3/savaya-thursday-v-savaya-bali/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/6e674853-8e64-4875-b7a8-f1b4728bdcc3/savaya-thursday-v-savaya-bali/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/6e674853-8e64-4875-b7a8-f1b4728bdcc3/savaya-thursday-at-savaya-bali/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/event/6f105852-0f84-41d4-84c7-c5b8b46dc105/uzhe-zavtra-vecherom-po-traditsii-nastolnye-igry-v-restorane-369/</loc><lastmod>2026-09-18</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/6f105852-0f84-41d4-84c7-c5b8b46dc105/uzhe-zavtra-vecherom-po-traditsii-nastolnye-igry-v-restorane-369/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/6f105852-0f84-41d4-84c7-c5b8b46dc105/already-tomorrow-evening-by-tradition-board-games-at-restaurant-369/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/event/6fa2f832-2668-41bd-a843-5418bd9c87f5/zhenskaya-vstrecha/</loc><lastmod>2026-09-18</lastmod>
@@ -3015,6 +2955,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/b5116895-393a-4a22-a11e-27bf74c6a85d/savaya-tuesday-at-savaya-bali/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/event/b53c5378-e43e-4ab3-a1e0-33baa3b6ec6a/speaking-club/</loc><lastmod>2026-09-18</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/b53c5378-e43e-4ab3-a1e0-33baa3b6ec6a/speaking-club/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/b53c5378-e43e-4ab3-a1e0-33baa3b6ec6a/speaking-club/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/event/b59f8579-1f7e-4dcd-9aae-2fd01b16df16/savaya-friday-v-savaya-bali/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/b59f8579-1f7e-4dcd-9aae-2fd01b16df16/savaya-friday-v-savaya-bali/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/b59f8579-1f7e-4dcd-9aae-2fd01b16df16/savaya-friday-at-savaya-bali/" />
@@ -3140,6 +3085,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/c97b782e-64fa-4515-ad6c-d36ec03ded5b/open-lesson/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/event/caaba6a1-d5c7-48c8-a1d0-854b82f3abd1/sovmestnaya-probezhka-na-severe/</loc><lastmod>2026-09-18</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/caaba6a1-d5c7-48c8-a1d0-854b82f3abd1/sovmestnaya-probezhka-na-severe/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/caaba6a1-d5c7-48c8-a1d0-854b82f3abd1/joint-run-in-the-north/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/event/cacd1652-92b7-481b-8cea-f9bd45241b95/urok-yogi-zdorovoe-telo-cherez-prostye-dvizheniya/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/cacd1652-92b7-481b-8cea-f9bd45241b95/urok-yogi-zdorovoe-telo-cherez-prostye-dvizheniya/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/cacd1652-92b7-481b-8cea-f9bd45241b95/yoga-lesson-a-healthy-body-through-simple-movements/" />
@@ -3153,6 +3103,11 @@
   <url><loc>https://mypins.site/event/cb5b7885-e155-4648-85d3-daac409874f5/lee-burridge-v-savaya-bali/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/cb5b7885-e155-4648-85d3-daac409874f5/lee-burridge-v-savaya-bali/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/cb5b7885-e155-4648-85d3-daac409874f5/lee-burridge-at-savaya-bali/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/event/cd883a4c-fb0d-4c27-bb6e-a6edec8ce7f4/transformatsionnaya-igra-mudrost-lily/</loc><lastmod>2026-09-18</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/cd883a4c-fb0d-4c27-bb6e-a6edec8ce7f4/transformatsionnaya-igra-mudrost-lily/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/cd883a4c-fb0d-4c27-bb6e-a6edec8ce7f4/transformational-game-lila-s-wisdom/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/event/ce0492a7-e6c6-49e8-a171-ac86bf592a3a/puteshestvie-v-zapovednik-n-i-ch-a/</loc><lastmod>2026-09-18</lastmod>
@@ -3390,6 +3345,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/e8892b0d-5ba4-4214-a76b-00b458720bfe/mind-against-at-savaya-bali/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/event/e90cb0a4-2bee-469d-b3f1-ae062d0332de/detskaya-liga-easy-game-league/</loc><lastmod>2026-09-18</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/e90cb0a4-2bee-469d-b3f1-ae062d0332de/detskaya-liga-easy-game-league/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/e90cb0a4-2bee-469d-b3f1-ae062d0332de/children-s-league-easy-game-league/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/event/e9ff547c-54ac-4b6f-9267-0d446d208cc3/yoga-utrennyaya-praktika-v-etu-sredu/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/e9ff547c-54ac-4b6f-9267-0d446d208cc3/yoga-utrennyaya-praktika-v-etu-sredu/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/e9ff547c-54ac-4b6f-9267-0d446d208cc3/yoga-morning-practice-this-wednesday/" />
@@ -3428,6 +3388,11 @@
   <url><loc>https://mypins.site/event/ee80820e-dde0-46d7-8591-4fc06c982d1a/mission-inner-peace/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/ee80820e-dde0-46d7-8591-4fc06c982d1a/mission-inner-peace/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/ee80820e-dde0-46d7-8591-4fc06c982d1a/mission-inner-peace/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/event/ee8d39b9-f1dd-4ff3-8e1e-8c0c3da9f2c6/kurs-podgotovki-prepodavateley-yogi/</loc><lastmod>2026-09-18</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/ee8d39b9-f1dd-4ff3-8e1e-8c0c3da9f2c6/kurs-podgotovki-prepodavateley-yogi/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/ee8d39b9-f1dd-4ff3-8e1e-8c0c3da9f2c6/yoga-teacher-training-course/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/event/eede015d-487b-4bf1-96ad-99eba46aec98/abuela-luna/</loc><lastmod>2026-09-18</lastmod>
@@ -3565,29 +3530,14 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/nha-trang/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/nha-trang/concert/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/nha-trang/concert/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/nha-trang/concert/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
   <url><loc>https://mypins.site/nha-trang/games/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/nha-trang/games/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/nha-trang/games/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/nha-trang/lecture/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/nha-trang/lecture/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/nha-trang/lecture/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
   <url><loc>https://mypins.site/nha-trang/meetup/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/nha-trang/meetup/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/nha-trang/meetup/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-  </url>
-  <url><loc>https://mypins.site/nha-trang/party/</loc><lastmod>2026-09-18</lastmod>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/nha-trang/party/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/nha-trang/party/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/nha-trang/speaking/</loc><lastmod>2026-09-18</lastmod>
