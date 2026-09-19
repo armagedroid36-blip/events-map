@@ -2,9 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
-         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
-         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
+         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
+         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
+         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -23,12 +27,23 @@
           s.src = GA_SRC;
           document.head.appendChild(s);
         }
-        if (navigator.connection && navigator.connection.saveData === true) return;
-        if (typeof window.requestIdleCallback === 'function') {
-          window.requestIdleCallback(loadGtag, { timeout: 3000 });
-        } else {
-          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+        function afterLoad() {
           window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              obs.disconnect();
+              loadGtag();
+            });
+            po.observe({ type: 'paint', buffered: true });
+            afterLoad();
+          } catch (e) {
+            afterLoad();
+          }
+        } else {
+          afterLoad();
         }
       })();
     </script>
@@ -128,8 +143,8 @@
   </ul>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/6b2eba4a-5a4d-4c28-8b43-b05fda4c0dae/am-m-at-savaya-bali/">AMÉMÉ at Savaya Bali <time datetime="2026-12-06">December 6, 2026</time></a></li>
     <li><a href="/en/event/b4b1fa95-bfaa-42dc-af2d-42aa1a657495/special-guest-at-savaya-bali/">SPECIAL GUEST at Savaya Bali <time datetime="2026-12-06">December 6, 2026</time></a></li>
+    <li><a href="/en/event/6b2eba4a-5a4d-4c28-8b43-b05fda4c0dae/am-m-at-savaya-bali/">AMÉMÉ at Savaya Bali <time datetime="2026-12-06">December 6, 2026</time></a></li>
     <li><a href="/en/event/ee3cd6f4-bfec-4374-a43e-913b854c3b69/last-light-at-savaya-bali/">LAST LIGHT at Savaya Bali <time datetime="2026-12-07">December 7, 2026</time></a></li>
     <li><a href="/en/event/0a3b5a29-9061-4737-943a-26a1d68b10bd/savaya-tuesday-at-savaya-bali/">SAVAYA TUESDAY at Savaya Bali <time datetime="2026-12-08">December 8, 2026</time></a></li>
     <li><a href="/en/event/5ac15058-20ac-40e9-a763-62ad1ae3b7de/savaya-thursday-at-savaya-bali/">SAVAYA THURSDAY at Savaya Bali <time datetime="2026-12-10">December 10, 2026</time></a></li>

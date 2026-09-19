@@ -2,9 +2,13 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
-         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
-         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
+         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
+         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
+         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -23,12 +27,23 @@
           s.src = GA_SRC;
           document.head.appendChild(s);
         }
-        if (navigator.connection && navigator.connection.saveData === true) return;
-        if (typeof window.requestIdleCallback === 'function') {
-          window.requestIdleCallback(loadGtag, { timeout: 3000 });
-        } else {
-          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+        function afterLoad() {
           window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              obs.disconnect();
+              loadGtag();
+            });
+            po.observe({ type: 'paint', buffered: true });
+            afterLoad();
+          } catch (e) {
+            afterLoad();
+          }
+        } else {
+          afterLoad();
         }
       })();
     </script>
@@ -125,14 +140,14 @@
   <p class="seo-updated">Афиша обновлена: <time datetime="2026-09-19">19 сентября 2026</time></p>
   <h2>Ближайшие события на Бали</h2>
   <ul>
-    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/a92f4b68-854e-4345-b3af-4cc5855a8012/kecak-fire-dance-v-khrame-uluvatu/">Kecak Fire Dance в храме Улувату</a> — <span>150000 IDR</span></li>
-    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/3ef4300d-9838-466e-9c2b-a321bab1fff7/kecak-i-tantsy-v-padang-tegal-kaja/">Kecak и танцы в Padang Tegal Kaja</a> — <span>100000 IDR</span></li>
-    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/af63e539-e913-4ca3-a010-e7d3117a1975/tantsevalnye-predstavleniya-v-khrame-sarasvati/">Танцевальные представления в храме Сарасвати</a> — <span>100000 IDR</span></li>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/905bb225-bc9c-46ea-9c5c-12da83fc1a11/tantsevalnye-predstavleniya-v-bale-banjar-ubud-kelod/">Танцевальные представления в Bale Banjar Ubud Kelod</a> — <span>100000 IDR</span></li>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/e80e6f75-3afd-4173-828c-a05191a6708c/tantsevalnye-predstavleniya-v-ubud-palace/">Танцевальные представления в Ubud Palace</a> — <span>100000 IDR</span></li>
+    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/3ef4300d-9838-466e-9c2b-a321bab1fff7/kecak-i-tantsy-v-padang-tegal-kaja/">Kecak и танцы в Padang Tegal Kaja</a> — <span>100000 IDR</span></li>
+    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/a92f4b68-854e-4345-b3af-4cc5855a8012/kecak-fire-dance-v-khrame-uluvatu/">Kecak Fire Dance в храме Улувату</a> — <span>150000 IDR</span></li>
+    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/af63e539-e913-4ca3-a010-e7d3117a1975/tantsevalnye-predstavleniya-v-khrame-sarasvati/">Танцевальные представления в храме Сарасвати</a> — <span>100000 IDR</span></li>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/60aed6ec-ad4b-4ad1-bc41-8ec33199dd18/devdan-show/">Devdan Show</a></li>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/5cedeb4c-b109-4848-bedd-160690d80c27/arma-dance-performance/">ARMA Dance Performance</a> — <span>150000 IDR</span></li>
-    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/b79b14ff-97ab-4c2d-9dfe-4e0593cfb5a6/kurs-podgotovki-prepodavateley-yogi/">Курс подготовки преподавателей йоги</a></li>
+    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/53d76d88-e570-4d38-8660-f21b17b3a546/immersive-wellness-day-retreat/">Immersive Wellness Day Retreat</a> — <span>1236000 IDR</span></li>
   </ul>
   <h2>Частые вопросы</h2>
     <details><summary>Какие события и мероприятия проходят на Бали?</summary><p>На MyPins организаторы сами публикуют события: вечеринки, концерты, йога-классы, маркеты, фестивали и встречи для экспатов. У каждого события на карте указаны дата, место и цена.</p></details>

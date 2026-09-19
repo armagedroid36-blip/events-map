@@ -2,9 +2,13 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
-         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
-         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
+         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
+         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
+         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -23,12 +27,23 @@
           s.src = GA_SRC;
           document.head.appendChild(s);
         }
-        if (navigator.connection && navigator.connection.saveData === true) return;
-        if (typeof window.requestIdleCallback === 'function') {
-          window.requestIdleCallback(loadGtag, { timeout: 3000 });
-        } else {
-          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+        function afterLoad() {
           window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              obs.disconnect();
+              loadGtag();
+            });
+            po.observe({ type: 'paint', buffered: true });
+            afterLoad();
+          } catch (e) {
+            afterLoad();
+          }
+        } else {
+          afterLoad();
         }
       })();
     </script>
@@ -127,12 +142,12 @@
   <ul>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/fdf56fce-c81d-4a79-bee3-c8664127c1b0/shou-charming-danang-v-danange/">Шоу Charming Danang в Дананге</a></li>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/513d9371-e071-4d9b-8489-42d2af1e2ee9/shou-ao-dai-v-danange/">Шоу Ao Dai в Дананге</a> — <span>400000 VND</span></li>
-    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/4d4bee39-6d16-4f26-9d02-e04c4b33440b/kviz-imix-v-etu-subbotu/">КВИЗ IMIX В ЭТУ СУББОТУ</a> — <span>200000 VND</span></li>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/44e749b9-fe41-41af-a5b7-c01c0e42d2af/inglish-rasshiryaet-granitsy-no-inogda-ikh-nuzhno-zashchitit-vyrazit-agressiyu-pokazat-zubki-u-know/">инглиш расширяет границы, но иногда их нужно защитить, выразить агрессию, показать зубки, u know</a> — <span>150000 VND</span></li>
+    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/4d4bee39-6d16-4f26-9d02-e04c4b33440b/kviz-imix-v-etu-subbotu/">КВИЗ IMIX В ЭТУ СУББОТУ</a> — <span>200000 VND</span></li>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/e37928a9-c089-4eea-b2a4-7779e1164f43/gitarnik-30/">ГИТАРНИК 30</a> — <span>50000 VND</span></li>
-    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/e4b4d1bb-5528-4b5b-b9be-9d03c8414df2/gitarnik-31/">ГИТАРНИК 31</a> — <span>50000 VND</span></li>
+    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/4ca9ee13-3c6f-4ab6-8202-e934b151f374/kak-vybrat-khobbi-prinosyashchee-udovolstvie-i-razvitie/">Как выбрать хобби, приносящее удовольствие и развитие?</a> — <span>200000 VND</span></li>
+    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/c578a54f-4320-4dd3-9a60-84035df561eb/rebyata-vsem-privet/">Ребята, всем привет ))</a> — <span>200000 VND</span></li>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/c6cd247f-6dfb-4c85-b6b6-1e65d5588abf/zavtra-vecher-nastolok-v-restorane-369/">Завтра вечер настолок в ресторане 369 !</a> — <span>Бесплатно</span></li>
-    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/a057cf61-a70f-4f24-87b2-b3f6c63c7a83/latin-party-salsa-bachata-kizomba/">LATIN PARTY: SALSA BACHATA KIZOMBA</a> — <span>110000 VND</span></li>
   </ul>
   <h2>Частые вопросы</h2>
     <details><summary>Какие события и мероприятия проходят в Дананге?</summary><p>На MyPins события Дананга публикуют сами организаторы: концерты, вечеринки, йога, спорт, маркеты и встречи для экспатов. На карте видны дата, место и цена каждого события.</p></details>

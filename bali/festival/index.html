@@ -2,9 +2,13 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
-         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
-         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
+         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
+         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
+         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -23,12 +27,23 @@
           s.src = GA_SRC;
           document.head.appendChild(s);
         }
-        if (navigator.connection && navigator.connection.saveData === true) return;
-        if (typeof window.requestIdleCallback === 'function') {
-          window.requestIdleCallback(loadGtag, { timeout: 3000 });
-        } else {
-          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+        function afterLoad() {
           window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              obs.disconnect();
+              loadGtag();
+            });
+            po.observe({ type: 'paint', buffered: true });
+            afterLoad();
+          } catch (e) {
+            afterLoad();
+          }
+        } else {
+          afterLoad();
         }
       })();
     </script>
@@ -105,7 +120,7 @@
     <link rel="alternate" hreflang="ru" href="https://mypins.site/bali/festival/" />
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/bali/festival/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","url":"https://mypins.site/bali/festival/","name":"Фестивали на Бали: афиша и мероприятия","inLanguage":"ru","isPartOf":{"@type":"WebSite","name":"MyPins","url":"https://mypins.site/"}},{"@type":"ItemList","numberOfItems":5,"itemListOrder":"https://schema.org/ItemListOrderAscending","itemListElement":[{"@type":"ListItem","position":1,"name":"Magic Garden Fest: праздник урожая и природы","url":"https://mypins.site/event/f69a0a4f-2bf3-47ce-9e47-7701ea9be7cb/magic-garden-fest-prazdnik-urozhaya-i-prirody/"},{"@type":"ListItem","position":2,"name":"BMW Motorrad Days Bali 2026","url":"https://mypins.site/event/1659bf6a-ae27-4122-bf79-ce11740f9243/bmw-motorrad-days-bali-2026/"},{"@type":"ListItem","position":3,"name":"Фестиваль Dekmantel Bali в Potato Head","url":"https://mypins.site/event/c8bb6c7b-a726-434d-948f-1eaff257e272/festival-dekmantel-bali-v-potato-head/"},{"@type":"ListItem","position":4,"name":"Фестиваль электронной музыки ZAMNA Bali 2026 в Savaya Bali","url":"https://mypins.site/event/7a56c430-fa90-40d4-90dc-62b4e6579d00/festival-elektronnoy-muzyki-zamna-bali-2026-v-savaya-bali/"},{"@type":"ListItem","position":5,"name":"Литературный фестиваль Ubud Writers & Readers Festival 2026 в Убуде","url":"https://mypins.site/event/684f7b44-d982-4355-9f48-5db4b870a932/literaturnyy-festival-ubud-writers-readers-festival-2026-v-ubude/"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Бали","item":"https://mypins.site/bali/"},{"@type":"ListItem","position":3,"name":"Фестивали","item":"https://mypins.site/bali/festival/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","url":"https://mypins.site/bali/festival/","name":"Фестивали на Бали: афиша и мероприятия","inLanguage":"ru","isPartOf":{"@type":"WebSite","name":"MyPins","url":"https://mypins.site/"}},{"@type":"ItemList","numberOfItems":5,"itemListOrder":"https://schema.org/ItemListOrderAscending","itemListElement":[{"@type":"ListItem","position":1,"name":"BMW Motorrad Days Bali 2026","url":"https://mypins.site/event/1659bf6a-ae27-4122-bf79-ce11740f9243/bmw-motorrad-days-bali-2026/"},{"@type":"ListItem","position":2,"name":"Magic Garden Fest: праздник урожая и природы","url":"https://mypins.site/event/f69a0a4f-2bf3-47ce-9e47-7701ea9be7cb/magic-garden-fest-prazdnik-urozhaya-i-prirody/"},{"@type":"ListItem","position":3,"name":"Фестиваль Dekmantel Bali в Potato Head","url":"https://mypins.site/event/c8bb6c7b-a726-434d-948f-1eaff257e272/festival-dekmantel-bali-v-potato-head/"},{"@type":"ListItem","position":4,"name":"Фестиваль электронной музыки ZAMNA Bali 2026 в Savaya Bali","url":"https://mypins.site/event/7a56c430-fa90-40d4-90dc-62b4e6579d00/festival-elektronnoy-muzyki-zamna-bali-2026-v-savaya-bali/"},{"@type":"ListItem","position":5,"name":"Литературный фестиваль Ubud Writers & Readers Festival 2026 в Убуде","url":"https://mypins.site/event/684f7b44-d982-4355-9f48-5db4b870a932/literaturnyy-festival-ubud-writers-readers-festival-2026-v-ubude/"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Бали","item":"https://mypins.site/bali/"},{"@type":"ListItem","position":3,"name":"Фестивали","item":"https://mypins.site/bali/festival/"}]}]}</script>
   </head>
   <body>
     <div id="root"></div>
@@ -114,20 +129,20 @@
     <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/bali/">Бали</a> <span aria-hidden="true">›</span> <span>Фестивали</span></p>
   </nav>
   <h1>Фестивали на Бали: афиша и мероприятия</h1>
-  <p>Фестивали на Бали: 5 событий в афише. Фестивали — многодневные события с музыкой, едой, маркетами и локальной культурой. На Бали афиша не затихает круглый год. Обычные площадки: Magic Garden, Pulau Peninsula Nusa Dua. Афиша охватывает период с 25 сентября 2026 по 21 октября 2026. Что происходит в ближайшие дни: «Magic Garden Fest: праздник урожая и природы» — 25 сентября (Magic Garden), «BMW Motorrad Days Bali 2026» — 25 сентября (Pulau Peninsula Nusa Dua), «Фестиваль Dekmantel Bali в Potato Head» — 26 сентября, «Фестиваль электронной музыки ZAMNA Bali 2026…» — 17 октября, «Литературный фестиваль Ubud Writers &amp; Readers…» — 21 октября. Подробности: Magic Garden Fest: праздник урожая и природы пройдёт 2026-09-25–2026-09-27 на площадке Magic Garden. Начало в 14:00. Трёхдневный фестиваль объединит… Билеты — 700 000 USD, 4 из 5 событий бесплатные или за донат.</p>
+  <p>Фестивали на Бали: 5 событий в афише. Фестивали — многодневные события с музыкой, едой, маркетами и локальной культурой. На Бали афиша не затихает круглый год. Обычные площадки: Pulau Peninsula Nusa Dua, Magic Garden. Афиша охватывает период с 25 сентября 2026 по 21 октября 2026. Что происходит в ближайшие дни: «BMW Motorrad Days Bali 2026» — 25 сентября (Pulau Peninsula Nusa Dua), «Magic Garden Fest: праздник урожая и природы» — 25 сентября (Magic Garden), «Фестиваль Dekmantel Bali в Potato Head» — 26 сентября, «Фестиваль электронной музыки ZAMNA Bali 2026…» — 17 октября, «Литературный фестиваль Ubud Writers &amp; Readers…» — 21 октября. Подробности: BMW Motorrad Days впервые пройдут на Бали. Двухдневный фестиваль на Peninsula Island объединит международное мотосообщество вокруг райдинга… Билеты — 700 000 IDR, 4 из 5 событий бесплатные или за донат.</p>
   <p class="seo-updated">Афиша обновлена: <time datetime="2026-09-19">19 сентября 2026</time></p>
   <h2>Ближайшие события: Фестивали</h2>
   <ul>
-    <li><time datetime="2026-09-25">25 сентября 2026</time> — <a href="https://mypins.site/event/f69a0a4f-2bf3-47ce-9e47-7701ea9be7cb/magic-garden-fest-prazdnik-urozhaya-i-prirody/">Magic Garden Fest: праздник урожая и природы</a> — <span>Бесплатно</span></li>
     <li><time datetime="2026-09-25">25 сентября 2026</time> — <a href="https://mypins.site/event/1659bf6a-ae27-4122-bf79-ce11740f9243/bmw-motorrad-days-bali-2026/">BMW Motorrad Days Bali 2026</a> — <span>700000 IDR</span></li>
+    <li><time datetime="2026-09-25">25 сентября 2026</time> — <a href="https://mypins.site/event/f69a0a4f-2bf3-47ce-9e47-7701ea9be7cb/magic-garden-fest-prazdnik-urozhaya-i-prirody/">Magic Garden Fest: праздник урожая и природы</a> — <span>Бесплатно</span></li>
     <li><time datetime="2026-09-26">26 сентября 2026</time> — <a href="https://mypins.site/event/c8bb6c7b-a726-434d-948f-1eaff257e272/festival-dekmantel-bali-v-potato-head/">Фестиваль Dekmantel Bali в Potato Head</a></li>
     <li><time datetime="2026-10-17">17 октября 2026</time> — <a href="https://mypins.site/event/7a56c430-fa90-40d4-90dc-62b4e6579d00/festival-elektronnoy-muzyki-zamna-bali-2026-v-savaya-bali/">Фестиваль электронной музыки ZAMNA Bali 2026 в Savaya Bali</a></li>
     <li><time datetime="2026-10-21">21 октября 2026</time> — <a href="https://mypins.site/event/684f7b44-d982-4355-9f48-5db4b870a932/literaturnyy-festival-ubud-writers-readers-festival-2026-v-ubude/">Литературный фестиваль Ubud Writers &amp; Readers Festival 2026 в Убуде</a></li>
   </ul>
   <h2>Частые вопросы</h2>
-    <details><summary>Сколько событий в категории «Фестивали» на Бали сейчас?</summary><p>Сейчас 5 событий: от «Magic Garden Fest: праздник урожая и природы» 25 сентября до «Литературный фестиваль Ubud Writers &amp; Readers…» 21 октября.</p></details>
-    <details><summary>Когда проходит ближайшее событие категории «Фестивали»?</summary><p>«Magic Garden Fest: праздник урожая и природы» — 25 сентября, Magic Garden.</p></details>
-    <details><summary>Сколько стоят билеты?</summary><p>700 000 USD; 4 из 5 событий бесплатные или за донат.</p></details>
+    <details><summary>Сколько событий в категории «Фестивали» на Бали сейчас?</summary><p>Сейчас 5 событий: от «BMW Motorrad Days Bali 2026» 25 сентября до «Литературный фестиваль Ubud Writers &amp; Readers…» 21 октября.</p></details>
+    <details><summary>Когда проходит ближайшее событие категории «Фестивали»?</summary><p>«BMW Motorrad Days Bali 2026» — 25 сентября, Pulau Peninsula Nusa Dua.</p></details>
+    <details><summary>Сколько стоят билеты?</summary><p>700 000 IDR; 4 из 5 событий бесплатные или за донат.</p></details>
 </div>
 
   </body>

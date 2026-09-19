@@ -2,9 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
-         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
-         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
+         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
+         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
+         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -23,12 +27,23 @@
           s.src = GA_SRC;
           document.head.appendChild(s);
         }
-        if (navigator.connection && navigator.connection.saveData === true) return;
-        if (typeof window.requestIdleCallback === 'function') {
-          window.requestIdleCallback(loadGtag, { timeout: 3000 });
-        } else {
-          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+        function afterLoad() {
           window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              obs.disconnect();
+              loadGtag();
+            });
+            po.observe({ type: 'paint', buffered: true });
+            afterLoad();
+          } catch (e) {
+            afterLoad();
+          }
+        } else {
+          afterLoad();
         }
       })();
     </script>
@@ -134,8 +149,8 @@ https://t.me/lizunik482</p>
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/b79b14ff-97ab-4c2d-9dfe-4e0593cfb5a6/yoga-teacher-training-course/">Yoga Teacher Training Course <time datetime="2026-09-19">September 19, 2026</time></a></li>
     <li><a href="/en/event/53d76d88-e570-4d38-8660-f21b17b3a546/immersive-wellness-day-retreat/">Immersive Wellness Day Retreat <time datetime="2026-09-19">September 19, 2026</time></a></li>
+    <li><a href="/en/event/b79b14ff-97ab-4c2d-9dfe-4e0593cfb5a6/yoga-teacher-training-course/">Yoga Teacher Training Course <time datetime="2026-09-19">September 19, 2026</time></a></li>
     <li><a href="/en/event/f7fe9774-54b7-4b70-8f9d-271d0a9b4fb3/liquid-body-at-the-yoga-barn/">Liquid Body at The Yoga Barn <time datetime="2026-09-19">September 19, 2026</time></a></li>
     <li><a href="/en/event/ab904e80-38e5-4886-aea0-05297b0a22dc/breath-of-bliss-at-the-yoga-barn/">Breath of Bliss at The Yoga Barn <time datetime="2026-09-19">September 19, 2026</time></a></li>
     <li><a href="/en/event/21d82178-3536-4302-9e2f-db01ae67cdd9/women-s-bathhouse/">Women&#39;s Bathhouse <time datetime="2026-09-19">September 19, 2026</time></a></li>

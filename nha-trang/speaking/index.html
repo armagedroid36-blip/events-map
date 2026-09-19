@@ -2,9 +2,13 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
-         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
-         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
+         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
+         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
+         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -23,12 +27,23 @@
           s.src = GA_SRC;
           document.head.appendChild(s);
         }
-        if (navigator.connection && navigator.connection.saveData === true) return;
-        if (typeof window.requestIdleCallback === 'function') {
-          window.requestIdleCallback(loadGtag, { timeout: 3000 });
-        } else {
-          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+        function afterLoad() {
           window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              obs.disconnect();
+              loadGtag();
+            });
+            po.observe({ type: 'paint', buffered: true });
+            afterLoad();
+          } catch (e) {
+            afterLoad();
+          }
+        } else {
+          afterLoad();
         }
       })();
     </script>
@@ -105,7 +120,7 @@
     <link rel="alternate" hreflang="ru" href="https://mypins.site/nha-trang/speaking/" />
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/nha-trang/speaking/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","url":"https://mypins.site/nha-trang/speaking/","name":"Разговорный клуб в Нячанге: афиша и мероприятия","inLanguage":"ru","isPartOf":{"@type":"WebSite","name":"MyPins","url":"https://mypins.site/"}},{"@type":"ItemList","numberOfItems":8,"itemListOrder":"https://schema.org/ItemListOrderAscending","itemListElement":[{"@type":"ListItem","position":1,"name":"WeekendTalk: английский для тех, кто умеет говорить","url":"https://mypins.site/event/4c59525d-3bc0-430e-ace8-7d19dd83a267/weekendtalk-angliyskiy-dlya-tekh-kto-umeet-govorit/"},{"@type":"ListItem","position":2,"name":"WeekendTalk: субботний speaking club A2","url":"https://mypins.site/event/bc9227ba-53f7-4a53-8a5a-5461c037acce/weekendtalk-subbotniy-speaking-club-a2/"},{"@type":"ListItem","position":3,"name":"Nha Trang English Club","url":"https://mypins.site/event/03fd0097-5f60-4f90-b1bd-a9d213f532a9/nha-trang-english-club/"},{"@type":"ListItem","position":4,"name":"Встреча English Speaking Club","url":"https://mypins.site/event/a2a9943f-a381-42ce-a30d-062055e178a7/vstrecha-english-speaking-club/"},{"@type":"ListItem","position":5,"name":"Приглашаю вас на Встречу английского разговорного клуба, где говорить будут все.","url":"https://mypins.site/event/2dea52b4-acbd-452d-8bc2-d42f9d707200/priglashayu-vas-na-vstrechu-angliyskogo-razgovornogo-kluba-gde-govorit-budut-vse/"},{"@type":"ListItem","position":6,"name":"Speaking Club","url":"https://mypins.site/event/35ffafce-20c4-45e8-8cb0-0c93972ad557/speaking-club/"},{"@type":"ListItem","position":7,"name":"Morning Talk: пятничный speaking club","url":"https://mypins.site/event/f750e6c3-1adb-4389-b235-bfaf836ac857/morning-talk-pyatnichnyy-speaking-club/"},{"@type":"ListItem","position":8,"name":"Speaking Club","url":"https://mypins.site/event/b53c5378-e43e-4ab3-a1e0-33baa3b6ec6a/speaking-club/"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"Разговорный клуб","item":"https://mypins.site/nha-trang/speaking/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","url":"https://mypins.site/nha-trang/speaking/","name":"Разговорный клуб в Нячанге: афиша и мероприятия","inLanguage":"ru","isPartOf":{"@type":"WebSite","name":"MyPins","url":"https://mypins.site/"}},{"@type":"ItemList","numberOfItems":8,"itemListOrder":"https://schema.org/ItemListOrderAscending","itemListElement":[{"@type":"ListItem","position":1,"name":"WeekendTalk: английский для тех, кто умеет говорить","url":"https://mypins.site/event/4c59525d-3bc0-430e-ace8-7d19dd83a267/weekendtalk-angliyskiy-dlya-tekh-kto-umeet-govorit/"},{"@type":"ListItem","position":2,"name":"Nha Trang English Club","url":"https://mypins.site/event/03fd0097-5f60-4f90-b1bd-a9d213f532a9/nha-trang-english-club/"},{"@type":"ListItem","position":3,"name":"WeekendTalk: субботний speaking club A2","url":"https://mypins.site/event/bc9227ba-53f7-4a53-8a5a-5461c037acce/weekendtalk-subbotniy-speaking-club-a2/"},{"@type":"ListItem","position":4,"name":"Приглашаю вас на Встречу английского разговорного клуба, где говорить будут все.","url":"https://mypins.site/event/2dea52b4-acbd-452d-8bc2-d42f9d707200/priglashayu-vas-na-vstrechu-angliyskogo-razgovornogo-kluba-gde-govorit-budut-vse/"},{"@type":"ListItem","position":5,"name":"Speaking Club","url":"https://mypins.site/event/35ffafce-20c4-45e8-8cb0-0c93972ad557/speaking-club/"},{"@type":"ListItem","position":6,"name":"Встреча English Speaking Club","url":"https://mypins.site/event/a2a9943f-a381-42ce-a30d-062055e178a7/vstrecha-english-speaking-club/"},{"@type":"ListItem","position":7,"name":"Morning Talk: пятничный speaking club","url":"https://mypins.site/event/f750e6c3-1adb-4389-b235-bfaf836ac857/morning-talk-pyatnichnyy-speaking-club/"},{"@type":"ListItem","position":8,"name":"Speaking Club","url":"https://mypins.site/event/b53c5378-e43e-4ab3-a1e0-33baa3b6ec6a/speaking-club/"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"Разговорный клуб","item":"https://mypins.site/nha-trang/speaking/"}]}]}</script>
   </head>
   <body>
     <div id="root"></div>
@@ -114,16 +129,16 @@
     <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/nha-trang/">Нячанг</a> <span aria-hidden="true">›</span> <span>Разговорный клуб</span></p>
   </nav>
   <h1>Разговорный клуб в Нячанге: афиша и мероприятия</h1>
-  <p>Разговорный клуб в Нячанге: 8 событий в афише. Разговорный клуб — практика английского и других языков в кафе и коворкингах. Нячанг живёт у моря: набережная и север города. Ждём вас здесь: Jungle Coffee, Doidep Tea Connect, Alam Cafe. Ближайшее — 19 сентября 2026, последнее в подборке — 24 сентября 2026. События на ближайшие дни: «WeekendTalk: английский для тех, кто умеет…» — 19 сентября (Jungle Coffee), «WeekendTalk: субботний speaking club A2» — 19 сентября (Jungle Coffee), «Nha Trang English Club» — 19 сентября, «Встреча English Speaking Club» — 20 сентября, «Приглашаю вас на Встречу английского…» — 20 сентября, «Speaking Club» — 20 сентября (Doidep Tea Connect), «Morning Talk: пятничный speaking club» — 21 сентября (Alam Cafe), «Speaking Club» — 24 сентября (Doidep Tea Connect). Подробности: 🗣️ WeekendTalk: английский для тех, кто умеет говорить Спорить и обсуждать на английском не то же самое, что заказать кофе или перекинуться парой… Цены на билеты — от 100 000 до 150 000 VND; 3 из 8 событий бесплатные или за донат.</p>
+  <p>Разговорный клуб в Нячанге: 8 событий в афише. Разговорный клуб — практика английского и других языков в кафе и коворкингах. Нячанг живёт у моря: набережная и север города. Ждём вас здесь: Jungle Coffee, Doidep Tea Connect, Alam Cafe. Ближайшее — 19 сентября 2026, последнее в подборке — 24 сентября 2026. События на ближайшие дни: «WeekendTalk: английский для тех, кто умеет…» — 19 сентября (Jungle Coffee), «Nha Trang English Club» — 19 сентября, «WeekendTalk: субботний speaking club A2» — 19 сентября (Jungle Coffee), «Приглашаю вас на Встречу английского…» — 20 сентября, «Speaking Club» — 20 сентября (Doidep Tea Connect), «Встреча English Speaking Club» — 20 сентября, «Morning Talk: пятничный speaking club» — 21 сентября (Alam Cafe), «Speaking Club» — 24 сентября (Doidep Tea Connect). Подробности: 🗣️ WeekendTalk: английский для тех, кто умеет говорить Спорить и обсуждать на английском не то же самое, что заказать кофе или перекинуться парой… Цены на билеты — от 100 000 до 150 000 VND; 3 из 8 событий бесплатные или за донат.</p>
   <p class="seo-updated">Афиша обновлена: <time datetime="2026-09-19">19 сентября 2026</time></p>
   <h2>Ближайшие события: Разговорный клуб</h2>
   <ul>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/4c59525d-3bc0-430e-ace8-7d19dd83a267/weekendtalk-angliyskiy-dlya-tekh-kto-umeet-govorit/">WeekendTalk: английский для тех, кто умеет говорить</a> — <span>100000 VND</span></li>
-    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/bc9227ba-53f7-4a53-8a5a-5461c037acce/weekendtalk-subbotniy-speaking-club-a2/">WeekendTalk: субботний speaking club A2</a> — <span>100000 VND</span></li>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/03fd0097-5f60-4f90-b1bd-a9d213f532a9/nha-trang-english-club/">Nha Trang English Club</a> — <span>Донат</span></li>
-    <li><time datetime="2026-09-20">20 сентября 2026</time> — <a href="https://mypins.site/event/a2a9943f-a381-42ce-a30d-062055e178a7/vstrecha-english-speaking-club/">Встреча English Speaking Club</a> — <span>150000 VND</span></li>
+    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/bc9227ba-53f7-4a53-8a5a-5461c037acce/weekendtalk-subbotniy-speaking-club-a2/">WeekendTalk: субботний speaking club A2</a> — <span>100000 VND</span></li>
     <li><time datetime="2026-09-20">20 сентября 2026</time> — <a href="https://mypins.site/event/2dea52b4-acbd-452d-8bc2-d42f9d707200/priglashayu-vas-na-vstrechu-angliyskogo-razgovornogo-kluba-gde-govorit-budut-vse/">Приглашаю вас на Встречу английского разговорного клуба, где говорить будут все.</a> — <span>150000 VND</span></li>
     <li><time datetime="2026-09-20">20 сентября 2026</time> — <a href="https://mypins.site/event/35ffafce-20c4-45e8-8cb0-0c93972ad557/speaking-club/">Speaking Club</a> — <span>Донат</span></li>
+    <li><time datetime="2026-09-20">20 сентября 2026</time> — <a href="https://mypins.site/event/a2a9943f-a381-42ce-a30d-062055e178a7/vstrecha-english-speaking-club/">Встреча English Speaking Club</a> — <span>150000 VND</span></li>
     <li><time datetime="2026-09-21">21 сентября 2026</time> — <a href="https://mypins.site/event/f750e6c3-1adb-4389-b235-bfaf836ac857/morning-talk-pyatnichnyy-speaking-club/">Morning Talk: пятничный speaking club</a> — <span>100000 VND</span></li>
     <li><time datetime="2026-09-24">24 сентября 2026</time> — <a href="https://mypins.site/event/b53c5378-e43e-4ab3-a1e0-33baa3b6ec6a/speaking-club/">Speaking Club</a> — <span>Донат</span></li>
   </ul>

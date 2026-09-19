@@ -2,9 +2,13 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
-         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
-         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
+         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
+         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
+         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -23,12 +27,23 @@
           s.src = GA_SRC;
           document.head.appendChild(s);
         }
-        if (navigator.connection && navigator.connection.saveData === true) return;
-        if (typeof window.requestIdleCallback === 'function') {
-          window.requestIdleCallback(loadGtag, { timeout: 3000 });
-        } else {
-          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+        function afterLoad() {
           window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              obs.disconnect();
+              loadGtag();
+            });
+            po.observe({ type: 'paint', buffered: true });
+            afterLoad();
+          } catch (e) {
+            afterLoad();
+          }
+        } else {
+          afterLoad();
         }
       })();
     </script>
@@ -129,10 +144,10 @@
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/29206756-1a5f-473f-82f2-b5cce7e48767/once-show-v-vinwonders/">Once Show в VinWonders</a></li>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/d87e2814-7362-4047-8ae6-0566ebe06320/life-puppets-kukolnoe-shou-v-theatre/">Life Puppets — кукольное шоу в Đó Theatre</a> — <span>20 USD</span></li>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/4df7da34-c18c-48ef-962d-db2f7f041a07/chum-show/">Chum Show</a></li>
-    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/fbd307d9-a53c-4e52-8e6f-79670bc89e7b/a-poekhali-vmeste-v/">А поехали вместе в</a> — <span>140000 VND</span></li>
-    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/96244443-2611-4260-b103-f6e032aca72e/vechernyaya-programma-bkhakti-margi/">Вечерняя программа Бхакти Марги</a> — <span>Донат</span></li>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/4c59525d-3bc0-430e-ace8-7d19dd83a267/weekendtalk-angliyskiy-dlya-tekh-kto-umeet-govorit/">WeekendTalk: английский для тех, кто умеет говорить</a> — <span>100000 VND</span></li>
-    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/fbdd1fd1-c919-4295-a2bb-3074be726cbd/khochesh-pochuvstvovat-sebya-geroem-boevika/">Хочешь почувствовать себя героем боевика?</a> — <span>200000 VND</span></li>
+    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/fbd307d9-a53c-4e52-8e6f-79670bc89e7b/a-poekhali-vmeste-v/">А поехали вместе в</a> — <span>140000 VND</span></li>
+    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/ea7edc2b-0f6b-41ff-b405-029ea9c1d21e/vsem-praktika-ashtanga-vinyasa-yogi-v-nyachange/">Всем . Практика аштанга виньяса йоги в Нячанге .</a> — <span>100000 VND</span></li>
+    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/96244443-2611-4260-b103-f6e032aca72e/vechernyaya-programma-bkhakti-margi/">Вечерняя программа Бхакти Марги</a> — <span>Донат</span></li>
   </ul>
   <h2>Частые вопросы</h2>
     <details><summary>Какие события и мероприятия проходят в Нячанге?</summary><p>Организаторы публикуют их сами: вечеринки, концерты, speaking-клубы, йога, шоу и маркеты. На карте у каждого события — дата, место и цена.</p></details>

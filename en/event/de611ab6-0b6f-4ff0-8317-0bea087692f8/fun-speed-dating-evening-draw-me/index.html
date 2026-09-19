@@ -2,9 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
-         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
-         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
+         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
+         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
+         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -23,12 +27,23 @@
           s.src = GA_SRC;
           document.head.appendChild(s);
         }
-        if (navigator.connection && navigator.connection.saveData === true) return;
-        if (typeof window.requestIdleCallback === 'function') {
-          window.requestIdleCallback(loadGtag, { timeout: 3000 });
-        } else {
-          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+        function afterLoad() {
           window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              obs.disconnect();
+              loadGtag();
+            });
+            po.observe({ type: 'paint', buffered: true });
+            afterLoad();
+          } catch (e) {
+            afterLoad();
+          }
+        } else {
+          afterLoad();
         }
       })();
     </script>
@@ -143,11 +158,11 @@ Post by: Elly Sheva</p>
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/86e21a7b-0ac7-46bc-ab78-810d86ac22a7/saturday-drawing-sessions-are-a-good-tradition-we-gather-as-girls-in-a-cozy-cafe-to-relax-draw-and-recharge/">Saturday drawing sessions are a good tradition. We gather as &quot;girls&quot; in a cozy cafe to relax, draw, and recharge. <time datetime="2026-09-19">September 19, 2026</time></a></li>
     <li><a href="/en/event/0e6a647a-cd1d-41b3-b12b-00df50758e0e/bento-cake-masterclass/">BENTO CAKE MASTERCLASS <time datetime="2026-09-19">September 19, 2026</time></a></li>
-    <li><a href="/en/event/5d6e5190-d9a1-47c0-add7-2b5f2ac9c880/master-class-vector-of-destiny/">MASTER CLASS VECTOR OF DESTINY <time datetime="2026-09-20">September 20, 2026</time></a></li>
+    <li><a href="/en/event/86e21a7b-0ac7-46bc-ab78-810d86ac22a7/saturday-drawing-sessions-are-a-good-tradition-we-gather-as-girls-in-a-cozy-cafe-to-relax-draw-and-recharge/">Saturday drawing sessions are a good tradition. We gather as &quot;girls&quot; in a cozy cafe to relax, draw, and recharge. <time datetime="2026-09-19">September 19, 2026</time></a></li>
     <li><a href="/en/event/6a4d9825-0673-4206-9f3f-680065e42743/fool-and-critic/">Fool and Critic. <time datetime="2026-09-20">September 20, 2026</time></a></li>
     <li><a href="/en/event/b8fc8987-13e6-4628-9520-6904aa23cfb1/create-a-jewelry/">CREATE A JEWELRY <time datetime="2026-09-20">September 20, 2026</time></a></li>
+    <li><a href="/en/event/5d6e5190-d9a1-47c0-add7-2b5f2ac9c880/master-class-vector-of-destiny/">MASTER CLASS VECTOR OF DESTINY <time datetime="2026-09-20">September 20, 2026</time></a></li>
     <li><a href="/en/event/b7e6025e-631a-4184-94d8-82912269a7a8/drawing-for-children-6-12-years-old/">Drawing for children 6-12 years old! <time datetime="2026-09-23">September 23, 2026</time></a></li>
   </ul>
 </div>

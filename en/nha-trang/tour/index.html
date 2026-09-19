@@ -2,9 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
-         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
-         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
+         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
+         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
+         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -23,12 +27,23 @@
           s.src = GA_SRC;
           document.head.appendChild(s);
         }
-        if (navigator.connection && navigator.connection.saveData === true) return;
-        if (typeof window.requestIdleCallback === 'function') {
-          window.requestIdleCallback(loadGtag, { timeout: 3000 });
-        } else {
-          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+        function afterLoad() {
           window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              obs.disconnect();
+              loadGtag();
+            });
+            po.observe({ type: 'paint', buffered: true });
+            afterLoad();
+          } catch (e) {
+            afterLoad();
+          }
+        } else {
+          afterLoad();
         }
       })();
     </script>
@@ -105,7 +120,7 @@
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/nha-trang/tour/" />
     <link rel="alternate" hreflang="ru" href="https://mypins.site/nha-trang/tour/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","url":"https://mypins.site/en/nha-trang/tour/","name":"Tours & Excursions in Nha Trang: what's on","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"MyPins","url":"https://mypins.site/en/"}},{"@type":"ItemList","numberOfItems":7,"itemListOrder":"https://schema.org/ItemListOrderAscending","itemListElement":[{"@type":"ListItem","position":1,"name":"And let's go together to","url":"https://mypins.site/en/event/fbd307d9-a53c-4e52-8e6f-79670bc89e7b/and-let-s-go-together-to/"},{"@type":"ListItem","position":2,"name":"Journey to Núi Chúa Nature Reserve","url":"https://mypins.site/en/event/ce0492a7-e6c6-49e8-a171-ac86bf592a3a/journey-to-n-i-ch-a-nature-reserve/"},{"@type":"ListItem","position":3,"name":"Hike to the summit through the jungle and mountain river \"Above the Mountains\"","url":"https://mypins.site/en/event/8dd674ba-8864-4369-bd08-7c72a8da9090/hike-to-the-summit-through-the-jungle-and-mountain-river-above-the-mountains/"},{"@type":"ListItem","position":4,"name":"DALAT September 19-20!","url":"https://mypins.site/en/event/8f79d7a4-b226-41ff-8955-9f88bfaf49bf/dalat-september-19-20/"},{"@type":"ListItem","position":5,"name":"Journey to the Hòn Hèo Peninsula","url":"https://mypins.site/en/event/1bf87d8e-c964-4300-a8b0-62b98306d2d4/journey-to-the-h-n-h-o-peninsula/"},{"@type":"ListItem","position":6,"name":"Dragon Labyrinth, sheep farm and Cam Ranh beaches","url":"https://mypins.site/en/event/80cf4fcd-7dda-48d7-a73b-0654e262afed/dragon-labyrinth-sheep-farm-and-cam-ranh-beaches/"},{"@type":"ListItem","position":7,"name":"WHERE TO GO THIS WEEKEND?","url":"https://mypins.site/en/event/2f4a605f-5ee5-4697-8d22-83f0b39989b4/where-to-go-this-weekend/"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"Tours & Excursions","item":"https://mypins.site/en/nha-trang/tour/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","url":"https://mypins.site/en/nha-trang/tour/","name":"Tours & Excursions in Nha Trang: what's on","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"MyPins","url":"https://mypins.site/en/"}},{"@type":"ItemList","numberOfItems":7,"itemListOrder":"https://schema.org/ItemListOrderAscending","itemListElement":[{"@type":"ListItem","position":1,"name":"And let's go together to","url":"https://mypins.site/en/event/fbd307d9-a53c-4e52-8e6f-79670bc89e7b/and-let-s-go-together-to/"},{"@type":"ListItem","position":2,"name":"Hike to the summit through the jungle and mountain river \"Above the Mountains\"","url":"https://mypins.site/en/event/8dd674ba-8864-4369-bd08-7c72a8da9090/hike-to-the-summit-through-the-jungle-and-mountain-river-above-the-mountains/"},{"@type":"ListItem","position":3,"name":"Journey to Núi Chúa Nature Reserve","url":"https://mypins.site/en/event/ce0492a7-e6c6-49e8-a171-ac86bf592a3a/journey-to-n-i-ch-a-nature-reserve/"},{"@type":"ListItem","position":4,"name":"DALAT September 19-20!","url":"https://mypins.site/en/event/8f79d7a4-b226-41ff-8955-9f88bfaf49bf/dalat-september-19-20/"},{"@type":"ListItem","position":5,"name":"Journey to the Hòn Hèo Peninsula","url":"https://mypins.site/en/event/1bf87d8e-c964-4300-a8b0-62b98306d2d4/journey-to-the-h-n-h-o-peninsula/"},{"@type":"ListItem","position":6,"name":"Dragon Labyrinth, sheep farm and Cam Ranh beaches","url":"https://mypins.site/en/event/80cf4fcd-7dda-48d7-a73b-0654e262afed/dragon-labyrinth-sheep-farm-and-cam-ranh-beaches/"},{"@type":"ListItem","position":7,"name":"WHERE TO GO THIS WEEKEND?","url":"https://mypins.site/en/event/2f4a605f-5ee5-4697-8d22-83f0b39989b4/where-to-go-this-weekend/"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"Tours & Excursions","item":"https://mypins.site/en/nha-trang/tour/"}]}]}</script>
   </head>
   <body>
     <div id="root"></div>
@@ -114,13 +129,13 @@
     <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>Tours &amp; Excursions</span></p>
   </nav>
   <h1>Tours &amp; Excursions in Nha Trang: what&#39;s on</h1>
-  <p>Tours &amp; Excursions in Nha Trang: 7 events on the map. Tours and excursions: guided trips to waterfalls, jungles, islands and nature parks. Nha Trang lives by the sea: the promenade and the north. You will find them at Природный парк Янг Бэй, провинция Ninh Thuận, полуостров Hòn Hèo. The next one is on September 19, 2026, the last one in this list on September 26, 2026. Coming up: “And let&#39;s go together to” on September 19 (Природный парк Янг Бэй), “Journey to Núi Chúa Nature Reserve” on September 19 (провинция Ninh Thuận), “Hike to the summit through the jungle and…” on September 19, “DALAT September 19-20!” on September 20, “Journey to the Hòn Hèo Peninsula” on September 20 (полуостров Hòn Hèo), “Dragon Labyrinth, sheep farm and Cam Ranh…” on September 20, “WHERE TO GO THIS WEEKEND?” on September 26 (Oceanus). Details: Let&#39;s go together to ⤵️ 🌳Yang Bay Nature Park 🌳 ❗️12.09 on Saturday, we leave at 9 am from Oceanus, we&#39;ll return around 16:00 There you can feed… Prices for tickets range from 50 to 1 000 000 VND; 1 of 7 events are free or donation-based.</p>
+  <p>Tours &amp; Excursions in Nha Trang: 7 events on the map. Tours and excursions: guided trips to waterfalls, jungles, islands and nature parks. Nha Trang lives by the sea: the promenade and the north. You will find them at Природный парк Янг Бэй, провинция Ninh Thuận, полуостров Hòn Hèo. The next one is on September 19, 2026, the last one in this list on September 26, 2026. Coming up: “And let&#39;s go together to” on September 19 (Природный парк Янг Бэй), “Hike to the summit through the jungle and…” on September 19, “Journey to Núi Chúa Nature Reserve” on September 19 (провинция Ninh Thuận), “DALAT September 19-20!” on September 20, “Journey to the Hòn Hèo Peninsula” on September 20 (полуостров Hòn Hèo), “Dragon Labyrinth, sheep farm and Cam Ranh…” on September 20, “WHERE TO GO THIS WEEKEND?” on September 26 (Oceanus). Details: Let&#39;s go together to ⤵️ 🌳Yang Bay Nature Park 🌳 ❗️12.09 on Saturday, we leave at 9 am from Oceanus, we&#39;ll return around 16:00 There you can feed… Prices for tickets range from 50 to 1 000 000 VND; 1 of 7 events are free or donation-based.</p>
   <p class="seo-updated">Updated: <time datetime="2026-09-19">September 19, 2026</time></p>
   <h2>Upcoming events: Tours &amp; Excursions</h2>
   <ul>
     <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/fbd307d9-a53c-4e52-8e6f-79670bc89e7b/and-let-s-go-together-to/">And let&#39;s go together to</a> — <span>140000 VND</span></li>
-    <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/ce0492a7-e6c6-49e8-a171-ac86bf592a3a/journey-to-n-i-ch-a-nature-reserve/">Journey to Núi Chúa Nature Reserve</a> — <span>1000000 VND</span></li>
     <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/8dd674ba-8864-4369-bd08-7c72a8da9090/hike-to-the-summit-through-the-jungle-and-mountain-river-above-the-mountains/">Hike to the summit through the jungle and mountain river &quot;Above the Mountains&quot;</a> — <span>Free</span></li>
+    <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/ce0492a7-e6c6-49e8-a171-ac86bf592a3a/journey-to-n-i-ch-a-nature-reserve/">Journey to Núi Chúa Nature Reserve</a> — <span>1000000 VND</span></li>
     <li><time datetime="2026-09-20">September 20, 2026</time> — <a href="https://mypins.site/en/event/8f79d7a4-b226-41ff-8955-9f88bfaf49bf/dalat-september-19-20/">DALAT September 19-20!</a> — <span>50 VND</span></li>
     <li><time datetime="2026-09-20">September 20, 2026</time> — <a href="https://mypins.site/en/event/1bf87d8e-c964-4300-a8b0-62b98306d2d4/journey-to-the-h-n-h-o-peninsula/">Journey to the Hòn Hèo Peninsula</a> — <span>1000000 VND</span></li>
     <li><time datetime="2026-09-20">September 20, 2026</time> — <a href="https://mypins.site/en/event/80cf4fcd-7dda-48d7-a73b-0654e262afed/dragon-labyrinth-sheep-farm-and-cam-ranh-beaches/">Dragon Labyrinth, sheep farm and Cam Ranh beaches</a> — <span>490 VND</span></li>

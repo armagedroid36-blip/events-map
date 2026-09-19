@@ -2,9 +2,13 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
-         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
-         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
+         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
+         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
+         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -23,12 +27,23 @@
           s.src = GA_SRC;
           document.head.appendChild(s);
         }
-        if (navigator.connection && navigator.connection.saveData === true) return;
-        if (typeof window.requestIdleCallback === 'function') {
-          window.requestIdleCallback(loadGtag, { timeout: 3000 });
-        } else {
-          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+        function afterLoad() {
           window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              obs.disconnect();
+              loadGtag();
+            });
+            po.observe({ type: 'paint', buffered: true });
+            afterLoad();
+          } catch (e) {
+            afterLoad();
+          }
+        } else {
+          afterLoad();
         }
       })();
     </script>
@@ -144,8 +159,8 @@ SWAP - это тёплая встреча, где мы обмениваемся 
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/29968975-8b85-404c-80cf-d8999b62ba9e/kak-prevratit-uzhe-sushchestvuyushchie-otnosheniya-v-druzheskie/">Как превратить уже существующие отношения в дружеские? <time datetime="2026-09-20">20 сентября 2026</time></a></li>
     <li><a href="/event/9f72bb5f-50b7-46c8-8995-0ba04f7f986a/autentichnye-anti-beznes-znakomstva/">АУТЕНТИЧНЫЕ (анти-безнес) ЗНАКОМСТВА <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/29968975-8b85-404c-80cf-d8999b62ba9e/kak-prevratit-uzhe-sushchestvuyushchie-otnosheniya-v-druzheskie/">Как превратить уже существующие отношения в дружеские? <time datetime="2026-09-20">20 сентября 2026</time></a></li>
     <li><a href="/event/bbf535dc-45fa-4dc8-bcf1-ce341552b92f/mastermaynd-dlya-tekh-kto-rabotaet-s-lyudmi/">МАСТЕРМАЙНД ДЛЯ ТЕХ, КТО РАБОТАЕТ С ЛЮДЬМИ <time datetime="2026-09-26">26 сентября 2026</time></a></li>
   </ul>
 </div>

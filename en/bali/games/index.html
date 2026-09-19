@@ -2,9 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
-         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
-         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
+         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
+         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
+         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -23,12 +27,23 @@
           s.src = GA_SRC;
           document.head.appendChild(s);
         }
-        if (navigator.connection && navigator.connection.saveData === true) return;
-        if (typeof window.requestIdleCallback === 'function') {
-          window.requestIdleCallback(loadGtag, { timeout: 3000 });
-        } else {
-          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+        function afterLoad() {
           window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              obs.disconnect();
+              loadGtag();
+            });
+            po.observe({ type: 'paint', buffered: true });
+            afterLoad();
+          } catch (e) {
+            afterLoad();
+          }
+        } else {
+          afterLoad();
         }
       })();
     </script>
@@ -105,7 +120,7 @@
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/bali/games/" />
     <link rel="alternate" hreflang="ru" href="https://mypins.site/bali/games/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","url":"https://mypins.site/en/bali/games/","name":"Games & Quizzes in Bali: what's on","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"MyPins","url":"https://mypins.site/en/"}},{"@type":"ItemList","numberOfItems":7,"itemListOrder":"https://schema.org/ItemListOrderAscending","itemListElement":[{"@type":"ListItem","position":1,"name":"Quiz, please!","url":"https://mypins.site/en/event/8cc78a5d-0936-4ed9-b433-dbe889c41d04/quiz-please/"},{"@type":"ListItem","position":2,"name":"women's breakfast❣️","url":"https://mypins.site/en/event/f9118a87-3562-4d7e-8ca7-19687207a94b/women-s-breakfast/"},{"@type":"ListItem","position":3,"name":"What? Where? Haha!","url":"https://mypins.site/en/event/78a719a5-e941-40be-aadd-d740c043d21b/what-where-haha/"},{"@type":"ListItem","position":4,"name":"City Mafia on Bukita","url":"https://mypins.site/en/event/e54aec68-0429-40eb-bf28-65fb64eef9ca/city-mafia-on-bukita/"},{"@type":"ListItem","position":5,"name":"Quiz game Mozgoboynya Bali💜 4 years together🏝️","url":"https://mypins.site/en/event/92c05457-6c64-4bbc-90fd-8769772b5aae/quiz-game-mozgoboynya-bali-4-years-together/"},{"@type":"ListItem","position":6,"name":"Classic Brain Battle in Bali💜Quiz game🤩","url":"https://mypins.site/en/event/5d37feb4-08a3-4f18-88d7-7447d4afb713/classic-brain-battle-in-bali-quiz-game/"},{"@type":"ListItem","position":7,"name":"Cashflow Bali","url":"https://mypins.site/en/event/228daa12-7831-40db-9fb7-f20831a0c29e/cashflow-bali/"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Bali","item":"https://mypins.site/en/bali/"},{"@type":"ListItem","position":3,"name":"Games & Quizzes","item":"https://mypins.site/en/bali/games/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","url":"https://mypins.site/en/bali/games/","name":"Games & Quizzes in Bali: what's on","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"MyPins","url":"https://mypins.site/en/"}},{"@type":"ItemList","numberOfItems":7,"itemListOrder":"https://schema.org/ItemListOrderAscending","itemListElement":[{"@type":"ListItem","position":1,"name":"Quiz, please!","url":"https://mypins.site/en/event/8cc78a5d-0936-4ed9-b433-dbe889c41d04/quiz-please/"},{"@type":"ListItem","position":2,"name":"women's breakfast❣️","url":"https://mypins.site/en/event/f9118a87-3562-4d7e-8ca7-19687207a94b/women-s-breakfast/"},{"@type":"ListItem","position":3,"name":"City Mafia on Bukita","url":"https://mypins.site/en/event/e54aec68-0429-40eb-bf28-65fb64eef9ca/city-mafia-on-bukita/"},{"@type":"ListItem","position":4,"name":"What? Where? Haha!","url":"https://mypins.site/en/event/78a719a5-e941-40be-aadd-d740c043d21b/what-where-haha/"},{"@type":"ListItem","position":5,"name":"Quiz game Mozgoboynya Bali💜 4 years together🏝️","url":"https://mypins.site/en/event/92c05457-6c64-4bbc-90fd-8769772b5aae/quiz-game-mozgoboynya-bali-4-years-together/"},{"@type":"ListItem","position":6,"name":"Classic Brain Battle in Bali💜Quiz game🤩","url":"https://mypins.site/en/event/5d37feb4-08a3-4f18-88d7-7447d4afb713/classic-brain-battle-in-bali-quiz-game/"},{"@type":"ListItem","position":7,"name":"Cashflow Bali","url":"https://mypins.site/en/event/228daa12-7831-40db-9fb7-f20831a0c29e/cashflow-bali/"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Bali","item":"https://mypins.site/en/bali/"},{"@type":"ListItem","position":3,"name":"Games & Quizzes","item":"https://mypins.site/en/bali/games/"}]}]}</script>
   </head>
   <body>
     <div id="root"></div>
@@ -114,14 +129,14 @@
     <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/bali/">Bali</a> <span aria-hidden="true">›</span> <span>Games &amp; Quizzes</span></p>
   </nav>
   <h1>Games &amp; Quizzes in Bali: what&#39;s on</h1>
-  <p>Games &amp; Quizzes in Bali: 7 events on the map. Games and quizzes: team quizzes, board games, mafia nights and tournaments. Bali is the busiest events island in Southeast Asia. The listing runs from September 20, 2026 to September 24, 2026. Next events: “Quiz, please!” on September 20, “women&#39;s breakfast❣️” on September 20, “What? Where? Haha!” on September 22, “City Mafia on Bukita” on September 22, “Quiz game Mozgoboynya Bali💜 4 years…” on September 23, “Classic Brain Battle in Bali💜Quiz game🤩” on September 23, “Cashflow Bali” on September 24. Details: 🌟 Quiz, Please! in Bali - the perfect evening with friends after sunset: a vibrant game, a storm of emotions, and an awesome atmosphere You register… Admission is free or by donation — details are in the event card.</p>
+  <p>Games &amp; Quizzes in Bali: 7 events on the map. Games and quizzes: team quizzes, board games, mafia nights and tournaments. Bali is the busiest events island in Southeast Asia. The listing runs from September 20, 2026 to September 24, 2026. Next events: “Quiz, please!” on September 20, “women&#39;s breakfast❣️” on September 20, “City Mafia on Bukita” on September 22, “What? Where? Haha!” on September 22, “Quiz game Mozgoboynya Bali💜 4 years…” on September 23, “Classic Brain Battle in Bali💜Quiz game🤩” on September 23, “Cashflow Bali” on September 24. Details: 🌟 Quiz, Please! in Bali - the perfect evening with friends after sunset: a vibrant game, a storm of emotions, and an awesome atmosphere You register… Admission is free or by donation — details are in the event card.</p>
   <p class="seo-updated">Updated: <time datetime="2026-09-19">September 19, 2026</time></p>
   <h2>Upcoming events: Games &amp; Quizzes</h2>
   <ul>
     <li><time datetime="2026-09-20">September 20, 2026</time> — <a href="https://mypins.site/en/event/8cc78a5d-0936-4ed9-b433-dbe889c41d04/quiz-please/">Quiz, please!</a></li>
     <li><time datetime="2026-09-20">September 20, 2026</time> — <a href="https://mypins.site/en/event/f9118a87-3562-4d7e-8ca7-19687207a94b/women-s-breakfast/">women&#39;s breakfast❣️</a></li>
-    <li><time datetime="2026-09-22">September 22, 2026</time> — <a href="https://mypins.site/en/event/78a719a5-e941-40be-aadd-d740c043d21b/what-where-haha/">What? Where? Haha!</a> — <span>Free</span></li>
     <li><time datetime="2026-09-22">September 22, 2026</time> — <a href="https://mypins.site/en/event/e54aec68-0429-40eb-bf28-65fb64eef9ca/city-mafia-on-bukita/">City Mafia on Bukita</a> — <span>Free</span></li>
+    <li><time datetime="2026-09-22">September 22, 2026</time> — <a href="https://mypins.site/en/event/78a719a5-e941-40be-aadd-d740c043d21b/what-where-haha/">What? Where? Haha!</a> — <span>Free</span></li>
     <li><time datetime="2026-09-23">September 23, 2026</time> — <a href="https://mypins.site/en/event/92c05457-6c64-4bbc-90fd-8769772b5aae/quiz-game-mozgoboynya-bali-4-years-together/">Quiz game Mozgoboynya Bali💜 4 years together🏝️</a></li>
     <li><time datetime="2026-09-23">September 23, 2026</time> — <a href="https://mypins.site/en/event/5d37feb4-08a3-4f18-88d7-7447d4afb713/classic-brain-battle-in-bali-quiz-game/">Classic Brain Battle in Bali💜Quiz game🤩</a></li>
     <li><time datetime="2026-09-24">September 24, 2026</time> — <a href="https://mypins.site/en/event/228daa12-7831-40db-9fb7-f20831a0c29e/cashflow-bali/">Cashflow Bali</a></li>

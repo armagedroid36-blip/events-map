@@ -2,9 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
-         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
-         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
+         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
+         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
+         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -23,12 +27,23 @@
           s.src = GA_SRC;
           document.head.appendChild(s);
         }
-        if (navigator.connection && navigator.connection.saveData === true) return;
-        if (typeof window.requestIdleCallback === 'function') {
-          window.requestIdleCallback(loadGtag, { timeout: 3000 });
-        } else {
-          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+        function afterLoad() {
           window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              obs.disconnect();
+              loadGtag();
+            });
+            po.observe({ type: 'paint', buffered: true });
+            afterLoad();
+          } catch (e) {
+            afterLoad();
+          }
+        } else {
+          afterLoad();
         }
       })();
     </script>
@@ -105,7 +120,7 @@
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/nha-trang/workshop/" />
     <link rel="alternate" hreflang="ru" href="https://mypins.site/nha-trang/workshop/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","url":"https://mypins.site/en/nha-trang/workshop/","name":"Workshops in Nha Trang: what's on","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"MyPins","url":"https://mypins.site/en/"}},{"@type":"ItemList","numberOfItems":9,"itemListOrder":"https://schema.org/ItemListOrderAscending","itemListElement":[{"@type":"ListItem","position":1,"name":"FUN SPEED DATING EVENING: DRAW ME.","url":"https://mypins.site/en/event/de611ab6-0b6f-4ff0-8317-0bea087692f8/fun-speed-dating-evening-draw-me/"},{"@type":"ListItem","position":2,"name":"Saturday drawing sessions are a good tradition. We gather as \"girls\" in a cozy cafe to relax, draw, and recharge.","url":"https://mypins.site/en/event/86e21a7b-0ac7-46bc-ab78-810d86ac22a7/saturday-drawing-sessions-are-a-good-tradition-we-gather-as-girls-in-a-cozy-cafe-to-relax-draw-and-recharge/"},{"@type":"ListItem","position":3,"name":"BENTO CAKE MASTERCLASS","url":"https://mypins.site/en/event/0e6a647a-cd1d-41b3-b12b-00df50758e0e/bento-cake-masterclass/"},{"@type":"ListItem","position":4,"name":"MASTER CLASS VECTOR OF DESTINY","url":"https://mypins.site/en/event/5d6e5190-d9a1-47c0-add7-2b5f2ac9c880/master-class-vector-of-destiny/"},{"@type":"ListItem","position":5,"name":"Fool and Critic.","url":"https://mypins.site/en/event/6a4d9825-0673-4206-9f3f-680065e42743/fool-and-critic/"},{"@type":"ListItem","position":6,"name":"CREATE A JEWELRY","url":"https://mypins.site/en/event/b8fc8987-13e6-4628-9520-6904aa23cfb1/create-a-jewelry/"},{"@type":"ListItem","position":7,"name":"Drawing for children 6-12 years old!","url":"https://mypins.site/en/event/b7e6025e-631a-4184-94d8-82912269a7a8/drawing-for-children-6-12-years-old/"},{"@type":"ListItem","position":8,"name":"NEUROGRAPHICS. UNIVERSE OF DESIRES","url":"https://mypins.site/en/event/deca723d-ce60-4b30-bf58-6b12b95682da/neurographics-universe-of-desires/"},{"@type":"ListItem","position":9,"name":"Create your dream jewelry YOURSELF","url":"https://mypins.site/en/event/05d573b2-fde5-4ebd-b16b-f58a9132643b/create-your-dream-jewelry-yourself/"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"Workshops","item":"https://mypins.site/en/nha-trang/workshop/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","url":"https://mypins.site/en/nha-trang/workshop/","name":"Workshops in Nha Trang: what's on","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"MyPins","url":"https://mypins.site/en/"}},{"@type":"ItemList","numberOfItems":9,"itemListOrder":"https://schema.org/ItemListOrderAscending","itemListElement":[{"@type":"ListItem","position":1,"name":"BENTO CAKE MASTERCLASS","url":"https://mypins.site/en/event/0e6a647a-cd1d-41b3-b12b-00df50758e0e/bento-cake-masterclass/"},{"@type":"ListItem","position":2,"name":"Saturday drawing sessions are a good tradition. We gather as \"girls\" in a cozy cafe to relax, draw, and recharge.","url":"https://mypins.site/en/event/86e21a7b-0ac7-46bc-ab78-810d86ac22a7/saturday-drawing-sessions-are-a-good-tradition-we-gather-as-girls-in-a-cozy-cafe-to-relax-draw-and-recharge/"},{"@type":"ListItem","position":3,"name":"FUN SPEED DATING EVENING: DRAW ME.","url":"https://mypins.site/en/event/de611ab6-0b6f-4ff0-8317-0bea087692f8/fun-speed-dating-evening-draw-me/"},{"@type":"ListItem","position":4,"name":"Fool and Critic.","url":"https://mypins.site/en/event/6a4d9825-0673-4206-9f3f-680065e42743/fool-and-critic/"},{"@type":"ListItem","position":5,"name":"CREATE A JEWELRY","url":"https://mypins.site/en/event/b8fc8987-13e6-4628-9520-6904aa23cfb1/create-a-jewelry/"},{"@type":"ListItem","position":6,"name":"MASTER CLASS VECTOR OF DESTINY","url":"https://mypins.site/en/event/5d6e5190-d9a1-47c0-add7-2b5f2ac9c880/master-class-vector-of-destiny/"},{"@type":"ListItem","position":7,"name":"Drawing for children 6-12 years old!","url":"https://mypins.site/en/event/b7e6025e-631a-4184-94d8-82912269a7a8/drawing-for-children-6-12-years-old/"},{"@type":"ListItem","position":8,"name":"NEUROGRAPHICS. UNIVERSE OF DESIRES","url":"https://mypins.site/en/event/deca723d-ce60-4b30-bf58-6b12b95682da/neurographics-universe-of-desires/"},{"@type":"ListItem","position":9,"name":"Create your dream jewelry YOURSELF","url":"https://mypins.site/en/event/05d573b2-fde5-4ebd-b16b-f58a9132643b/create-your-dream-jewelry-yourself/"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"Workshops","item":"https://mypins.site/en/nha-trang/workshop/"}]}]}</script>
   </head>
   <body>
     <div id="root"></div>
@@ -114,23 +129,23 @@
     <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>Workshops</span></p>
   </nav>
   <h1>Workshops in Nha Trang: what&#39;s on</h1>
-  <p>Workshops in Nha Trang: 9 events on the map. Workshops are hands-on classes: pottery, cooking, dance and crafts with local makers. Nha Trang lives by the sea: the promenade and the north. You will find them at Green Home Restaurant, Cedruss Coffee, Север Нячанга. The next one is on September 19, 2026, the last one in this list on September 25, 2026. Coming up: “FUN SPEED DATING EVENING: DRAW ME.” on September 19, “Saturday drawing sessions are a good…” on September 19 (Green Home Restaurant), “BENTO CAKE MASTERCLASS” on September 19 (Cedruss Coffee), “MASTER CLASS VECTOR OF DESTINY” on September 20 (Север Нячанга), “Fool and Critic.” on September 20, “CREATE A JEWELRY” on September 20, “Drawing for children 6-12 years old!” on September 23 (Shama book bakery), “NEUROGRAPHICS. UNIVERSE OF DESIRES” on September 24 (КЛУБ Neverland). Details: 😀 FUN EVENING OF GETTING ACQUAINTED: DRAW ME. Can&#39;t draw? Great. Creativity beyond boundaries and limits of thinking. We invite you to an… Prices for tickets range from 150 to 650 000 VND; 3 of 9 events are free or donation-based.</p>
+  <p>Workshops in Nha Trang: 9 events on the map. Workshops are hands-on classes: pottery, cooking, dance and crafts with local makers. Nha Trang lives by the sea: the promenade and the north. You will find them at Cedruss Coffee, Green Home Restaurant, Север Нячанга. The next one is on September 19, 2026, the last one in this list on September 25, 2026. Coming up: “BENTO CAKE MASTERCLASS” on September 19 (Cedruss Coffee), “Saturday drawing sessions are a good…” on September 19 (Green Home Restaurant), “FUN SPEED DATING EVENING: DRAW ME.” on September 19, “Fool and Critic.” on September 20, “CREATE A JEWELRY” on September 20, “MASTER CLASS VECTOR OF DESTINY” on September 20 (Север Нячанга), “Drawing for children 6-12 years old!” on September 23 (Shama book bakery), “NEUROGRAPHICS. UNIVERSE OF DESIRES” on September 24 (КЛУБ Neverland). Details: BENTO CAKE MASTERCLASS 🎂 September 19, 14:00 — edible creativity with your own hands! 💗assembling your own cakes with a filling of your choice… Prices for tickets range from 150 to 650 000 VND; 3 of 9 events are free or donation-based.</p>
   <p class="seo-updated">Updated: <time datetime="2026-09-19">September 19, 2026</time></p>
   <h2>Upcoming events: Workshops</h2>
   <ul>
-    <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/de611ab6-0b6f-4ff0-8317-0bea087692f8/fun-speed-dating-evening-draw-me/">FUN SPEED DATING EVENING: DRAW ME.</a> — <span>300000 VND</span></li>
-    <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/86e21a7b-0ac7-46bc-ab78-810d86ac22a7/saturday-drawing-sessions-are-a-good-tradition-we-gather-as-girls-in-a-cozy-cafe-to-relax-draw-and-recharge/">Saturday drawing sessions are a good tradition. We gather as &quot;girls&quot; in a cozy cafe to relax, draw, and recharge.</a> — <span>Donation</span></li>
     <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/0e6a647a-cd1d-41b3-b12b-00df50758e0e/bento-cake-masterclass/">BENTO CAKE MASTERCLASS</a> — <span>650000 VND</span></li>
-    <li><time datetime="2026-09-20">September 20, 2026</time> — <a href="https://mypins.site/en/event/5d6e5190-d9a1-47c0-add7-2b5f2ac9c880/master-class-vector-of-destiny/">MASTER CLASS VECTOR OF DESTINY</a> — <span>Donation</span></li>
+    <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/86e21a7b-0ac7-46bc-ab78-810d86ac22a7/saturday-drawing-sessions-are-a-good-tradition-we-gather-as-girls-in-a-cozy-cafe-to-relax-draw-and-recharge/">Saturday drawing sessions are a good tradition. We gather as &quot;girls&quot; in a cozy cafe to relax, draw, and recharge.</a> — <span>Donation</span></li>
+    <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/de611ab6-0b6f-4ff0-8317-0bea087692f8/fun-speed-dating-evening-draw-me/">FUN SPEED DATING EVENING: DRAW ME.</a> — <span>300000 VND</span></li>
     <li><time datetime="2026-09-20">September 20, 2026</time> — <a href="https://mypins.site/en/event/6a4d9825-0673-4206-9f3f-680065e42743/fool-and-critic/">Fool and Critic.</a> — <span>Donation</span></li>
     <li><time datetime="2026-09-20">September 20, 2026</time> — <a href="https://mypins.site/en/event/b8fc8987-13e6-4628-9520-6904aa23cfb1/create-a-jewelry/">CREATE A JEWELRY</a> — <span>150 VND</span></li>
+    <li><time datetime="2026-09-20">September 20, 2026</time> — <a href="https://mypins.site/en/event/5d6e5190-d9a1-47c0-add7-2b5f2ac9c880/master-class-vector-of-destiny/">MASTER CLASS VECTOR OF DESTINY</a> — <span>Donation</span></li>
     <li><time datetime="2026-09-23">September 23, 2026</time> — <a href="https://mypins.site/en/event/b7e6025e-631a-4184-94d8-82912269a7a8/drawing-for-children-6-12-years-old/">Drawing for children 6-12 years old!</a> — <span>220000 VND</span></li>
     <li><time datetime="2026-09-24">September 24, 2026</time> — <a href="https://mypins.site/en/event/deca723d-ce60-4b30-bf58-6b12b95682da/neurographics-universe-of-desires/">NEUROGRAPHICS. UNIVERSE OF DESIRES</a> — <span>200000 VND</span></li>
     <li><time datetime="2026-09-25">September 25, 2026</time> — <a href="https://mypins.site/en/event/05d573b2-fde5-4ebd-b16b-f58a9132643b/create-your-dream-jewelry-yourself/">Create your dream jewelry YOURSELF</a> — <span>250000 VND</span></li>
   </ul>
   <h2>FAQ</h2>
-    <details><summary>How many Workshops events can I find in Nha Trang?</summary><p>There are 9 events: from “FUN SPEED DATING EVENING: DRAW ME.” on September 19 to “Create your dream jewelry YOURSELF” on September 25.</p></details>
-    <details><summary>What is the nearest Workshops event?</summary><p>“FUN SPEED DATING EVENING: DRAW ME.” on September 19, Green Home Restaurant.</p></details>
+    <details><summary>How many Workshops events can I find in Nha Trang?</summary><p>There are 9 events: from “BENTO CAKE MASTERCLASS” on September 19 to “Create your dream jewelry YOURSELF” on September 25.</p></details>
+    <details><summary>What is the nearest Workshops event?</summary><p>“BENTO CAKE MASTERCLASS” on September 19, Cedruss Coffee.</p></details>
     <details><summary>How much do tickets cost?</summary><p>From 150 to 650 000 VND; 3 of 9 events are free or donation-based.</p></details>
 </div>
 
