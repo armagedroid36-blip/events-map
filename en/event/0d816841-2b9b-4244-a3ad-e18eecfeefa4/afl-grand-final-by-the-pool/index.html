@@ -4,11 +4,14 @@
     <meta charset="UTF-8" />
     <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
          до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
-         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
-         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
-         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
-         Страховка — load+setTimeout (браузеры без PerformanceObserver).
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
          Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
@@ -28,9 +31,6 @@
           s.src = GA_SRC;
           document.head.appendChild(s);
         }
-        function afterLoad() {
-          window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
-        }
         if (navigator.connection && navigator.connection.saveData === true) return;
         if (typeof window.PerformanceObserver === 'function') {
           try {
@@ -45,13 +45,9 @@
               }
             });
             po.observe({ type: 'paint', buffered: true });
-            afterLoad();
-          } catch (e) {
-            afterLoad();
-          }
-        } else {
-          afterLoad();
+          } catch (e) {}
         }
+        setTimeout(loadGtag, 5000);
       })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
