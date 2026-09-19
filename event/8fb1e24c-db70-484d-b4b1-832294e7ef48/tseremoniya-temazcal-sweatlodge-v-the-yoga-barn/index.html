@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
          до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
-         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
-         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
-         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
+         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
+         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
+         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
+         Страховка — load+setTimeout (браузеры без PerformanceObserver).
          Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
@@ -34,8 +35,14 @@
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
-              obs.disconnect();
-              loadGtag();
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
             });
             po.observe({ type: 'paint', buffered: true });
             afterLoad();
@@ -145,7 +152,7 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/e2b7f28f-8b2b-42a5-b7f4-594c83cccbeb/mini-retrit-shamanic-tantra/">мини-ретрит Shamanic tantra <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/179fe7dd-eb89-4a7c-82f1-c973eaa1e1ac/yoga-v-ubude/">Йога в Убуде <time datetime="2026-09-21">21 сентября 2026</time></a></li>
     <li><a href="/event/ee80820e-dde0-46d7-8591-4fc06c982d1a/mission-inner-peace/">Mission Inner Peace <time datetime="2026-09-21">21 сентября 2026</time></a></li>
     <li><a href="/event/4d0f5762-081d-4125-88ec-38a4c606687f/aktivatsiya-kundalini-kundalini-activation/">Активация Кундалини / Kundalini Activation <time datetime="2026-09-22">22 сентября 2026</time></a></li>
     <li><a href="/event/b1d0228f-6e76-45b5-bf14-6e88056f314c/somaticheskiy-master-klass-coming-home-to-the-body/">Соматический мастер-класс Coming Home to the Body <time datetime="2026-09-24">24 сентября 2026</time></a></li>

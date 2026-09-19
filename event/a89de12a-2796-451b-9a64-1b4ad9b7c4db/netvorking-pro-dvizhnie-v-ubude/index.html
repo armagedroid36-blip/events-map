@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
          до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
-         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
-         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
-         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
+         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
+         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
+         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
+         Страховка — load+setTimeout (браузеры без PerformanceObserver).
          Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
@@ -34,8 +35,14 @@
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
-              obs.disconnect();
-              loadGtag();
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
             });
             po.observe({ type: 'paint', buffered: true });
             afterLoad();
@@ -132,8 +139,14 @@
   <p>Бизнес-нетворкинг «Pro-движние» в Убуде  в четверг в 11:00Локация: ресторан Livingstone Holyground (Убуд)Мы собираемся вместе, чтобы pro-двигаться в бизнесе, своем деле, развитии и жизни. Наш нетворкинг - про эффективное взаимодействие, новые связи и контакты, сотворчество, поиск единомышленников и партнеров. Приходите, если: - хотите рассказать о себе и своем деле.- вам нужна поддержка, свежие идеи, экспертное мнение или контакты.- вы готовы щедро проявляться к другим людям, делиться опытом и помогать. - ваши ценности - осознанный бизнес, улучшение жизни людей, творческая реализация, рост и здоровое общение.Участие бесплатноеДля записи пишите в tg @elenwiner</p>
   <nav aria-label="Хлебные крошки">
     <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/bali/">Бали</a> <span aria-hidden="true">›</span> <span>Нетворкинг «Pro-движние» в Убуде</span></p>
-    <p>Ещё события на Бали: <a href="/bali/">афиша</a></p>
+    <p>Ещё события на Бали: <a href="/bali/">афиша</a> · <a href="/bali/meetup/">🤝 Встречи и нетворкинг</a></p>
   </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/9d2cb61a-26f9-4f41-b155-e00a86dd9018/bystrye-svidaniya/">Быстрые свидания <time datetime="2026-09-19">19 сентября 2026</time></a></li>
+    <li><a href="/event/003f0bbe-9056-430e-96da-a265ff536f34/zhenskiy-zavtrak-ekspatov-na-bukite/">Женский завтрак экспатов на Буките ❣️ <time datetime="2026-09-24">24 сентября 2026</time></a></li>
+    <li><a href="/event/90db5fad-fb30-4230-a734-26471957e998/zavtrak-netvorking-v-umalas/">⭐️Завтрак - Нетворкинг в Umalas⭐️ <time datetime="2026-09-25">25 сентября 2026</time></a></li>
+  </ul>
 </div>
 
   </body>

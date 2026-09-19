@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
          до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
-         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
-         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
-         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
+         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
+         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
+         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
+         Страховка — load+setTimeout (браузеры без PerformanceObserver).
          Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
@@ -34,8 +35,14 @@
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
-              obs.disconnect();
-              loadGtag();
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
             });
             po.observe({ type: 'paint', buffered: true });
             afterLoad();
@@ -137,9 +144,9 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/28d3d15d-8488-4da2-8746-abc984431e58/special-guest/">Special Guest <time datetime="2026-09-23">23 сентября 2026</time></a></li>
-    <li><a href="/event/1d639b06-d2ba-414d-bca5-1d3394b1fa3b/savaya-thursday-24-sentyabrya/">Savaya Thursday — 24 сентября <time datetime="2026-09-24">24 сентября 2026</time></a></li>
+    <li><a href="/event/f5ebd7b8-c94c-4df4-ac88-195f749121c1/tabu-moyo-september-23/">TABU - MOYO - SEPTEMBER 23 <time datetime="2026-09-23">23 сентября 2026</time></a></li>
     <li><a href="/event/e8039b97-37e3-45d7-96ea-04164b8b1458/zen-a/">ZENÍA <time datetime="2026-09-24">24 сентября 2026</time></a></li>
+    <li><a href="/event/1d639b06-d2ba-414d-bca5-1d3394b1fa3b/savaya-thursday-24-sentyabrya/">Savaya Thursday — 24 сентября <time datetime="2026-09-24">24 сентября 2026</time></a></li>
     <li><a href="/event/5bd15067-c4dc-4020-86cb-32ef29b2abdf/full-moon-25-sentyabrya/">Full Moon — 25 сентября <time datetime="2026-09-25">25 сентября 2026</time></a></li>
     <li><a href="/event/d18dfb28-9004-4828-bdb4-c2a2dd9c63aa/suck-my-disco-presents-r-squared/">SUCK MY DISCO presents R.SQUARED <time datetime="2026-09-26">26 сентября 2026</time></a></li>
     <li><a href="/event/9b091353-5166-4e3d-972a-b0a8a6b696f8/tabu-saturday-september-26/">TABU SATURDAY - SEPTEMBER 26 <time datetime="2026-09-26">26 сентября 2026</time></a></li>

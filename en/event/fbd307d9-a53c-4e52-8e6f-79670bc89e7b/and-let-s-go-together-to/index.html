@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
          до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
-         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
-         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
-         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
+         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
+         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
+         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
+         Страховка — load+setTimeout (браузеры без PerformanceObserver).
          Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
@@ -34,8 +35,14 @@
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
-              obs.disconnect();
-              loadGtag();
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
             });
             po.observe({ type: 'paint', buffered: true });
             afterLoad();
@@ -151,11 +158,11 @@ Post by: Alina | Trips around Nha Trang and Vietnam ☀️</p>
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/8dd674ba-8864-4369-bd08-7c72a8da9090/hike-to-the-summit-through-the-jungle-and-mountain-river-above-the-mountains/">Hike to the summit through the jungle and mountain river &quot;Above the Mountains&quot; <time datetime="2026-09-19">September 19, 2026</time></a></li>
     <li><a href="/en/event/ce0492a7-e6c6-49e8-a171-ac86bf592a3a/journey-to-n-i-ch-a-nature-reserve/">Journey to Núi Chúa Nature Reserve <time datetime="2026-09-19">September 19, 2026</time></a></li>
+    <li><a href="/en/event/8dd674ba-8864-4369-bd08-7c72a8da9090/hike-to-the-summit-through-the-jungle-and-mountain-river-above-the-mountains/">Hike to the summit through the jungle and mountain river &quot;Above the Mountains&quot; <time datetime="2026-09-19">September 19, 2026</time></a></li>
+    <li><a href="/en/event/80cf4fcd-7dda-48d7-a73b-0654e262afed/dragon-labyrinth-sheep-farm-and-cam-ranh-beaches/">Dragon Labyrinth, sheep farm and Cam Ranh beaches <time datetime="2026-09-20">September 20, 2026</time></a></li>
     <li><a href="/en/event/8f79d7a4-b226-41ff-8955-9f88bfaf49bf/dalat-september-19-20/">DALAT September 19-20! <time datetime="2026-09-20">September 20, 2026</time></a></li>
     <li><a href="/en/event/1bf87d8e-c964-4300-a8b0-62b98306d2d4/journey-to-the-h-n-h-o-peninsula/">Journey to the Hòn Hèo Peninsula <time datetime="2026-09-20">September 20, 2026</time></a></li>
-    <li><a href="/en/event/80cf4fcd-7dda-48d7-a73b-0654e262afed/dragon-labyrinth-sheep-farm-and-cam-ranh-beaches/">Dragon Labyrinth, sheep farm and Cam Ranh beaches <time datetime="2026-09-20">September 20, 2026</time></a></li>
     <li><a href="/en/event/2f4a605f-5ee5-4697-8d22-83f0b39989b4/where-to-go-this-weekend/">WHERE TO GO THIS WEEKEND? <time datetime="2026-09-26">September 26, 2026</time></a></li>
   </ul>
 </div>

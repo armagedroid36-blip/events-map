@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
          до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
-         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
-         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
-         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
+         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
+         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
+         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
+         Страховка — load+setTimeout (браузеры без PerformanceObserver).
          Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
@@ -34,8 +35,14 @@
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
-              obs.disconnect();
-              loadGtag();
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
             });
             po.observe({ type: 'paint', buffered: true });
             afterLoad();
@@ -151,11 +158,11 @@
   <h2>Похожие события</h2>
   <ul>
     <li><a href="/event/4c59525d-3bc0-430e-ace8-7d19dd83a267/weekendtalk-angliyskiy-dlya-tekh-kto-umeet-govorit/">WeekendTalk: английский для тех, кто умеет говорить <time datetime="2026-09-19">19 сентября 2026</time></a></li>
-    <li><a href="/event/03fd0097-5f60-4f90-b1bd-a9d213f532a9/nha-trang-english-club/">Nha Trang English Club <time datetime="2026-09-19">19 сентября 2026</time></a></li>
     <li><a href="/event/bc9227ba-53f7-4a53-8a5a-5461c037acce/weekendtalk-subbotniy-speaking-club-a2/">WeekendTalk: субботний speaking club A2 <time datetime="2026-09-19">19 сентября 2026</time></a></li>
+    <li><a href="/event/03fd0097-5f60-4f90-b1bd-a9d213f532a9/nha-trang-english-club/">Nha Trang English Club <time datetime="2026-09-19">19 сентября 2026</time></a></li>
     <li><a href="/event/2dea52b4-acbd-452d-8bc2-d42f9d707200/priglashayu-vas-na-vstrechu-angliyskogo-razgovornogo-kluba-gde-govorit-budut-vse/">Приглашаю вас на Встречу английского разговорного клуба, где говорить будут все. <time datetime="2026-09-20">20 сентября 2026</time></a></li>
     <li><a href="/event/35ffafce-20c4-45e8-8cb0-0c93972ad557/speaking-club/">Speaking Club <time datetime="2026-09-20">20 сентября 2026</time></a></li>
-    <li><a href="/event/f750e6c3-1adb-4389-b235-bfaf836ac857/morning-talk-pyatnichnyy-speaking-club/">Morning Talk: пятничный speaking club <time datetime="2026-09-21">21 сентября 2026</time></a></li>
+    <li><a href="/event/4d4d631d-3d30-4490-9205-9cefce0fedf2/parnyy-speaking-club-angliyskiy-v-nyachange/">Парный speaking club: английский в Нячанге <time datetime="2026-09-20">20 сентября 2026</time></a></li>
   </ul>
 </div>
 

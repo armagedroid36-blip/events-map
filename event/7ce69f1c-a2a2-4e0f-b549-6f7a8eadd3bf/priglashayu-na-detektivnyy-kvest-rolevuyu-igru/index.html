@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
          до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
-         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
-         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
-         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
+         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
+         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
+         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
+         Страховка — load+setTimeout (браузеры без PerformanceObserver).
          Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
@@ -34,8 +35,14 @@
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
-              obs.disconnect();
-              loadGtag();
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
             });
             po.observe({ type: 'paint', buffered: true });
             afterLoad();
@@ -150,11 +157,11 @@
   <h2>Похожие события</h2>
   <ul>
     <li><a href="/event/4d4bee39-6d16-4f26-9d02-e04c4b33440b/kviz-imix-v-etu-subbotu/">КВИЗ IMIX В ЭТУ СУББОТУ <time datetime="2026-09-19">19 сентября 2026</time></a></li>
-    <li><a href="/event/4ca9ee13-3c6f-4ab6-8202-e934b151f374/kak-vybrat-khobbi-prinosyashchee-udovolstvie-i-razvitie/">Как выбрать хобби, приносящее удовольствие и развитие? <time datetime="2026-09-19">19 сентября 2026</time></a></li>
     <li><a href="/event/c6cd247f-6dfb-4c85-b6b6-1e65d5588abf/zavtra-vecher-nastolok-v-restorane-369/">Завтра вечер настолок в ресторане 369 ! <time datetime="2026-09-19">19 сентября 2026</time></a></li>
     <li><a href="/event/176065ed-4aae-497f-9feb-5c1c40295ec3/kviz-pliz-v-danange/">Квиз, плиз! в Дананге. <time datetime="2026-09-20">20 сентября 2026</time></a></li>
     <li><a href="/event/4d172b0c-05fd-490d-91d4-b788fbba22b6/predictor-vpervye-igraem-v-voskresene/">PREDICTOR впервые играем в воскресенье <time datetime="2026-09-20">20 сентября 2026</time></a></li>
     <li><a href="/event/cd883a4c-fb0d-4c27-bb6e-a6edec8ce7f4/transformatsionnaya-igra-mudrost-lily/">ТРАНСФОРМАЦИОННАЯ ИГРА «МУДРОСТЬ ЛИЛЫ» <time datetime="2026-09-22">22 сентября 2026</time></a></li>
+    <li><a href="/event/7d9f7d56-2d03-4beb-a5b7-391ae789ca70/nastolki-kotorye-ne-nastolki-a-rasshiriteli-soznaniya/">Настолки, которые не настолки, а расширители сознания <time datetime="2026-09-24">24 сентября 2026</time></a></li>
   </ul>
 </div>
 

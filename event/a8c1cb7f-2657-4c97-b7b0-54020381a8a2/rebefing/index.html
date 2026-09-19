@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
          до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
-         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
-         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
-         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
+         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
+         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
+         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
+         Страховка — load+setTimeout (браузеры без PerformanceObserver).
          Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
@@ -34,8 +35,14 @@
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
-              obs.disconnect();
-              loadGtag();
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
             });
             po.observe({ type: 'paint', buffered: true });
             afterLoad();
@@ -162,10 +169,10 @@
   <ul>
     <li><a href="/event/b2d3bd93-748e-4521-93a1-9ee00b3164fc/silovye-trenirovki-v-gruppe-na-vse-telo-ponedelnik/">Силовые тренировки в группе,на все тело понедельник <time datetime="2026-09-21">21 сентября 2026</time></a></li>
     <li><a href="/event/a768f4a5-8cc6-4b60-a164-3293488e546c/gruppovaya-trenirovka-dlya-devushek/">ГРУППОВАЯ ТРЕНИРОВКА ДЛЯ ДЕВУШЕК <time datetime="2026-09-21">21 сентября 2026</time></a></li>
+    <li><a href="/event/03eee243-1e00-4be1-a4f7-bb77bca9817b/flow-yoga/">FLOW YOGA <time datetime="2026-09-21">21 сентября 2026</time></a></li>
     <li><a href="/event/ea92f222-4d51-4d06-8802-16bb9387c276/funktsionalnyy-stretching-v-mag/">Функциональный стретчинг в MAG <time datetime="2026-09-22">22 сентября 2026</time></a></li>
     <li><a href="/event/0e4bd1c7-31a6-4d9b-90ed-218df6fd3532/silovye-trenirovki-v-gruppe-na-vse-telo-vtornik/">Силовые тренировки в группе,на все тело вторник <time datetime="2026-09-22">22 сентября 2026</time></a></li>
     <li><a href="/event/4370a96b-67ea-43a7-ab5c-a79cb3e50893/yoga-na-severe-nyachanga-ryadom-s-oceanus/">Йога на севере Нячанга, рядом с Oceanus <time datetime="2026-09-22">22 сентября 2026</time></a></li>
-    <li><a href="/event/b72dc4bf-8cd0-4cd3-8848-9184b5fb96e3/saundkhiling-v-gamakakh/">САУНДХИЛИНГ В ГАМАКАХ <time datetime="2026-09-23">23 сентября 2026</time></a></li>
   </ul>
 </div>
 

@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
          до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
-         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
-         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
-         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
+         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
+         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
+         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
+         Страховка — load+setTimeout (браузеры без PerformanceObserver).
          Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
@@ -34,8 +35,14 @@
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
-              obs.disconnect();
-              loadGtag();
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
             });
             po.observe({ type: 'paint', buffered: true });
             afterLoad();
@@ -159,8 +166,8 @@
     <li><a href="/event/ea7edc2b-0f6b-41ff-b405-029ea9c1d21e/vsem-praktika-ashtanga-vinyasa-yogi-v-nyachange/">Всем . Практика аштанга виньяса йоги в Нячанге . <time datetime="2026-09-19">19 сентября 2026</time></a></li>
     <li><a href="/event/d9c15bea-3519-41f8-8f0b-b3f10ce81cca/yoga-v-nyachange/">Йога в Нячанге <time datetime="2026-09-19">19 сентября 2026</time></a></li>
     <li><a href="/event/bd9c77cd-b5d5-44e4-944c-53032ead6fef/besplatnaya-meditatsiya-vipassana-na-plyazhe-vozle-oceanus/">Бесплатная медитация Випассана на пляже возле Oceanus <time datetime="2026-09-19">19 сентября 2026</time></a></li>
-    <li><a href="/event/c5f6e9ac-66b3-445f-a32d-5ff0528dd4cc/saundkhilling-perezagruzka/">Саундхиллинг - перезагрузка <time datetime="2026-09-20">20 сентября 2026</time></a></li>
     <li><a href="/event/82e9709a-a12e-4919-816e-bbdebe56c3c8/prime-space/">Prime Space <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/c5f6e9ac-66b3-445f-a32d-5ff0528dd4cc/saundkhilling-perezagruzka/">Саундхиллинг - перезагрузка <time datetime="2026-09-20">20 сентября 2026</time></a></li>
     <li><a href="/event/124b4090-b3a3-4058-91b8-71ae4d62065b/tantra-seminar-chistaya-tantra/">Тантра-семинар: &quot;Чистая Тантра&quot; <time datetime="2026-09-20">20 сентября 2026</time></a></li>
   </ul>
 </div>

@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
          до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
-         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
-         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
-         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
+         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
+         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
+         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
+         Страховка — load+setTimeout (браузеры без PerformanceObserver).
          Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
@@ -34,8 +35,14 @@
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
-              obs.disconnect();
-              loadGtag();
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
             });
             po.observe({ type: 'paint', buffered: true });
             afterLoad();
@@ -141,8 +148,14 @@ Participation is free
 To sign up, write in tg @elenwiner</p>
   <nav aria-label="Breadcrumbs">
     <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/bali/">Bali</a> <span aria-hidden="true">›</span> <span>Networking &quot;Pro-motion&quot; in Ubud</span></p>
-    <p>More events in Bali: <a href="/en/bali/">what&#39;s on</a></p>
+    <p>More events in Bali: <a href="/en/bali/">what&#39;s on</a> · <a href="/en/bali/meetup/">🤝 Meetups &amp; Networking</a></p>
   </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/9d2cb61a-26f9-4f41-b155-e00a86dd9018/speed-dating/">Speed dating <time datetime="2026-09-19">September 19, 2026</time></a></li>
+    <li><a href="/en/event/003f0bbe-9056-430e-96da-a265ff536f34/women-s-expat-breakfast-in-bukit/">Women&#39;s expat breakfast in Bukit ❣️ <time datetime="2026-09-24">September 24, 2026</time></a></li>
+    <li><a href="/en/event/90db5fad-fb30-4230-a734-26471957e998/breakfast-networking-in-umalas/">⭐️Breakfast - Networking in Umalas⭐️ <time datetime="2026-09-25">September 25, 2026</time></a></li>
+  </ul>
 </div>
 
   </body>

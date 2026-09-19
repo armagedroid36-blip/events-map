@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
          до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
-         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
-         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
-         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
+         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
+         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
+         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
+         Страховка — load+setTimeout (браузеры без PerformanceObserver).
          Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
@@ -34,8 +35,14 @@
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
-              obs.disconnect();
-              loadGtag();
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
             });
             po.observe({ type: 'paint', buffered: true });
             afterLoad();
@@ -153,8 +160,8 @@ Post by: Andrey Troitskiy</p>
   <h2>Similar events</h2>
   <ul>
     <li><a href="/en/event/5e187c3d-0ef6-4f45-a1e1-51649427d48d/sports-mafia-in-nyachang/">SPORTS MAFIA IN NYACHANG <time datetime="2026-09-19">September 19, 2026</time></a></li>
-    <li><a href="/en/event/77b34d4d-ac88-4a36-bd5f-348358cc41d7/are-you-ready-to-test-how-well-you-know-music/">Are you ready to test how well you know music? <time datetime="2026-09-19">September 19, 2026</time></a></li>
     <li><a href="/en/event/c54f1a94-5dce-418d-80e1-f5feaa48cd08/children-s-board-game-playroom/">CHILDREN&#39;S BOARD GAME PLAYROOM <time datetime="2026-09-19">September 19, 2026</time></a></li>
+    <li><a href="/en/event/72c9e1c6-1323-41b2-af7b-8b17bcb0b5d9/board-games-and-meetup-evening/">BOARD GAMES AND MEETUP EVENING <time datetime="2026-09-19">September 19, 2026</time></a></li>
     <li><a href="/en/event/d08c3b79-6d68-43a3-9eef-f53936b3b94d/chess-for-adults-and-teenagers-12/">CHESS FOR ADULTS AND TEENAGERS 12 <time datetime="2026-09-19">September 19, 2026</time></a></li>
     <li><a href="/en/event/98a1e099-ee70-4c4a-a22d-10fb33399fa5/playing-mafia-in-english-19-00-saturday-mafia-in-english/">Playing MAFIA in ENGLISH! 19-00, Saturday, MAFIA in English <time datetime="2026-09-19">September 19, 2026</time></a></li>
     <li><a href="/en/event/361df73e-07df-4c70-aab8-cad52efe3f67/cashflow/">CASHFLOW <time datetime="2026-09-19">September 19, 2026</time></a></li>

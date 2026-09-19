@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
          до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
-         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
-         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
-         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
+         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
+         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
+         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
+         Страховка — load+setTimeout (браузеры без PerformanceObserver).
          Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
@@ -34,8 +35,14 @@
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
-              obs.disconnect();
-              loadGtag();
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
             });
             po.observe({ type: 'paint', buffered: true });
             afterLoad();
@@ -165,10 +172,10 @@ Post by: Chev Chelios</p>
   <h2>Similar events</h2>
   <ul>
     <li><a href="/en/event/5e187c3d-0ef6-4f45-a1e1-51649427d48d/sports-mafia-in-nyachang/">SPORTS MAFIA IN NYACHANG <time datetime="2026-09-19">September 19, 2026</time></a></li>
-    <li><a href="/en/event/77b34d4d-ac88-4a36-bd5f-348358cc41d7/are-you-ready-to-test-how-well-you-know-music/">Are you ready to test how well you know music? <time datetime="2026-09-19">September 19, 2026</time></a></li>
     <li><a href="/en/event/c54f1a94-5dce-418d-80e1-f5feaa48cd08/children-s-board-game-playroom/">CHILDREN&#39;S BOARD GAME PLAYROOM <time datetime="2026-09-19">September 19, 2026</time></a></li>
-    <li><a href="/en/event/61875057-0c8b-424d-8b0a-890efb17452d/traditional-classic-of-the-intellectual-game-quiz-please-on-sunday-september-20-at-19-00-at-la-villa-restaurant/">Traditional classic of the intellectual game Quiz, Please! on Sunday, September 20 at 19:00 at La Villa restaurant <time datetime="2026-09-20">September 20, 2026</time></a></li>
+    <li><a href="/en/event/72c9e1c6-1323-41b2-af7b-8b17bcb0b5d9/board-games-and-meetup-evening/">BOARD GAMES AND MEETUP EVENING <time datetime="2026-09-19">September 19, 2026</time></a></li>
     <li><a href="/en/event/355e8873-5414-468c-aaf8-dcb2497536c5/financial-game/">FINANCIAL GAME <time datetime="2026-09-20">September 20, 2026</time></a></li>
+    <li><a href="/en/event/61875057-0c8b-424d-8b0a-890efb17452d/traditional-classic-of-the-intellectual-game-quiz-please-on-sunday-september-20-at-19-00-at-la-villa-restaurant/">Traditional classic of the intellectual game Quiz, Please! on Sunday, September 20 at 19:00 at La Villa restaurant <time datetime="2026-09-20">September 20, 2026</time></a></li>
     <li><a href="/en/event/d3649776-48c1-45e0-9879-debb789a0ab5/transformational-game-leela-on-a-large-field/">TRANSFORMATIONAL GAME &quot;LEELA&quot; ON A LARGE FIELD <time datetime="2026-09-24">September 24, 2026</time></a></li>
   </ul>
 </div>

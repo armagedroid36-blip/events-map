@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
          до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
-         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
-         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
-         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
+         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
+         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
+         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
+         Страховка — load+setTimeout (браузеры без PerformanceObserver).
          Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
@@ -34,8 +35,14 @@
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
-              obs.disconnect();
-              loadGtag();
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
             });
             po.observe({ type: 'paint', buffered: true });
             afterLoad();
@@ -120,7 +127,7 @@
     <link rel="alternate" hreflang="ru" href="https://mypins.site/nha-trang/sport/" />
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/nha-trang/sport/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","url":"https://mypins.site/nha-trang/sport/","name":"Спорт в Нячанге: афиша и мероприятия","inLanguage":"ru","isPartOf":{"@type":"WebSite","name":"MyPins","url":"https://mypins.site/"}},{"@type":"ItemList","numberOfItems":6,"itemListOrder":"https://schema.org/ItemListOrderAscending","itemListElement":[{"@type":"ListItem","position":1,"name":"Хочешь почувствовать себя героем боевика?","url":"https://mypins.site/event/fbdd1fd1-c919-4295-a2bb-3074be726cbd/khochesh-pochuvstvovat-sebya-geroem-boevika/"},{"@type":"ListItem","position":2,"name":"Archery Tag: для компании, которой надоели обычные вечера","url":"https://mypins.site/event/00b19b44-03e6-415b-842b-2832c361a767/archery-tag-dlya-kompanii-kotoroy-nadoeli-obychnye-vechera/"},{"@type":"ListItem","position":3,"name":"Пробежка выходного дня","url":"https://mypins.site/event/160a3c9f-4f90-43a9-abaa-2ce91ac59d76/probezhka-vykhodnogo-dnya/"},{"@type":"ListItem","position":4,"name":"Совместная пробежка в центре","url":"https://mypins.site/event/d61dd365-3d96-426f-9300-b971ba761b5d/sovmestnaya-probezhka-v-tsentre/"},{"@type":"ListItem","position":5,"name":"Открытая тренировка бегового клуба TTRC в Нячанге","url":"https://mypins.site/event/f3a713f6-6839-4f5c-ac99-86e847db309e/otkrytaya-trenirovka-begovogo-kluba-ttrc-v-nyachange/"},{"@type":"ListItem","position":6,"name":"Совместная пробежка на севере","url":"https://mypins.site/event/caaba6a1-d5c7-48c8-a1d0-854b82f3abd1/sovmestnaya-probezhka-na-severe/"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"Спорт","item":"https://mypins.site/nha-trang/sport/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","url":"https://mypins.site/nha-trang/sport/","name":"Спорт в Нячанге: афиша и мероприятия","inLanguage":"ru","isPartOf":{"@type":"WebSite","name":"MyPins","url":"https://mypins.site/"}},{"@type":"ItemList","numberOfItems":6,"itemListOrder":"https://schema.org/ItemListOrderAscending","itemListElement":[{"@type":"ListItem","position":1,"name":"Хочешь почувствовать себя героем боевика?","url":"https://mypins.site/event/fbdd1fd1-c919-4295-a2bb-3074be726cbd/khochesh-pochuvstvovat-sebya-geroem-boevika/"},{"@type":"ListItem","position":2,"name":"Archery Tag: для компании, которой надоели обычные вечера","url":"https://mypins.site/event/00b19b44-03e6-415b-842b-2832c361a767/archery-tag-dlya-kompanii-kotoroy-nadoeli-obychnye-vechera/"},{"@type":"ListItem","position":3,"name":"Пробежка выходного дня","url":"https://mypins.site/event/160a3c9f-4f90-43a9-abaa-2ce91ac59d76/probezhka-vykhodnogo-dnya/"},{"@type":"ListItem","position":4,"name":"Открытая тренировка бегового клуба TTRC в Нячанге","url":"https://mypins.site/event/f3a713f6-6839-4f5c-ac99-86e847db309e/otkrytaya-trenirovka-begovogo-kluba-ttrc-v-nyachange/"},{"@type":"ListItem","position":5,"name":"Совместная пробежка в центре","url":"https://mypins.site/event/d61dd365-3d96-426f-9300-b971ba761b5d/sovmestnaya-probezhka-v-tsentre/"},{"@type":"ListItem","position":6,"name":"Совместная пробежка на севере","url":"https://mypins.site/event/caaba6a1-d5c7-48c8-a1d0-854b82f3abd1/sovmestnaya-probezhka-na-severe/"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"Спорт","item":"https://mypins.site/nha-trang/sport/"}]}]}</script>
   </head>
   <body>
     <div id="root"></div>
@@ -129,15 +136,15 @@
     <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/nha-trang/">Нячанг</a> <span aria-hidden="true">›</span> <span>Спорт</span></p>
   </nav>
   <h1>Спорт в Нячанге: афиша и мероприятия</h1>
-  <p>Спорт в Нячанге: 6 событий в афише. Спорт — забеги, тренировки, единоборства, футбол и активные выходные. Нячанг — курортная столица юга Вьетнама. Чаще всего события проходят здесь: GameZone, кольцо около Скении, Стадион Нячанга. Первое событие списка — 19 сентября 2026, последнее — 24 сентября 2026. Ближайшие события: «Хочешь почувствовать себя героем боевика?» — 19 сентября (GameZone), «Archery Tag: для компании, которой надоели…» — 19 сентября (GameZone), «Пробежка выходного дня» — 20 сентября (кольцо около Скении), «Совместная пробежка в центре» — 22 сентября, «Открытая тренировка бегового клуба TTRC в…» — 22 сентября (Стадион Нячанга), «Совместная пробежка на севере» — 24 сентября. Подробности: 🏹 Хочешь почувствовать себя героем боевика? Командный лучный бой Archery Tag: реальные луки, мягкие стрелы, ощущения как в пейнтболе. Опыта не… Вход стоит 200 000 VND. 4 из 6 событий бесплатные или за донат.</p>
+  <p>Спорт в Нячанге: 6 событий в афише. Спорт — забеги, тренировки, единоборства, футбол и активные выходные. Нячанг — курортная столица юга Вьетнама. Чаще всего события проходят здесь: GameZone, кольцо около Скении, Стадион Нячанга. Первое событие списка — 19 сентября 2026, последнее — 24 сентября 2026. Ближайшие события: «Хочешь почувствовать себя героем боевика?» — 19 сентября (GameZone), «Archery Tag: для компании, которой надоели…» — 19 сентября (GameZone), «Пробежка выходного дня» — 20 сентября (кольцо около Скении), «Открытая тренировка бегового клуба TTRC в…» — 22 сентября (Стадион Нячанга), «Совместная пробежка в центре» — 22 сентября, «Совместная пробежка на севере» — 24 сентября. Подробности: 🏹 Хочешь почувствовать себя героем боевика? Командный лучный бой Archery Tag: реальные луки, мягкие стрелы, ощущения как в пейнтболе. Опыта не… Вход стоит 200 000 VND. 4 из 6 событий бесплатные или за донат.</p>
   <p class="seo-updated">Афиша обновлена: <time datetime="2026-09-19">19 сентября 2026</time></p>
   <h2>Ближайшие события: Спорт</h2>
   <ul>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/fbdd1fd1-c919-4295-a2bb-3074be726cbd/khochesh-pochuvstvovat-sebya-geroem-boevika/">Хочешь почувствовать себя героем боевика?</a> — <span>200000 VND</span></li>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/00b19b44-03e6-415b-842b-2832c361a767/archery-tag-dlya-kompanii-kotoroy-nadoeli-obychnye-vechera/">Archery Tag: для компании, которой надоели обычные вечера</a> — <span>200000 VND</span></li>
     <li><time datetime="2026-09-20">20 сентября 2026</time> — <a href="https://mypins.site/event/160a3c9f-4f90-43a9-abaa-2ce91ac59d76/probezhka-vykhodnogo-dnya/">Пробежка выходного дня</a> — <span>Бесплатно</span></li>
-    <li><time datetime="2026-09-22">22 сентября 2026</time> — <a href="https://mypins.site/event/d61dd365-3d96-426f-9300-b971ba761b5d/sovmestnaya-probezhka-v-tsentre/">Совместная пробежка в центре</a> — <span>Бесплатно</span></li>
     <li><time datetime="2026-09-22">22 сентября 2026</time> — <a href="https://mypins.site/event/f3a713f6-6839-4f5c-ac99-86e847db309e/otkrytaya-trenirovka-begovogo-kluba-ttrc-v-nyachange/">Открытая тренировка бегового клуба TTRC в Нячанге</a></li>
+    <li><time datetime="2026-09-22">22 сентября 2026</time> — <a href="https://mypins.site/event/d61dd365-3d96-426f-9300-b971ba761b5d/sovmestnaya-probezhka-v-tsentre/">Совместная пробежка в центре</a> — <span>Бесплатно</span></li>
     <li><time datetime="2026-09-24">24 сентября 2026</time> — <a href="https://mypins.site/event/caaba6a1-d5c7-48c8-a1d0-854b82f3abd1/sovmestnaya-probezhka-na-severe/">Совместная пробежка на севере</a> — <span>Бесплатно</span></li>
   </ul>
   <h2>Частые вопросы</h2>

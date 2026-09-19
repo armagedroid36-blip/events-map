@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
          до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
-         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
-         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
-         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
+         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
+         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
+         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
+         Страховка — load+setTimeout (браузеры без PerformanceObserver).
          Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
@@ -34,8 +35,14 @@
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
-              obs.disconnect();
-              loadGtag();
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
             });
             po.observe({ type: 'paint', buffered: true });
             afterLoad();
@@ -136,10 +143,10 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/905bb225-bc9c-46ea-9c5c-12da83fc1a11/tantsevalnye-predstavleniya-v-bale-banjar-ubud-kelod/">Танцевальные представления в Bale Banjar Ubud Kelod <time datetime="2026-09-19">19 сентября 2026</time></a></li>
-    <li><a href="/event/3ef4300d-9838-466e-9c2b-a321bab1fff7/kecak-i-tantsy-v-padang-tegal-kaja/">Kecak и танцы в Padang Tegal Kaja <time datetime="2026-09-19">19 сентября 2026</time></a></li>
-    <li><a href="/event/a92f4b68-854e-4345-b3af-4cc5855a8012/kecak-fire-dance-v-khrame-uluvatu/">Kecak Fire Dance в храме Улувату <time datetime="2026-09-19">19 сентября 2026</time></a></li>
     <li><a href="/event/af63e539-e913-4ca3-a010-e7d3117a1975/tantsevalnye-predstavleniya-v-khrame-sarasvati/">Танцевальные представления в храме Сарасвати <time datetime="2026-09-19">19 сентября 2026</time></a></li>
+    <li><a href="/event/905bb225-bc9c-46ea-9c5c-12da83fc1a11/tantsevalnye-predstavleniya-v-bale-banjar-ubud-kelod/">Танцевальные представления в Bale Banjar Ubud Kelod <time datetime="2026-09-19">19 сентября 2026</time></a></li>
+    <li><a href="/event/a92f4b68-854e-4345-b3af-4cc5855a8012/kecak-fire-dance-v-khrame-uluvatu/">Kecak Fire Dance в храме Улувату <time datetime="2026-09-19">19 сентября 2026</time></a></li>
+    <li><a href="/event/3ef4300d-9838-466e-9c2b-a321bab1fff7/kecak-i-tantsy-v-padang-tegal-kaja/">Kecak и танцы в Padang Tegal Kaja <time datetime="2026-09-19">19 сентября 2026</time></a></li>
     <li><a href="/event/60aed6ec-ad4b-4ad1-bc41-8ec33199dd18/devdan-show/">Devdan Show <time datetime="2026-09-19">19 сентября 2026</time></a></li>
     <li><a href="/event/5cedeb4c-b109-4848-bedd-160690d80c27/arma-dance-performance/">ARMA Dance Performance <time datetime="2026-09-19">19 сентября 2026</time></a></li>
   </ul>

@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
          до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
-         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
-         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
-         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
+         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
+         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
+         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
+         Страховка — load+setTimeout (браузеры без PerformanceObserver).
          Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
@@ -34,8 +35,14 @@
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
-              obs.disconnect();
-              loadGtag();
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
             });
             po.observe({ type: 'paint', buffered: true });
             afterLoad();
@@ -135,8 +142,8 @@
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/2fb6710c-cef3-4227-a0d2-bc0e731deda1/stephan-jolk/">STEPHAN JOLK <time datetime="2026-10-07">October 7, 2026</time></a></li>
     <li><a href="/en/event/57a469cf-828e-4388-9691-81ca18ab406c/savaya-wednesday-at-savaya-bali/">SAVAYA WEDNESDAY at Savaya Bali <time datetime="2026-10-07">October 7, 2026</time></a></li>
+    <li><a href="/en/event/2fb6710c-cef3-4227-a0d2-bc0e731deda1/stephan-jolk/">STEPHAN JOLK <time datetime="2026-10-07">October 7, 2026</time></a></li>
     <li><a href="/en/event/07f104fb-e944-4586-b99f-7fd4aa3fc852/senja/">SENJA <time datetime="2026-10-08">October 8, 2026</time></a></li>
     <li><a href="/en/event/c92b09f1-5d41-4710-adb5-42df1c9a1c0d/savaya-friday-at-savaya-bali/">SAVAYA FRIDAY at Savaya Bali <time datetime="2026-10-09">October 9, 2026</time></a></li>
     <li><a href="/en/event/ee1f672f-8363-4c87-b075-41b400b2941c/colyn-at-savaya-bali/">COLYN at Savaya Bali <time datetime="2026-10-11">October 11, 2026</time></a></li>

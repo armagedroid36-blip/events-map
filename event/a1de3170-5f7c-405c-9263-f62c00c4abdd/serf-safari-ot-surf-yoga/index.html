@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
+         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
+         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
+         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
+         Страховка — load+setTimeout (браузеры без PerformanceObserver).
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        function afterLoad() {
+          window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+            afterLoad();
+          } catch (e) {
+            afterLoad();
+          }
+        } else {
+          afterLoad();
+        }
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Сёрф-сафари от Surf &amp; Yoga — 19 сентября 2026 · Тибубененг, Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-D9U_47z-.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-WzI1LDIn.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CHoEJt1x.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/address-Dnt1XBIP.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Bg1yZhWU.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BZnbJWdE.css">
+      <meta name="description" content="Тибубененг, Bali, 19 сентября 2026. Некоторые путешествия — не о том, чтобы уехать далеко.Они о том, чтобы погрузиться глубже. В сентябре 2026 года мы…" />
+    <link rel="canonical" href="https://mypins.site/event/a1de3170-5f7c-405c-9263-f62c00c4abdd/serf-safari-ot-surf-yoga/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Сёрф-сафари от Surf &amp; Yoga — 19 сентября 2026 · Тибубененг, Bali" />
+    <meta property="og:description" content="Тибубененг, Bali, 19 сентября 2026. Некоторые путешествия — не о том, чтобы уехать далеко.Они о том, чтобы погрузиться глубже. В сентябре 2026 года мы…" />
+    <meta property="og:url" content="https://mypins.site/event/a1de3170-5f7c-405c-9263-f62c00c4abdd/serf-safari-ot-surf-yoga/" />
+    <meta property="og:image" content="https://static.baliforum.ru/uploads/588684/conversions/94602290-66079495-preview.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/a1de3170-5f7c-405c-9263-f62c00c4abdd/serf-safari-ot-surf-yoga/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/a1de3170-5f7c-405c-9263-f62c00c4abdd/surf-safari-by-surf-yoga/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Сёрф-сафари от Surf & Yoga","url":"https://mypins.site/event/a1de3170-5f7c-405c-9263-f62c00c4abdd/serf-safari-ot-surf-yoga/","startDate":"2026-09-19T23:59:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Gang Melati Desa No.7, Kacamatan, Banjar, Tibubeneng, Kec. Kuta Utara, Kabupaten Badung, Bali 80361, Индонезия","address":{"@type":"PostalAddress","addressLocality":"Тибубененг, Bali","streetAddress":"Gang Melati Desa No.7, Kacamatan, Banjar, Tibubeneng, Kec. Kuta Utara, Kabupaten Badung, Bali 80361, Индонезия"},"geo":{"@type":"GeoCoordinates","latitude":-8.6310258,"longitude":115.1600505}},"offers":{"@type":"Offer","url":"https://mypins.site/event/a1de3170-5f7c-405c-9263-f62c00c4abdd/serf-safari-ot-surf-yoga/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-09-19"},"description":"Некоторые путешествия — не о том, чтобы уехать далеко.Они о том, чтобы погрузиться глубже. В сентябре 2026 года мы отправляемся в особенное surf & yoga-ретрит путешествие на Мальдивах —9 ночей жизни на серф-лодке, в погоне за волнами, закатами и медленными утрами в океане. Просыпайтесь среди бесконечных оттенков синего.Сёрфите чистые рифовые волны без толп в тёплой воде.Двигайтесь, дышите, отдыхайте — и снова по кругу. Без строгого расписания — только ритм океана. Этот ретрит подойдёт серферам и тем, кто хочет:🌊 качественные волны, а не толпы людей🧘‍♀️ ежедневную йогу и практики мобильности🛥️ плавучий дом посреди рая🤍 пространство для перезагрузки и общения 📍 Мальдивы🗓 12–21 сентября 2026🛥️ формат surf boat experience✨ количество мест ограничено 👉 Напишите нам в DM, если хотите забронировать место. 🌴 Если это откликается вам… вы уже знаете. 🤍 INSTAGRAM (https://www.instagram.com/surfnyogaretreats/)","endDate":"2026-09-19","image":"https://static.baliforum.ru/uploads/588684/conversions/94602290-66079495-preview.jpg","organizer":{"@type":"Organization","name":"BaliForum","url":"https://baliforum.ru/events/syorf-safari-ot-surf-yoga"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Бали","item":"https://mypins.site/bali/"},{"@type":"ListItem","position":3,"name":"Сёрф-сафари от Surf & Yoga","item":"https://mypins.site/event/a1de3170-5f7c-405c-9263-f62c00c4abdd/serf-safari-ot-surf-yoga/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Сёрф-сафари от Surf &amp; Yoga</h1>
+  <p><time datetime="2026-09-19T23:59:00">19 сентября 2026, 23:59</time></p>
+  <address>Gang Melati Desa No.7, Kacamatan, Banjar, Tibubeneng, Kec. Kuta Utara, Kabupaten Badung, Bali 80361, Индонезия, Тибубененг, Bali</address>
+  <p>Некоторые путешествия — не о том, чтобы уехать далеко.Они о том, чтобы погрузиться глубже.
+
+В сентябре 2026 года мы отправляемся в особенное surf &amp; yoga-ретрит путешествие на Мальдивах —9 ночей жизни на серф-лодке, в погоне за волнами, закатами и медленными утрами в океане.
+
+Просыпайтесь среди бесконечных оттенков синего.Сёрфите чистые рифовые волны без толп в тёплой воде.Двигайтесь, дышите, отдыхайте — и снова по кругу.
+
+Без строгого расписания — только ритм океана.
+
+Этот ретрит подойдёт серферам и тем, кто хочет:🌊 качественные волны, а не толпы людей🧘‍♀️ ежедневную йогу и практики мобильности🛥️ плавучий дом посреди рая🤍 пространство для перезагрузки и общения
+
+📍 Мальдивы🗓 12–21 сентября 2026🛥️ формат surf boat experience✨ количество мест ограничено
+
+👉 Напишите нам в DM, если хотите забронировать место.
+
+🌴 Если это откликается вам… вы уже знаете. 🤍
+
+INSTAGRAM (https://www.instagram.com/surfnyogaretreats/)</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/bali/">Бали</a> <span aria-hidden="true">›</span> <span>Сёрф-сафари от Surf &amp; Yoga</span></p>
+    <p>Ещё события на Бали: <a href="/bali/">афиша</a> · <a href="/bali/wellness/">🧘 Йога и здоровье</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/f7fe9774-54b7-4b70-8f9d-271d0a9b4fb3/liquid-body-v-the-yoga-barn/">Liquid Body в The Yoga Barn <time datetime="2026-09-19">19 сентября 2026</time></a></li>
+    <li><a href="/event/b79b14ff-97ab-4c2d-9dfe-4e0593cfb5a6/kurs-podgotovki-prepodavateley-yogi/">Курс подготовки преподавателей йоги <time datetime="2026-09-19">19 сентября 2026</time></a></li>
+    <li><a href="/event/53d76d88-e570-4d38-8660-f21b17b3a546/immersive-wellness-day-retreat/">Immersive Wellness Day Retreat <time datetime="2026-09-19">19 сентября 2026</time></a></li>
+    <li><a href="/event/ab904e80-38e5-4886-aea0-05297b0a22dc/breath-of-bliss-v-the-yoga-barn/">Breath of Bliss в The Yoga Barn <time datetime="2026-09-19">19 сентября 2026</time></a></li>
+    <li><a href="/event/88bd376d-453f-4ffc-81a3-26ddf319f0d3/gvozdestoyanie/">Гвоздестояние <time datetime="2026-09-19">19 сентября 2026</time></a></li>
+    <li><a href="/event/21d82178-3536-4302-9e2f-db01ae67cdd9/zhenskaya-banya/">Женская Баня <time datetime="2026-09-19">19 сентября 2026</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>

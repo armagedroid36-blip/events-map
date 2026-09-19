@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
          до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
-         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
-         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
-         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
+         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
+         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
+         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
+         Страховка — load+setTimeout (браузеры без PerformanceObserver).
          Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
@@ -34,8 +35,14 @@
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
-              obs.disconnect();
-              loadGtag();
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
             });
             po.observe({ type: 'paint', buffered: true });
             afterLoad();
@@ -155,10 +162,10 @@ To book a spot (prepayment), please write to 👉🏻 @tatianasaleeva
   <h2>Similar events</h2>
   <ul>
     <li><a href="/en/event/c578a54f-4320-4dd3-9a60-84035df561eb/hey-guys-hi-everyone/">Hey guys, hi everyone )) <time datetime="2026-09-19">September 19, 2026</time></a></li>
-    <li><a href="/en/event/267254c9-8137-42e4-acfd-62cc41f0eb07/solo-latina/">Solo Latina <time datetime="2026-09-20">September 20, 2026</time></a></li>
     <li><a href="/en/event/312101b4-d9c5-42ae-a5cd-dc56f726072e/argentine-tango-the-art-of-interaction-in-a-couple/">Argentine tango The art of interaction in a couple <time datetime="2026-09-20">September 20, 2026</time></a></li>
-    <li><a href="/en/event/18c5c2a5-fcda-4c23-b85a-13797686e7c8/the-very-dancehall-you-ll-be-able-to-dance-at-parties/">The very Dancehall you&#39;ll be able to dance at parties <time datetime="2026-09-22">September 22, 2026</time></a></li>
+    <li><a href="/en/event/267254c9-8137-42e4-acfd-62cc41f0eb07/solo-latina/">Solo Latina <time datetime="2026-09-20">September 20, 2026</time></a></li>
     <li><a href="/en/event/00911ca0-6ae0-4eaa-a297-926df17206d4/we-invite-girls-to-latin-american-dances/">We invite girls to Latin American dances! <time datetime="2026-09-22">September 22, 2026</time></a></li>
+    <li><a href="/en/event/18c5c2a5-fcda-4c23-b85a-13797686e7c8/the-very-dancehall-you-ll-be-able-to-dance-at-parties/">The very Dancehall you&#39;ll be able to dance at parties <time datetime="2026-09-22">September 22, 2026</time></a></li>
     <li><a href="/en/event/02b79462-6137-4270-8e3c-c4a7b8864447/on-thursday-17-09-i-invite-you-to-enjoy-the-autumn-mood-and-draw-the-atmosphere-of-autumn-with-oil-pastels/">On Thursday 17.09 I invite you to enjoy the autumn mood and draw the atmosphere of autumn with oil pastels <time datetime="2026-09-24">September 24, 2026</time></a></li>
   </ul>
 </div>

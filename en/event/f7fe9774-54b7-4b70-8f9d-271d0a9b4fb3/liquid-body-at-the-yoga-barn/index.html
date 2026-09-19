@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
          до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
-         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
-         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
-         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
+         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
+         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
+         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
+         Страховка — load+setTimeout (браузеры без PerformanceObserver).
          Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
@@ -34,8 +35,14 @@
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
-              obs.disconnect();
-              loadGtag();
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
             });
             po.observe({ type: 'paint', buffered: true });
             afterLoad();
@@ -138,12 +145,12 @@ The cost is 400,000 IDR, and for Indonesian citizens and KITAS holders — 250,0
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/53d76d88-e570-4d38-8660-f21b17b3a546/immersive-wellness-day-retreat/">Immersive Wellness Day Retreat <time datetime="2026-09-19">September 19, 2026</time></a></li>
     <li><a href="/en/event/b79b14ff-97ab-4c2d-9dfe-4e0593cfb5a6/yoga-teacher-training-course/">Yoga Teacher Training Course <time datetime="2026-09-19">September 19, 2026</time></a></li>
+    <li><a href="/en/event/53d76d88-e570-4d38-8660-f21b17b3a546/immersive-wellness-day-retreat/">Immersive Wellness Day Retreat <time datetime="2026-09-19">September 19, 2026</time></a></li>
+    <li><a href="/en/event/a1de3170-5f7c-405c-9263-f62c00c4abdd/surf-safari-by-surf-yoga/">Surf safari by Surf &amp; Yoga <time datetime="2026-09-19">September 19, 2026</time></a></li>
     <li><a href="/en/event/ab904e80-38e5-4886-aea0-05297b0a22dc/breath-of-bliss-at-the-yoga-barn/">Breath of Bliss at The Yoga Barn <time datetime="2026-09-19">September 19, 2026</time></a></li>
     <li><a href="/en/event/88bd376d-453f-4ffc-81a3-26ddf319f0d3/standing-on-nails/">Standing on nails <time datetime="2026-09-19">September 19, 2026</time></a></li>
     <li><a href="/en/event/21d82178-3536-4302-9e2f-db01ae67cdd9/women-s-bathhouse/">Women&#39;s Bathhouse <time datetime="2026-09-19">September 19, 2026</time></a></li>
-    <li><a href="/en/event/e2b7f28f-8b2b-42a5-b7f4-594c83cccbeb/mini-retreat-shamanic-tantra/">Mini-retreat Shamanic Tantra <time datetime="2026-09-20">September 20, 2026</time></a></li>
   </ul>
 </div>
 

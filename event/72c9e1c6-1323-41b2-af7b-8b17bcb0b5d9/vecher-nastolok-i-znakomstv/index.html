@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
+         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
+         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
+         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
+         Страховка — load+setTimeout (браузеры без PerformanceObserver).
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        function afterLoad() {
+          window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+            afterLoad();
+          } catch (e) {
+            afterLoad();
+          }
+        } else {
+          afterLoad();
+        }
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ВЕЧЕР НАСТОЛОК И ЗНАКОМСТВ — 19 сентября 2026 · Нячанг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-D9U_47z-.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-WzI1LDIn.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CHoEJt1x.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/address-Dnt1XBIP.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Bg1yZhWU.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BZnbJWdE.css">
+      <meta name="description" content="Нячанг, 19 сентября 2026. 🎲 ВЕЧЕР НАСТОЛОК И ЗНАКОМСТВ 🔥 ❣️Уже сегодня! Готов к вечеру, где будет смех, азарт и куча новых знакомств? Мы играем в Тайного…" />
+    <link rel="canonical" href="https://mypins.site/event/72c9e1c6-1323-41b2-af7b-8b17bcb0b5d9/vecher-nastolok-i-znakomstv/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="ВЕЧЕР НАСТОЛОК И ЗНАКОМСТВ — 19 сентября 2026 · Нячанг" />
+    <meta property="og:description" content="Нячанг, 19 сентября 2026. 🎲 ВЕЧЕР НАСТОЛОК И ЗНАКОМСТВ 🔥 ❣️Уже сегодня! Готов к вечеру, где будет смех, азарт и куча новых знакомств? Мы играем в Тайного…" />
+    <meta property="og:url" content="https://mypins.site/event/72c9e1c6-1323-41b2-af7b-8b17bcb0b5d9/vecher-nastolok-i-znakomstv/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/72c9e1c6-1323-41b2-af7b-8b17bcb0b5d9/vecher-nastolok-i-znakomstv/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/72c9e1c6-1323-41b2-af7b-8b17bcb0b5d9/board-games-and-meetup-evening/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"ВЕЧЕР НАСТОЛОК И ЗНАКОМСТВ","url":"https://mypins.site/event/72c9e1c6-1323-41b2-af7b-8b17bcb0b5d9/vecher-nastolok-i-znakomstv/","startDate":"2026-09-19T19:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"CCCP COFFEE HỒNG BÀNG, 112 Đ. Hồng Bàng, Tân Tiến, Nha Trang, Khánh Hòa 650000, Вьетнам","address":{"@type":"PostalAddress","addressLocality":"Нячанг","streetAddress":"CCCP COFFEE HỒNG BÀNG, 112 Đ. Hồng Bàng, Tân Tiến, Nha Trang, Khánh Hòa 650000, Вьетнам"},"geo":{"@type":"GeoCoordinates","latitude":12.2518861,"longitude":109.187874}},"offers":{"@type":"Offer","url":"https://mypins.site/event/72c9e1c6-1323-41b2-af7b-8b17bcb0b5d9/vecher-nastolok-i-znakomstv/","price":150000,"priceCurrency":"VND","availability":"https://schema.org/InStock","validFrom":"2026-09-19"},"description":"🎲 ВЕЧЕР НАСТОЛОК И ЗНАКОМСТВ 🔥 ❣️Уже сегодня! Готов к вечеру, где будет смех, азарт и куча новых знакомств? Мы играем в Тайного Гитлера — это не просто настолка, а шоу эмоций и импровизации! ☑ Правила объясним пошагово — разберётся даже новичок. Почему стоит прийти? 🎉 Это будет весело, динамично и атмосферно 🤝 Познакомишься с классными людьми и легко вольёшься в движ 🧠 Прокачаешь дар убеждения и умение аргументировать 🎭 Опробуешь свои актёрские способности — убедительно играть роль и считывать поведение других ⚡ Похожа на Мафию, но без выбываний! А партии короткие, насыщенные и максимально драйвовые! 📅 Когда? Суббота , 19 сентября 🕖 Во сколько? 19:00 – 23:00 📍Где? CCCP coffee (центр) 💰 Сколько? 150k VND / за вечер (4-5игр) 🎟 Количество мест ограничено — запись обязательна @juliana_flame #дата: 19.09.2026 Пост от: Juliana","endDate":"2026-09-19T23:00:00","image":"https://mypins.site/logo.png","organizer":{"@type":"Organization","name":"Telegram @nyachang_ru","url":"https://t.me/nyachang_ru/23448"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"ВЕЧЕР НАСТОЛОК И ЗНАКОМСТВ","item":"https://mypins.site/event/72c9e1c6-1323-41b2-af7b-8b17bcb0b5d9/vecher-nastolok-i-znakomstv/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>ВЕЧЕР НАСТОЛОК И ЗНАКОМСТВ</h1>
+  <p><time datetime="2026-09-19T19:00:00">19 сентября 2026, 19:00</time></p>
+  <address>CCCP COFFEE HỒNG BÀNG, 112 Đ. Hồng Bàng, Tân Tiến, Nha Trang, Khánh Hòa 650000, Вьетнам, Нячанг</address>
+  <p>150000 VND</p>
+  <p>🎲 ВЕЧЕР НАСТОЛОК И ЗНАКОМСТВ 🔥
+❣️Уже сегодня!
+
+Готов к вечеру, где будет смех, азарт и куча новых знакомств?
+Мы играем в Тайного Гитлера — это не просто настолка, а шоу эмоций и импровизации!
+
+☑ Правила объясним пошагово — разберётся даже новичок.
+
+Почему стоит прийти?
+🎉 Это будет весело, динамично и атмосферно
+🤝 Познакомишься с классными людьми и легко вольёшься в движ
+🧠 Прокачаешь дар убеждения и умение аргументировать
+🎭 Опробуешь свои актёрские способности — убедительно играть роль и считывать поведение других
+⚡ Похожа на Мафию, но без выбываний! 
+А партии короткие, насыщенные и максимально драйвовые!
+
+📅 Когда? Суббота , 19 сентября 
+🕖 Во сколько? 19:00 – 23:00
+📍Где? CCCP coffee (центр)
+💰 Сколько? 150k VND / за вечер (4-5игр)
+
+🎟 Количество мест ограничено — запись обязательна @juliana_flame
+
+#дата: 19.09.2026
+Пост от: Juliana</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/nha-trang/">Нячанг</a> <span aria-hidden="true">›</span> <span>ВЕЧЕР НАСТОЛОК И ЗНАКОМСТВ</span></p>
+    <p>Ещё события в Нячанге: <a href="/nha-trang/">афиша</a> · <a href="/nha-trang/games/">🎲 Игры и квизы</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/5e187c3d-0ef6-4f45-a1e1-51649427d48d/sportivnaya-mafiya-v-nyachange/">СПОРТИВНАЯ МАФИЯ В НЯЧАНГЕ <time datetime="2026-09-19">19 сентября 2026</time></a></li>
+    <li><a href="/event/c54f1a94-5dce-418d-80e1-f5feaa48cd08/detskaya-igroteka-nastolnykh-igr/">ДЕТСКАЯ ИГРОТЕКА НАСТОЛЬНЫХ ИГР <time datetime="2026-09-19">19 сентября 2026</time></a></li>
+    <li><a href="/event/d08c3b79-6d68-43a3-9eef-f53936b3b94d/shakhmaty-dlya-vzroslykh-i-podrostkov-12/">ШАХМАТЫ ДЛЯ ВЗРОСЛЫХ И ПОДРОСТКОВ 12 <time datetime="2026-09-19">19 сентября 2026</time></a></li>
+    <li><a href="/event/98a1e099-ee70-4c4a-a22d-10fb33399fa5/igraem-v-mafiyu-na-angliyskom-19-00-subbota-mafia-in-english/">Играем в МАФИЮ на АНГЛИЙСКОМ! 19-00, суббота, MAFIA in English <time datetime="2026-09-19">19 сентября 2026</time></a></li>
+    <li><a href="/event/361df73e-07df-4c70-aab8-cad52efe3f67/cashflow/">CASHFLOW <time datetime="2026-09-19">19 сентября 2026</time></a></li>
+    <li><a href="/event/e90cb0a4-2bee-469d-b3f1-ae062d0332de/detskaya-liga-easy-game-league/">ДЕТСКАЯ ЛИГА EASY GAME LEAGUE <time datetime="2026-09-19">19 сентября 2026</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>

@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
          до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
-         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
-         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
-         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
+         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
+         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
+         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
+         Страховка — load+setTimeout (браузеры без PerformanceObserver).
          Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
@@ -34,8 +35,14 @@
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
-              obs.disconnect();
-              loadGtag();
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
             });
             po.observe({ type: 'paint', buffered: true });
             afterLoad();
@@ -152,10 +159,10 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/267254c9-8137-42e4-acfd-62cc41f0eb07/solo-latina/">Соло Латина <time datetime="2026-09-20">20 сентября 2026</time></a></li>
     <li><a href="/event/312101b4-d9c5-42ae-a5cd-dc56f726072e/argentinskoe-tango-iskusstvo-vzaimodeystviya-v-pare/">Аргентинское танго Искусство взаимодействия в паре <time datetime="2026-09-20">20 сентября 2026</time></a></li>
-    <li><a href="/event/18c5c2a5-fcda-4c23-b85a-13797686e7c8/tot-samyy-dancehall-kotoryy-ty-smozhesh-tantsevat-na-vecherinkakh/">Тот самый Dancehall, который ты сможешь танцевать на вечеринках <time datetime="2026-09-22">22 сентября 2026</time></a></li>
+    <li><a href="/event/267254c9-8137-42e4-acfd-62cc41f0eb07/solo-latina/">Соло Латина <time datetime="2026-09-20">20 сентября 2026</time></a></li>
     <li><a href="/event/00911ca0-6ae0-4eaa-a297-926df17206d4/priglashaem-devushek-na-latinoamerikanskie-tantsy/">Приглашаем девушек на латиноамериканские танцы! <time datetime="2026-09-22">22 сентября 2026</time></a></li>
+    <li><a href="/event/18c5c2a5-fcda-4c23-b85a-13797686e7c8/tot-samyy-dancehall-kotoryy-ty-smozhesh-tantsevat-na-vecherinkakh/">Тот самый Dancehall, который ты сможешь танцевать на вечеринках <time datetime="2026-09-22">22 сентября 2026</time></a></li>
     <li><a href="/event/72a718e6-ba19-41bb-baba-97c7792b58cd/master-klass-po-improvizatsii/">Мастер-класс по импровизации <time datetime="2026-09-23">23 сентября 2026</time></a></li>
     <li><a href="/event/02b79462-6137-4270-8e3c-c4a7b8864447/v-chetverg-17-09-priglashayu-vas-naslazhdatsya-osennim-nastroeniem-i-porisovat-maslyanoy-pastelyu-atmosferu-oseni/">В четверг 17.09 приглашаю вас наслаждаться осенним настроением и порисовать масляной пастелью атмосферу осени <time datetime="2026-09-24">24 сентября 2026</time></a></li>
   </ul>

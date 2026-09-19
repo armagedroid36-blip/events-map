@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
          до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
-         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
-         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
-         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
+         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
+         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
+         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
+         Страховка — load+setTimeout (браузеры без PerformanceObserver).
          Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
@@ -34,8 +35,14 @@
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
-              obs.disconnect();
-              loadGtag();
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
             });
             po.observe({ type: 'paint', buffered: true });
             afterLoad();
@@ -170,10 +177,10 @@
   <h2>Похожие события</h2>
   <ul>
     <li><a href="/event/fbd307d9-a53c-4e52-8e6f-79670bc89e7b/a-poekhali-vmeste-v/">А поехали вместе в <time datetime="2026-09-19">19 сентября 2026</time></a></li>
-    <li><a href="/event/8dd674ba-8864-4369-bd08-7c72a8da9090/pokhod-na-vershinu-cherez-dzhungli-i-gornuyu-reku-vyshe-gor/">Поход на вершину через джунгли и горную реку «Выше Гор» <time datetime="2026-09-19">19 сентября 2026</time></a></li>
     <li><a href="/event/ce0492a7-e6c6-49e8-a171-ac86bf592a3a/puteshestvie-v-zapovednik-n-i-ch-a/">Путешествие в заповедник Núi Chúa <time datetime="2026-09-19">19 сентября 2026</time></a></li>
-    <li><a href="/event/8f79d7a4-b226-41ff-8955-9f88bfaf49bf/dalat-19-20-sentyabrya/">ДАЛАТ 19-20 сентября! <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/8dd674ba-8864-4369-bd08-7c72a8da9090/pokhod-na-vershinu-cherez-dzhungli-i-gornuyu-reku-vyshe-gor/">Поход на вершину через джунгли и горную реку «Выше Гор» <time datetime="2026-09-19">19 сентября 2026</time></a></li>
     <li><a href="/event/80cf4fcd-7dda-48d7-a73b-0654e262afed/labirint-drakona-ferma-s-barashkami-i-plyazhi-kamrani/">Лабиринт дракона, ферма с барашками и пляжи Камрани <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/8f79d7a4-b226-41ff-8955-9f88bfaf49bf/dalat-19-20-sentyabrya/">ДАЛАТ 19-20 сентября! <time datetime="2026-09-20">20 сентября 2026</time></a></li>
     <li><a href="/event/2f4a605f-5ee5-4697-8d22-83f0b39989b4/kuda-na-vykhodnye/">КУДА НА ВЫХОДНЫЕ? <time datetime="2026-09-26">26 сентября 2026</time></a></li>
   </ul>
 </div>

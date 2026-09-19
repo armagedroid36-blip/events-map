@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
          до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
-         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
-         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
-         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
+         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
+         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
+         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
+         Страховка — load+setTimeout (браузеры без PerformanceObserver).
          Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
@@ -34,8 +35,14 @@
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
-              obs.disconnect();
-              loadGtag();
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
             });
             po.observe({ type: 'paint', buffered: true });
             afterLoad();
@@ -153,8 +160,8 @@
   <ul>
     <li><a href="/event/fbdd1fd1-c919-4295-a2bb-3074be726cbd/khochesh-pochuvstvovat-sebya-geroem-boevika/">Хочешь почувствовать себя героем боевика? <time datetime="2026-09-19">19 сентября 2026</time></a></li>
     <li><a href="/event/00b19b44-03e6-415b-842b-2832c361a767/archery-tag-dlya-kompanii-kotoroy-nadoeli-obychnye-vechera/">Archery Tag: для компании, которой надоели обычные вечера <time datetime="2026-09-19">19 сентября 2026</time></a></li>
-    <li><a href="/event/d61dd365-3d96-426f-9300-b971ba761b5d/sovmestnaya-probezhka-v-tsentre/">Совместная пробежка в центре <time datetime="2026-09-22">22 сентября 2026</time></a></li>
     <li><a href="/event/f3a713f6-6839-4f5c-ac99-86e847db309e/otkrytaya-trenirovka-begovogo-kluba-ttrc-v-nyachange/">Открытая тренировка бегового клуба TTRC в Нячанге <time datetime="2026-09-22">22 сентября 2026</time></a></li>
+    <li><a href="/event/d61dd365-3d96-426f-9300-b971ba761b5d/sovmestnaya-probezhka-v-tsentre/">Совместная пробежка в центре <time datetime="2026-09-22">22 сентября 2026</time></a></li>
     <li><a href="/event/caaba6a1-d5c7-48c8-a1d0-854b82f3abd1/sovmestnaya-probezhka-na-severe/">Совместная пробежка на севере <time datetime="2026-09-24">24 сентября 2026</time></a></li>
   </ul>
 </div>

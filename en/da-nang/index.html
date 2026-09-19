@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
          до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
-         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
-         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
-         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
+         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
+         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
+         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
+         Страховка — load+setTimeout (браузеры без PerformanceObserver).
          Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
@@ -34,8 +35,14 @@
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
-              obs.disconnect();
-              loadGtag();
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
             });
             po.observe({ type: 'paint', buffered: true });
             afterLoad();
@@ -140,14 +147,14 @@
   <p class="seo-updated">Updated: <time datetime="2026-09-19">September 19, 2026</time></p>
   <h2>Upcoming events in Da Nang</h2>
   <ul>
-    <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/fdf56fce-c81d-4a79-bee3-c8664127c1b0/charming-danang-show/">Charming Danang Show</a></li>
     <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/513d9371-e071-4d9b-8489-42d2af1e2ee9/ao-dai-show-da-nang/">Ao Dai Show Da Nang</a> — <span>400000 VND</span></li>
-    <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/44e749b9-fe41-41af-a5b7-c01c0e42d2af/english-expands-boundaries-but-sometimes-they-need-to-be-defended-aggression-expressed-teeth-shown-u-know/">English expands boundaries, but sometimes they need to be defended, aggression expressed, teeth shown, u know</a> — <span>150000 VND</span></li>
+    <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/fdf56fce-c81d-4a79-bee3-c8664127c1b0/charming-danang-show/">Charming Danang Show</a></li>
     <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/4d4bee39-6d16-4f26-9d02-e04c4b33440b/quiz-imix-this-saturday/">QUIZ IMIX THIS SATURDAY</a> — <span>200000 VND</span></li>
+    <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/44e749b9-fe41-41af-a5b7-c01c0e42d2af/english-expands-boundaries-but-sometimes-they-need-to-be-defended-aggression-expressed-teeth-shown-u-know/">English expands boundaries, but sometimes they need to be defended, aggression expressed, teeth shown, u know</a> — <span>150000 VND</span></li>
     <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/e37928a9-c089-4eea-b2a4-7779e1164f43/gitarnik-30/">GITARNIK 30</a> — <span>50000 VND</span></li>
-    <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/4ca9ee13-3c6f-4ab6-8202-e934b151f374/how-to-choose-a-hobby-that-brings-pleasure-and-development/">How to choose a hobby that brings pleasure and development?</a> — <span>200000 VND</span></li>
-    <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/c578a54f-4320-4dd3-9a60-84035df561eb/hey-guys-hi-everyone/">Hey guys, hi everyone ))</a> — <span>200000 VND</span></li>
     <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/c6cd247f-6dfb-4c85-b6b6-1e65d5588abf/tomorrow-board-game-night-at-restaurant-369/">Tomorrow board game night at restaurant 369!</a> — <span>Free</span></li>
+    <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/a057cf61-a70f-4f24-87b2-b3f6c63c7a83/latin-party-salsa-bachata-kizomba/">LATIN PARTY: SALSA BACHATA KIZOMBA</a> — <span>110000 VND</span></li>
+    <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/4ca9ee13-3c6f-4ab6-8202-e934b151f374/how-to-choose-a-hobby-that-brings-pleasure-and-development/">How to choose a hobby that brings pleasure and development?</a> — <span>200000 VND</span></li>
   </ul>
   <h2>FAQ</h2>
     <details><summary>What events are happening in Da Nang?</summary><p>On MyPins, Da Nang events are published by organizers themselves: concerts, parties, yoga, sports, markets and expat meetups. The map shows the date, venue and price of every event.</p></details>

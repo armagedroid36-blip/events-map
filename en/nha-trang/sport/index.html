@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
          до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
-         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
-         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
-         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
+         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
+         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
+         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
+         Страховка — load+setTimeout (браузеры без PerformanceObserver).
          Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
@@ -34,8 +35,14 @@
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
-              obs.disconnect();
-              loadGtag();
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
             });
             po.observe({ type: 'paint', buffered: true });
             afterLoad();
@@ -120,7 +127,7 @@
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/nha-trang/sport/" />
     <link rel="alternate" hreflang="ru" href="https://mypins.site/nha-trang/sport/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","url":"https://mypins.site/en/nha-trang/sport/","name":"Sports in Nha Trang: what's on","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"MyPins","url":"https://mypins.site/en/"}},{"@type":"ItemList","numberOfItems":6,"itemListOrder":"https://schema.org/ItemListOrderAscending","itemListElement":[{"@type":"ListItem","position":1,"name":"Do you want to feel like an action movie hero?","url":"https://mypins.site/en/event/fbdd1fd1-c919-4295-a2bb-3074be726cbd/do-you-want-to-feel-like-an-action-movie-hero/"},{"@type":"ListItem","position":2,"name":"Archery Tag: for a group tired of the usual evenings","url":"https://mypins.site/en/event/00b19b44-03e6-415b-842b-2832c361a767/archery-tag-for-a-group-tired-of-the-usual-evenings/"},{"@type":"ListItem","position":3,"name":"Weekend jog","url":"https://mypins.site/en/event/160a3c9f-4f90-43a9-abaa-2ce91ac59d76/weekend-jog/"},{"@type":"ListItem","position":4,"name":"Joint run in the city center","url":"https://mypins.site/en/event/d61dd365-3d96-426f-9300-b971ba761b5d/joint-run-in-the-city-center/"},{"@type":"ListItem","position":5,"name":"Open training session of the TTRC running club in Nha Trang","url":"https://mypins.site/en/event/f3a713f6-6839-4f5c-ac99-86e847db309e/open-training-session-of-the-ttrc-running-club-in-nha-trang/"},{"@type":"ListItem","position":6,"name":"Joint run in the north","url":"https://mypins.site/en/event/caaba6a1-d5c7-48c8-a1d0-854b82f3abd1/joint-run-in-the-north/"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"Sports","item":"https://mypins.site/en/nha-trang/sport/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","url":"https://mypins.site/en/nha-trang/sport/","name":"Sports in Nha Trang: what's on","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"MyPins","url":"https://mypins.site/en/"}},{"@type":"ItemList","numberOfItems":6,"itemListOrder":"https://schema.org/ItemListOrderAscending","itemListElement":[{"@type":"ListItem","position":1,"name":"Do you want to feel like an action movie hero?","url":"https://mypins.site/en/event/fbdd1fd1-c919-4295-a2bb-3074be726cbd/do-you-want-to-feel-like-an-action-movie-hero/"},{"@type":"ListItem","position":2,"name":"Archery Tag: for a group tired of the usual evenings","url":"https://mypins.site/en/event/00b19b44-03e6-415b-842b-2832c361a767/archery-tag-for-a-group-tired-of-the-usual-evenings/"},{"@type":"ListItem","position":3,"name":"Weekend jog","url":"https://mypins.site/en/event/160a3c9f-4f90-43a9-abaa-2ce91ac59d76/weekend-jog/"},{"@type":"ListItem","position":4,"name":"Open training session of the TTRC running club in Nha Trang","url":"https://mypins.site/en/event/f3a713f6-6839-4f5c-ac99-86e847db309e/open-training-session-of-the-ttrc-running-club-in-nha-trang/"},{"@type":"ListItem","position":5,"name":"Joint run in the city center","url":"https://mypins.site/en/event/d61dd365-3d96-426f-9300-b971ba761b5d/joint-run-in-the-city-center/"},{"@type":"ListItem","position":6,"name":"Joint run in the north","url":"https://mypins.site/en/event/caaba6a1-d5c7-48c8-a1d0-854b82f3abd1/joint-run-in-the-north/"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"Sports","item":"https://mypins.site/en/nha-trang/sport/"}]}]}</script>
   </head>
   <body>
     <div id="root"></div>
@@ -129,15 +136,15 @@
     <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>Sports</span></p>
   </nav>
   <h1>Sports in Nha Trang: what&#39;s on</h1>
-  <p>Sports in Nha Trang: 6 events on the map. Sports: runs, training sessions, martial arts, football and active weekends. Nha Trang is the resort capital of southern Vietnam. Most events take place at GameZone, кольцо около Скении, Стадион Нячанга. The listing runs from September 19, 2026 to September 24, 2026. Next events: “Do you want to feel like an action movie hero?” on September 19 (GameZone), “Archery Tag: for a group tired of the usual…” on September 19 (GameZone), “Weekend jog” on September 20 (кольцо около Скении), “Joint run in the city center” on September 22, “Open training session of the TTRC running…” on September 22 (Стадион Нячанга), “Joint run in the north” on September 24. Details: 🏹 Want to feel like an action hero? Team archery battle Archery Tag: real bows, soft arrows, the thrill just like paintball. No experience needed… Admission costs 200 000 VND. 4 of 6 events are free or donation-based.</p>
+  <p>Sports in Nha Trang: 6 events on the map. Sports: runs, training sessions, martial arts, football and active weekends. Nha Trang is the resort capital of southern Vietnam. Most events take place at GameZone, кольцо около Скении, Стадион Нячанга. The listing runs from September 19, 2026 to September 24, 2026. Next events: “Do you want to feel like an action movie hero?” on September 19 (GameZone), “Archery Tag: for a group tired of the usual…” on September 19 (GameZone), “Weekend jog” on September 20 (кольцо около Скении), “Open training session of the TTRC running…” on September 22 (Стадион Нячанга), “Joint run in the city center” on September 22, “Joint run in the north” on September 24. Details: 🏹 Want to feel like an action hero? Team archery battle Archery Tag: real bows, soft arrows, the thrill just like paintball. No experience needed… Admission costs 200 000 VND. 4 of 6 events are free or donation-based.</p>
   <p class="seo-updated">Updated: <time datetime="2026-09-19">September 19, 2026</time></p>
   <h2>Upcoming events: Sports</h2>
   <ul>
     <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/fbdd1fd1-c919-4295-a2bb-3074be726cbd/do-you-want-to-feel-like-an-action-movie-hero/">Do you want to feel like an action movie hero?</a> — <span>200000 VND</span></li>
     <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/00b19b44-03e6-415b-842b-2832c361a767/archery-tag-for-a-group-tired-of-the-usual-evenings/">Archery Tag: for a group tired of the usual evenings</a> — <span>200000 VND</span></li>
     <li><time datetime="2026-09-20">September 20, 2026</time> — <a href="https://mypins.site/en/event/160a3c9f-4f90-43a9-abaa-2ce91ac59d76/weekend-jog/">Weekend jog</a> — <span>Free</span></li>
-    <li><time datetime="2026-09-22">September 22, 2026</time> — <a href="https://mypins.site/en/event/d61dd365-3d96-426f-9300-b971ba761b5d/joint-run-in-the-city-center/">Joint run in the city center</a> — <span>Free</span></li>
     <li><time datetime="2026-09-22">September 22, 2026</time> — <a href="https://mypins.site/en/event/f3a713f6-6839-4f5c-ac99-86e847db309e/open-training-session-of-the-ttrc-running-club-in-nha-trang/">Open training session of the TTRC running club in Nha Trang</a></li>
+    <li><time datetime="2026-09-22">September 22, 2026</time> — <a href="https://mypins.site/en/event/d61dd365-3d96-426f-9300-b971ba761b5d/joint-run-in-the-city-center/">Joint run in the city center</a> — <span>Free</span></li>
     <li><time datetime="2026-09-24">September 24, 2026</time> — <a href="https://mypins.site/en/event/caaba6a1-d5c7-48c8-a1d0-854b82f3abd1/joint-run-in-the-north/">Joint run in the north</a> — <span>Free</span></li>
   </ul>
   <h2>FAQ</h2>

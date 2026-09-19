@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
          до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — событие первой отрисовки (PerformanceObserver 'paint': запись приходит
-         уже ПОСЛЕ отрисовки), страховка — load+setTimeout (старые браузеры без
-         PerformanceObserver). requestIdleCallback НЕ используется: он выстреливает
-         в сетевой паузе, пока браузер ждёт модули, то есть до первой отрисовки.
+         Триггер — именно запись first-contentful-paint в PerformanceObserver('paint'):
+         первая запись бывает 'first-paint' (фон), она выходит РАНЬШЕ FCP, и загрузка по ней
+         всё ещё успевает затормозить первую отрисовку. requestIdleCallback НЕ используется:
+         он выстреливает в сетевой паузе, пока браузер ждёт модули, то есть до FCP.
+         Страховка — load+setTimeout (браузеры без PerformanceObserver).
          Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
          SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
@@ -34,8 +35,14 @@
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
-              obs.disconnect();
-              loadGtag();
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
             });
             po.observe({ type: 'paint', buffered: true });
             afterLoad();
@@ -141,6 +148,7 @@
     <li><a href="/event/455b10be-6993-4c84-a7ec-ecf182606c60/kokedama-workshop/">Kokedama Workshop <time datetime="2026-09-19">19 сентября 2026</time></a></li>
     <li><a href="/event/60b789b7-95dc-4bf3-b544-d790fc84b136/magic-garden-mini-scientist/">Magic Garden Mini Scientist <time datetime="2026-09-20">20 сентября 2026</time></a></li>
     <li><a href="/event/20ac2c16-af42-401b-ba4a-b36e3b968d4f/living-legend-mythopoetic-manifestation/">Living Legend: Mythopoetic Manifestation <time datetime="2026-09-22">22 сентября 2026</time></a></li>
+    <li><a href="/event/883c6957-84f1-4732-b2a5-ab09d7b2a10e/akh-nnye-sketchi-risovanie-ubud/">Ах**нные скетчи. Рисование. Убуд <time datetime="2026-09-25">25 сентября 2026</time></a></li>
     <li><a href="/event/7c4a5b50-f498-4afe-9bad-31133da0afbf/praktikum-po-entomologii-v-magic-garden/">Практикум по энтомологии в Magic Garden <time datetime="2026-09-26">26 сентября 2026</time></a></li>
   </ul>
 </div>
