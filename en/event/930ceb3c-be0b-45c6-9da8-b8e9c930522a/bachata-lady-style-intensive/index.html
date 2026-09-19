@@ -2,12 +2,35 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK"></script>
+    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadGtag, { timeout: 3000 });
+        } else {
+          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+          window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+      })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -57,7 +80,7 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-IYHe8Yl2.js"></script>
+    <script type="module" crossorigin src="/assets/index-D9U_47z-.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
     <link rel="modulepreload" crossorigin href="/assets/config-WzI1LDIn.js">
@@ -68,7 +91,7 @@
     <link rel="modulepreload" crossorigin href="/assets/seo-Bg1yZhWU.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DK2BLgyC.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-BZnbJWdE.css">
       <meta name="description" content="Da Nang, September 29, 2026. 💃 Bachata Lady Style Intensive 📅 September 8, 15, 22 and 29 🕚 11:00 – 12:30 💵 Price: 300k per class 1 million dong dance pass…" />
     <link rel="canonical" href="https://mypins.site/en/event/930ceb3c-be0b-45c6-9da8-b8e9c930522a/bachata-lady-style-intensive/" />
     <meta property="og:site_name" content="MyPins" />
@@ -132,6 +155,6 @@ This will be a completely new choreography, not like last time 😉
     <li><a href="/en/event/02b79462-6137-4270-8e3c-c4a7b8864447/on-thursday-17-09-i-invite-you-to-enjoy-the-autumn-mood-and-draw-the-atmosphere-of-autumn-with-oil-pastels/">On Thursday 17.09 I invite you to enjoy the autumn mood and draw the atmosphere of autumn with oil pastels <time datetime="2026-09-24">September 24, 2026</time></a></li>
   </ul>
 </div>
-
+
   </body>
 </html>

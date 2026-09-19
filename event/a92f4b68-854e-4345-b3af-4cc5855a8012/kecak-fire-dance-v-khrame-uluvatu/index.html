@@ -2,12 +2,35 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK"></script>
+    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadGtag, { timeout: 3000 });
+        } else {
+          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+          window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+      })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -57,7 +80,7 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-IYHe8Yl2.js"></script>
+    <script type="module" crossorigin src="/assets/index-D9U_47z-.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
     <link rel="modulepreload" crossorigin href="/assets/config-WzI1LDIn.js">
@@ -68,7 +91,7 @@
     <link rel="modulepreload" crossorigin href="/assets/seo-Bg1yZhWU.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DK2BLgyC.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-BZnbJWdE.css">
       <meta name="description" content="Улувату, Bali, 8 сентября 2026. Легендарный танец Kecak («Огненный танец») на скале над океаном у храма Улувату — десятки мужчин в унисон повторяют «чак-чак»…" />
     <link rel="canonical" href="https://mypins.site/event/a92f4b68-854e-4345-b3af-4cc5855a8012/kecak-fire-dance-v-khrame-uluvatu/" />
     <meta property="og:site_name" content="MyPins" />
@@ -98,14 +121,14 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/e80e6f75-3afd-4173-828c-a05191a6708c/tantsevalnye-predstavleniya-v-ubud-palace/">Танцевальные представления в Ubud Palace <time datetime="2026-09-19">19 сентября 2026</time></a></li>
-    <li><a href="/event/905bb225-bc9c-46ea-9c5c-12da83fc1a11/tantsevalnye-predstavleniya-v-bale-banjar-ubud-kelod/">Танцевальные представления в Bale Banjar Ubud Kelod <time datetime="2026-09-19">19 сентября 2026</time></a></li>
     <li><a href="/event/3ef4300d-9838-466e-9c2b-a321bab1fff7/kecak-i-tantsy-v-padang-tegal-kaja/">Kecak и танцы в Padang Tegal Kaja <time datetime="2026-09-19">19 сентября 2026</time></a></li>
     <li><a href="/event/af63e539-e913-4ca3-a010-e7d3117a1975/tantsevalnye-predstavleniya-v-khrame-sarasvati/">Танцевальные представления в храме Сарасвати <time datetime="2026-09-19">19 сентября 2026</time></a></li>
+    <li><a href="/event/905bb225-bc9c-46ea-9c5c-12da83fc1a11/tantsevalnye-predstavleniya-v-bale-banjar-ubud-kelod/">Танцевальные представления в Bale Banjar Ubud Kelod <time datetime="2026-09-19">19 сентября 2026</time></a></li>
+    <li><a href="/event/e80e6f75-3afd-4173-828c-a05191a6708c/tantsevalnye-predstavleniya-v-ubud-palace/">Танцевальные представления в Ubud Palace <time datetime="2026-09-19">19 сентября 2026</time></a></li>
     <li><a href="/event/60aed6ec-ad4b-4ad1-bc41-8ec33199dd18/devdan-show/">Devdan Show <time datetime="2026-09-19">19 сентября 2026</time></a></li>
     <li><a href="/event/5cedeb4c-b109-4848-bedd-160690d80c27/arma-dance-performance/">ARMA Dance Performance <time datetime="2026-09-19">19 сентября 2026</time></a></li>
   </ul>
 </div>
-
+
   </body>
 </html>

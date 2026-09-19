@@ -2,12 +2,35 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK"></script>
+    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadGtag, { timeout: 3000 });
+        } else {
+          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+          window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+      })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -57,7 +80,7 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-IYHe8Yl2.js"></script>
+    <script type="module" crossorigin src="/assets/index-D9U_47z-.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
     <link rel="modulepreload" crossorigin href="/assets/config-WzI1LDIn.js">
@@ -68,7 +91,7 @@
     <link rel="modulepreload" crossorigin href="/assets/seo-Bg1yZhWU.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DK2BLgyC.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-BZnbJWdE.css">
       <meta name="description" content="Йога и здоровье в Нячанге: 19 событий и афиша мероприятий с датами, местами и ценами. Афиша обновляется каждый день, а события публикуют сами организаторы." />
     <link rel="canonical" href="https://mypins.site/nha-trang/wellness/" />
     <meta property="og:site_name" content="MyPins" />
@@ -82,7 +105,7 @@
     <link rel="alternate" hreflang="ru" href="https://mypins.site/nha-trang/wellness/" />
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/nha-trang/wellness/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","url":"https://mypins.site/nha-trang/wellness/","name":"Йога и здоровье в Нячанге: афиша и мероприятия","inLanguage":"ru","isPartOf":{"@type":"WebSite","name":"MyPins","url":"https://mypins.site/"}},{"@type":"ItemList","numberOfItems":19,"itemListOrder":"https://schema.org/ItemListOrderAscending","itemListElement":[{"@type":"ListItem","position":1,"name":"Всем . Практика аштанга виньяса йоги в Нячанге .","url":"https://mypins.site/event/ea7edc2b-0f6b-41ff-b405-029ea9c1d21e/vsem-praktika-ashtanga-vinyasa-yogi-v-nyachange/"},{"@type":"ListItem","position":2,"name":"Вечерняя программа Бхакти Марги","url":"https://mypins.site/event/96244443-2611-4260-b103-f6e032aca72e/vechernyaya-programma-bkhakti-margi/"},{"@type":"ListItem","position":3,"name":"Йога в Нячанге","url":"https://mypins.site/event/d9c15bea-3519-41f8-8f0b-b3f10ce81cca/yoga-v-nyachange/"},{"@type":"ListItem","position":4,"name":"Бесплатная медитация Випассана на пляже возле Oceanus","url":"https://mypins.site/event/bd9c77cd-b5d5-44e4-944c-53032ead6fef/besplatnaya-meditatsiya-vipassana-na-plyazhe-vozle-oceanus/"},{"@type":"ListItem","position":5,"name":"Саундхиллинг - перезагрузка","url":"https://mypins.site/event/c5f6e9ac-66b3-445f-a32d-5ff0528dd4cc/saundkhilling-perezagruzka/"},{"@type":"ListItem","position":6,"name":"Тантра-семинар: \"Чистая Тантра\"","url":"https://mypins.site/event/124b4090-b3a3-4058-91b8-71ae4d62065b/tantra-seminar-chistaya-tantra/"},{"@type":"ListItem","position":7,"name":"Prime Space","url":"https://mypins.site/event/82e9709a-a12e-4919-816e-bbdebe56c3c8/prime-space/"},{"@type":"ListItem","position":8,"name":"Групповая встреча с психологом","url":"https://mypins.site/event/36654e67-d9e9-4176-971c-19ab8b0679b2/gruppovaya-vstrecha-s-psikhologom/"},{"@type":"ListItem","position":9,"name":"РАССТАНОВКИ 20 СЕНТЯБРЯ","url":"https://mypins.site/event/88b90b5a-43d7-48d4-be7f-726a18ccb56b/rasstanovki-20-sentyabrya/"},{"@type":"ListItem","position":10,"name":"Практика гвоздестояния в районе Oceanus 20.09, свободная оплата .","url":"https://mypins.site/event/1047944a-b629-4ad6-9bb1-bf62ea08e9ec/praktika-gvozdestoyaniya-v-rayone-oceanus-20-09-svobodnaya-oplata/"},{"@type":"ListItem","position":11,"name":"Силовые тренировки в группе,на все тело понедельник","url":"https://mypins.site/event/b2d3bd93-748e-4521-93a1-9ee00b3164fc/silovye-trenirovki-v-gruppe-na-vse-telo-ponedelnik/"},{"@type":"ListItem","position":12,"name":"ГРУППОВАЯ ТРЕНИРОВКА ДЛЯ ДЕВУШЕК","url":"https://mypins.site/event/a768f4a5-8cc6-4b60-a164-3293488e546c/gruppovaya-trenirovka-dlya-devushek/"},{"@type":"ListItem","position":13,"name":"Силовые тренировки в группе,на все тело вторник","url":"https://mypins.site/event/0e4bd1c7-31a6-4d9b-90ed-218df6fd3532/silovye-trenirovki-v-gruppe-na-vse-telo-vtornik/"},{"@type":"ListItem","position":14,"name":"Функциональный стретчинг в MAG","url":"https://mypins.site/event/ea92f222-4d51-4d06-8802-16bb9387c276/funktsionalnyy-stretching-v-mag/"},{"@type":"ListItem","position":15,"name":"Йога на севере Нячанга, рядом с Oceanus","url":"https://mypins.site/event/4370a96b-67ea-43a7-ab5c-a79cb3e50893/yoga-na-severe-nyachanga-ryadom-s-oceanus/"},{"@type":"ListItem","position":16,"name":"Ребефинг","url":"https://mypins.site/event/a8c1cb7f-2657-4c97-b7b0-54020381a8a2/rebefing/"},{"@type":"ListItem","position":17,"name":"САУНДХИЛИНГ В ГАМАКАХ","url":"https://mypins.site/event/b72dc4bf-8cd0-4cd3-8848-9184b5fb96e3/saundkhiling-v-gamakakh/"},{"@type":"ListItem","position":18,"name":"Занятие в Дыхательном классе 16","url":"https://mypins.site/event/f8b055a9-cbf2-49c7-b523-db5a3fec855b/zanyatie-v-dykhatelnom-klasse-16/"},{"@type":"ListItem","position":19,"name":"YOGA. Утренняя практика . В эту среду","url":"https://mypins.site/event/e9ff547c-54ac-4b6f-9267-0d446d208cc3/yoga-utrennyaya-praktika-v-etu-sredu/"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"Йога и здоровье","item":"https://mypins.site/nha-trang/wellness/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","url":"https://mypins.site/nha-trang/wellness/","name":"Йога и здоровье в Нячанге: афиша и мероприятия","inLanguage":"ru","isPartOf":{"@type":"WebSite","name":"MyPins","url":"https://mypins.site/"}},{"@type":"ItemList","numberOfItems":19,"itemListOrder":"https://schema.org/ItemListOrderAscending","itemListElement":[{"@type":"ListItem","position":1,"name":"Вечерняя программа Бхакти Марги","url":"https://mypins.site/event/96244443-2611-4260-b103-f6e032aca72e/vechernyaya-programma-bkhakti-margi/"},{"@type":"ListItem","position":2,"name":"Всем . Практика аштанга виньяса йоги в Нячанге .","url":"https://mypins.site/event/ea7edc2b-0f6b-41ff-b405-029ea9c1d21e/vsem-praktika-ashtanga-vinyasa-yogi-v-nyachange/"},{"@type":"ListItem","position":3,"name":"Йога в Нячанге","url":"https://mypins.site/event/d9c15bea-3519-41f8-8f0b-b3f10ce81cca/yoga-v-nyachange/"},{"@type":"ListItem","position":4,"name":"Бесплатная медитация Випассана на пляже возле Oceanus","url":"https://mypins.site/event/bd9c77cd-b5d5-44e4-944c-53032ead6fef/besplatnaya-meditatsiya-vipassana-na-plyazhe-vozle-oceanus/"},{"@type":"ListItem","position":5,"name":"Тантра-семинар: \"Чистая Тантра\"","url":"https://mypins.site/event/124b4090-b3a3-4058-91b8-71ae4d62065b/tantra-seminar-chistaya-tantra/"},{"@type":"ListItem","position":6,"name":"Prime Space","url":"https://mypins.site/event/82e9709a-a12e-4919-816e-bbdebe56c3c8/prime-space/"},{"@type":"ListItem","position":7,"name":"Саундхиллинг - перезагрузка","url":"https://mypins.site/event/c5f6e9ac-66b3-445f-a32d-5ff0528dd4cc/saundkhilling-perezagruzka/"},{"@type":"ListItem","position":8,"name":"Практика гвоздестояния в районе Oceanus 20.09, свободная оплата .","url":"https://mypins.site/event/1047944a-b629-4ad6-9bb1-bf62ea08e9ec/praktika-gvozdestoyaniya-v-rayone-oceanus-20-09-svobodnaya-oplata/"},{"@type":"ListItem","position":9,"name":"РАССТАНОВКИ 20 СЕНТЯБРЯ","url":"https://mypins.site/event/88b90b5a-43d7-48d4-be7f-726a18ccb56b/rasstanovki-20-sentyabrya/"},{"@type":"ListItem","position":10,"name":"Групповая встреча с психологом","url":"https://mypins.site/event/36654e67-d9e9-4176-971c-19ab8b0679b2/gruppovaya-vstrecha-s-psikhologom/"},{"@type":"ListItem","position":11,"name":"Силовые тренировки в группе,на все тело понедельник","url":"https://mypins.site/event/b2d3bd93-748e-4521-93a1-9ee00b3164fc/silovye-trenirovki-v-gruppe-na-vse-telo-ponedelnik/"},{"@type":"ListItem","position":12,"name":"ГРУППОВАЯ ТРЕНИРОВКА ДЛЯ ДЕВУШЕК","url":"https://mypins.site/event/a768f4a5-8cc6-4b60-a164-3293488e546c/gruppovaya-trenirovka-dlya-devushek/"},{"@type":"ListItem","position":13,"name":"Силовые тренировки в группе,на все тело вторник","url":"https://mypins.site/event/0e4bd1c7-31a6-4d9b-90ed-218df6fd3532/silovye-trenirovki-v-gruppe-na-vse-telo-vtornik/"},{"@type":"ListItem","position":14,"name":"Функциональный стретчинг в MAG","url":"https://mypins.site/event/ea92f222-4d51-4d06-8802-16bb9387c276/funktsionalnyy-stretching-v-mag/"},{"@type":"ListItem","position":15,"name":"Ребефинг","url":"https://mypins.site/event/a8c1cb7f-2657-4c97-b7b0-54020381a8a2/rebefing/"},{"@type":"ListItem","position":16,"name":"Йога на севере Нячанга, рядом с Oceanus","url":"https://mypins.site/event/4370a96b-67ea-43a7-ab5c-a79cb3e50893/yoga-na-severe-nyachanga-ryadom-s-oceanus/"},{"@type":"ListItem","position":17,"name":"САУНДХИЛИНГ В ГАМАКАХ","url":"https://mypins.site/event/b72dc4bf-8cd0-4cd3-8848-9184b5fb96e3/saundkhiling-v-gamakakh/"},{"@type":"ListItem","position":18,"name":"Занятие в Дыхательном классе 16","url":"https://mypins.site/event/f8b055a9-cbf2-49c7-b523-db5a3fec855b/zanyatie-v-dykhatelnom-klasse-16/"},{"@type":"ListItem","position":19,"name":"YOGA. Утренняя практика . В эту среду","url":"https://mypins.site/event/e9ff547c-54ac-4b6f-9267-0d446d208cc3/yoga-utrennyaya-praktika-v-etu-sredu/"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"Йога и здоровье","item":"https://mypins.site/nha-trang/wellness/"}]}]}</script>
   </head>
   <body>
     <div id="root"></div>
@@ -91,35 +114,35 @@
     <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/nha-trang/">Нячанг</a> <span aria-hidden="true">›</span> <span>Йога и здоровье</span></p>
   </nav>
   <h1>Йога и здоровье в Нячанге: афиша и мероприятия</h1>
-  <p>Йога и здоровье в Нячанге: 19 событий в афише. Йога и здоровье — утренние практики, дыхательные сессии, звуковые ванны и ретриты. В Нячанге события идут вдоль набережной. Обычные площадки: Орхидея студия, пляж возле Oceanus, Prime. Афиша охватывает период с 19 сентября 2026 по 23 сентября 2026. Что происходит в ближайшие дни: «Всем . Практика аштанга виньяса йоги в…» — 19 сентября, «Вечерняя программа Бхакти Марги» — 19 сентября (Орхидея студия), «Йога в Нячанге» — 19 сентября, «Бесплатная медитация Випассана на пляже возле…» — 19 сентября (пляж возле Oceanus), «Саундхиллинг - перезагрузка» — 20 сентября (Prime), «Тантра-семинар: &quot;Чистая Тантра&quot;» — 20 сентября, «Prime Space» — 20 сентября (Talent Lab), «Групповая встреча с психологом» — 20 сентября. Подробности: Всем 🙏. Практика аштанга виньяса йоги в Нячанге 🧘. На практике: динамичная первая серия йоги и асаны хатха йоги, дыхательные практики. Мой опыт… Билеты — от 100 000 до 300 000 VND, 7 из 19 событий бесплатные или за донат.</p>
+  <p>Йога и здоровье в Нячанге: 19 событий в афише. Йога и здоровье — утренние практики, дыхательные сессии, звуковые ванны и ретриты. В Нячанге события идут вдоль набережной. Обычные площадки: Орхидея студия, пляж возле Oceanus, Talent Lab. Афиша охватывает период с 19 сентября 2026 по 23 сентября 2026. Что происходит в ближайшие дни: «Вечерняя программа Бхакти Марги» — 19 сентября (Орхидея студия), «Всем . Практика аштанга виньяса йоги в…» — 19 сентября, «Йога в Нячанге» — 19 сентября, «Бесплатная медитация Випассана на пляже возле…» — 19 сентября (пляж возле Oceanus), «Тантра-семинар: &quot;Чистая Тантра&quot;» — 20 сентября, «Prime Space» — 20 сентября (Talent Lab), «Саундхиллинг - перезагрузка» — 20 сентября (Prime), «Практика гвоздестояния в районе Oceanus…» — 20 сентября (пляж в районе Oceanus). Подробности: 🕉 Вечерняя программа Бхакти Марги В традиции Бхакти Марги воспевание Божественных Имён называют пищей для души. Как телу нужна обычная пища, так и… Билеты — от 100 000 до 300 000 USD, 7 из 19 событий бесплатные или за донат.</p>
   <p class="seo-updated">Афиша обновлена: <time datetime="2026-09-19">19 сентября 2026</time></p>
   <h2>Ближайшие события: Йога и здоровье</h2>
   <ul>
-    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/ea7edc2b-0f6b-41ff-b405-029ea9c1d21e/vsem-praktika-ashtanga-vinyasa-yogi-v-nyachange/">Всем . Практика аштанга виньяса йоги в Нячанге .</a> — <span>100000 VND</span></li>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/96244443-2611-4260-b103-f6e032aca72e/vechernyaya-programma-bkhakti-margi/">Вечерняя программа Бхакти Марги</a> — <span>Донат</span></li>
+    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/ea7edc2b-0f6b-41ff-b405-029ea9c1d21e/vsem-praktika-ashtanga-vinyasa-yogi-v-nyachange/">Всем . Практика аштанга виньяса йоги в Нячанге .</a> — <span>100000 VND</span></li>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/d9c15bea-3519-41f8-8f0b-b3f10ce81cca/yoga-v-nyachange/">Йога в Нячанге</a> — <span>150000 VND</span></li>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/bd9c77cd-b5d5-44e4-944c-53032ead6fef/besplatnaya-meditatsiya-vipassana-na-plyazhe-vozle-oceanus/">Бесплатная медитация Випассана на пляже возле Oceanus</a> — <span>Бесплатно</span></li>
-    <li><time datetime="2026-09-20">20 сентября 2026</time> — <a href="https://mypins.site/event/c5f6e9ac-66b3-445f-a32d-5ff0528dd4cc/saundkhilling-perezagruzka/">Саундхиллинг - перезагрузка</a> — <span>Донат</span></li>
     <li><time datetime="2026-09-20">20 сентября 2026</time> — <a href="https://mypins.site/event/124b4090-b3a3-4058-91b8-71ae4d62065b/tantra-seminar-chistaya-tantra/">Тантра-семинар: &quot;Чистая Тантра&quot;</a> — <span>200000 VND</span></li>
     <li><time datetime="2026-09-20">20 сентября 2026</time> — <a href="https://mypins.site/event/82e9709a-a12e-4919-816e-bbdebe56c3c8/prime-space/">Prime Space</a> — <span>250000 VND</span></li>
-    <li><time datetime="2026-09-20">20 сентября 2026</time> — <a href="https://mypins.site/event/36654e67-d9e9-4176-971c-19ab8b0679b2/gruppovaya-vstrecha-s-psikhologom/">Групповая встреча с психологом</a> — <span>Донат</span></li>
-    <li><time datetime="2026-09-20">20 сентября 2026</time> — <a href="https://mypins.site/event/88b90b5a-43d7-48d4-be7f-726a18ccb56b/rasstanovki-20-sentyabrya/">РАССТАНОВКИ 20 СЕНТЯБРЯ</a> — <span>Донат</span></li>
+    <li><time datetime="2026-09-20">20 сентября 2026</time> — <a href="https://mypins.site/event/c5f6e9ac-66b3-445f-a32d-5ff0528dd4cc/saundkhilling-perezagruzka/">Саундхиллинг - перезагрузка</a> — <span>Донат</span></li>
     <li><time datetime="2026-09-20">20 сентября 2026</time> — <a href="https://mypins.site/event/1047944a-b629-4ad6-9bb1-bf62ea08e9ec/praktika-gvozdestoyaniya-v-rayone-oceanus-20-09-svobodnaya-oplata/">Практика гвоздестояния в районе Oceanus 20.09, свободная оплата .</a> — <span>Донат</span></li>
+    <li><time datetime="2026-09-20">20 сентября 2026</time> — <a href="https://mypins.site/event/88b90b5a-43d7-48d4-be7f-726a18ccb56b/rasstanovki-20-sentyabrya/">РАССТАНОВКИ 20 СЕНТЯБРЯ</a> — <span>Донат</span></li>
+    <li><time datetime="2026-09-20">20 сентября 2026</time> — <a href="https://mypins.site/event/36654e67-d9e9-4176-971c-19ab8b0679b2/gruppovaya-vstrecha-s-psikhologom/">Групповая встреча с психологом</a> — <span>Донат</span></li>
     <li><time datetime="2026-09-21">21 сентября 2026</time> — <a href="https://mypins.site/event/b2d3bd93-748e-4521-93a1-9ee00b3164fc/silovye-trenirovki-v-gruppe-na-vse-telo-ponedelnik/">Силовые тренировки в группе,на все тело понедельник</a> — <span>300000 VND</span></li>
     <li><time datetime="2026-09-21">21 сентября 2026</time> — <a href="https://mypins.site/event/a768f4a5-8cc6-4b60-a164-3293488e546c/gruppovaya-trenirovka-dlya-devushek/">ГРУППОВАЯ ТРЕНИРОВКА ДЛЯ ДЕВУШЕК</a> — <span>150000 VND</span></li>
     <li><time datetime="2026-09-22">22 сентября 2026</time> — <a href="https://mypins.site/event/0e4bd1c7-31a6-4d9b-90ed-218df6fd3532/silovye-trenirovki-v-gruppe-na-vse-telo-vtornik/">Силовые тренировки в группе,на все тело вторник</a> — <span>200000 VND</span></li>
     <li><time datetime="2026-09-22">22 сентября 2026</time> — <a href="https://mypins.site/event/ea92f222-4d51-4d06-8802-16bb9387c276/funktsionalnyy-stretching-v-mag/">Функциональный стретчинг в MAG</a> — <span>200000 VND</span></li>
-    <li><time datetime="2026-09-22">22 сентября 2026</time> — <a href="https://mypins.site/event/4370a96b-67ea-43a7-ab5c-a79cb3e50893/yoga-na-severe-nyachanga-ryadom-s-oceanus/">Йога на севере Нячанга, рядом с Oceanus</a> — <span>150000 VND</span></li>
     <li><time datetime="2026-09-22">22 сентября 2026</time> — <a href="https://mypins.site/event/a8c1cb7f-2657-4c97-b7b0-54020381a8a2/rebefing/">Ребефинг</a> — <span>300000 VND</span></li>
+    <li><time datetime="2026-09-22">22 сентября 2026</time> — <a href="https://mypins.site/event/4370a96b-67ea-43a7-ab5c-a79cb3e50893/yoga-na-severe-nyachanga-ryadom-s-oceanus/">Йога на севере Нячанга, рядом с Oceanus</a> — <span>150000 VND</span></li>
     <li><time datetime="2026-09-23">23 сентября 2026</time> — <a href="https://mypins.site/event/b72dc4bf-8cd0-4cd3-8848-9184b5fb96e3/saundkhiling-v-gamakakh/">САУНДХИЛИНГ В ГАМАКАХ</a> — <span>250000 VND</span></li>
     <li><time datetime="2026-09-23">23 сентября 2026</time> — <a href="https://mypins.site/event/f8b055a9-cbf2-49c7-b523-db5a3fec855b/zanyatie-v-dykhatelnom-klasse-16/">Занятие в Дыхательном классе 16</a> — <span>Донат</span></li>
     <li><time datetime="2026-09-23">23 сентября 2026</time> — <a href="https://mypins.site/event/e9ff547c-54ac-4b6f-9267-0d446d208cc3/yoga-utrennyaya-praktika-v-etu-sredu/">YOGA. Утренняя практика . В эту среду</a> — <span>200000 VND</span></li>
   </ul>
   <h2>Частые вопросы</h2>
-    <details><summary>Сколько событий в категории «Йога и здоровье» в Нячанге сейчас?</summary><p>Сейчас 19 событий: от «Всем . Практика аштанга виньяса йоги в…» 19 сентября до «YOGA. Утренняя практика . В эту среду» 23 сентября.</p></details>
-    <details><summary>Когда проходит ближайшее событие категории «Йога и здоровье»?</summary><p>«Всем . Практика аштанга виньяса йоги в…» — 19 сентября, Орхидея студия.</p></details>
-    <details><summary>Сколько стоят билеты?</summary><p>От 100 000 до 300 000 VND; 7 из 19 событий бесплатные или за донат.</p></details>
+    <details><summary>Сколько событий в категории «Йога и здоровье» в Нячанге сейчас?</summary><p>Сейчас 19 событий: от «Вечерняя программа Бхакти Марги» 19 сентября до «YOGA. Утренняя практика . В эту среду» 23 сентября.</p></details>
+    <details><summary>Когда проходит ближайшее событие категории «Йога и здоровье»?</summary><p>«Вечерняя программа Бхакти Марги» — 19 сентября, Орхидея студия.</p></details>
+    <details><summary>Сколько стоят билеты?</summary><p>От 100 000 до 300 000 USD; 7 из 19 событий бесплатные или за донат.</p></details>
 </div>
-
+
   </body>
 </html>

@@ -2,12 +2,35 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK"></script>
+    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadGtag, { timeout: 3000 });
+        } else {
+          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+          window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+      })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -57,7 +80,7 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-IYHe8Yl2.js"></script>
+    <script type="module" crossorigin src="/assets/index-D9U_47z-.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
     <link rel="modulepreload" crossorigin href="/assets/config-WzI1LDIn.js">
@@ -68,7 +91,7 @@
     <link rel="modulepreload" crossorigin href="/assets/seo-Bg1yZhWU.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DK2BLgyC.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-BZnbJWdE.css">
       <meta name="description" content="Nha Trang, September 16, 2026. 🧘‍♀️ SOUND HEALING IN HAMMOCKS 🎶✨ I invite you to a sound healing practice in hammocks — to the sounds of singing bowls and…" />
     <link rel="canonical" href="https://mypins.site/en/event/b72dc4bf-8cd0-4cd3-8848-9184b5fb96e3/sound-healing-in-hammocks/" />
     <meta property="og:site_name" content="MyPins" />
@@ -127,12 +150,12 @@ Post by: Elly Sheva</p>
   <ul>
     <li><a href="/en/event/0e4bd1c7-31a6-4d9b-90ed-218df6fd3532/full-body-group-strength-training-tuesday/">Full-body group strength training, Tuesday <time datetime="2026-09-22">September 22, 2026</time></a></li>
     <li><a href="/en/event/ea92f222-4d51-4d06-8802-16bb9387c276/functional-stretching-at-mag/">Functional stretching at MAG <time datetime="2026-09-22">September 22, 2026</time></a></li>
-    <li><a href="/en/event/4370a96b-67ea-43a7-ab5c-a79cb3e50893/yoga-in-the-north-of-nha-trang-next-to-oceanus/">Yoga in the north of Nha Trang, next to Oceanus <time datetime="2026-09-22">September 22, 2026</time></a></li>
     <li><a href="/en/event/a8c1cb7f-2657-4c97-b7b0-54020381a8a2/rebirthing/">Rebirthing <time datetime="2026-09-22">September 22, 2026</time></a></li>
+    <li><a href="/en/event/4370a96b-67ea-43a7-ab5c-a79cb3e50893/yoga-in-the-north-of-nha-trang-next-to-oceanus/">Yoga in the north of Nha Trang, next to Oceanus <time datetime="2026-09-22">September 22, 2026</time></a></li>
     <li><a href="/en/event/f8b055a9-cbf2-49c7-b523-db5a3fec855b/breathing-class-session-16/">Breathing Class Session 16 <time datetime="2026-09-23">September 23, 2026</time></a></li>
     <li><a href="/en/event/e9ff547c-54ac-4b6f-9267-0d446d208cc3/yoga-morning-practice-this-wednesday/">YOGA. Morning practice. This Wednesday <time datetime="2026-09-23">September 23, 2026</time></a></li>
   </ul>
 </div>
-
+
   </body>
 </html>

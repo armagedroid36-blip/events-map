@@ -2,12 +2,35 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK"></script>
+    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadGtag, { timeout: 3000 });
+        } else {
+          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+          window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+      })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -57,7 +80,7 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-IYHe8Yl2.js"></script>
+    <script type="module" crossorigin src="/assets/index-D9U_47z-.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
     <link rel="modulepreload" crossorigin href="/assets/config-WzI1LDIn.js">
@@ -68,7 +91,7 @@
     <link rel="modulepreload" crossorigin href="/assets/seo-Bg1yZhWU.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DK2BLgyC.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-BZnbJWdE.css">
       <meta name="description" content="Bali, September 25, 2026. On September 25 from 18:00 to 22:00, Tour-gether Worship Nite Project Bali will take place at Atlas Super Club. GUTS Bali and Worship…" />
     <link rel="canonical" href="https://mypins.site/en/event/c2813b49-6dc2-4c7f-88d8-de4fff401858/tour-gether-worship-nite-project-bali/" />
     <meta property="og:site_name" content="MyPins" />
@@ -105,11 +128,11 @@ Tickets: https://www.loket.com/event/tour-gether-worship-nite-project-bali-ws9b<
     <li><a href="/en/event/75b16bca-4728-45d0-a013-4c08778de521/full-moon-kirtan-celebration/">Full Moon Kirtan Celebration <time datetime="2026-09-24">September 24, 2026</time></a></li>
     <li><a href="/en/event/daf37d6a-2dfe-4140-8cd2-47dde70d90cd/listening-session-ron-trent/">Listening Session: Ron Trent <time datetime="2026-09-24">September 24, 2026</time></a></li>
     <li><a href="/en/event/e6d03445-c8ec-433a-896d-4fc07fd76f4a/the-martinez-brothers/">The Martinez Brothers <time datetime="2026-09-25">September 25, 2026</time></a></li>
-    <li><a href="/en/event/4ac800b1-f0b7-49c0-b100-49b6637a4699/the-weeknd-concert-after-hours-til-dawn-tour/">The Weeknd Concert: After Hours Til Dawn Tour <time datetime="2026-09-26">September 26, 2026</time></a></li>
+    <li><a href="/en/event/f7ed0cdf-ea76-41c7-adf0-998c2a0b881c/potato-head-presents-dekmantel/">Potato Head Presents Dekmantel <time datetime="2026-09-26">September 26, 2026</time></a></li>
     <li><a href="/en/event/f9485cc2-84ec-4f5c-848a-bb05922b2cf9/stephan-bodzin-concert-at-savaya/">Stephan Bodzin concert at Savaya <time datetime="2026-09-26">September 26, 2026</time></a></li>
     <li><a href="/en/event/4658841d-fcd1-4f62-b74b-0ebd29cf3301/satori-live/">Satori (Live) <time datetime="2026-09-26">September 26, 2026</time></a></li>
   </ul>
 </div>
-
+
   </body>
 </html>

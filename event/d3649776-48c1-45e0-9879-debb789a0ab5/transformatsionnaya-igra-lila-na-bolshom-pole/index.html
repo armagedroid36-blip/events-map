@@ -2,12 +2,35 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK"></script>
+    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadGtag, { timeout: 3000 });
+        } else {
+          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+          window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+      })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -57,7 +80,7 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-IYHe8Yl2.js"></script>
+    <script type="module" crossorigin src="/assets/index-D9U_47z-.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
     <link rel="modulepreload" crossorigin href="/assets/config-WzI1LDIn.js">
@@ -68,7 +91,7 @@
     <link rel="modulepreload" crossorigin href="/assets/seo-Bg1yZhWU.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DK2BLgyC.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-BZnbJWdE.css">
       <meta name="description" content="Нячанг, 17 сентября 2026. 🧘‍♀️ ТРАНСФОРМАЦИОННАЯ ИГРА «ЛИЛА» НА БОЛЬШОМ ПОЛЕ 🪷 Приглашаю сыграть в древнюю психологическую игру «ЛИЛА» на большом игровом…" />
     <link rel="canonical" href="https://mypins.site/event/d3649776-48c1-45e0-9879-debb789a0ab5/transformatsionnaya-igra-lila-na-bolshom-pole/" />
     <meta property="og:site_name" content="MyPins" />
@@ -130,13 +153,13 @@
   <h2>Похожие события</h2>
   <ul>
     <li><a href="/event/5e187c3d-0ef6-4f45-a1e1-51649427d48d/sportivnaya-mafiya-v-nyachange/">СПОРТИВНАЯ МАФИЯ В НЯЧАНГЕ <time datetime="2026-09-19">19 сентября 2026</time></a></li>
-    <li><a href="/event/361df73e-07df-4c70-aab8-cad52efe3f67/cashflow/">CASHFLOW <time datetime="2026-09-19">19 сентября 2026</time></a></li>
-    <li><a href="/event/e90cb0a4-2bee-469d-b3f1-ae062d0332de/detskaya-liga-easy-game-league/">ДЕТСКАЯ ЛИГА EASY GAME LEAGUE <time datetime="2026-09-19">19 сентября 2026</time></a></li>
-    <li><a href="/event/77b34d4d-ac88-4a36-bd5f-348358cc41d7/gotovy-proverit-naskolko-khorosho-vy-znaete-muzyku/">Готовы проверить, насколько хорошо вы знаете музыку? <time datetime="2026-09-19">19 сентября 2026</time></a></li>
-    <li><a href="/event/355e8873-5414-468c-aaf8-dcb2497536c5/finansovaya-igra/">ФИНАНСОВАЯ ИГРА <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/c54f1a94-5dce-418d-80e1-f5feaa48cd08/detskaya-igroteka-nastolnykh-igr/">ДЕТСКАЯ ИГРОТЕКА НАСТОЛЬНЫХ ИГР <time datetime="2026-09-19">19 сентября 2026</time></a></li>
+    <li><a href="/event/d08c3b79-6d68-43a3-9eef-f53936b3b94d/shakhmaty-dlya-vzroslykh-i-podrostkov-12/">ШАХМАТЫ ДЛЯ ВЗРОСЛЫХ И ПОДРОСТКОВ 12 <time datetime="2026-09-19">19 сентября 2026</time></a></li>
     <li><a href="/event/61875057-0c8b-424d-8b0a-890efb17452d/traditsionnaya-klassika-intellektualnoy-igry-kviz-pliz-v-voskresene-20-sentyabrya-v-19-00-v-restorane-la-villa/">Традиционная классика интеллектуальной игры Квиз, плиз! в воскресенье 20 сентября в 19:00 в ресторане La Villa <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/355e8873-5414-468c-aaf8-dcb2497536c5/finansovaya-igra/">ФИНАНСОВАЯ ИГРА <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/83535187-d3d3-4813-acaf-3b69135f1c5d/rolevaya-gorodskaya-mafiya-v-nyachange/">РОЛЕВАЯ (городская) МАФИЯ В НЯЧАНГЕ <time datetime="2026-09-25">25 сентября 2026</time></a></li>
   </ul>
 </div>
-
+
   </body>
 </html>

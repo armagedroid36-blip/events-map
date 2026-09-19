@@ -2,12 +2,35 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK"></script>
+    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadGtag, { timeout: 3000 });
+        } else {
+          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+          window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+      })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -57,7 +80,7 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-IYHe8Yl2.js"></script>
+    <script type="module" crossorigin src="/assets/index-D9U_47z-.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
     <link rel="modulepreload" crossorigin href="/assets/config-WzI1LDIn.js">
@@ -68,7 +91,7 @@
     <link rel="modulepreload" crossorigin href="/assets/seo-Bg1yZhWU.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DK2BLgyC.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-BZnbJWdE.css">
       <meta name="description" content="Нячанг, 26 сентября 2026. 🌴 КУДА НА ВЫХОДНЫЕ? В субботу, 26 сентября едем отдыхать всей компанией на пляж! 🚐☀️ 🗓️ План дня 🕘 09:15–09:30 — встречаемся у…" />
     <link rel="canonical" href="https://mypins.site/event/2f4a605f-5ee5-4697-8d22-83f0b39989b4/kuda-na-vykhodnye/" />
     <meta property="og:site_name" content="MyPins" />
@@ -123,13 +146,13 @@
   <h2>Похожие события</h2>
   <ul>
     <li><a href="/event/fbd307d9-a53c-4e52-8e6f-79670bc89e7b/a-poekhali-vmeste-v/">А поехали вместе в <time datetime="2026-09-19">19 сентября 2026</time></a></li>
-    <li><a href="/event/8dd674ba-8864-4369-bd08-7c72a8da9090/pokhod-na-vershinu-cherez-dzhungli-i-gornuyu-reku-vyshe-gor/">Поход на вершину через джунгли и горную реку «Выше Гор» <time datetime="2026-09-19">19 сентября 2026</time></a></li>
     <li><a href="/event/ce0492a7-e6c6-49e8-a171-ac86bf592a3a/puteshestvie-v-zapovednik-n-i-ch-a/">Путешествие в заповедник Núi Chúa <time datetime="2026-09-19">19 сентября 2026</time></a></li>
+    <li><a href="/event/8dd674ba-8864-4369-bd08-7c72a8da9090/pokhod-na-vershinu-cherez-dzhungli-i-gornuyu-reku-vyshe-gor/">Поход на вершину через джунгли и горную реку «Выше Гор» <time datetime="2026-09-19">19 сентября 2026</time></a></li>
     <li><a href="/event/8f79d7a4-b226-41ff-8955-9f88bfaf49bf/dalat-19-20-sentyabrya/">ДАЛАТ 19-20 сентября! <time datetime="2026-09-20">20 сентября 2026</time></a></li>
-    <li><a href="/event/80cf4fcd-7dda-48d7-a73b-0654e262afed/labirint-drakona-ferma-s-barashkami-i-plyazhi-kamrani/">Лабиринт дракона, ферма с барашками и пляжи Камрани <time datetime="2026-09-20">20 сентября 2026</time></a></li>
     <li><a href="/event/1bf87d8e-c964-4300-a8b0-62b98306d2d4/puteshestvie-na-poluostrov-h-n-h-o/">Путешествие на полуостров Hòn Hèo <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/80cf4fcd-7dda-48d7-a73b-0654e262afed/labirint-drakona-ferma-s-barashkami-i-plyazhi-kamrani/">Лабиринт дракона, ферма с барашками и пляжи Камрани <time datetime="2026-09-20">20 сентября 2026</time></a></li>
   </ul>
 </div>
-
+
   </body>
 </html>

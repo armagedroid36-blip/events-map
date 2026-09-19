@@ -2,12 +2,35 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK"></script>
+    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadGtag, { timeout: 3000 });
+        } else {
+          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+          window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+      })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -57,7 +80,7 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-IYHe8Yl2.js"></script>
+    <script type="module" crossorigin src="/assets/index-D9U_47z-.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
     <link rel="modulepreload" crossorigin href="/assets/config-WzI1LDIn.js">
@@ -68,7 +91,7 @@
     <link rel="modulepreload" crossorigin href="/assets/seo-Bg1yZhWU.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DK2BLgyC.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-BZnbJWdE.css">
       <meta name="description" content="Bali, September 11, 2026. Devdan Show theatrical performance at Bali Nusa Dua Theatre. The show runs 4 times a week: on Mondays, Wednesdays, Fridays, and…" />
     <link rel="canonical" href="https://mypins.site/en/event/60aed6ec-ad4b-4ad1-bc41-8ec33199dd18/devdan-show/" />
     <meta property="og:site_name" content="MyPins" />
@@ -98,13 +121,13 @@
   <h2>Similar events</h2>
   <ul>
     <li><a href="/en/event/a92f4b68-854e-4345-b3af-4cc5855a8012/kecak-fire-dance-at-uluwatu-temple/">Kecak Fire Dance at Uluwatu Temple <time datetime="2026-09-19">September 19, 2026</time></a></li>
-    <li><a href="/en/event/e80e6f75-3afd-4173-828c-a05191a6708c/traditional-dance-at-ubud-palace/">Traditional dance at Ubud Palace <time datetime="2026-09-19">September 19, 2026</time></a></li>
-    <li><a href="/en/event/905bb225-bc9c-46ea-9c5c-12da83fc1a11/traditional-dance-at-bale-banjar-ubud-kelod/">Traditional dance at Bale Banjar Ubud Kelod <time datetime="2026-09-19">September 19, 2026</time></a></li>
     <li><a href="/en/event/3ef4300d-9838-466e-9c2b-a321bab1fff7/kecak-dance-at-padang-tegal-kaja/">Kecak &amp; dance at Padang Tegal Kaja <time datetime="2026-09-19">September 19, 2026</time></a></li>
     <li><a href="/en/event/af63e539-e913-4ca3-a010-e7d3117a1975/traditional-dance-at-pura-saraswati/">Traditional dance at Pura Saraswati <time datetime="2026-09-19">September 19, 2026</time></a></li>
+    <li><a href="/en/event/905bb225-bc9c-46ea-9c5c-12da83fc1a11/traditional-dance-at-bale-banjar-ubud-kelod/">Traditional dance at Bale Banjar Ubud Kelod <time datetime="2026-09-19">September 19, 2026</time></a></li>
+    <li><a href="/en/event/e80e6f75-3afd-4173-828c-a05191a6708c/traditional-dance-at-ubud-palace/">Traditional dance at Ubud Palace <time datetime="2026-09-19">September 19, 2026</time></a></li>
     <li><a href="/en/event/5cedeb4c-b109-4848-bedd-160690d80c27/arma-dance-performance/">ARMA Dance Performance <time datetime="2026-09-19">September 19, 2026</time></a></li>
   </ul>
 </div>
-
+
   </body>
 </html>

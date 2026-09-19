@@ -2,12 +2,35 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK"></script>
+    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadGtag, { timeout: 3000 });
+        } else {
+          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+          window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+      })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -57,7 +80,7 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-IYHe8Yl2.js"></script>
+    <script type="module" crossorigin src="/assets/index-D9U_47z-.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
     <link rel="modulepreload" crossorigin href="/assets/config-WzI1LDIn.js">
@@ -68,7 +91,7 @@
     <link rel="modulepreload" crossorigin href="/assets/seo-Bg1yZhWU.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DK2BLgyC.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-BZnbJWdE.css">
       <meta name="description" content="Da Nang events map for expats and travellers: parties, concerts, yoga and meetups with dates, venues and prices." />
     <link rel="canonical" href="https://mypins.site/en/da-nang/" />
     <meta property="og:site_name" content="MyPins" />
@@ -102,10 +125,10 @@
   <p class="seo-updated">Updated: <time datetime="2026-09-19">September 19, 2026</time></p>
   <h2>Upcoming events in Da Nang</h2>
   <ul>
-    <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/513d9371-e071-4d9b-8489-42d2af1e2ee9/ao-dai-show-da-nang/">Ao Dai Show Da Nang</a> — <span>400000 VND</span></li>
     <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/fdf56fce-c81d-4a79-bee3-c8664127c1b0/charming-danang-show/">Charming Danang Show</a></li>
-    <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/44e749b9-fe41-41af-a5b7-c01c0e42d2af/english-expands-boundaries-but-sometimes-they-need-to-be-defended-aggression-expressed-teeth-shown-u-know/">English expands boundaries, but sometimes they need to be defended, aggression expressed, teeth shown, u know</a> — <span>150000 VND</span></li>
+    <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/513d9371-e071-4d9b-8489-42d2af1e2ee9/ao-dai-show-da-nang/">Ao Dai Show Da Nang</a> — <span>400000 VND</span></li>
     <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/4d4bee39-6d16-4f26-9d02-e04c4b33440b/quiz-imix-this-saturday/">QUIZ IMIX THIS SATURDAY</a> — <span>200000 VND</span></li>
+    <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/44e749b9-fe41-41af-a5b7-c01c0e42d2af/english-expands-boundaries-but-sometimes-they-need-to-be-defended-aggression-expressed-teeth-shown-u-know/">English expands boundaries, but sometimes they need to be defended, aggression expressed, teeth shown, u know</a> — <span>150000 VND</span></li>
     <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/e37928a9-c089-4eea-b2a4-7779e1164f43/gitarnik-30/">GITARNIK 30</a> — <span>50000 VND</span></li>
     <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/e4b4d1bb-5528-4b5b-b9be-9d03c8414df2/guitar-night-31/">GUITAR NIGHT 31</a> — <span>50000 VND</span></li>
     <li><time datetime="2026-09-19">September 19, 2026</time> — <a href="https://mypins.site/en/event/c6cd247f-6dfb-4c85-b6b6-1e65d5588abf/tomorrow-board-game-night-at-restaurant-369/">Tomorrow board game night at restaurant 369!</a> — <span>Free</span></li>
@@ -116,8 +139,8 @@
     <details><summary>What to do in Da Nang today or tomorrow?</summary><p>In the date filter choose “Today” or “Tomorrow” to see events for those days. For the weekend, browse the whole map — there are more events to choose from.</p></details>
     <details><summary>How much do events in Da Nang cost?</summary><p>Every event card shows the price: free, donation or an amount in the event&#39;s currency. The price filter can show only free events.</p></details>
   <h2>Categories in Da Nang</h2>
-  <p><a href="/en/da-nang/games/">🎲 Games &amp; Quizzes</a> · <a href="/en/da-nang/meetup/">🤝 Meetups &amp; Networking</a> · <a href="/en/da-nang/wellness/">🧘 Yoga &amp; Wellness</a> · <a href="/en/da-nang/workshop/">🎨 Workshops</a></p>
+  <p><a href="/en/da-nang/cinema/">🎬 Cinema Club</a> · <a href="/en/da-nang/games/">🎲 Games &amp; Quizzes</a> · <a href="/en/da-nang/meetup/">🤝 Meetups &amp; Networking</a> · <a href="/en/da-nang/wellness/">🧘 Yoga &amp; Wellness</a> · <a href="/en/da-nang/workshop/">🎨 Workshops</a></p>
 </div>
-
+
   </body>
 </html>

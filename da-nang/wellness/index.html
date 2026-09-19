@@ -2,12 +2,35 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK"></script>
+    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadGtag, { timeout: 3000 });
+        } else {
+          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+          window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+      })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -57,7 +80,7 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-IYHe8Yl2.js"></script>
+    <script type="module" crossorigin src="/assets/index-D9U_47z-.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
     <link rel="modulepreload" crossorigin href="/assets/config-WzI1LDIn.js">
@@ -68,21 +91,21 @@
     <link rel="modulepreload" crossorigin href="/assets/seo-Bg1yZhWU.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DK2BLgyC.css">
-      <meta name="description" content="Йога и здоровье в Дананге: 12 событий и афиша мероприятий с датами, местами и ценами. Афиша обновляется каждый день, а события публикуют сами организаторы." />
+    <link rel="stylesheet" crossorigin href="/assets/index-BZnbJWdE.css">
+      <meta name="description" content="Йога и здоровье в Дананге: 13 событий и афиша мероприятий с датами, местами и ценами. Афиша обновляется каждый день, а события публикуют сами организаторы." />
     <link rel="canonical" href="https://mypins.site/da-nang/wellness/" />
     <meta property="og:site_name" content="MyPins" />
     <meta property="og:locale" content="ru_RU" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Йога и здоровье в Дананге: афиша и куда сходить | MyPins" />
-    <meta property="og:description" content="Йога и здоровье в Дананге: 12 событий и афиша мероприятий с датами, местами и ценами. Афиша обновляется каждый день, а события публикуют сами организаторы." />
+    <meta property="og:description" content="Йога и здоровье в Дананге: 13 событий и афиша мероприятий с датами, местами и ценами. Афиша обновляется каждый день, а события публикуют сами организаторы." />
     <meta property="og:url" content="https://mypins.site/da-nang/wellness/" />
     <meta property="og:image" content="https://mypins.site/logo.png" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="alternate" hreflang="ru" href="https://mypins.site/da-nang/wellness/" />
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/da-nang/wellness/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","url":"https://mypins.site/da-nang/wellness/","name":"Йога и здоровье в Дананге: афиша и мероприятия","inLanguage":"ru","isPartOf":{"@type":"WebSite","name":"MyPins","url":"https://mypins.site/"}},{"@type":"ItemList","numberOfItems":12,"itemListOrder":"https://schema.org/ItemListOrderAscending","itemListElement":[{"@type":"ListItem","position":1,"name":"Медитация: «Погружение в Священное поле Сердца».","url":"https://mypins.site/event/5fe6f4f0-e73a-432a-8ea8-9a77ff2fd715/meditatsiya-pogruzhenie-v-svyashchennoe-pole-serdtsa/"},{"@type":"ListItem","position":2,"name":"12 ЧАСОВ БЕЗ ТЕЛЕФОНА.","url":"https://mypins.site/event/c330a18a-5234-41a3-984f-67483e1507c8/12-chasov-bez-telefona/"},{"@type":"ListItem","position":3,"name":"20 человек приехали сюда по разным причинам","url":"https://mypins.site/event/cf6153b3-8b29-44ab-882f-6925179b9e39/20-chelovek-priekhali-syuda-po-raznym-prichinam/"},{"@type":"ListItem","position":4,"name":"Тема: ЙОГА с НУЛЯ","url":"https://mypins.site/event/1c9c0924-120e-4659-b166-c680eb1605ea/tema-yoga-s-nulya/"},{"@type":"ListItem","position":5,"name":"УРОК ЙОГИ «ЗДОРОВОЕ ТЕЛО ЧЕРЕЗ ПРОСТЫЕ ДВИЖЕНИЯ»","url":"https://mypins.site/event/cacd1652-92b7-481b-8cea-f9bd45241b95/urok-yogi-zdorovoe-telo-cherez-prostye-dvizheniya/"},{"@type":"ListItem","position":6,"name":"ЦИГУН В УЮТНОМ ЗАЛЕ","url":"https://mypins.site/event/0878b6c1-effe-4763-9dec-cd356f7c1b44/tsigun-v-uyutnom-zale/"},{"@type":"ListItem","position":7,"name":"ЦИГУН НА ПЛЯЖЕ","url":"https://mypins.site/event/38e4a54a-6454-4a98-a74f-71f289345653/tsigun-na-plyazhe/"},{"@type":"ListItem","position":8,"name":"ЖЕНСКИЙ КРУГ В ДАНАНГЕ 21 СЕНТЯБРЯ (женское поддерживающее пространство без конкуренции)","url":"https://mypins.site/event/2b18f569-d40e-401a-b505-5627259344c8/zhenskiy-krug-v-danange-21-sentyabrya-zhenskoe-podderzhivayushchee-prostranstvo-bez-konkurentsii/"},{"@type":"ListItem","position":9,"name":"Утренние и вечерние классы Хатха-йоги","url":"https://mypins.site/event/155b092f-7c75-47ca-8f5f-b566e7d30327/utrennie-i-vechernie-klassy-khatkha-yogi/"},{"@type":"ListItem","position":10,"name":"Хатха-йога и дыхательная практика","url":"https://mypins.site/event/f9c592f6-bc48-4cef-b17c-b94dcde7616c/khatkha-yoga-i-dykhatelnaya-praktika/"},{"@type":"ListItem","position":11,"name":"Хатха-йога в стиле FYSM","url":"https://mypins.site/event/d7340acc-fe11-4335-bcde-2dbe1688ef7e/khatkha-yoga-v-stile-fysm/"},{"@type":"ListItem","position":12,"name":"Утренняя Mindfulness-медитация","url":"https://mypins.site/event/97d35924-6ac8-42d2-b325-a0016c41b67c/utrennyaya-mindfulness-meditatsiya/"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Дананг","item":"https://mypins.site/da-nang/"},{"@type":"ListItem","position":3,"name":"Йога и здоровье","item":"https://mypins.site/da-nang/wellness/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","url":"https://mypins.site/da-nang/wellness/","name":"Йога и здоровье в Дананге: афиша и мероприятия","inLanguage":"ru","isPartOf":{"@type":"WebSite","name":"MyPins","url":"https://mypins.site/"}},{"@type":"ItemList","numberOfItems":13,"itemListOrder":"https://schema.org/ItemListOrderAscending","itemListElement":[{"@type":"ListItem","position":1,"name":"Медитация: «Погружение в Священное поле Сердца».","url":"https://mypins.site/event/5fe6f4f0-e73a-432a-8ea8-9a77ff2fd715/meditatsiya-pogruzhenie-v-svyashchennoe-pole-serdtsa/"},{"@type":"ListItem","position":2,"name":"20 человек приехали сюда по разным причинам","url":"https://mypins.site/event/cf6153b3-8b29-44ab-882f-6925179b9e39/20-chelovek-priekhali-syuda-po-raznym-prichinam/"},{"@type":"ListItem","position":3,"name":"12 ЧАСОВ БЕЗ ТЕЛЕФОНА.","url":"https://mypins.site/event/c330a18a-5234-41a3-984f-67483e1507c8/12-chasov-bez-telefona/"},{"@type":"ListItem","position":4,"name":"Тема: ЙОГА с НУЛЯ","url":"https://mypins.site/event/1c9c0924-120e-4659-b166-c680eb1605ea/tema-yoga-s-nulya/"},{"@type":"ListItem","position":5,"name":"УРОК ЙОГИ «ЗДОРОВОЕ ТЕЛО ЧЕРЕЗ ПРОСТЫЕ ДВИЖЕНИЯ»","url":"https://mypins.site/event/cacd1652-92b7-481b-8cea-f9bd45241b95/urok-yogi-zdorovoe-telo-cherez-prostye-dvizheniya/"},{"@type":"ListItem","position":6,"name":"ЦИГУН В УЮТНОМ ЗАЛЕ","url":"https://mypins.site/event/0878b6c1-effe-4763-9dec-cd356f7c1b44/tsigun-v-uyutnom-zale/"},{"@type":"ListItem","position":7,"name":"ЖЕНСКИЙ КРУГ В ДАНАНГЕ 21 СЕНТЯБРЯ (женское поддерживающее пространство без конкуренции)","url":"https://mypins.site/event/2b18f569-d40e-401a-b505-5627259344c8/zhenskiy-krug-v-danange-21-sentyabrya-zhenskoe-podderzhivayushchee-prostranstvo-bez-konkurentsii/"},{"@type":"ListItem","position":8,"name":"ЦИГУН НА ПЛЯЖЕ","url":"https://mypins.site/event/38e4a54a-6454-4a98-a74f-71f289345653/tsigun-na-plyazhe/"},{"@type":"ListItem","position":9,"name":"Утренние и вечерние классы Хатха-йоги","url":"https://mypins.site/event/155b092f-7c75-47ca-8f5f-b566e7d30327/utrennie-i-vechernie-klassy-khatkha-yogi/"},{"@type":"ListItem","position":10,"name":"Хатха-йога и дыхательная практика","url":"https://mypins.site/event/f9c592f6-bc48-4cef-b17c-b94dcde7616c/khatkha-yoga-i-dykhatelnaya-praktika/"},{"@type":"ListItem","position":11,"name":"Хатха-йога в стиле FYSM","url":"https://mypins.site/event/d7340acc-fe11-4335-bcde-2dbe1688ef7e/khatkha-yoga-v-stile-fysm/"},{"@type":"ListItem","position":12,"name":"Утренняя Mindfulness-медитация","url":"https://mypins.site/event/97d35924-6ac8-42d2-b325-a0016c41b67c/utrennyaya-mindfulness-meditatsiya/"},{"@type":"ListItem","position":13,"name":"ХАТХА-ЙОГА В УЮТНОЙ СТУДИИ ДАНАНГА","url":"https://mypins.site/event/cfb3e235-4878-4440-83e8-2b6ca9902441/khatkha-yoga-v-uyutnoy-studii-dananga/"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Дананг","item":"https://mypins.site/da-nang/"},{"@type":"ListItem","position":3,"name":"Йога и здоровье","item":"https://mypins.site/da-nang/wellness/"}]}]}</script>
   </head>
   <body>
     <div id="root"></div>
@@ -91,28 +114,29 @@
     <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/da-nang/">Дананг</a> <span aria-hidden="true">›</span> <span>Йога и здоровье</span></p>
   </nav>
   <h1>Йога и здоровье в Дананге: афиша и мероприятия</h1>
-  <p>Йога и здоровье в Дананге: 12 событий в афише. Йога и здоровье — утренние практики, дыхательные сессии, звуковые ванны и ретриты. Дананг — компактный город у моря. Чаще всего события проходят здесь: Загородный Eco-Sport Resort, Eco-Sport Resort, YOGA Club Da Nang. Первое событие списка — 19 сентября 2026, последнее — 24 сентября 2026. Ближайшие события: «Медитация: «Погружение в Священное поле…» — 19 сентября, «12 ЧАСОВ БЕЗ ТЕЛЕФОНА.» — 20 сентября (Загородный Eco-Sport Resort), «20 человек приехали сюда по разным причинам» — 20 сентября (Eco-Sport Resort), «Тема: ЙОГА с НУЛЯ» — 20 сентября (YOGA Club Da Nang), «УРОК ЙОГИ «ЗДОРОВОЕ ТЕЛО ЧЕРЕЗ ПРОСТЫЕ…» — 21 сентября (JK Dance &amp; Coffee), «ЦИГУН В УЮТНОМ ЗАЛЕ» — 21 сентября, «ЦИГУН НА ПЛЯЖЕ» — 21 сентября, «ЖЕНСКИЙ КРУГ В ДАНАНГЕ 21 СЕНТЯБРЯ (женское…» — 21 сентября (Moon Hotel). Подробности: ✨Медитация: «Погружение в Священное поле Сердца». Эта практика позволит вам убрать беспокойные мысли, отпустить неприятные ощущения в теле, убрать… Билеты стоят 100 000–1 500 000 USD. 3 из 12 событий бесплатные или за донат.</p>
+  <p>Йога и здоровье в Дананге: 13 событий в афише. Йога и здоровье — утренние практики, дыхательные сессии, звуковые ванны и ретриты. Дананг — компактный город у моря. Чаще всего события проходят здесь: Eco-Sport Resort, Загородный Eco-Sport Resort, YOGA Club Da Nang. Первое событие списка — 19 сентября 2026, последнее — 25 сентября 2026. Ближайшие события: «Медитация: «Погружение в Священное поле…» — 19 сентября, «20 человек приехали сюда по разным причинам» — 20 сентября (Eco-Sport Resort), «12 ЧАСОВ БЕЗ ТЕЛЕФОНА.» — 20 сентября (Загородный Eco-Sport Resort), «Тема: ЙОГА с НУЛЯ» — 20 сентября (YOGA Club Da Nang), «УРОК ЙОГИ «ЗДОРОВОЕ ТЕЛО ЧЕРЕЗ ПРОСТЫЕ…» — 21 сентября (JK Dance &amp; Coffee), «ЦИГУН В УЮТНОМ ЗАЛЕ» — 21 сентября, «ЖЕНСКИЙ КРУГ В ДАНАНГЕ 21 СЕНТЯБРЯ (женское…» — 21 сентября (Moon Hotel), «ЦИГУН НА ПЛЯЖЕ» — 21 сентября. Подробности: ✨Медитация: «Погружение в Священное поле Сердца». Эта практика позволит вам убрать беспокойные мысли, отпустить неприятные ощущения в теле, убрать… Билеты стоят 100 000–1 500 000 USD. 4 из 13 событий бесплатные или за донат.</p>
   <p class="seo-updated">Афиша обновлена: <time datetime="2026-09-19">19 сентября 2026</time></p>
   <h2>Ближайшие события: Йога и здоровье</h2>
   <ul>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/5fe6f4f0-e73a-432a-8ea8-9a77ff2fd715/meditatsiya-pogruzhenie-v-svyashchennoe-pole-serdtsa/">Медитация: «Погружение в Священное поле Сердца».</a> — <span>Донат</span></li>
-    <li><time datetime="2026-09-20">20 сентября 2026</time> — <a href="https://mypins.site/event/c330a18a-5234-41a3-984f-67483e1507c8/12-chasov-bez-telefona/">12 ЧАСОВ БЕЗ ТЕЛЕФОНА.</a> — <span>1500000 VND</span></li>
     <li><time datetime="2026-09-20">20 сентября 2026</time> — <a href="https://mypins.site/event/cf6153b3-8b29-44ab-882f-6925179b9e39/20-chelovek-priekhali-syuda-po-raznym-prichinam/">20 человек приехали сюда по разным причинам</a> — <span>1500000 VND</span></li>
+    <li><time datetime="2026-09-20">20 сентября 2026</time> — <a href="https://mypins.site/event/c330a18a-5234-41a3-984f-67483e1507c8/12-chasov-bez-telefona/">12 ЧАСОВ БЕЗ ТЕЛЕФОНА.</a> — <span>1500000 VND</span></li>
     <li><time datetime="2026-09-20">20 сентября 2026</time> — <a href="https://mypins.site/event/1c9c0924-120e-4659-b166-c680eb1605ea/tema-yoga-s-nulya/">Тема: ЙОГА с НУЛЯ</a> — <span>Донат</span></li>
     <li><time datetime="2026-09-21">21 сентября 2026</time> — <a href="https://mypins.site/event/cacd1652-92b7-481b-8cea-f9bd45241b95/urok-yogi-zdorovoe-telo-cherez-prostye-dvizheniya/">УРОК ЙОГИ «ЗДОРОВОЕ ТЕЛО ЧЕРЕЗ ПРОСТЫЕ ДВИЖЕНИЯ»</a> — <span>100000 VND</span></li>
     <li><time datetime="2026-09-21">21 сентября 2026</time> — <a href="https://mypins.site/event/0878b6c1-effe-4763-9dec-cd356f7c1b44/tsigun-v-uyutnom-zale/">ЦИГУН В УЮТНОМ ЗАЛЕ</a> — <span>200000 VND</span></li>
-    <li><time datetime="2026-09-21">21 сентября 2026</time> — <a href="https://mypins.site/event/38e4a54a-6454-4a98-a74f-71f289345653/tsigun-na-plyazhe/">ЦИГУН НА ПЛЯЖЕ</a> — <span>200000 VND</span></li>
     <li><time datetime="2026-09-21">21 сентября 2026</time> — <a href="https://mypins.site/event/2b18f569-d40e-401a-b505-5627259344c8/zhenskiy-krug-v-danange-21-sentyabrya-zhenskoe-podderzhivayushchee-prostranstvo-bez-konkurentsii/">ЖЕНСКИЙ КРУГ В ДАНАНГЕ 21 СЕНТЯБРЯ (женское поддерживающее пространство без конкуренции)</a> — <span>300000 VND</span></li>
+    <li><time datetime="2026-09-21">21 сентября 2026</time> — <a href="https://mypins.site/event/38e4a54a-6454-4a98-a74f-71f289345653/tsigun-na-plyazhe/">ЦИГУН НА ПЛЯЖЕ</a> — <span>200000 VND</span></li>
     <li><time datetime="2026-09-22">22 сентября 2026</time> — <a href="https://mypins.site/event/155b092f-7c75-47ca-8f5f-b566e7d30327/utrennie-i-vechernie-klassy-khatkha-yogi/">Утренние и вечерние классы Хатха-йоги</a> — <span>200000 VND</span></li>
     <li><time datetime="2026-09-22">22 сентября 2026</time> — <a href="https://mypins.site/event/f9c592f6-bc48-4cef-b17c-b94dcde7616c/khatkha-yoga-i-dykhatelnaya-praktika/">Хатха-йога и дыхательная практика</a> — <span>Донат</span></li>
     <li><time datetime="2026-09-22">22 сентября 2026</time> — <a href="https://mypins.site/event/d7340acc-fe11-4335-bcde-2dbe1688ef7e/khatkha-yoga-v-stile-fysm/">Хатха-йога в стиле FYSM</a> — <span>200000 VND</span></li>
     <li><time datetime="2026-09-24">24 сентября 2026</time> — <a href="https://mypins.site/event/97d35924-6ac8-42d2-b325-a0016c41b67c/utrennyaya-mindfulness-meditatsiya/">Утренняя Mindfulness-медитация</a> — <span>150000 VND</span></li>
+    <li><time datetime="2026-09-25">25 сентября 2026</time> — <a href="https://mypins.site/event/cfb3e235-4878-4440-83e8-2b6ca9902441/khatkha-yoga-v-uyutnoy-studii-dananga/">ХАТХА-ЙОГА В УЮТНОЙ СТУДИИ ДАНАНГА</a> — <span>Донат</span></li>
   </ul>
   <h2>Частые вопросы</h2>
-    <details><summary>Что сейчас идёт в категории «Йога и здоровье» в Дананге?</summary><p>Сейчас 12 событий: от «Медитация: «Погружение в Священное поле…» 19 сентября до «Утренняя Mindfulness-медитация» 24 сентября.</p></details>
-    <details><summary>Когда ближайшее событие в категории «Йога и здоровье»?</summary><p>«Медитация: «Погружение в Священное поле…» — 19 сентября, Загородный Eco-Sport Resort.</p></details>
-    <details><summary>Какие цены на билеты?</summary><p>От 100 000 до 1 500 000 USD; 3 из 12 событий бесплатные или за донат.</p></details>
+    <details><summary>Что сейчас идёт в категории «Йога и здоровье» в Дананге?</summary><p>Сейчас 13 событий: от «Медитация: «Погружение в Священное поле…» 19 сентября до «ХАТХА-ЙОГА В УЮТНОЙ СТУДИИ ДАНАНГА» 25 сентября.</p></details>
+    <details><summary>Когда ближайшее событие в категории «Йога и здоровье»?</summary><p>«Медитация: «Погружение в Священное поле…» — 19 сентября, Eco-Sport Resort.</p></details>
+    <details><summary>Какие цены на билеты?</summary><p>От 100 000 до 1 500 000 USD; 4 из 13 событий бесплатные или за донат.</p></details>
 </div>
-
+
   </body>
 </html>

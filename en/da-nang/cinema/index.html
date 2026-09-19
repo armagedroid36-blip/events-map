@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadGtag, { timeout: 3000 });
+        } else {
+          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+          window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cinema Club in Da Nang: what&#39;s on | MyPins</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-D9U_47z-.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-WzI1LDIn.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CHoEJt1x.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/address-Dnt1XBIP.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Bg1yZhWU.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BZnbJWdE.css">
+      <meta name="description" content="Cinema Club in Da Nang: 3 events and what is on this month. The map is updated every day by the organizers themselves. Pick a date and a venue on the map." />
+    <link rel="canonical" href="https://mypins.site/en/da-nang/cinema/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Cinema Club in Da Nang: what&#39;s on | MyPins" />
+    <meta property="og:description" content="Cinema Club in Da Nang: 3 events and what is on this month. The map is updated every day by the organizers themselves. Pick a date and a venue on the map." />
+    <meta property="og:url" content="https://mypins.site/en/da-nang/cinema/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/da-nang/cinema/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/da-nang/cinema/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","url":"https://mypins.site/en/da-nang/cinema/","name":"Cinema Club in Da Nang: what's on","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"MyPins","url":"https://mypins.site/en/"}},{"@type":"ItemList","numberOfItems":3,"itemListOrder":"https://schema.org/ItemListOrderAscending","itemListElement":[{"@type":"ListItem","position":1,"name":"On Monday at Show n Tell Cinema Club, Robert is showing \"Rashomon\" (Rashomon, 1950)!","url":"https://mypins.site/en/event/4c5ffe9e-76ac-4e26-b032-1d7fa13eedd4/on-monday-at-show-n-tell-cinema-club-robert-is-showing-rashomon-rashomon-1950/"},{"@type":"ListItem","position":2,"name":"SEMANTIC MOVIE NIGHT","url":"https://mypins.site/en/event/63610477-0ccf-4f9b-aa6b-eb50ab5070a5/semantic-movie-night/"},{"@type":"ListItem","position":3,"name":"FRIDAY - MEANINGFUL MOVIE NIGHT","url":"https://mypins.site/en/event/431f4e1d-a132-4c0e-b142-580a37dde0d6/friday-meaningful-movie-night/"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Da Nang","item":"https://mypins.site/en/da-nang/"},{"@type":"ListItem","position":3,"name":"Cinema Club","item":"https://mypins.site/en/da-nang/cinema/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-category-block">
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/da-nang/">Da Nang</a> <span aria-hidden="true">›</span> <span>Cinema Club</span></p>
+  </nav>
+  <h1>Cinema Club in Da Nang: what&#39;s on</h1>
+  <p>Cinema Club in Da Nang: 3 events on the map. Cinema clubs: classics and new releases, documentaries and after-screening talks. Da Nang events cluster in the centre, My An and the riverside. You will find them at The Workshop, Tổ càphê. The next one is on September 21, 2026, the last one in this list on September 25, 2026. Coming up: “On Monday at Show n Tell Cinema Club, Robert…” on September 21 (The Workshop), “SEMANTIC MOVIE NIGHT” on September 25 (Tổ càphê), “FRIDAY - MEANINGFUL MOVIE NIGHT” on September 25 (Tổ càphê). Details: 🎬 On Monday at Show’n’Tell Cinema Club, Robert is screening “Rashomon” (Rashomon, 1950)! ✨ This is the first Akira Kurosawa film we’re showing at… The ticket price is 150 000 USD; 1 of 3 events are free or donation-based.</p>
+  <p class="seo-updated">Updated: <time datetime="2026-09-19">September 19, 2026</time></p>
+  <h2>Upcoming events: Cinema Club</h2>
+  <ul>
+    <li><time datetime="2026-09-21">September 21, 2026</time> — <a href="https://mypins.site/en/event/4c5ffe9e-76ac-4e26-b032-1d7fa13eedd4/on-monday-at-show-n-tell-cinema-club-robert-is-showing-rashomon-rashomon-1950/">On Monday at Show n Tell Cinema Club, Robert is showing &quot;Rashomon&quot; (Rashomon, 1950)!</a> — <span>Donation</span></li>
+    <li><time datetime="2026-09-25">September 25, 2026</time> — <a href="https://mypins.site/en/event/63610477-0ccf-4f9b-aa6b-eb50ab5070a5/semantic-movie-night/">SEMANTIC MOVIE NIGHT</a> — <span>150000 VND</span></li>
+    <li><time datetime="2026-09-25">September 25, 2026</time> — <a href="https://mypins.site/en/event/431f4e1d-a132-4c0e-b142-580a37dde0d6/friday-meaningful-movie-night/">FRIDAY - MEANINGFUL MOVIE NIGHT</a> — <span>150000 VND</span></li>
+  </ul>
+  <h2>FAQ</h2>
+    <details><summary>How many Cinema Club events can I find in Da Nang?</summary><p>There are 3 events: from “On Monday at Show n Tell Cinema Club, Robert…” on September 21 to “FRIDAY - MEANINGFUL MOVIE NIGHT” on September 25.</p></details>
+    <details><summary>What is the nearest Cinema Club event?</summary><p>“On Monday at Show n Tell Cinema Club, Robert…” on September 21, The Workshop.</p></details>
+    <details><summary>How much do tickets cost?</summary><p>150 000 USD; 1 of 3 events are free or donation-based.</p></details>
+</div>
+
+  </body>
+</html>

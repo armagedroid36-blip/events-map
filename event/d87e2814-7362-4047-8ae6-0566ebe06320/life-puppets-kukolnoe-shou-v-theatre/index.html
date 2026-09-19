@@ -2,12 +2,35 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK"></script>
+    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadGtag, { timeout: 3000 });
+        } else {
+          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+          window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+      })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -57,7 +80,7 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-IYHe8Yl2.js"></script>
+    <script type="module" crossorigin src="/assets/index-D9U_47z-.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
     <link rel="modulepreload" crossorigin href="/assets/config-WzI1LDIn.js">
@@ -68,7 +91,7 @@
     <link rel="modulepreload" crossorigin href="/assets/seo-Bg1yZhWU.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DK2BLgyC.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-BZnbJWdE.css">
       <meta name="description" content="Нячанг, 8 сентября 2026. «Живые куклы» (Rối Mơ / Life Puppets) — современное кукольное шоу по мотивам вьетнамского театра воды: необычная сцена, живой оркестр…" />
     <link rel="canonical" href="https://mypins.site/event/d87e2814-7362-4047-8ae6-0566ebe06320/life-puppets-kukolnoe-shou-v-theatre/" />
     <meta property="og:site_name" content="MyPins" />
@@ -102,8 +125,9 @@
     <li><a href="/event/29206756-1a5f-473f-82f2-b5cce7e48767/once-show-v-vinwonders/">Once Show в VinWonders <time datetime="2026-09-19">19 сентября 2026</time></a></li>
     <li><a href="/event/4df7da34-c18c-48ef-962d-db2f7f041a07/chum-show/">Chum Show <time datetime="2026-09-19">19 сентября 2026</time></a></li>
     <li><a href="/event/dd57b8d6-83f4-46d3-8628-bf55a226a4d0/20-sentyabrya-v-18-30-interaktivnyy-shou-spektakl-huntrix-dlya-detey-i-vzroslykh/">20 сентября в 18:30 ИНТЕРАКТИВНЫЙ ШОУ-СПЕКТАКЛЬ HUNTRIX ДЛЯ ДЕТЕЙ И ВЗРОСЛЫХ. <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/f9d4fc49-df46-4dd1-b307-4315a038cd7f/teatr-studiya-shalyapinykh-priglashaet-na-zanyatie/">ТЕАТР-СТУДИЯ ШАЛЯПИНЫХ приглашает на занятие <time datetime="2026-09-25">25 сентября 2026</time></a></li>
   </ul>
 </div>
-
+
   </body>
 </html>

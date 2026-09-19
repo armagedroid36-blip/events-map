@@ -2,12 +2,35 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK"></script>
+    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadGtag, { timeout: 3000 });
+        } else {
+          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+          window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+      })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -57,7 +80,7 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-IYHe8Yl2.js"></script>
+    <script type="module" crossorigin src="/assets/index-D9U_47z-.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
     <link rel="modulepreload" crossorigin href="/assets/config-WzI1LDIn.js">
@@ -68,21 +91,21 @@
     <link rel="modulepreload" crossorigin href="/assets/seo-Bg1yZhWU.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DK2BLgyC.css">
-      <meta name="description" content="Мастер-классы в Нячанге: 7 событий и афиша мероприятий с датами, местами и ценами. Афиша обновляется каждый день, а события публикуют сами организаторы." />
+    <link rel="stylesheet" crossorigin href="/assets/index-BZnbJWdE.css">
+      <meta name="description" content="Мастер-классы в Нячанге: 9 событий и афиша мероприятий с датами, местами и ценами. Афиша обновляется каждый день, а события публикуют сами организаторы." />
     <link rel="canonical" href="https://mypins.site/nha-trang/workshop/" />
     <meta property="og:site_name" content="MyPins" />
     <meta property="og:locale" content="ru_RU" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Мастер-классы в Нячанге: афиша и куда сходить | MyPins" />
-    <meta property="og:description" content="Мастер-классы в Нячанге: 7 событий и афиша мероприятий с датами, местами и ценами. Афиша обновляется каждый день, а события публикуют сами организаторы." />
+    <meta property="og:description" content="Мастер-классы в Нячанге: 9 событий и афиша мероприятий с датами, местами и ценами. Афиша обновляется каждый день, а события публикуют сами организаторы." />
     <meta property="og:url" content="https://mypins.site/nha-trang/workshop/" />
     <meta property="og:image" content="https://mypins.site/logo.png" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="alternate" hreflang="ru" href="https://mypins.site/nha-trang/workshop/" />
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/nha-trang/workshop/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","url":"https://mypins.site/nha-trang/workshop/","name":"Мастер-классы в Нячанге: афиша и мероприятия","inLanguage":"ru","isPartOf":{"@type":"WebSite","name":"MyPins","url":"https://mypins.site/"}},{"@type":"ItemList","numberOfItems":7,"itemListOrder":"https://schema.org/ItemListOrderAscending","itemListElement":[{"@type":"ListItem","position":1,"name":"ВЕСЕЛЫЙ ВЕЧЕР ЗНАКОМСТВ: НАРИСУЙ МЕНЯ.","url":"https://mypins.site/event/de611ab6-0b6f-4ff0-8317-0bea087692f8/veselyy-vecher-znakomstv-narisuy-menya/"},{"@type":"ListItem","position":2,"name":"Субботние рисовашки добрая традиция. Собираемся «девочками» в уютной кафешке, чтобы отдохнуть, порисовать и наполниться.","url":"https://mypins.site/event/86e21a7b-0ac7-46bc-ab78-810d86ac22a7/subbotnie-risovashki-dobraya-traditsiya-sobiraemsya-devochkami-v-uyutnoy-kafeshke-chtoby-otdokhnut-porisovat-i-napolnitsya/"},{"@type":"ListItem","position":3,"name":"МАСТЕР-КЛАСС ПО БЕНТО-ТОРТАМ","url":"https://mypins.site/event/0e6a647a-cd1d-41b3-b12b-00df50758e0e/master-klass-po-bento-tortam/"},{"@type":"ListItem","position":4,"name":"МАСТЕР-КЛАСС ВЕКТОР СУДЬБЫ","url":"https://mypins.site/event/5d6e5190-d9a1-47c0-add7-2b5f2ac9c880/master-klass-vektor-sudby/"},{"@type":"ListItem","position":5,"name":"Дура и Критик.","url":"https://mypins.site/event/6a4d9825-0673-4206-9f3f-680065e42743/dura-i-kritik/"},{"@type":"ListItem","position":6,"name":"Рисование для детей 6 12 лет!","url":"https://mypins.site/event/b7e6025e-631a-4184-94d8-82912269a7a8/risovanie-dlya-detey-6-12-let/"},{"@type":"ListItem","position":7,"name":"НЕЙРОГРАФИКА. ВСЕЛЕННАЯ ЖЕЛАНИЙ","url":"https://mypins.site/event/deca723d-ce60-4b30-bf58-6b12b95682da/neyrografika-vselennaya-zhelaniy/"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"Мастер-классы","item":"https://mypins.site/nha-trang/workshop/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","url":"https://mypins.site/nha-trang/workshop/","name":"Мастер-классы в Нячанге: афиша и мероприятия","inLanguage":"ru","isPartOf":{"@type":"WebSite","name":"MyPins","url":"https://mypins.site/"}},{"@type":"ItemList","numberOfItems":9,"itemListOrder":"https://schema.org/ItemListOrderAscending","itemListElement":[{"@type":"ListItem","position":1,"name":"ВЕСЕЛЫЙ ВЕЧЕР ЗНАКОМСТВ: НАРИСУЙ МЕНЯ.","url":"https://mypins.site/event/de611ab6-0b6f-4ff0-8317-0bea087692f8/veselyy-vecher-znakomstv-narisuy-menya/"},{"@type":"ListItem","position":2,"name":"Субботние рисовашки добрая традиция. Собираемся «девочками» в уютной кафешке, чтобы отдохнуть, порисовать и наполниться.","url":"https://mypins.site/event/86e21a7b-0ac7-46bc-ab78-810d86ac22a7/subbotnie-risovashki-dobraya-traditsiya-sobiraemsya-devochkami-v-uyutnoy-kafeshke-chtoby-otdokhnut-porisovat-i-napolnitsya/"},{"@type":"ListItem","position":3,"name":"МАСТЕР-КЛАСС ПО БЕНТО-ТОРТАМ","url":"https://mypins.site/event/0e6a647a-cd1d-41b3-b12b-00df50758e0e/master-klass-po-bento-tortam/"},{"@type":"ListItem","position":4,"name":"МАСТЕР-КЛАСС ВЕКТОР СУДЬБЫ","url":"https://mypins.site/event/5d6e5190-d9a1-47c0-add7-2b5f2ac9c880/master-klass-vektor-sudby/"},{"@type":"ListItem","position":5,"name":"Дура и Критик.","url":"https://mypins.site/event/6a4d9825-0673-4206-9f3f-680065e42743/dura-i-kritik/"},{"@type":"ListItem","position":6,"name":"СОЗДАЙ УКРАШЕНИЕ","url":"https://mypins.site/event/b8fc8987-13e6-4628-9520-6904aa23cfb1/sozday-ukrashenie/"},{"@type":"ListItem","position":7,"name":"Рисование для детей 6 12 лет!","url":"https://mypins.site/event/b7e6025e-631a-4184-94d8-82912269a7a8/risovanie-dlya-detey-6-12-let/"},{"@type":"ListItem","position":8,"name":"НЕЙРОГРАФИКА. ВСЕЛЕННАЯ ЖЕЛАНИЙ","url":"https://mypins.site/event/deca723d-ce60-4b30-bf58-6b12b95682da/neyrografika-vselennaya-zhelaniy/"},{"@type":"ListItem","position":9,"name":"Создай украшение мечты САМА","url":"https://mypins.site/event/05d573b2-fde5-4ebd-b16b-f58a9132643b/sozday-ukrashenie-mechty-sama/"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"Мастер-классы","item":"https://mypins.site/nha-trang/workshop/"}]}]}</script>
   </head>
   <body>
     <div id="root"></div>
@@ -91,7 +114,7 @@
     <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/nha-trang/">Нячанг</a> <span aria-hidden="true">›</span> <span>Мастер-классы</span></p>
   </nav>
   <h1>Мастер-классы в Нячанге: афиша и мероприятия</h1>
-  <p>Мастер-классы в Нячанге: 7 событий в афише. Мастер-классы — практические занятия: гончарное дело, кулинария, танцы и ремёсла. Нячанг живёт у моря: набережная и север города. Ждём вас здесь: Green Home Restaurant, Cedruss Coffee, Север Нячанга. Ближайшее — 19 сентября 2026, последнее в подборке — 24 сентября 2026. События на ближайшие дни: «ВЕСЕЛЫЙ ВЕЧЕР ЗНАКОМСТВ: НАРИСУЙ МЕНЯ.» — 19 сентября, «Субботние рисовашки добрая традиция…» — 19 сентября (Green Home Restaurant), «МАСТЕР-КЛАСС ПО БЕНТО-ТОРТАМ» — 19 сентября (Cedruss Coffee), «МАСТЕР-КЛАСС ВЕКТОР СУДЬБЫ» — 20 сентября (Север Нячанга), «Дура и Критик.» — 20 сентября, «Рисование для детей 6 12 лет!» — 23 сентября (Shama book bakery), «НЕЙРОГРАФИКА. ВСЕЛЕННАЯ ЖЕЛАНИЙ» — 24 сентября (КЛУБ Neverland). Подробности: 😀 ВЕСЕЛЫЙ ВЕЧЕР ЗНАКОМСТВ: НАРИСУЙ МЕНЯ. Не умеешь рисовать? Отлично. Творчество вне границ и рамок мышления. Приглашаем на &quot;антиурок&quot; рисования… Цены на билеты — от 200 000 до 650 000 VND; 3 из 7 событий бесплатные или за донат.</p>
+  <p>Мастер-классы в Нячанге: 9 событий в афише. Мастер-классы — практические занятия: гончарное дело, кулинария, танцы и ремёсла. Нячанг живёт у моря: набережная и север города. Ждём вас здесь: Green Home Restaurant, Cedruss Coffee, Север Нячанга. Ближайшее — 19 сентября 2026, последнее в подборке — 25 сентября 2026. События на ближайшие дни: «ВЕСЕЛЫЙ ВЕЧЕР ЗНАКОМСТВ: НАРИСУЙ МЕНЯ.» — 19 сентября, «Субботние рисовашки добрая традиция…» — 19 сентября (Green Home Restaurant), «МАСТЕР-КЛАСС ПО БЕНТО-ТОРТАМ» — 19 сентября (Cedruss Coffee), «МАСТЕР-КЛАСС ВЕКТОР СУДЬБЫ» — 20 сентября (Север Нячанга), «Дура и Критик.» — 20 сентября, «СОЗДАЙ УКРАШЕНИЕ» — 20 сентября, «Рисование для детей 6 12 лет!» — 23 сентября (Shama book bakery), «НЕЙРОГРАФИКА. ВСЕЛЕННАЯ ЖЕЛАНИЙ» — 24 сентября (КЛУБ Neverland). Подробности: 😀 ВЕСЕЛЫЙ ВЕЧЕР ЗНАКОМСТВ: НАРИСУЙ МЕНЯ. Не умеешь рисовать? Отлично. Творчество вне границ и рамок мышления. Приглашаем на &quot;антиурок&quot; рисования… Цены на билеты — от 150 до 650 000 VND; 3 из 9 событий бесплатные или за донат.</p>
   <p class="seo-updated">Афиша обновлена: <time datetime="2026-09-19">19 сентября 2026</time></p>
   <h2>Ближайшие события: Мастер-классы</h2>
   <ul>
@@ -100,14 +123,16 @@
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/0e6a647a-cd1d-41b3-b12b-00df50758e0e/master-klass-po-bento-tortam/">МАСТЕР-КЛАСС ПО БЕНТО-ТОРТАМ</a> — <span>650000 VND</span></li>
     <li><time datetime="2026-09-20">20 сентября 2026</time> — <a href="https://mypins.site/event/5d6e5190-d9a1-47c0-add7-2b5f2ac9c880/master-klass-vektor-sudby/">МАСТЕР-КЛАСС ВЕКТОР СУДЬБЫ</a> — <span>Донат</span></li>
     <li><time datetime="2026-09-20">20 сентября 2026</time> — <a href="https://mypins.site/event/6a4d9825-0673-4206-9f3f-680065e42743/dura-i-kritik/">Дура и Критик.</a> — <span>Донат</span></li>
+    <li><time datetime="2026-09-20">20 сентября 2026</time> — <a href="https://mypins.site/event/b8fc8987-13e6-4628-9520-6904aa23cfb1/sozday-ukrashenie/">СОЗДАЙ УКРАШЕНИЕ</a> — <span>150 VND</span></li>
     <li><time datetime="2026-09-23">23 сентября 2026</time> — <a href="https://mypins.site/event/b7e6025e-631a-4184-94d8-82912269a7a8/risovanie-dlya-detey-6-12-let/">Рисование для детей 6 12 лет!</a> — <span>220000 VND</span></li>
     <li><time datetime="2026-09-24">24 сентября 2026</time> — <a href="https://mypins.site/event/deca723d-ce60-4b30-bf58-6b12b95682da/neyrografika-vselennaya-zhelaniy/">НЕЙРОГРАФИКА. ВСЕЛЕННАЯ ЖЕЛАНИЙ</a> — <span>200000 VND</span></li>
+    <li><time datetime="2026-09-25">25 сентября 2026</time> — <a href="https://mypins.site/event/05d573b2-fde5-4ebd-b16b-f58a9132643b/sozday-ukrashenie-mechty-sama/">Создай украшение мечты САМА</a> — <span>250000 VND</span></li>
   </ul>
   <h2>Частые вопросы</h2>
-    <details><summary>Сколько событий категории «Мастер-классы» в Нячанге?</summary><p>Сейчас 7 событий: от «ВЕСЕЛЫЙ ВЕЧЕР ЗНАКОМСТВ: НАРИСУЙ МЕНЯ.» 19 сентября до «НЕЙРОГРАФИКА. ВСЕЛЕННАЯ ЖЕЛАНИЙ» 24 сентября.</p></details>
+    <details><summary>Сколько событий категории «Мастер-классы» в Нячанге?</summary><p>Сейчас 9 событий: от «ВЕСЕЛЫЙ ВЕЧЕР ЗНАКОМСТВ: НАРИСУЙ МЕНЯ.» 19 сентября до «Создай украшение мечты САМА» 25 сентября.</p></details>
     <details><summary>Какое событие категории «Мастер-классы» ближайшее?</summary><p>«ВЕСЕЛЫЙ ВЕЧЕР ЗНАКОМСТВ: НАРИСУЙ МЕНЯ.» — 19 сентября, Green Home Restaurant.</p></details>
-    <details><summary>Сколько стоит вход?</summary><p>От 200 000 до 650 000 VND; 3 из 7 событий бесплатные или за донат.</p></details>
+    <details><summary>Сколько стоит вход?</summary><p>От 150 до 650 000 VND; 3 из 9 событий бесплатные или за донат.</p></details>
 </div>
-
+
   </body>
 </html>

@@ -2,12 +2,35 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK"></script>
+    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadGtag, { timeout: 3000 });
+        } else {
+          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+          window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+      })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -57,7 +80,7 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-IYHe8Yl2.js"></script>
+    <script type="module" crossorigin src="/assets/index-D9U_47z-.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
     <link rel="modulepreload" crossorigin href="/assets/config-WzI1LDIn.js">
@@ -68,7 +91,7 @@
     <link rel="modulepreload" crossorigin href="/assets/seo-Bg1yZhWU.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DK2BLgyC.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-BZnbJWdE.css">
       <meta name="description" content="Nha Trang, September 19, 2026. Literary Club in Nha Trang An intimate literary club where we will carefully, without haste, analyze and discuss texts. No plot…" />
     <link rel="canonical" href="https://mypins.site/en/event/ace6bb94-e3d1-4868-9434-a4b26f6e2c20/literary-club-in-nha-trang/" />
     <meta property="og:site_name" content="MyPins" />
@@ -116,10 +139,11 @@ To sign up, message @dekobrina
   <h2>Similar events</h2>
   <ul>
     <li><a href="/en/event/c756690c-2610-4bc9-89b2-8770fb20d609/breakfast-with-the-stars-your-venus/">BREAKFAST WITH THE STARS. YOUR VENUS <time datetime="2026-09-19">September 19, 2026</time></a></li>
+    <li><a href="/en/event/6fa2f832-2668-41bd-a843-5418bd9c87f5/women-s-meetup/">Women&#39;s meetup <time datetime="2026-09-22">September 22, 2026</time></a></li>
     <li><a href="/en/event/dd2369d5-8810-43de-8bc3-be11800130cc/field-of-action/">FIELD OF ACTION <time datetime="2026-09-22">September 22, 2026</time></a></li>
     <li><a href="/en/event/18330baa-7015-41e2-a0a3-abc403170b66/meet-and-greet-breakfast-coziness-socializing-and-beautiful-content/">MEET-AND-GREET BREAKFAST: COZINESS, SOCIALIZING AND BEAUTIFUL CONTENT <time datetime="2026-09-24">September 24, 2026</time></a></li>
   </ul>
 </div>
-
+
   </body>
 </html>

@@ -2,12 +2,35 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK"></script>
+    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadGtag, { timeout: 3000 });
+        } else {
+          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+          window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+      })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -57,7 +80,7 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-IYHe8Yl2.js"></script>
+    <script type="module" crossorigin src="/assets/index-D9U_47z-.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
     <link rel="modulepreload" crossorigin href="/assets/config-WzI1LDIn.js">
@@ -68,7 +91,7 @@
     <link rel="modulepreload" crossorigin href="/assets/seo-Bg1yZhWU.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DK2BLgyC.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-BZnbJWdE.css">
       <meta name="description" content="Мероприятия в Дананге: концерты, вечеринки, йога и фестивали. Афиша для экспатов и туристов с датами, местами и ценами." />
     <link rel="canonical" href="https://mypins.site/da-nang/" />
     <meta property="og:site_name" content="MyPins" />
@@ -102,10 +125,10 @@
   <p class="seo-updated">Афиша обновлена: <time datetime="2026-09-19">19 сентября 2026</time></p>
   <h2>Ближайшие события в Дананге</h2>
   <ul>
-    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/513d9371-e071-4d9b-8489-42d2af1e2ee9/shou-ao-dai-v-danange/">Шоу Ao Dai в Дананге</a> — <span>400000 VND</span></li>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/fdf56fce-c81d-4a79-bee3-c8664127c1b0/shou-charming-danang-v-danange/">Шоу Charming Danang в Дананге</a></li>
-    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/44e749b9-fe41-41af-a5b7-c01c0e42d2af/inglish-rasshiryaet-granitsy-no-inogda-ikh-nuzhno-zashchitit-vyrazit-agressiyu-pokazat-zubki-u-know/">инглиш расширяет границы, но иногда их нужно защитить, выразить агрессию, показать зубки, u know</a> — <span>150000 VND</span></li>
+    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/513d9371-e071-4d9b-8489-42d2af1e2ee9/shou-ao-dai-v-danange/">Шоу Ao Dai в Дананге</a> — <span>400000 VND</span></li>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/4d4bee39-6d16-4f26-9d02-e04c4b33440b/kviz-imix-v-etu-subbotu/">КВИЗ IMIX В ЭТУ СУББОТУ</a> — <span>200000 VND</span></li>
+    <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/44e749b9-fe41-41af-a5b7-c01c0e42d2af/inglish-rasshiryaet-granitsy-no-inogda-ikh-nuzhno-zashchitit-vyrazit-agressiyu-pokazat-zubki-u-know/">инглиш расширяет границы, но иногда их нужно защитить, выразить агрессию, показать зубки, u know</a> — <span>150000 VND</span></li>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/e37928a9-c089-4eea-b2a4-7779e1164f43/gitarnik-30/">ГИТАРНИК 30</a> — <span>50000 VND</span></li>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/e4b4d1bb-5528-4b5b-b9be-9d03c8414df2/gitarnik-31/">ГИТАРНИК 31</a> — <span>50000 VND</span></li>
     <li><time datetime="2026-09-19">19 сентября 2026</time> — <a href="https://mypins.site/event/c6cd247f-6dfb-4c85-b6b6-1e65d5588abf/zavtra-vecher-nastolok-v-restorane-369/">Завтра вечер настолок в ресторане 369 !</a> — <span>Бесплатно</span></li>
@@ -116,8 +139,8 @@
     <details><summary>Что делать в Дананге сегодня или завтра?</summary><p>В фильтре даты выберите «Сегодня» или «Завтра» — останутся события на эти дни. На выходные удобнее смотреть всю карту целиком: событий больше.</p></details>
     <details><summary>Сколько стоят события в Дананге?</summary><p>В карточке события всегда указана цена: бесплатно, донат или сумма в нужной валюте. В фильтре цены можно оставить только бесплатные события.</p></details>
   <h2>Категории в Дананге</h2>
-  <p><a href="/da-nang/games/">🎲 Игры и квизы</a> · <a href="/da-nang/meetup/">🤝 Встречи и нетворкинг</a> · <a href="/da-nang/wellness/">🧘 Йога и здоровье</a> · <a href="/da-nang/workshop/">🎨 Мастер-классы</a></p>
+  <p><a href="/da-nang/cinema/">🎬 Киноклуб</a> · <a href="/da-nang/games/">🎲 Игры и квизы</a> · <a href="/da-nang/meetup/">🤝 Встречи и нетворкинг</a> · <a href="/da-nang/wellness/">🧘 Йога и здоровье</a> · <a href="/da-nang/workshop/">🎨 Мастер-классы</a></p>
 </div>
-
+
   </body>
 </html>

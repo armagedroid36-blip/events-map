@@ -2,12 +2,35 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK"></script>
+    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadGtag, { timeout: 3000 });
+        } else {
+          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+          window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+      })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -57,7 +80,7 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-IYHe8Yl2.js"></script>
+    <script type="module" crossorigin src="/assets/index-D9U_47z-.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
     <link rel="modulepreload" crossorigin href="/assets/config-WzI1LDIn.js">
@@ -68,7 +91,7 @@
     <link rel="modulepreload" crossorigin href="/assets/seo-Bg1yZhWU.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DK2BLgyC.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-BZnbJWdE.css">
       <meta name="description" content="Nha Trang, September 13, 2026. 🎶✨Soundhealing - reboot Sunday at 15:00 ⭐️You lie down and close your eyes, and the variety of sound vibrations help: 💎Switch…" />
     <link rel="canonical" href="https://mypins.site/en/event/c5f6e9ac-66b3-445f-a32d-5ff0528dd4cc/soundhealing-reboot/" />
     <meta property="og:site_name" content="MyPins" />
@@ -131,14 +154,14 @@ Post by: @LizaSvetArt</p>
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/ea7edc2b-0f6b-41ff-b405-029ea9c1d21e/everyone-ashtanga-vinyasa-yoga-practice-in-nha-trang/">Everyone. Ashtanga Vinyasa Yoga practice in Nha Trang. <time datetime="2026-09-19">September 19, 2026</time></a></li>
+    <li><a href="/en/event/96244443-2611-4260-b103-f6e032aca72e/evening-program-of-bhakti-margi/">Evening program of Bhakti Margi <time datetime="2026-09-19">September 19, 2026</time></a></li>
     <li><a href="/en/event/124b4090-b3a3-4058-91b8-71ae4d62065b/tantra-seminar-pure-tantra/">Tantra seminar: &quot;Pure Tantra&quot; <time datetime="2026-09-20">September 20, 2026</time></a></li>
     <li><a href="/en/event/82e9709a-a12e-4919-816e-bbdebe56c3c8/prime-space/">Prime Space <time datetime="2026-09-20">September 20, 2026</time></a></li>
-    <li><a href="/en/event/36654e67-d9e9-4176-971c-19ab8b0679b2/group-meeting-with-a-psychologist/">Group meeting with a psychologist <time datetime="2026-09-20">September 20, 2026</time></a></li>
-    <li><a href="/en/event/88b90b5a-43d7-48d4-be7f-726a18ccb56b/seating-arrangements-september-20/">SEATING ARRANGEMENTS SEPTEMBER 20 <time datetime="2026-09-20">September 20, 2026</time></a></li>
     <li><a href="/en/event/1047944a-b629-4ad6-9bb1-bf62ea08e9ec/nail-standing-practice-in-the-oceanus-area-20-09-free-payment/">Nail standing practice in the Oceanus area 20.09, free payment. <time datetime="2026-09-20">September 20, 2026</time></a></li>
+    <li><a href="/en/event/88b90b5a-43d7-48d4-be7f-726a18ccb56b/seating-arrangements-september-20/">SEATING ARRANGEMENTS SEPTEMBER 20 <time datetime="2026-09-20">September 20, 2026</time></a></li>
+    <li><a href="/en/event/36654e67-d9e9-4176-971c-19ab8b0679b2/group-meeting-with-a-psychologist/">Group meeting with a psychologist <time datetime="2026-09-20">September 20, 2026</time></a></li>
   </ul>
 </div>
-
+
   </body>
 </html>

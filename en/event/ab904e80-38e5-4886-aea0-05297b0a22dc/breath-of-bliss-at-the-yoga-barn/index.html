@@ -2,12 +2,35 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK"></script>
+    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadGtag, { timeout: 3000 });
+        } else {
+          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+          window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+      })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -57,7 +80,7 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-IYHe8Yl2.js"></script>
+    <script type="module" crossorigin src="/assets/index-D9U_47z-.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
     <link rel="modulepreload" crossorigin href="/assets/config-WzI1LDIn.js">
@@ -68,7 +91,7 @@
     <link rel="modulepreload" crossorigin href="/assets/seo-Bg1yZhWU.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DK2BLgyC.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-BZnbJWdE.css">
       <meta name="description" content="Bali, September 19, 2026. On September 19, from 14:00 to 16:30, Breath of Bliss will take place at The Yoga Barn. The practice combines directed breathing…" />
     <link rel="canonical" href="https://mypins.site/en/event/ab904e80-38e5-4886-aea0-05297b0a22dc/breath-of-bliss-at-the-yoga-barn/" />
     <meta property="og:site_name" content="MyPins" />
@@ -100,14 +123,14 @@ Cost — 450,000 IDR. Tickets: https://megatix.co.id/white-label/breath-of-bliss
   </nav>
   <h2>Similar events</h2>
   <ul>
+    <li><a href="/en/event/b79b14ff-97ab-4c2d-9dfe-4e0593cfb5a6/yoga-teacher-training-course/">Yoga Teacher Training Course <time datetime="2026-09-19">September 19, 2026</time></a></li>
     <li><a href="/en/event/53d76d88-e570-4d38-8660-f21b17b3a546/immersive-wellness-day-retreat/">Immersive Wellness Day Retreat <time datetime="2026-09-19">September 19, 2026</time></a></li>
-    <li><a href="/en/event/21d82178-3536-4302-9e2f-db01ae67cdd9/women-s-bathhouse/">Women&#39;s Bathhouse <time datetime="2026-09-19">September 19, 2026</time></a></li>
-    <li><a href="/en/event/88bd376d-453f-4ffc-81a3-26ddf319f0d3/standing-on-nails/">Standing on nails <time datetime="2026-09-19">September 19, 2026</time></a></li>
     <li><a href="/en/event/f7fe9774-54b7-4b70-8f9d-271d0a9b4fb3/liquid-body-at-the-yoga-barn/">Liquid Body at The Yoga Barn <time datetime="2026-09-19">September 19, 2026</time></a></li>
+    <li><a href="/en/event/88bd376d-453f-4ffc-81a3-26ddf319f0d3/standing-on-nails/">Standing on nails <time datetime="2026-09-19">September 19, 2026</time></a></li>
+    <li><a href="/en/event/21d82178-3536-4302-9e2f-db01ae67cdd9/women-s-bathhouse/">Women&#39;s Bathhouse <time datetime="2026-09-19">September 19, 2026</time></a></li>
     <li><a href="/en/event/e2b7f28f-8b2b-42a5-b7f4-594c83cccbeb/mini-retreat-shamanic-tantra/">Mini-retreat Shamanic Tantra <time datetime="2026-09-20">September 20, 2026</time></a></li>
-    <li><a href="/en/event/ee80820e-dde0-46d7-8591-4fc06c982d1a/mission-inner-peace/">Mission Inner Peace <time datetime="2026-09-21">September 21, 2026</time></a></li>
   </ul>
 </div>
-
+
   </body>
 </html>

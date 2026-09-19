@@ -2,12 +2,35 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK"></script>
+    <!-- GA4 (gtag.js, 172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread ~340 мс, поднимая FCP до 3.5 с.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadGtag, { timeout: 3000 });
+        } else {
+          // Safari: requestIdleCallback нет до 18-й версии — грузим после load.
+          window.addEventListener('load', function () { setTimeout(loadGtag, 0); });
+        }
+      })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -57,7 +80,7 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-IYHe8Yl2.js"></script>
+    <script type="module" crossorigin src="/assets/index-D9U_47z-.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
     <link rel="modulepreload" crossorigin href="/assets/config-WzI1LDIn.js">
@@ -68,7 +91,7 @@
     <link rel="modulepreload" crossorigin href="/assets/seo-Bg1yZhWU.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DK2BLgyC.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-BZnbJWdE.css">
       <meta name="description" content="Нячанг, 20 сентября 2026. 🎭 Дура и Критик. Игра, изменяющая реальность. ​20 сентября | 13:00 | Центр ​В каждой из нас есть две крайности: Критик, который…" />
     <link rel="canonical" href="https://mypins.site/event/6a4d9825-0673-4206-9f3f-680065e42743/dura-i-kritik/" />
     <meta property="og:site_name" content="MyPins" />
@@ -128,10 +151,10 @@
     <li><a href="/event/86e21a7b-0ac7-46bc-ab78-810d86ac22a7/subbotnie-risovashki-dobraya-traditsiya-sobiraemsya-devochkami-v-uyutnoy-kafeshke-chtoby-otdokhnut-porisovat-i-napolnitsya/">Субботние рисовашки добрая традиция. Собираемся «девочками» в уютной кафешке, чтобы отдохнуть, порисовать и наполниться. <time datetime="2026-09-19">19 сентября 2026</time></a></li>
     <li><a href="/event/0e6a647a-cd1d-41b3-b12b-00df50758e0e/master-klass-po-bento-tortam/">МАСТЕР-КЛАСС ПО БЕНТО-ТОРТАМ <time datetime="2026-09-19">19 сентября 2026</time></a></li>
     <li><a href="/event/5d6e5190-d9a1-47c0-add7-2b5f2ac9c880/master-klass-vektor-sudby/">МАСТЕР-КЛАСС ВЕКТОР СУДЬБЫ <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/b8fc8987-13e6-4628-9520-6904aa23cfb1/sozday-ukrashenie/">СОЗДАЙ УКРАШЕНИЕ <time datetime="2026-09-20">20 сентября 2026</time></a></li>
     <li><a href="/event/b7e6025e-631a-4184-94d8-82912269a7a8/risovanie-dlya-detey-6-12-let/">Рисование для детей 6 12 лет! <time datetime="2026-09-23">23 сентября 2026</time></a></li>
-    <li><a href="/event/deca723d-ce60-4b30-bf58-6b12b95682da/neyrografika-vselennaya-zhelaniy/">НЕЙРОГРАФИКА. ВСЕЛЕННАЯ ЖЕЛАНИЙ <time datetime="2026-09-24">24 сентября 2026</time></a></li>
   </ul>
 </div>
-
+
   </body>
 </html>
