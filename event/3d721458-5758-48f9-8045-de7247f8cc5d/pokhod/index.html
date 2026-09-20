@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Поход — 17 августа 2026 · Негомбо</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-Bj-bUc-I.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-C4pb8Y-v.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DrZrcBpm.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/address-Dnt1XBIP.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CCXmfBKO.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-_hkV5XT9.css" />
+      <meta name="description" content="Негомбо, 17 августа 2026. Поход на вулкан. UR/RUB F 98,35 +0,38 CNY Бирж. 12,61 +0,07 USD ЦБ 85,01 +0,47 EUR ЦБ 98,34 +0,82 CNY ЦБ 12,63 +0,15 USD Нал. 87,28…" />
+    <link rel="canonical" href="https://mypins.site/event/3d721458-5758-48f9-8045-de7247f8cc5d/pokhod/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Поход — 17 августа 2026 · Негомбо" />
+    <meta property="og:description" content="Негомбо, 17 августа 2026. Поход на вулкан. UR/RUB F 98,35 +0,38 CNY Бирж. 12,61 +0,07 USD ЦБ 85,01 +0,47 EUR ЦБ 98,34 +0,82 CNY ЦБ 12,63 +0,15 USD Нал. 87,28…" />
+    <meta property="og:url" content="https://mypins.site/event/3d721458-5758-48f9-8045-de7247f8cc5d/pokhod/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Поход","url":"https://mypins.site/event/3d721458-5758-48f9-8045-de7247f8cc5d/pokhod/","startDate":"2026-08-17T21:55:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"negombo, 12/02, Alles road, Periyamulla, Негомбо, Gampaha District, Западная провинция, 11500, Шри-Ланка","address":{"@type":"PostalAddress","addressLocality":"Негомбо","streetAddress":"negombo, 12/02, Alles road, Periyamulla, Негомбо, Gampaha District, Западная провинция, 11500, Шри-Ланка"},"geo":{"@type":"GeoCoordinates","latitude":7.21386416397013,"longitude":79.8356320434332}},"offers":{"@type":"Offer","url":"https://mypins.site/event/3d721458-5758-48f9-8045-de7247f8cc5d/pokhod/","price":50,"priceCurrency":"IDR","validFrom":"2026-08-17"},"description":"Поход на вулкан. UR/RUB F 98,35 +0,38 CNY Бирж. 12,61 +0,07 USD ЦБ 85,01 +0,47 EUR ЦБ 98,34 +0,82 CNY ЦБ 12,63 +0,15 USD Нал. 87,28 85,40 EUR Нал. 101,05 98,22 Cocoa 516,80 +6,45% BTC/USD Бирж. 64 451,00 +1 361,00 MOEXBTC 64 430,20 +2,41% IMOEX 2 093,22 -2,02% RTSI 775,65 -2,56% Brent 90,76 +2,35% Platinum 1 792,30 +0,82% Gold 4 417,20 +0,68% Silver 66,21 +1,61% Aluminum 3 266,50 +0,25% Nickel 16 620,00 +0,03% USD/RUB F 85,05 +0,28 EUR/RUB F 98,35 +0,38 CNY Бирж. 12,61 +0,07 USD ЦБ 85,01 +0,47 EUR ЦБ 98,34 +0,82 CNY ЦБ 12,63 +0,15 USD Нал. 87,28 85,40 EUR Нал. 101,05 98,22 Cocoa 516,80 +6,45% BTC/USD Бирж. 64 451,00 +1 361,00 MOEXBTC 64 430,20 +2,41% IMOEX 2 093,22 -2,02% RTSI 775,65 -2,56% Brent 90,76 +2,35% Platinum 1 792,30 +0,82% Gold 4 417,20 +0,68% Silver 66,21 +1,61% Aluminum 3 266,50 +0,25% Nickel 16 620,00 +0,03% Ваше местоположение Санкт-Петербург и область? Все новости Весь мир С.-Петербург Новый «Человек-паук» собрал более $2 млрд в прокате Общество21:46 Лучший игрок ЧМ-2026 Родри подтвердил, что перешел в «Барселону» Спорт21:46 Трамп заявил, что Ким Чен Ын ответил на предложение о диалоге Политика21:41 Fars сообщило о захвате Ираном танкера ОАЭ в Ормузском проливе Политика21:36 Цена на нефть Brent поднялась выше $91 за баррель впервые с конца июля Инвестиции21:32 FT узнала о планах совладельцев «Челси» продать свои доли в клубе Спорт21:32 Киты, тундра и космические пейзажи: зачем ехать в восточную Арктику РБК и УК Первая21:30 Как вы ведете себя в конфликте? Оцените свое поведение за 2 минуты Как вы ведете себя в конфликте? В работе сервисов Microsoft произошел массовый сбой Технологии и медиа21:21 Бублик объяснил, почему важно «страшно ныть» во время матчей Спорт21:20 На московском направлении сбили первые с начала суток беспилотники Политика21:15 Сколько реально стоит контрольный пакет: анализ 1000 сделок за 10 лет РБК Компании21:14 Взломавшие французскую налоговую хакеры заявили о продаже данных Политика21:11 CNN рассказал, как на Украине без ракет простаивают комплексы Patriot Политика21:10 Reuters узнал об угрозах Ирана прорвать морскую блокаду США Политика21:04 Не ярче, а вовремя: как нейротехнологии понимают потребности покупателя РБК и Яндекс Реклама21:01 Организатор объяснил ситуацию с билетами на концерт Канье Уэста в России Общество20:51 В регионах России за день сбили 316 украинских беспилотников Политика20:34 В Молдавии заявили о взрыве неустановленного летательного аппарата Политика20:32 Зачем инвестировать в торговые пространства на первых этажах РБК и ПИК Серия плюс20:30 Джеки Чан показал подарок азербайджанских поклонников. Видео Общество20:27 В ЭФИРЕ Вечерний РБК. Медиатренды 107.4 FM Нижний Новгород 101.1 FM Воронеж 100.6 FM Тюмень Урал 92.8 FM Москва 102.0 FM Санкт-Петербург 107.4 FM Нижний Новгород 101.1 FM Воронеж 100.6 FM Тюмень Урал 92.8 FM Москва 102.0 FM Санкт-Петербург 107.4 FM Нижний Новгород 101.1 FM Воронеж 100.6 FM Тюмень Урал 92.8 FM Москва 102.0 FM Санкт-Петербург 107.4 FM Нижний Новгород 101.1 FM Воронеж 100.6 FM Тюмень Урал 92.8 FM Москва 102.0 FM Санкт-Петербург 107.4 FM Нижний Новгород 101.1 FM Воронеж Общество17 августа, 19:01 Главные новости за день 17 августа Что случилось за день — в подборке РБК Андрей Любимов / РБК Фото: Андрей Любимов / РБК Содержание Что произошло в России Главное за рубежом Другие значимые новости Телеканал и Радио РБК Что произошло в России Российский фондовый рынок снизился на фоне угрозы новых санкций Индекс Мосбиржи (IMOEX2) на торгах в понедельник снизился на 2,36% к закрытию вечерней сессии в пятницу, 14 августа, и на минимуме в 8:27 мск достиг 2088,33 пункта. Так фондовый рынок отреагировал на новые планы Евросоюза ввести санкции против России. Глава дипломатии ЕС Кая Каллас заявила, что блок планирует значительно расширить санкционное давление на Россию уже этой осенью. Индекс государственных облигаций Московской биржи (RGBI) упал на 0,72% ниже уровня закрытия торгов предыдущего дня и достиг отметки 113,44 пункта по состоянию на 13:41 мск. Верховный суд поддержал снятие «Яблока» с выборов","image":"https://mypins.site/logo.png","inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Поход","item":"https://mypins.site/event/3d721458-5758-48f9-8045-de7247f8cc5d/pokhod/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Поход</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-08-17">17 августа 2026</time></p>
+  <p><time datetime="2026-08-17T21:55:00">17 августа 2026, 21:55</time></p>
+  <address>negombo, 12/02, Alles road, Periyamulla, Негомбо, Gampaha District, Западная провинция, 11500, Шри-Ланка, Негомбо</address>
+  <p>50 IDR</p>
+  <p>Поход на вулкан.
+UR/RUB F
+98,35
++0,38
+CNY
+Бирж.
+12,61
++0,07
+USD
+ЦБ
+85,01
++0,47
+EUR
+ЦБ
+98,34
++0,82
+CNY
+ЦБ
+12,63
++0,15
+USD
+Нал.
+87,28
+85,40
+EUR
+Нал.
+101,05
+98,22
+Cocoa
+516,80
++6,45%
+BTC/USD
+Бирж.
+64 451,00
++1 361,00
+MOEXBTC
+64 430,20
++2,41%
+IMOEX
+2 093,22
+-2,02%
+RTSI
+775,65
+-2,56%
+Brent
+90,76
++2,35%
+Platinum
+1 792,30
++0,82%
+Gold
+4 417,20
++0,68%
+Silver
+66,21
++1,61%
+Aluminum
+3 266,50
++0,25%
+Nickel
+16 620,00
++0,03%
+USD/RUB F
+85,05
++0,28
+EUR/RUB F
+98,35
++0,38
+CNY
+Бирж.
+12,61
++0,07
+USD
+ЦБ
+85,01
++0,47
+EUR
+ЦБ
+98,34
++0,82
+CNY
+ЦБ
+12,63
++0,15
+USD
+Нал.
+87,28
+85,40
+EUR
+Нал.
+101,05
+98,22
+Cocoa
+516,80
++6,45%
+BTC/USD
+Бирж.
+64 451,00
++1 361,00
+MOEXBTC
+64 430,20
++2,41%
+IMOEX
+2 093,22
+-2,02%
+RTSI
+775,65
+-2,56%
+Brent
+90,76
++2,35%
+Platinum
+1 792,30
++0,82%
+Gold
+4 417,20
++0,68%
+Silver
+66,21
++1,61%
+Aluminum
+3 266,50
++0,25%
+Nickel
+16 620,00
++0,03%
+Ваше местоположение Санкт-Петербург и область?
+
+
+
+Все новости
+Весь мир
+С.-Петербург
+Новый «Человек-паук» собрал более $2 млрд в прокате
+Общество21:46
+Лучший игрок ЧМ-2026 Родри подтвердил, что перешел в «Барселону»
+Спорт21:46
+Трамп заявил, что Ким Чен Ын ответил на предложение о диалоге
+Политика21:41
+Fars сообщило о захвате Ираном танкера ОАЭ в Ормузском проливе
+Политика21:36
+Цена на нефть Brent поднялась выше $91 за баррель впервые с конца июля
+Инвестиции21:32
+FT узнала о планах совладельцев «Челси» продать свои доли в клубе
+Спорт21:32
+Киты, тундра и космические пейзажи: зачем ехать в восточную Арктику
+РБК и УК Первая21:30
+Как вы ведете себя в конфликте?
+Оцените свое поведение за 2 минуты
+
+Как вы ведете себя в конфликте?
+В работе сервисов Microsoft произошел массовый сбой
+Технологии и медиа21:21
+Бублик объяснил, почему важно «страшно ныть» во время матчей
+Спорт21:20
+На московском направлении сбили первые с начала суток беспилотники
+Политика21:15
+Сколько реально стоит контрольный пакет: анализ 1000 сделок за 10 лет
+РБК Компании21:14
+Взломавшие французскую налоговую хакеры заявили о продаже данных
+Политика21:11
+CNN рассказал, как на Украине без ракет простаивают комплексы Patriot
+Политика21:10
+Reuters узнал об угрозах Ирана прорвать морскую блокаду США
+Политика21:04
+Не ярче, а вовремя: как нейротехнологии понимают потребности покупателя
+РБК и Яндекс Реклама21:01
+Организатор объяснил ситуацию с билетами на концерт Канье Уэста в России
+Общество20:51
+В регионах России за день сбили 316 украинских беспилотников
+Политика20:34
+В Молдавии заявили о взрыве неустановленного летательного аппарата
+Политика20:32
+Зачем инвестировать в торговые пространства на первых этажах
+РБК и ПИК Серия плюс20:30
+Джеки Чан показал подарок азербайджанских поклонников. Видео
+Общество20:27
+
+
+В ЭФИРЕ
+Вечерний РБК. Медиатренды
+
+
+
+
+107.4 FM
+Нижний Новгород
+
+101.1 FM
+Воронеж
+
+100.6 FM
+Тюмень
+
+Урал
+
+92.8 FM
+Москва
+
+102.0 FM
+Санкт-Петербург
+
+107.4 FM
+Нижний Новгород
+
+101.1 FM
+Воронеж
+
+100.6 FM
+Тюмень
+
+Урал
+
+92.8 FM
+Москва
+
+102.0 FM
+Санкт-Петербург
+
+107.4 FM
+Нижний Новгород
+
+101.1 FM
+Воронеж
+
+100.6 FM
+Тюмень
+
+Урал
+
+92.8 FM
+Москва
+
+102.0 FM
+Санкт-Петербург
+
+107.4 FM
+Нижний Новгород
+
+101.1 FM
+Воронеж
+
+100.6 FM
+Тюмень
+
+Урал
+
+92.8 FM
+Москва
+
+102.0 FM
+Санкт-Петербург
+
+107.4 FM
+Нижний Новгород
+
+101.1 FM
+Воронеж
+
+Общество17 августа, 19:01
+Главные новости за день 17 августа
+Что случилось за день — в подборке РБК
+
+Андрей Любимов / РБК
+Фото: Андрей Любимов / РБК
+
+Содержание
+
+Что произошло в России
+Главное за рубежом
+Другие значимые новости
+Телеканал и Радио РБК
+Что произошло в России
+Российский фондовый рынок снизился на фоне угрозы новых санкций
+
+Индекс Мосбиржи (IMOEX2) на торгах в понедельник снизился на 2,36% к закрытию вечерней сессии в пятницу, 14 августа, и на минимуме в 8:27 мск достиг 2088,33 пункта. Так фондовый рынок отреагировал на новые планы Евросоюза ввести санкции против России. Глава дипломатии ЕС Кая Каллас заявила, что блок планирует значительно расширить санкционное давление на Россию уже этой осенью.
+
+Индекс государственных облигаций Московской биржи (RGBI) упал на 0,72% ниже уровня закрытия торгов предыдущего дня и достиг отметки 113,44 пункта по состоянию на 13:41 мск.
+
+Верховный суд поддержал снятие «Яблока» с выборов</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <span>Поход</span></p>
+  </nav>
+  <p class="event-past-cta"><a href="/">Открыть карту событий</a></p>
+</div>
+
+  </body>
+</html>

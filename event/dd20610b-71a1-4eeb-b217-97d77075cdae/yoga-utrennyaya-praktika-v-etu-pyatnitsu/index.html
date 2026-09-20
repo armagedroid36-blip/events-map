@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YOGA. Утренняя практика . В эту пятницу — 4 сентября 2026 ·…</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-Bj-bUc-I.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-C4pb8Y-v.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DrZrcBpm.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/address-Dnt1XBIP.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CCXmfBKO.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-_hkV5XT9.css" />
+      <meta name="description" content="Нячанг, 4 сентября 2026. YOGA. Утренняя практика . В эту пятницу 🧘 Привет друзья, меня зовут Екатерина 🙂 Больше 7 лет преподаю йогу в разных странах. Имеют…" />
+    <link rel="canonical" href="https://mypins.site/event/dd20610b-71a1-4eeb-b217-97d77075cdae/yoga-utrennyaya-praktika-v-etu-pyatnitsu/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="YOGA. Утренняя практика . В эту пятницу — 4 сентября 2026 ·…" />
+    <meta property="og:description" content="Нячанг, 4 сентября 2026. YOGA. Утренняя практика . В эту пятницу 🧘 Привет друзья, меня зовут Екатерина 🙂 Больше 7 лет преподаю йогу в разных странах. Имеют…" />
+    <meta property="og:url" content="https://mypins.site/event/dd20610b-71a1-4eeb-b217-97d77075cdae/yoga-utrennyaya-praktika-v-etu-pyatnitsu/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/dd20610b-71a1-4eeb-b217-97d77075cdae/yoga-utrennyaya-praktika-v-etu-pyatnitsu/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/dd20610b-71a1-4eeb-b217-97d77075cdae/yoga-morning-practice-this-friday/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"YOGA. Утренняя практика . В эту пятницу","url":"https://mypins.site/event/dd20610b-71a1-4eeb-b217-97d77075cdae/yoga-utrennyaya-praktika-v-etu-pyatnitsu/","startDate":"2026-09-04T08:50:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Orhideya Ballet Studio, 46 Hòn Chồng, Vĩnh Phước, Nha Trang, Khánh Hòa 650000","address":{"@type":"PostalAddress","addressLocality":"Нячанг","streetAddress":"Orhideya Ballet Studio, 46 Hòn Chồng, Vĩnh Phước, Nha Trang, Khánh Hòa 650000"},"geo":{"@type":"GeoCoordinates","latitude":12.275305,"longitude":109.1979673}},"offers":{"@type":"Offer","url":"https://mypins.site/event/dd20610b-71a1-4eeb-b217-97d77075cdae/yoga-utrennyaya-praktika-v-etu-pyatnitsu/","price":200000,"priceCurrency":"VND","validFrom":"2026-09-03"},"description":"YOGA. Утренняя практика . В эту пятницу 🧘 Привет друзья, меня зовут Екатерина 🙂 Больше 7 лет преподаю йогу в разных странах. Имеют международный сертификат по Хатха йоге. Обучалась на аштанга йогу. И практикую Крийя йогу. Мои практики нацелены на : -укрепление тела -спокойствие ума -развитие гибкости -мобильность суставов -здоровье и энергия 🗓 Когда: 4.09( пятница ) в 8:50 📍 Где: https://maps.app.goo.gl/xuQHajMyZ2KZEUev5?g_st=ipc 📌 Форматы и цены: — 🧘‍♂️ Групповые практики — 200.000 VND ( 70 минут ) Записаться: https://t.me/andreeva234 #дата: 04.09.2026 Пост от: Kate","image":"https://mypins.site/logo.png","organizer":{"@type":"Organization","name":"Telegram @nyachang_ru","url":"https://t.me/nyachang_ru/22861"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"YOGA. Утренняя практика . В эту пятницу","item":"https://mypins.site/event/dd20610b-71a1-4eeb-b217-97d77075cdae/yoga-utrennyaya-praktika-v-etu-pyatnitsu/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>YOGA. Утренняя практика . В эту пятницу</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-09-18">18 сентября 2026</time></p>
+  <p><time datetime="2026-09-04T08:50:00">4 сентября 2026, 08:50</time></p>
+  <address>Orhideya Ballet Studio, 46 Hòn Chồng, Vĩnh Phước, Nha Trang, Khánh Hòa 650000, Нячанг</address>
+  <p>200000 VND</p>
+  <p>YOGA. Утренняя практика . В эту пятницу 🧘
+
+Привет друзья, меня зовут Екатерина 🙂
+Больше 7 лет преподаю йогу в разных странах. Имеют международный сертификат по Хатха йоге. Обучалась на аштанга йогу. И практикую Крийя йогу. 
+
+Мои практики нацелены на :
+-укрепление тела 
+-спокойствие ума
+-развитие гибкости
+-мобильность суставов 
+-здоровье и энергия 
+
+🗓 Когда: 4.09( пятница ) в 8:50
+📍 Где: https://maps.app.goo.gl/xuQHajMyZ2KZEUev5?g_st=ipc
+
+📌 Форматы и цены:
+— 🧘‍♂️ Групповые практики — 200.000 VND ( 70 минут ) 
+
+Записаться:
+
+https://t.me/andreeva234
+
+#дата: 04.09.2026
+Пост от: Kate</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/nha-trang/">Нячанг</a> <span aria-hidden="true">›</span> <span>YOGA. Утренняя практика . В эту пятницу</span></p>
+    <p>Ещё события в Нячанге: <a href="/nha-trang/">афиша</a> · <a href="/nha-trang/wellness/">🧘 Йога и здоровье</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/124b4090-b3a3-4058-91b8-71ae4d62065b/tantra-seminar-chistaya-tantra/">Тантра-семинар: &quot;Чистая Тантра&quot; <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/82e9709a-a12e-4919-816e-bbdebe56c3c8/prime-space/">Prime Space <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/c5f6e9ac-66b3-445f-a32d-5ff0528dd4cc/saundkhilling-perezagruzka/">Саундхиллинг - перезагрузка <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/36654e67-d9e9-4176-971c-19ab8b0679b2/gruppovaya-vstrecha-s-psikhologom/">Групповая встреча с психологом <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/1047944a-b629-4ad6-9bb1-bf62ea08e9ec/praktika-gvozdestoyaniya-v-rayone-oceanus-20-09-svobodnaya-oplata/">Практика гвоздестояния в районе Oceanus 20.09, свободная оплата . <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/88b90b5a-43d7-48d4-be7f-726a18ccb56b/rasstanovki-20-sentyabrya/">РАССТАНОВКИ 20 СЕНТЯБРЯ <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+  </ul>
+  <p class="event-past-cta"><a href="/nha-trang/">Ближайшие события: Нячанг</a></p>
+</div>
+
+  </body>
+</html>

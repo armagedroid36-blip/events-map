@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Квиз, плиз! 6 классическая игра вообще для всех. Вас ждут…</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-Bj-bUc-I.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-C4pb8Y-v.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DrZrcBpm.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/address-Dnt1XBIP.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CCXmfBKO.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-_hkV5XT9.css" />
+      <meta name="description" content="Дананг, 30 августа 2026. Квиз, плиз! #6 — классическая игра вообще для всех. Вас ждут вопросы на самые разные темы и из самых разных областей. Заряжайтесь…" />
+    <link rel="canonical" href="https://mypins.site/event/3764cecb-0263-4dee-9571-04aea1eb0a59/kviz-pliz-6-klassicheskaya-igra-voobshche-dlya-vsekh-vas-zhdut-voprosy-na-samye-raznye-temy-i-iz-samykh-raznykh-oblastey-zaryazh/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Квиз, плиз! 6 классическая игра вообще для всех. Вас ждут…" />
+    <meta property="og:description" content="Дананг, 30 августа 2026. Квиз, плиз! #6 — классическая игра вообще для всех. Вас ждут вопросы на самые разные темы и из самых разных областей. Заряжайтесь…" />
+    <meta property="og:url" content="https://mypins.site/event/3764cecb-0263-4dee-9571-04aea1eb0a59/kviz-pliz-6-klassicheskaya-igra-voobshche-dlya-vsekh-vas-zhdut-voprosy-na-samye-raznye-temy-i-iz-samykh-raznykh-oblastey-zaryazh/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Квиз, плиз! 6 классическая игра вообще для всех. Вас ждут вопросы на самые разные темы и из самых разных областей. Заряж","url":"https://mypins.site/event/3764cecb-0263-4dee-9571-04aea1eb0a59/kviz-pliz-6-klassicheskaya-igra-voobshche-dlya-vsekh-vas-zhdut-voprosy-na-samye-raznye-temy-i-iz-samykh-raznykh-oblastey-zaryazh/","startDate":"2026-08-30T19:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Webe Coffee","address":{"@type":"PostalAddress","addressLocality":"Дананг","streetAddress":"Webe Coffee"},"geo":{"@type":"GeoCoordinates","latitude":16.0672264,"longitude":108.2354237}},"offers":{"@type":"Offer","url":"https://mypins.site/event/3764cecb-0263-4dee-9571-04aea1eb0a59/kviz-pliz-6-klassicheskaya-igra-voobshche-dlya-vsekh-vas-zhdut-voprosy-na-samye-raznye-temy-i-iz-samykh-raznykh-oblastey-zaryazh/","price":200000,"priceCurrency":"VND","validFrom":"2026-08-27"},"description":"Квиз, плиз! #6 — классическая игра вообще для всех. Вас ждут вопросы на самые разные темы и из самых разных областей. Заряжайтесь удачей и всем, что вы когда-либо знали. Велком на вакантные места. 30 августа, 19:00 Webe Coffee 200к донгов с человека По всем вопросам пишем в личку @VitaliiMoskalev #дата: 30.08.2026","image":"https://mypins.site/logo.png","organizer":{"@type":"Organization","name":"Telegram @danang_afisha","url":"https://t.me/danang_afisha/5214"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Дананг","item":"https://mypins.site/da-nang/"},{"@type":"ListItem","position":3,"name":"Квиз, плиз! 6 классическая игра вообще для всех. Вас ждут вопросы на самые разные темы и из самых разных областей. Заряж","item":"https://mypins.site/event/3764cecb-0263-4dee-9571-04aea1eb0a59/kviz-pliz-6-klassicheskaya-igra-voobshche-dlya-vsekh-vas-zhdut-voprosy-na-samye-raznye-temy-i-iz-samykh-raznykh-oblastey-zaryazh/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Квиз, плиз! 6 классическая игра вообще для всех. Вас ждут вопросы на самые разные темы и из самых разных областей. Заряж</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-08-30">30 августа 2026</time></p>
+  <p><time datetime="2026-08-30T19:00:00">30 августа 2026, 19:00</time></p>
+  <address>Webe Coffee, Дананг</address>
+  <p>200000 VND</p>
+  <p>Квиз, плиз! #6 — классическая игра вообще для всех. Вас ждут вопросы на самые разные темы и из самых разных областей. Заряжайтесь удачей и всем, что вы когда-либо знали. Велком на вакантные места.
+
+30 августа, 19:00
+Webe Coffee
+200к донгов с человека
+
+По всем вопросам пишем в личку @VitaliiMoskalev
+
+#дата: 30.08.2026</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/da-nang/">Дананг</a> <span aria-hidden="true">›</span> <span>Квиз, плиз! 6 классическая игра вообще для всех. Вас ждут вопросы на самые разные темы и из самых разных областей. Заряж</span></p>
+    <p>Ещё события в Дананге: <a href="/da-nang/">афиша</a> · <a href="/da-nang/games/">🎲 Игры и квизы</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/176065ed-4aae-497f-9feb-5c1c40295ec3/kviz-pliz-v-danange/">Квиз, плиз! в Дананге. <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/4d172b0c-05fd-490d-91d4-b788fbba22b6/predictor-vpervye-igraem-v-voskresene/">PREDICTOR впервые играем в воскресенье <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/cd883a4c-fb0d-4c27-bb6e-a6edec8ce7f4/transformatsionnaya-igra-mudrost-lily/">ТРАНСФОРМАЦИОННАЯ ИГРА «МУДРОСТЬ ЛИЛЫ» <time datetime="2026-09-22">22 сентября 2026</time></a></li>
+    <li><a href="/event/7d9f7d56-2d03-4beb-a5b7-391ae789ca70/nastolki-kotorye-ne-nastolki-a-rasshiriteli-soznaniya/">Настолки, которые не настолки, а расширители сознания <time datetime="2026-09-24">24 сентября 2026</time></a></li>
+    <li><a href="/event/7ce69f1c-a2a2-4e0f-b549-6f7a8eadd3bf/priglashayu-na-detektivnyy-kvest-rolevuyu-igru/">Приглашаю на детективный квест - ролевую игру! <time datetime="2026-09-25">25 сентября 2026</time></a></li>
+  </ul>
+  <p class="event-past-cta"><a href="/da-nang/">Ближайшие события: Дананг</a></p>
+</div>
+
+  </body>
+</html>

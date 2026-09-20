@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Сотворите свой личный оберег: Мастер-класс по созданию ловца…</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-Bj-bUc-I.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-C4pb8Y-v.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DrZrcBpm.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/address-Dnt1XBIP.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CCXmfBKO.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-_hkV5XT9.css" />
+      <meta name="description" content="Нячанг, 5 сентября 2026. Сотворите свой личный оберег: Мастер-класс по созданию ловца снов в GameZone ✨ Погрузитесь в атмосферу уюта, творчества и магии…" />
+    <link rel="canonical" href="https://mypins.site/event/7f7ae5cb-6e01-48c6-9421-5d7f7ecf1792/sotvorite-svoy-lichnyy-obereg-master-klass-po-sozdaniyu-lovtsa-snov-v-gamezone/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Сотворите свой личный оберег: Мастер-класс по созданию ловца…" />
+    <meta property="og:description" content="Нячанг, 5 сентября 2026. Сотворите свой личный оберег: Мастер-класс по созданию ловца снов в GameZone ✨ Погрузитесь в атмосферу уюта, творчества и магии…" />
+    <meta property="og:url" content="https://mypins.site/event/7f7ae5cb-6e01-48c6-9421-5d7f7ecf1792/sotvorite-svoy-lichnyy-obereg-master-klass-po-sozdaniyu-lovtsa-snov-v-gamezone/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Сотворите свой личный оберег: Мастер-класс по созданию ловца снов в GameZone","url":"https://mypins.site/event/7f7ae5cb-6e01-48c6-9421-5d7f7ecf1792/sotvorite-svoy-lichnyy-obereg-master-klass-po-sozdaniyu-lovtsa-snov-v-gamezone/","startDate":"2026-09-05T14:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Gamezone - Laser tag, Archery tag, BBQ, Trần Khát Chân, Đường Đệ, Bắc Nha Trang, Khánh Hòa","address":{"@type":"PostalAddress","addressLocality":"Нячанг","streetAddress":"Gamezone - Laser tag, Archery tag, BBQ, Trần Khát Chân, Đường Đệ, Bắc Nha Trang, Khánh Hòa"},"geo":{"@type":"GeoCoordinates","latitude":12.2388,"longitude":109.1967}},"offers":{"@type":"Offer","url":"https://mypins.site/event/7f7ae5cb-6e01-48c6-9421-5d7f7ecf1792/sotvorite-svoy-lichnyy-obereg-master-klass-po-sozdaniyu-lovtsa-snov-v-gamezone/","price":300000,"priceCurrency":"VND","validFrom":"2026-09-02"},"description":"Сотворите свой личный оберег: Мастер-класс по созданию ловца снов в GameZone ✨ Погрузитесь в атмосферу уюта, творчества и магии сплетения нитей. Ловец снов — это не просто стильный элемент интерьера в стиле бохо, а наполненный вашей энергией талисман, хранящий только добрые сны и светлые мысли 🌾 Что вас ждёт на встрече: 💫 Освоение традиционной техники плетения и гармоничной сборки основы. 💫 Работа с натуральными материалами: пряжа, нежные перья, деревянные бусины и основы тёплых оттенков. 💫 Творческий релакс в компании единомышленников и готовый авторский амулет, созданный вашими руками. Опыт не требуется — мастер подробно покажет каждый шаг и поможет воплотить вашу идею в жизнь. Детали встречи: 📅 Дата: 5 сентября 🕑 Время: 14:00 📍Локация: GameZone 💳 Стоимость: 300 000 (все материалы уже включены в стоимость) Количество мест ограничено, чтобы каждому участнику было комфортно творить. Запись: @Anastasia_sgushenka - слово: \"ЛОВЕЦ СНОВ\" #дата: 05.09.2026","image":"https://mypins.site/logo.png","organizer":{"@type":"Organization","name":"Telegram @nyachang_ru","url":"https://t.me/nyachang_ru/22805"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"Сотворите свой личный оберег: Мастер-класс по созданию ловца снов в GameZone","item":"https://mypins.site/event/7f7ae5cb-6e01-48c6-9421-5d7f7ecf1792/sotvorite-svoy-lichnyy-obereg-master-klass-po-sozdaniyu-lovtsa-snov-v-gamezone/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Сотворите свой личный оберег: Мастер-класс по созданию ловца снов в GameZone</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-09-05">5 сентября 2026</time></p>
+  <p><time datetime="2026-09-05T14:00:00">5 сентября 2026, 14:00</time></p>
+  <address>Gamezone - Laser tag, Archery tag, BBQ, Trần Khát Chân, Đường Đệ, Bắc Nha Trang, Khánh Hòa, Нячанг</address>
+  <p>300000 VND</p>
+  <p>Сотворите свой личный оберег: Мастер-класс по созданию ловца снов в GameZone ✨
+
+Погрузитесь в атмосферу уюта, творчества и магии сплетения нитей. Ловец снов — это не просто стильный элемент интерьера в стиле бохо, а наполненный вашей энергией талисман, хранящий только добрые сны и светлые мысли 🌾
+
+Что вас ждёт на встрече:
+
+💫 Освоение традиционной техники плетения и гармоничной сборки основы.
+💫 Работа с натуральными материалами: пряжа, нежные перья, деревянные бусины и основы тёплых оттенков.
+💫 Творческий релакс в компании единомышленников и готовый авторский амулет, созданный вашими руками.
+
+Опыт не требуется — мастер подробно покажет каждый шаг и поможет воплотить вашу идею в жизнь.
+
+Детали встречи:
+
+📅 Дата: 5 сентября
+🕑 Время: 14:00
+📍Локация: GameZone 
+
+
+💳 Стоимость: 300 000 (все материалы уже включены в стоимость)
+
+
+Количество мест ограничено, чтобы каждому участнику было комфортно творить.
+Запись: @Anastasia_sgushenka - слово: &quot;ЛОВЕЦ СНОВ&quot;
+
+#дата: 05.09.2026</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/nha-trang/">Нячанг</a> <span aria-hidden="true">›</span> <span>Сотворите свой личный оберег: Мастер-класс по созданию ловца снов в GameZone</span></p>
+    <p>Ещё события в Нячанге: <a href="/nha-trang/">афиша</a> · <a href="/nha-trang/workshop/">🎨 Мастер-классы</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/6a4d9825-0673-4206-9f3f-680065e42743/dura-i-kritik/">Дура и Критик. <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/5d6e5190-d9a1-47c0-add7-2b5f2ac9c880/master-klass-vektor-sudby/">МАСТЕР-КЛАСС ВЕКТОР СУДЬБЫ <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/b8fc8987-13e6-4628-9520-6904aa23cfb1/sozday-ukrashenie/">СОЗДАЙ УКРАШЕНИЕ <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/71e1013b-20c7-4261-88a4-c8ef1c6c7755/tvorcheskiy-master-klass-po-shityu-dlya-detey-6/">Творческий мастер-класс по шитью для детей 6 <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/9c9eab94-b396-4920-9b3d-c6387b9b958d/u-kazhdogo-cheloveka-est-svoy-vedushchiy-arkhetip-i-to-kak-vzaimodeystvuyut-lyudi-s-raznymi-vedushchimi-arkhetipami-obyasnyaet-i-l/">У каждого человека есть свой ведущий архетип и то, как взаимодействуют люди с разными ведущими архетипами, объясняет и л <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/1a06925b-9191-497c-8af6-11c83f3c895a/high-heels-v-prime-tsentr-goroda-dlya-novichkov/">HIGH HEELS в Prime, центр города для новичков <time datetime="2026-09-21">21 сентября 2026</time></a></li>
+  </ul>
+  <p class="event-past-cta"><a href="/nha-trang/">Ближайшие события: Нячанг</a></p>
+</div>
+
+  </body>
+</html>

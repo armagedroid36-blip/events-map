@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Psychological meetup — September 13, 2026 · Da Nang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-Bj-bUc-I.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-C4pb8Y-v.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DrZrcBpm.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/address-Dnt1XBIP.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CCXmfBKO.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-_hkV5XT9.css" />
+      <meta name="description" content="Da Nang, September 13, 2026. Psychological Meetup &quot;I understand that everything is fine. But why do I still feel anxious?&quot; Sometimes nothing objectively bad is…" />
+    <link rel="canonical" href="https://mypins.site/en/event/a4b195f9-e689-44a9-b5cd-b49833dfab6b/psychological-meetup/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Psychological meetup — September 13, 2026 · Da Nang" />
+    <meta property="og:description" content="Da Nang, September 13, 2026. Psychological Meetup &quot;I understand that everything is fine. But why do I still feel anxious?&quot; Sometimes nothing objectively bad is…" />
+    <meta property="og:url" content="https://mypins.site/en/event/a4b195f9-e689-44a9-b5cd-b49833dfab6b/psychological-meetup/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/a4b195f9-e689-44a9-b5cd-b49833dfab6b/psychological-meetup/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/a4b195f9-e689-44a9-b5cd-b49833dfab6b/psikhologicheskaya-vstrecha/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Psychological meetup","url":"https://mypins.site/en/event/a4b195f9-e689-44a9-b5cd-b49833dfab6b/psychological-meetup/","startDate":"2026-09-13T19:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Wind Garden, 72 Lê Mạnh Trinh, Phước Mỹ, Sơn Trà, Đà Nẵng 550000, Da Nang","address":{"@type":"PostalAddress","addressLocality":"Da Nang","streetAddress":"Wind Garden, 72 Lê Mạnh Trinh, Phước Mỹ, Sơn Trà, Đà Nẵng 550000, Da Nang"},"geo":{"@type":"GeoCoordinates","latitude":16.0759643,"longitude":108.2449034}},"offers":{"@type":"Offer","url":"https://mypins.site/en/event/a4b195f9-e689-44a9-b5cd-b49833dfab6b/psychological-meetup/","price":250000,"priceCurrency":"VND","validFrom":"2026-09-08"},"description":"Psychological Meetup \"I understand that everything is fine. But why do I still feel anxious?\" Sometimes nothing objectively bad is happening, but inside it feels like a danger-waiting mode is constantly switched on. You replay conversations in your head, imagine bad scenarios in advance, check messages, worry about the future, and try to control everything — just to finally feel calm. But for some reason, calm still doesn't come. At the meetup we'll talk about anxiety: — why anxiety arises even when there is no real danger — how anxiety differs from fear — why we start controlling everything, analyzing, and \"replaying\" thoughts — where the feeling of \"something is bound to happen\" comes from — why attempts to get rid of anxiety sometimes only make it stronger — how anxiety, control, and uncertainty are connected — what happens to anxiety when we suppress it — and most importantly — how to learn to tolerate anxiety without letting it run your life We won't just talk about anxiety — we'll examine our usual ways of coping with it and look for healthier options. If this sounds familiar: \"I'm constantly worrying about something\" \"It's hard for me to relax\" \"I analyze everything\" \"I need to control everything\" \"Even when everything is good, I expect something to happen\" \"I'm tired of my own head\" — I'm waiting for you 🤍 Theme: ANXIETY 🗓️September 13 (Sun) at 19:00 📍Wind Garden ✅ Cost: 250k VND 👥 Limited number of spots 📩 Sign up: @Dana_psychology #date: 13.09","image":"https://mypins.site/logo.png","organizer":{"@type":"Organization","name":"Telegram @danang_afisha","url":"https://t.me/danang_afisha/5375"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Da Nang","item":"https://mypins.site/en/da-nang/"},{"@type":"ListItem","position":3,"name":"Psychological meetup","item":"https://mypins.site/en/event/a4b195f9-e689-44a9-b5cd-b49833dfab6b/psychological-meetup/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Psychological meetup</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-09-13">September 13, 2026</time></p>
+  <p><time datetime="2026-09-13T19:00:00">September 13, 2026, 7:00 PM</time></p>
+  <address>Wind Garden, 72 Lê Mạnh Trinh, Phước Mỹ, Sơn Trà, Đà Nẵng 550000, Da Nang</address>
+  <p>250000 VND</p>
+  <p>Psychological Meetup
+
+&quot;I understand that everything is fine. But why do I still feel anxious?&quot;
+
+Sometimes nothing objectively bad is happening, but inside it feels like a danger-waiting mode is constantly switched on.
+
+You replay conversations in your head, imagine bad scenarios in advance, check messages, worry about the future, and try to control everything — just to finally feel calm.
+
+But for some reason, calm still doesn&#39;t come.
+
+At the meetup we&#39;ll talk about anxiety:
+
+— why anxiety arises even when there is no real danger
+— how anxiety differs from fear
+— why we start controlling everything, analyzing, and &quot;replaying&quot; thoughts
+— where the feeling of &quot;something is bound to happen&quot; comes from
+— why attempts to get rid of anxiety sometimes only make it stronger
+— how anxiety, control, and uncertainty are connected
+— what happens to anxiety when we suppress it
+— and most importantly — how to learn to tolerate anxiety without letting it run your life
+
+We won&#39;t just talk about anxiety — we&#39;ll examine our usual ways of coping with it and look for healthier options.
+
+If this sounds familiar:
+
+&quot;I&#39;m constantly worrying about something&quot;
+&quot;It&#39;s hard for me to relax&quot;
+&quot;I analyze everything&quot;
+&quot;I need to control everything&quot;
+&quot;Even when everything is good, I expect something to happen&quot;
+&quot;I&#39;m tired of my own head&quot;
+
+— I&#39;m waiting for you 🤍
+
+Theme: ANXIETY
+
+🗓️September 13 (Sun) at 19:00
+📍Wind Garden
+✅ Cost: 250k VND
+
+👥 Limited number of spots
+
+📩 Sign up:
+@Dana_psychology
+
+#date: 13.09</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/da-nang/">Da Nang</a> <span aria-hidden="true">›</span> <span>Psychological meetup</span></p>
+    <p>More events in Da Nang: <a href="/en/da-nang/">what&#39;s on</a> · <a href="/en/da-nang/meetup/">🤝 Meetups &amp; Networking</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/29968975-8b85-404c-80cf-d8999b62ba9e/how-can-you-turn-an-existing-relationship-into-a-friendship/">How can you turn an existing relationship into a friendship? <time datetime="2026-09-20">September 20, 2026</time></a></li>
+    <li><a href="/en/event/9f72bb5f-50b7-46c8-8995-0ba04f7f986a/authentic-anti-business-dating/">AUTHENTIC (anti-business) DATING <time datetime="2026-09-20">September 20, 2026</time></a></li>
+    <li><a href="/en/event/d99b89c1-895c-47d5-afbd-6fa2d192e917/let-there-be-swap/">LET THERE BE SWAP <time datetime="2026-09-20">September 20, 2026</time></a></li>
+    <li><a href="/en/event/2b2c45d7-7819-47b7-864c-d01a64475d44/live-meeting/">LIVE MEETING <time datetime="2026-09-22">September 22, 2026</time></a></li>
+    <li><a href="/en/event/bbf535dc-45fa-4dc8-bcf1-ce341552b92f/mastermind-for-those-who-work-with-people/">MASTERMIND FOR THOSE WHO WORK WITH PEOPLE <time datetime="2026-09-26">September 26, 2026</time></a></li>
+  </ul>
+  <p class="event-past-cta"><a href="/en/da-nang/">Upcoming events in Da Nang</a></p>
+</div>
+
+  </body>
+</html>

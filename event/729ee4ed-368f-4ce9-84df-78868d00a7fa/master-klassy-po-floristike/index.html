@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Мастер-классы по флористике: — 6 сентября 2026 · Дананг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-Bj-bUc-I.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-C4pb8Y-v.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DrZrcBpm.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/address-Dnt1XBIP.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CCXmfBKO.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-_hkV5XT9.css" />
+      <meta name="description" content="Дананг, 6 сентября 2026. Мастер-классы по флористике: 6 сентября в 12:00 — яркий тропический букет в оттенках осени 🧡 Соберём яркий, жизнерадостный букет со…" />
+    <link rel="canonical" href="https://mypins.site/event/729ee4ed-368f-4ce9-84df-78868d00a7fa/master-klassy-po-floristike/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Мастер-классы по флористике: — 6 сентября 2026 · Дананг" />
+    <meta property="og:description" content="Дананг, 6 сентября 2026. Мастер-классы по флористике: 6 сентября в 12:00 — яркий тропический букет в оттенках осени 🧡 Соберём яркий, жизнерадостный букет со…" />
+    <meta property="og:url" content="https://mypins.site/event/729ee4ed-368f-4ce9-84df-78868d00a7fa/master-klassy-po-floristike/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/729ee4ed-368f-4ce9-84df-78868d00a7fa/master-klassy-po-floristike/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/729ee4ed-368f-4ce9-84df-78868d00a7fa/floristry-master-classes/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Мастер-классы по флористике:","url":"https://mypins.site/event/729ee4ed-368f-4ce9-84df-78868d00a7fa/master-klassy-po-floristike/","startDate":"2026-09-06T12:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Дананг","address":{"@type":"PostalAddress","addressLocality":"Дананг"},"geo":{"@type":"GeoCoordinates","latitude":16.0544,"longitude":108.2022}},"offers":{"@type":"Offer","url":"https://mypins.site/event/729ee4ed-368f-4ce9-84df-78868d00a7fa/master-klassy-po-floristike/","price":550000,"priceCurrency":"VND","validFrom":"2026-09-02"},"description":"Мастер-классы по флористике: 6 сентября в 12:00 — яркий тропический букет в оттенках осени 🧡 Соберём яркий, жизнерадостный букет со стрелицией и монстерой - про тепло, энергию и настроение. Поработаем с цветом, объёмом и акцентами, чтобы букет получился живым и запоминающимся. Стоимость — 550к ✱ Примечание: фотографии в анонсе приведены как пример для передачи идеи и визуального настроения. Итоговый состав и внешний вид могут отличаться. Всего 6 мест на каждую встречу Условие кафе — заказать напиток. Для записи пишите: @ponchik_kkkkkk 🎀 #дата: 06.09","image":"https://mypins.site/logo.png","organizer":{"@type":"Organization","name":"Telegram @danang_afisha","url":"https://t.me/danang_afisha/5281"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Дананг","item":"https://mypins.site/da-nang/"},{"@type":"ListItem","position":3,"name":"Мастер-классы по флористике:","item":"https://mypins.site/event/729ee4ed-368f-4ce9-84df-78868d00a7fa/master-klassy-po-floristike/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Мастер-классы по флористике:</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-09-06">6 сентября 2026</time></p>
+  <p><time datetime="2026-09-06T12:00:00">6 сентября 2026, 12:00</time></p>
+  <address>Дананг</address>
+  <p>550000 VND</p>
+  <p>Мастер-классы по флористике: 
+
+6 сентября в 12:00 — яркий тропический букет в оттенках осени 🧡
+
+Соберём яркий, жизнерадостный букет со стрелицией и монстерой - про тепло, энергию и настроение. 
+Поработаем с цветом, объёмом и акцентами, чтобы букет получился живым и запоминающимся.
+
+Стоимость — 550к 
+
+✱ Примечание: фотографии в анонсе приведены как пример для передачи идеи и визуального настроения. Итоговый состав и внешний вид могут отличаться.
+
+Всего 6 мест на каждую встречу
+
+Условие кафе — заказать напиток.
+
+Для записи пишите: @ponchik_kkkkkk 🎀
+
+#дата: 06.09</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/da-nang/">Дананг</a> <span aria-hidden="true">›</span> <span>Мастер-классы по флористике:</span></p>
+    <p>Ещё события в Дананге: <a href="/da-nang/">афиша</a> · <a href="/da-nang/workshop/">🎨 Мастер-классы</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/312101b4-d9c5-42ae-a5cd-dc56f726072e/argentinskoe-tango-iskusstvo-vzaimodeystviya-v-pare/">Аргентинское танго Искусство взаимодействия в паре <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/267254c9-8137-42e4-acfd-62cc41f0eb07/solo-latina/">Соло Латина <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/00911ca0-6ae0-4eaa-a297-926df17206d4/priglashaem-devushek-na-latinoamerikanskie-tantsy/">Приглашаем девушек на латиноамериканские танцы! <time datetime="2026-09-22">22 сентября 2026</time></a></li>
+    <li><a href="/event/18c5c2a5-fcda-4c23-b85a-13797686e7c8/tot-samyy-dancehall-kotoryy-ty-smozhesh-tantsevat-na-vecherinkakh/">Тот самый Dancehall, который ты сможешь танцевать на вечеринках <time datetime="2026-09-22">22 сентября 2026</time></a></li>
+    <li><a href="/event/72a718e6-ba19-41bb-baba-97c7792b58cd/master-klass-po-improvizatsii/">Мастер-класс по импровизации <time datetime="2026-09-23">23 сентября 2026</time></a></li>
+    <li><a href="/event/02b79462-6137-4270-8e3c-c4a7b8864447/v-chetverg-17-09-priglashayu-vas-naslazhdatsya-osennim-nastroeniem-i-porisovat-maslyanoy-pastelyu-atmosferu-oseni/">В четверг 17.09 приглашаю вас наслаждаться осенним настроением и порисовать масляной пастелью атмосферу осени <time datetime="2026-09-24">24 сентября 2026</time></a></li>
+  </ul>
+  <p class="event-past-cta"><a href="/da-nang/">Ближайшие события: Дананг</a></p>
+</div>
+
+  </body>
+</html>

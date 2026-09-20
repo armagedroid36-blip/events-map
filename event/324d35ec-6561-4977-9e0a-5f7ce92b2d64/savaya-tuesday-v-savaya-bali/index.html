@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SAVAYA TUESDAY в Savaya Bali — 3 ноября 2026 · Печату (Улувату)…</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-Bj-bUc-I.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-C4pb8Y-v.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DrZrcBpm.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/address-Dnt1XBIP.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CCXmfBKO.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-_hkV5XT9.css" />
+      <meta name="description" content="Печату (Улувату), Bali, 3 ноября 2026. SAVAYA TUESDAY пройдёт 3 ноября 2026 года в Savaya Bali. Это отдельная клубная программа электронной музыки на площадке…" />
+    <link rel="canonical" href="https://mypins.site/event/324d35ec-6561-4977-9e0a-5f7ce92b2d64/savaya-tuesday-v-savaya-bali/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="SAVAYA TUESDAY в Savaya Bali — 3 ноября 2026 · Печату (Улувату)…" />
+    <meta property="og:description" content="Печату (Улувату), Bali, 3 ноября 2026. SAVAYA TUESDAY пройдёт 3 ноября 2026 года в Savaya Bali. Это отдельная клубная программа электронной музыки на площадке…" />
+    <meta property="og:url" content="https://mypins.site/event/324d35ec-6561-4977-9e0a-5f7ce92b2d64/savaya-tuesday-v-savaya-bali/" />
+    <meta property="og:image" content="https://static.baliforum.ru/uploads/689129/conversions/candidate-01-dd5f277180dd-preview.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/324d35ec-6561-4977-9e0a-5f7ce92b2d64/savaya-tuesday-v-savaya-bali/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/324d35ec-6561-4977-9e0a-5f7ce92b2d64/savaya-tuesday-at-savaya-bali/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"SAVAYA TUESDAY в Savaya Bali","url":"https://mypins.site/event/324d35ec-6561-4977-9e0a-5f7ce92b2d64/savaya-tuesday-v-savaya-bali/","startDate":"2026-11-03T23:59:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Jl. Belimbing Sari, Banjar Tambiyak, Pecatu, Uluwatu, Kabupaten Badung, Bali 80364, Indonesia","address":{"@type":"PostalAddress","addressLocality":"Печату (Улувату), Bali","streetAddress":"Jl. Belimbing Sari, Banjar Tambiyak, Pecatu, Uluwatu, Kabupaten Badung, Bali 80364, Indonesia"},"geo":{"@type":"GeoCoordinates","latitude":-8.8464743,"longitude":115.1407208}},"offers":{"@type":"Offer","url":"https://mypins.site/event/324d35ec-6561-4977-9e0a-5f7ce92b2d64/savaya-tuesday-v-savaya-bali/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-09-14"},"description":"SAVAYA TUESDAY пройдёт 3 ноября 2026 года в Savaya Bali. Это отдельная клубная программа электронной музыки на площадке в Улувату.","endDate":"2026-11-03","image":"https://static.baliforum.ru/uploads/689129/conversions/candidate-01-dd5f277180dd-preview.jpg","organizer":{"@type":"Organization","name":"BaliForum","url":"https://baliforum.ru/events/savaya-tuesday-v-savaya-bali-5"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Бали","item":"https://mypins.site/bali/"},{"@type":"ListItem","position":3,"name":"SAVAYA TUESDAY в Savaya Bali","item":"https://mypins.site/event/324d35ec-6561-4977-9e0a-5f7ce92b2d64/savaya-tuesday-v-savaya-bali/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>SAVAYA TUESDAY в Savaya Bali</h1>
+  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-11-03">3 ноября 2026</time></p>
+  <p><time datetime="2026-11-03T23:59:00">3 ноября 2026, 23:59</time></p>
+  <address>Jl. Belimbing Sari, Banjar Tambiyak, Pecatu, Uluwatu, Kabupaten Badung, Bali 80364, Indonesia, Печату (Улувату), Bali</address>
+  <p>SAVAYA TUESDAY пройдёт 3 ноября 2026 года в Savaya Bali. Это отдельная клубная программа электронной музыки на площадке в Улувату.</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/bali/">Бали</a> <span aria-hidden="true">›</span> <span>SAVAYA TUESDAY в Savaya Bali</span></p>
+    <p>Ещё события на Бали: <a href="/bali/">афиша</a> · <a href="/bali/party/">🪩 Вечеринки</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/c3c3b21d-ba79-4c03-b2e0-e7fc7e91214a/special-guest-v-savaya-bali/">SPECIAL GUEST в Savaya Bali <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/a9739ca9-dfae-4e98-a1d5-7c673f64049c/last-light-v-savaya-bali/">LAST LIGHT в Savaya Bali <time datetime="2026-11-02">2 ноября 2026</time></a></li>
+    <li><a href="/event/b5116895-393a-4a22-a11e-27bf74c6a85d/savaya-tuesday-v-savaya-bali/">SAVAYA TUESDAY в Savaya Bali <time datetime="2026-11-03">3 ноября 2026</time></a></li>
+    <li><a href="/event/b5bbbecf-1501-413c-a0c7-8b8c60d25cc2/savaya-wednesday-v-savaya-bali/">SAVAYA WEDNESDAY в Savaya Bali <time datetime="2026-11-04">4 ноября 2026</time></a></li>
+    <li><a href="/event/de804e85-7d39-4f9a-99c1-cd57c6449a72/savaya-thursday-v-savaya-bali/">SAVAYA THURSDAY в Savaya Bali <time datetime="2026-11-05">5 ноября 2026</time></a></li>
+    <li><a href="/event/945639a3-5ce8-4dd7-bd0e-13304c53cda9/u-uk-uk1mat-u-v-savaya-bali/">¥ØU$UK€ ¥UK1MAT$U в Savaya Bali <time datetime="2026-11-06">6 ноября 2026</time></a></li>
+  </ul>
+  <p class="event-past-cta"><a href="/bali/">Ближайшие события: Бали</a></p>
+</div>
+
+  </body>
+</html>

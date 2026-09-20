@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Курс подготовки преподавателей йоги — 18 сентября 2026 ·…</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-Bj-bUc-I.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-C4pb8Y-v.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DrZrcBpm.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/address-Dnt1XBIP.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CCXmfBKO.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CGNUZLkr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-_hkV5XT9.css" />
+      <meta name="description" content="Табанан, Bali, 18 сентября 2026. Moana Wellness Hub приглашает на программу WYTT Multistyle 200HRS Yoga Teacher Training + 20HRS Wellness Training…" />
+    <link rel="canonical" href="https://mypins.site/event/ee8d39b9-f1dd-4ff3-8e1e-8c0c3da9f2c6/kurs-podgotovki-prepodavateley-yogi/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Курс подготовки преподавателей йоги — 18 сентября 2026 ·…" />
+    <meta property="og:description" content="Табанан, Bali, 18 сентября 2026. Moana Wellness Hub приглашает на программу WYTT Multistyle 200HRS Yoga Teacher Training + 20HRS Wellness Training…" />
+    <meta property="og:url" content="https://mypins.site/event/ee8d39b9-f1dd-4ff3-8e1e-8c0c3da9f2c6/kurs-podgotovki-prepodavateley-yogi/" />
+    <meta property="og:image" content="https://static.baliforum.ru/uploads/649100/conversions/96308162-67172295-preview.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/ee8d39b9-f1dd-4ff3-8e1e-8c0c3da9f2c6/kurs-podgotovki-prepodavateley-yogi/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/ee8d39b9-f1dd-4ff3-8e1e-8c0c3da9f2c6/yoga-teacher-training-course/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Курс подготовки преподавателей йоги","url":"https://mypins.site/event/ee8d39b9-f1dd-4ff3-8e1e-8c0c3da9f2c6/kurs-podgotovki-prepodavateley-yogi/","startDate":"2026-09-18T23:59:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"93FX+JV, Beraban, Kediri, Tabanan Regency, Bali, Indonesia","address":{"@type":"PostalAddress","addressLocality":"Табанан, Bali","streetAddress":"93FX+JV, Beraban, Kediri, Tabanan Regency, Bali, Indonesia"},"geo":{"@type":"GeoCoordinates","latitude":-8.6264159,"longitude":115.0997968}},"offers":{"@type":"Offer","url":"https://mypins.site/event/ee8d39b9-f1dd-4ff3-8e1e-8c0c3da9f2c6/kurs-podgotovki-prepodavateley-yogi/","price":0,"priceCurrency":"USD","validFrom":"2026-09-18"},"description":"Moana Wellness Hub приглашает на программу WYTT Multistyle 200HRS Yoga Teacher Training + 20HRS Wellness Training — интенсивный курс для тех, кто хочет углубить свою практику и получить международную сертификацию преподавателя йоги. Программа соответствует стандартам Yoga Alliance® и сочетает изучение различных направлений йоги с практиками холистического здоровья, аюрведы, работы с чакрами, дыхательных техник и осознанного движения. Даты обучения в 2026 году: 🗓 21 июня – 12 июля🗓 6 – 27 сентября🗓 4 – 25 октября 📍 Moana Wellness Hub, Nuanu Creative City 🧘 200 часов подготовки преподавателей йоги🌿 20 часов велнес-практик✨ Международная сертификация и глубокая трансформационная программа Идеально для тех, кто хочет развивать личную практику или начать профессиональный путь преподавателя йоги. 🌺🙏🪷 instagram (https://www.instagram.com/moanawellnesshub/?g=5) tel:+62 8812808888","image":"https://static.baliforum.ru/uploads/649100/conversions/96308162-67172295-preview.jpg","organizer":{"@type":"Organization","name":"BaliForum","url":"https://baliforum.ru/events/kurs-podgotovki-prepodavateley-yogi-1"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Бали","item":"https://mypins.site/bali/"},{"@type":"ListItem","position":3,"name":"Курс подготовки преподавателей йоги","item":"https://mypins.site/event/ee8d39b9-f1dd-4ff3-8e1e-8c0c3da9f2c6/kurs-podgotovki-prepodavateley-yogi/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Курс подготовки преподавателей йоги</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-09-18">18 сентября 2026</time></p>
+  <p><time datetime="2026-09-18T23:59:00">18 сентября 2026, 23:59</time></p>
+  <address>93FX+JV, Beraban, Kediri, Tabanan Regency, Bali, Indonesia, Табанан, Bali</address>
+  <p>Moana Wellness Hub приглашает на программу WYTT Multistyle 200HRS Yoga Teacher Training + 20HRS Wellness Training — интенсивный курс для тех, кто хочет углубить свою практику и получить международную сертификацию преподавателя йоги.
+
+Программа соответствует стандартам Yoga Alliance® и сочетает изучение различных направлений йоги с практиками холистического здоровья, аюрведы, работы с чакрами, дыхательных техник и осознанного движения.
+
+Даты обучения в 2026 году:
+
+🗓 21 июня – 12 июля🗓 6 – 27 сентября🗓 4 – 25 октября
+
+📍 Moana Wellness Hub, Nuanu Creative City
+
+🧘 200 часов подготовки преподавателей йоги🌿 20 часов велнес-практик✨ Международная сертификация и глубокая трансформационная программа
+
+Идеально для тех, кто хочет развивать личную практику или начать профессиональный путь преподавателя йоги. 🌺🙏🪷
+
+instagram (https://www.instagram.com/moanawellnesshub/?g=5)
+
+tel:+62 8812808888</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/bali/">Бали</a> <span aria-hidden="true">›</span> <span>Курс подготовки преподавателей йоги</span></p>
+    <p>Ещё события на Бали: <a href="/bali/">афиша</a> · <a href="/bali/wellness/">🧘 Йога и здоровье</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/c265491d-6b9b-407d-9e4d-ecbbce2d5a04/gvozdeterapiya/">Гвоздетерапия <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/d0e306e5-508d-499a-aa91-606f73ab3e5f/serf-safari-ot-surf-yoga/">Сёрф-сафари от Surf &amp; Yoga <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/e2b7f28f-8b2b-42a5-b7f4-594c83cccbeb/mini-retrit-shamanic-tantra/">мини-ретрит Shamanic tantra <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/82c94c49-05a2-4c54-b138-283008e56a98/kurs-podgotovki-prepodavateley-yogi/">Курс подготовки преподавателей йоги <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/ee80820e-dde0-46d7-8591-4fc06c982d1a/mission-inner-peace/">Mission Inner Peace <time datetime="2026-09-21">21 сентября 2026</time></a></li>
+    <li><a href="/event/a64ce8d1-7a46-47d9-8eb8-bca3fea26f43/zhenskaya-banya/">Женская Баня <time datetime="2026-09-21">21 сентября 2026</time></a></li>
+  </ul>
+  <p class="event-past-cta"><a href="/bali/">Ближайшие события: Бали</a></p>
+</div>
+
+  </body>
+</html>
