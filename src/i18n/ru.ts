@@ -246,6 +246,11 @@ export default {
     recurrenceUntil: 'до {{date}}',
     seriesDates: 'Другие даты серии:',
     similarEvents: 'Похожие события',
+    pastBadge: 'Событие прошло',
+    pastRemoved: 'Событие снято с афиши',
+    pastCta: 'Ближайшие события',
+    pastBackToMap: 'Открыть карту событий',
+
     breadcrumbs: 'Хлебные крошки',
     crumbHome: 'Главная',
     moreInCity: 'Ещё события {{city}}:',

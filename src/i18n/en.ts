@@ -245,6 +245,11 @@ export default {
     recurrenceUntil: 'until {{date}}',
     seriesDates: 'Other dates in this series:',
     similarEvents: 'Similar events',
+    pastBadge: 'Event has ended',
+    pastRemoved: 'Event removed from the lineup',
+    pastCta: 'Upcoming events',
+    pastBackToMap: 'Open the events map',
+
     breadcrumbs: 'Breadcrumbs',
     crumbHome: 'Home',
     moreInCity: 'More events in {{city}}:',

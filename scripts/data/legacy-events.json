@@ -1,0 +1,27 @@
+[
+  {
+    "id": "51f9bb49-a8b5-4d0b-8fdb-b5fcdba72882",
+    "title": "мастер-класс для бобров и инженеров-строителей \"Хатка-Йога\"",
+    "title_ru": null,
+    "title_en": "Beaver and civil engineer masterclass \"Hatka-Yoga\"",
+    "description": "научимся строить хатки гибко и гармонично",
+    "description_ru": null,
+    "description_en": "Let's learn to build huts flexibly and harmoniously.",
+    "source_lang": "ru",
+    "start_date": "2026-11-27",
+    "end_date": "2026-11-30",
+    "city": "Мандалай",
+    "address": "Than Hlyet Maw (South) Ward, Maha Aungmye, Mahaaungmyay District, Мандалай, Mandalay City, Мандалай, 05031, Мьянма",
+    "category_id": "wellness",
+    "price": null,
+    "currency": null,
+    "donation": true,
+    "photos": [
+      "1787477806625-9c7g2i.jpg"
+    ],
+    "owner_id": "53cae975-4d39-4940-a9e3-f43d10e9e629",
+    "start_time": "09:45:00",
+    "end_time": "14:31:00",
+    "status": "archived"
+  }
+]

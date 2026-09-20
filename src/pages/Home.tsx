@@ -22,7 +22,7 @@ import { seriesSiblings } from '../lib/series';
 import { similarEvents } from '../lib/similar';
 import { nextOccurrenceDate } from '../lib/recurrence';
 import { formatDate, todayIso } from '../lib/dates';
-import { cityCrumbLabel, cityCrumbLabelLocative, cityPath } from '../lib/address';
+import { cityCrumbLabel, cityCrumbLabelLocative, cityPageHref, cityPath } from '../lib/address';
 import type { CityPath } from '../lib/address';
 import { MAP_INTRO_KEY, MOBILE_INTRO_QUERY, HOME_PANEL_QUERY, dropIntroSeoBlocks, setHomePanelHidden } from '../lib/mobileIntro';
 import {
@@ -111,6 +111,10 @@ export default function Home({
   // Прямая ссылка /event/<id>/... на событие, которого нет (удалено/скрыто):
   // вместо карты показываем блок «не найдено»
   const [eventNotFound, setEventNotFound] = useState(false);
+  // Страница ПРОШЕДШЕГО (архивного) события: событие достаётся по id через
+  // get_public_event (в активном наборе его нет) — /event/<id>/<slug>/ должен
+  // открывать карточку, а не заглушку «событие не найдено».
+  const [pastEvent, setPastEvent] = useState<EventItem | null>(null);
 
   // --- Состояние интерфейса ---
   // filters — активные фильтры. Применяются МГНОВЕННО при любом изменении
@@ -475,10 +479,27 @@ export default function Home({
           // enPath && !hasEn: URL не трогаем (EN-версии события нет —
           // canonical на RU URL ставит applyEventMeta)
         } else {
-          // События нет (удалено/скрыто/завершено) — вместо карты заглушка.
-          // Глубокий URL мёртв — мета базовая, canonical/og снимаем (404)
-          applyGenericMeta();
-          setEventNotFound(true);
+          // События нет в активном наборе: возможно, это страница ПРОШЕДШЕГО
+          // события (архивное событие на карте не показывается, но его страница
+          // существует — пре-рендер её собирает, GSC её индексирует). Пробуем
+          // достать событие по id: RPC get_public_event отдаёт и архивные.
+          let archived: EventItem | null = null;
+          try {
+            archived = await getApi().getPublicEvent(eventId);
+          } catch {
+            archived = null;
+          }
+          if (!alive) return;
+          if (archived && archived.status === 'archived') {
+            setPastEvent(archived);
+            // Мета — как у статической страницы: canonical на сам URL события
+            applyEventMeta(archived);
+          } else {
+            // События нет вовсе (удалено/скрыто) — вместо карты заглушка.
+            // Глубокий URL мёртв — мета базовая, canonical/og снимаем (404)
+            applyGenericMeta();
+            setEventNotFound(true);
+          }
         }
       }
     })();
@@ -776,6 +797,38 @@ export default function Home({
   // путей: страницы у такой пары нет и в статике (вне sitemap).
   if (categoryNotFound) {
     return <NotFound />;
+  }
+
+  // Страница ПРОШЕДШЕГО события (архивного): карточка с плашкой «Событие
+  // прошло», фактами, блоком похожих ближайших событий и ссылкой на афишу
+  // города. Живая карта не монтируется: событие архивное, на карте его нет —
+  // показывать map ради пустого экрана незачем.
+  if (pastEvent) {
+    const pastCityHref = cityPageHref(pastEvent.city, seoLang) ?? (seoLang === 'en' ? '/en/' : '/');
+    return (
+      <div className="flex min-h-screen flex-col">
+        <Header onOpenForm={() => setFormOpen(true)} />
+        <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-6">
+          <EventCard
+            event={pastEvent}
+            categories={categories}
+            onClose={() => navigate(seoLang === 'en' ? '/en/' : '/')}
+            titleAsH1
+            pastMode
+            similarEvents={similarEvents(pastEvent, events, seoLang)}
+          />
+          <div className="mt-4">
+            <a
+              href={pastCityHref}
+              className="inline-block rounded-md bg-[#72D2CF] px-4 py-2 text-sm font-semibold text-black shadow hover:bg-[#61B2B0]"
+            >
+              {t('card.pastCta')}
+              {pastEvent.city ? `: ${pastEvent.city}` : ''}
+            </a>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // Прямая ссылка на событие, которого нет (удалено/скрыто/завершено):

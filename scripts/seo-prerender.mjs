@@ -30,7 +30,7 @@
 // слэш сам.
 
 import { createClient } from '@supabase/supabase-js';
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, promises as fsp } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -1356,16 +1356,69 @@ function eventJsonLd(ev, url, lang = 'ru', image = null) {
  * старые hreflang-теги вычищаются (страница без пары). meta.canonical/
  * ogUrl уже должны указывать на версию языка (SITE_URL + /en для EN).
  */
+// Кэш «очищенной» базы: renderPage снимает с базового index.html
+// description/canonical/hreflang/og-теги, и для одной и той же базы результат
+// всегда одинаковый. Раньше эти четыре прохода по всему документу выполнялись
+// на КАЖДУЮ страницу (их теперь 3250+) — чистим один раз.
+let cleanedBaseSrc = null;
+let cleanedBaseOut = null;
+
+/** Базовый HTML без description/canonical/alternate/og — «чистая» голова для renderPage */
+function cleanedBase(baseHtml) {
+  if (cleanedBaseSrc === baseHtml && cleanedBaseOut !== null) return cleanedBaseOut;
+  const out = baseHtml
+    .replace(/<meta\s+name=["']description["'][^>]*>/gi, '')
+    .replace(/<link\s+rel=["']canonical["'][^>]*\/?>/gi, '')
+    .replace(/<link\s+rel=["']alternate["'][^>]*\/?>/gi, '')
+    .replace(/<meta\s+(?:property|name)=["'](?:og|twitter):[^"']*["'][^>]*>/gi, '');
+  cleanedBaseSrc = baseHtml;
+  cleanedBaseOut = out;
+  return out;
+}
+
+/**
+ * База для страниц ПРОШЕДШИХ событий: входной CSS отдаётся отдельным файлом
+ * (как было до оптимизации первого экрана), а не встроенным. Причина — время
+ * сборки: архивных страниц ~2500, а встроенный CSS (117 КБ) утяжеляет каждую
+ * из них в 10 раз и по записи, и по строковым операциям в renderPage.
+ * Первый экран для этих страниц не приоритет (на них приходят из поиска по
+ * прошедшему событию), поэтому у них обычная ссылка на CSS; встроенный CSS
+ * остаётся на главной, городах, категориях и страницах активных событий.
+ * Файл CSS ищется по совпадению содержимого — сборка остаётся самодостаточной.
+ */
+let cssBaseCache = null;
+
+function baseWithCssLink(baseHtml) {
+  if (cssBaseCache) return cssBaseCache;
+  const m = /<style>([\s\S]*?)<\/style>/.exec(baseHtml);
+  if (!m) {
+    cssBaseCache = baseHtml;
+    return cssBaseCache;
+  }
+  try {
+    for (const f of readdirSync(join(DIST, 'assets'))) {
+      if (!f.endsWith('.css')) continue;
+      if (readFileSync(join(DIST, 'assets', f), 'utf8') === m[1]) {
+        cssBaseCache = baseHtml.replace(
+          m[0],
+          `<link rel="stylesheet" crossorigin href="/assets/${f}" />`,
+        );
+        return cssBaseCache;
+      }
+    }
+  } catch {
+    /* каталога assets нет — оставляем базу как есть */
+  }
+  cssBaseCache = baseHtml;
+  return cssBaseCache;
+}
+
 function renderPage(baseHtml, meta) {
   const lang = meta.lang === 'en' ? 'en' : 'ru';
   const locale = lang === 'en' ? 'en_US' : 'ru_RU';
-  let out = baseHtml
+  let out = cleanedBase(baseHtml)
     .replace(/<title>[\s\S]*?<\/title>/i, () => `<title>${esc(meta.title)}</title>`)
     .replace(/<html\s+lang=["'][^"']*["']/i, `<html lang="${lang}"`);
-  out = out.replace(/<meta\s+name=["']description["'][^>]*>/gi, '');
-  out = out.replace(/<link\s+rel=["']canonical["'][^>]*\/?>/gi, '');
-  out = out.replace(/<link\s+rel=["']alternate["'][^>]*\/?>/gi, '');
-  out = out.replace(/<meta\s+(?:property|name)=["'](?:og|twitter):[^"']*["'][^>]*>/gi, '');
   const lines = [
     `    <meta name="description" content="${esc(meta.description)}" />`,
     `    <link rel="canonical" href="${esc(meta.canonical)}" />`,
@@ -1411,6 +1464,29 @@ function renderPage(baseHtml, meta) {
     );
   }
   return out;
+}
+
+/**
+ * Запись пачки страниц с ограниченной параллельностью.
+ * На Windows одна запись файла стоит ~35 мс (антивирус + файловая система):
+ * последовательная запись 2500 архивных страниц растягивала сборку на минуты,
+ * хотя сами страницы копятся в памяти (14 КБ × 2500 = 35 МБ). Параллельная
+ * запись тем же составом файлов сокращает этап в разы.
+ */
+const WRITE_CONCURRENCY = 12;
+
+async function writePagesParallel(pages) {
+  let next = 0;
+  const worker = async () => {
+    while (next < pages.length) {
+      const i = next++;
+      const page = pages[i];
+      const dir = join(DIST, ...page.path.split('/'));
+      await fsp.mkdir(dir, { recursive: true });
+      await fsp.writeFile(join(dir, 'index.html'), page.html);
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(WRITE_CONCURRENCY, pages.length) }, worker));
 }
 
 /** Записать dist/<path>/index.html из шаблона */
@@ -1917,6 +1993,105 @@ const MAX_SIMILAR = 6;
 // Минимум кандидатов, при котором блок выводится (анти-тонкий контент)
 const MIN_SIMILAR = 3;
 
+// --- Прошедшие (архивные) события: их страницы обязаны отдавать 200 ---
+// archive-past.mjs переводит завершившиеся события active → archived, после
+// чего они исчезали из пре-рендера и sitemap, а Google Search Console показывал
+// по ним «Не найдено (404)» (~1400 URL). Набор для СТРАНИЦ: активные + все
+// архивные (RPC list_past_events — security definer, читается анонимом, т.к.
+// RLS отдаёт анониму только active, а list_all_events закрыт). В SITEMAP
+// попадают только прошедшие не старше PAST_SITEMAP_MONTHS месяцев: более
+// старые отдают 200, но карту не засоряют.
+const PAST_SITEMAP_MONTHS = 12;
+// Сколько прошедших событий тянем за один запрос (лимит PostgREST — 1000 строк)
+const PAST_PAGE_SIZE = 1000;
+
+/** Последний день события (end_date или start_date) как ISO-строка или null */
+function eventLastDay(ev) {
+  const d = ev && (ev.end_date || ev.start_date);
+  return typeof d === 'string' && d ? d.slice(0, 10) : null;
+}
+
+/** Событие завершилось (последний день раньше сегодняшнего)? */
+function isPastEvent(ev) {
+  const iso = eventLastDay(ev);
+  return Boolean(iso) && iso < TODAY_ISO;
+}
+
+/** Прошедшее событие старше окна sitemap (или без даты) — страница есть, в карте нет */
+function pastTooOld(ev) {
+  const iso = eventLastDay(ev);
+  if (!iso) return true;
+  const limit = new Date(`${TODAY_ISO}T00:00:00Z`);
+  limit.setUTCMonth(limit.getUTCMonth() - PAST_SITEMAP_MONTHS);
+  return iso < limit.toISOString().slice(0, 10);
+}
+
+/**
+ * Все архивные события постранично (PostgREST отдаёт максимум 1000 строк).
+ * Пустой ответ — не ошибка: архив может быть пуст, но молча терять страницы
+ * нельзя, поэтому о размере набора пишем в лог сборки.
+ */
+async function loadPastEvents(db) {
+  const all = [];
+  for (let from = 0; ; from += PAST_PAGE_SIZE) {
+    const { data, error } = await db
+      .rpc('list_past_events')
+      .range(from, from + PAST_PAGE_SIZE - 1);
+    if (error) {
+      console.error(`seo-prerender: ошибка list_past_events: ${error.message}`);
+      process.exit(1);
+    }
+    const rows = data ?? [];
+    all.push(...rows);
+    if (rows.length < PAST_PAGE_SIZE) break;
+  }
+  return all;
+}
+
+/**
+ * Исторические URL из списка Google Search Console (scripts/data/gsc-404-urls.txt):
+ * слаги менялись вместе с заголовками события, поэтому у части событий ссылка,
+ * которую знает Google, отличается от текущей расчётной. Такие URL получают
+ * страницу-алиас с canonical на канонический URL (редирект запрещён ТЗ).
+ * Файла нет — алиасов нет (скрипт работает и без него).
+ */
+function loadGscEventUrls() {
+  try {
+    return readFileSync(join(ROOT, 'scripts/data/gsc-404-urls.txt'), 'utf8')
+      .split('\n')
+      .map((s) => s.trim())
+      .filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Снимки событий, которых УЖЕ НЕТ в базе, но чьи URL есть в списке GSC
+ * (scripts/data/legacy-events.json): их страницы тоже должны отдавать 200.
+ * Записи обрабатываются как прошедшие (в карту не попадают).
+ */
+function loadLegacyEvents() {
+  try {
+    const raw = readFileSync(join(ROOT, 'scripts/data/legacy-events.json'), 'utf8');
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch {
+    return [];
+  }
+}
+
+/** Плашка прошедшего события: «Событие прошло» — для прошедших по дате,
+ *  «Событие снято с афиши» — для архивных с датой в будущем (такие архивируют
+ *  вручную: дубли и снятые анонсы). */
+function pastBadge(ev, lang) {
+  const en = lang === 'en';
+  return isPastEvent(ev)
+    ? (en ? 'Event has ended' : 'Событие прошло')
+    : (en ? 'Event removed from the lineup' : 'Событие снято с афиши');
+}
+
+
 /** Группы «город × категория» по всему активному набору: Map(cellKey → события).
  * Те же требования к событию, что у посадочных категорий: распознанный город
  * (cityCrumb), заполненная категория и непустое название. */
@@ -2080,7 +2255,7 @@ function eventBreadcrumbHtml(ev, lang = 'ru', name = '', catLink = null) {
  * после серии добавляется блок «Похожие события»/«Similar events» со ссылками
  * на них; пусто — блока нет.
  */
-function eventSeoHtml(ev, url, lang = 'ru', sibs = [], catLink = null, similar = []) {
+function eventSeoHtml(ev, url, lang = 'ru', sibs = [], catLink = null, similar = [], past = false) {
   const en = lang === 'en';
   const name = en
     ? ev.title_en || ev.title || ''
@@ -2105,6 +2280,18 @@ function eventSeoHtml(ev, url, lang = 'ru', sibs = [], catLink = null, similar =
 
   const lines = ['<div id="seo-event-block">'];
   if (name) lines.push(`  <h1>${esc(name)}</h1>`);
+  // Плашка прошедшего события (страницы архивных событий; в SPA та же плашка —
+  // EventCard pastMode). Текст: «Событие прошло» либо «Событие снято с афиши»
+  // для архивных с датой в будущем; дата — последний день события.
+  if (past) {
+    const last = eventLastDay(ev);
+    const badge = pastBadge(ev, lang);
+    lines.push(
+      `  <p class="event-past"><strong>${esc(badge)}</strong>${
+        last ? ` — <time datetime="${esc(last)}">${esc(en ? enDate(last) : ruDate(last))}</time>` : ''
+      }</p>`,
+    );
+  }
   if (sd) {
     const dateText = time ? localizedDateTime(sd, time, lang) : (en ? enDate(sd) : ruDate(sd));
     const datetime = time ? `${sd}T${time}` : sd;
@@ -2148,8 +2335,92 @@ function eventSeoHtml(ev, url, lang = 'ru', sibs = [], catLink = null, similar =
   // Похожие события (тот же город + та же категория) — после блока серии
   const similarHtml = similarEventsHtml(similar, lang);
   if (similarHtml) lines.push(similarHtml);
+  // CTA страницы прошедшего события: ближайшие события города (или карта, если
+  // город не распознан) — посетитель не должен упираться в тупик на архивной
+  // странице. Ссылка ведёт на существующую страницу своего языка.
+  if (past) {
+    const crumb = cityCrumb(ev.city);
+    const cityName = crumb ? (en ? CITY_NAME_EN[crumb.path] || crumb.name : crumb.name) : '';
+    const ctaHref = crumb ? `${en ? '/en' : ''}/${crumb.path}/` : (en ? '/en/' : '/');
+    const ctaText = crumb
+      ? (en ? `Upcoming events in ${cityName}` : `Ближайшие события: ${cityName}`)
+      : (en ? 'Open the events map' : 'Открыть карту событий');
+    lines.push(`  <p class="event-past-cta"><a href="${esc(ctaHref)}">${esc(ctaText)}</a></p>`);
+  }
   lines.push('</div>', '');
   return lines.join('\n');
+}
+
+/**
+ * Мета страницы события (title/description/canonical/og/JSON-LD/hreflang/body) —
+ * вынесена для страниц ПРОШЕДШИХ событий и их алиасов: у алиаса исторического
+ * слага та же мета (canonical остаётся на каноническом URL — редирект запрещён,
+ * canonical снимает дубликат). Формулы title/description ПОСИМВОЛЬНО те же, что
+ * в основном цикле страниц активных событий (искать «События: URL должен
+ * совпадать») — при правке менять в обоих местах.
+ *
+ * opts = { url, enUrl, hasEn, image, similar, catLink, past }.
+ */
+function eventPageMetaFor(ev, lang, opts) {
+  const en = lang === 'en';
+  const { url, enUrl, hasEn, image, similar, catLink, past } = opts;
+  const city = typeof ev.city === 'string' ? ev.city.trim() : '';
+  const sibs = [];
+  if (en) {
+    const nameEn = ev.title_en || ev.title || '';
+    const crumb = cityCrumb(ev.city);
+    const cityEn = crumb ? CITY_NAME_EN[crumb.path] || crumb.name : '';
+    const enText = ev.description_en || ev.description || ev.description_ru || '';
+    const dateEn = enDate(ev.start_date);
+    const prefixEn = [cityEn, dateEn].filter(Boolean).join(', ');
+    const descriptionEn = snippet(prefixEn ? `${prefixEn}. ${enText}` : enText, 160);
+    const titleEn =
+      snippet([`${nameEn} — ${enDate(occurrence(ev))}`, cityEn].filter(Boolean).join(' · '), 65) ||
+      'Event';
+    return {
+      lang: 'en',
+      title: titleEn,
+      description: descriptionEn,
+      canonical: url,
+      ogTitle: titleEn,
+      ogDescription: descriptionEn,
+      ogUrl: url,
+      ogImage: image,
+      jsonLd: eventJsonLd(ev, url, 'en', image),
+      hreflang: [
+        { hreflang: 'en', href: url },
+        { hreflang: 'ru', href: enUrl },
+        { hreflang: 'x-default', href: `${SITE_URL}/en/` },
+      ],
+      bodySeo: eventSeoHtml(ev, url, 'en', sibs, catLink, similar, Boolean(past)),
+    };
+  }
+  const title =
+    snippet([`${ev.title} — ${ruDate(occurrence(ev))}`, city].filter(Boolean).join(' · '), 65) ||
+    'Событие';
+  const ruText = ev.description_ru || ev.description || ev.description_en || '';
+  const prefix = [city, ruDate(ev.start_date)].filter(Boolean).join(', ');
+  const description = snippet(prefix ? `${prefix}. ${ruText}` : ruText, 160);
+  return {
+    title,
+    description,
+    canonical: url,
+    ogTitle: title,
+    ogDescription: description,
+    ogUrl: url,
+    ogImage: image,
+    jsonLd: eventJsonLd(ev, url, 'ru', image),
+    ...(hasEn
+      ? {
+          hreflang: [
+            { hreflang: 'ru', href: url },
+            { hreflang: 'en', href: enUrl },
+            { hreflang: 'x-default', href: `${SITE_URL}/en/` },
+          ],
+        }
+      : {}),
+    bodySeo: eventSeoHtml(ev, url, 'ru', sibs, catLink, similar, Boolean(past)),
+  };
 }
 
 // --- Посадочные страницы «город × категория» (/<city>/<category>/, Фаза 4) ---
@@ -2991,6 +3262,11 @@ function categoryJsonLd(cell, lang) {
 // --- Главный ход ---
 
 async function main() {
+  // Отметки времени сборки: страниц стало ~3250 (активные + прошедшие), и
+  // «стало медленнее» надо видеть с точностью до этапа — данные, пробы
+  // картинок, страницы активных, страницы прошедших.
+  const buildT0 = Date.now();
+  const mark = (label) => console.log(`  [time] ${label}: ${((Date.now() - buildT0) / 1000).toFixed(1)} c`);
   // Порог категорийных страниц обязан совпадать в статике и SPA — иначе
   // сборка останавливается (см. assertMinCategoryEventsSync).
   assertMinCategoryEventsSync();
@@ -3043,10 +3319,20 @@ async function main() {
     }
   }
 
-  // Активные id событий (нижний регистр): mdLinksToHtml снимает ссылки на
-  // события, которых уже нет в наборе (архивация/дедупликация в БД) — иначе
-  // такая ссылка отдаёт 404 в статике и в SPA.
-  const activeIds = new Set(events.map((e) => String(e.id).toLowerCase()));
+  // Прошедшие (архивные) события: страницы обязаны отдавать 200, иначе GSC
+  // показывает «Не найдено (404)» по ссылкам, которые сам же и проиндексировал.
+  // Плюс снимки событий, которых в базе уже нет (scripts/data/legacy-events.json).
+  const pastEvents = await loadPastEvents(db);
+  const legacyEvents = loadLegacyEvents();
+  const allPast = [...pastEvents, ...legacyEvents];
+  console.log(
+    `  прошедших событий: ${pastEvents.length} (+снимков удалённых: ${legacyEvents.length}), вне sitemap по возрасту (>${PAST_SITEMAP_MONTHS} мес): ${allPast.filter(pastTooOld).length}`,
+  );
+
+  // id событий, у которых ЕСТЬ страница (активные + прошедшие + снимки):
+  // mdLinksToHtml снимает ссылки только на события, которых нет вовсе — ссылка
+  // на архивное событие больше не считается мёртвой (страница у него есть).
+  const activeIds = new Set([...events, ...allPast].map((e) => String(e.id).toLowerCase()));
   const linkCtx = (context) => ({ activeIds, context });
 
   // Картинки событий: og:image и JSON-LD image должны указывать на ЖИВОЕ
@@ -3054,7 +3340,11 @@ async function main() {
   // картинки в rich-результате). Пробы — ДО генерации страниц, только для
   // уникальных URL: [images] probed N unique, dead M -> LOGO_URL. null —
   // сборка без внешней сети, подмена отключена (см. resolveEventImages).
-  const imageMap = await resolveEventImages(events);
+  // Прошедшие события тоже проходят пробу: их страницы живут в индексе и
+  // делятся в мессенджерах так же, как активные.
+  mark('данные: активные + прошедшие + снимки');
+  const imageMap = await resolveEventImages([...events, ...allPast]);
+  mark('пробы картинок');
 
   const baseHtml = readFileSync(join(DIST, 'index.html'), 'utf8');
   const locs = [`${SITE_URL}/`];
@@ -3390,6 +3680,106 @@ async function main() {
     `  похожие события: страниц с блоком RU ${similarRuPages}, EN ${similarEnPages}`,
   );
 
+  // --- Прошедшие (архивные) события: страница у КАЖДОГО архивного события
+  // (иначе GSC снова покажет «Не найдено (404)»), в sitemap — только не старше
+  // PAST_SITEMAP_MONTHS месяцев (ТЗ: более старые отдают 200, но вне карты).
+  // «Похожие события» берутся из групп АКТИВНЫХ событий — блок ведёт на
+  // актуальные страницы; меньше MIN_SIMILAR кандидатов → блока нет.
+  mark('страницы активных событий');
+  const pastPathMeta = new Map(); // canonical path → meta (для алиасов)
+  const pastPagesBuffer = []; // {path, html} — запись одной пачкой (см. writePagesParallel)
+  // Архивные страницы собираются из базы с CSS-ссылкой (см. baseWithCssLink):
+  // их ~2500, встроенный CSS утроил бы и вес dist, и время сборки.
+  const pastBaseHtml = baseWithCssLink(baseHtml);
+  let pastRuPages = 0;
+  let pastEnPages = 0;
+  let pastInSitemap = 0;
+  for (const ev of allPast) {
+    if (!ev || typeof ev.id !== 'string' || typeof ev.title !== 'string') continue;
+    const hasEn = Boolean(ev.title_en) || ev.source_lang === 'en';
+    const path = `event/${ev.id}/${slugify(ev.title)}`;
+    const url = `${SITE_URL}/${path}/`;
+    const enPath = `en/event/${ev.id}/${slugify(hasEn ? ev.title_en || ev.title : ev.title)}`;
+    const enUrl = `${SITE_URL}/${enPath}/`;
+    const evImage = eventImage(ev, imageMap);
+    const metaRu = eventPageMetaFor(ev, 'ru', {
+      url,
+      enUrl,
+      hasEn,
+      image: evImage,
+      similar: similarItems(ev, 'ru', similarGroups, []),
+      catLink: eventCategoryLink(ev, 'ru', cells),
+      past: true,
+    });
+    pastPagesBuffer.push({ path, html: renderPage(pastBaseHtml, metaRu) });
+    pastPathMeta.set(path, metaRu);
+    // Страница архивного события не меняется после его даты — это и есть lastmod
+    lastmods.set(url, eventLastDay(ev) ?? TODAY_ISO);
+    const inSitemap = !pastTooOld(ev);
+    if (inSitemap) {
+      locs.push(url);
+      pastInSitemap += 1;
+    }
+    pastRuPages += 1;
+    if (hasEn) {
+      const metaEn = eventPageMetaFor(ev, 'en', {
+        url: enUrl,
+        enUrl: url,
+        hasEn,
+        image: evImage,
+        similar: similarItems(ev, 'en', similarGroups, []),
+        catLink: eventCategoryLink(ev, 'en', cells),
+        past: true,
+      });
+      pastPagesBuffer.push({ path: enPath, html: renderPage(pastBaseHtml, metaEn) });
+      pastPathMeta.set(enPath, metaEn);
+      lastmods.set(enUrl, eventLastDay(ev) ?? TODAY_ISO);
+      if (inSitemap) {
+        locs.push(enUrl);
+        hreflangPairs.set(url, enUrl);
+      }
+      pastEnPages += 1;
+    }
+  }
+  mark('рендер архивных страниц (буфер в памяти)');
+  await writePagesParallel(pastPagesBuffer);
+  mark('запись архивных страниц на диск');
+  pastPagesBuffer.length = 0; // буфер переиспользуется под страницы-алиасы
+  console.log(
+    `  прошедших событий: страниц RU ${pastRuPages}, EN ${pastEnPages} (в sitemap ${pastInSitemap} пар), страниц всего: ${locs.length}`,
+  );
+
+  // --- Алиасы исторических URL (список Google Search Console): слаг события
+  // менялся вместе с заголовком, поэтому ссылка, которую Google проиндексировал,
+  // не совпадает с текущей расчётной. У алиаса ТА ЖЕ мета, что у канонической
+  // страницы — canonical указывает на неё (редирект и noindex запрещены ТЗ).
+  // В sitemap алиасы не попадают: это дубли, их место указывает canonical.
+  const byIdAnyCase = new Map([...events, ...allPast].map((e) => [String(e.id).toLowerCase(), e]));
+  let aliasPages = 0;
+  const aliasSeen = new Set();
+  for (const raw of loadGscEventUrls()) {
+    const rel = raw.startsWith(SITE_URL) ? raw.slice(SITE_URL.length) : raw;
+    const m = /^\/(en\/)?event\/([0-9a-fA-F-]{36})\/([^/]+)\/$/.exec(rel);
+    if (!m) continue;
+    const en = Boolean(m[1]);
+    const ev = byIdAnyCase.get(m[2].toLowerCase());
+    if (!ev) continue;
+    const hasEn = Boolean(ev.title_en) || ev.source_lang === 'en';
+    if (en && !hasEn) continue;
+    const curSlug = slugify(en ? ev.title_en || ev.title : ev.title);
+    const curPath = `${en ? 'en/' : ''}event/${ev.id}/${curSlug}`;
+    const aliasPath = `${en ? 'en/' : ''}event/${ev.id}/${m[3]}`;
+    if (aliasPath === curPath || aliasSeen.has(aliasPath)) continue;
+    const meta = pastPathMeta.get(curPath);
+    if (!meta) continue; // канонической страницы нет (напр. событие активно) — алиас не нужен
+    pastPagesBuffer.push({ path: aliasPath, html: renderPage(pastBaseHtml, meta) });
+    aliasSeen.add(aliasPath);
+    aliasPages += 1;
+  }
+  if (pastPagesBuffer.length) await writePagesParallel(pastPagesBuffer);
+  console.log(`  страниц-алиасов исторических URL: ${aliasPages}`);
+  mark('страницы событий (активные + прошедшие + алиасы)');
+
   // Организаторы: /org/<id> — публичные профили организаторов, у которых в
   // списке событий выше есть owner_id. Профиль — из публичного RPC
   // get_org_profile (как src/lib/api.ts:443-451). Страница пишется только
@@ -3715,6 +4105,8 @@ async function main() {
     '</urlset>',
     '',
   ].join('\n');
+  mark('прочие страницы (города/категории/блог/о проекте)');
+  mark('ИТОГО');
   writeFileSync(join(DIST, 'sitemap.xml'), xml);
   console.log(`  dist/sitemap.xml: ${locs.length} URL`);
 

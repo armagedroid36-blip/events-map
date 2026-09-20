@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import type { Category, EventItem } from '../lib/types';
 import { localizedText } from '../lib/translate';
 import { languageName } from '../lib/languages';
-import { formatDate, formatTimeHM } from '../lib/dates';
+import { formatDate, formatTimeHM, todayIso } from '../lib/dates';
 import { recurrenceLabel } from '../lib/recurrence';
 import { photoUrl } from '../lib/api';
 import { isValidCoords } from '../lib/coords';
@@ -23,6 +23,12 @@ import { nextZ } from '../lib/zindex';
 import { navigate, slugify } from '../lib/navigate';
 import { occurrenceDate } from '../lib/series';
 import FavoriteButton from './FavoriteButton';
+
+/** Последний день события (end_date или start_date) как ISO — для плашки
+ *  прошедшего события: сравнение с сегодняшним днём задаёт текст плашки. */
+function pastEventLastDay(ev: EventItem): string {
+  return (ev.end_date || ev.start_date || '').slice(0, 10);
+}
 
 /** Символы валют */
 const CURRENCY_SYMBOLS: Record<string, string> = {
@@ -161,6 +167,11 @@ interface Props {
    *  (titleAsH1), как в статике (scripts/seo-prerender.mjs). Не передан или
    *  пуст — блока нет. */
   similarEvents?: EventItem[];
+  /** Страница ПРОШЕДШЕГО события (/event/<id>/<slug>/ архивного события):
+   *  вместо действий организатора показывается плашка «Событие прошло» (или
+   *  «Событие снято с афиши», если архивное событие датировано будущим).
+   *  Факты — название, место, цена, описание, организатор — остаются как есть. */
+  pastMode?: boolean;
 }
 
 /** Полный URL фото: загруженные файлы хранятся как пути в хранилище */
@@ -559,6 +570,7 @@ export default function EventCard({
   seriesEvents,
   categoryLink,
   similarEvents,
+  pastMode = false,
 }: Props) {
   const { t, i18n } = useTranslation();
   const [lightbox, setLightbox] = useState<number | null>(null);
@@ -675,6 +687,11 @@ export default function EventCard({
             <h1 className="text-base font-semibold leading-snug text-gray-900">{title}</h1>
           ) : (
             <h3 className="text-base font-semibold leading-snug text-gray-900">{title}</h3>
+          )}
+          {pastMode && (
+            <span className="mt-1 inline-block rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-semibold text-gray-700">
+              {pastEventLastDay(event) < todayIso() ? t('card.pastBadge') : t('card.pastRemoved')}
+            </span>
           )}
           {event.is_international && (
             <span className="mt-1 inline-block rounded-full bg-[#72D2CF]/25 px-2 py-0.5 text-[10px] font-semibold text-[#0F766E]">

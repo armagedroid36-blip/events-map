@@ -65,6 +65,9 @@ export interface DataApi {
   listEvents(): Promise<EventItem[]>;
   /** Полный список (включая прошедшие/скрытые) — только для админки */
   listAllEvents(): Promise<EventItem[]>;
+  /** Публичное событие по id (активное ИЛИ прошедшее) — для прямых ссылок на
+   *  страницы прошедших событий, которых нет в listEvents (только active) */
+  getPublicEvent(id: string): Promise<EventItem | null>;
   /** Только события на модерации (для админа) */
   listModerationEvents(): Promise<EventItem[]>;
   /** Статистика по пользователям и организаторам (для админа) */
@@ -265,6 +268,17 @@ class SupabaseApi implements DataApi {
     const events = (data ?? []) as EventItem[];
     this.eventsCache = { at: now, data: events };
     return events;
+  }
+
+  /** Публичное событие по id — активное ИЛИ прошедшее (RPC get_public_event,
+   *  security definer). Нужен для прямых ссылок /event/<id>/<slug>/ на
+   *  страницы прошедших событий: в listEvents (только active) их нет, и без
+   *  этого вызова SPA показывала «событие не найдено» вместо карточки. */
+  async getPublicEvent(id: string): Promise<EventItem | null> {
+    const { data, error } = await this.db.rpc('get_public_event', { p_id: id });
+    if (error) throw error;
+    const rows = (data ?? []) as EventItem[];
+    return rows.length > 0 ? rows[0] : null;
   }
 
   async listAllEvents(): Promise<EventItem[]> {

@@ -165,6 +165,12 @@ export class DemoApi {
     return load<EventItem[]>(LS_EVENTS, DEMO_EVENTS);
   }
 
+  /** Демо-режим: событие из демо-набора по id (включая архивные — как
+   *  get_public_event в базе, страницы прошедших событий) */
+  async getPublicEvent(id: string): Promise<EventItem | null> {
+    return load<EventItem[]>(LS_EVENTS, DEMO_EVENTS).find((e) => e.id === id) ?? null;
+  }
+
   async listModerationEvents(): Promise<EventItem[]> {
     return load<EventItem[]>(LS_EVENTS, DEMO_EVENTS).filter((e) => e.status === 'moderation');
   }
