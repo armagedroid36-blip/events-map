@@ -404,12 +404,21 @@ function normUrl(u) {
 /** Значимые токены строки (для сравнения названий площадок). */
 function tokens(s) {
   return new Set(
-    String(s || '')
+    stripDiacritics(s)
       .toLowerCase()
       .replace(/[^a-zа-я0-9ё\s]/gi, ' ')
       .split(/\s+/)
       .filter((w) => w.length >= 4),
   );
+}
+
+/** Диакритика не должна мешать сравнению: «Áo Dài»/«Ao Dai», «Đà Nẵng»/«Da Nang»
+ *  — одно и то же шоу и город, а без нормализации «dài» распадалось в мусор. */
+function stripDiacritics(s) {
+  return String(s || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[đĐ]/g, 'd');
 }
 
 /** Слова-«шум»: встречаются почти в любом адресе города, для сопоставления площадок
@@ -626,14 +635,22 @@ async function main() {
 
     // Кандидаты: та же площадка ИЛИ похожее название (внутри города)
     const place = ev.venue || ev.address;
-    const score = (e) =>
-      (place && e.address && placeMatches(e.address, place) ? 3 : 0) +
-      Math.max(
+    const score = (e) => {
+      const placeHit = Boolean(place && e.address && placeMatches(e.address, place));
+      const titleHit = Math.max(
         titleOverlap(ev.title, e.title),
         titleOverlap(ev.title, e.title_en),
         titleOverlap(ev.title_en, e.title),
         titleOverlap(ev.title_en, e.title_en),
       );
+      // ОДНО общее значимое слово — ещё не то же событие: 21.09.2026 по слову
+      // «Kecak» склеились шоу отеля Tanah Gajah (Kecak + ужин) и «Kecak и танцы
+      // в Padang Tegal Kaja» — чужая карточка получила телефон отеля, а новое
+      // шоу своей карточки не получило. Склейка по названию требует ДВУХ общих
+      // значимых слов; одно слово — только вместе с совпадением площадки.
+      if (!placeHit && titleHit < 2) return 0;
+      return (placeHit ? 3 : 0) + titleHit;
+    };
 
     let best = null;
     let bestScore = 0;

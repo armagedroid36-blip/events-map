@@ -3970,6 +3970,38 @@ async function main() {
     console.log(`  внимание: среди активных событий снято дублей ${droppedActive} — из наборов выдачи тоже убраны`);
   }
 
+  // --- Страницы-архив для URL, которые Google уже держит в индексе ---
+  // Промпт Лёхи 21.09.2026, критерий 1: 144 URL из Search Console обязаны
+  // отдавать 200. В этот список попадают записи, снятые санитарией с
+  // публикации: копии, отброшенные dedupeCopies, и тестовые записи. Их
+  // страницы несут плашку «Событие прошло»/«Снято с афиши», self-canonical,
+  // hreflang-пару и не имеют noindex — НО их нет ни в sitemap, ни в видимых
+  // блоках (похожие, хронология, городской архив, профиль организатора):
+  // продвигать дубли нельзя, страница существует только ради старого URL.
+  const pageOnlyCandidates = [
+    ...pastClean.filter((ev) => dupDropped.has(ev.id)),
+    ...skippedTest.map((s) => s.ev),
+  ];
+  // Страницу ради старого URL пишем ТОЛЬКО тем, чей URL Google уже знает
+  // (список scripts/data/gsc-404-urls.txt) — иначе плодили бы по 250 страниц
+  // копий, которых поисковик никогда не видел.
+  const gscEventIds = new Set(
+    loadGscEventUrls()
+      .map((u) => (/\/event\/([0-9a-fA-F-]{36})\//.exec(u) || [])[1])
+      .filter(Boolean)
+      .map((id) => id.toLowerCase()),
+  );
+  const pageOnlyPast = pageOnlyCandidates.filter((ev) =>
+    gscEventIds.has(String(ev.id).toLowerCase()),
+  );
+  const allPastPages = [...allPast, ...pageOnlyPast];
+  const pageOnlyIds = new Set(pageOnlyPast.map((ev) => String(ev.id).toLowerCase()));
+  console.log(
+    `  снято санитарией всего ${pageOnlyCandidates.length} записей; из них URL в списке GSC — ${pageOnlyPast.length}` +
+      ' (страницы будут 200 впервые/снова, вне sitemap и вне блоков)',
+  );
+
+
   // Публичные профили организаторов считаем ДО сборки страниц событий: ссылку
   // «Организатор» печатает eventSeoHtml, а страницы профилей пишутся позже —
   // оба решения берут ответ отсюда (orgProfilePublished).
@@ -3981,7 +4013,7 @@ async function main() {
   // (миграция не применена) — работаем по владельцам событий, сборка не падает.
   const orgOwnerIds = [
     ...new Set(
-      [...events, ...allPast]
+      [...events, ...allPastPages]
         .map((ev) => (typeof ev.owner_id === 'string' ? ev.owner_id : ''))
         .filter((id) => id.length > 0),
     ),
@@ -4006,7 +4038,7 @@ async function main() {
     }
   }
   const orgEventCount = new Map();
-  for (const ev of [...events, ...allPast]) {
+  for (const ev of [...events, ...allPastPages]) {
     if (typeof ev.owner_id !== 'string' || !ev.owner_id) continue;
     orgEventCount.set(ev.owner_id, (orgEventCount.get(ev.owner_id) ?? 0) + 1);
   }
@@ -4044,7 +4076,7 @@ async function main() {
   // id событий, у которых ЕСТЬ страница (активные + прошедшие + снимки):
   // mdLinksToHtml снимает ссылки только на события, которых нет вовсе — ссылка
   // на архивное событие больше не считается мёртвой (страница у него есть).
-  const activeIds = new Set([...events, ...allPast].map((e) => String(e.id).toLowerCase()));
+  const activeIds = new Set([...events, ...allPastPages].map((e) => String(e.id).toLowerCase()));
   const linkCtx = (context) => ({ activeIds, context });
 
   // Картинки событий: og:image и JSON-LD image должны указывать на ЖИВОЕ
@@ -4055,7 +4087,7 @@ async function main() {
   // Прошедшие события тоже проходят пробу: их страницы живут в индексе и
   // делятся в мессенджерах так же, как активные.
   mark('данные: активные + прошедшие + снимки');
-  const imageMap = await resolveEventImages([...events, ...allPast]);
+  const imageMap = await resolveEventImages([...events, ...allPastPages]);
   mark('пробы картинок');
 
   const baseHtml = readFileSync(join(DIST, 'index.html'), 'utf8');
@@ -4506,7 +4538,7 @@ async function main() {
   let pastRuPages = 0;
   let pastEnPages = 0;
   let pastInSitemap = 0;
-  for (const ev of allPast) {
+  for (const ev of allPastPages) {
     if (!ev || typeof ev.id !== 'string' || typeof ev.title !== 'string') continue;
     const hasEn = Boolean(ev.title_en) || ev.source_lang === 'en';
     const path = `event/${ev.id}/${slugify(ev.title)}`;
@@ -4515,7 +4547,15 @@ async function main() {
     const enUrl = `${SITE_URL}/${enPath}/`;
     const evImage = eventImage(ev, imageMap);
     const chronoOneRu = chronoForEvent(chronoRu, ev, 'ru');
-    if (!chronoOneRu || (!chronoOneRu.prev && !chronoOneRu.next)) pastNoChrono += 1;
+    // Счётчик входящих ссылок ведём только по страницам, которые стоят в
+    // видимых блоках: у «страниц ради URL из индекса» соседей в хронологии нет
+    // по замыслу (дубли не продвигаем), это не повод для предупреждения.
+    if (
+      !pageOnlyIds.has(String(ev.id).toLowerCase()) &&
+      (!chronoOneRu || (!chronoOneRu.prev && !chronoOneRu.next))
+    ) {
+      pastNoChrono += 1;
+    }
     const metaRu = eventPageMetaFor(ev, 'ru', {
       url,
       enUrl,
@@ -4530,7 +4570,7 @@ async function main() {
     pastPathMeta.set(path, metaRu);
     // Страница архивного события не меняется после его даты — это и есть lastmod
     lastmods.set(url, eventLastDay(ev) ?? TODAY_ISO);
-    const inSitemap = !pastTooOld(ev);
+    const inSitemap = !pageOnlyIds.has(String(ev.id).toLowerCase()) && !pastTooOld(ev);
     if (inSitemap) {
       locs.push(url);
       pastInSitemap += 1;
@@ -4570,7 +4610,7 @@ async function main() {
   // не совпадает с текущей расчётной. У алиаса ТА ЖЕ мета, что у канонической
   // страницы — canonical указывает на неё (редирект и noindex запрещены ТЗ).
   // В sitemap алиасы не попадают: это дубли, их место указывает canonical.
-  const byIdAnyCase = new Map([...events, ...allPast].map((e) => [String(e.id).toLowerCase(), e]));
+  const byIdAnyCase = new Map([...events, ...allPastPages].map((e) => [String(e.id).toLowerCase(), e]));
   let aliasPages = 0;
   const aliasSeen = new Set();
   for (const raw of loadGscEventUrls()) {

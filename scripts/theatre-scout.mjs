@@ -6,6 +6,17 @@
 // 3) Фильтр LLM (DeepSeek) по паре «название + URL»: есть ли там регулярные
 //    шоу/афиша для туристов; тип кандидата venue | listing | aggregator | social.
 // 4) Проверка живости страницы: GET 200 и размер > 5 КБ (код ответа пишем в БД).
+// 4a) Фильтр мусора (21.09.2026): кандидат, который не отдаёт 200 (в т.ч. домен
+//    не резолвится), отдаёт JS-пустышку (<500 символов текста после снятия
+//    тегов) или является билетной витриной (>30% внешних ссылок на
+//    getyourguide/viator/klook/headout/tripadvisor/tickadoo/megatix/danaticket,
+//    либо «Powered by GetYourGuide», либо partner_id= в ссылках), получает
+//    status='rejected' с причиной в note и предложением в отчёт НЕ попадает.
+//    Таймаут/обрыв сети приговором НЕ считается: кандидат остаётся в истории и
+//    проверяется в следующем прогоне (иначе разовый сбой записал бы живой сайт
+//    в rejected навсегда); «недоступен» из-за таймаута показывается в отчёте.
+// 4b) Одобренный источник, который перестал отвечать или отдаёт JS-пустышку —
+//    отдельной строкой в отчёте, статус НЕ меняется (решает человек).
 // 5) История и антиспам: таблица public.theatre_source_candidates (RLS, только
 //    service role). В Telegram уходят ТОЛЬКО кандидаты, появившиеся впервые;
 //    повторный прогон в тот же день молчит. Автодобавления в реестр источников
@@ -20,12 +31,18 @@ const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
 const TG_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 
-if (!SUPABASE_URL || !SERVICE_ROLE) {
+// IMPORT_ONLY — режим проверки фильтра снаружи: модуль импортируется, прогон не
+// стартует и ключи БД не требуются (см. scripts/theatre-scout.test.mjs скилла).
+const IMPORT_ONLY = process.env.THEATRE_SCOUT_IMPORT_ONLY === '1';
+
+if (!IMPORT_ONLY && (!SUPABASE_URL || !SERVICE_ROLE)) {
   console.error('Нужны переменные: SUPABASE_URL, SUPABASE_SERVICE_ROLE');
   process.exit(1);
 }
 
-const db = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } });
+const db = IMPORT_ONLY
+  ? null
+  : createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } });
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36';
 // Overpass отдаёт 406 на браузерный UA — нужен честный UA приложения
 const OVERPASS_UA = 'events-map-theatre-scout/1.0 (+https://mypins.site; contact: dima.armagedroid@yandex.ru)';
@@ -100,8 +117,41 @@ const SOCIAL = /facebook\.com|instagram\.com|tiktok\.com|twitter\.com|x\.com|you
 const AGGREGATORS = /klook\.com|trip\.com|getyourguide\.|viator\.com|tiqets\.com|bookmyshow|trazy\.com|kkday\.com|traveloka\.com|agoda\.com|booking\.com|tripadvisor\./i;
 // Служебные адреса поисковика и прочий мусор выдачи — как источник не годятся
 const JUNK_HOSTS = /^(html\.)?duckduckgo\.com$|^google\.com$|^bing\.com$|^yandex\./i;
+// Билетные витрины (промпт Лёхи 21.09.2026): >MARKETPLACE_SHARE внешних ссылок
+// ведут на них, либо «Powered by GetYourGuide», либо в ссылках есть partner_id=
+// → это посредник, а не площадка с собственной афишей.
+const MARKETPLACE = /getyourguide|viator\.|klook\.|headout\.|tripadvisor\.|tickadoo|megatix|danaticket/i;
+const MARKETPLACE_SHARE = 0.3;
+const MIN_TEXT_CHARS = 500; // меньше текста после снятия тегов = JS-пустышка
 
-/** GET страницы: код ответа + размер тела. */
+/** Текст страницы без тегов, скриптов и стилей. */
+function htmlText(html) {
+  return String(html)
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/** Признаки билетной витрины: доля внешних ссылок на маркетплейсы, «Powered by
+ *  GetYourGuide», partner_id= в ссылках. Своя площадка со ссылкой на билетного
+ *  партнёра (devdanbali.com — 15% таких ссылок) порог не переходит и проходит. */
+function marketplaceSignals(html) {
+  const links = [...String(html).matchAll(/<a\b[^>]*href\s*=\s*["']([^"']+)["']/gi)].map((m) => m[1]);
+  const external = links.filter((h) => /^https?:\/\//i.test(h));
+  const market = links.filter((h) => MARKETPLACE.test(h));
+  return {
+    share: external.length ? market.length / external.length : 0,
+    market: market.length,
+    external: external.length,
+    poweredBy: /powered\s+by\s+getyourguide/i.test(html),
+    partnerId: /partner_id=/i.test(html),
+  };
+}
+
+/** GET страницы: код ответа, размер тела, длина текста и признаки витрины. */
 async function checkAlive(url) {
   try {
     const controller = new AbortController();
@@ -113,11 +163,45 @@ async function checkAlive(url) {
     });
     const body = res.status === 200 ? await res.text() : '';
     clearTimeout(timer);
-    return { status: res.status, size: body.length || Number(res.headers.get('content-length') || 0) };
+    return {
+      status: res.status,
+      size: body.length || Number(res.headers.get('content-length') || 0),
+      textLen: body ? htmlText(body).length : 0,
+      market: body ? marketplaceSignals(body) : null,
+    };
   } catch (e) {
-    return { status: 0, size: 0, error: e.message };
+    return { status: 0, size: 0, textLen: 0, market: null, error: e.message, code: e.cause?.code || '' };
   }
 }
+
+/** Причина автоотклонения кандидата (или null): недоступен / домен не
+ *  резолвится, JS-пустышка, билетная витрина. Порядок — от грубого к тонкому.
+ *  ВАЖНО: таймаут/обрыв сети — НЕ приговор: такой кандидат остаётся в истории и
+ *  проверяется в следующем прогоне (иначе разовый сбой сети навсегда записал бы
+ *  живой сайт в rejected). Приговор — только HTTP-код != 200 или DNS-ошибка. */
+function rejectReason(alive) {
+  if (!alive || alive.status !== 200) {
+    if (alive?.error) {
+      const dns = /getaddrinfo|ENOTFOUND|EAI_AGAIN|ERR_NAME_NOT_RESOLVED/i.test(
+        `${alive.error} ${alive.code || ''}`,
+      );
+      return dns ? `домен не резолвится (${alive.error})` : null;
+    }
+    return `ответ не 200 (код ${alive?.status ?? 0})`;
+  }
+  if (alive.size < MIN_PAGE_BYTES) return `страница пустая (${alive.size} б)`;
+  if (alive.textLen < MIN_TEXT_CHARS) {
+    return `JS-пустышка: текста после снятия тегов ${alive.textLen} симв (<${MIN_TEXT_CHARS}) — сборщик ничего не извлечёт`;
+  }
+  const m = alive.market;
+  if (m && m.poweredBy) return 'билетная витрина: «Powered by GetYourGuide» на странице';
+  if (m && m.partnerId) return 'билетная витрина: ссылки с partner_id= (партнёрская витрина)';
+  if (m && m.share > MARKETPLACE_SHARE) {
+    return `билетная витрина: ${m.market} из ${m.external} внешних ссылок на билетные маркетплейсы (${Math.round(m.share * 100)}% > ${Math.round(MARKETPLACE_SHARE * 100)}%)`;
+  }
+  return null;
+}
+
 
 /** Overpass: площадки вокруг центра города (перебор зеркал). */
 async function overpass(lat, lng) {
@@ -308,6 +392,7 @@ async function main() {
   }
 
   const filtered = [];
+  const llmRejected = []; // отклонённые LLM тоже фиксируем в таблице (см. ниже)
   for (let i = 0; i < candidates.length; i++) {
     const c = candidates[i];
     const v = verdicts.get(i);
@@ -318,15 +403,47 @@ async function main() {
     const pass = relevant || (kind === 'aggregator' && AGGREGATORS.test(c.url));
     if (!pass) {
       console.log(`  × отклонён: ${c.url} (${v?.reason || 'нет вердикта LLM'})`);
+      llmRejected.push({ ...c, kind, reason: v?.reason || 'нет вердикта LLM' });
       continue;
     }
     filtered.push({ ...c, kind, reason: v?.reason || '' });
   }
-  console.log(`Прошли фильтр LLM: ${filtered.length}`);
+  console.log(`Прошли фильтр LLM: ${filtered.length}, отклонено LLM: ${llmRejected.length}`);
+
 
   // ---------- 3. Проверка живости + запись в БД ----------
   const nowIso = new Date().toISOString();
   const fresh = [];
+  const autoRejected = [];
+  /** Записать кандидата как rejected. Прежнюю заметку (её мог написать человек
+   *  при разборе бэклога) СОХРАНЯЕМ: дописываем свежую машинную причину вместо
+   *  прошлой машинной — повторные прогоны не должны терять человеческую запись
+   *  и не должны бесконечно удлинять note. */
+  const setRejected = async (url, { name, city, kind, reason }) => {
+    if (DRY_RUN) return;
+    const { data: prev } = await db
+      .from('theatre_source_candidates')
+      .select('note,first_seen')
+      .eq('url', url)
+      .maybeSingle();
+    const prevNote = typeof prev?.note === 'string' ? prev.note.trim() : '';
+    const head = prevNote.split(/\s*\|\s*автоотклонение/i)[0].trim();
+    const note = `${head ? `${head} | ` : ''}автоотклонение: ${reason}`;
+    const { error } = await db.from('theatre_source_candidates').upsert(
+      {
+        url,
+        name,
+        city: city || null,
+        kind,
+        status: 'rejected',
+        first_seen: prev ? undefined : nowIso,
+        last_seen: nowIso,
+        note: note.slice(0, 500),
+      },
+      { onConflict: 'url' },
+    );
+    if (error) console.error(`БД (отклонение ${url}): ${error.message}`);
+  };
   for (const c of filtered) {
     const { data: prev, error: pe } = await db
       .from('theatre_source_candidates')
@@ -340,6 +457,22 @@ async function main() {
     const alive = await checkAlive(c.url);
     const okAlive = alive.status === 200 && alive.size > MIN_PAGE_BYTES;
     const name = c.name || (okAlive ? await pageTitle(c.url) : null) || hostOf(c.url);
+
+    // Автоотклонение мусора (промпт Лёхи 21.09.2026): отдаёт не 200 / домен не
+    // резолвится, JS-пустышка или билетная витрина. Такие кандидаты в Telegram
+    // НЕ попадают, а в таблице получают status='rejected' с причиной — значит,
+    // повторно не предлагаются. Уже одобренный источник не понижаем.
+    const bad = rejectReason(alive);
+    if (bad) {
+      console.log(`  ✗ автоотклонён: ${c.url} — ${bad}`);
+      autoRejected.push({ url: c.url, reason: bad });
+      if (prev?.status !== 'approved') {
+        await setRejected(c.url, { name, city: c.city, kind: c.kind, reason: bad });
+      }
+      await sleep(300);
+      continue;
+    }
+
     const status = prev?.status || 'proposed';
     const note = `${c.city || ''} | ${c.kind} | код ${alive.status}, ${alive.size} б | ${c.reason}`.slice(0, 500);
 
@@ -358,8 +491,35 @@ async function main() {
     await sleep(300);
   }
 
+  // Отклонённые LLM тоже попадают в таблицу со статусом rejected: иначе их
+  // предложат снова в следующем прогоне (ТЗ: rejected = «не предлагать повторно»).
+  let llmRejectedNew = 0;
+  for (const c of llmRejected) {
+    const { data: prev, error } = await db
+      .from('theatre_source_candidates')
+      .select('url,status')
+      .eq('url', c.url)
+      .maybeSingle();
+    if (error) {
+      console.error(`БД (чтение ${c.url}): ${error.message}`);
+      continue;
+    }
+    if (prev) continue; // уже в истории (в т.ч. одобренные) — не трогаем
+    llmRejectedNew += 1;
+    await setRejected(c.url, {
+      name: c.name || hostOf(c.url),
+      city: c.city,
+      kind: c.kind,
+      reason: `LLM не видит регулярных шоу — ${c.reason}`,
+    });
+    console.log(`  ✗ записан как rejected (LLM): ${c.url} — ${c.reason}`);
+    await sleep(150);
+  }
+  console.log(`Новых записей со статусом rejected: LLM ${llmRejectedNew}, автоотклонено мусора ${autoRejected.length}`);
+
   // ---------- 4. Живость уже одобренных источников ----------
   const alerts = [];
+  const degraded = []; // перестал отвечать/JS-пустышка — статус не меняем, решает человек
   for (const s of SOURCES) {
     const alive = await checkAlive(s.url);
     const okAlive = alive.status === 200 && alive.size > MIN_PAGE_BYTES;
@@ -381,18 +541,24 @@ async function main() {
           status: 'approved',
           first_seen: prev ? undefined : nowIso,
           last_seen: nowIso,
-          note: `fails=${fails}; живость: код ${alive.status}, ${alive.size} б`,
+          note: `fails=${fails}; живость: код ${alive.status}, ${alive.size} б, текста ${alive.textLen} симв`,
         },
         { onConflict: 'url' },
       );
       if (error) console.error(`БД (источник ${s.url}): ${error.message}`);
     }
-    console.log(`  ${okAlive ? '✓' : '✗'} ${s.name}: код ${alive.status}, ${alive.size} б, провалов подряд ${fails}`);
+    const bad = okAlive
+      ? rejectReason(alive)
+      : `недоступен (код ${alive.status}${alive.error ? `, ${alive.error}` : ''})`;
+    if (bad) degraded.push(`${s.name}: ${bad}`);
+    console.log(
+      `  ${okAlive ? '✓' : '✗'} ${s.name}: код ${alive.status}, ${alive.size} б, провалов подряд ${fails}${bad ? ` — ${bad}` : ''}`,
+    );
     if (fails >= FAIL_ALERT_RUNS) alerts.push(`${s.name} — код ${alive.status}, провалов подряд ${fails}`);
   }
 
   // ---------- 5. Отчёт в Telegram (только новое) ----------
-  if (!fresh.length && !alerts.length) {
+  if (!fresh.length && !alerts.length && !degraded.length) {
     console.log('Новых кандидатов и алертов нет — отчёт не отправляем');
     return;
   }
@@ -417,6 +583,19 @@ async function main() {
     );
   }
   if (sorted.length > shown.length) lines.push(`…и ещё ${sorted.length - shown.length} — в таблице theatre_source_candidates`);
+  if (autoRejected.length) {
+    lines.push(
+      `🧹 Автоотклонено ${autoRejected.length} (недоступные, JS-пустышки, билетные витрины) — в базе rejected, повторно не предлагаются:\n${autoRejected
+        .slice(0, 5)
+        .map((a) => `• ${esc(a.url)}\n  ${esc(a.reason)}`)
+        .join('\n')}${autoRejected.length > 5 ? `\n…и ещё ${autoRejected.length - 5}` : ''}`,
+    );
+  }
+  if (degraded.length) {
+    lines.push(
+      `⚠️ Одобренные источники (статус не меняем, решает человек):\n${degraded.map((d) => `• ${esc(d)}`).join('\n')}`,
+    );
+  }
   if (alerts.length) lines.push(`⚠️ Упали одобренные источники:\n${alerts.map((a) => `• ${esc(a)}`).join('\n')}`);
 
   const { data: settingsRows } = await db.from('app_settings').select('key,value');
@@ -436,7 +615,13 @@ async function main() {
   }
 }
 
-main().catch((e) => {
-  console.error('Критическая ошибка:', e.message);
-  process.exit(1);
-});
+// Экспорт чистых функций фильтра: их проверяет scripts/theatre-scout.test.mjs
+// (запуск с THEATRE_SCOUT_IMPORT_ONLY=1, чтобы импорт не стартовал прогон).
+export { rejectReason, marketplaceSignals, htmlText };
+
+if (!IMPORT_ONLY) {
+  main().catch((e) => {
+    console.error('Критическая ошибка:', e.message);
+    process.exit(1);
+  });
+}

@@ -18,6 +18,9 @@
 //   ticket» (проверено 11.09.26) — из неё дозаполняется время карточки Tata Show;
 //   цены нет (входит в билет парка), поэтому price карточки остаётся пустым;
 // - balerungbali.com, waterpuppetnhatrang.com — домены не резолвятся;
+// - houseoflegends.vn/vi/schedule — 200, но расписание подгружается скриптами
+//   (в HTML 1133 символа текста — только меню и названия шоу): LLM извлёк
+//   0 событий (проверено 21.09.2026, кандидат отклонён в таблице);
 // - ubudcommunity.com, balispirit.com — JS-челлендж Cloudflare/бот-стена (202);
 // - nowbali.co.id/events/, thebalibible.com/events/, bali.com/events/ — 404.
 export const SOURCES = [
@@ -55,5 +58,22 @@ export const SOURCES = [
     name: 'Da Nang Fantasticity — Ao Dai Show',
     url: 'https://danangfantasticity.com/en/art/ao-dai-show-da-nang',
     city: 'Дананг', country: 'Vietnam', tzMin: 420, kind: 'schedule',
+  },
+  {
+    // Своя площадка (отель Tanah Gajah Ubud): на странице ДВА шоу — Kecak +
+    // ужин и Barong + ужин, поэтому kind='listing' (URL ключом дедупа быть не
+    // может — иначе карточки схлопнутся в одну). Прогон 21.09.2026: LLM извлёк
+    // 2 события со временем, ценой, площадкой и контактом.
+    name: 'Tanah Gajah Ubud — Kecak & Barong dinner shows',
+    url: 'https://www.tanahgajahubud.com/en/experiences/kecak-dance--dinner',
+    city: 'Убуд, Bali', country: 'Indonesia', tzMin: 480, kind: 'listing',
+  },
+  {
+    // Городской портал Дананга: обзор «10 шоу» своего города — афиша, а не
+    // билетная витрина (ссылок на билетные маркетплейсы 0). Прогон 21.09.2026:
+    // 7 событий с адресами, временем и ценами.
+    name: 'danang365.com — обзор шоу Дананга',
+    url: 'https://danang365.com/vi/du-lich-da-nang-show-dien-2/',
+    city: 'Дананг', country: 'Vietnam', tzMin: 420, kind: 'listing',
   },
 ];
