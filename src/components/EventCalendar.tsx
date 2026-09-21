@@ -140,14 +140,17 @@ export default function EventCalendar({
           return (
             <div
               key={iso}
-              className={`flex flex-col rounded-lg border p-1 ${
+              className={`relative flex flex-col rounded-lg border p-1 ${
                 isToday ? 'border-[#72D2CF] bg-[#72D2CF]/10' : 'border-gray-200 bg-white'
               } ${inMonth ? '' : 'opacity-50'}`}
             >
+              {/* На телефоне заголовок растянут на всю ячейку: пальцем не попасть
+                  в кнопки событий (они ~20 px), поэтому тап по ЛЮБОМУ месту дня
+                  раскрывает список под сеткой. На десктопе — обычный заголовок. */}
               <button
                 type="button"
                 onClick={() => setOpenDay(openDay === iso ? null : iso)}
-                className="mb-1 flex items-center justify-between rounded px-0.5 text-left hover:bg-gray-50"
+                className="absolute inset-0 z-0 mb-1 flex items-start justify-between rounded px-1 pt-0.5 text-left hover:bg-gray-50 sm:static sm:inset-auto sm:z-auto sm:items-center sm:px-0.5"
                 aria-label={t('calendar.openDay')}
               >
                 <span
@@ -156,7 +159,7 @@ export default function EventCalendar({
                   {dayNumber(iso)}
                 </span>
                 {list.length > MAX_CELL && (
-                  <span className="text-[10px] font-medium text-[#E66343]">
+                  <span className="absolute right-1 top-0.5 text-[10px] font-medium text-[#E66343] sm:static sm:right-auto sm:top-auto">
                     {t('calendar.more', { count: list.length - MAX_CELL })}
                   </span>
                 )}
@@ -166,7 +169,7 @@ export default function EventCalendar({
                 // Пустой день не скрываем: пустая ячейка с высотой строки
                 <span className="min-h-[1.5rem] flex-1" aria-hidden="true" />
               ) : mode === 'week' ? (
-                <div className="flex flex-1 flex-col gap-0.5">
+                <div className="pointer-events-none relative z-10 flex flex-1 flex-col gap-0.5 sm:pointer-events-auto">
                   {list.slice(0, MAX_CELL).map((ev) => (
                     <button
                       key={ev.id}
@@ -188,7 +191,7 @@ export default function EventCalendar({
                 </div>
               ) : (
                 // Месяц: точки + счётчик, подробности — в списке под сеткой
-                <div className="flex flex-wrap items-center gap-0.5">
+                <div className="pointer-events-none relative z-10 flex flex-wrap items-center gap-0.5">
                   {list.slice(0, MAX_CELL).map((ev) => (
                     <span
                       key={ev.id}
@@ -207,6 +210,11 @@ export default function EventCalendar({
           );
         })}
       </div>
+
+      {/* Подсказка (только телефон): по дню надо именно тапнуть */}
+      {!openDay && (
+        <p className="mt-2 text-center text-[11px] text-gray-500 sm:hidden">{t('calendar.tapHint')}</p>
+      )}
 
       {/* Список выбранного дня — раскрывается под сеткой */}
       {openDay && (

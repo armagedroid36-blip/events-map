@@ -222,6 +222,7 @@ export default {
     next: 'Next period',
     more: '+{{count}}',
     openDay: 'Events on this day',
+    tapHint: 'Tap a day to see all events',
     emptyDay: 'No events on this day',
   },
   list: {
