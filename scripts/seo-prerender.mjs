@@ -2320,6 +2320,46 @@ function orgSkipReason(profile, hasEvents) {
   return null;
 }
 
+/** Сколько событий организатора показываем на его странице */
+const ORG_EVENTS_LIMIT = 20;
+
+/**
+ * Блок «События организатора» на странице /org/<id>/ (RU) и /en/org/<id>/ (EN):
+ * сначала БЛИЖАЙШИЕ активные события (по дате), а если их нет — ПРОШЕДШИЕ
+ * (свежие сверху); показывать нечего — пустое состояние «Пока нет событий»
+ * (у организации может быть заполнен профиль, но все её события архивные или
+ * тестовые — тестовые записи вне публикации, см. санитарию архива).
+ * Ссылки — на карточки своего языка (их генерирует пре-рендер: битых нет).
+ */
+function orgEventsBlockHtml(lang, activeItems, pastItems) {
+  const en = lang === 'en';
+  const upcoming = activeItems.slice(0, ORG_EVENTS_LIMIT);
+  const pastMode = !upcoming.length && pastItems.length > 0;
+  const list = upcoming.length ? upcoming : pastItems.slice(0, ORG_EVENTS_LIMIT);
+  const title = pastMode
+    ? en
+      ? 'Past events by the organizer'
+      : 'Прошедшие события организатора'
+    : en
+      ? 'Organizer events'
+      : 'События организатора';
+  const lines = [`  <h2>${esc(title)}</h2>`];
+  if (!list.length) {
+    lines.push(`  <p>${esc(en ? 'No events yet' : 'Пока нет событий')}</p>`);
+    return lines.join('\n');
+  }
+  lines.push('  <ul>');
+  for (const { ev, date } of list) {
+    const l = eventPageLink(ev, lang);
+    const when = date
+      ? `<time datetime="${esc(date)}">${esc(en ? enDate(date) : ruDate(date))}</time> — `
+      : '';
+    lines.push(`    <li>${when}<a href="${esc(l.href)}">${esc(l.name)}</a></li>`);
+  }
+  lines.push('  </ul>');
+  return lines.join('\n');
+}
+
 /** Данные блока хронологии для конкретного события (null — соседей нет) */
 function chronoForEvent(index, ev, lang) {
   const c = index.get(ev.id);
@@ -2448,12 +2488,28 @@ function similarEventsHtml(items, lang = 'ru') {
   ].join('\n');
 }
 
+/** Есть ли EN-версия страницы ячейки: EN-событий (title_en непуст ИЛИ
+ *  source_lang='en') в ячейке >= MIN_CATEGORY_EVENTS. ОДНО условие на все
+ *  потребители (запись EN-страницы, ссылки с городской страницы и со страницы
+ *  события): иначе ссылка вела бы на несуществующий URL. Для восстановленных
+ *  ячеек EN-страница не создаётся при недоборе EN-событий (RESTORED_CELLS —
+ *  RU-URL из GSC). */
+function cellHasEnPage(cell) {
+  return (
+    cell.items.filter(({ ev }) => Boolean(ev.title_en) || ev.source_lang === 'en').length >=
+    MIN_CATEGORY_EVENTS
+  );
+}
+
 /** Блок перелинковки на городской странице: «Категории в городе» — ссылки на
  * посадочные категорий, прошедшие гейт (только существующие страницы, все
- * отдают 200). Пусто → блока нет. */
+ * отдают 200). На EN-странице города — только ячейки с EN-версией страницы.
+ * Пусто → блока нет. */
 function cityCategoriesHtml(path, lang, cells) {
   const en = lang === 'en';
-  const list = [...cells.values()].filter((c) => c.path === path);
+  const list = [...cells.values()].filter(
+    (c) => c.path === path && (!en || cellHasEnPage(c)),
+  );
   if (!list.length) return { text: '', html: null };
   const title = categoriesBlockTitle(path, lang);
   const links = list
@@ -2761,6 +2817,79 @@ function eventPageMetaFor(ev, lang, opts) {
 // >= MIN_CATEGORY_EVENTS активных событий этой категории (тот же набор
 // list_active_events, что грузит SPA) — иначе страницы нет, она вне sitemap.
 const MIN_CATEGORY_EVENTS = 3;   // синхронно с src/lib/categoryPages.ts
+
+/**
+ * ВОССТАНОВЛЕННЫЕ ячейки «город × категория» (21.09.2026, промпт Лёхи):
+ * 13 URL из списка 404 Google Search Console — страницы существовали, попали в
+ * индекс, а затем исчезли из статики, когда активных событий этой категории в
+ * городе стало меньше MIN_CATEGORY_EVENTS (SPA на такие URL отдаёт 404, пре-рендер
+ * их не писал). Для этих пар страница отдаётся ВСЕГДА (200) и попадает в sitemap:
+ * порог остаётся только для НОВЫХ ячеек (тонких страниц не плодим), а у
+ * восстановленных наполнение добирается блоком «Прошедшие события этой категории
+ * в <городе>» (до RESTORED_ARCHIVE_LIMIT, свежие сверху) + h1/интро/FAQ.
+ * Список ЗАФИКСИРОВАН: ячейки не должны снова пропадать.
+ * ЗЕРКАЛО: src/lib/categoryPages.ts (RESTORED_CELLS) — менять ОБА файла,
+ * рассинхрон останавливает сборку (assertRestoredCellsSync, exit 1).
+ */
+const RESTORED_CELLS = [
+  'bali|cinema',
+  'bali|exhibition',
+  'bali|food',
+  'bali|speaking',
+  'da-nang|concert',
+  'da-nang|festival',
+  'da-nang|lecture',
+  'da-nang|speaking',
+  'da-nang|sport',
+  'da-nang|theatre',
+  'nha-trang|concert',
+  'nha-trang|lecture',
+  'nha-trang|party',
+];
+const RESTORED_CELL_SET = new Set(RESTORED_CELLS);
+/** Сколько прошедших событий показывает блок архива восстановленной страницы
+ *  (та же величина в SPA — src/lib/categoryPages.ts: RESTORED_ARCHIVE_LIMIT) */
+const RESTORED_ARCHIVE_LIMIT = 20;
+
+/** Ячейка восстановлена принудительно (страница есть даже ниже порога) */
+function isRestoredCell(path, categoryId) {
+  return RESTORED_CELL_SET.has(cellKey(path, categoryId));
+}
+
+/**
+ * Синхронность списка восстановленных ячеек со SPA (src/lib/categoryPages.ts).
+ * Рассинхрон = «страница есть в статике, а SPA отдаёт 404» (или наоборот) —
+ * для проиндексированных URL это регресс, поэтому сборка падает.
+ */
+function assertRestoredCellsSync() {
+  const rel = 'src/lib/categoryPages.ts';
+  let src;
+  try {
+    src = readFileSync(join(ROOT, rel), 'utf8');
+  } catch (e) {
+    console.error(`seo-prerender: не читается ${rel} (${e.message}) — синхронность RESTORED_CELLS не проверить.`);
+    process.exit(1);
+  }
+  const block = /export\s+const\s+RESTORED_CELLS[^=]*=\s*\[([^\]]*)\]/.exec(src);
+  if (!block) {
+    console.error(`seo-prerender: в ${rel} не найден 'export const RESTORED_CELLS = [...]' — синхронность не проверить.`);
+    process.exit(1);
+  }
+  const spa = [...block[1].matchAll(/'([^']+)'/g)].map((m) => m[1]).sort();
+  const here = [...RESTORED_CELLS].sort();
+  if (spa.length !== here.length || spa.some((k, i) => k !== here[i])) {
+    console.error(
+      `seo-prerender: РАССИНХРОН RESTORED_CELLS: ${rel} = ${spa.length} ячеек, scripts/seo-prerender.mjs = ${here.length}.`,
+    );
+    console.error(`seo-prerender: только в TS: ${spa.filter((k) => !here.includes(k)).join(', ') || '—'}`);
+    console.error(`seo-prerender: только в JS: ${here.filter((k) => !spa.includes(k)).join(', ') || '—'}`);
+    console.error('seo-prerender: списки обязаны совпадать — сборка остановлена.');
+    process.exit(1);
+  }
+  console.log(
+    `  восстановленные ячейки «город × категория»: ${RESTORED_CELLS.length} (синхронно с ${rel})`,
+  );
+}
 
 /**
  * Синхронность порога с SPA-модулем src/lib/categoryPages.ts.
@@ -3194,7 +3323,12 @@ function catPricePhrase(f, lang, v) {
       ][v];
 }
 
-/** Вступление ячейки (>=300 знаков) — те же строки, что categoryIntro в SPA */
+/** Вступление ячейки (>=300 знаков) — те же строки, что categoryIntro в SPA.
+ *  Восстановленная ячейка БЕЗ активных событий (count === 0): фразы про
+ *  «ближайшее» событие и его даты бессмысленны — свой текст (см.
+ *  src/lib/categoryPages.ts, categoryIntro). Он зависит только от названий
+ *  города/категории, поэтому SPA и статика совпадают посимвольно. Порядок
+ *  вариантов фиксирован: k=1 — «новых дат нет», k=4 — концовка. */
 function categoryIntro(cat, path, lang, f) {
   const en = lang === 'en';
   const seed = cellSeed(path, cat.id);
@@ -3202,6 +3336,35 @@ function categoryIntro(cat, path, lang, f) {
   const blurb = (CAT_BLURB[cat.id] ?? CAT_DEFAULT_BLURB)[en ? 'en' : 'ru'];
   const city = CAT_CITY_BLURB[path][en ? 'en' : 'ru'][cellVariant(seed, 0)];
   const where = catWhere(path, lang);
+  const price = catPricePhrase(f, lang, cellVariant(seed, 2));
+  if (f.count === 0) {
+    const head = `${name} ${where}: ${
+      en ? 'no upcoming events right now.' : 'ближайших событий в афише сейчас нет.'
+    }`;
+    const none = en
+      ? [
+          ' New dates appear here as soon as organizers publish them; meanwhile look at how the previous ones went.',
+          ' The category is empty for now: the next dates are not announced yet.',
+          ' Organizers have not announced new dates yet — the category is waiting for the next event.',
+        ][cellVariant(seed, 1)]
+      : [
+          ' Новые даты появятся здесь, как только организаторы их опубликуют; а пока посмотрите, как это было в прошлые разы.',
+          ' Сейчас категория пуста: ближайшие даты ещё не объявлены.',
+          ' Организаторы ещё не опубликовали новые даты — категория ждёт следующего события.',
+        ][cellVariant(seed, 1)];
+    const closing = en
+      ? [
+          ' Past events of the category are collected below, and the city listings and the map are updated every day.',
+          ' The past events of this category are listed below; the live city listings and the map hold the freshest dates, venues and prices.',
+          ' Look through the past events below and follow the city listings on the map — organizers refresh them every day.',
+        ][cellVariant(seed, 4)]
+      : [
+          ' Прошедшие события категории собраны ниже, а афиша города и карта обновляются каждый день.',
+          ' Прошедшие события этой категории — в списке ниже; свежие даты, места и цены всегда есть в афише города на карте.',
+          ' Загляните в прошедшие события ниже и следите за афишей города на карте — организаторы обновляют её каждый день.',
+        ][cellVariant(seed, 4)];
+    return `${head} ${blurb} ${city}${none}${closing}${price}`.replace(/\s{2,}/g, ' ');
+  }
   const head = `${name} ${where}: ${catEventsWord(f.count, lang)} ${en ? 'on the map.' : 'в афише.'}`;
   const venues = f.venues.length
     ? en
@@ -3236,7 +3399,6 @@ function categoryIntro(cat, path, lang, f) {
       ? ` Details: ${f.nearestText}`
       : ` Подробности: ${f.nearestText}`
     : '';
-  const price = catPricePhrase(f, lang, cellVariant(seed, 2));
   return `${head} ${blurb} ${city}${venues}${dates}${upcoming}${details}${price}`.replace(/\s{2,}/g, ' ');
 }
 
@@ -3261,6 +3423,40 @@ function categoryFaq(cat, path, lang, f) {
         `Сколько событий категории «${name}» ${where}?`,
         `Что сейчас идёт в категории «${name}» ${where}?`,
       ][v0];
+  // Восстановленная ячейка без активных событий (count === 0): обычные ответы
+  // построены на ближайших событиях и их датах — отвечать нечем, поэтому свой
+  // набор (тот же расчёт в SPA, src/lib/categoryPages.ts: categoryFaq). Текст не
+  // зависит от данных → статика и SPA совпадают посимвольно.
+  if (f.count === 0) {
+    const aZero = en
+      ? `There are none right now: no upcoming ${name} events are announced ${where}. Organizers publish dates themselves, so new ones appear here right away.`
+      : `Сейчас их нет: ближайшие события категории «${name}» ${where} ещё не объявлены. Даты публикуют сами организаторы — новые появятся здесь сразу после публикации.`;
+    const qNext = en
+      ? [
+          `When will new ${name} events appear?`,
+          `Are new dates coming for the ${name} category?`,
+          `How do I find out about new ${name} events?`,
+        ][v1]
+      : [
+          `Когда появятся новые события категории «${name}»?`,
+          `Будут ли новые даты в категории «${name}»?`,
+          `Как узнать о новых событиях категории «${name}»?`,
+        ][v1];
+    const aNext = en
+      ? `Follow the city listings and the MyPins map: new events show up there as soon as an organizer publishes them.`
+      : `Следите за афишей города и картой MyPins: новые события появляются там сразу после публикации организатором.`;
+    const qPriceZero = en
+      ? ['Are these events free?', 'Do I need to buy a ticket?', 'Is entry free?'][v2]
+      : ['Есть ли бесплатные события?', 'Нужно ли покупать билет?', 'Вход бесплатный?'][v2];
+    const aPriceZero = en
+      ? `Entry is usually free or donation-based; the exact price is always shown in the event card.`
+      : `Вход на такие события обычно бесплатный или за донат; точная цена указана в карточке события.`;
+    return [
+      { q: q1, a: aZero },
+      { q: qNext, a: aNext },
+      { q: qPriceZero, a: aPriceZero },
+    ];
+  }
   const a1 = en
     ? `There are ${catEventsWord(f.count, 'en')}: from “${next ? next.name : ''}” on ${
         next ? catShortDay(next.date, 'en') : ''
@@ -3391,11 +3587,20 @@ function catFitDescription(lead, tails, fills) {
 
 /** description страницы ячейки (140–160 знаков) */
 function categoryDescription(cat, path, lang, f) {
+  // Восстановленная ячейка без активных событий (count === 0) — свой лид:
+  // «0 событий» в сниппете выглядит как пустая страница (см.
+  // src/lib/categoryPages.ts, categoryDescription). Текст не зависит от данных.
   if (lang === 'en') {
-    const lead = `${cat.name_en} in ${CAT_CITY_NAME_EN[path]}: ${catEventsWord(f.count, 'en')} and what is on this month.`;
+    const lead =
+      f.count === 0
+        ? `${cat.name_en} in ${CAT_CITY_NAME_EN[path]}: past events of this category and the city listings.`
+        : `${cat.name_en} in ${CAT_CITY_NAME_EN[path]}: ${catEventsWord(f.count, 'en')} and what is on this month.`;
     return catFitDescription(lead, CAT_DESC_TAILS_EN, CAT_DESC_FILL_EN);
   }
-  const lead = `${cat.name_ru} ${CAT_CITY_WHERE_RU[path]}: ${catEventsWord(f.count, 'ru')} и афиша мероприятий с датами, местами и ценами.`;
+  const lead =
+    f.count === 0
+      ? `${cat.name_ru} ${CAT_CITY_WHERE_RU[path]}: прошедшие события категории и афиша мероприятий города.`
+      : `${cat.name_ru} ${CAT_CITY_WHERE_RU[path]}: ${catEventsWord(f.count, 'ru')} и афиша мероприятий с датами, местами и ценами.`;
   return catFitDescription(lead, CAT_DESC_TAILS_RU, CAT_DESC_FILL_RU);
 }
 
@@ -3418,9 +3623,13 @@ async function loadCategories(db) {
 }
 
 /**
- * Ячейки «город × категория», прошедшие гейт MIN_CATEGORY_EVENTS:
- * Map ключ cellKey(path, categoryId) → { path, cat, items } (items —
- * отсортированы по ближайшему вхождению, как в SPA: nextOccurrenceDate).
+ * Ячейки «город × категория» для публикации: Map ключ cellKey(path, categoryId)
+ * → { path, cat, items, restored } (items — отсортированы по ближайшему
+ * вхождению, как в SPA: nextOccurrenceDate).
+ *
+ * Гейт MIN_CATEGORY_EVENTS действует только для НЕвосстановленных ячеек.
+ * Восстановленные (RESTORED_CELLS — 13 URL из списка 404 GSC) публикуются
+ * всегда: их наполняет блок прошедших событий (categoryArchiveBlockHtml).
  */
 function buildCategoryCells(events, categories) {
   const cells = new Map();
@@ -3439,8 +3648,9 @@ function buildCategoryCells(events, categories) {
         )
         .map((ev) => ({ ev, date: String(nextOccurrenceDate(ev, TODAY_ISO) ?? '') }))
         .sort((a, b) => a.date.localeCompare(b.date));
-      if (items.length < MIN_CATEGORY_EVENTS) continue;
-      cells.set(cellKey(c.path, cat.id), { path: c.path, cat, items });
+      const restored = isRestoredCell(c.path, cat.id);
+      if (!restored && items.length < MIN_CATEGORY_EVENTS) continue;
+      cells.set(cellKey(c.path, cat.id), { path: c.path, cat, items, restored });
     }
   }
   return cells;
@@ -3453,6 +3663,9 @@ function eventCategoryLink(ev, lang, cells) {
   const cell = cells.get(cellKey(crumb.path, ev.category_id));
   if (!cell) return null;
   const en = lang === 'en';
+  // EN-страницы ячейки может не быть (EN-событий меньше порога; у
+  // восстановленных ячеек её нет по построению) — тогда ссылку не выводим.
+  if (en && !cellHasEnPage(cell)) return null;
   const name = en ? cell.cat.name_en : cell.cat.name_ru;
   const emoji = typeof cell.cat.emoji === 'string' ? cell.cat.emoji : '';
   return {
@@ -3526,6 +3739,67 @@ function categorySeoHtml(cell, lang, cells) {
   return lines.join('\n');
 }
 
+/** Блок «Прошедшие события этой категории в <городе>» на ВОССТАНОВЛЕННОЙ
+ *  посадочной (id=seo-category-archive, отдельный блок рядом с
+ *  #seo-category-block): наполнение страницы, у которой активных событий
+ *  меньше порога, + вход в архив ячейки для посетителя и краулера.
+ *  items — ОПУБЛИКОВАННЫЕ прошедшие события ячейки, свежие сверху, до
+ *  RESTORED_ARCHIVE_LIMIT (тестовые записи и дубли-копии исключены санитарией
+ *  архива — иначе ссылка вела бы в 404). Пусто — блока нет: сводка, список и
+ *  ссылки на афишу города/карту. В SPA тот же блок рисуется из RPC
+ *  list_past_cell_events (та же сортировка и лимит). */
+function categoryArchiveBlockHtml(cell, lang, items) {
+  if (!items || !items.length) return '';
+  const en = lang === 'en';
+  const { path, cat } = cell;
+  const cityName = en ? CAT_CITY_NAME_EN[path] : CAT_CITY_CRUMB_RU[path];
+  const catName = en ? cat.name_en : cat.name_ru;
+  const where = catWhere(path, lang);
+  const cityHref = `${en ? '/en' : ''}/${path}/`;
+  const days = items.map((i) => i.date).filter(Boolean).sort();
+  const first = days[0] ?? '';
+  const last = days[days.length - 1] ?? '';
+  const period =
+    first && last
+      ? first === last
+        ? `${catDay(first, lang)}`
+        : en
+          ? `from ${catDay(first, lang)} to ${catDay(last, lang)}`
+          : `с ${catDay(first, lang)} по ${catDay(last, lang)}`
+      : '';
+  const summary = en
+    ? `${items.length} ${items.length === 1 ? 'past event' : 'past events'} of the ${catName} category ${where}${
+        period ? `, ${period}` : ''
+      }: the freshest first. Open a card to see the venue, the programme and the price.`
+    : `В подборке ${catEventsWord(items.length, 'ru')} категории «${catName}» ${where}${
+        period ? ` — ${period}` : ''
+      }, свежие сверху. Откройте карточку, чтобы посмотреть площадку, программу и цену.`;
+  const rows = items.map(({ ev, date }) => {
+    const l = eventPageLink(ev, lang);
+    const when = date
+      ? `<time datetime="${esc(date)}">${esc(en ? enDate(date) : ruDate(date))}</time> — `
+      : '';
+    return `    <li>${when}<a href="${esc(l.href)}">${esc(l.name)}</a></li>`;
+  });
+  return [
+    '<div id="seo-category-archive">',
+    `  <h2>${esc(
+      en ? `Past ${catName} events ${where}` : `Прошедшие события: ${catName} ${where}`,
+    )}</h2>`,
+    `  <p>${esc(summary)}</p>`,
+    '  <ul>',
+    ...rows,
+    '  </ul>',
+    `  <p class="seo-category-links"><a href="${esc(cityHref)}">${esc(
+      en ? `${cityName} event listings` : `Афиша ${cityName}`,
+    )}</a> · <a href="${esc(en ? '/en/' : '/')}">${esc(
+      en ? 'Events map MyPins' : 'Карта событий MyPins',
+    )}</a></p>`,
+    '</div>',
+    '',
+  ].join('\n');
+}
+
 /** JSON-LD страницы «город × категория»: @graph [CollectionPage, ItemList
  * (позиции → URL ВСЕХ активных событий ячейки), BreadcrumbList «Главная >
  * Город > Категория»] — та же иерархия, что у видимой крошки; на EN-версии
@@ -3594,9 +3868,11 @@ async function main() {
   // картинок, страницы активных, страницы прошедших.
   const buildT0 = Date.now();
   const mark = (label) => console.log(`  [time] ${label}: ${((Date.now() - buildT0) / 1000).toFixed(1)} c`);
-  // Порог категорийных страниц обязан совпадать в статике и SPA — иначе
-  // сборка останавливается (см. assertMinCategoryEventsSync).
+  // ---- Порог категорийных страниц и список восстановленных ячеек: оба
+  // обязаны совпадать в статике и SPA — иначе сборка останавливается
+  // (assertMinCategoryEventsSync / assertRestoredCellsSync).
   assertMinCategoryEventsSync();
+  assertRestoredCellsSync();
 
   const db = createClient(SUPABASE_URL, ANON_KEY, { auth: { persistSession: false } });
   const { data, error } = await db.rpc('list_active_events');
@@ -3697,6 +3973,12 @@ async function main() {
   // Публичные профили организаторов считаем ДО сборки страниц событий: ссылку
   // «Организатор» печатает eventSeoHtml, а страницы профилей пишутся позже —
   // оба решения берут ответ отсюда (orgProfilePublished).
+  //
+  // Кандидаты = (а) владельцы активных и архивных событий + (б) ВСЕ публичные
+  // профили из RPC list_public_orgs (заполненный display_name, роль org, не
+  // заблокирован) — иначе организация с профилем, но БЕЗ событий вообще не
+  // получала страницу /org/<id>/ (URL из GSC висел 404). RPC недоступен
+  // (миграция не применена) — работаем по владельцам событий, сборка не падает.
   const orgOwnerIds = [
     ...new Set(
       [...events, ...allPast]
@@ -3704,6 +3986,25 @@ async function main() {
         .filter((id) => id.length > 0),
     ),
   ];
+  let publicOrgsExtra = 0;
+  {
+    const { data, error } = await db.rpc('list_public_orgs');
+    if (error) {
+      console.log(
+        `  list_public_orgs недоступен (${error.message}) — кандидаты только владельцы событий.`,
+      );
+    } else {
+      for (const row of data ?? []) {
+        const id = typeof row?.id === 'string' ? row.id : '';
+        if (!id || orgOwnerIds.includes(id)) continue;
+        orgOwnerIds.push(id);
+        publicOrgsExtra += 1;
+      }
+      console.log(
+        `  публичных профилей в БД: ${(data ?? []).length} (+${publicOrgsExtra} без событий)`,
+      );
+    }
+  }
   const orgEventCount = new Map();
   for (const ev of [...events, ...allPast]) {
     if (typeof ev.owner_id !== 'string' || !ev.owner_id) continue;
@@ -3790,6 +4091,34 @@ async function main() {
       if (!archiveByCityEn.has(crumb.path)) archiveByCityEn.set(crumb.path, []);
       if (archiveByCityEn.get(crumb.path).length < 20) archiveByCityEn.get(crumb.path).push(ev);
     }
+  }
+
+  // Архив ВОССТАНОВЛЕННЫХ ячеек «город × категория» (RESTORED_CELLS): до
+  // RESTORED_ARCHIVE_LIMIT свежих ОПУБЛИКОВАННЫХ прошедших событий пары —
+  // наполнение страниц, которые держим в индексе при недоборе активных событий
+  // (блок «Прошедшие события этой категории в <городе>»). Набор — из уже
+  // очищенного архива (тестовые записи и дубли-копии исключены санитарией:
+  // их страниц нет, ссылка вела бы в 404).
+  const pastByCell = new Map();
+  for (const ev of [...allPast].sort((a, b) =>
+    (eventLastDay(b) || '').localeCompare(eventLastDay(a) || ''),
+  )) {
+    const crumb = cityCrumb(ev.city);
+    if (!crumb || typeof ev.category_id !== 'string' || !ev.category_id) continue;
+    const k = cellKey(crumb.path, ev.category_id);
+    if (!RESTORED_CELL_SET.has(k)) continue;
+    if (!pastByCell.has(k)) pastByCell.set(k, []);
+    const list = pastByCell.get(k);
+    if (list.length < RESTORED_ARCHIVE_LIMIT) {
+      list.push({ ev, date: String(eventLastDay(ev) ?? '') });
+    }
+  }
+  {
+    const empty = [...RESTORED_CELL_SET].filter((k) => !(pastByCell.get(k) ?? []).length);
+    console.log(
+      `  архив восстановленных ячеек: ${pastByCell.size} из ${RESTORED_CELL_SET.size} с прошедшими событиями` +
+        (empty.length ? ` (без архива: ${empty.join(', ')})` : ''),
+    );
   }
 
   // Города: canonical/og:url — со слэшем (GitHub Pages отдаёт 200 только
@@ -3919,6 +4248,7 @@ async function main() {
   // этого фильтра осталось >= MIN_CATEGORY_EVENTS событий, иначе её нет.
   let pageCategories = 0;
   let pageCategoriesEn = 0;
+  let restoredPages = 0;
   const cellList = [...cells.values()].sort((a, b) =>
     `${a.path}/${a.cat.id}`.localeCompare(`${b.path}/${b.cat.id}`),
   );
@@ -3932,14 +4262,34 @@ async function main() {
     const itemsEn = cell.items.filter(
       ({ ev }) => Boolean(ev.title_en) || ev.source_lang === 'en',
     );
-    const hasEnPage = itemsEn.length >= MIN_CATEGORY_EVENTS;
-    if (!hasEnPage) {
+    // Условие «EN-страница есть» — общее с ссылками (город/событие): cellHasEnPage
+    const hasEnPage = cellHasEnPage(cell);
+    // ВОССТАНОВЛЕННАЯ ячейка с недобором активных событий (RESTORED_CELLS):
+    // страница публикуется всегда (200 + sitemap), а её наполнение добирает
+    // блок «Прошедшие события этой категории в <городе>» — до
+    // RESTORED_ARCHIVE_LIMIT свежих ОПУБЛИКОВАННЫХ архивных событий пары.
+    const restoredOnly = cell.restored && cell.items.length < MIN_CATEGORY_EVENTS;
+    const pastItems = restoredOnly
+      ? (pastByCell.get(cellKey(cell.path, cell.cat.id)) ?? [])
+      : [];
+    if (!hasEnPage && !restoredOnly) {
       console.warn(
         `seo-prerender: EN-страница /en/${cell.path}/${cell.cat.id}/ пропущена (EN-событий ${itemsEn.length} < ${MIN_CATEGORY_EVENTS}) — RU-страница без hreflang.`,
       );
     }
+    if (restoredOnly && !cell.items.length && !pastItems.length) {
+      console.warn(
+        `seo-prerender: восстановленная ячейка ${cell.path}/${cell.cat.id} без единого события (ни активных, ни прошедших) — страница почти пустая.`,
+      );
+    }
     const ruTitle = categoryTitle(cell.cat, cell.path, 'ru');
     const ruDescription = categoryDescription(cell.cat, cell.path, 'ru', catCellFacts(cell.items, 'ru'));
+    // ItemList = все видимые ссылки страницы: активные события ячейки + (для
+    // восстановленной) прошедшие из блока архива — иначе разметка расходится
+    // с видимым списком.
+    const ruJsonLdCell = pastItems.length
+      ? { ...cell, items: [...cell.items, ...pastItems] }
+      : cell;
     writePage(baseHtml, `${cell.path}/${cell.cat.id}`, {
       lang: 'ru',
       title: ruTitle,
@@ -3949,7 +4299,7 @@ async function main() {
       ogDescription: ruDescription,
       ogUrl: ruUrl,
       ogImage: LOGO_URL,
-      jsonLd: categoryJsonLd(cell, 'ru'),
+      jsonLd: categoryJsonLd(ruJsonLdCell, 'ru'),
       ...(hasEnPage
         ? {
             hreflang: [
@@ -3959,14 +4309,31 @@ async function main() {
             ],
           }
         : {}),
-      bodySeo: categorySeoHtml(cell, 'ru', cells),
+      bodySeo:
+        categorySeoHtml(cell, 'ru', cells) +
+        (pastItems.length ? categoryArchiveBlockHtml(cell, 'ru', pastItems) : ''),
     });
     locs.push(ruUrl);
     if (hasEnPage) hreflangPairs.set(ruUrl, enUrl);
-    pageCategories += 1;
-    console.log(
-      `  /${cell.path}/${cell.cat.id}/index.html (событий: ${cell.items.length})`,
-    );
+    if (restoredOnly) {
+      // <lastmod> восстановленной страницы — дата самого свежего события пары
+      // (активного или прошедшего): осмысленный сигнал «когда менялся контент»
+      // вместо даты сборки. Пусто/в будущем — остаётся дата сборки.
+      const newest = [...cell.items.map((i) => i.date), ...pastItems.map((i) => i.date)]
+        .filter(Boolean)
+        .sort()
+        .at(-1);
+      if (newest && newest < TODAY_ISO) lastmods.set(ruUrl, newest);
+      restoredPages += 1;
+      console.log(
+        `  /${cell.path}/${cell.cat.id}/index.html (ВОССТАНОВЛЕНА: активных ${cell.items.length}, прошедших в блоке ${pastItems.length}, lastmod ${lastmods.get(ruUrl) ?? TODAY_ISO})`,
+      );
+    } else {
+      pageCategories += 1;
+      console.log(
+        `  /${cell.path}/${cell.cat.id}/index.html (событий: ${cell.items.length})`,
+      );
+    }
 
     if (!hasEnPage) continue;
     const cellEn = { path: cell.path, cat: cell.cat, items: itemsEn };
@@ -3996,7 +4363,7 @@ async function main() {
     );
   }
   console.log(
-    `  посадочных «город × категория» (MIN_CATEGORY_EVENTS=${MIN_CATEGORY_EVENTS}): ${pageCategories} RU + ${pageCategoriesEn} EN, страниц всего: ${locs.length}`,
+    `  посадочных «город × категория» (MIN_CATEGORY_EVENTS=${MIN_CATEGORY_EVENTS}): ${pageCategories} RU + ${pageCategoriesEn} EN, восстановленных ${restoredPages} RU, страниц всего: ${locs.length}`,
   );
 
   // События: URL должен совпадать с тем, что строит SPA, —
@@ -4234,34 +4601,100 @@ async function main() {
   }
   mark('страницы событий (активные + прошедшие + алиасы)');
 
-  // Организаторы: /org/<id> — публичные профили организаторов, у которых в
-  // списке событий выше есть owner_id. Профиль — из публичного RPC
-  // get_org_profile (как src/lib/api.ts:443-451). Страница пишется только
-  // если display_name непустой И (у org есть активные события || bio
-  // непустой) — пустышки остаются 404 и в sitemap не попадают.
+  // Организаторы: /org/<id> — публичные профили организаторов (кандидаты: все
+  // заполненные профили из RPC list_public_orgs + владельцы событий).
+  // Профиль — из публичного RPC get_org_profile (как src/lib/api.ts:443-451).
+  // Страница пишется если display_name непустой И (есть опубликованные события
+  // || bio непустой) — пустышки остаются 404 и в sitemap не попадают.
   // КОНТАКТЫ (телефон/email/telegram/instagram и пр.) в статический HTML и
   // JSON-LD не выводятся НИКОГДА — даже при contacts_public=true: индексация
-  // профиля не должна публиковать личные данные, их покажет живой React.
+  // профиля не должна публиковать личные данные, их покажет живой React
+  // (страница организатора в SPA выводит контакты при contacts_public=true).
+  // EN-версия /en/org/<id>/ — та же страница на английском интерфейсе.
   // Набор и условие берём из общего расчёта (PUBLISHED_ORG_IDS, orgProfiles):
   // та же проверка, что у печати ссылки «Организатор» (orgProfilePublished).
+  const orgItems = new Map(); // id → { active: [{ev,date}], past: [{ev,date}] }
+  const orgBucket = (id) => {
+    if (!orgItems.has(id)) orgItems.set(id, { active: [], past: [] });
+    return orgItems.get(id);
+  };
+  for (const ev of events) {
+    if (typeof ev?.owner_id !== 'string' || !ev.owner_id) continue;
+    orgBucket(ev.owner_id).active.push({ ev, date: String(nextOccurrenceDate(ev, TODAY_ISO) ?? '') });
+  }
+  for (const { ev, date } of [...allPast]
+    .sort((a, b) => (eventLastDay(b) || '').localeCompare(eventLastDay(a) || ''))
+    .map((ev) => ({ ev, date: String(eventLastDay(ev) ?? '') }))) {
+    if (typeof ev?.owner_id !== 'string' || !ev.owner_id) continue;
+    orgBucket(ev.owner_id).past.push({ ev, date });
+  }
+  for (const bucket of orgItems.values()) {
+    bucket.active.sort((a, b) => a.date.localeCompare(b.date));
+    bucket.past.sort((a, b) => b.date.localeCompare(a.date));
+  }
   let pageOrgs = 0;
+  let pageOrgsEn = 0;
   for (const id of PUBLISHED_ORG_IDS) {
     const profile = orgProfiles.get(id);
     const name = typeof profile?.display_name === 'string' ? profile.display_name.trim() : '';
     const bio = typeof profile?.bio === 'string' ? profile.bio.trim() : '';
     const url = `${SITE_URL}/org/${encodeURIComponent(id)}/`;
+    const enUrl = `${SITE_URL}/en/org/${encodeURIComponent(id)}/`;
     const title = `${snippet(name, 40)}: события и афиша | MyPins`;
+    const titleEn = `${snippet(name, 40)}: events and listings | MyPins`;
     const description = bio
       ? snippet(bio, 155)
       : `${name} — организатор событий. Актуальная афиша на карте MyPins: даты, места и цены.`;
+    const descriptionEn = bio
+      ? snippet(bio, 155)
+      : `${name} — event organizer. Live event listings on the MyPins map: dates, venues and prices.`;
     const avatar =
       typeof profile.avatar_url === 'string' && profile.avatar_url.trim()
         ? profile.avatar_url.trim()
         : '';
     const image = avatar ? absPhoto(avatar) : LOGO_URL;
-    const bodySeo = `<div id="seo-org-block">\n  <h1>${esc(name)}</h1>${
-      bio ? `\n  <p>${esc(bio)}</p>` : ''
-    }\n</div>`;
+    const items = orgItems.get(id) ?? { active: [], past: [] };
+    // Разметка блока: h1 имя + bio + «События организатора» (ближайшие, иначе
+    // прошедшие; пусто — «Пока нет событий»). Контакты — не выводятся (см. выше).
+    const orgBlockHtml = (lang) => {
+      const en = lang === 'en';
+      const head = `  <h1>${esc(name)}</h1>${bio ? `\n  <p>${esc(bio)}</p>` : ''}`;
+      const list = orgEventsBlockHtml(
+        lang,
+        en ? items.active.filter(({ ev }) => Boolean(ev.title_en) || ev.source_lang === 'en') : items.active,
+        en ? items.past.filter(({ ev }) => Boolean(ev.title_en) || ev.source_lang === 'en') : items.past,
+      );
+      return `<div id="seo-org-block">\n${head}\n${list}\n</div>`;
+    };
+    const orgJsonLd = (urlLang, lang) => ({
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'ProfilePage',
+          url: urlLang,
+          inLanguage: lang,
+          mainEntity: {
+            '@type': 'Organization',
+            name,
+            url: urlLang,
+            logo: image,
+            ...(bio ? { description: bio } : {}),
+          },
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: lang === 'en' ? 'Home' : 'Главная',
+              item: `${SITE_URL}${lang === 'en' ? '/en' : ''}/`,
+            },
+            { '@type': 'ListItem', position: 2, name, item: urlLang },
+          ],
+        },
+      ],
+    });
     writePage(baseHtml, `org/${encodeURIComponent(id)}`, {
       title,
       description,
@@ -4270,36 +4703,43 @@ async function main() {
       ogDescription: description,
       ogUrl: url,
       ogImage: image,
-      jsonLd: {
-        '@context': 'https://schema.org',
-        '@graph': [
-          {
-            '@type': 'ProfilePage',
-            url,
-            mainEntity: {
-              '@type': 'Organization',
-              name,
-              url,
-              logo: image,
-              ...(bio ? { description: bio } : {}),
-            },
-          },
-          {
-            '@type': 'BreadcrumbList',
-            itemListElement: [
-              { '@type': 'ListItem', position: 1, name: 'Главная', item: `${SITE_URL}/` },
-              { '@type': 'ListItem', position: 2, name, item: url },
-            ],
-          },
-        ],
-      },
-      bodySeo,
+      jsonLd: orgJsonLd(url, 'ru'),
+      hreflang: [
+        { hreflang: 'ru', href: url },
+        { hreflang: 'en', href: enUrl },
+        { hreflang: 'x-default', href: enRoot },
+      ],
+      bodySeo: orgBlockHtml('ru'),
     });
     locs.push(url);
+    hreflangPairs.set(url, enUrl);
+    writePage(baseHtml, `en/org/${encodeURIComponent(id)}`, {
+      lang: 'en',
+      title: titleEn,
+      description: descriptionEn,
+      canonical: enUrl,
+      ogTitle: titleEn,
+      ogDescription: descriptionEn,
+      ogUrl: enUrl,
+      ogImage: image,
+      jsonLd: orgJsonLd(enUrl, 'en'),
+      hreflang: [
+        { hreflang: 'en', href: enUrl },
+        { hreflang: 'ru', href: url },
+        { hreflang: 'x-default', href: enRoot },
+      ],
+      bodySeo: orgBlockHtml('en'),
+    });
+    locs.push(enUrl);
     pageOrgs += 1;
-    console.log(`  /org/${id}/index.html`);
+    pageOrgsEn += 1;
+    console.log(
+      `  /org/${id}/index.html + /en/org/${id}/ (событий: активных ${items.active.length}, прошедших ${items.past.length})`,
+    );
   }
-  console.log(`  организаторов: ${pageOrgs}, страниц всего: ${locs.length}`);
+  console.log(
+    `  организаторов: ${pageOrgs} (RU+EN, EN ${pageOrgsEn}), страниц всего: ${locs.length}`,
+  );
 
   // Блог: /blog/ + /blog/<slug>/ — статьи из src/content/articles.json
   // (единый источник с SPA src/pages/Blog.tsx; тексты дословно, здесь не

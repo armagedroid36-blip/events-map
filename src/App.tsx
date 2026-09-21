@@ -211,11 +211,12 @@ export default function App() {
       // EN-главная /en (как RU '/', но интерфейс EN)
       page = <Home key={en ? 'home:en' : 'home'} />;
     } else {
-      // /org/<id> EN-версии НЕ имеет (промпт R: /en/org/* не входит) —
-      // под /en путь организатора = 404
-      const orgM = !en ? pub.match(/^\/org\/([^/]+)$/) : null;
+      // /org/<id> — публичный профиль организатора; с 21.09.2026 есть и
+      // EN-версия /en/org/<id>/ (её пишет пре-рендер, страницы парные) —
+      // раньше под /en путь организатора отдавал 404.
+      const orgM = pub.match(/^\/org\/([^/]+)$/);
       if (orgM) {
-        page = <OrgProfilePage key={`org:${orgM[1]}`} orgId={decodeURIComponent(orgM[1])} />;
+        page = <OrgProfilePage key={`${en ? 'en:' : ''}org:${orgM[1]}`} orgId={decodeURIComponent(orgM[1])} />;
       } else if (pub === '/blog') {
         page = <BlogIndex key={`${en ? 'en:' : ''}blog`} />;
       } else {

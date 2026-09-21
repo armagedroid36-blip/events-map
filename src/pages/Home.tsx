@@ -26,6 +26,7 @@ import { cityCrumbLabel, cityCrumbLabelLocative, cityPageHref, cityPath } from '
 import type { CityPath } from '../lib/address';
 import { MAP_INTRO_KEY, MOBILE_INTRO_QUERY, HOME_PANEL_QUERY, dropIntroSeoBlocks, setHomePanelHidden } from '../lib/mobileIntro';
 import {
+  MIN_CATEGORY_EVENTS,
   categoriesBlockTitle,
   categoryCells,
   categoryCityName,
@@ -34,8 +35,11 @@ import {
   categoryIntro,
   categoryPageExists,
   categoryPageHref,
+  categoryPagePublished,
+  categoryWhere,
   cellFacts,
   cellItems,
+  isRestoredCell,
 } from '../lib/categoryPages';
 import {
   applyCategoryMeta,
@@ -49,6 +53,23 @@ import { config } from '../config';
 import { useAuth } from '../lib/auth';
 import NotFound from '../components/NotFound';
 import type { Category, EventItem, Filters } from '../lib/types';
+
+/** Число активных событий ячейки с EN-версией (то же условие, что у
+ *  существования EN-страницы ячейки в пре-рендере: >= MIN_CATEGORY_EVENTS,
+ *  см. cellHasEnPage) — по нему отбираются ссылки на EN-странице города. */
+function categoryEnCountIn(
+  list: EventItem[],
+  cityPathValue: CityPath,
+  categoryId: string,
+): number {
+  return list.filter(
+    (ev) =>
+      ev &&
+      cityPath(ev.city) === cityPathValue &&
+      ev.category_id === categoryId &&
+      (Boolean(ev.title_en) || ev.source_lang === 'en'),
+  ).length;
+}
 
 /** Фильтры ещё не заданы (ничего не ограничивает) */
 function isDefaultFilters(f: Filters): boolean {
@@ -321,15 +342,35 @@ export default function Home({
         : [],
     [events, pageCityPath, categoryId],
   );
-  /** Факты ячейки — из них собираются тексты и description (lib/categoryPages) */
+  /** Факты ячейки — из них собираются тексты и description (lib/categoryPages).
+   *  Считаются и для ПУСТОГО набора активных событий: восстановленная ячейка
+   *  (RESTORED_CELLS) без активных событий всё равно рисует h1/интро/FAQ — их
+   *  тексты для count === 0 не зависят от данных и совпадают со статикой. */
   const categoryFacts = useMemo(
-    () => (categoryCellItems.length ? cellFacts(categoryCellItems, seoLang) : null),
-    [categoryCellItems, seoLang],
+    () => (pageCityPath && categoryId ? cellFacts(categoryCellItems, seoLang) : null),
+    [categoryCellItems, pageCityPath, categoryId, seoLang],
   );
-  /** Гейт MIN_CATEGORY_EVENTS: страница пары существует только с 3+ событиями */
+  /** Сколько в ячейке активных событий с EN-версией: EN-страница существует
+   *  ровно при >= MIN_CATEGORY_EVENTS (то же условие в пре-рендере —
+   *  cellHasEnPage), поэтому же выводится hreflang-пара. */
+  const categoryEnCount = useMemo(
+    () =>
+      categoryCellItems.filter(({ ev }) => Boolean(ev.title_en) || ev.source_lang === 'en').length,
+    [categoryCellItems],
+  );
+  /** Гейт публикации страницы пары «город × категория».
+   *  RU: прошла порог MIN_CATEGORY_EVENTS ИЛИ ячейка восстановлена
+   *  (RESTORED_CELLS — URL из списка 404 GSC: страница отдаётся всегда);
+   *  EN: только при >= MIN_CATEGORY_EVENTS EN-событий (у восстановленных
+   *  ячеек EN-версии нет — их URL из GSC русские). */
   const categoryPageOk =
     !categoryId ||
-    (pageCityPath !== null && category !== null && categoryPageExists(cells, pageCityPath, categoryId));
+    (pageCityPath !== null &&
+      category !== null &&
+      (seoLang === 'en'
+        ? categoryEnCount >= MIN_CATEGORY_EVENTS
+        : categoryPageExists(cells, pageCityPath, categoryId) ||
+          isRestoredCell(pageCityPath, categoryId)));
   // Пары без набора событий страницы не имеют — существующая 404-заглушка
   const categoryNotFound = Boolean(categoryId) && !loading && !categoryPageOk;
   /** Видимый блок ячейки (h1 + интро + FAQ) — как статический seo-category-block */
@@ -341,19 +382,73 @@ export default function Home({
       faq: categoryFaq(category, pageCityPath, seoLang, categoryFacts),
     };
   }, [pageCityPath, category, categoryFacts, seoLang]);
-  /** Категории города, прошедшие гейт (перелинковка hub/spoke: город → категории) */
+
+  /** Восстановленная посадочная БЕЗ достатка активных событий: наполнение —
+   *  блок «Прошедшие события этой категории в <городе>». Только RU: у
+   *  восстановленных ячеек EN-версии нет (URL из GSC русские). */
+  const restoredOnly = Boolean(
+    pageCityPath &&
+      categoryId &&
+      seoLang === 'ru' &&
+      isRestoredCell(pageCityPath, categoryId) &&
+      categoryCellItems.length < MIN_CATEGORY_EVENTS,
+  );
+  /** Прошедшие события ячейки (RPC list_past_cell_events: фильтр по городу и
+   *  категории + лимит делает БД — весь архив на страницу не грузим). */
+  const [categoryArchive, setCategoryArchive] = useState<EventItem[]>([]);
+  useEffect(() => {
+    if (!restoredOnly || !pageCityPath || !categoryId) {
+      setCategoryArchive([]);
+      return;
+    }
+    let alive = true;
+    getApi()
+      .listPastCellEvents(pageCityPath, categoryId)
+      .then((rows) => {
+        if (alive) setCategoryArchive(rows);
+      })
+      .catch(() => {
+        // Сеть/прав нет — блока прошедших не будет (страница остаётся с h1,
+        // интро и FAQ: тексты при count === 0 от данных не зависят)
+        if (alive) setCategoryArchive([]);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [restoredOnly, pageCityPath, categoryId]);
+  /** Прошедшие события ячейки с датой последнего дня (порядок — из БД: свежие
+   *  сверху, как в статическом блоке #seo-category-archive) */
+  const categoryArchiveItems = useMemo(
+    () =>
+      categoryArchive.map((ev) => ({
+        ev,
+        date: String(ev.end_date || ev.start_date || '').slice(0, 10),
+      })),
+    [categoryArchive],
+  );
+  /** Категории города, у которых страница РЕАЛЬНО есть (перелинковка hub/spoke:
+   *  город → категории): прошла порог MIN_CATEGORY_EVENTS или ячейка
+   *  восстановлена (RESTORED_CELLS — страница есть всегда). На EN-странице
+   *  города — только ячейки с EN-версией страницы (иначе ссылка вела бы в 404):
+   *  то же условие, что у EN-страницы ячейки в пре-рендере. */
   const cityCategoryLinks = useMemo(
     () =>
       pageCityPath
         ? categories
-            .filter((c) => categoryPageExists(cells, pageCityPath, c.id))
+            .filter((c) => {
+              const published =
+                categoryPageExists(cells, pageCityPath, c.id) || isRestoredCell(pageCityPath, c.id);
+              if (!published) return false;
+              if (seoLang !== 'en') return true;
+              return categoryEnCountIn(events, pageCityPath, c.id) >= MIN_CATEGORY_EVENTS;
+            })
             .map((c) => ({
               id: c.id,
               href: categoryPageHref(pageCityPath, c.id, seoLang),
               label: `${c.emoji} ${seoLang === 'en' ? c.name_en : c.name_ru}`.trim(),
             }))
         : [],
-    [categories, cells, pageCityPath, seoLang],
+    [categories, cells, events, pageCityPath, seoLang],
   );
   /** Ближайшие события города для городского SEO-блока (#city-seo-block):
    *  до MAX_CITY_EVENTS, только БУДУЩИЕ вхождения (nextOccurrenceDate >= today),
@@ -404,12 +499,16 @@ export default function Home({
     if (!onEventPage) return null;
     const cp = cityPath(selected.city) as CityPath | null;
     const cat = categories.find((c) => c.id === selected.category_id);
-    if (!cp || !cat || !categoryPageExists(cells, cp, cat.id)) return null;
+    if (!cp || !cat || !categoryPagePublished(cells, cp, cat.id)) return null;
+    // На EN-странице события — только если у ячейки есть EN-страница
+    if (seoLang === 'en' && categoryEnCountIn(events, cp, cat.id) < MIN_CATEGORY_EVENTS) {
+      return null;
+    }
     return {
       href: categoryPageHref(cp, cat.id, seoLang),
       label: `${cat.emoji} ${seoLang === 'en' ? cat.name_en : cat.name_ru}`.trim(),
     };
-  }, [selected, categories, cells, seoLang]);
+  }, [selected, categories, cells, events, seoLang]);
 
   /** Мета текущего маршрута: категория (Фаза 4) → город → главная.
    *  Категорийный маршрут без набора событий (гейт MIN_CATEGORY_EVENTS не
@@ -418,7 +517,14 @@ export default function Home({
   function applyCurrentMeta(): void {
     if (categoryId) {
       if (pageCityPath && category && categoryFacts && categoryPageOk) {
-        applyCategoryMeta(pageCityPath, category, categoryFacts);
+        // hreflang-пара выводится только у парных страниц: EN-страница ячейки
+        // существует при >= MIN_CATEGORY_EVENTS EN-событий (как в пре-рендере)
+        applyCategoryMeta(
+          pageCityPath,
+          category,
+          categoryFacts,
+          categoryEnCount >= MIN_CATEGORY_EVENTS,
+        );
       } else if (!loading) {
         applyGenericMeta();
       }
@@ -516,7 +622,7 @@ export default function Home({
   useEffect(() => {
     applyCurrentMeta();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [city, eventId, categoryId, category, categoryFacts, categoryPageOk, loading]);
+  }, [city, eventId, categoryId, category, categoryFacts, categoryPageOk, categoryEnCount, loading]);
 
   // При размонтировании (смена маршрута) снимаем мету события/города — head
   // доедет до верного состояния эффектами нового маршрута (новый Home/App)
@@ -1143,6 +1249,41 @@ export default function Home({
               <p className="mt-1 text-sm leading-relaxed text-gray-600">{f.a}</p>
             </details>
           ))}
+          {/* Восстановленная ячейка без достатка активных событий: блок
+              «Прошедшие события этой категории в <городе>» — то же наполнение,
+              что у статического #seo-category-archive (свежие сверху, до
+              RESTORED_ARCHIVE_LIMIT, ссылки на карточки RU-событий и на афишу
+              города/карту). Данные — RPC list_past_cell_events. */}
+          {categoryArchiveItems.length > 0 && (
+            <div id="seo-category-archive" className="mt-2 border-t border-white/50 pt-2">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-gray-500">
+                {`Прошедшие события: ${category.name_ru} ${categoryWhere(pageCityPath, 'ru')}`}
+              </h2>
+              <ul className="mt-1 space-y-0.5 text-xs leading-relaxed text-gray-700">
+                {categoryArchiveItems.map(({ ev, date }) => (
+                  <li key={ev.id}>
+                    {date && <time dateTime={date}>{formatDate(date)}</time>}
+                    {date ? ' — ' : ''}
+                    <a
+                      href={`/event/${ev.id}/${slugify(ev.title)}/`}
+                      className="text-[#0F766E] hover:underline"
+                    >
+                      {ev.title_ru || ev.title || ev.title_en || ''}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-1 text-xs leading-relaxed text-gray-600">
+                <a href={`/${pageCityPath}/`} className="text-[#0F766E] hover:underline">
+                  {`Афиша ${categoryCityName(pageCityPath, 'ru')}`}
+                </a>
+                <span className="text-gray-300"> · </span>
+                <a href="/" className="text-[#0F766E] hover:underline">
+                  Карта событий MyPins
+                </a>
+              </p>
+            </div>
+          )}
           {/* Другие категории этого города живут на афише города (ссылка в
               крошке выше) — на странице категории их не дублируем: один h1,
               фокус на своей категории. */}

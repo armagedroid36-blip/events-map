@@ -22,6 +22,7 @@ import type {
 } from './types';
 import { config } from '../config';
 import { DemoApi } from './demo';
+import { RESTORED_ARCHIVE_LIMIT } from './categoryPages';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 /** Код ошибки подтверждения кода (OTP) — AuthModal показывает по нему сообщение */
@@ -68,6 +69,12 @@ export interface DataApi {
   /** Публичное событие по id (активное ИЛИ прошедшее) — для прямых ссылок на
    *  страницы прошедших событий, которых нет в listEvents (только active) */
   getPublicEvent(id: string): Promise<EventItem | null>;
+  /** Прошедшие события ОДНОЙ ячейки «город × категория» (RPC
+   *  list_past_cell_events): блок «Прошедшие события этой категории в <городе>»
+   *  на восстановленной посадочной странице (см. lib/categoryPages:
+   *  isRestoredCell). Весь архив (~1600 строк с описаниями) не грузим —
+   *  фильтр и лимит делает БД. */
+  listPastCellEvents(cityPath: string, categoryId: string, limit?: number): Promise<EventItem[]>;
   /** Только события на модерации (для админа) */
   listModerationEvents(): Promise<EventItem[]>;
   /** Статистика по пользователям и организаторам (для админа) */
@@ -279,6 +286,25 @@ class SupabaseApi implements DataApi {
     if (error) throw error;
     const rows = (data ?? []) as EventItem[];
     return rows.length > 0 ? rows[0] : null;
+  }
+
+  /** Прошедшие события ячейки «город × категория» (RPC list_past_cell_events,
+   *  security definer; порядок — свежие сверху, лимит ограничен базой).
+   *  Нужен восстановленным посадочным страницам (RESTORED_CELLS): активных
+   *  событий у них меньше порога, а блок прошедших показывает, что в этой
+   *  категории вообще происходит. */
+  async listPastCellEvents(
+    cityPath: string,
+    categoryId: string,
+    limit = RESTORED_ARCHIVE_LIMIT,
+  ): Promise<EventItem[]> {
+    const { data, error } = await this.db.rpc('list_past_cell_events', {
+      p_city_path: cityPath,
+      p_category: categoryId,
+      p_limit: limit,
+    });
+    if (error) throw error;
+    return (data ?? []) as EventItem[];
   }
 
   async listAllEvents(): Promise<EventItem[]> {

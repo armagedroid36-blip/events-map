@@ -10,6 +10,10 @@
 // Гейт: страница пары (город, категория) существует, только если в этом городе
 // >= MIN_CATEGORY_EVENTS АКТИВНЫХ событий этой категории (набор активных =
 // list_active_events, он же грузится в SPA) — иначе 404 и вне sitemap.
+// ИСКЛЮЧЕНИЕ — RESTORED_CELLS (13 пар из списка 404 Google Search Console,
+// 21.09.2026): их страницы отдаются ВСЕГДА (200) и есть в sitemap, даже когда
+// активных событий меньше порога; наполнение добирается прошедшими событиями
+// (блок «Прошедшие события этой категории в <городе>»).
 //
 // Уникальность (гайдлайны programmatic, >=40% уникального текста на страницу):
 // вступление и FAQ строятся на ФАКТАХ ЯЧЕЙКИ — названия ближайших событий, их
@@ -107,6 +111,53 @@ export function categoryPageExists(
   categoryId: string,
 ): boolean {
   return (cells.get(cellKey(path, categoryId)) ?? 0) >= MIN_CATEGORY_EVENTS;
+}
+
+/** Восстановленные ячейки «город × категория» — URL, которые Google уже
+ *  проиндексировал, а страница ИСЧЕЗЛА, когда активных событий стало меньше
+ *  порога (GSC 21.09.2026: 13 таких посадочных отдавали 404).
+ *  Для этих пар страница отдаётся ВСЕГДА (200) и попадает в sitemap; порог
+ *  MIN_CATEGORY_EVENTS продолжает действовать только для НОВЫХ ячеек —
+ *  тонких страниц не плодим. Наполнение восстановленной страницы при
+ *  count === 0: h1, интро/FAQ без «ближайших» дат (см. categoryIntro и
+ *  categoryFaq), блок «Прошедшие события этой категории в <городе>»
+ *  (до RESTORED_ARCHIVE_LIMIT, свежие сверху) и ссылки на афишу города и карту.
+ *  Список ЗАФИКСИРОВАН — эти ячейки больше не должны пропадать.
+ *  ЗЕРКАЛО: scripts/seo-prerender.mjs (RESTORED_CELLS) — при правке менять оба
+ *  файла; рассинхрон останавливает сборку (assertRestoredCellsSync, exit 1). */
+export const RESTORED_CELLS: readonly string[] = [
+  'bali|cinema',
+  'bali|exhibition',
+  'bali|food',
+  'bali|speaking',
+  'da-nang|concert',
+  'da-nang|festival',
+  'da-nang|lecture',
+  'da-nang|speaking',
+  'da-nang|sport',
+  'da-nang|theatre',
+  'nha-trang|concert',
+  'nha-trang|lecture',
+  'nha-trang|party',
+];
+
+const RESTORED_CELL_SET = new Set<string>(RESTORED_CELLS);
+
+/** Сколько прошедших событий показывает блок архива восстановленной страницы */
+export const RESTORED_ARCHIVE_LIMIT = 20;
+
+/** Ячейка восстановлена принудительно (страница есть даже ниже порога) */
+export function isRestoredCell(path: CityPath, categoryId: string): boolean {
+  return RESTORED_CELL_SET.has(cellKey(path, categoryId));
+}
+
+/** Страница ячейки доступна: прошла гейт ИЛИ ячейка восстановлена */
+export function categoryPagePublished(
+  cells: Map<string, number>,
+  path: CityPath,
+  categoryId: string,
+): boolean {
+  return categoryPageExists(cells, path, categoryId) || isRestoredCell(path, categoryId);
 }
 
 /** Относительный href страницы ячейки своего языка: /bali/party/ или /en/bali/party/ */
@@ -554,7 +605,14 @@ function pricePhrase(f: CellFacts, lang: 'ru' | 'en', v: number): string {
 }
 
 /** Вступление ячейки (>=300 знаков, не mad-libs: город + категория + факты
- * ячейки — ближайшие события по названиям и датам, площадки, цены) */
+ * ячейки — ближайшие события по названиям и датам, площадки, цены).
+ * Восстановленная ячейка БЕЗ активных событий (count === 0): фразы про
+ * «ближайшее» событие и его даты бессмысленны, поэтому свой текст — он
+ * строится только на названиях города/категории и потому ПОСИМВОЛЬНО
+ * совпадает в статике и SPA без запросов к БД (см. categoryIntro в
+ * scripts/seo-prerender.mjs). Порядок вариантов фиксирован: k=1 — «новых дат
+ * нет», k=4 — концовка (в обычной ячейке k=4 занят подводкой списка
+ * ближайших событий, а при count === 0 такого списка нет). */
 export function categoryIntro(
   cat: Category,
   path: CityPath,
@@ -567,6 +625,35 @@ export function categoryIntro(
   const blurb = (CATEGORY_BLURB[cat.id] ?? DEFAULT_BLURB)[en ? 'en' : 'ru'];
   const city = CITY_BLURB[path][en ? 'en' : 'ru'][cellVariant(seed, 0)];
   const where = categoryWhere(path, lang);
+  const price = pricePhrase(f, lang, cellVariant(seed, 2));
+  if (f.count === 0) {
+    const head = `${name} ${where}: ${
+      en ? 'no upcoming events right now.' : 'ближайших событий в афише сейчас нет.'
+    }`;
+    const none = en
+      ? [
+          ' New dates appear here as soon as organizers publish them; meanwhile look at how the previous ones went.',
+          ' The category is empty for now: the next dates are not announced yet.',
+          ' Organizers have not announced new dates yet — the category is waiting for the next event.',
+        ][cellVariant(seed, 1)]
+      : [
+          ' Новые даты появятся здесь, как только организаторы их опубликуют; а пока посмотрите, как это было в прошлые разы.',
+          ' Сейчас категория пуста: ближайшие даты ещё не объявлены.',
+          ' Организаторы ещё не опубликовали новые даты — категория ждёт следующего события.',
+        ][cellVariant(seed, 1)];
+    const closing = en
+      ? [
+          ' Past events of the category are collected below, and the city listings and the map are updated every day.',
+          ' The past events of this category are listed below; the live city listings and the map hold the freshest dates, venues and prices.',
+          ' Look through the past events below and follow the city listings on the map — organizers refresh them every day.',
+        ][cellVariant(seed, 4)]
+      : [
+          ' Прошедшие события категории собраны ниже, а афиша города и карта обновляются каждый день.',
+          ' Прошедшие события этой категории — в списке ниже; свежие даты, места и цены всегда есть в афише города на карте.',
+          ' Загляните в прошедшие события ниже и следите за афишей города на карте — организаторы обновляют её каждый день.',
+        ][cellVariant(seed, 4)];
+    return `${head} ${blurb} ${city}${none}${closing}${price}`.replace(/\s{2,}/g, ' ');
+  }
   const head = `${name} ${where}: ${eventsWord(f.count, lang)} ${en ? 'on the map.' : 'в афише.'}`;
   const venues = f.venues.length
     ? en
@@ -603,7 +690,6 @@ export function categoryIntro(
       ? ` Details: ${f.nearestText}`
       : ` Подробности: ${f.nearestText}`
     : '';
-  const price = pricePhrase(f, lang, cellVariant(seed, 2));
   return `${head} ${blurb} ${city}${venues}${dates}${upcoming}${details}${price}`.replace(/\s{2,}/g, ' ');
 }
 
@@ -638,6 +724,40 @@ export function categoryFaq(
         `Сколько событий категории «${name}» ${where}?`,
         `Что сейчас идёт в категории «${name}» ${where}?`,
       ][v0];
+  // Восстановленная ячейка без активных событий (count === 0): обычные ответы
+  // построены на ближайших событиях и их датах — отвечать нечем, поэтому свой
+  // набор (тот же расчёт в статике, менять синхронно). Текст не зависит от
+  // данных → SPA и статика совпадают посимвольно.
+  if (f.count === 0) {
+    const aZero = en
+      ? `There are none right now: no upcoming ${name} events are announced ${where}. Organizers publish dates themselves, so new ones appear here right away.`
+      : `Сейчас их нет: ближайшие события категории «${name}» ${where} ещё не объявлены. Даты публикуют сами организаторы — новые появятся здесь сразу после публикации.`;
+    const qNext = en
+      ? [
+          `When will new ${name} events appear?`,
+          `Are new dates coming for the ${name} category?`,
+          `How do I find out about new ${name} events?`,
+        ][v1]
+      : [
+          `Когда появятся новые события категории «${name}»?`,
+          `Будут ли новые даты в категории «${name}»?`,
+          `Как узнать о новых событиях категории «${name}»?`,
+        ][v1];
+    const aNext = en
+      ? `Follow the city listings and the MyPins map: new events show up there as soon as an organizer publishes them.`
+      : `Следите за афишей города и картой MyPins: новые события появляются там сразу после публикации организатором.`;
+    const qPriceZero = en
+      ? ['Are these events free?', 'Do I need to buy a ticket?', 'Is entry free?'][v2]
+      : ['Есть ли бесплатные события?', 'Нужно ли покупать билет?', 'Вход бесплатный?'][v2];
+    const aPriceZero = en
+      ? `Entry is usually free or donation-based; the exact price is always shown in the event card.`
+      : `Вход на такие события обычно бесплатный или за донат; точная цена указана в карточке события.`;
+    return [
+      { q: q1, a: aZero },
+      { q: qNext, a: aNext },
+      { q: qPriceZero, a: aPriceZero },
+    ];
+  }
   const a1 = en
     ? `There are ${eventsWord(f.count, 'en')}: from “${next ? next.name : ''}” on ${
         next ? shortDay(next.date, 'en') : ''
@@ -779,7 +899,9 @@ function fitDescription(lead: string, tails: string[], fills: string[]): string 
   return out;
 }
 
-/** description страницы ячейки (140–160 знаков) */
+/** description страницы ячейки (140–160 знаков). Восстановленная ячейка без
+ * активных событий (count === 0) — свой лид: «0 событий» в сниппете выглядит
+ * как пустая страница. Текст не зависит от данных (совпадает в SPA и статике). */
 export function categoryDescription(
   cat: Category,
   path: CityPath,
@@ -787,10 +909,16 @@ export function categoryDescription(
   f: CellFacts,
 ): string {
   if (lang === 'en') {
-    const lead = `${cat.name_en} in ${CITY_NAME_EN[path]}: ${eventsWord(f.count, 'en')} and what is on this month.`;
+    const lead =
+      f.count === 0
+        ? `${cat.name_en} in ${CITY_NAME_EN[path]}: past events of this category and the city listings.`
+        : `${cat.name_en} in ${CITY_NAME_EN[path]}: ${eventsWord(f.count, 'en')} and what is on this month.`;
     return fitDescription(lead, DESC_TAILS_EN, DESC_FILL_EN);
   }
-  const lead = `${cat.name_ru} ${CITY_WHERE_RU[path]}: ${eventsWord(f.count, 'ru')} и афиша мероприятий с датами, местами и ценами.`;
+  const lead =
+    f.count === 0
+      ? `${cat.name_ru} ${CITY_WHERE_RU[path]}: прошедшие события категории и афиша мероприятий города.`
+      : `${cat.name_ru} ${CITY_WHERE_RU[path]}: ${eventsWord(f.count, 'ru')} и афиша мероприятий с датами, местами и ценами.`;
   return fitDescription(lead, DESC_TAILS_RU, DESC_FILL_RU);
 }
 

@@ -345,6 +345,7 @@ export function applyCategoryMeta(
   path: CityPath,
   category: Category,
   facts: CellFacts,
+  hasEn = true,
 ): void {
   const en = isEnPath(window.location.pathname);
   const lang = en ? 'en' : 'ru';
@@ -363,10 +364,15 @@ export function applyCategoryMeta(
       'og:url': url,
       'og:image': `${SITE_URL}/logo.png`,
     },
-    hreflang: hreflangPairsFor(
-      `${SITE_URL}${categoryPageHref(path, category.id, 'ru')}`,
-      `${SITE_URL}${categoryPageHref(path, category.id, 'en')}`,
-    ),
+    // Аннотации только у ПАРНЫХ страниц: EN-версии нет, если EN-событий в
+    // ячейке меньше порога MIN_CATEGORY_EVENTS (в т.ч. у восстановленных
+    // RU-URL, RESTORED_CELLS) — иначе hreflang вёл бы на несуществующий URL.
+    hreflang: hasEn
+      ? hreflangPairsFor(
+          `${SITE_URL}${categoryPageHref(path, category.id, 'ru')}`,
+          `${SITE_URL}${categoryPageHref(path, category.id, 'en')}`,
+        )
+      : null,
   });
 }
 
@@ -462,11 +468,12 @@ export function applyEventMeta(ev: EventItem): void {
 }
 
 /**
- * Организатор (/org/<id>): title/description/OG как в пре-рендере
- * (seo-prerender.mjs, блок /org/<id>), canonical со слэшем. og:image —
- * аватарка (абсолютный URL через photoUrl) или логотип сайта. Контакты
- * (телефон/email/telegram и пр.) в мету и og НЕ попадают никогда — даже при
- * contacts_public=true (их показывает только живая страница).
+ * Организатор (/org/<id> и /en/org/<id>): title/description/OG как в
+ * пре-рендере (seo-prerender.mjs, блок /org/<id>), canonical со слэшем,
+ * hreflang-пара RU↔EN. og:image — аватарка (абсолютный URL через photoUrl)
+ * или логотип сайта. Контакты (телефон/email/telegram и пр.) в мету и og НЕ
+ * попадают никогда — даже при contacts_public=true (их показывает только
+ * живая страница).
  */
 export function applyOrgMeta(profile: OrgProfile): void {
   const name = (profile.display_name ?? '').trim();
@@ -476,12 +483,21 @@ export function applyOrgMeta(profile: OrgProfile): void {
     applyGenericMeta();
     return;
   }
+  // Язык страницы — из URL (как у остальных публичных страниц): /en/org/<id> —
+  // EN-мета. Версии парные: обе пишет пре-рендер.
+  const en = isEnPath(window.location.pathname);
   const bio = (profile.bio ?? '').trim();
-  const title = `${snippet(name, 40)}: события и афиша | MyPins`;
+  const title = en
+    ? `${snippet(name, 40)}: events and listings | MyPins`
+    : `${snippet(name, 40)}: события и афиша | MyPins`;
   const description = bio
     ? snippet(bio, 155)
-    : `${name} — организатор событий. Актуальная афиша на карте MyPins: даты, места и цены.`;
-  const canonical = `${SITE_URL}/org/${encodeURIComponent(profile.id)}/`;
+    : en
+      ? `${name} — event organizer. Live event listings on the MyPins map: dates, venues and prices.`
+      : `${name} — организатор событий. Актуальная афиша на карте MyPins: даты, места и цены.`;
+  const ruUrl = `${SITE_URL}/org/${encodeURIComponent(profile.id)}/`;
+  const enUrl = `${SITE_URL}/en/org/${encodeURIComponent(profile.id)}/`;
+  const canonical = en ? enUrl : ruUrl;
   const avatar = (profile.avatar_url ?? '').trim();
   const image = avatar
     ? avatar.startsWith('http')
@@ -491,6 +507,7 @@ export function applyOrgMeta(profile: OrgProfile): void {
   apply({
     title,
     description,
+    lang: en ? 'en' : 'ru',
     canonical,
     og: {
       'og:title': title,
@@ -498,9 +515,8 @@ export function applyOrgMeta(profile: OrgProfile): void {
       'og:url': canonical,
       'og:image': image,
     },
-    // У /org/<id> нет EN-версии (в этот промпт /en/org/* не входит)
-    lang: 'ru',
-    hreflang: null,
+    // RU- и EN-версия страницы организатора парные (обе пишет пре-рендер)
+    hreflang: hreflangPairsFor(ruUrl, enUrl),
   });
 }
 

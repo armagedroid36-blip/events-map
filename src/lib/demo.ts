@@ -171,6 +171,12 @@ export class DemoApi {
     return load<EventItem[]>(LS_EVENTS, DEMO_EVENTS).find((e) => e.id === id) ?? null;
   }
 
+  /** Демо-режим: прошедшие события ячейки «город × категория» (в демо-наборе
+   *  их нет — как пустой архив в базе, блок на странице не выводится). */
+  async listPastCellEvents(_cityPath: string, _categoryId: string): Promise<EventItem[]> {
+    return [];
+  }
+
   async listModerationEvents(): Promise<EventItem[]> {
     return load<EventItem[]>(LS_EVENTS, DEMO_EVENTS).filter((e) => e.status === 'moderation');
   }
