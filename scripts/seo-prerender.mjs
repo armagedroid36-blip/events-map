@@ -2294,6 +2294,32 @@ function eventPageLink(ev, lang) {
   };
 }
 
+// --- Публичные профили организаторов: ОДНО условие на двух потребителей ---
+// Условие публикации страницы /org/<id>/ обязано совпадать в двух местах:
+// (1) сборка самой страницы профиля, (2) печать ссылки «Организатор» на
+// страницах событий. Пока условия жили раздельно, ссылка вела в 404 — это была
+// единственная битая внутренняя цель сайта (21.09.2026).
+//
+// Профиль публикуется, если display_name непустой И у владельца есть хотя бы
+// одно ОПУБЛИКОВАННОЕ событие (активное или архивная страница) ИЛИ непустой bio.
+// Владельцев с ролью не org и заблокированных get_org_profile не отдаёт вовсе
+// (RPC возвращает пустую выборку), поэтому отдельной проверки роли нет.
+const PUBLISHED_ORG_IDS = new Set();
+
+/** Есть ли у владельца страница профиля — единственный источник истины */
+function orgProfilePublished(ownerId) {
+  return typeof ownerId === 'string' && ownerId.length > 0 && PUBLISHED_ORG_IDS.has(ownerId);
+}
+
+/** Почему профиль не публикуется (для лога сборки); null — публикуется */
+function orgSkipReason(profile, hasEvents) {
+  const name = typeof profile?.display_name === 'string' ? profile.display_name.trim() : '';
+  const bio = typeof profile?.bio === 'string' ? profile.bio.trim() : '';
+  if (!name) return 'нет display_name (профиль не заполнен, роль не org или владелец заблокирован)';
+  if (!hasEvents && !bio) return 'нет ни событий, ни описания (пустышка)';
+  return null;
+}
+
 /** Данные блока хронологии для конкретного события (null — соседей нет) */
 function chronoForEvent(index, ev, lang) {
   const c = index.get(ev.id);
@@ -2569,9 +2595,17 @@ function eventSeoHtml(ev, url, lang = 'ru', sibs = [], catLink = null, similar =
   if (priceText) lines.push(`  <p>${esc(priceText)}</p>`);
   if (text) lines.push(`  <p>${esc(text)}</p>`);
   if (orgName && ownerId) {
-    const orgUrl = `${SITE_URL}/org/${encodeURIComponent(ownerId)}/`;
+    // Ссылка — ТОЛЬКО если страница профиля действительно записана сборкой
+    // (orgProfilePublished — то же условие, что у блока /org/<id>/). Иначе имя
+    // выводится текстом: до 21.09.2026 ссылка вела в 404 (5 архивных страниц
+    // событий владельца без публичного профиля — единственная битая цель сайта).
+    const label = en ? 'Organizer:' : 'Организатор:';
     lines.push(
-      `  <p>${en ? 'Organizer:' : 'Организатор:'} <a href="${esc(orgUrl)}">${esc(orgName)}</a></p>`,
+      orgProfilePublished(ownerId)
+        ? `  <p>${label} <a href="${esc(
+            `${SITE_URL}/org/${encodeURIComponent(ownerId)}/`,
+          )}">${esc(orgName)}</a></p>`
+        : `  <p>${label} ${esc(orgName)}</p>`,
     );
   }
   // Видимая хлебная крошка (Главная > город > событие) — та же иерархия, что
@@ -3660,6 +3694,43 @@ async function main() {
     console.log(`  внимание: среди активных событий снято дублей ${droppedActive} — из наборов выдачи тоже убраны`);
   }
 
+  // Публичные профили организаторов считаем ДО сборки страниц событий: ссылку
+  // «Организатор» печатает eventSeoHtml, а страницы профилей пишутся позже —
+  // оба решения берут ответ отсюда (orgProfilePublished).
+  const orgOwnerIds = [
+    ...new Set(
+      [...events, ...allPast]
+        .map((ev) => (typeof ev.owner_id === 'string' ? ev.owner_id : ''))
+        .filter((id) => id.length > 0),
+    ),
+  ];
+  const orgEventCount = new Map();
+  for (const ev of [...events, ...allPast]) {
+    if (typeof ev.owner_id !== 'string' || !ev.owner_id) continue;
+    orgEventCount.set(ev.owner_id, (orgEventCount.get(ev.owner_id) ?? 0) + 1);
+  }
+  const orgProfiles = new Map();
+  for (const id of orgOwnerIds) {
+    const { data, error } = await db
+      .rpc('get_org_profile', { p_org_id: id })
+      .maybeSingle();
+    if (error) {
+      console.log(`  /org/${id}: пропущен (${error.message})`);
+      continue;
+    }
+    const profile = data ?? null;
+    const reason = orgSkipReason(profile, (orgEventCount.get(id) ?? 0) > 0);
+    if (reason) {
+      console.log(`  /org/${id}: не публикуется — ${reason}`);
+      continue;
+    }
+    PUBLISHED_ORG_IDS.add(id);
+    orgProfiles.set(id, profile);
+  }
+  console.log(
+    `  профили организаторов: кандидатов ${orgOwnerIds.length}, публикуется ${PUBLISHED_ORG_IDS.size}`,
+  );
+
   // id событий, у которых ЕСТЬ страница (активные + прошедшие + снимки):
   // mdLinksToHtml снимает ссылки только на события, которых нет вовсе — ссылка
   // на архивное событие больше не считается мёртвой (страница у него есть).
@@ -4162,25 +4233,13 @@ async function main() {
   // КОНТАКТЫ (телефон/email/telegram/instagram и пр.) в статический HTML и
   // JSON-LD не выводятся НИКОГДА — даже при contacts_public=true: индексация
   // профиля не должна публиковать личные данные, их покажет живой React.
-  const orgIds = [
-    ...new Set(
-      events.map((ev) => ev.owner_id).filter((id) => typeof id === 'string' && id.length > 0),
-    ),
-  ];
+  // Набор и условие берём из общего расчёта (PUBLISHED_ORG_IDS, orgProfiles):
+  // та же проверка, что у печати ссылки «Организатор» (orgProfilePublished).
   let pageOrgs = 0;
-  for (const id of orgIds) {
-    const { data, error } = await db
-      .rpc('get_org_profile', { p_org_id: id })
-      .maybeSingle();
-    if (error) {
-      console.log(`  /org/${id}: пропущен (${error.message})`);
-      continue;
-    }
-    const profile = data ?? null;
+  for (const id of PUBLISHED_ORG_IDS) {
+    const profile = orgProfiles.get(id);
     const name = typeof profile?.display_name === 'string' ? profile.display_name.trim() : '';
     const bio = typeof profile?.bio === 'string' ? profile.bio.trim() : '';
-    const hasEvents = events.some((ev) => ev.owner_id === id);
-    if (!name || (!hasEvents && !bio)) continue;
     const url = `${SITE_URL}/org/${encodeURIComponent(id)}/`;
     const title = `${snippet(name, 40)}: события и афиша | MyPins`;
     const description = bio
