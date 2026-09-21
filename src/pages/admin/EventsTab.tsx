@@ -124,6 +124,9 @@ export default function EventsTab({ version, onChanged }: Props) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(0);
+  // Счётчики кликов «Записаться»/«Связаться» по событиям (за 30 дней):
+  // один запрос на таблицу, см. RPC admin_event_clicks_map
+  const [clickMap, setClickMap] = useState<Map<string, { booking: number; contact: number }>>(new Map());
   const [editing, setEditing] = useState<Partial<EventItem> | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [savedMsg, setSavedMsg] = useState('');
@@ -133,9 +136,17 @@ export default function EventsTab({ version, onChanged }: Props) {
     let alive = true;
     (async () => {
       const api = getApi();
-      const [evs, cats] = await Promise.all([api.listAllEvents(), api.getCategories()]);
+      const [evs, cats, clicks] = await Promise.all([
+        api.listAllEvents(),
+        api.getCategories(),
+        // Счётчики кликов не должны ронять таблицу: нет прав/сети — просто пусто
+        api.getEventClicksMap(30).catch(() => []),
+      ]);
       if (!alive) return;
       setEvents(evs);
+      setClickMap(
+        new Map(clicks.map((c) => [c.event_id, { booking: c.booking, contact: c.contact }])),
+      );
       setCategories(cats);
     })();
     return () => {
@@ -219,6 +230,7 @@ export default function EventsTab({ version, onChanged }: Props) {
               <th className="px-3 py-2">{t('filters.city')}</th>
               <th className="px-3 py-2">{t('filters.period')}</th>
               <th className="px-3 py-2">Статус</th>
+              <th className="px-3 py-2">{t('admin.events.clicks')}</th>
               <th className="px-3 py-2"></th>
             </tr>
           </thead>
@@ -252,6 +264,20 @@ export default function EventsTab({ version, onChanged }: Props) {
                     >
                       {statusLabel(ev.status)}
                     </span>
+                  </td>
+                  <td className="px-3 py-2 whitespace-nowrap text-gray-600">
+                    {(() => {
+                      const c = clickMap.get(ev.id);
+                      if (!c || c.booking + c.contact === 0) return <span className="text-gray-300">—</span>;
+                      return (
+                        <span
+                          className="rounded-full bg-[#E66343]/15 px-2 py-0.5 text-xs font-medium text-[#B3492C]"
+                          title={t('admin.events.clicksHint')}
+                        >
+                          {c.booking + c.contact}
+                        </span>
+                      );
+                    })()}
                   </td>
                   <td className="px-3 py-2 text-right whitespace-nowrap">
                     <button

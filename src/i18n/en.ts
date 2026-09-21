@@ -244,6 +244,8 @@ export default {
     international: 'International artist',
     contacts: 'Organizer contacts',
     organizer: 'Organizer',
+    book: 'Book a spot',
+    contactOrg: 'Contact organizer',
     share: 'Share',
     shareTelegram: 'Telegram',
     shareWhatsapp: 'WhatsApp',
@@ -497,6 +499,8 @@ export default {
       deleteConfirm: 'Delete event «{{title}}»? This cannot be undone.',
       search: 'Search by name or city…',
       empty: 'No events yet. Add manually or import from a file.',
+      clicks: 'Book',
+      clicksHint: 'Clicks on the card button over 30 days',
       status: {
         active: 'Active',
         past: 'Past',
@@ -537,6 +541,11 @@ export default {
       noData: 'No data yet',
       byCountry: 'Visits by country',
       bySource: 'Traffic sources',
+      byClicks: 'Booking clicks',
+      byClicksHint:
+        'Clicks on the card button over 30 days: “Book a spot” opens the registration link, “Contact organizer” opens the organizer contacts. No personal data.',
+      clicksBooking: 'Book',
+      clicksContact: 'Contact',
       bySourceHint:
         'Referrer domain and landing page. No IP addresses or full URLs are stored — daily aggregates only.',
       countriesShort: 'countries',

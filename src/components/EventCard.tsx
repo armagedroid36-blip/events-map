@@ -10,7 +10,7 @@ import { localizedText } from '../lib/translate';
 import { languageName } from '../lib/languages';
 import { formatDate, formatTimeHM, todayIso } from '../lib/dates';
 import { recurrenceLabel } from '../lib/recurrence';
-import { photoUrl } from '../lib/api';
+import { getApi, photoUrl } from '../lib/api';
 import { isValidCoords } from '../lib/coords';
 import {
   cityCrumbLabel,
@@ -655,6 +655,20 @@ export default function EventCard({
   // Рабочие фото: без битых ссылок (onError)
   const okPhotos = photos.filter((_, i) => !brokenPhotos.has(i));
 
+  // Главная кнопка карточки (ТЗ фаза 2): «Записаться» — ссылка регистрации
+  // события (events.website). Ссылки нет — «Связаться»: ведём в контакты
+  // организатора (Telegram → WhatsApp → e-mail → телефон → Instagram).
+  // Клик логируется в event_clicks (event_id, kind) — без PII.
+  const bookingUrl = typeof event.website === 'string' ? event.website.trim() : '';
+  const contactUrl =
+    (event.contact_telegram ? tgLink(event.contact_telegram) : '') ||
+    (event.contact_whatsapp ? waLink(event.contact_whatsapp) : '') ||
+    (event.contact_email ? `mailto:${event.contact_email}` : '') ||
+    (event.contact_phone ? `tel:${event.contact_phone.replace(/[^\d+]/g, '')}` : '') ||
+    (event.contact_instagram ? igLink(event.contact_instagram) : '');
+  const ctaUrl = bookingUrl || contactUrl;
+  const ctaKind: 'booking' | 'contact' = bookingUrl ? 'booking' : 'contact';
+
   // Удаление доступно админу или владельцу события, с подтверждением
   const handleDelete = () => {
     if (onDelete && window.confirm('Удалить событие?')) onDelete(event.id);
@@ -863,6 +877,23 @@ export default function EventCard({
           <span className="text-gray-900">{formatPrice(event.price, event.currency)}</span>
         )}
       </div>
+
+      {ctaUrl && (
+        <a
+          href={ctaUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => {
+            // Клик не должен ждать сеть: логируем «выстрелил и забыл»
+            getApi()
+              .logEventClick(event.id, ctaKind)
+              .catch(() => {});
+          }}
+          className="mb-3 flex w-full items-center justify-center gap-2 rounded-lg bg-[#E66343] px-4 py-3 text-sm font-semibold text-white shadow-[0_6px_18px_rgba(230,99,67,0.35)] transition hover:bg-[#d4553a] active:scale-[0.99]"
+        >
+          {ctaKind === 'booking' ? t('card.book') : t('card.contactOrg')}
+        </a>
+      )}
 
       <p className="mb-3 whitespace-pre-line text-sm leading-relaxed text-gray-700">{linkifyText(description)}</p>
 

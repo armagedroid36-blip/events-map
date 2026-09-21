@@ -269,6 +269,24 @@ export interface VisitCountryRow {
  *  домен источника, визиты, число стран и страниц входа + самая частая страница.
  *  Источник: 'direct' — прямой заход, 'internal' — переход внутри сайта,
  *  иначе домен (telegram.org, google.com, yandex.ru, t.me …). */
+/** Строка сводки кликов по записи (RPC admin_event_clicks): клики «Записаться»
+ *  (kind='booking' — ссылка регистрации события) и «Связаться» (kind='contact'). */
+export interface EventClickRow {
+  event_id: string;
+  title: string;
+  booking: number;
+  contact: number;
+  total: number;
+  last_at: string | null;
+}
+
+/** Счётчик кликов по одному событию (RPC admin_event_clicks_map) */
+export interface EventClickCount {
+  event_id: string;
+  booking: number;
+  contact: number;
+}
+
 export interface VisitSourceRow {
   source: string;
   visits: number;

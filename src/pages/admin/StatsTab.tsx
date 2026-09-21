@@ -14,6 +14,7 @@ import type {
   VisitCountryDay,
   VisitCountryRow,
   VisitSourceRow,
+  EventClickRow,
 } from '../../lib/types';
 
 interface Props {
@@ -150,6 +151,7 @@ export default function StatsTab({ version }: Props) {
   const [countryRows, setCountryRows] = useState<VisitCountryRow[] | null>(null);
   const [sourcePeriod, setSourcePeriod] = useState<7 | 30 | 90>(30);
   const [sourceRows, setSourceRows] = useState<VisitSourceRow[] | null>(null);
+  const [clickRows, setClickRows] = useState<EventClickRow[] | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [countrySeries, setCountrySeries] = useState<VisitCountryDay[] | null>(null);
 
@@ -187,6 +189,19 @@ export default function StatsTab({ version }: Props) {
       alive = false;
     };
   }, [countryPeriod, version]);
+
+  // Клики по записи за период (RPC admin_event_clicks): «Записаться» и «Связаться»
+  useEffect(() => {
+    let alive = true;
+    setClickRows(null);
+    getApi()
+      .getEventClicks(30)
+      .then((rows) => alive && setClickRows(rows))
+      .catch(() => alive && setClickRows([]));
+    return () => {
+      alive = false;
+    };
+  }, [version]);
 
   // Источники переходов за период (RPC admin_visits_by_source): домен
   // источника, страница входа, число стран. Данные — суточные агрегаты.
@@ -446,6 +461,36 @@ export default function StatsTab({ version }: Props) {
           </div>
         )}
         <p className="mt-2 text-xs text-gray-500">{t('admin.stats.bySourceHint')}</p>
+      </div>
+
+      <div className="mt-6">
+        <h3 className="mb-3 text-sm font-semibold text-gray-900">{t('admin.stats.byClicks')}</h3>
+        {clickRows === null ? (
+          <p className="text-sm text-gray-500">…</p>
+        ) : clickRows.length === 0 ? (
+          <p className="text-sm text-gray-500">{t('admin.stats.noData')}</p>
+        ) : (
+          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+            {clickRows.slice(0, 15).map((r, idx) => (
+              <div
+                key={r.event_id}
+                className="flex items-center gap-2 border-b border-gray-100 px-3 py-2 last:border-b-0"
+              >
+                <span className="w-5 text-sm text-gray-400">{idx + 1}</span>
+                <span className="min-w-0 flex-1 truncate text-sm font-medium text-gray-900">
+                  {r.title || r.event_id}
+                </span>
+                <span className="shrink-0 text-xs text-gray-500">
+                  {t('admin.stats.clicksBooking')}: {r.booking} · {t('admin.stats.clicksContact')}: {r.contact}
+                </span>
+                <span className="shrink-0 rounded-full bg-[#E66343]/15 px-2 py-0.5 text-xs font-semibold text-[#B3492C]">
+                  {r.total}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+        <p className="mt-2 text-xs text-gray-500">{t('admin.stats.byClicksHint')}</p>
       </div>
     </div>
   );

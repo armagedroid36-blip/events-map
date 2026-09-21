@@ -19,6 +19,8 @@ import type {
   VisitCountryRow,
   VisitCountryDay,
   VisitSourceRow,
+  EventClickRow,
+  EventClickCount,
   GalleryPhoto,
 } from './types';
 import { config } from '../config';
@@ -182,6 +184,13 @@ export interface DataApi {
   getVisitsByCountry(days: number): Promise<VisitCountryRow[]>;
   /** Визиты одной страны по дням за период (график; только админ) */
   getVisitsCountrySeries(country: string, days: number): Promise<VisitCountryDay[]>;
+  /** Записать клик по кнопке карточки: 'booking' — ссылка регистрации события,
+   *  'contact' — переход в контакты организатора. Без PII (RPC log_event_click). */
+  logEventClick(eventId: string, kind: 'booking' | 'contact'): Promise<void>;
+  /** Сводка кликов по записи за период (только админ) */
+  getEventClicks(days: number): Promise<EventClickRow[]>;
+  /** Счётчики кликов по событиям для строк админского списка (только админ) */
+  getEventClicksMap(days: number): Promise<EventClickCount[]>;
   /** Сводка источников переходов (RPC admin_visits_by_source, только админ) */
   getVisitsBySource(days: number): Promise<VisitSourceRow[]>;
 
@@ -800,6 +809,31 @@ class SupabaseApi implements DataApi {
     const { data, error } = await this.db.rpc('admin_visits_by_country', { p_days: days });
     if (error) throw error;
     return (data ?? []) as VisitCountryRow[];
+  }
+
+  /** Клик по кнопке карточки: fire-and-forget, ошибки не влияют на переход
+   *  по ссылке (RPC log_event_click, security definer, доступен анониму). */
+  async logEventClick(eventId: string, kind: 'booking' | 'contact'): Promise<void> {
+    const { error } = await this.db.rpc('log_event_click', {
+      p_event_id: eventId,
+      p_kind: kind,
+    });
+    if (error) throw error;
+  }
+
+  /** Клики по записи за период: события с числом кликов (RPC admin_event_clicks) */
+  async getEventClicks(days: number): Promise<EventClickRow[]> {
+    const { data, error } = await this.db.rpc('admin_event_clicks', { p_days: days });
+    if (error) throw error;
+    return (data ?? []) as EventClickRow[];
+  }
+
+  /** Счётчики кликов по событиям (RPC admin_event_clicks_map) — для строк
+   *  админского списка: один запрос на таблицу, без запроса на строку. */
+  async getEventClicksMap(days: number): Promise<EventClickCount[]> {
+    const { data, error } = await this.db.rpc('admin_event_clicks_map', { p_days: days });
+    if (error) throw error;
+    return (data ?? []) as EventClickCount[];
   }
 
   /** Источники переходов за период (RPC admin_visits_by_source, security

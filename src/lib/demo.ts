@@ -1,7 +1,7 @@
 // Демо-режим: сайт работает БЕЗ базы данных.
 // Данные хранятся в localStorage браузера. Нужен, чтобы проверить
 // внешний вид и поведение сайта до подключения Supabase.
-import type { Category, EventItem, Application, ApplicationDraft, ImportRow, UserStatsRow, OrgProfile, StatsDailyRow, VisitCountryRow, VisitCountryDay, VisitSourceRow, GalleryPhoto } from './types';
+import type { Category, EventItem, Application, ApplicationDraft, ImportRow, UserStatsRow, OrgProfile, StatsDailyRow, VisitCountryRow, VisitCountryDay, VisitSourceRow, EventClickRow, EventClickCount, GalleryPhoto } from './types';
 
 /** Относительные даты: событие всегда в будущем, демо «живое» */
 function inDays(n: number): string {
@@ -483,6 +483,19 @@ export class DemoApi {
 
   async getVisitsByCountry(_days: number): Promise<VisitCountryRow[]> {
     // Демо: без базы данных по странам нет
+    return [];
+  }
+
+  /** Демо: логировать клики некуда */
+  async logEventClick(_eventId: string, _kind: 'booking' | 'contact'): Promise<void> {}
+
+  /** Демо: сводки кликов нет */
+  async getEventClicks(_days: number): Promise<EventClickRow[]> {
+    return [];
+  }
+
+  /** Демо: счётчиков кликов нет */
+  async getEventClicksMap(_days: number): Promise<EventClickCount[]> {
     return [];
   }
 
