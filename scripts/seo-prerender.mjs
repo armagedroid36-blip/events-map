@@ -1174,7 +1174,15 @@ function organizerNameFromWebsite(website) {
  * image — картинка для JSON-LD (ЖИВОЙ URL из resolveEventImages: og:image и
  * image — один и тот же URL); не передан → прежнее поведение absPhoto(photos[0]).
  */
-function eventJsonLd(ev, url, lang = 'ru', image = null) {
+function eventJsonLd(ev, url, lang = 'ru', image = null, mode = 'active') {
+  // mode: 'active' — обычная страница события; 'removed' — архивное событие с
+  // датой в будущем (снято с афиши): узел Event остаётся, но БЕЗ offers/
+  // validFrom/availability — событие не проводится, продавать нечего;
+  // 'past' — архивное событие с прошедшей датой: узел Event не выводится
+  // вовсе (в прошлом у страницы нет rich-результата, а EventScheduled на
+  // прошедшую дату вводит поисковик в заблуждение). BreadcrumbList остаётся.
+  const removed = mode === 'removed';
+  const dropEvent = mode === 'past';
   const en = lang === 'en';
   const city = cityLabel(ev.city, lang);
   const address = typeof ev.address === 'string' ? ev.address.trim() : '';
@@ -1225,9 +1233,10 @@ function eventJsonLd(ev, url, lang = 'ru', image = null) {
   // Конец вхождения (не путать с events.end_date — конец серии): null, когда
   // длительность неизвестна (нет end_time или это заглушка «23:59:00»).
   const ed = occurrenceEnd(sd, ev.start_time, ev.end_time);
-  // Прошедшее событие: страницы прошедших не индексируются, но функция может
-  // быть вызвана и для них — availability/endDate тогда не выводим, чтобы не
-  // регрессировать поведение индексации архива.
+  // Прошедшее событие: с 21.09.2026 страницы прошедших событий ПУБЛИКУЮТСЯ
+  // (их вернул пре-рендер ради 404 из GSC), поэтому узел Event для события с
+  // прошедшей датой вовсе не выводится (mode='past'), а для архивного с
+  // будущей датой (mode='removed') остаётся без offers/availability/validFrom.
   const isPast = !sd || sd < TODAY_ISO;
   // endDate для БУДУЩИХ событий — всегда (требование Search Console):
   //   1) end_time известен → конец вхождения с временем (occurrenceEnd);
@@ -1276,15 +1285,19 @@ function eventJsonLd(ev, url, lang = 'ru', image = null) {
         ? { geo: { '@type': 'GeoCoordinates', latitude: lat, longitude: lng } }
         : {}),
     },
-    offers: {
-      '@type': 'Offer',
-      url,
-      price,
-      priceCurrency: currency,
-      ...(availability ? { availability } : {}),
-      ...(validFrom ? { validFrom } : {}),
-      ...(ev.donation ? { description: 'donation' } : {}),
-    },
+    ...(removed
+      ? {}
+      : {
+          offers: {
+            '@type': 'Offer',
+            url,
+            price,
+            priceCurrency: currency,
+            ...(availability ? { availability } : {}),
+            ...(validFrom ? { validFrom } : {}),
+            ...(ev.donation ? { description: 'donation' } : {}),
+          },
+        }),
   };
   if (text) doc.description = cleanText(text);
   if (!isPast) doc.endDate = endDateIso;
@@ -1333,10 +1346,9 @@ function eventJsonLd(ev, url, lang = 'ru', image = null) {
   });
   return {
     '@context': 'https://schema.org',
-    '@graph': [
-      doc,
-      { '@type': 'BreadcrumbList', itemListElement: items },
-    ],
+    '@graph': dropEvent
+      ? [{ '@type': 'BreadcrumbList', itemListElement: items }]
+      : [doc, { '@type': 'BreadcrumbList', itemListElement: items }],
   };
 }
 
@@ -2091,6 +2103,233 @@ function pastBadge(ev, lang) {
     : (en ? 'Event removed from the lineup' : 'Событие снято с афиши');
 }
 
+// --- Санитария архива: тестовые записи и дубли-копии ---
+//
+// 1) Тестовые записи владельца («Тест колокольчика», «test») не публикуются:
+//    явный список id (его видно в сборке) + строгие совпадения по названию —
+//    регулярка якорная, иначе под неё попали бы реальные события с «тест» в
+//    названии («тест-драйв», «contest»). Каждое исключение логируется.
+const TEST_EVENT_IDS = new Set([
+  '57cff55a-8a22-416b-8d27-de984560c056',
+  '105efb07-6001-4b15-82a7-0e87bb8845f8',
+  'a4d14e7b-f860-4908-ae90-c8d2f5b00a96',
+  '3df8f2c9-b459-4177-84d6-7cff17a3df45',
+  '4544fea5-ed2f-41a1-9b0d-590a5df39206',
+  '6b0f487b-67bf-4bbe-bc93-51e26cf30239',
+  '9391ae16-bfd9-4131-9748-cf46987e9852',
+]);
+const TEST_TITLE_RE = /^(test|тест|, test|тест колокольчика|тест колокольчика\.)$/;
+
+/** Причина, по которой страница события не публикуется (тест) или null */
+function testEventReason(ev) {
+  if (TEST_EVENT_IDS.has(ev.id)) return 'тестовая запись (список id)';
+  const t = normTitleKey(ev.title);
+  if (TEST_TITLE_RE.test(t)) return `тестовая запись (название «${ev.title}»)`;
+  return null;
+}
+
+/**
+ * Ключ дубля-копии: название + дата начала + город (признак 1 из
+ * scripts/dedupe-events.mjs — «title + start_date + city»). Копии одного
+ * события различаются только id, поэтому у них один и тот же URL-путь смысла,
+ * разные URL и одинаковые title/h1/canonical — прямой вред для SEO.
+ */
+function dupKey(ev, lang) {
+  const name = lang === 'en' ? ev.title_en || ev.title : ev.title_ru || ev.title || ev.title_en;
+  return `${normTitleKey(name)}|${(ev.start_date || '').slice(0, 10)}|${normTitleKey(ev.city)}`;
+}
+
+/** Свежесть записи для выбора «главной» копии: updated_at, затем created_at */
+function freshness(ev) {
+  return `${ev.updated_at || ''}|${ev.created_at || ''}`;
+}
+
+/**
+ * Оставляет среди дублей ОДНУ запись — с самым свежим updated_at (при
+ * равенстве — created_at, затем id: выбор детерминированный). Разные названия
+ * RU и EN связываются в одну группу (объединение множеств): иначе могло выйти
+ * так, что русская страница одной копии ссылается по hreflang на английскую
+ * страницу другой, которую мы не публикуем.
+ *
+ * Возвращает { dropped: Map(id → {keptId, key}), groups, freed } — dropped
+ * содержит ВСЕ копии, кроме главной (страницы обеих языковых версий → 404 и
+ * вне sitemap).
+ */
+function dedupeCopies(rows) {
+  const parent = new Map();
+  const find = (x) => {
+    let r = x;
+    while (parent.get(r) !== r) r = parent.get(r);
+    while (parent.get(x) !== r) {
+      const next = parent.get(x);
+      parent.set(x, r);
+      x = next;
+    }
+    return r;
+  };
+  const union = (a, b) => {
+    const ra = find(a);
+    const rb = find(b);
+    if (ra !== rb) parent.set(rb, ra);
+  };
+  for (const ev of rows) parent.set(ev.id, ev.id);
+
+  const byKey = new Map(); // ключ → [id]
+  for (const lang of ['ru', 'en']) {
+    for (const ev of rows) {
+      if (lang === 'en' && !(ev.title_en || ev.source_lang === 'en')) continue;
+      const k = `${lang}|${dupKey(ev, lang)}`;
+      if (!byKey.has(k)) byKey.set(k, []);
+      byKey.get(k).push(ev.id);
+    }
+  }
+  for (const ids of byKey.values()) {
+    for (let i = 1; i < ids.length; i += 1) union(ids[0], ids[i]);
+  }
+
+  const byRoot = new Map();
+  for (const ev of rows) {
+    const r = find(ev.id);
+    if (!byRoot.has(r)) byRoot.set(r, []);
+    byRoot.get(r).push(ev);
+  }
+  const dropped = new Map();
+  let groups = 0;
+  for (const [, list] of byRoot) {
+    if (list.length < 2) continue;
+    groups += 1;
+    const sorted = [...list].sort((a, b) => {
+      // Активное событие — всегда главное в группе: копия, заархивированная
+      // дедупом, обновлена ПОЗЖЕ живого события, и «самое свежее updated_at»
+      // без этой проверки снимало бы с публикации действующую карточку
+      // (проверено 21.09.2026: так пропадали 192 активных события, 6 ячеек
+      // категорий и страницы организаторов).
+      const actA = a.status === 'active' ? 1 : 0;
+      const actB = b.status === 'active' ? 1 : 0;
+      if (actA !== actB) return actB - actA;
+      const fa = freshness(a);
+      const fb = freshness(b);
+      if (fa !== fb) return fb.localeCompare(fa);
+      return String(a.id).localeCompare(String(b.id));
+    });
+    const keep = sorted[0];
+    for (const ev of sorted.slice(1)) {
+      dropped.set(ev.id, { keptId: keep.id, key: dupKey(ev, 'ru') });
+    }
+  }
+  return { dropped, groups };
+}
+
+/**
+ * Хронология архива: для каждой опубликованной архивной страницы — соседи по
+ * дате в том же городе и языке. Это гарантия входящих внутренних ссылок:
+ * до 21.09.2026 у 2626 из 2629 архивных страниц не было НИ ОДНОЙ входящей
+ * ссылки, архив был достижим только через sitemap.
+ */
+function archiveChronoIndex(list, lang) {
+  const en = lang === 'en';
+  const buckets = new Map(); // путь города | 'other' → события
+  for (const ev of list) {
+    if (en && !(ev.title_en || ev.source_lang === 'en')) continue;
+    const crumb = cityCrumb(ev.city);
+    const key = crumb ? crumb.path : 'other';
+    if (!buckets.has(key)) buckets.set(key, []);
+    buckets.get(key).push(ev);
+  }
+  const byDate = (a, b) => {
+    const da = eventLastDay(a) || '';
+    const db = eventLastDay(b) || '';
+    if (da !== db) return da.localeCompare(db);
+    return String(a.id).localeCompare(String(b.id));
+  };
+  const index = new Map();
+  const singles = [];
+  for (const [key, arr] of buckets) {
+    const sorted = [...arr].sort(byDate);
+    const cityName =
+      key === 'other' ? '' : en ? CITY_NAME_EN[key] || '' : CAT_CITY_CRUMB_RU[key] || '';
+    for (let i = 0; i < sorted.length; i += 1) {
+      index.set(sorted[i].id, {
+        prev: i > 0 ? sorted[i - 1] : null,
+        next: i < sorted.length - 1 ? sorted[i + 1] : null,
+        cityName,
+      });
+    }
+    // Город с единственным архивным событием: соседей в бакете нет — такое
+    // событие (напр. удалённый снимок в Мандалае) оставалось без входящих
+    // ссылок. Ему подставляем соседей по ближайшей дате среди ВСЕХ архивных
+    // страниц языка — заголовок блока тогда без названия города.
+    if (sorted.length === 1) singles.push(sorted[0]);
+  }
+  if (singles.length) {
+    const global = [...list.filter((ev) => !en || ev.title_en || ev.source_lang === 'en')].sort(byDate);
+    for (const ev of singles) {
+      const i = global.findIndex((x) => x.id === ev.id);
+      const prev = i > 0 ? global[i - 1] : null;
+      const next = i >= 0 && i < global.length - 1 ? global[i + 1] : null;
+      index.set(ev.id, { prev, next, cityName: '', extra: [] });
+      // ОБРАТНЫЕ ссылки: соседи по глобальной цепочке получают дополнительную
+      // ссылку на одиночное событие — иначе у того не будет входящих ссылок
+      // (проверка 21.09.2026: EN-страница снимка удалённого события в Мандалае
+      // оставалась единственной архивной страницей без входящих ссылок).
+      for (const nb of [prev, next]) {
+        if (!nb) continue;
+        const entry = index.get(nb.id);
+        if (!entry) continue;
+        if (!entry.extra) entry.extra = [];
+        if (entry.extra.length < 2) entry.extra.push(ev);
+      }
+    }
+  }
+  return index;
+}
+
+/** Ссылка на страницу события своего языка (для блоков архива) */
+function eventPageLink(ev, lang) {
+  const en = lang === 'en';
+  return {
+    href: `${en ? '/en' : ''}/event/${ev.id}/${slugify(en ? ev.title_en || ev.title : ev.title)}/`,
+    name: en ? ev.title_en || ev.title || '' : ev.title_ru || ev.title || ev.title_en || '',
+    date: eventLastDay(ev) || '',
+  };
+}
+
+/** Данные блока хронологии для конкретного события (null — соседей нет) */
+function chronoForEvent(index, ev, lang) {
+  const c = index.get(ev.id);
+  if (!c) return null;
+  return {
+    prev: c.prev ? eventPageLink(c.prev, lang) : null,
+    next: c.next ? eventPageLink(c.next, lang) : null,
+    cityName: c.cityName,
+    extra: (c.extra ?? []).map((x) => eventPageLink(x, lang)),
+  };
+}
+
+/** Блок «Прошедшие события: <город>» на городской странице: свежие архивные
+ *  страницы города — вход в архив для посетителя и краулера. Пусто — блока нет. */
+function cityArchiveBlockHtml(path, lang, items) {
+  if (!items || !items.length) return '';
+  const en = lang === 'en';
+  const cityName = en ? CITY_NAME_EN[path] || path : CAT_CITY_CRUMB_RU[path] || path;
+  const rows = items.map((ev) => {
+    const l = eventPageLink(ev, lang);
+    return `    <li><a href="${esc(l.href)}">${esc(l.name)}</a>${
+      l.date
+        ? ` <time datetime="${esc(l.date)}">${esc(en ? enDate(l.date) : ruDate(l.date))}</time>`
+        : ''
+    }</li>`;
+  });
+  return [
+    `<div id="seo-city-archive">`,
+    `  <h2>${esc(en ? `Past events: ${cityName}` : `Прошедшие события: ${cityName}`)}</h2>`,
+    '  <ul>',
+    ...rows,
+    '  </ul>',
+    '</div>',
+  ].join('\n');
+}
+
 
 /** Группы «город × категория» по всему активному набору: Map(cellKey → события).
  * Те же требования к событию, что у посадочных категорий: распознанный город
@@ -2119,32 +2358,40 @@ function buildSimilarGroups(events) {
  * lang='en' — только события с EN-страницей (иначе ссылка вела бы в 404 на
  * /en/event/…). Логика зеркальна src/lib/similar.ts — менять синхронно.
  */
-function similarItems(ev, lang, groups, sibs) {
+function similarItems(ev, lang, groups, sibs, archiveGroups = null) {
   const crumb = cityCrumb(ev.city);
   if (!crumb || typeof ev.category_id !== 'string' || !ev.category_id) return [];
-  const group = groups.get(cellKey(crumb.path, ev.category_id)) ?? [];
+  const en = lang === 'en';
   const skip = new Set((sibs ?? []).map((s) => s.id));
   const own = occurrence(ev);
-  const en = lang === 'en';
-  const items = group
-    .filter(
-      (o) =>
-        o.id !== ev.id &&
-        !skip.has(o.id) &&
-        (!en || Boolean(o.title_en) || o.source_lang === 'en'),
-    )
-    .map((o) => ({ ev: o, occ: occurrence(o) }));
-  if (items.length < MIN_SIMILAR) return [];
-  return items
-    .sort((a, b) => {
-      const da = Math.abs(dayGap(a.occ, own));
-      const db = Math.abs(dayGap(b.occ, own));
-      if (da !== db) return da - db;
-      return a.occ.localeCompare(b.occ);
-    })
-    .slice(0, MAX_SIMILAR)
-    .sort((a, b) => a.occ.localeCompare(b.occ))
-    .map((x) => x.ev);
+  const cell = cellKey(crumb.path, ev.category_id);
+  const byProximity = (a, b) => {
+    const da = Math.abs(dayGap(a.occ, own));
+    const db = Math.abs(dayGap(b.occ, own));
+    if (da !== db) return da - db;
+    return a.occ.localeCompare(b.occ);
+  };
+  const pick = (list) =>
+    (list ?? [])
+      .filter(
+        (o) =>
+          o &&
+          o.id !== ev.id &&
+          !skip.has(o.id) &&
+          (!en || Boolean(o.title_en) || o.source_lang === 'en'),
+      )
+      .map((o) => ({ ev: o, occ: occurrence(o) }))
+      .sort(byProximity)
+      .map((x) => x.ev);
+  // Активные соседи — приоритет; архивные (archiveGroups) — только ДОБОР, когда
+  // активных не хватает до гейта: иначе архивные страницы остаются без единой
+  // входящей ссылки (архив достижим лишь через sitemap). Лимит MAX_SIMILAR
+  // общий — активные всегда попадают в него первыми.
+  const active = pick(groups.get(cell));
+  const archived = archiveGroups ? pick(archiveGroups.get(cell)) : [];
+  const combined = [...active, ...archived].slice(0, MAX_SIMILAR);
+  if (combined.length < MIN_SIMILAR) return [];
+  return combined.sort((a, b) => occurrence(a).localeCompare(occurrence(b)));
 }
 
 /**
@@ -2255,7 +2502,7 @@ function eventBreadcrumbHtml(ev, lang = 'ru', name = '', catLink = null) {
  * после серии добавляется блок «Похожие события»/«Similar events» со ссылками
  * на них; пусто — блока нет.
  */
-function eventSeoHtml(ev, url, lang = 'ru', sibs = [], catLink = null, similar = [], past = false) {
+function eventSeoHtml(ev, url, lang = 'ru', sibs = [], catLink = null, similar = [], past = false, chrono = null) {
   const en = lang === 'en';
   const name = en
     ? ev.title_en || ev.title || ''
@@ -2335,6 +2582,49 @@ function eventSeoHtml(ev, url, lang = 'ru', sibs = [], catLink = null, similar =
   // Похожие события (тот же город + та же категория) — после блока серии
   const similarHtml = similarEventsHtml(similar, lang);
   if (similarHtml) lines.push(similarHtml);
+  // Хронология архива: ссылки на предыдущее/следующее прошедшее событие того же
+  // города (chrono). Каждая архивная страница получает хотя бы ОДНУ входящую
+  // внутреннюю ссылку от соседей по хронологии — иначе архив достижим только
+  // через sitemap (до 21.09.2026 так было у 2626 страниц из 2629).
+  if (past && chrono && (chrono.prev || chrono.next)) {
+    const citySuffix = chrono.cityName ? `: ${esc(chrono.cityName)}` : '';
+    const rows = [];
+    if (chrono.prev) {
+      rows.push(
+        `    <li>${en ? 'Previous' : 'Предыдущее'}: <a href="${esc(chrono.prev.href)}">${esc(
+          chrono.prev.name,
+        )}</a>${chrono.prev.date ? ` <time datetime="${esc(chrono.prev.date)}">${esc(
+          en ? enDate(chrono.prev.date) : ruDate(chrono.prev.date),
+        )}</time>` : ''}</li>`,
+      );
+    }
+    if (chrono.next) {
+      rows.push(
+        `    <li>${en ? 'Next' : 'Следующее'}: <a href="${esc(chrono.next.href)}">${esc(
+          chrono.next.name,
+        )}</a>${chrono.next.date ? ` <time datetime="${esc(chrono.next.date)}">${esc(
+          en ? enDate(chrono.next.date) : ruDate(chrono.next.date),
+        )}</time>` : ''}</li>`,
+      );
+    }
+    for (const x of chrono.extra ?? []) {
+      rows.push(
+        `    <li>${en ? 'Also in the archive' : 'Также в архиве'}: <a href="${esc(x.href)}">${esc(
+          x.name,
+        )}</a>${x.date ? ` <time datetime="${esc(x.date)}">${esc(
+          en ? enDate(x.date) : ruDate(x.date),
+        )}</time>` : ''}</li>`,
+      );
+    }
+    lines.push(
+      `  <nav class="event-past-chrono">`,
+      `    <h2>${en ? 'Archive chronology' : 'Хронология прошедших событий'}${citySuffix}</h2>`,
+      '    <ul>',
+      ...rows,
+      '    </ul>',
+      '  </nav>',
+    );
+  }
   // CTA страницы прошедшего события: ближайшие события города (или карта, если
   // город не распознан) — посетитель не должен упираться в тупик на архивной
   // странице. Ссылка ведёт на существующую страницу своего языка.
@@ -2363,9 +2653,12 @@ function eventSeoHtml(ev, url, lang = 'ru', sibs = [], catLink = null, similar =
  */
 function eventPageMetaFor(ev, lang, opts) {
   const en = lang === 'en';
-  const { url, enUrl, hasEn, image, similar, catLink, past } = opts;
+  const { url, enUrl, hasEn, image, similar, catLink, past, chrono } = opts;
   const city = typeof ev.city === 'string' ? ev.city.trim() : '';
   const sibs = [];
+  // JSON-LD архивной страницы: прошедшая дата — узла Event нет, архивная с
+  // будущей датой («снято с афиши») — Event без offers (см. eventJsonLd mode).
+  const mode = past ? (isPastEvent(ev) ? 'past' : 'removed') : 'active';
   if (en) {
     const nameEn = ev.title_en || ev.title || '';
     const crumb = cityCrumb(ev.city);
@@ -2386,13 +2679,13 @@ function eventPageMetaFor(ev, lang, opts) {
       ogDescription: descriptionEn,
       ogUrl: url,
       ogImage: image,
-      jsonLd: eventJsonLd(ev, url, 'en', image),
+      jsonLd: eventJsonLd(ev, url, 'en', image, mode),
       hreflang: [
         { hreflang: 'en', href: url },
         { hreflang: 'ru', href: enUrl },
         { hreflang: 'x-default', href: `${SITE_URL}/en/` },
       ],
-      bodySeo: eventSeoHtml(ev, url, 'en', sibs, catLink, similar, Boolean(past)),
+      bodySeo: eventSeoHtml(ev, url, 'en', sibs, catLink, similar, Boolean(past), chrono),
     };
   }
   const title =
@@ -2409,7 +2702,7 @@ function eventPageMetaFor(ev, lang, opts) {
     ogDescription: description,
     ogUrl: url,
     ogImage: image,
-    jsonLd: eventJsonLd(ev, url, 'ru', image),
+    jsonLd: eventJsonLd(ev, url, 'ru', image, mode),
     ...(hasEn
       ? {
           hreflang: [
@@ -2419,7 +2712,7 @@ function eventPageMetaFor(ev, lang, opts) {
           ],
         }
       : {}),
-    bodySeo: eventSeoHtml(ev, url, 'ru', sibs, catLink, similar, Boolean(past)),
+    bodySeo: eventSeoHtml(ev, url, 'ru', sibs, catLink, similar, Boolean(past), chrono),
   };
 }
 
@@ -3324,10 +3617,48 @@ async function main() {
   // Плюс снимки событий, которых в базе уже нет (scripts/data/legacy-events.json).
   const pastEvents = await loadPastEvents(db);
   const legacyEvents = loadLegacyEvents();
-  const allPast = [...pastEvents, ...legacyEvents];
+  const allPastLoaded = [...pastEvents, ...legacyEvents];
   console.log(
-    `  прошедших событий: ${pastEvents.length} (+снимков удалённых: ${legacyEvents.length}), вне sitemap по возрасту (>${PAST_SITEMAP_MONTHS} мес): ${allPast.filter(pastTooOld).length}`,
+    `  прошедших событий: ${pastEvents.length} (+снимков удалённых: ${legacyEvents.length}), вне sitemap по возрасту (>${PAST_SITEMAP_MONTHS} мес): ${allPastLoaded.filter(pastTooOld).length}`,
   );
+
+  // --- Санитария архива (21.09.2026): тестовые записи и дубли-копии ---
+  // Тестовые записи владельца и копии одного события (разные id, одинаковые
+  // title+дата+город) НЕ публикуются: страницы → 404, в sitemap их нет.
+  // Всё, что исключено, печатается в лог сборки — решение видно, а не спрятано.
+  const skippedTest = [];
+  const pastClean = [];
+  for (const ev of allPastLoaded) {
+    const reason = testEventReason(ev);
+    if (reason) skippedTest.push({ ev, reason });
+    else pastClean.push(ev);
+  }
+  const { dropped: dupDropped, groups: dupGroups } = dedupeCopies([...events, ...pastClean]);
+  const allPast = pastClean.filter((ev) => !dupDropped.has(ev.id));
+  console.log(
+    `  санитария: тестовых записей исключено ${skippedTest.length}, групп дублей ${dupGroups}, копий снято ${dupDropped.size}`,
+  );
+  for (const s of skippedTest) {
+    console.log(`    тест → 404: /event/${s.ev.id}/ (${s.reason})`);
+  }
+  let dupLogged = 0;
+  for (const [id, info] of dupDropped) {
+    if (dupLogged < 8) {
+      console.log(`    дубль → 404: /event/${id}/ — главная копия ${info.keptId} (${info.key})`);
+    }
+    dupLogged += 1;
+  }
+  if (dupDropped.size > 8) console.log(`    … всего копий снято ${dupDropped.size}`);
+  // Активные дубли (сегодня их нет) убираем из набора НА МЕСТЕ: иначе их id
+  // остались бы в городских блоках, «похожих событиях» и категорийных ячейках —
+  // то есть внутренние ссылки вели бы на 404.
+  const droppedActive = events.filter((ev) => dupDropped.has(ev.id)).length;
+  if (droppedActive) {
+    for (let i = events.length - 1; i >= 0; i -= 1) {
+      if (dupDropped.has(events[i].id)) events.splice(i, 1);
+    }
+    console.log(`  внимание: среди активных событий снято дублей ${droppedActive} — из наборов выдачи тоже убраны`);
+  }
 
   // id событий, у которых ЕСТЬ страница (активные + прошедшие + снимки):
   // mdLinksToHtml снимает ссылки только на события, которых нет вовсе — ссылка
@@ -3361,6 +3692,25 @@ async function main() {
   // <lastmod> для sitemap: по умолчанию дата сборки (TODAY_ISO); статьи блога
   // и /blog/ перекрываются датой публикации статьи (lastmods.set ниже)
   const lastmods = new Map();
+
+  // Архив по городам для блока «Прошедшие события» на городских страницах:
+  // 20 самых свежих ОПУБЛИКОВАННЫХ архивных страниц города (RU; для EN —
+  // только события с EN-версией). Это вход в архив для посетителя и краулера:
+  // до 21.09.2026 архив был достижим лишь через sitemap.
+  const archiveByCityRu = new Map();
+  const archiveByCityEn = new Map();
+  for (const ev of [...allPast].sort((a, b) =>
+    (eventLastDay(b) || '').localeCompare(eventLastDay(a) || ''),
+  )) {
+    const crumb = cityCrumb(ev.city);
+    if (!crumb) continue;
+    if (!archiveByCityRu.has(crumb.path)) archiveByCityRu.set(crumb.path, []);
+    if (archiveByCityRu.get(crumb.path).length < 20) archiveByCityRu.get(crumb.path).push(ev);
+    if (ev.title_en || ev.source_lang === 'en') {
+      if (!archiveByCityEn.has(crumb.path)) archiveByCityEn.set(crumb.path, []);
+      if (archiveByCityEn.get(crumb.path).length < 20) archiveByCityEn.get(crumb.path).push(ev);
+    }
+  }
 
   // Города: canonical/og:url — со слэшем (GitHub Pages отдаёт 200 только
   // на /bali/, без слэша — 301). Плюс видимый SEO-блок в body (RU) — тот же
@@ -3416,7 +3766,10 @@ async function main() {
         { hreflang: 'en', href: enUrl },
         { hreflang: 'x-default', href: enRoot },
       ],
-      bodySeo: seo ? citySeoHtml(seo, cityEvs, cityCategoriesHtml(c.path, 'ru', cells).html) : null,
+      bodySeo: seo
+        ? citySeoHtml(seo, cityEvs, cityCategoriesHtml(c.path, 'ru', cells).html) +
+          cityArchiveBlockHtml(c.path, 'ru', archiveByCityRu.get(c.path) ?? [])
+        : null,
       // Мобильное интро в статике: превью карты города (как в SPA
       // Home.tsx: slugify(city) — для этих городов совпадает с c.path)
       introPreview: `/images/map-preview-${c.path}.webp`,
@@ -3466,7 +3819,10 @@ async function main() {
         { hreflang: 'ru', href: ruUrl },
         { hreflang: 'x-default', href: enRoot },
       ],
-      bodySeo: seo ? citySeoHtmlEn(seo, cityEvs, cityCategoriesHtml(c.path, 'en', cells).html) : null,
+      bodySeo: seo
+        ? citySeoHtmlEn(seo, cityEvs, cityCategoriesHtml(c.path, 'en', cells).html) +
+          cityArchiveBlockHtml(c.path, 'en', archiveByCityEn.get(c.path) ?? [])
+        : null,
       // Мобильное интро (EN-версия текстов по lang='en'), то же превью карты
       introPreview: `/images/map-preview-${c.path}.webp`,
     });
@@ -3686,6 +4042,15 @@ async function main() {
   // «Похожие события» берутся из групп АКТИВНЫХ событий — блок ведёт на
   // актуальные страницы; меньше MIN_SIMILAR кандидатов → блока нет.
   mark('страницы активных событий');
+  // Группы «город × категория» по АРХИВУ — добор для блока «похожие события»,
+  // когда активных соседей меньше MIN_SIMILAR (иначе у архива нет входящих
+  // ссылок: до 21.09.2026 так было у 2626 страниц из 2629).
+  const archiveSimilarGroups = buildSimilarGroups(allPast);
+  // Хронология по городам и языкам: предыдущее/следующее прошедшее событие —
+  // гарантия хотя бы одной входящей ссылки для каждой архивной страницы.
+  const chronoRu = archiveChronoIndex(allPast, 'ru');
+  const chronoEn = archiveChronoIndex(allPast, 'en');
+  let pastNoChrono = 0;
   const pastPathMeta = new Map(); // canonical path → meta (для алиасов)
   const pastPagesBuffer = []; // {path, html} — запись одной пачкой (см. writePagesParallel)
   // Архивные страницы собираются из базы с CSS-ссылкой (см. baseWithCssLink):
@@ -3702,14 +4067,17 @@ async function main() {
     const enPath = `en/event/${ev.id}/${slugify(hasEn ? ev.title_en || ev.title : ev.title)}`;
     const enUrl = `${SITE_URL}/${enPath}/`;
     const evImage = eventImage(ev, imageMap);
+    const chronoOneRu = chronoForEvent(chronoRu, ev, 'ru');
+    if (!chronoOneRu || (!chronoOneRu.prev && !chronoOneRu.next)) pastNoChrono += 1;
     const metaRu = eventPageMetaFor(ev, 'ru', {
       url,
       enUrl,
       hasEn,
       image: evImage,
-      similar: similarItems(ev, 'ru', similarGroups, []),
+      similar: similarItems(ev, 'ru', similarGroups, [], archiveSimilarGroups),
       catLink: eventCategoryLink(ev, 'ru', cells),
       past: true,
+      chrono: chronoOneRu,
     });
     pastPagesBuffer.push({ path, html: renderPage(pastBaseHtml, metaRu) });
     pastPathMeta.set(path, metaRu);
@@ -3727,9 +4095,10 @@ async function main() {
         enUrl: url,
         hasEn,
         image: evImage,
-        similar: similarItems(ev, 'en', similarGroups, []),
+        similar: similarItems(ev, 'en', similarGroups, [], archiveSimilarGroups),
         catLink: eventCategoryLink(ev, 'en', cells),
         past: true,
+        chrono: chronoForEvent(chronoEn, ev, 'en'),
       });
       pastPagesBuffer.push({ path: enPath, html: renderPage(pastBaseHtml, metaEn) });
       pastPathMeta.set(enPath, metaEn);
@@ -3778,6 +4147,11 @@ async function main() {
   }
   if (pastPagesBuffer.length) await writePagesParallel(pastPagesBuffer);
   console.log(`  страниц-алиасов исторических URL: ${aliasPages}`);
+  if (pastNoChrono) {
+    console.log(
+      `  внимание: архивных страниц без соседей по хронологии: ${pastNoChrono} — у них может не быть входящих ссылок`,
+    );
+  }
   mark('страницы событий (активные + прошедшие + алиасы)');
 
   // Организаторы: /org/<id> — публичные профили организаторов, у которых в
