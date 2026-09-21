@@ -209,6 +209,21 @@ export default {
     emptyHint: 'Try changing the filters or picking another destination.',
     other: 'Other',
   },
+  view: {
+    feed: 'Feed',
+    calendar: 'Calendar',
+    map: 'Map',
+  },
+  calendar: {
+    week: 'Week',
+    month: 'Month',
+    today: 'Today',
+    prev: 'Previous period',
+    next: 'Next period',
+    more: '+{{count}}',
+    openDay: 'Events on this day',
+    emptyDay: 'No events on this day',
+  },
   list: {
     title: 'Events as a list',
     collapse: 'Collapse',

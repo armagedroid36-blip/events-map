@@ -8,6 +8,7 @@ import type { MapBounds } from '../components/MapView';
 const MapView = lazy(() => import('../components/MapView'));
 import FiltersPanel from '../components/Filters';
 import EventsList from '../components/EventsList';
+import EventCalendar from '../components/EventCalendar';
 import EventCard from '../components/EventCard';
 import QuickLocations from '../components/QuickLocations';
 import MobileMapIntro from '../components/MobileMapIntro';
@@ -112,6 +113,45 @@ function cityEventHref(ev: EventItem, lang: 'ru' | 'en'): string {
     : `/event/${encodeURIComponent(ev.id)}/${slugify(ev.title)}/`;
 }
 
+/** Вид главной: лента (список), календарь, только карта */
+type MainView = 'feed' | 'calendar' | 'map';
+
+interface MainViewState {
+  view: MainView;
+  mode: 'week' | 'month';
+  date: string;
+}
+
+/** Вид и дата из URL: ?view=feed|calendar|map&mode=week|month&d=YYYY-MM-DD.
+ *  Ссылка с этими параметрами шарится и открывается в нужном виде (ТЗ). */
+function readMainView(): MainViewState {
+  const q = new URLSearchParams(window.location.search);
+  const v = q.get('view');
+  const view: MainView = v === 'calendar' || v === 'feed' ? v : 'map';
+  const mode = q.get('mode') === 'month' ? 'month' : 'week';
+  const d = q.get('d') ?? '';
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(d) ? d : todayIso();
+  return { view, mode, date };
+}
+
+/** Записать вид в URL, не трогая путь и хэш (иначе ломается маршрут SPA) */
+function writeMainView(v: MainViewState): void {
+  const url = new URL(window.location.href);
+  if (v.view === 'map') url.searchParams.delete('view');
+  else url.searchParams.set('view', v.view);
+  if (v.view === 'calendar') {
+    if (v.mode === 'month') url.searchParams.set('mode', 'month');
+    else url.searchParams.delete('mode');
+    url.searchParams.set('d', v.date);
+  } else {
+    url.searchParams.delete('mode');
+    url.searchParams.delete('d');
+  }
+  const next = `${url.pathname}${url.search}${url.hash}`;
+  const cur = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  if (next !== cur) window.history.replaceState(null, '', next);
+}
+
 export default function Home({
   city,
   eventId,
@@ -153,7 +193,10 @@ export default function Home({
   const [filtersCollapsed, setFiltersCollapsed] = useState(false);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   // Кнопка «События на карте» — список событий видимой области
-  const [listOpen, setListOpen] = useState(false);
+  // Вид главной и календарное состояние (в URL: ?view=&mode=&d=)
+  const [mainView, setMainView] = useState<MainViewState>(readMainView);
+  // Панель открыта во всех видах, кроме «карты» (поведение прежнего listOpen)
+  const listOpen = mainView.view !== 'map';
   // Верх карточки события на мобильном (поднимается до верха списка)
   const [cardTop, setCardTop] = useState<string | undefined>(undefined);
   // Реальная нижняя граница шапки + зазор: панели, кнопки и меню шестерёнки
@@ -267,7 +310,7 @@ export default function Home({
   useEffect(() => {
     const h = () => {
       setMobileFiltersOpen(false);
-      setListOpen(false);
+      setMainView((prev) => ({ ...prev, view: 'map' }));
     };
     window.addEventListener('close-home-panels', h);
     return () => window.removeEventListener('close-home-panels', h);
@@ -275,14 +318,20 @@ export default function Home({
 
   function openFilters() {
     setMobileFiltersOpen(true);
-    setListOpen(false);
+    setMainView((prev) => ({ ...prev, view: 'map' }));
     window.dispatchEvent(new CustomEvent('close-gear-menu'));
   }
-  function openList() {
-    setListOpen(true);
-    setMobileFiltersOpen(false);
-    window.dispatchEvent(new CustomEvent('close-gear-menu'));
+  // Вид и дата — в URL: ссылку можно переслать, при открытии страница
+  // встаёт в нужный вид (?view=calendar&d=2026-09-21)
+  useEffect(() => {
+    writeMainView(mainView);
+  }, [mainView]);
+
+  /** Клик по сегменту переключателя: повторный клик по активному закрывает панель */
+  function switchMainView(v: MainView): void {
+    setMainView((prev) => ({ ...prev, view: prev.view === v ? 'map' : v }));
   }
+
   // Видимая область карты (юго-запад, северо-восток)
   const [bounds, setBounds] = useState<MapBounds | null>(null);
 
@@ -1000,7 +1049,7 @@ export default function Home({
               favoriteIds={favoriteIds}
               onMapClick={() => {
                 closeCard();
-                setListOpen(false);
+                setMainView((prev) => ({ ...prev, view: 'map' }));
               }}
             />
           </Suspense>
@@ -1345,39 +1394,64 @@ export default function Home({
         </div>
       )}
 
-      {/* Кнопка «События списком» — список событий видимой области.
-          Скрыта, когда открыта карточка события */}
+      {/* Переключатель вида: Лента | Календарь | Карта.
+          Вид и дата живут в URL (?view=…&mode=…&d=…), поэтому ссылку можно
+          переслать, а при открытии страница встаёт в нужный вид. */}
       {!selected && (
-        <button
-          onClick={() => {
-            if (listOpen) setListOpen(false);
-            else openList();
-          }}
-          className="glass-btn bottom-safe absolute left-1/2 z-[1160] -translate-x-1/2 rounded-full px-5 py-2.5 text-sm font-semibold shadow-lg"
-        >
-          {listOpen
-            ? `▾ ${t('list.collapse')}`
-            : `${t('list.title')} (${onMapEvents.length})`}
-        </button>
+        <div className="glass-btn bottom-safe absolute left-1/2 z-[1160] flex -translate-x-1/2 items-center gap-0.5 rounded-full p-1 shadow-lg">
+          {(['feed', 'calendar', 'map'] as const).map((v) => (
+            <button
+              key={v}
+              type="button"
+              onClick={() => switchMainView(v)}
+              aria-pressed={mainView.view === v}
+              className={`rounded-full px-3 py-1.5 text-sm font-semibold transition-colors ${
+                mainView.view === v ? 'bg-gray-900 text-white' : 'text-gray-700 hover:bg-white/60'
+              }`}
+            >
+              {t(`view.${v}`)}
+            </button>
+          ))}
+        </div>
       )}
 
-      {/* Список под кнопкой — события текущего участка карты */}
+      {/* Панель под переключателем: лента событий или календарь.
+          Лента — события текущего участка карты (как раньше), календарь —
+          все отфильтрованные события (без привязки к границам карты). */}
       {listOpen && (
         <div
           id="events-list-panel"
-          className="glass absolute inset-x-0 bottom-28 z-[1130] mx-auto max-h-[50vh] w-full max-w-xl overflow-y-auto rounded-xl p-3 shadow-xl thin-scroll"
+          className={`glass absolute inset-x-0 bottom-28 z-[1130] mx-auto w-full overflow-y-auto rounded-xl p-3 shadow-xl thin-scroll ${
+            mainView.view === 'calendar' ? 'max-h-[72vh] max-w-3xl' : 'max-h-[50vh] max-w-xl'
+          }`}
         >
-          {onMapEvents.length === 0 && (
-            <p className="py-4 text-center text-sm text-gray-500">{t('list.empty')}</p>
+          {mainView.view === 'calendar' ? (
+            <EventCalendar
+              events={visible}
+              categories={categories}
+              mode={mainView.mode}
+              date={mainView.date}
+              selectedId={selected?.id ?? null}
+              lang={seoLang}
+              onSelect={selectEvent}
+              onModeChange={(mode) => setMainView((prev) => ({ ...prev, mode }))}
+              onDateChange={(d) => setMainView((prev) => ({ ...prev, date: d }))}
+            />
+          ) : (
+            <>
+              {onMapEvents.length === 0 && (
+                <p className="py-4 text-center text-sm text-gray-500">{t('list.empty')}</p>
+              )}
+              <EventsList
+                events={onMapEvents}
+                categories={categories}
+                selectedId={selected?.id ?? null}
+                onSelect={selectEvent}
+                favoriteIds={favoriteIds}
+                onToggleFavorite={user ? toggleFavorite : () => setAuthOpen(true)}
+              />
+            </>
           )}
-          <EventsList
-            events={onMapEvents}
-            categories={categories}
-            selectedId={selected?.id ?? null}
-            onSelect={selectEvent}
-            favoriteIds={favoriteIds}
-            onToggleFavorite={user ? toggleFavorite : () => setAuthOpen(true)}
-          />
         </div>
       )}
 
