@@ -87,6 +87,16 @@ export interface EventItem {
   owner_id?: string;
   /** Источник: collector (автосбор), theatre (постоянные шоу), organizer */
   source_type?: string | null;
+  /** Итог автопроверки карточки (правила + LLM) — виден в админке */
+  auto_review?: {
+    verdict: 'publish' | 'review' | 'reject';
+    flags?: string[];
+    reason?: string;
+    engine?: string;
+    at?: string;
+  } | null;
+  /** Когда карточку проверяла автопроверка */
+  auto_reviewed_at?: string | null;
   /** Аватарка организатора (из profiles, в публичном списке событий) */
   org_avatar_url?: string | null;
   /** Имя организатора (из profiles, в публичном списке событий) */

@@ -225,6 +225,12 @@ export interface DataApi {
   getNotifyEmail(): Promise<string | null>;
   /** Сохранить email для уведомлений о модерации (только админ) */
   setNotifyEmail(email: string): Promise<void>;
+  /** Включена ли автопубликация проверенных событий сборщика ('on' | 'off') */
+  getAutoPublish(): Promise<'on' | 'off'>;
+  /** Переключить автопубликацию (только админ) */
+  setAutoPublish(value: 'on' | 'off'): Promise<void>;
+  /** Итоги автопроверки за N дней: {publish, review, reject} */
+  getAutoModerationStats(days: number): Promise<Record<string, number>>;
 
   // --- Избранное ---
   /** Сохранённые события (активные; для вошедших) */
@@ -1026,6 +1032,23 @@ class SupabaseApi implements DataApi {
   async setNotifyEmail(email: string): Promise<void> {
     const { error } = await this.db.rpc('set_notify_email', { p_email: email });
     if (error) throw error;
+  }
+
+  async getAutoPublish(): Promise<'on' | 'off'> {
+    const { data, error } = await this.db.rpc('get_auto_publish');
+    if (error) throw error;
+    return data === 'off' ? 'off' : 'on';
+  }
+
+  async setAutoPublish(value: 'on' | 'off'): Promise<void> {
+    const { error } = await this.db.rpc('set_auto_publish', { p_value: value });
+    if (error) throw error;
+  }
+
+  async getAutoModerationStats(days: number): Promise<Record<string, number>> {
+    const { data, error } = await this.db.rpc('admin_auto_moderation_stats', { p_days: days });
+    if (error) throw error;
+    return (data ?? {}) as Record<string, number>;
   }
 
   // --- Избранное ---

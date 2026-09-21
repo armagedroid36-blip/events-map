@@ -230,6 +230,20 @@ export default function EventsModerationTab({ onChanged }: Props) {
                     ))}
                   </p>
                 )}
+                {/* Почему автопроверка не опубликовала карточку сама */}
+                {ev.auto_review?.reason && (
+                  <p className="mt-1 flex flex-wrap items-center gap-1 text-[11px] text-gray-600">
+                    <span className="rounded bg-gray-200 px-1.5 py-0.5 font-medium text-gray-700">
+                      {t('admin.moderation.autoReview')}
+                    </span>
+                    {(ev.auto_review.flags ?? []).slice(0, 3).map((flag) => (
+                      <span key={flag} className="rounded bg-red-100 px-1.5 py-0.5 font-medium text-red-700">
+                        {t(`admin.moderation.autoFlags.${flag}`)}
+                      </span>
+                    ))}
+                    <span>{ev.auto_review.reason}</span>
+                  </p>
+                )}
                 {/* Контакты организатора — видны только админу */}
                 {(ev.contact_telegram || ev.contact_whatsapp || ev.contact_email || ev.contact_phone || ev.contact_instagram || ev.contact) && (
                   <p className="mt-1 break-all text-xs text-gray-600">
@@ -298,6 +312,20 @@ export default function EventsModerationTab({ onChanged }: Props) {
                   ))}
                 </div>
               </div>
+            )}
+            {/* Почему автопроверка не опубликовала карточку сама */}
+            {selected.auto_review?.reason && (
+              <p className="mb-3 flex flex-wrap items-center gap-1 rounded-md bg-gray-100 p-2.5 text-[11px] text-gray-700">
+                <span className="rounded bg-gray-200 px-1.5 py-0.5 font-medium text-gray-700">
+                  {t('admin.moderation.autoReview')}
+                </span>
+                {(selected.auto_review.flags ?? []).slice(0, 4).map((flag) => (
+                  <span key={flag} className="rounded bg-red-100 px-1.5 py-0.5 font-medium text-red-700">
+                    {t(`admin.moderation.autoFlags.${flag}`)}
+                  </span>
+                ))}
+                <span>{selected.auto_review.reason}</span>
+              </p>
             )}
             <EventCard event={selected} categories={categories} onClose={() => setSelected(null)} />
             <div className="mt-3 flex justify-end gap-2">

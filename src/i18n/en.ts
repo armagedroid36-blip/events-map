@@ -456,6 +456,13 @@ export default {
     notifyEmail: 'Notification email',
     saveEmail: 'Save',
     savedEmail: 'Saved',
+    // Automatic check and publishing of collected events
+    autoPublishTitle: 'Auto-check and publishing',
+    autoPublishHint:
+      'Collected events are checked automatically: rules (profanity, forbidden topics, required fields) and a language model. Events that pass go live at once, doubtful ones stay here for moderation, clear violations are rejected.',
+    autoPublishToggle: 'Publish checked collector events without manual moderation',
+    autoPublishStats: 'Last 7 days: published {{publish}}, for review {{review}}, rejected {{reject}}',
+    autoPublishError: 'Could not change the setting',
     eventsModeration: {
       title: 'Events awaiting review',
       empty: 'No events awaiting review',
@@ -493,6 +500,22 @@ export default {
       noCoords: 'No coordinates — exact address needed',
       approxCoords: 'Approximate coordinates',
       attention: 'Needs attention',
+      autoReview: 'Auto-check',
+      autoFlags: {
+        profanity: 'profanity',
+        illegal: 'legality',
+        drugs: 'drugs',
+        weapons: 'weapons',
+        adult: 'adult',
+        gambling: 'gambling',
+        scam: 'scam',
+        hate: 'hate',
+        politics: 'politics',
+        spam: 'spam',
+        unclear: 'unclear',
+        incomplete: 'missing data',
+        unchecked: 'not model-checked',
+      },
     },
     events: {
       title: 'Events',

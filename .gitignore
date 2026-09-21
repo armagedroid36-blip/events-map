@@ -32,5 +32,8 @@ org_*.json
 org-contacts.*
 supabase/.temp/
 
+# Отчёт автопроверки событий (пишется скриптом moderate-events.mjs)
+auto-moderation-report.json
+
 # 3D-логотип: рабочие файлы Blender, в репозиторий не кладём
 logo3d/
