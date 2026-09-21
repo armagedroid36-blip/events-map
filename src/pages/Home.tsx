@@ -1480,7 +1480,9 @@ export default function Home({
         >
           {mainView.view === 'calendar' ? (
             <EventCalendar
-              events={visible}
+              // События видимой области карты (как у ленты): календарь показывает
+              // то, что сейчас на экране, а не всю базу (просьба Дмитрия 21.09)
+              events={onMapEvents}
               categories={categories}
               mode={mainView.mode}
               date={mainView.date}

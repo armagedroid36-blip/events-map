@@ -169,7 +169,7 @@ export default function EventCalendar({
                 // Пустой день не скрываем: пустая ячейка с высотой строки
                 <span className="min-h-[1.5rem] flex-1" aria-hidden="true" />
               ) : mode === 'week' ? (
-                <div className="pointer-events-none relative z-10 flex flex-1 flex-col gap-0.5 sm:pointer-events-auto">
+                <div className="pointer-events-none relative z-10 mt-4 flex flex-1 flex-col gap-0.5 sm:pointer-events-auto sm:mt-0">
                   {list.slice(0, MAX_CELL).map((ev) => (
                     <button
                       key={ev.id}
@@ -191,7 +191,7 @@ export default function EventCalendar({
                 </div>
               ) : (
                 // Месяц: точки + счётчик, подробности — в списке под сеткой
-                <div className="pointer-events-none relative z-10 flex flex-wrap items-center gap-0.5">
+                <div className="pointer-events-none relative z-10 mt-4 flex flex-wrap items-center gap-0.5 sm:mt-0">
                   {list.slice(0, MAX_CELL).map((ev) => (
                     <span
                       key={ev.id}
