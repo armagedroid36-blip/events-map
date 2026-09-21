@@ -521,6 +521,12 @@ export default {
       year: 'Year',
       noData: 'No data yet',
       byCountry: 'Visits by country',
+      bySource: 'Traffic sources',
+      bySourceHint:
+        'Referrer domain and landing page. No IP addresses or full URLs are stored — daily aggregates only.',
+      countriesShort: 'countries',
+      srcDirect: 'Direct (no referrer)',
+      srcInternal: 'Internal navigation',
       period7: '7 days',
       period30: '30 days',
       period90: '90 days',
@@ -552,7 +558,7 @@ export default {
         'When you register: email, password and role (user or organizer).',
         'For organizers additionally: Telegram, WhatsApp, phone, Instagram.',
         'When you submit an event: contacts, photos, name, description, price.',
-        'Technical data: the interface language you choose (stored in your browser) and the visit counter.',
+        'Technical data: the interface language you picked (kept in your browser) and anonymous visit statistics — country (derived from the IP address, which is not stored), referrer domain and landing page; daily aggregates only.',
       ],
     },
     use: {

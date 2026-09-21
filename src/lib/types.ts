@@ -265,6 +265,18 @@ export interface VisitCountryRow {
 }
 
 /** Визиты одной страны по дням (из RPC admin_visits_country_series) */
+/** Строка сводки «источники переходов» (RPC admin_visits_by_source):
+ *  домен источника, визиты, число стран и страниц входа + самая частая страница.
+ *  Источник: 'direct' — прямой заход, 'internal' — переход внутри сайта,
+ *  иначе домен (telegram.org, google.com, yandex.ru, t.me …). */
+export interface VisitSourceRow {
+  source: string;
+  visits: number;
+  countries: number;
+  pages: number;
+  top_page: string | null;
+}
+
 export interface VisitCountryDay {
   /** Дата в формате YYYY-MM-DD */
   day: string;

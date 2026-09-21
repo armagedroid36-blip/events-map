@@ -18,6 +18,7 @@ import type {
   StatsDailyRow,
   VisitCountryRow,
   VisitCountryDay,
+  VisitSourceRow,
   GalleryPhoto,
 } from './types';
 import { config } from '../config';
@@ -181,6 +182,8 @@ export interface DataApi {
   getVisitsByCountry(days: number): Promise<VisitCountryRow[]>;
   /** Визиты одной страны по дням за период (график; только админ) */
   getVisitsCountrySeries(country: string, days: number): Promise<VisitCountryDay[]>;
+  /** Сводка источников переходов (RPC admin_visits_by_source, только админ) */
+  getVisitsBySource(days: number): Promise<VisitSourceRow[]>;
 
   // --- История просмотров ---
   addHistory(eventId: string): Promise<void>;
@@ -797,6 +800,14 @@ class SupabaseApi implements DataApi {
     const { data, error } = await this.db.rpc('admin_visits_by_country', { p_days: days });
     if (error) throw error;
     return (data ?? []) as VisitCountryRow[];
+  }
+
+  /** Источники переходов за период (RPC admin_visits_by_source, security
+   *  definer + is_admin): домен источника, визиты, страны, страницы входа. */
+  async getVisitsBySource(days: number): Promise<VisitSourceRow[]> {
+    const { data, error } = await this.db.rpc('admin_visits_by_source', { p_days: days });
+    if (error) throw error;
+    return (data ?? []) as VisitSourceRow[];
   }
 
   async getVisitsCountrySeries(country: string, days: number): Promise<VisitCountryDay[]> {

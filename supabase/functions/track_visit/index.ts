@@ -1,9 +1,15 @@
-// Трекер посещений по странам: публичная функция (без JWT), вызывается
-// браузером при загрузке страницы. Определяет страну по IP посетителя
-// (ip-api.com → fallback ipwho.is), сохраняет ТОЛЬКО код страны в
-// visits_country_daily через RPC increment_visit_country (service role).
-// IP нигде не сохраняется; кэш ip→country в памяти функции (TTL 24 ч),
-// чтобы не превышать лимит ip-api (45 req/min).
+// Трекер посещений: публичная функция (без JWT), вызывается браузером при
+// загрузке страницы. Определяет страну по IP посетителя (ip-api.com → fallback
+// ipwho.is) и сохраняет ДВЕ агрегированные записи:
+//   1) visits_country_daily — +1 визит страны (RPC increment_visit_country);
+//   2) visits_source_daily  — +1 визит (страна, ИСТОЧНИК перехода, страница
+//      входа) (RPC increment_visit_source) — с 21.09.2026, чтобы видеть «откуда
+//      приходят посетители» (вопрос владельца: откуда переходы из Индонезии).
+// Храним только: код страны, ДОМЕН источника (referrer без пути и query; пусто
+// → 'direct', свой сайт → 'internal') и путь входа без query. IP-адреса, полные
+// рефереры, query-параметры и user-agent НЕ сохраняются ни в каком виде.
+// Кэш ip→country в памяти функции (TTL 24 ч) — чтобы не превышать лимит
+// ip-api (45 req/min).
 // env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (автоматически в Edge Functions).
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
 
@@ -64,6 +70,45 @@ async function countryByIp(ip: string): Promise<string> {
   return 'unknown';
 }
 
+/** Домен источника из referrer: только хост, без www, без пути и query.
+ *  Пусто → 'direct'; свой сайт (переход внутри сайта) → 'internal'. */
+const OWN_HOSTS = ['mypins.site', 'armagedroid36-blip.github.io', 'www.mypins.site'];
+
+function sourceFromReferrer(referrer: unknown): string {
+  if (typeof referrer !== 'string' || referrer.length === 0) return 'direct';
+  try {
+    const host = new URL(referrer).hostname.toLowerCase().replace(/^www\./, '');
+    if (!host) return 'direct';
+    if (OWN_HOSTS.some((h) => h.replace(/^www\./, '') === host)) return 'internal';
+    return host.slice(0, 120);
+  } catch {
+    return 'direct';
+  }
+}
+
+/** Путь входа: pathname без query и hash (hash-маршруты приватных разделов
+ *  дают '/'), пусто → '/'. */
+function pathFromPagePath(pagePath: unknown): string {
+  if (typeof pagePath !== 'string' || pagePath.length === 0) return '/';
+  const clean = pagePath.split('#')[0].split('?')[0].trim();
+  if (!clean) return '/';
+  return (clean.startsWith('/') ? clean : `/${clean}`).slice(0, 200);
+}
+
+/** +1 визит источника (RPC increment_visit_source, service role) */
+async function incrementSource(country: string, source: string, path: string): Promise<void> {
+  if (!SUPABASE_URL || !SERVICE_ROLE) return;
+  await fetch(`${SUPABASE_URL}/rest/v1/rpc/increment_visit_source`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      apikey: SERVICE_ROLE,
+      Authorization: `Bearer ${SERVICE_ROLE}`,
+    },
+    body: JSON.stringify({ p_country: country, p_source: source, p_path: path }),
+  });
+}
+
 /** +1 визит страны за сегодня (RPC increment_visit_country, service role) */
 async function incrementCountry(country: string): Promise<void> {
   if (!SUPABASE_URL || !SERVICE_ROLE) return;
@@ -88,19 +133,22 @@ serve(async (req) => {
   }
 
   try {
-    // Тело опционально (page_path/referrer) — только обрезаем до 500 символов;
-    // данные не сохраняются, IP не логируется.
+    // Тело опционально (page_path/referrer). Сохраняем из него ТОЛЬКО домен
+    // источника и путь входа — длину режем на входе, чтобы не тащить мусор в
+    // базу (IP не логируется вовсе).
+    let pagePath: unknown = null;
+    let referrer: unknown = null;
     try {
       const body = await req.json();
       if (body && typeof body === 'object') {
-        for (const k of ['page_path', 'referrer'] as const) {
-          const v = body[k];
-          if (typeof v === 'string' && v.length > 500) body[k] = v.slice(0, 500);
-        }
+        pagePath = (body as { page_path?: unknown }).page_path ?? null;
+        referrer = (body as { referrer?: unknown }).referrer ?? null;
       }
     } catch {
       /* пустое/не-JSON тело — не ошибка */
     }
+    const source = sourceFromReferrer(referrer);
+    const landing = pathFromPagePath(pagePath);
 
     const ip = clientIp(req);
     let country = 'unknown';
@@ -117,6 +165,9 @@ serve(async (req) => {
 
     // Ошибка записи не должна ронять ответ — визит не критичен
     await incrementCountry(country).catch((e) => console.error('increment error:', String(e)));
+    await incrementSource(country, source, landing).catch((e) =>
+      console.error('increment source error:', String(e)),
+    );
   } catch (e) {
     console.error('track_visit error:', String(e));
   }

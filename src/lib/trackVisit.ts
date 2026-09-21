@@ -6,7 +6,10 @@ import { config } from '../config';
 
 export function trackVisit(): void {
   if (!config.supabaseUrl) return;
-  const pagePath = (window.location.hash || window.location.pathname).slice(0, 500);
+  // Страница входа: чистый путь без query и хэша (функция всё равно вырежет их,
+  // но так в теле запроса нет лишнего). Хэш-маршруты приватных разделов (#/admin)
+  // дают '/', в статистику источников они как посадочные не попадают.
+  const pagePath = window.location.pathname.slice(0, 200);
   const referrer = document.referrer.slice(0, 500);
   fetch(`${config.supabaseUrl}/functions/v1/track_visit`, {
     method: 'POST',

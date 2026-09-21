@@ -13,6 +13,7 @@ import type {
   StatsDailyRow,
   VisitCountryDay,
   VisitCountryRow,
+  VisitSourceRow,
 } from '../../lib/types';
 
 interface Props {
@@ -20,6 +21,34 @@ interface Props {
 }
 
 type Period = 'day' | 'month' | 'year';
+
+/** Подпись источника: 'direct'/'internal' — текстом, известные домены — по имени,
+ *  остальные — как есть (домен). */
+function sourceLabel(source: string, tr: (k: string) => string): string {
+  if (source === 'direct') return tr('admin.stats.srcDirect');
+  if (source === 'internal') return tr('admin.stats.srcInternal');
+  const known: Record<string, string> = {
+    't.me': 'Telegram (t.me)',
+    'telegram.org': 'Telegram',
+    'telegram.me': 'Telegram',
+    'google.com': 'Google',
+    'google.co.id': 'Google (Индонезия)',
+    'google.ru': 'Google (Россия)',
+    'yandex.ru': 'Яндекс',
+    'yandex.com': 'Яндекс',
+    'bing.com': 'Bing',
+    'instagram.com': 'Instagram',
+    'facebook.com': 'Facebook',
+    'm.facebook.com': 'Facebook',
+    'vk.com': 'ВКонтакте',
+    'whatsapp.com': 'WhatsApp',
+    'web.whatsapp.com': 'WhatsApp',
+    'threads.net': 'Threads',
+    'linkedin.com': 'LinkedIn',
+    'reddit.com': 'Reddit',
+  };
+  return known[source] ?? source;
+}
 
 const BAR_VISITS = '#3b82f6'; // синий
 const BAR_CARD_VIEWS = '#f59e0b'; // янтарный
@@ -119,6 +148,8 @@ export default function StatsTab({ version }: Props) {
   // --- Посещения по странам ---
   const [countryPeriod, setCountryPeriod] = useState<7 | 30 | 90>(30);
   const [countryRows, setCountryRows] = useState<VisitCountryRow[] | null>(null);
+  const [sourcePeriod, setSourcePeriod] = useState<7 | 30 | 90>(30);
+  const [sourceRows, setSourceRows] = useState<VisitSourceRow[] | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [countrySeries, setCountrySeries] = useState<VisitCountryDay[] | null>(null);
 
@@ -156,6 +187,20 @@ export default function StatsTab({ version }: Props) {
       alive = false;
     };
   }, [countryPeriod, version]);
+
+  // Источники переходов за период (RPC admin_visits_by_source): домен
+  // источника, страница входа, число стран. Данные — суточные агрегаты.
+  useEffect(() => {
+    let alive = true;
+    setSourceRows(null);
+    getApi()
+      .getVisitsBySource(sourcePeriod)
+      .then((rows) => alive && setSourceRows(rows))
+      .catch(() => alive && setSourceRows([]));
+    return () => {
+      alive = false;
+    };
+  }, [sourcePeriod, version]);
 
   // График выбранной страны по дням
   useEffect(() => {
@@ -357,6 +402,50 @@ export default function StatsTab({ version }: Props) {
             )}
           </>
         )}
+      </div>
+
+      <div className="mt-6">
+        <h3 className="mb-3 text-sm font-semibold text-gray-900">{t('admin.stats.bySource')}</h3>
+        <div className="mb-3 inline-flex rounded-lg border border-gray-200 bg-white p-0.5">
+          {([7, 30, 90] as const).map((p) => (
+            <button
+              key={p}
+              type="button"
+              onClick={() => setSourcePeriod(p)}
+              className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
+                sourcePeriod === p ? 'bg-gray-900 text-white' : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              {t(`admin.stats.period${p}`)}
+            </button>
+          ))}
+        </div>
+        {sourceRows === null ? (
+          <p className="text-sm text-gray-500">…</p>
+        ) : sourceRows.length === 0 ? (
+          <p className="text-sm text-gray-500">{t('admin.stats.noData')}</p>
+        ) : (
+          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+            {sourceRows.slice(0, 15).map((r, idx) => (
+              <div
+                key={r.source}
+                className="flex items-center gap-2 border-b border-gray-100 px-3 py-2 last:border-b-0"
+              >
+                <span className="w-5 text-sm text-gray-400">{idx + 1}</span>
+                <span className="min-w-0 flex-1 truncate text-sm font-medium text-gray-900">
+                  {sourceLabel(r.source, t)}
+                </span>
+                <span className="hidden min-w-0 flex-1 truncate text-xs text-gray-500 sm:block">
+                  {r.top_page ?? ''}
+                </span>
+                <span className="shrink-0 text-xs text-gray-500">
+                  {r.visits} · {r.countries} {t('admin.stats.countriesShort')}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+        <p className="mt-2 text-xs text-gray-500">{t('admin.stats.bySourceHint')}</p>
       </div>
     </div>
   );
