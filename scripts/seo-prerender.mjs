@@ -3730,6 +3730,15 @@ async function main() {
   console.log(
     `  профили организаторов: кандидатов ${orgOwnerIds.length}, публикуется ${PUBLISHED_ORG_IDS.size}`,
   );
+  // Манифест публичных профилей для SPA: карточка события показывает переход на
+  // /org/<id>/ ТОЛЬКО для id из этого списка. Решение одно и то же у статики и у
+  // клиента (раньше клик в карточке вёл на 404 — в статике ссылку уже поправили,
+  // теперь выровнен и клиент). Файл лежит в dist и уезжает на gh-pages.
+  writeFileSync(
+    join(DIST, 'published-orgs.json'),
+    `${JSON.stringify({ generatedAt: TODAY_ISO, ids: [...PUBLISHED_ORG_IDS].sort() })}\n`,
+  );
+  console.log(`  dist/published-orgs.json: ${PUBLISHED_ORG_IDS.size} профилей`);
 
   // id событий, у которых ЕСТЬ страница (активные + прошедшие + снимки):
   // mdLinksToHtml снимает ссылки только на события, которых нет вовсе — ссылка

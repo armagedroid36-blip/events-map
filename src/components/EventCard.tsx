@@ -23,6 +23,7 @@ import { nextZ } from '../lib/zindex';
 import { navigate, slugify } from '../lib/navigate';
 import { occurrenceDate } from '../lib/series';
 import FavoriteButton from './FavoriteButton';
+import { useOrgProfilePublished } from '../lib/orgProfiles';
 
 /** Последний день события (end_date или start_date) как ISO — для плашки
  *  прошедшего события: сравнение с сегодняшним днём задаёт текст плашки. */
@@ -584,6 +585,9 @@ export default function EventCard({
     setBrokenOrgAvatar(false);
   }, [event.id]);
   const lang = i18n.language.startsWith('ru') ? 'ru' : 'en';
+  // Есть ли у владельца собранная страница профиля (/org/<id>/): переход
+  // показываем только тогда, когда страница существует (манифест сборки)
+  const orgPublished = useOrgProfilePublished(event.owner_id);
   const cat = categories.find((c) => c.id === event.category_id);
 
   const title = localizedText(event.title, event.title_ru, event.title_en, event.source_lang, lang);
@@ -870,15 +874,22 @@ export default function EventCard({
           {event.owner_id && (
             <button
               type="button"
+              // Переход на профиль есть только при собранной странице профиля:
+              // иначе клик уводил на заглушку «не найдено» (страницы /org/<id>/
+              // сборка пишет не всем владельцам)
+              disabled={!orgPublished}
               onClick={() => {
+                if (!orgPublished) return;
                 onClose();
                 // Чистый URL профиля организатора (/org/<id>); Home/App сами
                 // разберут маршрут
                 navigate(`/org/${encodeURIComponent(event.owner_id ?? '')}`);
               }}
-              title={t('card.organizer')}
-              aria-label={t('card.organizer')}
-              className="mb-2 flex items-center gap-2 rounded-full hover:bg-gray-50"
+              title={orgPublished ? t('card.organizer') : undefined}
+              aria-label={orgPublished ? t('card.organizer') : undefined}
+              className={`mb-2 flex items-center gap-2 rounded-full ${
+                orgPublished ? 'hover:bg-gray-50' : 'cursor-default'
+              }`}
             >
               {event.org_avatar_url && !brokenOrgAvatar ? (
                 <img
