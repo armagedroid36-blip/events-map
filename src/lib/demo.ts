@@ -486,6 +486,15 @@ export class DemoApi {
     return [];
   }
 
+  /** Демо: напоминания не сохраняем */
+  async setEventReminder(_eventId: string, _remindOn: string): Promise<void> {}
+
+  async removeEventReminder(_eventId: string): Promise<void> {}
+
+  async getMyReminders(): Promise<{ event_id: string; remind_on: string }[]> {
+    return [];
+  }
+
   /** Демо: логировать клики некуда */
   async logEventClick(_eventId: string, _kind: 'booking' | 'contact'): Promise<void> {}
 

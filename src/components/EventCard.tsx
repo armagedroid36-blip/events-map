@@ -168,6 +168,11 @@ interface Props {
    *  (titleAsH1), как в статике (scripts/seo-prerender.mjs). Не передан или
    *  пуст — блока нет. */
   similarEvents?: EventItem[];
+  /** id событий, по которым включено напоминание «за день»; null — гость
+   *  (колокольчик скрыт) */
+  reminderIds?: string[] | null;
+  /** Переключить напоминание «за день» (клик по колокольчику) */
+  onToggleReminder?: (ev: EventItem) => void;
   /** Страница ПРОШЕДШЕГО события (/event/<id>/<slug>/ архивного события):
    *  вместо действий организатора показывается плашка «Событие прошло» (или
    *  «Событие снято с афиши», если архивное событие датировано будущим).
@@ -572,6 +577,8 @@ export default function EventCard({
   categoryLink,
   similarEvents,
   pastMode = false,
+  reminderIds = null,
+  onToggleReminder,
 }: Props) {
   const { t, i18n } = useTranslation();
   const [lightbox, setLightbox] = useState<number | null>(null);
@@ -650,6 +657,9 @@ export default function EventCard({
   const timeLabel =
     startTime && (event.end_time ? `${startTime} – ${formatTimeHM(event.end_time)}` : startTime);
 
+  // Напоминание «за день» включено для этого события?
+  const hasReminder = reminderIds?.includes(event.id) ?? false;
+
   const photos = (event.photos ?? []).filter((p) => p);
 
   // Рабочие фото: без битых ссылок (onError)
@@ -718,6 +728,24 @@ export default function EventCard({
           )}
         </div>
         <div className="flex shrink-0 items-center gap-1">
+          {/* Напоминание «за день»: push-уведомление накануне события.
+              Гость (reminderIds === null) колокольчик не видит — как сердечко */}
+          {onToggleReminder && reminderIds !== null && (
+            <button
+              type="button"
+              onClick={() => onToggleReminder(event)}
+              aria-pressed={hasReminder}
+              title={hasReminder ? t('card.remindOn') : t('card.remindOff')}
+              aria-label={hasReminder ? t('card.remindOn') : t('card.remindOff')}
+              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-base transition ${
+                hasReminder
+                  ? 'border-[#E66343] bg-[#E66343]/10'
+                  : 'border-gray-200 hover:bg-gray-50'
+              }`}
+            >
+              🔔
+            </button>
+          )}
           {/* Поделиться — доступно всем, в т.ч. гостям */}
           <ShareButton url={shareUrl} title={title} />
           {/* Сердечко — для всех; гость (favoriteIds === null) видит его неактивным */}

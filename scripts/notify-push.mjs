@@ -1,8 +1,11 @@
-// Push-уведомления о новых событиях (браузерные подписки).
-// Ежедневно (шаг в notify-subscribers.yml, cron 04:00 UTC):
-// 1. события status='active', созданные за последние 24 часа;
-// 2. все подписки из push_subscriptions;
-// 3. каждой — web-push sendNotification; 404/410 (подписка умерла) — удаляем.
+// Push-уведомления (браузерные подписки). Ежедневно, шаг в notify-subscribers.yml
+// (cron 04:00 UTC), два прохода:
+//   A. НОВЫЕ СОБЫТИЯ: события status='active' за последние 24 часа → всем
+//      подпискам из push_subscriptions; 404/410 — подписку удаляем.
+//   B. НАПОМИНАНИЯ «ЗА ДЕНЬ» (промпт 21.09.2026): RPC reminders_due(p_on) отдаёт
+//      непереданные напоминания на сегодня (таблица event_reminders), каждому
+//      владельцу шлём push по его подпискам и помечаем sent_at — повторно одно
+//      напоминание не уходит.
 import { createClient } from '@supabase/supabase-js';
 import webpush from 'web-push';
 
@@ -28,7 +31,7 @@ const db = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: fa
 
 const PERIOD_HOURS = 24;
 
-async function main() {
+async function sendNewEvents() {
   const since = new Date(Date.now() - PERIOD_HOURS * 3600 * 1000).toISOString();
 
   // 1. Новые активные события за период
@@ -98,6 +101,93 @@ async function main() {
   }
 
   console.log(`Событий: ${events.length}, подписок: ${subs.length}, Отправлено: ${sent}, удалено мёртвых: ${removed}`);
+}
+
+/**
+ * Проход B: напоминания «за день». Напоминания хранит таблица event_reminders
+ * (user_id, event_id, remind_on, sent_at). RPC reminders_due возвращает то, что
+ * надо отправить сегодня; после отправки строки помечаются sent_at, поэтому
+ * повторный прогон в тот же день ничего не отправит.
+ */
+async function sendReminders() {
+  const today = new Date().toISOString().slice(0, 10);
+  const { data: due, error } = await db.rpc('reminders_due', { p_on: today });
+  if (error) {
+    // Нет доступа/таблицы — не валим весь прогон: новые события уже разосланы
+    console.error('reminders_due недоступен:', error.message);
+    return;
+  }
+  if (!due || due.length === 0) {
+    console.log('Напоминаний на сегодня нет');
+    return;
+  }
+
+  // Подписки всех, кому напоминаем: один запрос на пачку из 50 пользователей
+  const userIds = [...new Set(due.map((r) => r.user_id))];
+  const subsByUser = new Map();
+  for (let i = 0; i < userIds.length; i += 50) {
+    const { data: subs } = await db
+      .from('push_subscriptions')
+      .select('endpoint, p256dh, auth, user_id')
+      .in('user_id', userIds.slice(i, i + 50));
+    for (const s of subs ?? []) {
+      if (!subsByUser.has(s.user_id)) subsByUser.set(s.user_id, []);
+      subsByUser.get(s.user_id).push(s);
+    }
+  }
+
+  let sent = 0;
+  let removed = 0;
+  let noSubs = 0;
+  for (const row of due) {
+    const subs = subsByUser.get(row.user_id) ?? [];
+    if (subs.length === 0) noSubs += 1;
+    const name = (row.title_ru || row.title || row.title_en || '').trim();
+    const payload = JSON.stringify({
+      title: 'Напоминание / Reminder',
+      body: name ? `${name}${row.start_date ? ' · ' + row.start_date : ''}` : '',
+      url: `${SITE_URL}#/?e=${row.event_id}`,
+      tag: `reminder-${row.event_id}`,
+    });
+    for (const sub of subs) {
+      try {
+        await webpush.sendNotification(
+          { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
+          payload,
+          { TTL: 60 * 60 * 12 },
+        );
+        sent += 1;
+      } catch (err) {
+        const code = err?.statusCode;
+        if (code === 404 || code === 410) {
+          await db.from('push_subscriptions').delete().eq('endpoint', sub.endpoint);
+          removed += 1;
+        } else {
+          console.error(`Ошибка напоминания (${code ?? 'unknown'}): ${err?.message ?? err}`);
+        }
+      }
+    }
+    // Отметку ставим и когда подписок нет: напоминание без устройства
+    // доставить некуда, и пытаться каждый день смысла нет
+    await db
+      .from('event_reminders')
+      .update({ sent_at: new Date().toISOString() })
+      .eq('id', row.reminder_id);
+  }
+  console.log(
+    `Напоминаний на ${today}: ${due.length}, отправлено: ${sent}, без подписок: ${noSubs}, удалено мёртвых: ${removed}`,
+  );
+}
+
+async function main() {
+  // SKIP_NEW_EVENTS=1 — только напоминания (ручная проверка прохода B и разовые
+  // прогоны, когда рассылка о новых событиях уже ушла)
+  if (process.env.SKIP_NEW_EVENTS === '1') {
+    console.log('Рассылка о новых событиях пропущена (SKIP_NEW_EVENTS=1)');
+  } else {
+    await sendNewEvents();
+  }
+  await sendReminders();
 }
 
 main().catch((err) => {

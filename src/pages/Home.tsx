@@ -15,13 +15,14 @@ import MobileMapIntro from '../components/MobileMapIntro';
 const EventForm = lazy(() => import('../components/EventForm'));
 import AuthModal from '../components/AuthModal';
 import { getApi } from '../lib/api';
+import { enablePush, pushSupported, subscriptionData } from '../lib/push';
 import { ruToEn } from '../lib/cities';
 import { eventCountry } from '../lib/countries';
 import { DEFAULT_FILTERS, eventMatchesFilters } from '../lib/eventFilters';
 import { navigate, slugify } from '../lib/navigate';
 import { seriesSiblings } from '../lib/series';
 import { similarEvents } from '../lib/similar';
-import { nextOccurrenceDate } from '../lib/recurrence';
+import { addDaysIso, nextOccurrenceDate } from '../lib/recurrence';
 import { formatDate, todayIso } from '../lib/dates';
 import { cityCrumbLabel, cityCrumbLabelLocative, cityPageHref, cityPath } from '../lib/address';
 import type { CityPath } from '../lib/address';
@@ -254,6 +255,56 @@ export default function Home({
         isFav ? (prev ? [...prev, id] : [id]) : (prev ?? []).filter((x) => x !== id),
       );
     });
+  }
+
+  // Напоминания «за день»: id событий, по которым включено напоминание
+  // (null — гость, колокольчик не показываем)
+  const [reminderIds, setReminderIds] = useState<string[] | null>(null);
+
+  useEffect(() => {
+    if (!user) {
+      setReminderIds(null);
+      return;
+    }
+    getApi()
+      .getMyReminders()
+      .then((rows) => setReminderIds(rows.map((r) => r.event_id)))
+      .catch(() => setReminderIds([]));
+  }, [user]);
+
+  /**
+   * Переключение напоминания «за день». Без входа — окно входа (как избранное).
+   * Включение: сначала push-подписка (иначе напоминание некуда доставить),
+   * затем запись напоминания на дату «вхождение минус день» — для регулярных
+   * серий это ближайшее вхождение по правилу повтора (nextOccurrenceDate).
+   */
+  async function toggleReminder(ev: EventItem): Promise<void> {
+    if (!user) return;
+    const on = reminderIds?.includes(ev.id) ?? false;
+    const api = getApi();
+    try {
+      if (on) {
+        await api.removeEventReminder(ev.id);
+        setReminderIds((prev) => (prev ?? []).filter((id) => id !== ev.id));
+        return;
+      }
+      if (pushSupported()) {
+        if (typeof Notification !== 'undefined' && Notification.permission !== 'granted') {
+          const perm = await Notification.requestPermission();
+          if (perm !== 'granted') return; // без разрешения напоминание не доставить
+        }
+        const sub = await enablePush();
+        if (sub) {
+          const d = subscriptionData(sub);
+          await api.pushSubscribe(d.endpoint, d.p256dh, d.auth);
+        }
+      }
+      const occurrence = nextOccurrenceDate(ev, todayIso());
+      await api.setEventReminder(ev.id, addDaysIso(occurrence, -1));
+      setReminderIds((prev) => [...(prev ?? []), ev.id]);
+    } catch {
+      // Напоминания не должны ломать карточку: молча ничего не меняем
+    }
   }
 
   // Мобильный интро-экран (вместо живой карты на <768px до клика по кнопке).
@@ -1371,6 +1422,8 @@ export default function Home({
               categoryLink={selectedCategoryLink}
               seriesEvents={selectedSeries}
               similarEvents={selectedSimilar}
+              reminderIds={reminderIds}
+              onToggleReminder={user ? toggleReminder : undefined}
             />
           </div>
           <button

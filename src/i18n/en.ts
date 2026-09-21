@@ -245,6 +245,8 @@ export default {
     contacts: 'Organizer contacts',
     organizer: 'Organizer',
     book: 'Book a spot',
+    remindOn: 'Reminder is on — we will notify you a day before',
+    remindOff: 'Remind me a day before (push notification)',
     contactOrg: 'Contact organizer',
     share: 'Share',
     shareTelegram: 'Telegram',

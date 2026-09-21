@@ -247,6 +247,8 @@ export default {
     contacts: 'Контакты организатора',
     organizer: 'Организатор',
     book: 'Записаться',
+    remindOn: 'Напоминание включено — пришлём за день до события',
+    remindOff: 'Напомнить за день (push-уведомление)',
     contactOrg: 'Связаться',
     share: 'Поделиться',
     shareTelegram: 'Telegram',

@@ -184,6 +184,13 @@ export interface DataApi {
   getVisitsByCountry(days: number): Promise<VisitCountryRow[]>;
   /** Визиты одной страны по дням за период (график; только админ) */
   getVisitsCountrySeries(country: string, days: number): Promise<VisitCountryDay[]>;
+  /** Поставить напоминание «за день» по событию (RPC set_event_reminder).
+   *  remindOn — дата отправки, её считает клиент (вхождение минус день). */
+  setEventReminder(eventId: string, remindOn: string): Promise<void>;
+  /** Снять напоминание по событию */
+  removeEventReminder(eventId: string): Promise<void>;
+  /** Мои напоминания: id событий, по которым включено напоминание */
+  getMyReminders(): Promise<{ event_id: string; remind_on: string }[]>;
   /** Записать клик по кнопке карточки: 'booking' — ссылка регистрации события,
    *  'contact' — переход в контакты организатора. Без PII (RPC log_event_click). */
   logEventClick(eventId: string, kind: 'booking' | 'contact'): Promise<void>;
@@ -809,6 +816,26 @@ class SupabaseApi implements DataApi {
     const { data, error } = await this.db.rpc('admin_visits_by_country', { p_days: days });
     if (error) throw error;
     return (data ?? []) as VisitCountryRow[];
+  }
+
+  /** Напоминание «за день»: upsert по (user_id, event_id) на стороне базы */
+  async setEventReminder(eventId: string, remindOn: string): Promise<void> {
+    const { error } = await this.db.rpc('set_event_reminder', {
+      p_event_id: eventId,
+      p_remind_on: remindOn,
+    });
+    if (error) throw error;
+  }
+
+  async removeEventReminder(eventId: string): Promise<void> {
+    const { error } = await this.db.rpc('remove_event_reminder', { p_event_id: eventId });
+    if (error) throw error;
+  }
+
+  async getMyReminders(): Promise<{ event_id: string; remind_on: string }[]> {
+    const { data, error } = await this.db.rpc('my_event_reminders');
+    if (error) throw error;
+    return (data ?? []) as { event_id: string; remind_on: string }[];
   }
 
   /** Клик по кнопке карточки: fire-and-forget, ошибки не влияют на переход
