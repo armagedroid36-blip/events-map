@@ -37,3 +37,7 @@ auto-moderation-report.json
 
 # 3D-логотип: рабочие файлы Blender, в репозиторий не кладём
 logo3d/
+
+# рабочие артефакты сессий (не часть проекта)
+.hermes/
+.work-gsc/
