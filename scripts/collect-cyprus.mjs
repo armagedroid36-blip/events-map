@@ -29,6 +29,13 @@ const MAX_EVENTS = Number(process.env.MAX_EVENTS || 150); // предохран�
 const DAYS_AHEAD = Number(process.env.DAYS_AHEAD || 120);  // горизонт планирования
 const DESC_LIMIT = 3000;
 const GEOCODE_PAUSE_MS = 1100; // лимит Nominatim: не чаще 1 запроса в секунду
+// Бюджет времени на источник: серверы Кипра отвечают рывками, без ограничения
+// шаг может висеть часами (проверено: Cyprus.BZ отдаёт страницы по 30–60 с).
+const BUDGET = {
+  visitcyprus: 6 * 60000,
+  cyprusnow: 8 * 60000,
+  cyprusbz: 8 * 60000,
+};
 // Только выбранные источники (для отладки): ONLY=visitcyprus,cyprusbz
 const ONLY = (process.env.ONLY || '').split(',').map((s) => s.trim()).filter(Boolean);
 const want = (name) => !ONLY.length || ONLY.includes(name);
@@ -249,13 +256,18 @@ async function geocode(query) {
 
 // ===== Дедупликация по базе =====
 async function existingKeys() {
-  if (!db) return new Set();
-  const { data, error } = await db.from('events').select('title, start_date');
+  if (!db) return { keys: new Set(), websites: new Set() };
+  const { data, error } = await db.from('events').select('title, start_date, website');
   if (error) {
     console.error('Ошибка чтения дублей:', error.message);
-    return new Set();
+    return { keys: new Set(), websites: new Set() };
   }
-  return new Set((data || []).map((e) => normKey(e.title, e.start_date)));
+  const keys = new Set((data || []).map((e) => normKey(e.title, e.start_date)));
+  // Ссылки на уже обработанные страницы источников: Cyprus.BZ отдаёт страницы
+  // по 30+ секунд, поэтому повторно их не скачиваем — каждый запуск продвигается
+  // глубже по карте сайта, а не топчется на первых страницах.
+  const websites = new Set((data || []).map((e) => (e.website || '').trim()).filter(Boolean));
+  return { keys, websites };
 }
 
 // ===== Запись события =====
@@ -338,11 +350,12 @@ async function buildRow(src) {
 // ===== Источник 1: VisitCyprus (официальный календарь) =====
 async function collectVisitCyprus(seen, budget) {
   const base = 'https://www.visitcyprus.com/wp-json/tribe/events/v1/events';
+  const deadline = Date.now() + BUDGET.visitcyprus;
   let page = 1;
   let added = 0;
   console.log('Собираю: VisitCyprus (официальный календарь)...');
   // per_page=10: большие страницы (20/50) этот сервер отдаёт медленно и обрывает соединение
-  while (page <= 20 && added < budget) {
+  while (page <= 20 && added < budget && Date.now() < deadline) {
     let data;
     try {
       data = await fetchJson(`${base}?per_page=10&page=${page}&start_date=${todayStr()}`, 90000);
@@ -398,10 +411,11 @@ async function collectVisitCyprus(seen, budget) {
 // ===== Источник 2: Cyprus Now (агрегатор, координаты площадок) =====
 async function collectCyprusNow(seen, budget) {
   const cities = ['limassol', 'nicosia', 'larnaca', 'paphos', 'famagusta'];
+  const deadline = Date.now() + BUDGET.cyprusnow;
   let added = 0;
   console.log('Собираю: Cyprus Now (агрегатор с координатами)...');
   for (const citySlug of cities) {
-    if (added >= budget) break;
+    if (added >= budget || Date.now() > deadline) break;
     let data;
     try {
       data = await fetchJson(`https://cyprusnow.app/api/events?city=${citySlug}`, 90000);
@@ -476,8 +490,9 @@ function jsonLdEvents(html) {
   return out;
 }
 
-async function collectCyprusBz(seen, budget) {
+async function collectCyprusBz(seen, budget, websites = new Set()) {
   let added = 0;
+  const deadline = Date.now() + BUDGET.cyprusbz;
   console.log('Собираю: Cyprus.BZ (русскоязычная афиша)...');
   // Сайт отдаёт большие XML/HTML медленно: сначала русская карта сайта,
   // если не отдалась — английская (там те же события, ссылки /event/...).
@@ -501,15 +516,24 @@ async function collectCyprusBz(seen, budget) {
       return !year || year >= thisYear;
     });
   console.log(`  страниц событий в sitemap: ${urls.length}`);
+  let fails = 0;
+  let scanned = 0;
   for (const url of urls) {
-    if (added >= budget) break;
+    if (added >= budget || Date.now() > deadline || fails >= 8) break;
+    if (websites.has(url)) {
+      stats.skipped++;
+      continue; // страница уже разобрана в прошлых запусках — не тратим на неё время
+    }
+    scanned++;
     let ev;
     try {
-      ev = jsonLdEvents(await fetchPartial(url, 60000))[0];
+      ev = jsonLdEvents(await fetchPartial(url, 25000))[0];
     } catch (e) {
       console.error(`  ${url.slice(-40)}: ${e.message}`);
+      fails++;
       continue;
     }
+    fails = 0;
     await new Promise((r) => setTimeout(r, 400)); // вежливая пауза между страницами
     if (!ev) continue;
     const title = decodeEntities(ev.name || '').trim();
@@ -547,13 +571,18 @@ async function collectCyprusBz(seen, budget) {
     row.language = 'ru';
     if (await save(row, seen)) added++;
   }
+  console.log(
+    `  Cyprus.BZ: просмотрено страниц ${scanned}, добавлено ${added}`
+    + (Date.now() > deadline ? ' (бюджет времени источника исчерпан)' : '')
+    + (fails >= 8 ? ' (сервер перестал отвечать)' : ''),
+  );
   stats.cyprusbz = added;
   return added;
 }
 
 // ===== Основной цикл =====
 async function main() {
-  const seen = await existingKeys();
+  const { keys: seen, websites } = await existingKeys();
   const started = new Date();
   console.log(`Старт сбора событий Кипра${DRY_RUN ? ' (DRY_RUN)' : ''}. Уже в базе ключей: ${seen.size}`);
 
@@ -562,7 +591,7 @@ async function main() {
   if (want('visitcyprus')) await collectVisitCyprus(seen, Math.min(60, MAX_EVENTS));
   if (want('cyprusnow')) await collectCyprusNow(seen, Math.min(80, MAX_EVENTS));
   if (want('cyprusbz')) {
-    await collectCyprusBz(seen, Math.max(0, MAX_EVENTS - stats.visitcyprus - stats.cyprusnow));
+    await collectCyprusBz(seen, Math.max(0, MAX_EVENTS - stats.visitcyprus - stats.cyprusnow), websites);
   }
 
   const mins = ((Date.now() - started) / 60000).toFixed(1);
