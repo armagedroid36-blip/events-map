@@ -38,6 +38,7 @@ export const ISO_COUNTRY_NAMES: Record<string, CountryName> = {
   CN: { ru: 'Китай', en: 'China' },
   IN: { ru: 'Индия', en: 'India' },
   AE: { ru: 'ОАЭ', en: 'UAE' },
+  CY: { ru: 'Кипр', en: 'Cyprus' },
   OM: { ru: 'Оман', en: 'Oman' },
   US: { ru: 'США', en: 'USA' },
   GB: { ru: 'Великобритания', en: 'UK' },

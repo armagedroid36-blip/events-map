@@ -59,10 +59,12 @@ function isTouristFriendly(ev) {
 // (Ticketmaster убран: в регионе почти нет событий для туристов, в основном локальные.)
 
 const METRO_AREAS = [
-  { name: 'Бали (Денпасар)', url: '/metro-areas/29138-indonesia-denpasar', lat: -8.65, lng: 115.22 },
-  { name: 'Сингапур', url: '/metro-areas/32258-singapore-singapore', lat: 1.35, lng: 103.82 },
-  { name: 'Бангкок', url: '/metro-areas/32333-thailand-bangkok', lat: 13.75, lng: 100.5 },
-  { name: 'Куала-Лумпур', url: '/metro-areas/31146-malaysia-kuala-lumpur', lat: 3.14, lng: 101.69 },
+  { name: 'Бали (Денпасар)', url: '/metro-areas/29138-indonesia-denpasar', lat: -8.65, lng: 115.22, country: 'indonesia' },
+  { name: 'Сингапур', url: '/metro-areas/32258-singapore-singapore', lat: 1.35, lng: 103.82, country: 'singapore' },
+  { name: 'Бангкок', url: '/metro-areas/32333-thailand-bangkok', lat: 13.75, lng: 100.5, country: 'thailand' },
+  { name: 'Куала-Лумпур', url: '/metro-areas/31146-malaysia-kuala-lumpur', lat: 3.14, lng: 101.69, country: 'malaysia' },
+  // Кипр: Лимассол — единственная кипрская площадка Songkick с событиями (Никосия/Ларнака/Пафос пусто)
+  { name: 'Лимасол, Кипр', url: '/metro-areas/33473-cyprus-limassol', lat: 34.7071, lng: 33.0226, country: 'cyprus' },
 ];
 
 /** Парсит страницу города Songkick: список событий с датами */
@@ -137,6 +139,7 @@ async function collectSongkick(seen, limit, insertedCount) {
         start_time: ev.time || null,
         end_time: null,
         city: metro.name.replace(' (Денпасар)', ''),
+        country: metro.country || null,
         address: ev.venue || null,
         lat: ev.lat,
         lng: ev.lng,

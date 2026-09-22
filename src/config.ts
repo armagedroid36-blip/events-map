@@ -22,7 +22,7 @@ export const config = {
   demoMode: false,
 
   // Версия сборки — показывается в шапке мелким текстом для сверки
-  buildVersion: 'beta 0.80',
+  buildVersion: 'beta 0.81',
 
   // Push-уведомления: ПУБЛИЧНЫЙ VAPID-ключ (приватный — в GitHub secrets,
   // VAPID_PRIVATE_KEY; рассылка — scripts/notify-push.mjs в GHA)
@@ -47,6 +47,7 @@ export const config = {
     { label: 'Бали', labelEn: 'Bali', lat: -8.5, lng: 115.2, zoom: 10 },
     { label: 'Дананг', labelEn: 'Da Nang', lat: 16.05, lng: 108.22, zoom: 11 },
     { label: 'Нячанг', labelEn: 'Nha Trang', lat: 12.24, lng: 109.19, zoom: 11 },
+    { label: 'Кипр', labelEn: 'Cyprus', lat: 34.9, lng: 33.1, zoom: 9 },
   ],
 
   // --- Геокодинг (адрес -> координаты) ---

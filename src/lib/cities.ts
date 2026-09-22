@@ -27,6 +27,15 @@ const RU_TO_EN: Record<string, string> = {
   'филиппины': 'philippines',
   'мьянма': 'myanmar',
   'лаос': 'laos',
+  'лимасол': 'limassol',
+  'никосия': 'nicosia',
+  'ларнака': 'larnaca',
+  'пафос': 'paphos',
+  'ая-напа': 'ayia napa',
+  'протарас': 'protaras',
+  'паралимни': 'paralimni',
+  'фамагуста': 'famagusta',
+  'кипр': 'cyprus',
 };
 
 /** Обратный словарь: английское название -> русское (для поиска EN-запросами) */

@@ -41,6 +41,7 @@ export const COUNTRY_NAMES: Record<string, CountryName> = {
   india: { ru: 'Индия', en: 'India' },
   uae: { ru: 'ОАЭ', en: 'UAE' },
   oman: { ru: 'Оман', en: 'Oman' },
+  cyprus: { ru: 'Кипр', en: 'Cyprus' },
 };
 
 /** Список стран для фильтра (все ЮВА + популярные у туристов/экспатов) */
@@ -74,6 +75,7 @@ export const KNOWN_COUNTRIES: string[] = [
   'india',
   'uae',
   'oman',
+  'cyprus',
 ];
 
 /**
@@ -111,6 +113,7 @@ const RULES: Array<{ keys: string[]; country: string }> = [
   { keys: ['mumbai', 'delhi', 'goa', 'bengaluru', 'bangalore', 'india', 'мумбаи', 'дели', 'гоа', 'индия', 'бангалор'], country: 'india' },
   { keys: ['dubai', 'abu dhabi', 'sharjah', 'uae', 'дубай', 'абу-даби', 'шарджа'], country: 'uae' },
   { keys: ['suwayri', 'suwayq', 'muscat', 'oman', 'мускат', 'сувайк', 'оман'], country: 'oman' },
+  { keys: ['limassol', 'lemessos', 'nicosia', 'lefkosia', 'larnaca', 'larnaka', 'paphos', 'pafos', 'ayia napa', 'agia napa', 'protaras', 'paralimni', 'famagusta', 'cyprus', 'лимасол', 'никосия', 'ларнака', 'пафос', 'ая-напа', 'ая напа', 'протарас', 'паралимни', 'фамагуста', 'кипр'], country: 'cyprus' },
 ];
 
 /** Страна по названию города (канонический код). Не найдено — '' */
