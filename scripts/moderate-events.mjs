@@ -20,7 +20,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createClient } from '@supabase/supabase-js';
 import { checkRules, eventTextForLlm } from './moderation-rules.mjs';
-import { judgeEvent } from './moderation-llm.mjs';
+import { judgeEventWithReason } from './moderation-llm.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 
@@ -48,6 +48,9 @@ const NO_LLM = args.includes('--no-llm') || !process.env.DEEPSEEK_API_KEY;
 const argLimit = args.find((a) => a.startsWith('--limit='));
 const LIMIT = Math.max(1, Math.min(500, Number(argLimit ? argLimit.split('=')[1] : 100) || 100));
 const MAX_LLM = Math.max(1, Number(process.env.MODERATION_MAX_LLM || 100) || 100);
+// Сколько отказов LLM подряд считаем «модель легла»: дальше карточки идут
+// человеку без вызова API (иначе серия таймаутов растянет прогон на часы).
+const LLM_FAIL_LIMIT = Math.max(1, Number(process.env.MODERATION_LLM_FAIL_LIMIT || 3) || 3);
 const RECHECK_HOURS = Math.max(1, Number(process.env.MODERATION_RECHECK_HOURS || 24) || 24);
 const REPORT_PATH = process.env.MODERATION_REPORT || path.join(here, '..', 'auto-moderation-report.json');
 
@@ -105,20 +108,40 @@ async function decide(ev, budget) {
       engine: 'cached',
     };
   }
-  if (NO_LLM || budget.used >= budget.max) {
-    return { verdict: 'review', flags: [...rules.flags, 'unchecked'], reason: 'LLM-проверка недоступна', engine: 'rules' };
+  if (NO_LLM || budget.used >= budget.max || budget.down) {
+    const reason = budget.down
+      ? 'LLM-проверка недоступна (серия отказов, карточка отложена)'
+      : 'LLM-проверка недоступна';
+    return { verdict: 'review', flags: [...rules.flags, 'unchecked'], reason, engine: 'rules' };
   }
 
   budget.used++;
-  const judged = await judgeEvent(eventTextForLlm(ev));
-  if (!judged) {
-    return { verdict: 'review', flags: [...rules.flags, 'unchecked'], reason: 'LLM не ответил', engine: 'rules' };
+  const judged = await judgeEventWithReason(eventTextForLlm(ev));
+  if (!judged.ok) {
+    budget.fails++;
+    budget.errors.push(judged.error);
+    if (budget.fails >= LLM_FAIL_LIMIT && !budget.down) {
+      budget.down = true;
+      console.warn(
+        `! LLM: ${budget.fails} отказов подряд (${judged.error}) — остальные карточки ` +
+          'отправляются человеку без вызова модели',
+      );
+    }
+    return {
+      verdict: 'review',
+      flags: [...rules.flags, 'unchecked'],
+      reason: `LLM не ответил: ${judged.error}`.slice(0, 200),
+      engine: 'rules',
+    };
   }
+  budget.fails = 0;
+
+  const decision = { verdict: judged.verdict, flags: judged.flags, reason: judged.reason };
   // Противоречие «reject без конкретной причины» — отдаём человеку
-  if (judged.verdict === 'reject' && judged.flags.every((f) => f === 'unclear')) {
-    return { ...judged, verdict: 'review' };
+  if (decision.verdict === 'reject' && decision.flags.every((f) => f === 'unclear')) {
+    return { ...decision, verdict: 'review' };
   }
-  return { ...judged, engine: 'rules+llm' };
+  return { ...decision, engine: 'rules+llm' };
 }
 
 async function main() {
@@ -151,7 +174,7 @@ async function main() {
   const queue = events || [];
   console.log(`Проверяю: ${queue.length} из ${count} в очереди${DRY_RUN ? ' (тестовый прогон, без записи)' : ''}`);
 
-  const budget = { used: 0, max: MAX_LLM };
+  const budget = { used: 0, max: MAX_LLM, fails: 0, down: false, errors: [] };
   const totals = { publish: 0, review: 0, reject: 0, failed: 0 };
   const items = [];
 
@@ -206,6 +229,9 @@ async function main() {
     queue: count,
     checked: queue.length,
     llm_calls: budget.used,
+    llm_failed: budget.errors.length,
+    llm_stopped_early: budget.down,
+    llm_errors: [...new Set(budget.errors)].slice(0, 5),
     totals,
     items,
   };
@@ -217,8 +243,12 @@ async function main() {
 
   console.log(
     `Готово: опубликовано ${totals.publish}, на проверку ${totals.review}, ` +
-      `отклонено ${totals.reject}, ошибок ${totals.failed} (LLM-вызовов ${budget.used})`,
+      `отклонено ${totals.reject}, ошибок ${totals.failed} (LLM-вызовов ${budget.used}` +
+      `${budget.errors.length ? `, отказов LLM ${budget.errors.length}` : ''})`,
   );
+  if (budget.down) {
+    console.log(`LLM не отвечал — проверка прервана досрочно, причины: ${[...new Set(budget.errors)].join('; ')}`);
+  }
   if (count > queue.length) console.log(`В очереди ещё ${count - queue.length} — обработаются в следующий запуск.`);
 }
 

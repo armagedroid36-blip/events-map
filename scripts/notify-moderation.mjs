@@ -52,6 +52,14 @@ function buildText(events, total, auto) {
     );
     const bad = (auto.items || []).filter((i) => i.verdict === 'reject').slice(0, 3);
     for (const r of bad) lines.push(`✕ ${esc(r.title)} — ${esc(r.reason || 'нарушение правил')}`);
+    // Отказы LLM-судьи: карточки остались на ручной проверке не по своей вине
+    if (Number(auto.llm_failed) > 0) {
+      const why = (auto.llm_errors || []).slice(0, 2).join('; ');
+      lines.push(
+        `LLM-судья не ответил по ${auto.llm_failed} карточкам${why ? ` (${esc(why)})` : ''} — ` +
+          'они ждут ручной проверки',
+      );
+    }
   }
   if (total > 0) {
     lines.push(`Новые события на модерации: ${total}`);
