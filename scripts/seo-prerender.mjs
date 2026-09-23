@@ -398,7 +398,14 @@ function blogIndexSeoHtml(articles, lang = 'ru') {
     })
     .join('\n');
   const h1 = en ? 'MyPins Blog: guides to events and listings' : 'Блог MyPins: гиды по событиям';
-  return ['<div id="seo-article-block">', `  <h1>${h1}</h1>`, cards, '</div>', ''].join('\n');
+  return [
+    '<div id="seo-article-block">',
+    `  <h1>${h1}</h1>`,
+    mapCtaHtml(lang),
+    cards,
+    '</div>',
+    '',
+  ].join('\n');
 }
 
 /** Подпись редакции (E-E-A-T) в конце блока статьи — по языку страницы */
@@ -407,6 +414,19 @@ function articleBylineHtml(lang = 'ru') {
     return `  <p class="article-byline">MyPins Editorial · <a href="${SITE_URL}/en/about/">About the project</a></p>`;
   }
   return `  <p class="article-byline">Редакция MyPins · <a href="${SITE_URL}/about/">О проекте и контакты</a></p>`;
+}
+
+/** Кнопка «Посмотреть события на карте» в статическом блоке: на текстовые
+ *  страницы (блог, статья, «О проекте», «Для организаторов») посетитель
+ *  приходит из поиска, и путь на карту должен быть виден ещё ДО JS — та же
+ *  кнопка есть в SPA (src/components/MapCta.tsx: подпись и классы совпадают,
+ *  правки держать синхронно). href — канонический URL карты языка (со слэшем:
+ *  GitHub Pages делает 301 с версии без слэша). */
+function mapCtaHtml(lang = 'ru') {
+  const en = lang === 'en';
+  const label = en ? 'See events on the map' : 'Посмотреть события на карте';
+  const href = en ? `${SITE_URL}/en/` : '/';
+  return `  <p><a class="inline-block rounded-md bg-[#72D2CF] px-4 py-2 text-sm font-semibold text-black shadow hover:bg-[#61B2B0]" href="${esc(href)}">${label}</a></p>`;
 }
 
 /**
@@ -424,7 +444,9 @@ function articleSeoHtml(article, lang = 'ru', ctx = {}) {
     `  <p><time datetime="${esc(article.datePublished)}">${esc(
       en ? enDate(article.datePublished) : ruDate(article.datePublished),
     )}</time></p>`,
+    mapCtaHtml(lang),
     articleSectionsHtml(sections, ctx),
+    mapCtaHtml(lang),
     articleBylineHtml(lang),
     '</div>',
     '',
@@ -456,6 +478,7 @@ function forOrganizersSeoHtml(c, lang = 'ru', ctx = {}) {
     '<div id="seo-b2b-block">',
     `  <h1>${esc(pick('h1', 'h1_en'))}</h1>`,
     `  <p>${mdLinksToHtml(pick('intro', 'intro_en') ?? '', ctx)}</p>`,
+    mapCtaHtml(lang),
     articleSectionsHtml(en ? c.sections_en || c.sections : c.sections, ctx),
   ];
   if (faq) lines.push(faq);
@@ -513,6 +536,7 @@ function aboutSeoHtml(c, lang = 'ru', ctx = {}) {
   return [
     '<div id="seo-about-block">',
     `  <h1>${esc(en ? c.h1_en || c.h1 : c.h1)}</h1>`,
+    mapCtaHtml(lang),
     articleSectionsHtml(en ? c.sections_en || c.sections : c.sections, ctx),
     '</div>',
     '',

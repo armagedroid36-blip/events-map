@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
+import MapCta from '../components/MapCta';
 import { navigate } from '../lib/navigate';
 import { getApi } from '../lib/api';
 import { applyArticleMeta, applyBlogMeta, applyGenericMeta, enDate, ruDate } from '../lib/seo';
@@ -163,6 +164,8 @@ export function BlogIndex() {
             ? 'What to do in Nha Trang, Bali and Da Nang: guides to the local event scenes.'
             : 'Куда сходить в Нячанге, на Бали и в Дананге: подборки и гиды по событийной жизни городов.'}
         </p>
+        {/* Путь на карту: посетитель пришёл из поиска на текстовую страницу */}
+        <MapCta />
         {list.map((a) => {
           const h1 = en ? a.h1_en || a.h1 : a.h1;
           const desc = en ? a.description_en || a.description : a.description;
@@ -259,9 +262,14 @@ export function ArticlePage({ slug }: { slug: string }) {
         <p className="mt-1 text-xs text-gray-400">
           {en ? enDate(article.datePublished) : ruDate(article.datePublished)}
         </p>
+        {/* Карта — сразу под заголовком: посетитель из поиска видит путь к
+            событиям на первом экране, не дочитывая статью */}
+        <MapCta />
         <div className="mt-4">
           <Sections sections={view!.sections} activeIds={activeIds} />
         </div>
+        {/* Повтор кнопки в конце статьи: тот, кто дочитал, тоже уходит на карту */}
+        <MapCta className="mt-6" />
         {/* Подпись редакции (E-E-A-T): авторство + ссылка на страницу /about.
             Как и datePublished — текст-xs; внутренний /about перехватывает
             document-обработчик App.tsx (navigate, без перезагрузки). EN —

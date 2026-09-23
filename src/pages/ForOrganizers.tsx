@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
+import MapCta from '../components/MapCta';
 import { navigate } from '../lib/navigate';
 import { applyForOrganizersMeta, applyGenericMeta } from '../lib/seo';
 import type { ArticleSection, ForOrganizersContent } from '../lib/types';
@@ -110,6 +111,9 @@ export default function ForOrganizers() {
       <main className="mx-auto w-full max-w-2xl flex-1 p-4">
         <h1 className="text-xl font-semibold text-gray-900">{c.h1}</h1>
         <p className="mt-3 text-sm leading-relaxed text-gray-700">{renderMd(c.intro)}</p>
+        {/* Карта — под вводным абзацем: посетителю из поиска нужен путь к
+            событиям, а не только форма подачи */}
+        <MapCta />
         <div className="mt-2">
           <Sections sections={c.sections} />
         </div>

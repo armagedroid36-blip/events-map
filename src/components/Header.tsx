@@ -48,6 +48,11 @@ export default function Header({ onOpenForm }: HeaderProps) {
   const blogHref = lang === 'ru' ? '/blog/' : '/en/blog/';
   const forOrgHref = lang === 'ru' ? '/for-organizers/' : '/en/for-organizers/';
   const aboutHref = lang === 'ru' ? '/about/' : '/en/about/';
+  // Кнопка «На карту» на текстовых публичных страницах (блог, статья,
+  // «О проекте», «Для организаторов»): href — канонический URL карты языка
+  // (со слэшем), переход по клику остаётся SPA-шным (goHome)
+  const mapHref = lang === 'ru' ? '/' : '/en/';
+  const navMapLabel = lang === 'ru' ? 'На карту' : 'Event map';
 
   // Путь без хвостового слэша (нормализация как normPath в App.tsx). Бренд —
   // h1 только на главной «/» (и EN-главной «/en»): на городских страницах
@@ -60,6 +65,19 @@ export default function Header({ onOpenForm }: HeaderProps) {
       ? '/'
       : window.location.pathname.replace(/\/+$/, '') || '/';
   const isBrandH1 = cleanPath === '/' || cleanPath === '/en';
+
+  // Путь без префикса языка (/en/blog/... → /blog/...) — тип страницы
+  const pubPath =
+    cleanPath === '/en' ? '/' : cleanPath.startsWith('/en/') ? cleanPath.slice(3) : cleanPath;
+  // Кнопка «На карту» — ТОЛЬКО на текстовых публичных страницах (блог и статьи,
+  // «О проекте», «Для организаторов»): на них карты нет, а посетитель приходит
+  // из поиска. На главной, городских и карточке события кнопка не нужна (карта
+  // и так на экране).
+  const showMapCta =
+    pubPath === '/blog' ||
+    pubPath.startsWith('/blog/') ||
+    pubPath === '/about' ||
+    pubPath === '/for-organizers';
 
   // Бейдж уведомлений: org — движение по его событиям («Мои события»),
   // admin — события на модерации. Пересчитывается: при монтировании,
@@ -315,6 +333,22 @@ export default function Header({ onOpenForm }: HeaderProps) {
         </a>
 
         <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-1 sm:gap-2">
+          {/* «На карту» — заметная кнопка перехода к событиям с текстовых
+              страниц (блог, статья, «О проекте», «Для организаторов»), куда
+              приходят из поиска. Видна с sm+ (на <640px — первым пунктом в
+              нижней строке шапки, см. ряд 2), стиль — акцентный CTA проекта. */}
+          {showMapCta && (
+            <a
+              href={mapHref}
+              onClick={(e) => {
+                e.preventDefault();
+                goHome();
+              }}
+              className="hidden rounded-md bg-[#72D2CF] px-3 py-1.5 text-sm font-semibold text-black shadow hover:bg-[#61B2B0] sm:block"
+            >
+              {navMapLabel}
+            </a>
+          )}
           {/* Навигация по ролям — видна на всех экранах (кроме hideDesktop) */}
           {nav.filter((n) => !n.hideDesktop).map((n) => (
             <button
@@ -527,7 +561,9 @@ export default function Header({ onOpenForm }: HeaderProps) {
       </div>
 
       {/* Ряд 2 — только на <640px (sm:hidden): публичная навигация
-          «Блог» / «Для организаторов» / «О проекте». Видна гостю и
+          «На карту» (на текстовых страницах — блог, статья, «О проекте»,
+          «Для организаторов») / «Блог» / «Для организаторов» / «О проекте».
+          Видна гостю и
           вошедшему (у вошедшего эти пункты на мобильном из бургер-меню
           убраны — без дублей на одном экране). Ряд 1 остаётся в одну
           строку: бренд слева (truncate), справа только язык + «Войти»
@@ -536,6 +572,21 @@ export default function Header({ onOpenForm }: HeaderProps) {
           ResizeObserver'ом в useLayoutEffect — бургер-меню и панели
           Home позиционируются по --header-bottom ниже ОБЕИХ строк. */}
       <div className="flex flex-wrap items-center justify-center gap-1 px-2 pb-2 sm:hidden">
+        {/* «На карту» — первым пунктом: с телефона путь к событиям с текстовой
+            страницы (блог, статья, «О проекте», «Для организаторов») должен
+            быть виден сразу в шапке */}
+        {showMapCta && (
+          <a
+            href={mapHref}
+            onClick={(e) => {
+              e.preventDefault();
+              goHome();
+            }}
+            className="rounded-md bg-[#72D2CF] px-2 py-1 text-sm font-semibold text-black shadow hover:bg-[#61B2B0]"
+          >
+            {navMapLabel}
+          </a>
+        )}
         <a
           href={blogHref}
           onClick={(e) => {

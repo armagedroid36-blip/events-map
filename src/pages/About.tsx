@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
+import MapCta from '../components/MapCta';
 import { applyAboutMeta, applyGenericMeta } from '../lib/seo';
 import type { AboutContent, ArticleSection } from '../lib/types';
 // Каст через unknown: resolveJsonModule выводит точный литеральный тип,
@@ -109,6 +110,9 @@ export default function About() {
       <Header />
       <main className="mx-auto w-full max-w-2xl flex-1 p-4">
         <h1 className="text-xl font-semibold text-gray-900">{c.h1}</h1>
+        {/* Карта — сразу под заголовком: посетитель из поиска видит путь к
+            событиям, не читая страницу целиком */}
+        <MapCta />
         <div className="mt-2">
           <Sections sections={c.sections} />
         </div>
