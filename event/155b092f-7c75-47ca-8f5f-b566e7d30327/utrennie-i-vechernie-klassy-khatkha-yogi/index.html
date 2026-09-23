@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Утренние и вечерние классы Хатха-йоги — 8 сентября 2026 · Дананг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-hr5uxveG.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-Dg1LyPPS.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-BAD1VRSU.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-DYO_cZ0p.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CZs7i0BB.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro--G1TI1EZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-dzRKy9tz.css" />
+      <meta name="description" content="Дананг, 8 сентября 2026. Утренние и вечерние классы Хатха-йоги Практики для заряда бодрости на весь день по утрам и для снятия напряжения и активизации тела…" />
+    <link rel="canonical" href="https://mypins.site/event/155b092f-7c75-47ca-8f5f-b566e7d30327/utrennie-i-vechernie-klassy-khatkha-yogi/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Утренние и вечерние классы Хатха-йоги — 8 сентября 2026 · Дананг" />
+    <meta property="og:description" content="Дананг, 8 сентября 2026. Утренние и вечерние классы Хатха-йоги Практики для заряда бодрости на весь день по утрам и для снятия напряжения и активизации тела…" />
+    <meta property="og:url" content="https://mypins.site/event/155b092f-7c75-47ca-8f5f-b566e7d30327/utrennie-i-vechernie-klassy-khatkha-yogi/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/155b092f-7c75-47ca-8f5f-b566e7d30327/utrennie-i-vechernie-klassy-khatkha-yogi/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/155b092f-7c75-47ca-8f5f-b566e7d30327/morning-and-evening-hatha-yoga-classes/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Дананг","item":"https://mypins.site/da-nang/"},{"@type":"ListItem","position":3,"name":"Утренние и вечерние классы Хатха-йоги","item":"https://mypins.site/event/155b092f-7c75-47ca-8f5f-b566e7d30327/utrennie-i-vechernie-klassy-khatkha-yogi/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Утренние и вечерние классы Хатха-йоги</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-09-22">22 сентября 2026</time></p>
+  <p><time datetime="2026-09-08T09:15:00">8 сентября 2026, 09:15</time></p>
+  <address>студия в Son Tra, студия в My An, Дананг</address>
+  <p>200000 VND</p>
+  <p>Утренние и вечерние классы Хатха-йоги
+
+Практики для заряда бодрости на весь день по утрам и для снятия напряжения и активизации тела после рабочего дня вечером🙌
+
+
+🗓 вторник и четверг | 09:15
+🗓 понедельник, среда и пятница | 18:00
+
+
+📍локация студия в Son Tra 
+📍локация студия в My An 
+💰 пробное 200.000 vnd
+💫 подходит для любого уровня
+📌 запись у @dikoyoga
+
+#дата 01.09
+#дата 02.09</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/da-nang/">Дананг</a> <span aria-hidden="true">›</span> <span>Утренние и вечерние классы Хатха-йоги</span></p>
+    <p>Ещё события в Дананге: <a href="/da-nang/">афиша</a> · <a href="/da-nang/wellness/">🧘 Йога и здоровье</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/0878b6c1-effe-4763-9dec-cd356f7c1b44/tsigun-v-uyutnom-zale/">ЦИГУН В УЮТНОМ ЗАЛЕ <time datetime="2026-09-23">23 сентября 2026</time></a></li>
+    <li><a href="/event/38e4a54a-6454-4a98-a74f-71f289345653/tsigun-na-plyazhe/">ЦИГУН НА ПЛЯЖЕ <time datetime="2026-09-23">23 сентября 2026</time></a></li>
+    <li><a href="/event/f865996f-32dd-4ddb-9f3a-d9ba848d6d47/utrennyaya-yoga-fysm-dlya-vsekh-urovney/">УТРЕННЯЯ ЙОГА FYSM для всех уровней <time datetime="2026-09-23">23 сентября 2026</time></a></li>
+    <li><a href="/event/cee0c6a7-6fb6-4e74-9780-70348233884f/fly-yoga-v-danange-praktika-v-gamakakh/">Fly Yoga в Дананге практика в гамаках <time datetime="2026-09-23">23 сентября 2026</time></a></li>
+    <li><a href="/event/679cb49d-bc62-4e4b-8d03-0362cce790ff/solo-latina/">Соло Латина <time datetime="2026-09-24">24 сентября 2026</time></a></li>
+    <li><a href="/event/97d35924-6ac8-42d2-b325-a0016c41b67c/utrennyaya-mindfulness-meditatsiya/">Утренняя Mindfulness-медитация <time datetime="2026-09-24">24 сентября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Дананг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/d9bac883-7b20-4c6e-921e-25ff757cb025/khatkha-yoga-v-danange/">ХАТХА-ЙОГА В ДАНАНГЕ</a> <time datetime="2026-09-21">21 сентября 2026</time></li>
+    <li>Следующее: <a href="/event/4de9f3bd-1214-4f8e-834e-6f5edf29a240/mafiya-v-danange-v-restorane-369/">МАФИЯ в Дананге в ресторане 369</a> <time datetime="2026-09-22">22 сентября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/da-nang/">Ближайшие события: Дананг</a></p>
+</div>
+
+  </body>
+</html>

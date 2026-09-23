@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Full-body group strength training, Tuesday — September 15, 2026…</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-hr5uxveG.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-Dg1LyPPS.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-BAD1VRSU.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-DYO_cZ0p.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CZs7i0BB.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro--G1TI1EZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-dzRKy9tz.css" />
+      <meta name="description" content="Nha Trang, September 15, 2026. Full-body group strength training 🌟Tuesday Suitable for beginners! Session in a mini group of up to 3 people. - development of…" />
+    <link rel="canonical" href="https://mypins.site/en/event/0e4bd1c7-31a6-4d9b-90ed-218df6fd3532/full-body-group-strength-training-tuesday/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Full-body group strength training, Tuesday — September 15, 2026…" />
+    <meta property="og:description" content="Nha Trang, September 15, 2026. Full-body group strength training 🌟Tuesday Suitable for beginners! Session in a mini group of up to 3 people. - development of…" />
+    <meta property="og:url" content="https://mypins.site/en/event/0e4bd1c7-31a6-4d9b-90ed-218df6fd3532/full-body-group-strength-training-tuesday/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/0e4bd1c7-31a6-4d9b-90ed-218df6fd3532/full-body-group-strength-training-tuesday/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/0e4bd1c7-31a6-4d9b-90ed-218df6fd3532/silovye-trenirovki-v-gruppe-na-vse-telo-vtornik/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"Full-body group strength training, Tuesday","item":"https://mypins.site/en/event/0e4bd1c7-31a6-4d9b-90ed-218df6fd3532/full-body-group-strength-training-tuesday/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Full-body group strength training, Tuesday</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-09-22">September 22, 2026</time></p>
+  <p><time datetime="2026-09-15T14:30:00">September 15, 2026, 2:30 PM</time></p>
+  <address>CLB THỂ HÌNH - GYM NHA TRANG, 102 Đ. Bắc Sơn, Bắc Nha Trang, Khánh Hòa 650000</address>
+  <p>200000 VND</p>
+  <p>Full-body group strength training 🌟Tuesday
+
+Suitable for beginners!
+Session in a mini group of up to 3 people.
+- development of muscular endurance
+- joint mobility
+- flexibility and stretching
+- strengthening the body&#39;s frame
+- physical and mental health 💖
+
+Start today!
+With me you will love sports and your body 💜 I will show you how to train with pleasure 💜
+
+
+🗓 When: 15.09 Tuesday at 14:30, duration 80
+minutes)
+📍 Where: https://maps.app.goo.gl/yhF5bbStFYPbQjyF8?g_st=ic
+
+💰 Price: 200k (trial session)
+
+
+✍️ Registration required: https://t.me/andreeva234
+
+#date: 15.09.2026
+Post by: Kate</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>Full-body group strength training, Tuesday</span></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a> · <a href="/en/nha-trang/wellness/">🧘 Yoga &amp; Wellness</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/f8b055a9-cbf2-49c7-b523-db5a3fec855b/breathing-class-session-16/">Breathing Class Session 16 <time datetime="2026-09-23">September 23, 2026</time></a></li>
+    <li><a href="/en/event/b72dc4bf-8cd0-4cd3-8848-9184b5fb96e3/sound-healing-in-hammocks/">SOUND HEALING IN HAMMOCKS <time datetime="2026-09-23">September 23, 2026</time></a></li>
+    <li><a href="/en/event/03eee243-1e00-4be1-a4f7-bb77bca9817b/flow-yoga/">FLOW YOGA <time datetime="2026-09-23">September 23, 2026</time></a></li>
+    <li><a href="/en/event/2e505c22-afd2-4cb7-a8b1-9971c315737d/yoga-center-all-my-students-have-results/">Yoga center, ALL my students have results <time datetime="2026-09-23">September 23, 2026</time></a></li>
+    <li><a href="/en/event/e9ff547c-54ac-4b6f-9267-0d446d208cc3/yoga-morning-practice-this-wednesday/">YOGA. Morning practice. This Wednesday <time datetime="2026-09-23">September 23, 2026</time></a></li>
+    <li><a href="/en/event/7d0d5868-70be-410a-ba41-40ac7af23f9a/fly-dance-dancing-in-the-air/">FLY DANCE DANCING IN THE AIR <time datetime="2026-09-23">September 23, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Nha Trang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/f750e6c3-1adb-4389-b235-bfaf836ac857/morning-talk-friday-speaking-club/">Morning Talk: Friday speaking club</a> <time datetime="2026-09-21">September 21, 2026</time></li>
+    <li>Next: <a href="/en/event/14356790-b388-4d2c-9914-3e95f1f3ed18/lecture-mannerism-when-the-renaissance-became-too-ideal/">Lecture &quot;Mannerism: When the Renaissance Became Too Ideal&quot;</a> <time datetime="2026-09-22">September 22, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
+</div>
+
+  </body>
+</html>

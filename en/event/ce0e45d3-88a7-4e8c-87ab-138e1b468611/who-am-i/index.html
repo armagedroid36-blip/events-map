@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WHO AM I? — September 22, 2026 · Nha Trang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-hr5uxveG.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-Dg1LyPPS.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-BAD1VRSU.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-DYO_cZ0p.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CZs7i0BB.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro--G1TI1EZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-dzRKy9tz.css" />
+      <meta name="description" content="Nha Trang, September 22, 2026. WHO AM I? Am I my body? My thoughts? My feelings? My desires? Sometimes we say: &quot;I&#39;m tired.&quot; &quot;I want.&quot; &quot;I can&#39;t.&quot; &quot;I&#39;m that kind…" />
+    <link rel="canonical" href="https://mypins.site/en/event/ce0e45d3-88a7-4e8c-87ab-138e1b468611/who-am-i/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WHO AM I? — September 22, 2026 · Nha Trang" />
+    <meta property="og:description" content="Nha Trang, September 22, 2026. WHO AM I? Am I my body? My thoughts? My feelings? My desires? Sometimes we say: &quot;I&#39;m tired.&quot; &quot;I want.&quot; &quot;I can&#39;t.&quot; &quot;I&#39;m that kind…" />
+    <meta property="og:url" content="https://mypins.site/en/event/ce0e45d3-88a7-4e8c-87ab-138e1b468611/who-am-i/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/ce0e45d3-88a7-4e8c-87ab-138e1b468611/who-am-i/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/ce0e45d3-88a7-4e8c-87ab-138e1b468611/kto-ya/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"WHO AM I?","item":"https://mypins.site/en/event/ce0e45d3-88a7-4e8c-87ab-138e1b468611/who-am-i/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>WHO AM I?</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-09-22">September 22, 2026</time></p>
+  <p><time datetime="2026-09-22T13:00:00">September 22, 2026, 1:00 PM</time></p>
+  <address>Nha Trang</address>
+  <p>Free</p>
+  <p>WHO AM I?
+
+Am I my body?
+My thoughts?
+My feelings?
+My desires?
+
+Sometimes we say:
+&quot;I&#39;m tired.&quot; &quot;I want.&quot; &quot;I can&#39;t.&quot; &quot;I&#39;m that kind of person.&quot;
+
+But… who exactly is it that says this &quot;I&quot;?
+
+It turns out a simple question can be not simple at all
+
+When: September 22 · Tuesday
+Time: 13:00
+Where:📍 Camelia Cafe | Sever
+
+Free entry 🤍
+
+Come yourself and bring your friends
+There will be plenty to talk about
+
+#date: 22.09.2026
+
+#date: 22.09.2026
+Post by: Nune | Beauty &amp; Slim Coach</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>WHO AM I?</span></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a> · <a href="/en/nha-trang/meetup/">🤝 Meetups &amp; Networking</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/afc58186-d58e-414c-beb2-eee132705f59/content-mastermind/">Content mastermind <time datetime="2026-09-23">September 23, 2026</time></a></li>
+    <li><a href="/en/event/24ff92b9-6102-49fc-817b-54fa5d3b9583/breakfast-pro-money/">BREAKFAST PRO MONEY <time datetime="2026-09-23">September 23, 2026</time></a></li>
+    <li><a href="/en/event/b0a60fa2-afa3-4290-a82c-561add983748/fractal-human-design/">Fractal Human Design. <time datetime="2026-09-23">September 23, 2026</time></a></li>
+    <li><a href="/en/event/18330baa-7015-41e2-a0a3-abc403170b66/meet-and-greet-breakfast-coziness-socializing-and-beautiful-content/">MEET-AND-GREET BREAKFAST: COZINESS, SOCIALIZING AND BEAUTIFUL CONTENT <time datetime="2026-09-24">September 24, 2026</time></a></li>
+    <li><a href="/en/event/fa05e52e-cff3-48b5-9449-1a543e7e9fd2/fluffy-inspiration-meetup/">Fluffy inspiration meetup <time datetime="2026-09-24">September 24, 2026</time></a></li>
+    <li><a href="/en/event/5e3ba55f-c262-4832-9e60-21304dcb8410/the-legendary-philosophical-cafe-is-now-in-nha-trang/">The legendary philosophical cafe is now in Nha Trang! <time datetime="2026-09-24">September 24, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Nha Trang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/c784614f-fc4a-4275-a2eb-f54ebfa09116/dance-class/">Dance class</a> <time datetime="2026-09-22">September 22, 2026</time></li>
+    <li>Next: <a href="/en/event/d46f42cc-4a29-42ae-92b8-67951c0c4e56/sunrise-on-sapas/">SUNRISE ON SAPAS</a> <time datetime="2026-09-22">September 22, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
+</div>
+
+  </body>
+</html>

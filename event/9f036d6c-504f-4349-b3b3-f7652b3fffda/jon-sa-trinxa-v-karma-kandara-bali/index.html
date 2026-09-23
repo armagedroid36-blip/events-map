@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jon Sa Trinxa в Karma Kandara Bali — 22 сентября 2026 · Унгасан…</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-hr5uxveG.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-Dg1LyPPS.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-BAD1VRSU.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-DYO_cZ0p.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CZs7i0BB.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro--G1TI1EZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-dzRKy9tz.css" />
+      <meta name="description" content="Унгасан, Bali, 22 сентября 2026. Вечер с легендарным диджеем Jon Sa Trinxa в одной из самых живописных локаций Бали. Музыка, закат, океан и фирменная…" />
+    <link rel="canonical" href="https://mypins.site/event/9f036d6c-504f-4349-b3b3-f7652b3fffda/jon-sa-trinxa-v-karma-kandara-bali/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Jon Sa Trinxa в Karma Kandara Bali — 22 сентября 2026 · Унгасан…" />
+    <meta property="og:description" content="Унгасан, Bali, 22 сентября 2026. Вечер с легендарным диджеем Jon Sa Trinxa в одной из самых живописных локаций Бали. Музыка, закат, океан и фирменная…" />
+    <meta property="og:url" content="https://mypins.site/event/9f036d6c-504f-4349-b3b3-f7652b3fffda/jon-sa-trinxa-v-karma-kandara-bali/" />
+    <meta property="og:image" content="https://static.baliforum.ru/uploads/688963/conversions/97782062-68187730-preview.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/9f036d6c-504f-4349-b3b3-f7652b3fffda/jon-sa-trinxa-v-karma-kandara-bali/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/9f036d6c-504f-4349-b3b3-f7652b3fffda/jon-sa-trinxa-at-karma-kandara-bali/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Бали","item":"https://mypins.site/bali/"},{"@type":"ListItem","position":3,"name":"Jon Sa Trinxa в Karma Kandara Bali","item":"https://mypins.site/event/9f036d6c-504f-4349-b3b3-f7652b3fffda/jon-sa-trinxa-v-karma-kandara-bali/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Jon Sa Trinxa в Karma Kandara Bali</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-09-22">22 сентября 2026</time></p>
+  <p><time datetime="2026-09-22T12:00:00">22 сентября 2026, 12:00</time></p>
+  <address>Jl. Villa Kandara, Banjar Wijaya Kusuma, Ungasan, Kec. Kuta Sel., Kabupaten Badung, Bali 80362, Индонезия, Унгасан, Bali</address>
+  <p>Вечер с легендарным диджеем Jon Sa Trinxa в одной из самых живописных локаций Бали.
+
+Музыка, закат, океан и фирменная расслабленная атмосфера Karma Kandara — идеальное сочетание для красивого вечера у моря. 🌅✨
+
+instagram (https://www.instagram.com/karma.kandara.bali/)</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/bali/">Бали</a> <span aria-hidden="true">›</span> <span>Jon Sa Trinxa в Karma Kandara Bali</span></p>
+    <p>Ещё события на Бали: <a href="/bali/">афиша</a> · <a href="/bali/party/">🪩 Вечеринки</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/88d7f6fe-a476-4ccb-9be8-802e2ad15617/jon-sa-trinxa-v-karma-kandara-bali/">Jon Sa Trinxa в Karma Kandara Bali <time datetime="2026-09-23">23 сентября 2026</time></a></li>
+    <li><a href="/event/282fc419-ccf2-4571-b89f-b52d2d6dd51b/karibskaya-vecherinka-lime-n-mingle-v-mama-bali/">Карибская вечеринка LIME N MINGLE в Mama Bali <time datetime="2026-09-23">23 сентября 2026</time></a></li>
+    <li><a href="/event/f5ebd7b8-c94c-4df4-ac88-195f749121c1/tabu-moyo-september-23/">TABU - MOYO - SEPTEMBER 23 <time datetime="2026-09-23">23 сентября 2026</time></a></li>
+    <li><a href="/event/28d3d15d-8488-4da2-8746-abc984431e58/special-guest/">Special Guest <time datetime="2026-09-23">23 сентября 2026</time></a></li>
+    <li><a href="/event/212dbcbf-1c2d-4cdb-a461-9a937b8a830f/vecherinka-dj-wrigley-v-cretya-ubud/">Вечеринка DJ Wrigley в Cretya Ubud <time datetime="2026-09-23">23 сентября 2026</time></a></li>
+    <li><a href="/event/e8f676d8-11a4-4822-a1f6-5fac6cad4147/el-club-vol-1-vecherinka-v-muin-bali/">EL CLUB Vol. 1 — вечеринка в MUIN Bali <time datetime="2026-09-23">23 сентября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Бали</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/8caf77ca-251d-40c8-84fc-b55878283c9c/zvukovaya-meditatsiya-s-elementami-reiki-v-adda-yoga/">Звуковая медитация с элементами Reiki в ADDA Yoga</a> <time datetime="2026-09-22">22 сентября 2026</time></li>
+    <li>Следующее: <a href="/event/e100571a-8d55-46a2-9637-402fdb012df4/mafiya-sportivnaya/">Мафия (спортивная)</a> <time datetime="2026-09-22">22 сентября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/bali/">Ближайшие события: Бали</a></p>
+</div>
+
+  </body>
+</html>
