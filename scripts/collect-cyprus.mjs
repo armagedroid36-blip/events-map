@@ -6,6 +6,8 @@
 //      (/api/events?city=...).
 //   3) Cyprus.BZ — русскоязычная афиша острова: страницы событий перечисляются
 //      sitemap-ом, данные лежат в JSON-LD (schema.org/Event).
+//   4) Cyprus.BZ — афиши городов Восточного Кипра (Ая-Напа, Протарас,
+//      Паралимни, Фамагуста): готовый JSON-LD со страницы города.
 // Запуск: GitHub Actions по расписанию или вручную. Переменные окружения:
 // SUPABASE_URL, SUPABASE_SERVICE_ROLE, DEEPSEEK_API_KEY (категория через LLM).
 import { createClient } from '@supabase/supabase-js';
@@ -33,8 +35,9 @@ const GEOCODE_PAUSE_MS = 1100; // лимит Nominatim: не чаще 1 запр
 // шаг может висеть часами (проверено: Cyprus.BZ отдаёт страницы по 30–60 с).
 const BUDGET = {
   visitcyprus: 6 * 60000,
-  cyprusnow: 8 * 60000,
+  cyprusnow: 12 * 60000,
   cyprusbz: 8 * 60000,
+  cyprusbzCities: 5 * 60000,
 };
 // Только выбранные источники (для отладки): ONLY=visitcyprus,cyprusbz
 const ONLY = (process.env.ONLY || '').split(',').map((s) => s.trim()).filter(Boolean);
@@ -271,7 +274,7 @@ async function existingKeys() {
 }
 
 // ===== Запись события =====
-const stats = { visitcyprus: 0, cyprusnow: 0, cyprusbz: 0, skipped: 0, errors: 0 };
+const stats = { visitcyprus: 0, cyprusnow: 0, cyprusbz: 0, cyprusbzCities: 0, skipped: 0, errors: 0 };
 
 async function save(row, seen) {
   const key = normKey(row.title, row.start_date);
@@ -409,24 +412,32 @@ async function collectVisitCyprus(seen, budget) {
 }
 
 // ===== Источник 2: Cyprus Now (агрегатор, координаты площадок) =====
+// Города обходим с квотой на каждый: у агрегатора по 40+ событий на город, и
+// раньше общий лимит выбирали первые четыре города — восточная часть острова
+// (Фамагуста, Ая-Напа, Протарас, Паралимни) не доходила до сбора вообще.
+// Порядок — восточные первыми: они и есть цель (курортные зоны туристов).
+const CYPRUSNOW_CITIES = ['famagusta', 'protaras', 'paralimni', 'larnaca', 'paphos', 'limassol', 'nicosia'];
+
 async function collectCyprusNow(seen, budget) {
-  const cities = ['limassol', 'nicosia', 'larnaca', 'paphos', 'famagusta'];
   const deadline = Date.now() + BUDGET.cyprusnow;
+  // Квота на город: не меньше 15, но так, чтобы всем городам хватило общего бюджета
+  const perCity = Math.max(15, Math.ceil(budget / CYPRUSNOW_CITIES.length));
   let added = 0;
-  console.log('Собираю: Cyprus Now (агрегатор с координатами)...');
-  for (const citySlug of cities) {
+  console.log(`Собираю: Cyprus Now (агрегатор с координатами), квота на город ${perCity}...`);
+  for (const citySlug of CYPRUSNOW_CITIES) {
     if (added >= budget || Date.now() > deadline) break;
     let data;
     try {
-      data = await fetchJson(`https://cyprusnow.app/api/events?city=${citySlug}`, 90000);
+      // limit=200: по умолчанию API отдаёт только 40 событий на город
+      data = await fetchJson(`https://cyprusnow.app/api/events?city=${citySlug}&limit=200`, 90000);
     } catch (e) {
       console.error(`  Cyprus Now ${citySlug}: ${e.message}`);
       continue;
     }
     const events = data?.events || [];
-    console.log(`  ${citySlug}: получено ${events.length}`);
+    let cityAdded = 0;
     for (const ev of events) {
-      if (added >= budget) break;
+      if (added >= budget || cityAdded >= perCity) break;
       const title = decodeEntities(ev.title || ev.name || '').trim();
       const start = String(ev.start_at || ev.start_date || '').slice(0, 10);
       if (!title || !start) continue;
@@ -458,8 +469,12 @@ async function collectCyprusNow(seen, budget) {
         category: 'festival',
         catHint: `Источник: агрегатор Cyprus Now, город ${citySlug}. Тип: ${ev.category || ev.type || 'не указан'}`,
       });
-      if (await save(row, seen)) added++;
+      if (await save(row, seen)) {
+        added++;
+        cityAdded++;
+      }
     }
+    console.log(`  ${citySlug}: в ленте ${events.length}, добавлено ${cityAdded}`);
   }
   stats.cyprusnow = added;
   return added;
@@ -580,6 +595,84 @@ async function collectCyprusBz(seen, budget, websites = new Set()) {
   return added;
 }
 
+// ===== Источник 4: Cyprus.BZ — афиши городов (Восточный Кипр) =====
+// Городские страницы /events/<город> отдают ближайшие события готовым JSON-LD
+// (schema.org/Event): одна страница = ~5 событий, скачивать каждую карточку
+// (30–60 с) не нужно. Так добираем Восточный Кипр, который в общей карте сайта
+// лежит глубоко и до него не доходит бюджет sitemap-обхода.
+const BZ_CITY_PAGES = [
+  ['ayia-napa', 'Ая-Напа'],
+  ['protaras', 'Протарас'],
+  ['paralimni', 'Паралимни'],
+  ['famagusta', 'Фамагуста'],
+];
+
+async function collectCyprusBzCities(seen, budget) {
+  const deadline = Date.now() + BUDGET.cyprusbzCities;
+  let added = 0;
+  console.log('Собираю: Cyprus.BZ, афиши городов Восточного Кипра...');
+  for (const [slug, cityRuName] of BZ_CITY_PAGES) {
+    if (added >= budget || Date.now() > deadline) break;
+    let html;
+    try {
+      html = await fetchPartial(`https://cyprus.bz/events/${slug}`, 60000);
+    } catch (e) {
+      console.error(`  Cyprus.BZ ${slug}: ${e.message}`);
+      continue;
+    }
+    const events = jsonLdEvents(html);
+    let cityAdded = 0;
+    for (const ev of events) {
+      if (added >= budget || cityAdded >= 10) break;
+      const title = decodeEntities(ev.name || '').trim();
+      const start = String(ev.startDate || '').slice(0, 10);
+      if (!title || !start) continue;
+      if (seen.has(normKey(title, start))) {
+        stats.skipped++;
+        continue;
+      }
+      const loc = ev.location || {};
+      const locality = loc.address?.addressLocality || '';
+      const place = loc.name || '';
+      const photos = (Array.isArray(ev.image) ? ev.image : [ev.image])
+        .map((i) => (typeof i === 'string' ? i : i?.url))
+        .filter(Boolean)
+        .slice(0, 3);
+      const priceRaw = ev.offers?.price ?? (Array.isArray(ev.offers) ? ev.offers[0]?.price : undefined);
+      const priceNum = parseFloat(priceRaw);
+      const description = stripHtml(ev.description || '');
+      const lang = /[\u0400-\u04FF]/.test(`${title} ${description}`) ? 'ru' : 'en';
+      const row = await buildRow({
+        title,
+        description,
+        lang,
+        start_date: start,
+        end_date: ev.endDate ? String(ev.endDate).slice(0, 10) : null,
+        start_time: String(ev.startDate || '').slice(11, 16) || null,
+        end_time: String(ev.endDate || '').slice(11, 16) || null,
+        city: cityRu(locality) || cityRu(`${place} ${title}`) || cityRuName,
+        cityEn: locality || slug,
+        venue: place,
+        address: [place, locality].filter(Boolean).join(', '),
+        website: ev.url || `https://cyprus.bz/events/${slug}`,
+        photos,
+        price: Number.isFinite(priceNum) ? priceNum : null,
+        currency: Number.isFinite(priceNum) ? (ev.offers?.priceCurrency || 'eur').toLowerCase() : null,
+        category: 'festival',
+        catHint: `Источник: афиша Cyprus.BZ по городу ${cityRuName} (Восточный Кипр), место: ${place}, ${locality}`,
+      });
+      row.language = lang;
+      if (await save(row, seen)) {
+        added++;
+        cityAdded++;
+      }
+    }
+    console.log(`  ${slug}: событий на странице ${events.length}, добавлено ${cityAdded}`);
+  }
+  stats.cyprusbzCities = added;
+  return added;
+}
+
 // ===== Основной цикл =====
 async function main() {
   const { keys: seen, websites } = await existingKeys();
@@ -589,15 +682,19 @@ async function main() {
   // VisitCyprus отдаёт небольшой официальный календарь (~30 событий),
   // Cyprus Now — самый насыщенный источник, Cyprus.BZ добирает остаток бюджета.
   if (want('visitcyprus')) await collectVisitCyprus(seen, Math.min(60, MAX_EVENTS));
-  if (want('cyprusnow')) await collectCyprusNow(seen, Math.min(80, MAX_EVENTS));
+  if (want('cyprusnow')) await collectCyprusNow(seen, Math.min(120, MAX_EVENTS));
+  if (want('cyprusbzCities')) {
+    await collectCyprusBzCities(seen, Math.min(25, Math.max(0, MAX_EVENTS - stats.visitcyprus - stats.cyprusnow)));
+  }
   if (want('cyprusbz')) {
-    await collectCyprusBz(seen, Math.max(0, MAX_EVENTS - stats.visitcyprus - stats.cyprusnow), websites);
+    await collectCyprusBz(seen, Math.max(0, MAX_EVENTS - stats.visitcyprus - stats.cyprusnow - stats.cyprusbzCities), websites);
   }
 
   const mins = ((Date.now() - started) / 60000).toFixed(1);
   console.log(
-    `Готово: добавлено ${stats.visitcyprus + stats.cyprusnow + stats.cyprusbz} `
-    + `(VisitCyprus ${stats.visitcyprus}, Cyprus Now ${stats.cyprusnow}, Cyprus.BZ ${stats.cyprusbz}), `
+    `Готово: добавлено ${stats.visitcyprus + stats.cyprusnow + stats.cyprusbz + stats.cyprusbzCities} `
+    + `(VisitCyprus ${stats.visitcyprus}, Cyprus Now ${stats.cyprusnow}, `
+    + `Cyprus.BZ города Востока ${stats.cyprusbzCities}, Cyprus.BZ sitemap ${stats.cyprusbz}), `
     + `пропущено ${stats.skipped}, ошибок ${stats.errors}, ${mins} мин.`,
   );
 }
