@@ -969,7 +969,7 @@ export default function Home({
     // не монтируется до клика по кнопке.
     if (introShown) {
       return (
-        <div className="relative h-screen w-full overflow-hidden bg-white">
+        <div className="map-screen relative w-full overflow-hidden bg-white">
           <div className="absolute inset-0 bg-white" />
           <div
             ref={headerRef}
@@ -1079,7 +1079,7 @@ export default function Home({
   })();
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-white">
+    <div className="map-screen relative w-full overflow-hidden bg-white">
       {/* КАРТА НА ВЕСЬ ЭКРАН — фон сайта.
           Пока активен мобильный интро-экран, MapView (maplibre) НЕ монтируем:
           чанк карты и тайлы не запрашиваются до клика по кнопке (мобильный
