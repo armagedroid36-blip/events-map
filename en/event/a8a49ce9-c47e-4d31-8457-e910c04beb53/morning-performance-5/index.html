@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Morning performance 5 — September 23, 2026 · Da Nang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-GA3vRUJu.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CN6jKhgH.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-ixbcFSqM.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-DYO_cZ0p.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CThWRLnG.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro--G1TI1EZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-CSa-KqHE.css" />
+      <meta name="description" content="Da Nang, September 23, 2026. Morning Rave #5 It&#39;s been a while since we had energetic morning dancing, right? It&#39;s time to celebrate life again to selective…" />
+    <link rel="canonical" href="https://mypins.site/en/event/a8a49ce9-c47e-4d31-8457-e910c04beb53/morning-performance-5/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Morning performance 5 — September 23, 2026 · Da Nang" />
+    <meta property="og:description" content="Da Nang, September 23, 2026. Morning Rave #5 It&#39;s been a while since we had energetic morning dancing, right? It&#39;s time to celebrate life again to selective…" />
+    <meta property="og:url" content="https://mypins.site/en/event/a8a49ce9-c47e-4d31-8457-e910c04beb53/morning-performance-5/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/a8a49ce9-c47e-4d31-8457-e910c04beb53/morning-performance-5/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/a8a49ce9-c47e-4d31-8457-e910c04beb53/utrennik-5/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Da Nang","item":"https://mypins.site/en/da-nang/"},{"@type":"ListItem","position":3,"name":"Morning performance 5","item":"https://mypins.site/en/event/a8a49ce9-c47e-4d31-8457-e910c04beb53/morning-performance-5/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Morning performance 5</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-09-23">September 23, 2026</time></p>
+  <p><time datetime="2026-09-23T10:00:00">September 23, 2026, 10:00 AM</time></p>
+  <address>Da Nang</address>
+  <p>50000 VND</p>
+  <p>Morning Rave #5
+
+It&#39;s been a while since we had energetic morning dancing, right?
+It&#39;s time to celebrate life again to selective house and hard-hitting techno with DJ mastodons
+
+Quantum Oracle (res. Gamma fest)
+Taras Wake (res. Mutator club)
+
+Come move energetically and meet up with your friends in your best pajamas. Or not.
+
+Wednesday,
+September 23,
+from 10 to 1 pm
+
+Entry 50k,
+to cover the costs of quality sound.
+
+👉🏼 authentic location in DM for a repost📍
+
+Details at @mitchelka
+
+#date: 23.09.</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/da-nang/">Da Nang</a> <span aria-hidden="true">›</span> <span>Morning performance 5</span></p>
+    <p>More events in Da Nang: <a href="/en/da-nang/">what&#39;s on</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/17f0c063-0550-451f-b732-bfaab8f3e8f3/dance-unity-party-friday-september-11/">DANCE UNITY PARTY FRIDAY, SEPTEMBER 11 <time datetime="2026-09-11">September 11, 2026</time></a></li>
+    <li><a href="/en/event/31081455-7195-4deb-9eb2-040b80c36b56/latin-party-salsa-bachata-kizomba/">LATIN PARTY: SALSA BACHATA KIZOMBA <time datetime="2026-09-12">September 12, 2026</time></a></li>
+    <li><a href="/en/event/a057cf61-a70f-4f24-87b2-b3f6c63c7a83/latin-party-salsa-bachata-kizomba/">LATIN PARTY: SALSA BACHATA KIZOMBA <time datetime="2026-09-19">September 19, 2026</time></a></li>
+    <li><a href="/en/event/a643c26a-ba79-4862-81e9-ceaf684e3449/monday-latino-night-party-in-da-nang/">MONDAY LATINO NIGHT PARTY IN DA NANG <time datetime="2026-09-21">September 21, 2026</time></a></li>
+    <li><a href="/en/event/c0ff70b4-9f9d-4354-913f-20474e74c049/dance-unity-party-friday-september-25/">DANCE UNITY PARTY FRIDAY, SEPTEMBER 25 <time datetime="2026-09-25">September 25, 2026</time></a></li>
+    <li><a href="/en/event/8cecb73e-b5ca-4cf9-be5a-2d2479686f71/this-saturday-latin-party/">THIS SATURDAY LATIN PARTY <time datetime="2026-09-26">September 26, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Da Nang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/83efa3f9-c67c-4d51-a367-e4b27d2919e8/argentine-tango-the-art-of-interaction-in-a-couple/">Argentine tango The art of interaction in a couple</a> <time datetime="2026-09-23">September 23, 2026</time></li>
+    <li>Next: <a href="/en/event/b6334c98-332f-4662-b3f7-b2cfb3957be8/tien-sa-show/">Tien Sa Show</a> <time datetime="2026-09-23">September 23, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/da-nang/">Upcoming events in Da Nang</a></p>
+</div>
+
+  </body>
+</html>

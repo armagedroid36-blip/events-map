@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Film Club: &quot;Brazil&quot; — September 23, 2026 · Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-GA3vRUJu.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CN6jKhgH.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-ixbcFSqM.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-DYO_cZ0p.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CThWRLnG.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro--G1TI1EZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-CSa-KqHE.css" />
+      <meta name="description" content="Bali, September 23, 2026. Sam lives in an absurd world of the future and honestly tries to find his place: works as a low-level clerk, ingratiates himself with…" />
+    <link rel="canonical" href="https://mypins.site/en/event/02057b07-c8e7-46c1-b398-19d44b808f7c/film-club-brazil/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Film Club: &quot;Brazil&quot; — September 23, 2026 · Bali" />
+    <meta property="og:description" content="Bali, September 23, 2026. Sam lives in an absurd world of the future and honestly tries to find his place: works as a low-level clerk, ingratiates himself with…" />
+    <meta property="og:url" content="https://mypins.site/en/event/02057b07-c8e7-46c1-b398-19d44b808f7c/film-club-brazil/" />
+    <meta property="og:image" content="https://static.baliforum.ru/uploads/693956/conversions/2-preview.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/02057b07-c8e7-46c1-b398-19d44b808f7c/film-club-brazil/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/02057b07-c8e7-46c1-b398-19d44b808f7c/kinoklub-braziliya/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Bali","item":"https://mypins.site/en/bali/"},{"@type":"ListItem","position":3,"name":"Film Club: \"Brazil\"","item":"https://mypins.site/en/event/02057b07-c8e7-46c1-b398-19d44b808f7c/film-club-brazil/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Film Club: &quot;Brazil&quot;</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-09-23">September 23, 2026</time></p>
+  <p><time datetime="2026-09-23T18:30:00">September 23, 2026, 6:30 PM</time></p>
+  <address>Jalan Pecatu Indah Raya Resort, Pecatu, Kec. Kuta Sel., Kabupaten Badung, Bali 80362, Indonesia</address>
+  <p>Free</p>
+  <p>Sam lives in an absurd world of the future and honestly tries to find his place: works as a low-level clerk, ingratiates himself with his superiors, obeys his mom... Until he meets a girl he saw in his dreams. Can the lovers break the totalitarian system and escape from under the surveillance of &quot;Big Brother&quot;?
+
+.
+
+Mix Daneliya&#39;s &quot;Kin-dza-dza!&quot;, Orwell&#39;s &quot;1984,&quot; and Kafka&#39;s novels — and you get a Terry Gilliam film. This tragicomedy became one of the main dystopias in cinema history. Absurd, satirical, ridiculous, profound, frightening, hopeful... More than 40 years have passed since filming, and the passions still haven&#39;t subsided. Shall we discuss?
+
+.
+
+Trailer (https://youtu.be/mMx8H-GJpG0?si=B9RCDiBuieVR5wPJ)
+
+Film on Kinopoisk (https://www.kinopoisk.ru/film/483/) | IMDB (https://www.imdb.com/title/tt0088846/)
+
+.
+
+Director — Terry Gilliam
+
+Screenwriters — Terry Gilliam, Tom Stoppard, Charles McKeown
+
+Cast — Jonathan Pryce, Robert De Niro, Katherine Helmond, Ian Holm
+
+Age rating — 18+
+
+Year of release — 1985
+
+Runtime — 2h 12m
+
+.
+
+Date — September 23 (Wed)
+
+Time — 18:30
+
+Venue — BALAGAN Resto &amp; Lounge Bar (https://maps.app.goo.gl/NeJbRyrQ5TFHR5Wo8) (Bukit)
+
+Free entry
+
+.
+
+After the screening — traditional discussion. We&#39;ll talk about the director, the script, the history and influence of the film. We&#39;ll discuss the questions the characters face and the dystopian genre as a whole. We&#39;ll share impressions, thoughts, and emotions.
+
+.
+
+Film club &quot;Atalanta&quot;</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/bali/">Bali</a> <span aria-hidden="true">›</span> <span>Film Club: &quot;Brazil&quot;</span></p>
+    <p>More events in Bali: <a href="/en/bali/">what&#39;s on</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/7d3e7519-f343-4514-92a0-5d286004866c/movie-night-the-mitchells-vs-the-machines-at-yema-bali/">Movie Night: &quot;The Mitchells vs. the Machines&quot; at Yema Bali <time datetime="2026-09-16">September 16, 2026</time></a></li>
+    <li><a href="/en/event/82da5036-5fe9-4159-b3ef-357c99b69538/a-program-of-short-films-from-around-the-world/">A program of short films from around the world. <time datetime="2026-09-16">September 16, 2026</time></a></li>
+    <li><a href="/en/event/a5d992e5-9e12-484a-93c9-047181cc00f2/a-program-of-short-films-from-around-the-world/">A program of short films from around the world. <time datetime="2026-09-17">September 17, 2026</time></a></li>
+    <li><a href="/en/event/4ddfba0d-97e3-4da4-b177-9260acd6b97b/minikino-short-film-week/">Minikino Short Film Week <time datetime="2026-09-17">September 17, 2026</time></a></li>
+    <li><a href="/en/event/750b10a2-005a-4018-952c-5f0fff80488b/a-program-of-short-films-from-around-the-world/">A program of short films from around the world. <time datetime="2026-09-18">September 18, 2026</time></a></li>
+    <li><a href="/en/event/a8bb03bb-63e1-4585-8072-1bf0d780b63f/bali-international-ai-film-festival-2026/">Bali International AI Film Festival 2026 <time datetime="2026-09-30">September 30, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Bali</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/fde5a82c-3995-472b-907b-4364d6d30b8c/volleyball-in-ubud-classic/">Volleyball in Ubud (Classic)</a> <time datetime="2026-09-22">September 22, 2026</time></li>
+    <li>Next: <a href="/en/event/05b01d52-da88-495d-ab34-2cb4b4a128b6/10th-anniversary-of-samasta-bali-experience-the-extraordinary/">10th anniversary of Samasta Bali: &quot;Experience the extraordinary&quot;</a> <time datetime="2026-09-23">September 23, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/bali/">Upcoming events in Bali</a></p>
+</div>
+
+  </body>
+</html>

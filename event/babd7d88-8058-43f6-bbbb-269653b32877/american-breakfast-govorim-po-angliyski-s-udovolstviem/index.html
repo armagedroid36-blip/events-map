@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>American Breakfast говорим по-английски с удовольствием! — 23…</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-GA3vRUJu.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CN6jKhgH.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-ixbcFSqM.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-DYO_cZ0p.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CThWRLnG.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro--G1TI1EZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-CSa-KqHE.css" />
+      <meta name="description" content="Дананг, 23 сентября 2026. American Breakfast — говорим по-английски с удовольствием! 🇺🇸 🌿 На прошлой встрече мы обсудили судебный процесс по делу об…" />
+    <link rel="canonical" href="https://mypins.site/event/babd7d88-8058-43f6-bbbb-269653b32877/american-breakfast-govorim-po-angliyski-s-udovolstviem/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="American Breakfast говорим по-английски с удовольствием! — 23…" />
+    <meta property="og:description" content="Дананг, 23 сентября 2026. American Breakfast — говорим по-английски с удовольствием! 🇺🇸 🌿 На прошлой встрече мы обсудили судебный процесс по делу об…" />
+    <meta property="og:url" content="https://mypins.site/event/babd7d88-8058-43f6-bbbb-269653b32877/american-breakfast-govorim-po-angliyski-s-udovolstviem/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/babd7d88-8058-43f6-bbbb-269653b32877/american-breakfast-govorim-po-angliyski-s-udovolstviem/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/babd7d88-8058-43f6-bbbb-269653b32877/american-breakfast-speaking-english-with-pleasure/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Дананг","item":"https://mypins.site/da-nang/"},{"@type":"ListItem","position":3,"name":"American Breakfast говорим по-английски с удовольствием!","item":"https://mypins.site/event/babd7d88-8058-43f6-bbbb-269653b32877/american-breakfast-govorim-po-angliyski-s-udovolstviem/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>American Breakfast говорим по-английски с удовольствием!</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-09-23">23 сентября 2026</time></p>
+  <p><time datetime="2026-09-23T11:00:00">23 сентября 2026, 11:00</time></p>
+  <address>Дананг</address>
+  <p>150000 VND</p>
+  <p>American Breakfast — говорим по-английски с удовольствием! 🇺🇸
+
+🌿 На прошлой встрече мы обсудили судебный процесс по делу об убийстве Kinsey Clancy и поговорили о том, должны ли проблемы с психическим здоровьем влиять на приговор.
+🌍 Вспомнили, что мы смотрели в детстве — от Nickelodeon до Disney — и сравнили это с тем, что дети смотрят сегодня. А ещё поговорили о вьетнамском языке и вьетнамцах.
+А о чём вы захотите поговорить в этот раз? 💬
+
+Макс из США 🇺🇸 создаёт пространство, где можно высказаться, поспорить и найти слова для своих мыслей — на настоящем английском.
+
+Почему это не просто разговорный клуб?
+
+☕️ Живой английский за “завтраком”
+Макс поделится актуальной лексикой и грамматикой — так, как реально говорят в Америке.
+💬 Практика + персональный фидбек
+Вы разговариваете — он слушает, помогает исправить ошибки и звучать естественно.
+😄 Лёгкая и весёлая атмосфера
+Без стресса и скучных правил — только живое общение, юмор и поддержка.
+🍳 Формат American Breakfast:
+немного полезной лексики и грамматики + много разговорной практики + классная компания
+👥 Для кого?
+Если ты хочешь разговориться, прокачать уверенность и наконец начать использовать английский в речи — тебе к нам.
+
+❗️Участие: 150.000 VND
+⏰ Время: среда, 23 сентября, 11.00
+📅 Мест всего 8 — успей записаться!
+
+Запись и по любым вопросам @infraredfade
+#дата: 23.09</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/da-nang/">Дананг</a> <span aria-hidden="true">›</span> <span>American Breakfast говорим по-английски с удовольствием!</span></p>
+    <p>Ещё события в Дананге: <a href="/da-nang/">афиша</a> · <a href="/da-nang/speaking/">💬 Разговорный клуб</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/832b98cb-91fb-4349-b56b-ad6dacf5a3a6/american-breakfast-govorim-po-angliyski-s-udovolstviem/">American Breakfast говорим по-английски с удовольствием! <time datetime="2026-09-02">2 сентября 2026</time></a></li>
+    <li><a href="/event/44e749b9-fe41-41af-a5b7-c01c0e42d2af/inglish-rasshiryaet-granitsy-no-inogda-ikh-nuzhno-zashchitit-vyrazit-agressiyu-pokazat-zubki-u-know/">инглиш расширяет границы, но иногда их нужно защитить, выразить агрессию, показать зубки, u know <time datetime="2026-09-05">5 сентября 2026</time></a></li>
+    <li><a href="/event/d857b9e0-f067-4f9a-be16-c19da163b753/druzya/">Друзья! <time datetime="2026-09-06">6 сентября 2026</time></a></li>
+    <li><a href="/event/b0345de8-b9cb-481d-ba75-244528a3da6b/american-breakfast-govorim-po-angliyski-s-udovolstviem/">American Breakfast говорим по-английски с удовольствием! <time datetime="2026-09-16">16 сентября 2026</time></a></li>
+    <li><a href="/event/e439df69-660f-4666-91b9-b768bced2a46/druzya/">Друзья! <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/45367749-1e7b-475b-937d-12933498c36f/english-speaking-game-club-dlya-podrostkov/">ENGLISH SPEAKING GAME CLUB для подростков <time datetime="2026-09-25">25 сентября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Дананг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/b6334c98-332f-4662-b3f7-b2cfb3957be8/ti-n-sa-show/">Tiên Sa Show</a> <time datetime="2026-09-23">23 сентября 2026</time></li>
+    <li>Следующее: <a href="/event/ed70c64b-a8d0-4176-9432-a4ff0102cee8/druzya-sobiraemsya-zavtra-na-igru-tas-v-restorane-369-budet-osobenno-zharko/">Друзья, собираемся завтра на игру ТАС в ресторане 369, будет особенно жарко!</a> <time datetime="2026-09-23">23 сентября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/da-nang/">Ближайшие события: Дананг</a></p>
+</div>
+
+  </body>
+</html>
