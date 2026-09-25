@@ -235,6 +235,73 @@ async function archive(ids) {
   return archived;
 }
 
+/** Удалить архивные КОПИИ одного события.
+ *
+ * Зачем: архивация (archive()) не удаляет дубль, а переводит его в status
+ * 'archived' — страницы архивных событий публикуются с 21.09.2026, поэтому
+ * каждая копия остаётся в индексе со своим URL и одинаковым title (25.09.2026:
+ * в базе накопилось 1492 архивных копии и 10 групп одинаковых title на разных
+ * id). Здесь копии убираются физически — по строгому ключу (название + дата +
+ * город + время + адрес) и ТОЛЬКО со статусом 'archived': живые карточки
+ * (active/moderation/needs_changes/rejected) не удаляются никогда.
+ * Бэкап перед прогоном: ежедневный дамп Supabase; лог удаляемых id — в выводе.
+ * Отключить: PRUNE_ARCHIVED=0.
+ */
+async function pruneArchivedCopies() {
+  if (process.env.PRUNE_ARCHIVED === '0') {
+    console.log('Удаление архивных копий отключено (PRUNE_ARCHIVED=0).');
+    return;
+  }
+  const rows = await selectAll(db, 'events',
+    'id, title, title_ru, start_date, start_time, city, address, status, created_at',
+    { log: (m) => console.log(`  ${m}`) });
+  const rank = { active: 0, moderation: 1, needs_changes: 2, rejected: 3, archived: 4 };
+  const strictKey = (e) => [
+    norm(e.title_ru || e.title).replace(/[^\p{L}\p{N}]+/gu, ''),
+    e.start_date,
+    norm(e.city),
+    e.start_time || '',
+    norm(e.address),
+  ].join('|');
+  const groups = new Map();
+  for (const e of rows) {
+    const k = strictKey(e);
+    if (!groups.has(k)) groups.set(k, []);
+    groups.get(k).push(e);
+  }
+  const toDelete = [];
+  for (const g of groups.values()) {
+    if (g.length < 2) continue;
+    const sorted = [...g].sort((a, b) => {
+      const s = (rank[a.status] ?? 9) - (rank[b.status] ?? 9);
+      if (s !== 0) return s;
+      return String(a.created_at).localeCompare(String(b.created_at));
+    });
+    for (const e of sorted.slice(1)) {
+      if (e.status === 'archived') toDelete.push(e.id);
+    }
+  }
+  if (!toDelete.length) {
+    console.log('Архивные копии: не найдено.');
+    return;
+  }
+  console.log(`Архивные копии одного события (строгий ключ): ${toDelete.length}`);
+  for (let i = 0; i < toDelete.length; i += CHUNK) {
+    const part = toDelete.slice(i, i + CHUNK);
+    if (DRY_RUN) {
+      console.log(`  [DRY] удалить: ${part.join(', ')}`);
+      continue;
+    }
+    const { error } = await db.from('events').delete().in('id', part);
+    if (error) {
+      console.error(`  Ошибка удаления (${part.length} шт.): ${error.message}`);
+      continue;
+    }
+    console.log(`  удалено: ${part.length}`);
+  }
+  console.log(`${DRY_RUN ? 'Будет удалено' : 'Удалено'} архивных копий: ${toDelete.length}`);
+}
+
 /** Поля, которые переносим из дубля в оставленную карточку, если у неё они пустые */
 const ENRICH_FIELDS = [
   'start_time', 'end_time', 'address', 'photos', 'price', 'currency', 'contact',
@@ -362,6 +429,11 @@ async function main() {
     console.log(`Контроль: карточек в ${STATUSES.join('/')} — ${after.length} (${STATUSES.map((s) => `${s}=${byStatusAfter[s] || 0}`).join(', ')})`);
     console.log(`Контроль: групп дублей осталось — ${leftGroups.length}`);
   }
+
+  // После склейки живых карточек — убрать архивные КОПИИ (иначе каждая копия
+  // остаётся публичной страницей с тем же title и копит сирот в индексе).
+  console.log('');
+  await pruneArchivedCopies();
 }
 
 main().catch((e) => {
