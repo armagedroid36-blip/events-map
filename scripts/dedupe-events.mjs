@@ -252,6 +252,44 @@ async function pruneArchivedCopies() {
     console.log('Удаление архивных копий отключено (PRUNE_ARCHIVED=0).');
     return;
   }
+  // Сначала — живые близнецы (два источника об одном событии: названия
+  // различаются хвостом, но совпадают дата, время и адрес и первые слова
+  // названия). Их не удаляем, а архивируем — обратимо и совпадает с
+  // поведением основного прохода dedupe. Пример: «10th Rural Culture Festival
+  // - Paralimni, Municipality of Par…» и «… by KOAP in Protaras» — один
+  // фестиваль 2 октября на Lefkolla Municipal Square.
+  const liveRows = await selectAll(db, 'events',
+    'id, title, title_ru, start_date, start_time, address, status, created_at',
+    { filter: (q) => q.in('status', STATUSES) });
+  const prefixKey = (e) => {
+    const words = norm(e.title_ru || e.title).replace(/[^\p{L}\p{N}]+/gu, ' ').trim().split(/\s+/).slice(0, 3).join(' ');
+    const addr = norm(e.address);
+    if (!words || !addr || !e.start_time) return null;
+    return [e.start_date, e.start_time, addr, words].join('|');
+  };
+  const liveGroups = new Map();
+  for (const e of liveRows) {
+    const k = prefixKey(e);
+    if (!k) continue;
+    if (!liveGroups.has(k)) liveGroups.set(k, []);
+    liveGroups.get(k).push(e);
+  }
+  const toArchive = [];
+  for (const g of liveGroups.values()) {
+    if (g.length < 2) continue;
+    const sorted = [...g].sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)));
+    for (const e of sorted.slice(1)) toArchive.push(e.id);
+  }
+  if (toArchive.length) {
+    console.log('');
+    console.log(`Живые близнецы (совпали дата, время, адрес и начало названия): ${toArchive.length}`);
+    for (const id of toArchive) console.log(`  архивируем: ${id}`);
+    if (!DRY_RUN) {
+      const n = await archive(toArchive);
+      console.log(`Заархивировано близнецов: ${n}`);
+    }
+  }
+
   const rows = await selectAll(db, 'events',
     'id, title, title_ru, start_date, start_time, city, address, status, created_at',
     { log: (m) => console.log(`  ${m}`) });
@@ -269,25 +307,33 @@ async function pruneArchivedCopies() {
     if (!groups.has(k)) groups.set(k, []);
     groups.get(k).push(e);
   }
-  const toDelete = [];
-  for (const g of groups.values()) {
-    if (g.length < 2) continue;
-    const sorted = [...g].sort((a, b) => {
+  const toDelete = new Set();
+  const pickLosers = (list) => {
+    const sorted = [...list].sort((a, b) => {
       const s = (rank[a.status] ?? 9) - (rank[b.status] ?? 9);
       if (s !== 0) return s;
       return String(a.created_at).localeCompare(String(b.created_at));
     });
     for (const e of sorted.slice(1)) {
-      if (e.status === 'archived') toDelete.push(e.id);
+      if (e.status === 'archived') toDelete.add(e.id);
     }
+  };
+  for (const g of groups.values()) {
+    if (g.length >= 2) pickLosers(g);
   }
-  if (!toDelete.length) {
+  // Второй проход (по адресу+дате+времени) НЕ применяем: проверка на dry-run
+  // 25.09.2026 показала, что под него попадают РАЗНЫЕ события одной программы в
+  // одном месте и время («Искусство и Бали 2026» и «Международная ярмарка…» в
+  // Nuanu Creative City; две разные программы кинофестиваля Minikino) — 24 из 26
+  // находок ложные. Совпадать должны название И место, иначе удаление вредит.
+  if (!toDelete.size) {
     console.log('Архивные копии: не найдено.');
     return;
   }
-  console.log(`Архивные копии одного события (строгий ключ): ${toDelete.length}`);
-  for (let i = 0; i < toDelete.length; i += CHUNK) {
-    const part = toDelete.slice(i, i + CHUNK);
+  const deleteIds = [...toDelete];
+  console.log(`Архивные копии одного события: ${deleteIds.length}`);
+  for (let i = 0; i < deleteIds.length; i += CHUNK) {
+    const part = deleteIds.slice(i, i + CHUNK);
     if (DRY_RUN) {
       console.log(`  [DRY] удалить: ${part.join(', ')}`);
       continue;
@@ -299,7 +345,7 @@ async function pruneArchivedCopies() {
     }
     console.log(`  удалено: ${part.length}`);
   }
-  console.log(`${DRY_RUN ? 'Будет удалено' : 'Удалено'} архивных копий: ${toDelete.length}`);
+  console.log(`${DRY_RUN ? 'Будет удалено' : 'Удалено'} архивных копий: ${deleteIds.length}`);
 }
 
 /** Поля, которые переносим из дубля в оставленную карточку, если у неё они пустые */
