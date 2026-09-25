@@ -118,6 +118,12 @@ const CITY_PAGES = [
     description:
       'Мероприятия в Нячанге: вечеринки, концерты, шоу и встречи. Афиша с датами, местами и ценами для туристов и экспатов.',
   },
+  {
+    path: 'cyprus',
+    title: 'Мероприятия на Кипре: афиша и куда сходить | Events in Cyprus',
+    description:
+      'Мероприятия на Кипре: фестивали, концерты, спорт и экскурсии в Лимасоле, Никосии, Ларнаке, Пафосе и Ая-Напе. Афиша с датами, местами и ценами.',
+  },
 ];
 
 // --- Видимый SEO-текст городских страниц (h1 + интро + FAQ), RU. Эти же
@@ -179,6 +185,25 @@ const CITY_SEO = {
       {
         q: 'Сколько стоят события в Нячанге?',
         a: 'В карточке события указана цена: бесплатно, донат или сумма в нужной валюте. Фильтр цены покажет только бесплатные события, если нужно.',
+      },
+    ],
+  },
+  cyprus: {
+    h1: 'Мероприятия и события на Кипре',
+    intro:
+      'Кипр живёт событиями почти круглый год: зимой это концерты и театр в Никосии и Лимасоле, весной и осенью — фестивали вина и урожая, летом — open-air вечеринки Ая-Напы, Протараса и Ларнаки. На карте MyPins собрана афиша по всему острову: Лимасол, Никосия, Ларнака, Пафос, Ая-Напа, Паралимни, Протарас, Полис и Фамагуста. Афиша обновляется организаторами: даты, места и цены всегда актуальные. Фильтры по дате, категории, цене и языку помогут найти событие на вечер, выходные или целую поездку.',
+    faq: [
+      {
+        q: 'Какие мероприятия проходят на Кипре?',
+        a: 'Фестивали и винные праздники, концерты классической и греческой музыки, театр и выставки, спортивные забеги и регаты, кулинарные и ремесленные мастер-классы. Большая часть афиши — Лимасол, Никосия, Ларнака и Пафос, курортные события летом — в Ая-Напе и Протарасе.',
+      },
+      {
+        q: 'Как найти события в своём городе на Кипре?',
+        a: 'Приблизьте карту к нужному городу — список покажет события на видимой области. Ниже есть ссылки на города и категории: например, концерты в Лимасоле или фестивали в Пафосе. В фильтрах можно оставить только нужную дату, категорию или язык события.',
+      },
+      {
+        q: 'Есть ли на Кипре бесплатные события?',
+        a: 'Да, много муниципальных фестивалей, ярмарок и праздников в деревнях проходят бесплатно. В фильтре цены выберите «Бесплатные» или «Донат»: в карточке события цена указана всегда — бесплатно, донат или сумма в евро.',
       },
     ],
   },
@@ -244,6 +269,25 @@ const CITY_SEO_EN = {
       },
     ],
   },
+  cyprus: {
+    h1: 'Events and things to do in Cyprus',
+    intro:
+      "Cyprus keeps an event calendar almost all year round: winter brings concerts and theatre to Nicosia and Limassol, spring and autumn bring wine and harvest festivals, and summer fills Ayia Napa, Protaras and Larnaca with open-air parties. MyPins maps what is on across the island — Limassol, Nicosia, Larnaca, Paphos, Ayia Napa, Paralimni, Protaras, Polis and Famagusta. Organizers publish their own events, so dates, venues and prices stay fresh. Filter by date, category, price or language to plan an evening, a weekend or a whole trip.",
+    faq: [
+      {
+        q: 'What events are happening in Cyprus?',
+        a: 'Festivals and wine celebrations, classical and Greek music concerts, theatre and exhibitions, running races and regattas, food and craft workshops. Most listings are in Limassol, Nicosia, Larnaca and Paphos, while the resort towns Ayia Napa and Protaras take over in summer.',
+      },
+      {
+        q: 'How do I find events in a particular Cypriot city?',
+        a: 'Zoom the map to the city you need — the list shows events on the visible area. The city and category links below help too: concerts in Limassol or festivals in Paphos. Filters let you keep only the date, category or language you want.',
+      },
+      {
+        q: 'Are there free events in Cyprus?',
+        a: 'Yes — many municipal festivals, fairs and village celebrations are free to attend. In the price filter choose “Free” or “Donation”: every event card shows the price as free, donation or an amount in euro.',
+      },
+    ],
+  },
 };
 
 // EN-версии title/description городских страниц (для /en/<city>/).
@@ -265,6 +309,12 @@ const CITY_PAGES_EN = [
     title: 'Events in Nha Trang: concerts, shows and parties | MyPins',
     description:
       'Nha Trang events map for travellers and expats: concerts, shows, parties and speaking clubs with dates, venues and prices.',
+  },
+  {
+    path: 'cyprus',
+    title: "Events in Cyprus: concerts, festivals and what's on | MyPins",
+    description:
+      'Cyprus events map for travellers and expats: festivals, concerts, sport and tours in Limassol, Nicosia, Larnaca, Paphos, Ayia Napa with dates and prices.',
   },
 ];
 
@@ -976,6 +1026,24 @@ function snippet(text, max) {
   return `${head}…`;
 }
 
+/** Заголовок событийной страницы: дата и город присутствуют ВСЕГДА, обрезается
+ * только название. snippet() режет строку с конца, поэтому собрать
+ * «название — дата · город» и отдать в snippet(…, 65) нельзя: длинное название
+ * съедало сначала город, потом дату (713 страниц без года, пары RU/EN одного
+ * события с идентичным заголовком). Бюджет названия считается от хвоста:
+ * 65 − хвост − « — » − запас на многоточие. Дата и город не режутся никогда,
+ * даже если название придётся сжать до MIN_NAME знаков. */
+const EVENT_TITLE_MAX = 65;
+const EVENT_TITLE_MIN_NAME = 20;
+
+function eventTitle(name, date, city, lang = 'ru') {
+  const tail = [date, city].filter(Boolean).join(' · ');
+  const cleanName = cleanText(name) || (lang === 'en' ? 'Event' : 'Событие');
+  if (!tail) return snippet(cleanName, EVENT_TITLE_MAX);
+  const budget = Math.max(EVENT_TITLE_MIN_NAME, EVENT_TITLE_MAX - tail.length - 4);
+  return `${snippet(cleanName, budget)} — ${tail}`;
+}
+
 /**
  * Распознавание города события по ev.city → русское имя и путь городской
  * страницы для хлебной крошки. Регистронезависимо, поиск подстроки в
@@ -998,6 +1066,24 @@ function cityCrumb(rawCity) {
   if (baliKeys.some((k) => city.includes(k))) {
     return { name: 'Бали', path: 'bali' };
   }
+  // Кипр: городская страница одна на всю страну (/cyprus/) — отдельные города
+  // публикуем только когда в городе наберётся >=25 активных событий, иначе это
+  // тонкий контент. Распознаём и страну, и кипрские города (в поле city данные
+  // приходят как «Лимасол, Кипр», поэтому «кипр»/«cyprus» — основной ключ).
+  const cyprusKeys = [
+    'кипр', 'cyprus',
+    'лимасол', 'limassol', 'lemesos', 'lemessos',
+    'никосия', 'nicosia', 'lefkosia', 'lefkosa', 'strovolos', 'latsia',
+    'ларнака', 'larnaca', 'larnaka',
+    'пафос', 'paphos', 'pafos', 'peyia', 'pegeia', 'kouklia',
+    'фамагуста', 'famagusta', 'ammochostos',
+    'ая-напа', 'ая напа', 'ayia napa', 'agia napa', 'ayanapa',
+    'паралимни', 'paralimni', 'протарас', 'protaras', 'дериния', 'deryneia',
+    'полис', 'polis', 'latchi',
+  ];
+  if (cyprusKeys.some((k) => city.includes(k))) {
+    return { name: 'Кипр', path: 'cyprus' };
+  }
   return null;
 }
 
@@ -1007,6 +1093,7 @@ const CITY_NAME_EN = {
   bali: 'Bali',
   'da-nang': 'Da Nang',
   'nha-trang': 'Nha Trang',
+  cyprus: 'Cyprus',
 };
 
 /** RU-имя города в ПРЕДЛОЖНОМ падеже для строки «Ещё события <город>: афиша»
@@ -1017,6 +1104,7 @@ const CITY_NAME_RU_LOCATIVE = {
   bali: 'на Бали',
   'da-nang': 'в Дананге',
   'nha-trang': 'в Нячанге',
+  cyprus: 'на Кипре',
 };
 
 /**
@@ -1339,9 +1427,13 @@ function eventJsonLd(ev, url, lang = 'ru', image = null, mode = 'active') {
   // (нет полей artists/lineup) — состав выдумывать нельзя.
   // inLanguage = язык СТРАНИЦЫ, а не источника события: EN-версия
   // (/en/event/*, name/description уже EN) всегда 'en', даже если оригинал
-  // события RU. RU-страницы — как раньше (languages[0] || language ||
-  // source_lang).
+  // события RU. RU-страница кипрского события — 'ru': текстовый слой и
+  // интерфейс страницы русские, а source_lang у собранных кипрских карточек
+  // почти всегда 'en' (данные VisitCyprus/Cyprus Now), из-за чего разметка
+  // противоречила странице. Прочие RU-страницы — как раньше (languages[0] ||
+  // language || source_lang).
   if (en) doc.inLanguage = 'en';
+  else if (cityCrumb(ev.city)?.path === 'cyprus') doc.inLanguage = 'ru';
   else if (langField) doc.inLanguage = langField;
 
   // Хлебная крошка: Главная/Home > город (если распознан по ev.city) >
@@ -1539,15 +1631,22 @@ function writePage(baseHtml, path, meta) {
  * SPA удаляет его (main.tsx) и рисует свой локализованный блок. Контент
  * вопросов-ответов остаётся в DOM (details). evs — уже отфильтрованные и
  * отсортированные события города; пусто → секции событий нет. */
-function citySeoHtml(seo, evs, categoriesHtml = '') {
+function citySeoHtml(seo, evs, categoriesHtml = '', cityPathKey = '') {
   const faq = seo.faq
     .map(
       (f) =>
         `    <details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`,
     )
     .join('\n');
+  const cityName = CAT_CITY_CRUMB_RU[cityPathKey] || '';
   const lines = [
     '<div id="seo-city-block">',
+    // Видимая крошка «Главная › Кипр › Афиша» — та же иерархия, что
+    // BreadcrumbList в JSON-LD страницы (cityJsonLd), как на посадках
+    // «город × категория» (categorySeoHtml).
+    `  <nav aria-label="${esc(CRUMB_TEXT.ru.aria)}">`,
+    `    <p><a href="/">${esc(CRUMB_TEXT.ru.home)}</a> <span aria-hidden="true">›</span> <span>${esc(cityName)}</span> <span aria-hidden="true">›</span> <span>Афиша</span></p>`,
+    '  </nav>',
     `  <h1>${esc(seo.h1)}</h1>`,
     `  <p>${esc(seo.intro)}</p>`,
     // Свежесть афиши (E-E-A-T): видимая дата обновления на дату сборки.
@@ -1785,22 +1884,30 @@ function mapIntroSeoHtml(previewUrl, lang = 'ru') {
  * события /en/event/<id>/<slugify(title_en||title)>/ (п. 2.3: страницы
  * сгенерированы пре-рендером — битых ссылок нет).
  */
-function citySeoHtmlEn(seo, evs, categoriesHtml = '') {
+function citySeoHtmlEn(seo, evs, categoriesHtml = '', cityPathKey = '') {
   const faq = seo.faq
     .map(
       (f) =>
         `    <details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`,
     )
     .join('\n');
+  const cityName = CAT_CITY_NAME_EN[cityPathKey] || '';
   const lines = [
     '<div id="seo-city-block">',
+    // Видимая крошка «Home › Cyprus › What's on» — та же иерархия, что
+    // BreadcrumbList в JSON-LD страницы (cityJsonLd).
+    `  <nav aria-label="${esc(CRUMB_TEXT.en.aria)}">`,
+    `    <p><a href="/en/">${esc(CRUMB_TEXT.en.home)}</a> <span aria-hidden="true">›</span> <span>${esc(cityName)}</span> <span aria-hidden="true">›</span> <span>What's on</span></p>`,
+    '  </nav>',
     `  <h1>${esc(seo.h1)}</h1>`,
     `  <p>${esc(seo.intro)}</p>`,
     `  <p class="seo-updated">Updated: <time datetime="${TODAY_ISO}">${enDate(TODAY_ISO)}</time></p>`,
   ];
   if (Array.isArray(evs) && evs.length) {
-    // «Events in Bali» → «Upcoming events in Bali» (суффикс h1 переиспользуется)
-    const where = seo.h1.replace(/^Events in\s+/, '');
+    // «Events in Bali» / «Events and things to do in Cyprus» → «Upcoming events
+    // in …» (падежная часть h1 переиспользуется; второй шаблон — для Кипра,
+    // где h1 сформулирован иначе, чем у городов ЮВА).
+    const where = seo.h1.replace(/^(?:Events and things to do in|Events in)\s+/, '');
     lines.push(`  <h2>Upcoming events in ${esc(where)}</h2>`, '  <ul>');
     for (const ev of evs) {
       const sd = nextOccurrenceDate(ev, TODAY_ISO);
@@ -1847,6 +1954,73 @@ function faqPageJsonLd(faq) {
       acceptedAnswer: { '@type': 'Answer', text: f.a },
     })),
   };
+}
+
+/** JSON-LD городской страницы (/cyprus/, /bali/, /en/…): @graph
+ * [CollectionPage, ItemList ближайших событий, BreadcrumbList «Главная > Город >
+ * Афиша», FAQPage]. Иерархия крошки та же, что у видимой (citySeoHtml), и та же
+ * форма, что у страниц «город × категория» (categoryJsonLd). Город с
+ * распознаванием cityCrumb: name — RU/EN имя города (Кипр/Cyprus). */
+function cityJsonLd(seo, evs, path, lang) {
+  const en = lang === 'en';
+  const url = `${SITE_URL}${en ? '/en' : ''}/${path}/`;
+  const cityName = en
+    ? CAT_CITY_NAME_EN[path] || path
+    : CAT_CITY_CRUMB_RU[path] || path;
+  const graph = [
+    {
+      '@type': 'CollectionPage',
+      url,
+      name: seo?.h1 || cityName,
+      inLanguage: en ? 'en' : 'ru',
+      isPartOf: {
+        '@type': 'WebSite',
+        name: 'MyPins',
+        url: `${SITE_URL}${en ? '/en' : ''}/`,
+      },
+    },
+  ];
+  if (Array.isArray(evs) && evs.length) {
+    graph.push({
+      '@type': 'ItemList',
+      numberOfItems: evs.length,
+      itemListOrder: 'https://schema.org/ItemListOrderAscending',
+      itemListElement: evs.map((ev, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: en
+          ? ev.title_en || ev.title || ''
+          : ev.title_ru || ev.title || ev.title_en || '',
+        url: `${SITE_URL}${en ? '/en' : ''}/event/${ev.id}/${slugify(
+          en ? ev.title_en || ev.title : ev.title,
+        )}/`,
+      })),
+    });
+  }
+  graph.push({
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: en ? 'Home' : 'Главная',
+        item: `${SITE_URL}${en ? '/en' : ''}/`,
+      },
+      { '@type': 'ListItem', position: 2, name: cityName, item: url },
+      { '@type': 'ListItem', position: 3, name: en ? "What's on" : 'Афиша', item: url },
+    ],
+  });
+  if (seo?.faq?.length) {
+    graph.push({
+      '@type': 'FAQPage',
+      mainEntity: seo.faq.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    });
+  }
+  return { '@context': 'https://schema.org', '@graph': graph };
 }
 
 // --- Серии событий: одно название + одно место, много дат (промпт SEO-Гуру) ---
@@ -2782,8 +2956,7 @@ function eventPageMetaFor(ev, lang, opts) {
     const prefixEn = [cityEn, dateEn].filter(Boolean).join(', ');
     const descriptionEn = snippet(prefixEn ? `${prefixEn}. ${enText}` : enText, 160);
     const titleEn =
-      snippet([`${nameEn} — ${enDate(occurrence(ev))}`, cityEn].filter(Boolean).join(' · '), 65) ||
-      'Event';
+      eventTitle(nameEn, enDate(occurrence(ev)), cityEn, 'en') || 'Event';
     return {
       lang: 'en',
       title: titleEn,
@@ -2803,8 +2976,7 @@ function eventPageMetaFor(ev, lang, opts) {
     };
   }
   const title =
-    snippet([`${ev.title} — ${ruDate(occurrence(ev))}`, city].filter(Boolean).join(' · '), 65) ||
-    'Событие';
+    eventTitle(ev.title, ruDate(occurrence(ev)), city, 'ru') || 'Событие';
   const ruText = ev.description_ru || ev.description || ev.description_en || '';
   const prefix = [city, ruDate(ev.start_date)].filter(Boolean).join(', ');
   const description = snippet(prefix ? `${prefix}. ${ruText}` : ruText, 160);
@@ -2953,11 +3125,11 @@ function assertMinCategoryEventsSync() {
 }
 
 /** RU/EN названия городов по пути (как в JSON-LD и городских страницах) */
-const CAT_CITY_NAME_EN = { bali: 'Bali', 'da-nang': 'Da Nang', 'nha-trang': 'Nha Trang' };
+const CAT_CITY_NAME_EN = { bali: 'Bali', 'da-nang': 'Da Nang', 'nha-trang': 'Nha Trang', cyprus: 'Cyprus' };
 /** Предлог + город в предложном падеже (RU): «на Бали», «в Дананге» */
-const CAT_CITY_WHERE_RU = { bali: 'на Бали', 'da-nang': 'в Дананге', 'nha-trang': 'в Нячанге' };
+const CAT_CITY_WHERE_RU = { bali: 'на Бали', 'da-nang': 'в Дананге', 'nha-trang': 'в Нячанге', cyprus: 'на Кипре' };
 /** RU-имя города для крошки/ссылок (как CITY_PAGES) */
-const CAT_CITY_CRUMB_RU = { bali: 'Бали', 'da-nang': 'Дананг', 'nha-trang': 'Нячанг' };
+const CAT_CITY_CRUMB_RU = { bali: 'Бали', 'da-nang': 'Дананг', 'nha-trang': 'Нячанг', cyprus: 'Кипр' };
 
 /** «на Бали» / «в Дананге» (RU), «in Bali» (EN) */
 function catWhere(path, lang) {
@@ -3077,6 +3249,18 @@ const CAT_CITY_BLURB = {
       'Nha Trang is the resort capital of southern Vietnam.',
       'In Nha Trang events run along the promenade.',
       'Nha Trang lives by the sea: the promenade and the north.',
+    ],
+  },
+  cyprus: {
+    ru: [
+      'Кипр — остров с афишей по всему побережью.',
+      'На Кипре события идут от Лимасола до Ая-Напы.',
+      'Кипр живёт событиями: Лимасол, Никосия, Ларнака, Пафос.',
+    ],
+    en: [
+      'Cyprus keeps an event calendar along the whole coast.',
+      'In Cyprus events run from Limassol to Ayia Napa.',
+      'Cyprus runs on events: Limassol, Nicosia, Larnaca, Paphos.',
     ],
   },
 };
@@ -4215,8 +4399,9 @@ async function main() {
         ),
       )
       .slice(0, MAX_CITY_EVENTS);
-    // FAQPage (отдельным ld+json-скриптом) — только если у города есть faq
-    const faqLd = seo?.faq?.length ? faqPageJsonLd(seo.faq) : null;
+    // JSON-LD городской страницы: CollectionPage + ItemList ближайших событий +
+    // BreadcrumbList «Главная > Кипр > Афиша» + FAQPage (если есть faq)
+    const cityLd = seo ? cityJsonLd(seo, cityEvs, c.path, 'ru') : null;
     writePage(baseHtml, c.path, {
       lang: 'ru',
       title: c.title,
@@ -4226,14 +4411,14 @@ async function main() {
       ogDescription: c.description,
       ogUrl: url,
       ogImage: LOGO_URL,
-      jsonLd: faqLd,
+      jsonLd: cityLd,
       hreflang: [
         { hreflang: 'ru', href: url },
         { hreflang: 'en', href: enUrl },
         { hreflang: 'x-default', href: enRoot },
       ],
       bodySeo: seo
-        ? citySeoHtml(seo, cityEvs, cityCategoriesHtml(c.path, 'ru', cells).html) +
+        ? citySeoHtml(seo, cityEvs, cityCategoriesHtml(c.path, 'ru', cells).html, c.path) +
           cityArchiveBlockHtml(c.path, 'ru', archiveByCityRu.get(c.path) ?? [])
         : null,
       // Мобильное интро в статике: превью карты города (как в SPA
@@ -4269,7 +4454,7 @@ async function main() {
         ),
       )
       .slice(0, MAX_CITY_EVENTS);
-    const faqLd = seo?.faq?.length ? faqPageJsonLd(seo.faq) : null;
+    const cityLdEn = seo ? cityJsonLd(seo, cityEvs, c.path, 'en') : null;
     writePage(baseHtml, `en/${c.path}`, {
       lang: 'en',
       title: c.title,
@@ -4279,14 +4464,14 @@ async function main() {
       ogDescription: c.description,
       ogUrl: url,
       ogImage: LOGO_URL,
-      jsonLd: faqLd,
+      jsonLd: cityLdEn,
       hreflang: [
         { hreflang: 'en', href: url },
         { hreflang: 'ru', href: ruUrl },
         { hreflang: 'x-default', href: enRoot },
       ],
       bodySeo: seo
-        ? citySeoHtmlEn(seo, cityEvs, cityCategoriesHtml(c.path, 'en', cells).html) +
+        ? citySeoHtmlEn(seo, cityEvs, cityCategoriesHtml(c.path, 'en', cells).html, c.path) +
           cityArchiveBlockHtml(c.path, 'en', archiveByCityEn.get(c.path) ?? [])
         : null,
       // Мобильное интро (EN-версия текстов по lang='en'), то же превью карты
@@ -4457,11 +4642,9 @@ async function main() {
     if (similarRu.length) similarRuPages += 1;
     // Дата ближайшего вхождения — в title/og:title: внутри серии («одно
     // название + одно место, много дат») заголовки без даты совпадали.
-    // Дата идёт ДО города — при обрезке snippet(…, 65) город режется первым.
+    // Дата и город неприкосновенны: обрезается только название (eventTitle).
     const occRu = occurrence(ev);
-    const title =
-      snippet([`${ev.title} — ${ruDate(occRu)}`, city].filter(Boolean).join(' · '), 65) ||
-      'Событие';
+    const title = eventTitle(ev.title, ruDate(occRu), city, 'ru') || 'Событие';
     // Текст, который видит русскоязычный посетитель (html lang="ru"),
     // как localizedText(description, description_ru, …): перевод или оригинал
     const ruText = ev.description_ru || ev.description || ev.description_en || '';
@@ -4506,9 +4689,7 @@ async function main() {
       const descriptionEn = snippet(prefixEn ? `${prefixEn}. ${enText}` : enText, 160);
       // Дата ближайшего вхождения — в EN title/og:title (та же логика, что в RU)
       const occEn = occurrence(ev);
-      const titleEn =
-        snippet([`${nameEn} — ${enDate(occEn)}`, cityEn].filter(Boolean).join(' · '), 65) ||
-        'Event';
+      const titleEn = eventTitle(nameEn, enDate(occEn), cityEn, 'en') || 'Event';
       const similarEn = similarItems(ev, 'en', similarGroups, sibs);
       if (similarEn.length) similarEnPages += 1;
       writePage(baseHtml, enPath, {

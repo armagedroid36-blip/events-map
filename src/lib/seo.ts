@@ -89,6 +89,11 @@ const CITY_META: Record<string, { title: string; description: string }> = {
     description:
       'Мероприятия в Нячанге: вечеринки, концерты, шоу и встречи. Афиша с датами, местами и ценами для туристов и экспатов.',
   },
+  cyprus: {
+    title: 'Мероприятия на Кипре: афиша и куда сходить | Events in Cyprus',
+    description:
+      'Мероприятия на Кипре: фестивали, концерты, спорт и экскурсии в Лимасоле, Никосии, Ларнаке, Пафосе и Ая-Напе. Афиша с датами, местами и ценами.',
+  },
 };
 
 // EN-версии title/description городов — синхронно с CITY_PAGES_EN пре-рендера.
@@ -107,6 +112,11 @@ const CITY_META_EN: Record<string, { title: string; description: string }> = {
     title: 'Events in Nha Trang: concerts, shows and parties | MyPins',
     description:
       'Nha Trang events map for travellers and expats: concerts, shows, parties and speaking clubs with dates, venues and prices.',
+  },
+  cyprus: {
+    title: "Events in Cyprus: concerts, festivals and what's on | MyPins",
+    description:
+      'Cyprus events map for travellers and expats: festivals, concerts, sport and tours in Limassol, Nicosia, Larnaca, Paphos, Ayia Napa with dates and prices.',
   },
 };
 
@@ -166,6 +176,31 @@ function snippet(text: string | null | undefined, max: number): string {
     .replace(/[\s,.;:—–-]+$/, '')
     .trim();
   return `${head}…`;
+}
+
+/** Заголовок событийной страницы: дата и город присутствуют ВСЕГДА, обрезается
+ * только название. Синхронно с seo-prerender.mjs (eventTitle): snippet режет
+ * строку с конца, поэтому длинное название съедало дату и город, а пары RU/EN
+ * одного события получали идентичный заголовок. Дату и город не режем никогда —
+ * при нехватке места сжимается название (минимум EVENT_TITLE_MIN_NAME знаков). */
+const EVENT_TITLE_MAX = 65;
+const EVENT_TITLE_MIN_NAME = 20;
+
+function eventTitle(
+  name: string | null | undefined,
+  date: string,
+  city: string,
+  lang: 'ru' | 'en' = 'ru',
+): string {
+  const tail = [date, city].filter(Boolean).join(' · ');
+  const cleanName =
+    String(name ?? '')
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim() || (lang === 'en' ? 'Event' : 'Событие');
+  if (!tail) return snippet(cleanName, EVENT_TITLE_MAX);
+  const budget = Math.max(EVENT_TITLE_MIN_NAME, EVENT_TITLE_MAX - tail.length - 4);
+  return `${snippet(cleanName, budget)} — ${tail}`;
 }
 
 interface HeadMeta {
@@ -420,15 +455,17 @@ export function applyEventMeta(ev: EventItem): void {
   const enCity = useEn ? cityNameEn(ev.city) : '';
   // Дата ближайшего вхождения в title/og:title (та же, что в JSON-LD статики:
   // nextOccurrenceDate) — внутри серии «одно название + одно место, много дат»
-  // заголовки без даты совпадали. Шаблон синхронен с seo-prerender.mjs:
-  // дата идёт ДО города, чтобы при обрезке snippet(…, 65) город резался первым.
+  // заголовки без даты совпадали. Шаблон синхронен с seo-prerender.mjs
+  // (eventTitle): обрезается только название, дата и город — всегда на месте.
   const occDate = useEn
     ? enDate(nextOccurrenceDate(ev, todayIso()))
     : ruDate(nextOccurrenceDate(ev, todayIso()));
-  const title = snippet(
-    [`${titleName} — ${occDate}`, useEn ? enCity : city].filter(Boolean).join(' · '),
-    65,
-  ) || 'Событие';
+  const title = eventTitle(
+    titleName,
+    occDate,
+    useEn ? enCity : city,
+    useEn ? 'en' : 'ru',
+  );
   // Текст, который видит посетитель этой версии (как localizedText)
   const text = useEn
     ? ev.description_en || ev.description

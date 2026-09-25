@@ -701,6 +701,25 @@ export default {
         },
       ],
     },
+    cyprus: {
+      h1: 'Events and things to do in Cyprus',
+      intro:
+        "Cyprus keeps an event calendar almost all year round: winter brings concerts and theatre to Nicosia and Limassol, spring and autumn bring wine and harvest festivals, and summer fills Ayia Napa, Protaras and Larnaca with open-air parties. MyPins maps what is on across the island — Limassol, Nicosia, Larnaca, Paphos, Ayia Napa, Paralimni, Protaras, Polis and Famagusta. Organizers publish their own events, so dates, venues and prices stay fresh. Filter by date, category, price or language to plan an evening, a weekend or a whole trip.",
+      faq: [
+        {
+          q: 'What events are happening in Cyprus?',
+          a: 'Festivals and wine celebrations, classical and Greek music concerts, theatre and exhibitions, running races and regattas, food and craft workshops. Most listings are in Limassol, Nicosia, Larnaca and Paphos, while the resort towns Ayia Napa and Protaras take over in summer.',
+        },
+        {
+          q: 'How do I find events in a particular Cypriot city?',
+          a: 'Zoom the map to the city you need — the list shows events on the visible area. The city and category links below help too: concerts in Limassol or festivals in Paphos. Filters let you keep only the date, category or language you want.',
+        },
+        {
+          q: 'Are there free events in Cyprus?',
+          a: 'Yes — many municipal festivals, fairs and village celebrations are free to attend. In the price filter choose “Free” or “Donation”: every event card shows the price as free, donation or an amount in euro.',
+        },
+      ],
+    },
   },
   common: {
     cancel: 'Cancel',

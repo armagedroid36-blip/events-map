@@ -38,12 +38,14 @@ const CITY_NAME_RU: Record<CityPath, string> = {
   bali: 'Бали',
   'da-nang': 'Дананг',
   'nha-trang': 'Нячанг',
+  cyprus: 'Кипр',
 };
 
 const CITY_NAME_EN: Record<CityPath, string> = {
   bali: 'Bali',
   'da-nang': 'Da Nang',
   'nha-trang': 'Nha Trang',
+  cyprus: 'Cyprus',
 };
 
 /** Предлог + город в предложном падеже (RU): «на Бали», «в Дананге» */
@@ -51,6 +53,7 @@ const CITY_WHERE_RU: Record<CityPath, string> = {
   bali: 'на Бали',
   'da-nang': 'в Дананге',
   'nha-trang': 'в Нячанге',
+  cyprus: 'на Кипре',
 };
 
 /** Локализованное имя города по пути */
@@ -272,6 +275,18 @@ const CITY_BLURB: Record<CityPath, { ru: string[]; en: string[] }> = {
       'Nha Trang is the resort capital of southern Vietnam.',
       'In Nha Trang events run along the promenade.',
       'Nha Trang lives by the sea: the promenade and the north.',
+    ],
+  },
+  cyprus: {
+    ru: [
+      'Кипр — остров с афишей по всему побережью.',
+      'На Кипре события идут от Лимасола до Ая-Напы.',
+      'Кипр живёт событиями: Лимасол, Никосия, Ларнака, Пафос.',
+    ],
+    en: [
+      'Cyprus keeps an event calendar along the whole coast.',
+      'In Cyprus events run from Limassol to Ayia Napa.',
+      'Cyprus runs on events: Limassol, Nicosia, Larnaca, Paphos.',
     ],
   },
 };

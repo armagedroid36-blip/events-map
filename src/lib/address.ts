@@ -24,13 +24,14 @@ const COUNTRY_NAME_EN: Record<string, string> = {
 const CYRILLIC_RE = /[\u0400-\u04FF]/;
 
 /** Путь городской страницы события (как slugify(labelEn) в config.quickLocations) */
-export type CityPath = 'bali' | 'da-nang' | 'nha-trang';
+export type CityPath = 'bali' | 'da-nang' | 'nha-trang' | 'cyprus';
 
 /** RU-имена городов по пути — как в JSON-LD BreadcrumbList (cityCrumb.name) */
 const CITY_NAME_RU: Record<CityPath, string> = {
   bali: 'Бали',
   'da-nang': 'Дананг',
   'nha-trang': 'Нячанг',
+  cyprus: 'Кипр',
 };
 
 /** RU-имя города в ПРЕДЛОЖНОМ падеже для строки «Ещё события {{city}}: афиша»
@@ -41,6 +42,7 @@ const CITY_NAME_RU_LOCATIVE: Record<CityPath, string> = {
   bali: 'на Бали',
   'da-nang': 'в Дананге',
   'nha-trang': 'в Нячанге',
+  cyprus: 'на Кипре',
 };
 
 /** EN-имена городов по пути — как labelEn в config / CITY_NAME_EN пре-рендера */
@@ -48,6 +50,7 @@ const CITY_NAME_BY_PATH: Record<CityPath, string> = {
   bali: 'Bali',
   'da-nang': 'Da Nang',
   'nha-trang': 'Nha Trang',
+  cyprus: 'Cyprus',
 };
 
 /**
@@ -74,6 +77,20 @@ export function cityPath(rawCity: string | null | undefined): CityPath | null {
     'seminyak', 'семиньяк', 'kuta', 'кута', 'denpasar', 'gianyar',
   ];
   if (baliKeys.some((k) => city.includes(k))) return 'bali';
+  // Кипр: одна городская страница на страну (/cyprus/). Зеркало cityCrumb в
+  // scripts/seo-prerender.mjs — менять синхронно: там тот же список ключей.
+  const cyprusKeys = [
+    'кипр', 'cyprus',
+    'лимасол', 'limassol', 'lemesos', 'lemessos',
+    'никосия', 'nicosia', 'lefkosia', 'lefkosa', 'strovolos', 'latsia',
+    'ларнака', 'larnaca', 'larnaka',
+    'пафос', 'paphos', 'pafos', 'peyia', 'pegeia', 'kouklia',
+    'фамагуста', 'famagusta', 'ammochostos',
+    'ая-напа', 'ая напа', 'ayia napa', 'agia napa', 'ayanapa',
+    'паралимни', 'paralimni', 'протарас', 'protaras', 'дериния', 'deryneia',
+    'полис', 'polis', 'latchi',
+  ];
+  if (cyprusKeys.some((k) => city.includes(k))) return 'cyprus';
   return null;
 }
 

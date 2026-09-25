@@ -1233,6 +1233,17 @@ export default function Home({
           id="city-seo-block"
           className="glass absolute inset-x-2 bottom-36 z-[1140] mx-auto max-h-[42vh] w-auto max-w-xl overflow-y-auto rounded-xl p-3 shadow-xl thin-scroll lg:inset-x-auto lg:right-4 lg:mx-0 lg:w-[400px] lg:max-w-[calc(100vw-2rem)] lg:bottom-24"
         >
+          <nav aria-label={seoLang === 'en' ? 'Breadcrumbs' : 'Хлебные крошки'}>
+            <p className="mb-1 text-xs text-gray-500">
+              <a href={seoLang === 'en' ? '/en/' : '/'} className="text-[#0F766E] hover:underline">
+                {seoLang === 'en' ? 'Home' : 'Главная'}
+              </a>
+              <span aria-hidden="true"> › </span>
+              <span>{seoLang === 'en' ? cityCrumbLabel(city, 'en') : cityCrumbLabel(city, 'ru')}</span>
+              <span aria-hidden="true"> › </span>
+              <span>{seoLang === 'en' ? "What's on" : 'Афиша'}</span>
+            </p>
+          </nav>
           <h1 className="text-lg font-extrabold tracking-tight text-gray-900">{citySeo.h1}</h1>
           <p className="mt-1 text-sm leading-relaxed text-gray-700">{citySeo.intro}</p>
           {/* Ближайшие события города: до MAX_CITY_EVENTS, только будущие
