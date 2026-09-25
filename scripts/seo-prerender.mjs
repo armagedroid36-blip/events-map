@@ -41,6 +41,10 @@ const LOGO_URL = `${SITE_URL}/logo.png`;
 // Сколько ближайших событий города показывать в статическом блоке городской
 // страницы (план SEO п.4.1.2 «5–15»; на карте сейчас событий мало — до 8)
 const MAX_CITY_EVENTS = 8;
+/** Сколько «остальных» событий страны/города выводить дополнительным списком
+ * (после первых MAX_CITY_EVENTS): нужны входящие ссылки, чтобы у каждого
+ * события были внутренние ссылки и не появлялись сироты. */
+const MAX_CITY_REST_EVENTS = 200;
 // «Сегодня» для startDate повторяющихся событий — фиксируется один раз на
 // сборку (UTC; toISOString даёт YYYY-MM-DD, без часовых поясов)
 const TODAY_ISO = new Date().toISOString().slice(0, 10);
@@ -1631,7 +1635,7 @@ function writePage(baseHtml, path, meta) {
  * SPA удаляет его (main.tsx) и рисует свой локализованный блок. Контент
  * вопросов-ответов остаётся в DOM (details). evs — уже отфильтрованные и
  * отсортированные события города; пусто → секции событий нет. */
-function citySeoHtml(seo, evs, categoriesHtml = '', cityPathKey = '') {
+function citySeoHtml(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs = []) {
   const faq = seo.faq
     .map(
       (f) =>
@@ -1683,6 +1687,25 @@ function citySeoHtml(seo, evs, categoriesHtml = '', cityPathKey = '') {
       if (sd) parts.push(`<time datetime="${esc(sd)}">${esc(ruDate(sd))}</time>`);
       if (name) parts.push(`<a href="${esc(url)}">${esc(name)}</a>`);
       if (priceText) parts.push(`<span>${esc(priceText)}</span>`);
+      lines.push(`    <li>${parts.join(' — ')}</li>`);
+    }
+    lines.push('  </ul>');
+  }
+  // Остальные события страны/города (сверх первых MAX_CITY_EVENTS): дают
+  // каждой событийной странице входящую ссылку — иначе события редких
+  // категорий (нет посадки «город × категория») и «не попавшие в ближайшие 8»
+  // остаются сиротами (найдено аудитом 25.09.2026: кипрская Influence
+  // Conference в Пафосе).
+  if (Array.isArray(restEvs) && restEvs.length) {
+    const restWhere = seo.h1.replace(/^(?:Мероприятия и события|События)\s+/, '');
+    lines.push(`  <h2>Остальные события ${esc(restWhere)} (${restEvs.length})</h2>`, '  <ul>');
+    for (const ev of restEvs) {
+      const sd = nextOccurrenceDate(ev, TODAY_ISO);
+      const url = `${SITE_URL}/event/${ev.id}/${slugify(ev.title)}/`;
+      const name = ev.title_ru || ev.title || ev.title_en || '';
+      const parts = [];
+      if (sd) parts.push(`<time datetime="${esc(sd)}">${esc(ruDate(sd))}</time>`);
+      if (name) parts.push(`<a href="${esc(url)}">${esc(name)}</a>`);
       lines.push(`    <li>${parts.join(' — ')}</li>`);
     }
     lines.push('  </ul>');
@@ -1884,7 +1907,7 @@ function mapIntroSeoHtml(previewUrl, lang = 'ru') {
  * события /en/event/<id>/<slugify(title_en||title)>/ (п. 2.3: страницы
  * сгенерированы пре-рендером — битых ссылок нет).
  */
-function citySeoHtmlEn(seo, evs, categoriesHtml = '', cityPathKey = '') {
+function citySeoHtmlEn(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs = []) {
   const faq = seo.faq
     .map(
       (f) =>
@@ -1931,6 +1954,22 @@ function citySeoHtmlEn(seo, evs, categoriesHtml = '', cityPathKey = '') {
       if (sd) parts.push(`<time datetime="${esc(sd)}">${esc(enDate(sd))}</time>`);
       if (name) parts.push(`<a href="${esc(url)}">${esc(name)}</a>`);
       if (priceText) parts.push(`<span>${esc(priceText)}</span>`);
+      lines.push(`    <li>${parts.join(' — ')}</li>`);
+    }
+    lines.push('  </ul>');
+  }
+  // Остальные события (сверх первых MAX_CITY_EVENTS) — входящие ссылки для
+  // событий редких категорий и тех, что не попали в «Upcoming» (см. citySeoHtml).
+  if (Array.isArray(restEvs) && restEvs.length) {
+    const restWhere = seo.h1.replace(/^(?:Events and things to do in|Events in)\s+/, '');
+    lines.push(`  <h2>More events in ${esc(restWhere)} (${restEvs.length})</h2>`, '  <ul>');
+    for (const ev of restEvs) {
+      const sd = nextOccurrenceDate(ev, TODAY_ISO);
+      const url = `${SITE_URL}/en/event/${ev.id}/${slugify(ev.title_en || ev.title)}/`;
+      const name = ev.title_en || ev.title || '';
+      const parts = [];
+      if (sd) parts.push(`<time datetime="${esc(sd)}">${esc(enDate(sd))}</time>`);
+      if (name) parts.push(`<a href="${esc(url)}">${esc(name)}</a>`);
       lines.push(`    <li>${parts.join(' — ')}</li>`);
     }
     lines.push('  </ul>');
@@ -4384,7 +4423,7 @@ async function main() {
     const url = `${SITE_URL}/${c.path}/`;
     const enUrl = `${SITE_URL}/en/${c.path}/`;
     const seo = CITY_SEO[c.path];
-    const cityEvs = events
+    const cityEvsAll = events
       .filter(
         (ev) =>
           ev &&
@@ -4397,8 +4436,9 @@ async function main() {
         String(nextOccurrenceDate(a, TODAY_ISO)).localeCompare(
           String(nextOccurrenceDate(b, TODAY_ISO)),
         ),
-      )
-      .slice(0, MAX_CITY_EVENTS);
+      );
+    const cityEvs = cityEvsAll.slice(0, MAX_CITY_EVENTS);
+    const cityEvsRest = cityEvsAll.slice(MAX_CITY_EVENTS, MAX_CITY_EVENTS + MAX_CITY_REST_EVENTS);
     // JSON-LD городской страницы: CollectionPage + ItemList ближайших событий +
     // BreadcrumbList «Главная > Кипр > Афиша» + FAQPage (если есть faq)
     const cityLd = seo ? cityJsonLd(seo, cityEvs, c.path, 'ru') : null;
@@ -4418,7 +4458,7 @@ async function main() {
         { hreflang: 'x-default', href: enRoot },
       ],
       bodySeo: seo
-        ? citySeoHtml(seo, cityEvs, cityCategoriesHtml(c.path, 'ru', cells).html, c.path) +
+        ? citySeoHtml(seo, cityEvs, cityCategoriesHtml(c.path, 'ru', cells).html, c.path, cityEvsRest) +
           cityArchiveBlockHtml(c.path, 'ru', archiveByCityRu.get(c.path) ?? [])
         : null,
       // Мобильное интро в статике: превью карты города (как в SPA
@@ -4438,7 +4478,7 @@ async function main() {
     const url = `${SITE_URL}/en/${c.path}/`;
     const ruUrl = `${SITE_URL}/${c.path}/`;
     const seo = CITY_SEO_EN[c.path];
-    const cityEvs = events
+    const cityEvsAll = events
       .filter(
         (ev) =>
           ev &&
@@ -4452,8 +4492,9 @@ async function main() {
         String(nextOccurrenceDate(a, TODAY_ISO)).localeCompare(
           String(nextOccurrenceDate(b, TODAY_ISO)),
         ),
-      )
-      .slice(0, MAX_CITY_EVENTS);
+      );
+    const cityEvs = cityEvsAll.slice(0, MAX_CITY_EVENTS);
+    const cityEvsRest = cityEvsAll.slice(MAX_CITY_EVENTS, MAX_CITY_EVENTS + MAX_CITY_REST_EVENTS);
     const cityLdEn = seo ? cityJsonLd(seo, cityEvs, c.path, 'en') : null;
     writePage(baseHtml, `en/${c.path}`, {
       lang: 'en',
@@ -4471,7 +4512,7 @@ async function main() {
         { hreflang: 'x-default', href: enRoot },
       ],
       bodySeo: seo
-        ? citySeoHtmlEn(seo, cityEvs, cityCategoriesHtml(c.path, 'en', cells).html, c.path) +
+        ? citySeoHtmlEn(seo, cityEvs, cityCategoriesHtml(c.path, 'en', cells).html, c.path, cityEvsRest) +
           cityArchiveBlockHtml(c.path, 'en', archiveByCityEn.get(c.path) ?? [])
         : null,
       // Мобильное интро (EN-версия текстов по lang='en'), то же превью карты
