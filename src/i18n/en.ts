@@ -8,9 +8,9 @@ export default {
   },
   mapIntro: {
     title: 'Events for travelers and expats',
-    subtitle: 'Concerts, parties, yoga, markets and meetups — Bali, Da Nang, Nha Trang',
+    subtitle: 'Concerts, parties, yoga, markets and meetups — Bali, Da Nang, Nha Trang, Cyprus',
     open: 'Open the map',
-    imgAlt: 'Event map — Bali, Da Nang, Nha Trang',
+    imgAlt: 'Event map — Bali, Da Nang, Nha Trang, Cyprus',
   },
   menu: {
     title: 'Menu',

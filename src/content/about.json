@@ -1,7 +1,7 @@
 {
   "title": "О проекте MyPins: карта событий для туристов и экспатов | MyPins",
   "h1": "О проекте MyPins",
-  "description": "MyPins — карта событий для туристов и экспатов на Бали, в Дананге и Нячанге. Кто публикует события, как они проходят модерацию и как связаться с редакцией.",
+  "description": "MyPins — карта событий для туристов и экспатов на Бали, в Дананге, Нячанге и на Кипре. Кто публикует события, как они проходят модерацию и как связаться с редакцией.",
   "email": "armagedroid36@gmail.com",
   "sections": [
     {
@@ -10,7 +10,7 @@
     },
     {
       "type": "p",
-      "text": "MyPins — карта событий для туристов и экспатов в Юго-Восточной Азии: йога и ретриты, концерты и вечеринки, маркеты, фестивали, speaking-клубы и встречи. Сейчас на карте три направления: [события на Бали](/bali/), [в Дананге](/da-nang/) и [в Нячанге](/nha-trang/). События публикуют сами организаторы, и у каждого на карте есть дата, место и цена — сразу видно, что проходит рядом и сколько это стоит."
+      "text": "MyPins — карта событий для туристов и экспатов в Юго-Восточной Азии и на Кипре: йога и ретриты, концерты и вечеринки, маркеты, фестивали, speaking-клубы и встречи. Сейчас на карте четыре направления: [события на Бали](/bali/), [в Дананге](/da-nang/), [в Нячанге](/nha-trang/) и [на Кипре](/cyprus/). События публикуют сами организаторы, и у каждого на карте есть дата, место и цена — сразу видно, что проходит рядом и сколько это стоит."
     },
     {
       "type": "h2",
@@ -47,7 +47,7 @@
   ],
   "title_en": "About MyPins: events map for travellers and expats | MyPins",
   "h1_en": "About MyPins",
-  "description_en": "MyPins is an events map for travellers and expats in Bali, Da Nang and Nha Trang. Who publishes the events, how moderation works and how to contact the editorial team.",
+  "description_en": "MyPins is an events map for travellers and expats in Bali, Da Nang, Nha Trang and Cyprus. Who publishes the events, how moderation works and how to contact the editorial team.",
   "sections_en": [
     {
       "type": "h2",
@@ -55,7 +55,7 @@
     },
     {
       "type": "p",
-      "text": "MyPins is an events map for travellers and expats in Southeast Asia: yoga and retreats, concerts and parties, markets, festivals, speaking clubs and meetups. The map now covers three destinations: [events in Bali](/en/bali/), [in Da Nang](/en/da-nang/) and [in Nha Trang](/en/nha-trang/). Organizers publish the events themselves, and every pin shows the date, venue and price — so you can see at a glance what is happening nearby and how much it costs."
+      "text": "MyPins is an events map for travellers and expats in Southeast Asia and Cyprus: yoga and retreats, concerts and parties, markets, festivals, speaking clubs and meetups. The map now covers four destinations: [events in Bali](/en/bali/), [in Da Nang](/en/da-nang/), [in Nha Trang](/en/nha-trang/) and [in Cyprus](/en/cyprus/). Organizers publish the events themselves, and every pin shows the date, venue and price — so you can see at a glance what is happening nearby and how much it costs."
     },
     {
       "type": "h2",

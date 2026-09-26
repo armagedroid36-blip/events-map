@@ -1246,6 +1246,23 @@ export default function Home({
           </nav>
           <h1 className="text-lg font-extrabold tracking-tight text-gray-900">{citySeo.h1}</h1>
           <p className="mt-1 text-sm leading-relaxed text-gray-700">{citySeo.intro}</p>
+          {/* Перелинковка направлений (хаб↔хаб), как в статическом блоке
+              (scripts/seo-prerender.mjs: citySeoHtml/citySeoHtmlEn): с города
+              ЮВА — на афишу Кипра, с Кипра — на три города. */}
+          <p className="mt-1 text-sm leading-relaxed text-gray-700">
+            {seoLang === 'en' ? 'Other destinations on MyPins: ' : 'Другие направления MyPins: '}
+            {(pageCityPath === 'cyprus'
+              ? ([['bali', seoLang === 'en' ? 'in Bali' : 'на Бали'], ['da-nang', seoLang === 'en' ? 'in Da Nang' : 'в Дананге'], ['nha-trang', seoLang === 'en' ? 'in Nha Trang' : 'в Нячанге']] as const)
+              : ([['cyprus', seoLang === 'en' ? 'in Cyprus' : 'на Кипре']] as const)
+            ).map(([path, label], i, arr) => (
+              <span key={path}>
+                <a href={`/${seoLang === 'en' ? 'en/' : ''}${path}/`} className="text-[#0F766E] hover:underline">
+                  {label}
+                </a>
+                {i < arr.length - 1 ? ', ' : '.'}
+              </span>
+            ))}
+          </p>
           {/* Ближайшие события города: до MAX_CITY_EVENTS, только будущие
               вхождения, по возрастанию даты — ссылки на страницы событий
               своего языка (как в статическом блоке города,

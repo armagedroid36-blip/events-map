@@ -62,14 +62,14 @@ export function stripLangPrefix(p: string): string {
 // загрузке модуля: SPA может стартовать на /en (document.title уже EN),
 // и RU-версия '/' получила бы чужие EN-значения. Константы обеих версий.
 const BASE_TITLE =
-  'События на карте — Events on the Map';
+  'События на карте: Бали, Дананг, Нячанг, Кипр';
 const BASE_DESCRIPTION =
-  'Конференции, концерты, выставки и вечеринки на карте Бали и Юго-Восточной Азии. Conferences, concerts, exhibitions and parties on the map of Bali and Southeast Asia.';
+  'Концерты, фестивали и вечеринки на карте Бали, Дананга, Нячанга и Кипра. Concerts, festivals and parties on the map of Bali, Da Nang, Nha Trang and Cyprus.';
 
 // EN-версия главной /en/ — синхронно с пре-рендером (homeTitleEn в main()).
-const BASE_TITLE_EN = 'Events on the Map: Bali, Da Nang, Nha Trang | MyPins';
+const BASE_TITLE_EN = 'Events on the Map: Bali, Da Nang, Nha Trang, Cyprus | MyPins';
 const BASE_DESCRIPTION_EN =
-  'MyPins is an events map for travellers and expats in Southeast Asia: concerts, parties, yoga, markets and speaking clubs in Bali, Da Nang and Nha Trang with dates, venues and prices.';
+  'MyPins is an events map for travellers and expats in Southeast Asia and Cyprus: concerts, parties, yoga, markets and speaking clubs in Bali, Da Nang, Nha Trang and Cyprus with dates, venues and prices.';
 
 // Города — ровно те, что в CITY_PAGES (scripts/seo-prerender.mjs:76-95);
 // путь = slugify(labelEn) из config.quickLocations. EN-версии — CITY_PAGES_EN.
@@ -564,14 +564,14 @@ export function applyOrgMeta(profile: OrgProfile): void {
 const BLOG_META = {
   title: 'Блог MyPins: гиды по событиям и афиша | MyPins',
   description:
-    'Гиды по событийной жизни Бали, Нячанга и Дананга: куда сходить, что посмотреть, сколько стоят события. Подборки от команды MyPins.',
+    'Гиды по событийной жизни Бали, Нячанга, Дананга и Кипра: куда сходить, что посмотреть, сколько стоят события. Подборки от команды MyPins.',
 };
 
 // EN-версия /en/blog/ — синхронно с пре-рендером (main()).
 const BLOG_META_EN = {
-  title: 'MyPins Blog: event guides for Bali, Da Nang and Nha Trang | MyPins',
+  title: 'MyPins Blog: event guides for Bali, Da Nang, Nha Trang and Cyprus | MyPins',
   description:
-    'Guides to the event scenes of Nha Trang, Bali and Da Nang: where to go, what to see and how much events cost. Round-ups by the MyPins team.',
+    'Guides to the event scenes of Nha Trang, Bali, Da Nang and Cyprus: where to go, what to see and how much events cost. Round-ups by the MyPins team.',
 };
 
 /** /blog: список статей. canonical со слэшем, og — логотип сайта.

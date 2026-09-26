@@ -161,8 +161,8 @@ export function BlogIndex() {
         </h1>
         <p className="mt-1 text-sm text-gray-500">
           {en
-            ? 'What to do in Nha Trang, Bali and Da Nang: guides to the local event scenes.'
-            : 'Куда сходить в Нячанге, на Бали и в Дананге: подборки и гиды по событийной жизни городов.'}
+            ? 'What to do in Nha Trang, Bali, Da Nang and Cyprus: guides to the local event scenes.'
+            : 'Куда сходить в Нячанге, на Бали, в Дананге и на Кипре: подборки и гиды по событийной жизни городов.'}
         </p>
         {/* Путь на карту: посетитель пришёл из поиска на текстовую страницу */}
         <MapCta />

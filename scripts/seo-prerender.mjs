@@ -329,7 +329,7 @@ const CITY_PAGES_EN = [
 const BLOG_META = {
   title: 'Блог MyPins: гиды по событиям и афиша | MyPins',
   description:
-    'Гиды по событийной жизни Бали, Нячанга и Дананга: куда сходить, что посмотреть, сколько стоят события. Подборки от команды MyPins.',
+    'Гиды по событийной жизни Бали, Нячанга, Дананга и Кипра: куда сходить, что посмотреть, сколько стоят события. Подборки от команды MyPins.',
 };
 
 /** Статьи блога из src/content/articles.json (readFileSync — единый источник) */
@@ -452,10 +452,16 @@ function blogIndexSeoHtml(articles, lang = 'ru') {
     })
     .join('\n');
   const h1 = en ? 'MyPins Blog: guides to events and listings' : 'Блог MyPins: гиды по событиям';
+  // Блок направлений: ссылки на хабы (включая Кипр) — входящие ссылки для
+  // /cyprus/ и /en/cyprus/ с не-событийной страницы блога.
+  const destinations = en
+    ? `<p>Event guides and listings by destination: <a href="/en/bali/">Bali</a>, <a href="/en/da-nang/">Da Nang</a>, <a href="/en/nha-trang/">Nha Trang</a>, <a href="/en/cyprus/">Cyprus</a>.</p>`
+    : `<p>Гиды и афиши по направлениям: <a href="/bali/">Бали</a>, <a href="/da-nang/">Дананг</a>, <a href="/nha-trang/">Нячанг</a>, <a href="/cyprus/">Кипр</a>.</p>`;
   return [
     '<div id="seo-article-block">',
     `  <h1>${h1}</h1>`,
     mapCtaHtml(lang),
+    `  ${destinations}`,
     cards,
     '</div>',
     '',
@@ -1710,6 +1716,20 @@ function citySeoHtml(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs = 
     }
     lines.push('  </ul>');
   }
+  // Перелинковка направлений (хаб↔хаб): с городов ЮВА — одна контекстная
+  // ссылка на афишу Кипра, с Кипра — на три города. Ссылки относительные, как
+  // в крошке. Нужна, чтобы /cyprus/ получал входящие с не-событийных страниц.
+  const otherCities =
+    cityPathKey === 'cyprus'
+      ? [['bali', 'на Бали'], ['da-nang', 'в Дананге'], ['nha-trang', 'в Нячанге']]
+      : [['cyprus', 'на Кипре']];
+  if (cityPathKey) {
+    lines.push(
+      `  <p>Другие направления MyPins: ${otherCities
+        .map(([p, label]) => `<a href="/${p}/">${esc(label)}</a>`)
+        .join(', ')}.</p>`,
+    );
+  }
   lines.push('  <h2>Частые вопросы</h2>', faq);
   if (categoriesHtml) lines.push(categoriesHtml);
   lines.push('</div>', '');
@@ -1811,11 +1831,11 @@ function homeSeoHtml(evs = []) {
   const link = (path, label) => `<a href="${SITE_URL}/${path}/">${esc(label)}</a>`;
   const lines = [
     '<div id="seo-home-block">',
-    '  <h1>События на карте: Бали, Дананг и Нячанг</h1>',
-    '  <p>MyPins — это карта событий для туристов и экспатов в Юго-Восточной Азии: концерты, вечеринки, йога, маркеты и speaking-клубы, которые публикуют сами организаторы.</p>',
-    '  <p>Каждое событие показано на карте с датой, местом и ценой — от бесплатных встреч и донат-вечеринок до крупных концертов. Фильтры по категории, дате и цене и поиск по городу помогут найти занятие на сегодня или на выходные, а приближение карты покажет события в нужном районе: Чангу, Убуде или Семиньяке на Бали, в центре Дананга или на набережной Нячанга.</p>',
+    '  <h1>События на карте: Бали, Дананг, Нячанг и Кипр</h1>',
+    '  <p>MyPins — это карта событий для туристов и экспатов в Юго-Восточной Азии и на Кипре: концерты, вечеринки, йога, маркеты и speaking-клубы, которые публикуют сами организаторы.</p>',
+    '  <p>Каждое событие показано на карте с датой, местом и ценой — от бесплатных встреч и донат-вечеринок до крупных концертов. Фильтры по категории, дате и цене и поиск по городу помогут найти занятие на сегодня или на выходные, а приближение карты покажет события в нужном районе: Чангу, Убуде или Семиньяке на Бали, в центре Дананга, на набережной Нячанга или в Лимасоле и Пафосе на Кипре.</p>',
     '  <p>Афиша живая: организаторы публикуют события сами, а карта обновляется каждый день, поэтому здесь всегда есть что посмотреть сегодня или на выходных.</p>',
-    `  <p>Смотреть события: ${link('bali', 'на Бали')}, ${link('da-nang', 'в Дананге')}, ${link('nha-trang', 'в Нячанге')}. Подборки и гиды по событиям — ${link('blog', 'в блоге MyPins')}.</p>`,
+    `  <p>Смотреть события: ${link('bali', 'на Бали')}, ${link('da-nang', 'в Дананге')}, ${link('nha-trang', 'в Нячанге')}, ${link('cyprus', 'на Кипре')}. Подборки и гиды по событиям — ${link('blog', 'в блоге MyPins')}.</p>`,
   ];
   // События — только h2: единственный h1 страницы остаётся у блока выше
   if (Array.isArray(evs) && evs.length) {
@@ -1837,11 +1857,11 @@ function homeSeoHtmlEn(evs = []) {
   const link = (path, label) => `<a href="${SITE_URL}/en/${path}/">${esc(label)}</a>`;
   const lines = [
     '<div id="seo-home-block">',
-    '  <h1>Events on the Map: Bali, Da Nang, Nha Trang</h1>',
-    '  <p>MyPins is an events map for travellers and expats in Southeast Asia: concerts, parties, yoga, markets and speaking clubs, published by the organizers themselves.</p>',
-    '  <p>Every event is shown on the map with its date, venue and price — from free meetups and donation parties to big concerts. Filters by category, date and price plus a city search help you find something for today or for the weekend, and zooming the map shows events in the area you need: Canggu, Ubud or Seminyak in Bali, central Da Nang or the Nha Trang promenade.</p>',
+    '  <h1>Events on the Map: Bali, Da Nang, Nha Trang, Cyprus</h1>',
+    '  <p>MyPins is an events map for travellers and expats in Southeast Asia and Cyprus: concerts, parties, yoga, markets and speaking clubs, published by the organizers themselves.</p>',
+    '  <p>Every event is shown on the map with its date, venue and price — from free meetups and donation parties to big concerts. Filters by category, date and price plus a city search help you find something for today or for the weekend, and zooming the map shows events in the area you need: Canggu, Ubud or Seminyak in Bali, central Da Nang, the Nha Trang promenade or Limassol and Paphos in Cyprus.</p>',
     '  <p>The listings are live: organizers publish events themselves and the map updates every day, so there is always something to check out today or on the weekend.</p>',
-    `  <p>Browse events ${link('bali', 'in Bali')}, ${link('da-nang', 'in Da Nang')}, ${link('nha-trang', 'in Nha Trang')}. Guides and event round-ups — ${link('blog', 'on the MyPins blog')}.</p>`,
+    `  <p>Browse events ${link('bali', 'in Bali')}, ${link('da-nang', 'in Da Nang')}, ${link('nha-trang', 'in Nha Trang')}, ${link('cyprus', 'in Cyprus')}. Guides and event round-ups — ${link('blog', 'on the MyPins blog')}.</p>`,
   ];
   // События — только h2: единственный h1 страницы остаётся у блока выше
   if (Array.isArray(evs) && evs.length) {
@@ -1860,15 +1880,15 @@ function homeSeoHtmlEn(evs = []) {
 const MAP_INTRO_TEXT = {
   ru: {
     title: 'События для туристов и экспатов',
-    subtitle: 'Концерты, вечеринки, йога, маркеты и встречи — Бали, Дананг, Нячанг',
+    subtitle: 'Концерты, вечеринки, йога, маркеты и встречи — Бали, Дананг, Нячанг, Кипр',
     open: 'Открыть карту',
-    imgAlt: 'Карта событий — Бали, Дананг, Нячанг',
+    imgAlt: 'Карта событий — Бали, Дананг, Нячанг, Кипр',
   },
   en: {
     title: 'Events for travelers and expats',
-    subtitle: 'Concerts, parties, yoga, markets and meetups — Bali, Da Nang, Nha Trang',
+    subtitle: 'Concerts, parties, yoga, markets and meetups — Bali, Da Nang, Nha Trang, Cyprus',
     open: 'Open the map',
-    imgAlt: 'Event map — Bali, Da Nang, Nha Trang',
+    imgAlt: 'Event map — Bali, Da Nang, Nha Trang, Cyprus',
   },
 };
 
@@ -1973,6 +1993,18 @@ function citySeoHtmlEn(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs 
       lines.push(`    <li>${parts.join(' — ')}</li>`);
     }
     lines.push('  </ul>');
+  }
+  // Перелинковка направлений (см. citySeoHtml): EN-версии городов ↔ /en/cyprus/.
+  const otherCitiesEn =
+    cityPathKey === 'cyprus'
+      ? [['bali', 'in Bali'], ['da-nang', 'in Da Nang'], ['nha-trang', 'in Nha Trang']]
+      : [['cyprus', 'in Cyprus']];
+  if (cityPathKey) {
+    lines.push(
+      `  <p>Other destinations on MyPins: ${otherCitiesEn
+        .map(([p, label]) => `<a href="/en/${p}/">${esc(label)}</a>`)
+        .join(', ')}.</p>`,
+    );
   }
   lines.push('  <h2>FAQ</h2>', faq);
   if (categoriesHtml) lines.push(categoriesHtml);
@@ -5067,13 +5099,13 @@ async function main() {
   console.log('  /blog/index.html');
   writePage(baseHtml, 'en/blog', {
     lang: 'en',
-    title: 'MyPins Blog: event guides for Bali, Da Nang and Nha Trang | MyPins',
+    title: 'MyPins Blog: event guides for Bali, Da Nang, Nha Trang and Cyprus | MyPins',
     description:
-      'Guides to the event scenes of Nha Trang, Bali and Da Nang: where to go, what to see and how much events cost. Round-ups by the MyPins team.',
+      'Guides to the event scenes of Nha Trang, Bali, Da Nang and Cyprus: where to go, what to see and how much events cost. Round-ups by the MyPins team.',
     canonical: enBlogUrl,
-    ogTitle: 'MyPins Blog: event guides for Bali, Da Nang and Nha Trang | MyPins',
+    ogTitle: 'MyPins Blog: event guides for Bali, Da Nang, Nha Trang and Cyprus | MyPins',
     ogDescription:
-      'Guides to the event scenes of Nha Trang, Bali and Da Nang: where to go, what to see and how much events cost. Round-ups by the MyPins team.',
+      'Guides to the event scenes of Nha Trang, Bali, Da Nang and Cyprus: where to go, what to see and how much events cost. Round-ups by the MyPins team.',
     ogUrl: enBlogUrl,
     ogImage: LOGO_URL,
     jsonLd: blogIndexJsonLd(blogArticles, 'en'),
@@ -5316,9 +5348,9 @@ async function main() {
   // EN-главная /en/: dist/en/index.html — из того же baseHtml, lang="en",
   // EN-title/description, canonical/og:url /en/, hreflang-пара на / + x-default
   // (на себя — x-default /en/ — как у всех EN-страниц), EN-блок #seo-home-block.
-  const homeTitleEn = 'Events on the Map: Bali, Da Nang, Nha Trang | MyPins';
+  const homeTitleEn = 'Events on the Map: Bali, Da Nang, Nha Trang, Cyprus | MyPins';
   const homeDescriptionEn =
-    'MyPins is an events map for travellers and expats in Southeast Asia: concerts, parties, yoga, markets and speaking clubs in Bali, Da Nang and Nha Trang with dates, venues and prices.';
+    'MyPins is an events map for travellers and expats in Southeast Asia and Cyprus: concerts, parties, yoga, markets and speaking clubs in Bali, Da Nang, Nha Trang and Cyprus with dates, venues and prices.';
   writeFileSync(
     join(DIST, 'en/index.html'),
     renderPage(baseHtml, {
