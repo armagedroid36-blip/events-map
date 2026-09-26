@@ -79,12 +79,18 @@ jobs:
       - name: Автопроверка собранных событий и публикация
         # Проверка правилами + LLM; прошедшие публикуются сразу, спорные остаются
         # на модерации человеку, грубые нарушения отклоняются.
+        # Очередь разбирается пакетами (100 карточек за запрос) до исчерпания:
+        # суточный сбор Кипра/Бали публикуется целиком за один запуск, хвост
+        # очереди не ждёт следующего запуска. Предохранители — 300 вызовов LLM
+        # и 30 минут на прогон.
         if: always()
         run: node scripts/moderate-events.mjs
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          MODERATION_MAX_LLM: '300'
+          MODERATION_MAX_MINUTES: '30'
       - name: Уведомление о новых событиях
         if: always()
         run: node scripts/notify-moderation.mjs
