@@ -12,6 +12,7 @@
 // SUPABASE_URL, SUPABASE_SERVICE_ROLE, DEEPSEEK_API_KEY (категория через LLM).
 import { createClient } from '@supabase/supabase-js';
 import { extractCategory } from './category-llm.mjs';
+import { selectAll } from './db-rows.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -276,18 +277,29 @@ async function geocode(query) {
 
 // ===== Дедупликация по базе =====
 async function existingKeys() {
-  if (!db) return { keys: new Set(), websites: new Set() };
-  const { data, error } = await db.from('events').select('title, start_date, website');
-  if (error) {
-    console.error('Ошибка чтения дублей:', error.message);
-    return { keys: new Set(), websites: new Set() };
+  if (!db) return { keys: new Set(), websites: new Set(), rows: 0 };
+  let data;
+  try {
+    // Постранично (selectAll): PostgREST отдаёт максимум 1000 строк на запрос,
+    // поэтому одиночный select оставлял без ключей все события за первой
+    // тысячей — они вставлялись заново на каждом прогоне, а счётчик
+    // «добавлено» показывал их как новые (их потом сносил dedupe-events.mjs).
+    data = await selectAll(db, 'events', 'title, start_date, website', {
+      log: (msg) => console.log(`  ключи дублей — ${msg}`),
+    });
+  } catch (e) {
+    // Пустой набор ключей означает повторную вставку всей ленты источника:
+    // лучше упасть, чем наплодить дублей — следующий прогон по расписанию
+    // прочитает ключи и доберёт события.
+    throw new Error(`не удалось прочитать ключи дублей: ${e.message}`);
   }
-  const keys = new Set((data || []).map((e) => normKey(e.title, e.start_date)));
+  const rows = data || [];
+  const keys = new Set(rows.map((e) => normKey(e.title, e.start_date)));
   // Ссылки на уже обработанные страницы источников: Cyprus.BZ отдаёт страницы
   // по 30+ секунд, поэтому повторно их не скачиваем — каждый запуск продвигается
   // глубже по карте сайта, а не топчется на первых страницах.
-  const websites = new Set((data || []).map((e) => (e.website || '').trim()).filter(Boolean));
-  return { keys, websites };
+  const websites = new Set(rows.map((e) => (e.website || '').trim()).filter(Boolean));
+  return { keys, websites, rows: rows.length };
 }
 
 // ===== Запись события =====
@@ -704,9 +716,12 @@ async function collectCyprusBzCities(seen, budget) {
 
 // ===== Основной цикл =====
 async function main() {
-  const { keys: seen, websites } = await existingKeys();
+  const { keys: seen, websites, rows: dbRows } = await existingKeys();
   const started = new Date();
-  console.log(`Старт сбора событий Кипра${DRY_RUN ? ' (DRY_RUN)' : ''}. Уже в базе ключей: ${seen.size}`);
+  console.log(
+    `Старт сбора событий Кипра${DRY_RUN ? ' (DRY_RUN)' : ''}. `
+    + `Уже в базе строк: ${dbRows}, ключей дублей: ${seen.size}, ссылок источников: ${websites.size}`,
+  );
 
   // VisitCyprus отдаёт небольшой официальный календарь (~30 событий),
   // Cyprus Now — самый насыщенный источник, Cyprus.BZ добирает остаток бюджета.
