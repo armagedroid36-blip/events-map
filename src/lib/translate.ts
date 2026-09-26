@@ -38,23 +38,30 @@ export async function translateText(text: string, targetLang: 'ru' | 'en'): Prom
 
 /**
  * Определяет язык оригинала по тексту (эвристика).
- * Для MVP достаточно: если есть кириллица — русский, иначе — английский.
+ * Греческий — по буквам (U+0370–U+03FF, U+1F00–U+1FFF: афиши Кипра приходят
+ * без перевода), кириллица — русский, иначе английский.
  */
-export function detectLang(text: string): 'ru' | 'en' {
+export function detectLang(text: string): 'ru' | 'en' | 'el' {
+  if (/[\u0370-\u03FF\u1F00-\u1FFF]/.test(text)) return 'el';
   return /[а-яё]/i.test(text) ? 'ru' : 'en';
 }
 
 /**
  * Возвращает текст события на языке интерфейса:
- * перевод, если есть; иначе оригинал (запасной вариант по спецификации).
+ * перевод, если есть; иначе оригинал, если он на нужном языке; иначе второй
+ * перевод; в крайнем случае — оригинал (что есть, то и показываем).
+ * Греческий оригинал в RU/EN-версии не показывается, пока есть хоть одна
+ * переведённая версия: иначе посетитель видит греческую афишу.
  */
 export function localizedText(
   original: string,
   ru?: string,
   en?: string,
-  _sourceLang?: string,
+  sourceLang?: string,
   uiLang: 'ru' | 'en' = 'ru',
 ): string {
-  if (uiLang === 'ru') return ru || original;
-  return en || original;
+  if (uiLang === 'ru') {
+    return ru || (sourceLang === 'ru' ? original : en || original);
+  }
+  return en || (sourceLang === 'en' ? original : ru || original);
 }

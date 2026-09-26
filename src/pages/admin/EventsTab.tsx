@@ -391,18 +391,29 @@ function EventEditor({ initial, categories, onCancel, onSaved }: EditorProps) {
     setError('');
     try {
       const sourceLang = detectLang(form.title ?? '');
-      const target: 'ru' | 'en' = sourceLang === 'ru' ? 'en' : 'ru';
+      // Греческий оригинал переводим сразу в оба языка: «своего» RU/EN-поля у
+      // него нет, иначе обе версии страницы показывали греческий текст.
+      const targets: Array<'ru' | 'en'> =
+        sourceLang === 'el' ? ['ru', 'en'] : [sourceLang === 'ru' ? 'en' : 'ru'];
       // Перевод выполняется один раз при сохранении; при сбое — null (покажем оригинал)
-      const titleTr = await translateText(form.title ?? '', target);
-      const descTr = await translateText(form.description ?? '', target);
+      const translations: Partial<EventItem> = {};
+      for (const target of targets) {
+        const titleTr = await translateText(form.title ?? '', target);
+        const descTr = await translateText(form.description ?? '', target);
+        if (target === 'ru') {
+          translations.title_ru = titleTr ?? undefined;
+          translations.description_ru = descTr ?? undefined;
+        } else {
+          translations.title_en = titleTr ?? undefined;
+          translations.description_en = descTr ?? undefined;
+        }
+      }
       const payload: Partial<EventItem> = {
         ...form,
         source_lang: sourceLang,
         photos: photoInputs.filter((p) => p.trim()),
-        // Переведённые поля кладём в нужную колонку
-        ...(target === 'ru'
-          ? { title_ru: titleTr ?? undefined, description_ru: descTr ?? undefined }
-          : { title_en: titleTr ?? undefined, description_en: descTr ?? undefined }),
+        // Переведённые поля кладём в нужные колонки
+        ...translations,
       };
       if (isNew) await getApi().createEvent(payload);
       else await getApi().updateEvent(initial.id!, payload);

@@ -89,6 +89,23 @@ function cityRu(text) {
   return '';
 }
 
+// ===== Язык текста по письменности =====
+// Агрегаторы (Cyprus Now) отдают греческие афиши под флагом 'en', а сборщик
+// копировал текст источника в RU-поля: и русская, и английская страница такого
+// события показывали греческий. Язык определяем по самим буквам, а не по
+// подсказке источника: греческие (U+0370–U+03FF, U+1F00–U+1FFF) → 'el',
+// кириллица → 'ru', иначе 'en'.
+const GREEK_RE = /[\u0370-\u03FF\u1F00-\u1FFF]/;
+const CYRILLIC_RE = /[\u0400-\u04FF]/;
+
+/** Язык текста: 'el' | 'ru' | 'en' */
+function detectLang(text) {
+  const s = String(text || '');
+  if (GREEK_RE.test(s)) return 'el';
+  if (CYRILLIC_RE.test(s)) return 'ru';
+  return 'en';
+}
+
 /** Ближайший крупный город по координатам — когда площадка названа незнакомо */
 function nearestCity(lat, lng) {
   let best = null;
@@ -324,13 +341,22 @@ async function buildRow(src) {
 
   const cat = (await extractCategory(src.description || src.title, src.catHint)) || src.category || 'festival';
 
+  // Язык по письменности: греческий заголовок важнее подсказки источника,
+  // иначе агрегатор помечает греческую афишу как английскую.
+  const titleLang = detectLang(src.title);
+  const descLang = detectLang(src.description);
+  const greek = titleLang === 'el' || descLang === 'el';
+  const lang = titleLang === 'en' ? (src.lang || 'en') : titleLang;
+
   return {
     title: src.title,
-    title_ru: src.title,
+    // Греческий текст в RU-поля НЕ копируем (иначе RU-страница показывает
+    // греческую афишу): перевод подставит scripts/backfill-translations.mjs.
+    title_ru: titleLang === 'el' ? null : src.title,
     description: src.description || '',
-    description_ru: src.description || '',
-    source_lang: src.lang || 'en',
-    language: src.lang || 'en',
+    description_ru: greek ? null : (src.description || ''),
+    source_lang: lang,
+    language: lang,
     start_date: src.start_date,
     end_date: src.end_date || null,
     start_time: src.start_time || null,
@@ -401,7 +427,6 @@ async function collectVisitCyprus(seen, budget) {
         category,
         catHint: `Источник: официальный календарь VisitCyprus. Категории источника: ${catNames.join(', ') || 'нет'}`,
       });
-      row.source_lang = 'en';
       if (await save(row, seen)) added++;
     }
     if (page >= (data.total_pages || 1)) break;
@@ -582,8 +607,12 @@ async function collectCyprusBz(seen, budget, websites = new Set()) {
       category: 'festival',
       catHint: `Источник: афиша Cyprus.BZ (русскоязычная), место: ${place}, ${addrLoc}`,
     });
-    row.source_lang = 'ru';
-    row.language = 'ru';
+    // Источник русскоязычный: языком считаем 'ru', но греческий заголовок
+    // (он уже определён по письменности) не перекрываем.
+    if (row.source_lang !== 'el') {
+      row.source_lang = 'ru';
+      row.language = 'ru';
+    }
     if (await save(row, seen)) added++;
   }
   console.log(

@@ -448,7 +448,11 @@ export function applyEventMeta(ev: EventItem): void {
   const hasEn = Boolean(ev.title_en) || ev.source_lang === 'en';
   const useEn = en && hasEn;
   const city = typeof ev.city === 'string' ? ev.city.trim() : '';
-  const titleName = useEn ? ev.title_en || ev.title : ev.title;
+  // RU-заголовок: перевод, иначе оригинал (если он русский), иначе EN-перевод —
+  // как localizedText. Без этого у греческих афиш Кипра в мете стоял греческий.
+  const titleName = useEn
+    ? ev.title_en || ev.title
+    : ev.title_ru || (ev.source_lang === 'en' ? ev.title : ev.title_en) || ev.title;
   // Город в мете — на языке страницы: EN-версия локализует той же логикой,
   // что крошка пре-рендера (cityNameEn: Нячанг→Nha Trang, Дананг→Da Nang,
   // Бали/районы→Bali); нераспознанный город — суффикс опущен. RU — как раньше.
@@ -466,10 +470,11 @@ export function applyEventMeta(ev: EventItem): void {
     useEn ? enCity : city,
     useEn ? 'en' : 'ru',
   );
-  // Текст, который видит посетитель этой версии (как localizedText)
+  // Текст, который видит посетитель этой версии (как localizedText):
+  // греческий оригинал не показываем, если есть хоть один перевод.
   const text = useEn
-    ? ev.description_en || ev.description
-    : ev.description_ru || ev.description || ev.description_en || '';
+    ? ev.description_en || (ev.source_lang === 'en' ? ev.description : ev.description_ru) || ev.description
+    : ev.description_ru || (ev.source_lang === 'ru' ? ev.description : ev.description_en) || ev.description || '';
   const date = useEn ? enDate(ev.start_date) : ruDate(ev.start_date);
   const prefix = [useEn ? enCity : city, date].filter(Boolean).join(', ');
   const description = snippet(prefix ? `${prefix}. ${text}` : text, 160);

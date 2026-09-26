@@ -1258,6 +1258,20 @@ function placeLabel(address, ev, lang) {
   return place;
 }
 
+/** URL без не-ASCII символов (процентное кодирование). В JSON-LD отдаём
+ *  именно его: у кипрских афиш ссылка источника содержит греческие буквы
+ *  (cyprusnow.app/event/αγκαλιά-…), из-за чего в статике /en/event/… оставались
+ *  греческие буквы. Адрес при этом тот же, что и был. */
+function asciiUrl(raw) {
+  const s = String(raw ?? '').trim();
+  if (!s) return '';
+  try {
+    return new URL(s).href;
+  } catch {
+    return s;
+  }
+}
+
 /**
  * Имя организации-источника, выводимое из website (Search Console хочет
  * organizer, а аккаунтов-организаторов в базе нет — owner_id/org_display_name
@@ -1430,7 +1444,7 @@ function eventJsonLd(ev, url, lang = 'ru', image = null, mode = 'active') {
       name: organizerName,
       // url — только когда имя выведено из website. Для аккаунта-организатора
       // URL источника не подставляем: это разные сущности.
-      ...(!orgName && website ? { url: website } : {}),
+      ...(!orgName && website ? { url: asciiUrl(website) } : {}),
     };
   }
   // performer намеренно НЕ выводим: в events нет данных об артистах
@@ -3046,9 +3060,13 @@ function eventPageMetaFor(ev, lang, opts) {
       bodySeo: eventSeoHtml(ev, url, 'en', sibs, catLink, similar, Boolean(past), chrono),
     };
   }
-  const title =
-    eventTitle(ev.title, ruDate(occurrence(ev)), city, 'ru') || 'Событие';
-  const ruText = ev.description_ru || ev.description || ev.description_en || '';
+  // Заголовок/описание RU-версии — тем же правилом, что localizedText (SPA):
+  // перевод, иначе оригинал (если он русский), иначе EN-перевод. Иначе у
+  // греческих афиш Кипра в <title> и описании стоял греческий текст.
+  const nameRu = ev.title_ru || (ev.source_lang === 'en' ? ev.title : ev.title_en) || ev.title;
+  const title = eventTitle(nameRu, ruDate(occurrence(ev)), city, 'ru') || 'Событие';
+  const ruText =
+    ev.description_ru || (ev.source_lang === 'ru' ? ev.description : ev.description_en) || ev.description || '';
   const prefix = [city, ruDate(ev.start_date)].filter(Boolean).join(', ');
   const description = snippet(prefix ? `${prefix}. ${ruText}` : ruText, 160);
   return {
@@ -4717,10 +4735,16 @@ async function main() {
     // название + одно место, много дат») заголовки без даты совпадали.
     // Дата и город неприкосновенны: обрезается только название (eventTitle).
     const occRu = occurrence(ev);
-    const title = eventTitle(ev.title, ruDate(occRu), city, 'ru') || 'Событие';
+    // Заголовок RU-страницы — по тем же правилам, что localizedText (SPA):
+    // перевод, иначе оригинал (если он русский), иначе EN-перевод. Без этого у
+    // греческих афиш Кипра в <title> стоял греческий текст, хотя h1 уже был
+    // переведён (правило одно на обе версии).
+    const nameRu = ev.title_ru || (ev.source_lang === 'en' ? ev.title : ev.title_en) || ev.title;
+    const title = eventTitle(nameRu, ruDate(occRu), city, 'ru') || 'Событие';
     // Текст, который видит русскоязычный посетитель (html lang="ru"),
     // как localizedText(description, description_ru, …): перевод или оригинал
-    const ruText = ev.description_ru || ev.description || ev.description_en || '';
+    const ruText =
+      ev.description_ru || (ev.source_lang === 'ru' ? ev.description : ev.description_en) || ev.description || '';
     const date = ruDate(ev.start_date);
     const prefix = [city, date].filter(Boolean).join(', ');
     const description = snippet(prefix ? `${prefix}. ${ruText}` : ruText, 160);

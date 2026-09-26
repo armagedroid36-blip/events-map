@@ -135,19 +135,27 @@ async function translateInBackground(
   id: string,
   title: string,
   description: string,
-  sourceLang: 'ru' | 'en',
+  sourceLang: 'ru' | 'en' | 'el',
 ): Promise<void> {
   try {
-    const target: 'ru' | 'en' = sourceLang === 'ru' ? 'en' : 'ru';
-    const [titleTr, descTr] = await Promise.all([
-      translateText(title, target),
-      translateText(description, target),
-    ]);
-    if (!titleTr && !descTr) return;
-    const upd: Partial<EventItem> =
-      target === 'ru'
-        ? { title_ru: titleTr ?? undefined, description_ru: descTr ?? undefined }
-        : { title_en: titleTr ?? undefined, description_en: descTr ?? undefined };
+    // Греческий оригинал (афиши Кипра) переводим сразу в ОБА языка: у него нет
+    // «своего» RU/EN-поля, без этого обе версии страницы показывали греческий.
+    const targets: Array<'ru' | 'en'> = sourceLang === 'el' ? ['ru', 'en'] : [sourceLang === 'ru' ? 'en' : 'ru'];
+    const upd: Partial<EventItem> = {};
+    for (const target of targets) {
+      const [titleTr, descTr] = await Promise.all([
+        translateText(title, target),
+        translateText(description, target),
+      ]);
+      if (target === 'ru') {
+        if (titleTr) upd.title_ru = titleTr;
+        if (descTr) upd.description_ru = descTr;
+      } else {
+        if (titleTr) upd.title_en = titleTr;
+        if (descTr) upd.description_en = descTr;
+      }
+    }
+    if (!Object.keys(upd).length) return;
     await getApi().updateEvent(id, upd);
   } catch {
     // перевод недоступен — остаётся оригинал
