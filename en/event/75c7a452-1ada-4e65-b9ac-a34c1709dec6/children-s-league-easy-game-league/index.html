@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHILDREN&#39;S LEAGUE EASY GAME… — September 26, 2026 · Nha Trang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-dyYU3_jx.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-DkfEsSAb.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-5Czxwcjv.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-DYO_cZ0p.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-BswbZeZp.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro--G1TI1EZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-CSa-KqHE.css" />
+      <meta name="description" content="Nha Trang, September 26, 2026. 🎯 KIDS&#39; LEAGUE EASY GAME LEAGUE 🏆 Here victory doesn&#39;t depend on age or athletic training — but on accuracy, agility and a bit…" />
+    <link rel="canonical" href="https://mypins.site/en/event/75c7a452-1ada-4e65-b9ac-a34c1709dec6/children-s-league-easy-game-league/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="CHILDREN&#39;S LEAGUE EASY GAME… — September 26, 2026 · Nha Trang" />
+    <meta property="og:description" content="Nha Trang, September 26, 2026. 🎯 KIDS&#39; LEAGUE EASY GAME LEAGUE 🏆 Here victory doesn&#39;t depend on age or athletic training — but on accuracy, agility and a bit…" />
+    <meta property="og:url" content="https://mypins.site/en/event/75c7a452-1ada-4e65-b9ac-a34c1709dec6/children-s-league-easy-game-league/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/75c7a452-1ada-4e65-b9ac-a34c1709dec6/children-s-league-easy-game-league/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/75c7a452-1ada-4e65-b9ac-a34c1709dec6/detskaya-liga-easy-game-league/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"CHILDREN'S LEAGUE EASY GAME LEAGUE","item":"https://mypins.site/en/event/75c7a452-1ada-4e65-b9ac-a34c1709dec6/children-s-league-easy-game-league/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>CHILDREN&#39;S LEAGUE EASY GAME LEAGUE</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-09-26">September 26, 2026</time></p>
+  <p><time datetime="2026-09-26T15:00:00">September 26, 2026, 3:00 PM</time></p>
+  <address>76F2 3P5 Cộng sự, Bắc Nha Trang, Khánh Hòa 650000, Vietnam</address>
+  <p>150000 VND</p>
+  <p>🎯 KIDS&#39; LEAGUE EASY GAME LEAGUE
+🏆 Here victory doesn&#39;t depend on age or athletic training — but on accuracy, agility and a bit of luck!
+Big wooden games, points, competition and real emotions 🎯
+First time? We&#39;ll explain the rules before the game.
+📅 26.09 | 15:00–16:30
+👦 8–13 years old | 💰 150,000 VND
+The price includes participation and a drink
+📍 Location: next to Oceanus cafe Cộng sự https://maps.app.goo.gl/LnsMvv9Xa6wFPa7k6?g_st=ic
+✨ Limited number of spots
+📩 Sign up for the game: https://t.me/juliaglobal
+
+#date: 26.09.2026
+Post by: Julia</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>CHILDREN&#39;S LEAGUE EASY GAME LEAGUE</span></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a> · <a href="/en/nha-trang/games/">🎲 Games &amp; Quizzes</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/63900690-c014-4126-be3f-aa141b84d8a8/music-quiz-guess-the-melody-in-nha-trang/">Music Quiz Guess the Melody in Nha Trang! <time datetime="2026-09-27">September 27, 2026</time></a></li>
+    <li><a href="/en/event/86b40fc1-bc41-443b-b33f-f73f43cf5b2b/financial-game-tournament-finance-and-investments/">FINANCIAL GAME TOURNAMENT &quot;FINANCE AND INVESTMENTS&quot; <time datetime="2026-09-27">September 27, 2026</time></a></li>
+    <li><a href="/en/event/4c8a0ac6-67cf-414a-b3c6-1cfa7b874073/board-game-day/">Board Game Day <time datetime="2026-09-27">September 27, 2026</time></a></li>
+    <li><a href="/en/event/50e9bebb-ef10-4433-80ff-545bb32bc97e/board-games-at-shama-book-bakery/">Board games at Shama Book Bakery <time datetime="2026-09-27">September 27, 2026</time></a></li>
+    <li><a href="/en/event/035f0ae1-c3bb-40af-a1bc-5e122be948d1/sunday-playing-avalon/">Sunday: Playing AVALON <time datetime="2026-09-27">September 27, 2026</time></a></li>
+    <li><a href="/en/event/4baf9c0e-d4b7-4f64-b392-6741e44af66f/evening-of-playing-in-all-severity/">Evening of playing &quot;IN ALL SEVERITY&quot; <time datetime="2026-09-27">September 27, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Nha Trang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/5ddbd301-c28b-4a66-8b28-b16d33e9c38c/children-s-board-game-playroom/">CHILDREN&#39;S BOARD GAME PLAYROOM</a> <time datetime="2026-09-26">September 26, 2026</time></li>
+    <li>Next: <a href="/en/event/865f7b6f-e2c1-4a72-9cd4-6738f237868e/big-free-pickleball-games-for-beginners/">BIG FREE PICKLEBALL GAMES FOR BEGINNERS</a> <time datetime="2026-09-26">September 26, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
+</div>
+
+  </body>
+</html>
