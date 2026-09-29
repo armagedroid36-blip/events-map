@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz Night: Team Trivia Evening… — September 26, 2026 · Cyprus</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-dyYU3_jx.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-DkfEsSAb.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-5Czxwcjv.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-DYO_cZ0p.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-BswbZeZp.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro--G1TI1EZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-CSa-KqHE.css" />
+      <meta name="description" content="Cyprus, September 26, 2026. Team up for a fun trivia night at Seedari Bakehouse in Nicosia on 26 September 2026 — €5 per person, pizza included for players…" />
+    <link rel="canonical" href="https://mypins.site/en/event/2818408b-e0a8-4c6f-8ffd-d5bf4d99f1e5/quiz-night-team-trivia-evening-at-seedari-bakehouse/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Quiz Night: Team Trivia Evening… — September 26, 2026 · Cyprus" />
+    <meta property="og:description" content="Cyprus, September 26, 2026. Team up for a fun trivia night at Seedari Bakehouse in Nicosia on 26 September 2026 — €5 per person, pizza included for players…" />
+    <meta property="og:url" content="https://mypins.site/en/event/2818408b-e0a8-4c6f-8ffd-d5bf4d99f1e5/quiz-night-team-trivia-evening-at-seedari-bakehouse/" />
+    <meta property="og:image" content="https://eventor-images-s3.s3.eu-west-2.amazonaws.com/high-res/8da0080d-cb71-412b-b5c8-0e5bb70cf059.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/2818408b-e0a8-4c6f-8ffd-d5bf4d99f1e5/quiz-night-team-trivia-evening-at-seedari-bakehouse/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/2818408b-e0a8-4c6f-8ffd-d5bf4d99f1e5/quiz-night-team-trivia-evening-at-seedari-bakehouse/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Quiz Night: Team Trivia Evening at Seedari Bakehouse","item":"https://mypins.site/en/event/2818408b-e0a8-4c6f-8ffd-d5bf4d99f1e5/quiz-night-team-trivia-evening-at-seedari-bakehouse/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Quiz Night: Team Trivia Evening at Seedari Bakehouse</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-09-26">September 26, 2026</time></p>
+  <p><time datetime="2026-09-26T16:00:00">September 26, 2026, 4:00 PM</time></p>
+  <address>Seedari Bakehouse, Cyprus</address>
+  <p>Team up for a fun trivia night at Seedari Bakehouse in Nicosia on 26 September 2026 — €5 per person, pizza included for players. Reserve your spot now.
+
+---
+
+Scroll down for English version 👇
+
+---
+
+A night full of questions, competition, and team spirit awaits you at Seedari Bakehouse! Bring your crew — teams of 2 to 5 people — and get ready for an unforgettable battle of wits on Saturday, 26 September 2026, at 19:00.
+
+🎟️ Tickets from €5 per person.
+
+Every player has exclusive access to pizza served only to participants — until it runs out! Don&#39;t leave your spot</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Quiz Night: Team Trivia Evening at Seedari Bakehouse</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/games/">🎲 Games &amp; Quizzes</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/0a9d03a5-baf1-4d1a-8373-96013f685527/marina-treasure-hunt/">Marina Treasure Hunt <time datetime="2026-10-01">October 1, 2026</time></a></li>
+    <li><a href="/en/event/5892357c-01e1-44ac-b331-196ab024e1bc/the-station-mystery-the-case-reopens-in-evrychou/">The Station Mystery: The Case Reopens in Evrychou <time datetime="2026-10-02">October 2, 2026</time></a></li>
+    <li><a href="/en/event/5d781252-e712-41dc-a39d-c48f4c13683c/the-station-mystery-the-case-reopens-in-evrychou/">The Station Mystery: The Case Reopens in Evrychou <time datetime="2026-10-04">October 4, 2026</time></a></li>
+    <li><a href="/en/event/7c135631-ab99-4578-8387-680a537662da/the-mystery-of-the-station-the-case-reopens/">The Mystery of the Station – The Case Reopens <time datetime="2026-10-04">October 4, 2026</time></a></li>
+    <li><a href="/en/event/1d25396e-6715-4b37-9e12-f746b0e6f3b5/kids-fun-day-2026/">Kids Fun Day 2026 <time datetime="2026-10-04">October 4, 2026</time></a></li>
+    <li><a href="/en/event/0619935b-d3b3-4978-b637-3c2f7b37ccd0/etxetera-bar-quiz-friday-night-trivia-in-nicosia/">Etxetera Bar Quiz: Friday Night Trivia in Nicosia <time datetime="2026-10-09">October 9, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/23e438c4-7453-41dd-b8e0-37c38ade69bd/ak-85-at-malindi-beach-bar/">AK 85 at Malindi Beach Bar</a> <time datetime="2026-09-26">September 26, 2026</time></li>
+    <li>Next: <a href="/en/event/2889ebd5-19eb-4f5d-89cb-812ff7eb1ea3/castle-club-saturdays/">Castle Club Saturdays</a> <time datetime="2026-09-26">September 26, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

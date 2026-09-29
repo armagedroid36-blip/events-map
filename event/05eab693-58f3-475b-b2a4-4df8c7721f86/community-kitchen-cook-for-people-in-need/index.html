@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Community Kitchen… — 13 сентября 2026 · Печату (Улувату), Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-dyYU3_jx.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-DkfEsSAb.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-5Czxwcjv.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-DYO_cZ0p.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-BswbZeZp.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro--G1TI1EZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-CSa-KqHE.css" />
+      <meta name="description" content="Печату (Улувату), Bali, 13 сентября 2026. На платной культурной программе Community Kitchen участники приготовят и упакуют 200 порций nasi bungkus для…" />
+    <link rel="canonical" href="https://mypins.site/event/05eab693-58f3-475b-b2a4-4df8c7721f86/community-kitchen-cook-for-people-in-need/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Community Kitchen… — 13 сентября 2026 · Печату (Улувату), Bali" />
+    <meta property="og:description" content="Печату (Улувату), Bali, 13 сентября 2026. На платной культурной программе Community Kitchen участники приготовят и упакуют 200 порций nasi bungkus для…" />
+    <meta property="og:url" content="https://mypins.site/event/05eab693-58f3-475b-b2a4-4df8c7721f86/community-kitchen-cook-for-people-in-need/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/05eab693-58f3-475b-b2a4-4df8c7721f86/community-kitchen-cook-for-people-in-need/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/05eab693-58f3-475b-b2a4-4df8c7721f86/community-kitchen-cook-for-people-in-need/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Бали","item":"https://mypins.site/bali/"},{"@type":"ListItem","position":3,"name":"Community Kitchen: Cook for People in Need","item":"https://mypins.site/event/05eab693-58f3-475b-b2a4-4df8c7721f86/community-kitchen-cook-for-people-in-need/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Community Kitchen: Cook for People in Need</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-09-13">13 сентября 2026</time></p>
+  <p><time datetime="2026-09-13T08:00:00">13 сентября 2026, 08:00</time></p>
+  <address>Jl. Labuansait No.32, Pecatu, Kec. Kuta Sel., Kabupaten Badung, Bali 80361, Печату (Улувату), Bali</address>
+  <p>На платной культурной программе Community Kitchen участники приготовят и упакуют 200 порций nasi bungkus для нуждающихся жителей Букита. Встречи проходят во второе и четвёртое воскресенье месяца с 08:00 до 11:00; формат оформлен как платная активность с учётом миграционных правил Индонезии.
+
+Билеты: https://megatix.co.id/events/community-kitchen</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/bali/">Бали</a> <span aria-hidden="true">›</span> <span>Community Kitchen: Cook for People in Need</span></p>
+    <p>Ещё события на Бали: <a href="/bali/">афиша</a> · <a href="/bali/food/">🍜 Еда и напитки</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/b59a77ca-e836-431d-b50c-cf2e00ee5d55/degustatsiya-indoneziyskikh-vin-v-dome/">Дегустация индонезийских вин в Dome <time datetime="2026-09-11">11 сентября 2026</time></a></li>
+    <li><a href="/event/89c296a3-67a0-4d65-a9ce-5e70073268f1/den-margarity-v-one-eyed-jack/">День Маргариты в One Eyed Jack <time datetime="2026-09-14">14 сентября 2026</time></a></li>
+    <li><a href="/event/d7d59e51-e514-4ff0-9f49-3431f01d5739/uzhin-l-orientale-v-sardine-by-k-club/">Ужин L’Orientale в Sardine by K Club <time datetime="2026-09-14">14 сентября 2026</time></a></li>
+    <li><a href="/event/c5f9b6ed-2463-40e1-afa7-c5dfb093f959/uzhin-v-bourke-s/">Ужин в Bourke’s <time datetime="2026-09-15">15 сентября 2026</time></a></li>
+    <li><a href="/event/c0400dca-4886-4926-ab8d-030116e64cb4/diskussiya-o-ede-i-kulture-v-dragon-tea-temple/">Дискуссия о еде и культуре в Dragon Tea Temple <time datetime="2026-09-16">16 сентября 2026</time></a></li>
+    <li><a href="/event/524b7d6e-234a-4402-a54b-e43ad127b4c0/rozhdestvenskie-vechera-v-copper-muzyka-i-prazdnichnyy-uzhin/">Рождественские вечера в Copper: музыка и праздничный ужин <time datetime="2026-12-24">24 декабря 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Бали</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/ffe75e0c-dd63-4a4b-856b-883a31e428f8/mafiya-sportivnaya/">Мафия (спортивная)</a> <time datetime="2026-09-12">12 сентября 2026</time></li>
+    <li>Следующее: <a href="/event/0d837041-e0f3-4ee9-92c0-be20cb20de9b/kofeynyy-master-klass-v-dome/">Кофейный мастер-класс в Dome</a> <time datetime="2026-09-13">13 сентября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/bali/">Ближайшие события: Бали</a></p>
+</div>
+
+  </body>
+</html>

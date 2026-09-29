@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>А поехали вместе в — 12 сентября 2026 · Нячанг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-dyYU3_jx.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-DkfEsSAb.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-5Czxwcjv.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-DYO_cZ0p.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-BswbZeZp.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro--G1TI1EZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-CSa-KqHE.css" />
+      <meta name="description" content="Нячанг, 12 сентября 2026. А поехали вместе в ⤵️ 🌳Природный парк Янг Бэй 🌳 ❗️12.09 в субботу , выезжаем в 9 утра от океануса, вернемся примерно в 16-00 Там…" />
+    <link rel="canonical" href="https://mypins.site/event/fbd307d9-a53c-4e52-8e6f-79670bc89e7b/a-poekhali-vmeste-v/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="А поехали вместе в — 12 сентября 2026 · Нячанг" />
+    <meta property="og:description" content="Нячанг, 12 сентября 2026. А поехали вместе в ⤵️ 🌳Природный парк Янг Бэй 🌳 ❗️12.09 в субботу , выезжаем в 9 утра от океануса, вернемся примерно в 16-00 Там…" />
+    <meta property="og:url" content="https://mypins.site/event/fbd307d9-a53c-4e52-8e6f-79670bc89e7b/a-poekhali-vmeste-v/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/fbd307d9-a53c-4e52-8e6f-79670bc89e7b/a-poekhali-vmeste-v/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/fbd307d9-a53c-4e52-8e6f-79670bc89e7b/and-let-s-go-together-to/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"А поехали вместе в","item":"https://mypins.site/event/fbd307d9-a53c-4e52-8e6f-79670bc89e7b/a-poekhali-vmeste-v/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>А поехали вместе в</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-09-20">20 сентября 2026</time></p>
+  <p><time datetime="2026-09-12T09:00:00">12 сентября 2026, 09:00</time></p>
+  <address>Природный парк Янг Бэй, Нячанг</address>
+  <p>140000 VND</p>
+  <p>А поехали вместе в ⤵️
+
+🌳Природный парк Янг Бэй 🌳
+
+❗️12.09 в субботу , выезжаем в 9 утра от океануса, вернемся примерно в 16-00
+
+Там можно кормить крокодилов, страусов, кроликов, рыбок, и других животных. Там можно смотреть водопады, или купаться в них, очень много гулять или передвигаться на внутреннем транспорте. Там можно поплавать в горячих и холодных натуральных источниках с красивым видом. Вообщем этот парк обязателен к посещению. Он всегда дарит много эмоций, в любую погоду взрослым и детям😍
+
+💰место в трансфере - 300 внд. Дополнительно оплачивается вход в парк, уже в день поездки (200 внд - взрослым, 140 - детям, малыши бесплатно)
+
+В машине 15 мест
+
+✍️Для бронирования пишите мне @alina_khmelinina
+
+#дата: 12.09.2026
+Пост от: Алина | Поездки по Нячангу и Вьетнаму ☀️</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/nha-trang/">Нячанг</a> <span aria-hidden="true">›</span> <span>А поехали вместе в</span></p>
+    <p>Ещё события в Нячанге: <a href="/nha-trang/">афиша</a> · <a href="/nha-trang/tour/">🗺️ Экскурсии и туры</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/a96bf582-6965-47a3-b895-33cc7e060ab8/rassvet-na-gore-angelov-vyshe-gor/">Рассвет на Горе Ангелов «Выше Гор» <time datetime="2026-09-30">30 сентября 2026</time></a></li>
+    <li><a href="/event/afa7103f-1403-4ffa-a939-736dcc3b1b51/puteshestvie-k-tainstvennomu-ostrovu-i-mayaku-i-l-nh/">Путешествие к таинственному острову и маяку Đại Lãnh <time datetime="2026-10-01">1 октября 2026</time></a></li>
+    <li><a href="/event/49eda0ae-213c-476b-b66c-4ae5f9e61dab/1go-oktyabrya-v-cht/">1го октября в чт <time datetime="2026-10-01">1 октября 2026</time></a></li>
+    <li><a href="/event/64260d83-0c1d-47af-b50a-976b31ae8f25/kuda-na-vykhodnye/">КУДА НА ВЫХОДНЫЕ? <time datetime="2026-10-03">3 октября 2026</time></a></li>
+    <li><a href="/event/f6f5494c-4450-4d96-9d31-bacba1c8b5c6/puteshestvie-v-zapovednik-n-i-ch-a/">Путешествие в заповедник Núi Chúa <time datetime="2026-10-03">3 октября 2026</time></a></li>
+    <li><a href="/event/c7832c75-0c2f-401a-8a66-ebca610622b7/podem-na-goru-angelov/">ПОДЪЁМ НА ГОРУ АНГЕЛОВ <time datetime="2026-10-04">4 октября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Нячанг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/ddae3b6a-85c8-4fb3-8153-911bc437a757/nyting-v-nyachange/">НЫТИНГ В НЯЧАНГЕ</a> <time datetime="2026-09-20">20 сентября 2026</time></li>
+    <li>Следующее: <a href="/event/083551e3-b869-412b-af1e-57a228c299ac/bachata-open-air-ponedelnik-21-sentyabrya/">BACHATA OPEN AIR ПОНЕДЕЛЬНИК, 21 СЕНТЯБРЯ!</a> <time datetime="2026-09-21">21 сентября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/nha-trang/">Ближайшие события: Нячанг</a></p>
+</div>
+
+  </body>
+</html>
