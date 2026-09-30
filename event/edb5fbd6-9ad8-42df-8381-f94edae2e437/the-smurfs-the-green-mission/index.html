@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Smurfs - The Green Mission — 31 октября 2026 · Лимасол, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-dyYU3_jx.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-DkfEsSAb.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-5Czxwcjv.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-DYO_cZ0p.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-BswbZeZp.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro--G1TI1EZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-CSa-KqHE.css" />
+      <meta name="description" content="Лимасол, Кипр, 31 октября 2026. An interactive children&#39;s adventure that will remain... Smurftastic! Our beloved Smurfs return with a brand-new, imaginative…" />
+    <link rel="canonical" href="https://mypins.site/event/edb5fbd6-9ad8-42df-8381-f94edae2e437/the-smurfs-the-green-mission/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="The Smurfs - The Green Mission — 31 октября 2026 · Лимасол, Кипр" />
+    <meta property="og:description" content="Лимасол, Кипр, 31 октября 2026. An interactive children&#39;s adventure that will remain... Smurftastic! Our beloved Smurfs return with a brand-new, imaginative…" />
+    <meta property="og:url" content="https://mypins.site/event/edb5fbd6-9ad8-42df-8381-f94edae2e437/the-smurfs-the-green-mission/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/caa996cd-5461-42d2-bc3b-7cd93ebff4f0/1783480040886.webp?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/edb5fbd6-9ad8-42df-8381-f94edae2e437/the-smurfs-the-green-mission/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/edb5fbd6-9ad8-42df-8381-f94edae2e437/the-smurfs-the-green-mission/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"The Smurfs - The Green Mission","url":"https://mypins.site/event/edb5fbd6-9ad8-42df-8381-f94edae2e437/the-smurfs-the-green-mission/","startDate":"2026-10-31T09:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Pattichio Theatre, Limassol","address":{"@type":"PostalAddress","addressLocality":"Лимасол, Кипр","streetAddress":"Pattichio Theatre, Limassol","addressCountry":"cyprus"},"geo":{"@type":"GeoCoordinates","latitude":34.7071,"longitude":33.0226}},"description":"An interactive children's adventure that will remain... Smurftastic! Our beloved Smurfs return with a brand-new, imaginative show for the whole family! Songs, dancing, laughter, mystery, hilarious twists and powerful environmental messages come together in a theatrical experience unlike any...","endDate":"2026-10-31T11:00:00","image":"https://cyprus.bz/img/images/events/caa996cd-5461-42d2-bc3b-7cd93ebff4f0/1783480040886.webp?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/event/30c4/the-smurfs-the-green-mission-2026"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"The Smurfs - The Green Mission","item":"https://mypins.site/event/edb5fbd6-9ad8-42df-8381-f94edae2e437/the-smurfs-the-green-mission/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>The Smurfs - The Green Mission</h1>
+  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-11-01">1 ноября 2026</time></p>
+  <p><time datetime="2026-10-31T09:00:00">31 октября 2026, 09:00</time></p>
+  <address>Pattichio Theatre, Limassol, Лимасол, Кипр</address>
+  <p>An interactive children&#39;s adventure that will remain... Smurftastic! Our beloved Smurfs return with a brand-new, imaginative show for the whole family! Songs, dancing, laughter, mystery, hilarious twists and powerful environmental messages come together in a theatrical experience unlike any...</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>The Smurfs - The Green Mission</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/theatre/">🎭 Театры и шоу</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/10c0fa2f-c7bc-47b9-b65e-5ef51762f52f/one-dark-knight-a-batman-musical/">Один тёмный рыцарь: мюзикл о Бэтмене <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/38bdd6f3-8daa-48b9-8ca2-207b9a77a442/event/">Лысая певица <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/a9877216-8b63-433b-8d54-ea88c25ef0bd/one-weekend-with-teatro-angelico/">One Weekend With Teatro Angelico <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/74321e3c-3972-4ebd-964d-d7080bef4015/the-smurfs-the-green-mission-live-theatre-show-in-limassol-nicosia/">The Smurfs: The Green Mission - Live Theatre Show in Limassol &amp; Nicosia <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/f582be45-50d1-4d3d-8820-fa898fa92889/los-vivancos-live-spanish-dance-music-show-in-cyprus/">Los Vivancos Live: шоу испанского танца и музыки на Кипре <time datetime="2026-11-04">4 ноября 2026</time></a></li>
+    <li><a href="/event/4ea76971-37dd-4f4c-bdcd-30df9f08e984/los-vivancos-live-show/">Los Vivancos Live Show <time datetime="2026-11-04">4 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/57a46904-84e9-4e22-99b2-c3e2e749b2a8/s-v-e-t-w-symphonic-orchestra/">S.V.E.T w/ SYMPHONIC ORCHESTRA</a> <time datetime="2026-10-10">10 октября 2026</time></li>
+    <li>Следующее: <a href="/event/e086a01c-b827-4ae2-b4e7-a73097ed0491/the-princess-of-agioi-saranta/">The Princess of Agioi Saranta!</a> <time datetime="2026-11-15">15 ноября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>
