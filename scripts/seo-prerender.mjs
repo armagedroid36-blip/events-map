@@ -2322,6 +2322,18 @@ function pastTooOld(ev) {
 }
 
 /**
+ * <lastmod> АКТИВНОГО события: дата последнего изменения записи (updated_at),
+ * а не дата сборки. Без этого каждую ночь все ~2000 URL событий объявляются
+ * «обновлёнными сегодня»: сигнал свежести обесценивается, краулер переобходит
+ * те же адреса, а новые страницы ждут в очереди. Нет updated_at (или он из
+ * будущего) → дата сборки, как было.
+ */
+function activeLastmod(ev) {
+  const iso = typeof ev.updated_at === 'string' ? ev.updated_at.slice(0, 10) : '';
+  return /^\d{4}-\d{2}-\d{2}$/.test(iso) && iso <= TODAY_ISO ? iso : TODAY_ISO;
+}
+
+/**
  * Все архивные события постранично (PostgREST отдаёт максимум 1000 строк).
  * Пустой ответ — не ошибка: архив может быть пуст, но молча терять страницы
  * нельзя, поэтому о размере набора пишем в лог сборки.
@@ -4400,7 +4412,8 @@ async function main() {
   console.log(
     `  категорий: ${categories.length}, ячеек «город × категория» (>=${MIN_CATEGORY_EVENTS}): ${cells.size}`,
   );
-  // <lastmod> для sitemap: по умолчанию дата сборки (TODAY_ISO); статьи блога
+  // <lastmod> для sitemap: у активных событий — updated_at (activeLastmod),
+  // у остальных по умолчанию дата сборки (TODAY_ISO); статьи блога
   // и /blog/ перекрываются датой публикации статьи (lastmods.set ниже)
   const lastmods = new Map();
 
@@ -4771,6 +4784,8 @@ async function main() {
       bodySeo: eventSeoHtml(ev, url, 'ru', sibs, eventCategoryLink(ev, 'ru', cells), similarRu),
     });
     locs.push(url);
+    // lastmod активного события = updated_at (см. activeLastmod), не дата сборки
+    lastmods.set(url, activeLastmod(ev));
     pageEvents.push(path);
     // EN-версия события — только если у события есть перевод/англ. оригинал
     if (hasEn) {
@@ -4807,6 +4822,7 @@ async function main() {
         bodySeo: eventSeoHtml(ev, enUrl, 'en', sibs, eventCategoryLink(ev, 'en', cells), similarEn),
       });
       locs.push(enUrl);
+      lastmods.set(enUrl, activeLastmod(ev));
       hreflangPairs.set(url, enUrl);
       pageEnEvents += 1;
     }
