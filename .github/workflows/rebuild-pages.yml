@@ -51,13 +51,30 @@ jobs:
       # Ключи нужны и Vite (VITE_* вшиваются в бандл), и пре-рендеру
       # (scripts/seo-prerender.mjs читает VITE_SUPABASE_URL /
       # VITE_SUPABASE_ANON_KEY из env; без них сборка падает на exit 1).
-      # Без pipefail шага бы не было: GitHub выполняет run через bash -eo pipefail,
-      # поэтому падение сборки валит шаг, а следующий (деплой) не запускается.
+      #
+      # shell: bash здесь не для красоты. Дефолтная оболочка шага — bash -e {0}
+      # (без pipefail), поэтому в `npm run build 2>&1 | tee build.log` код шага
+      # равнялся коду tee и падение сборки не валило шаг: 28.09 так уехал
+      # частичный dist, и прод 23 часа отдавал 404. Явный shell: bash даёт
+      # `bash --noprofile --norc -eo pipefail {0}` — падение любого звена
+      # (tsc -b && vite build && пре-рендер && 404) валит шаг, и публикация
+      # в gh-pages не выполняется.
       - name: Сборка (tsc + vite + пре-рендер + sitemap)
+        shell: bash
         run: npm run build 2>&1 | tee build.log
         env:
           VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+
+      # Лог сборки сохраняем ВСЕГДА (даже когда шаг упал): логи Actions по API
+      # отдают 403, поэтому без артефакта причину сбоя 28.09 установить было нечем.
+      - name: Артефакт лога сборки
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log
+          if-no-files-found: ignore
 
       - name: Итоги сборки (счётчики)
         run: |
@@ -69,6 +86,12 @@ jobs:
           echo "ячеек город×категория: $(for c in bali da-nang nha-trang; do find "dist/$c" -mindepth 2 -maxdepth 2 -name index.html; done | wc -l) RU / $(for c in bali da-nang nha-trang; do find "dist/en/$c" -mindepth 2 -maxdepth 2 -name index.html; done | wc -l) EN"
           echo "URL в sitemap:         $(grep -c '<loc>' dist/sitemap.xml)"
           echo "дата сборки в статике: $(grep -o 'Афиша обновлена: <time datetime=\"[0-9-]*\"' dist/bali/index.html | head -1)"
+
+      # Второй барьер перед публикацией: код возврата шага сборки проверяет
+      # «упало ли», а этот шаг — «получилось ли». Пустой или частичный dist
+      # (как 28.09) валит пайплайн здесь, и в gh-pages ничего не уезжает.
+      - name: Проверка целостности dist
+        run: node scripts/verify-dist.mjs
 
       # Деплой строго ПОСЛЕ успешной сборки: если build упал, шаг не
       # выполняется и прод остаётся прежним (частичный dist не публикуется).
