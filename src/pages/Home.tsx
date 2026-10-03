@@ -185,6 +185,14 @@ export default function Home({
   // Последний город, по которому ушёл запрос геокодинга (для гонок запросов)
   const geocodeCityRef = useRef('');
   const [selected, setSelected] = useState<EventItem | null>(null);
+  // Порядковый номер последнего выбора события: ответ дозагрузки полного
+  // объекта приходит асинхронно — по нему отбрасываем устаревшие ответы
+  // (пользователь уже закрыл карточку или открыл другое событие).
+  const selectSeqRef = useRef(0);
+  // Полные объекты событий, дозагруженные точечно (get_public_event):
+  // облегчённый список не несёт описаний, а из описания первого события ячейки
+  // «город × категория» собирается текст «Подробности: …» — как в статике.
+  const [fullById, setFullById] = useState<Record<string, EventItem>>({});
   const [center, setCenter] = useState<{ lat: number; lng: number } | null>(null);
   const [zoom, setZoom] = useState<number | undefined>(undefined);
   const [formOpen, setFormOpen] = useState(false);
@@ -401,6 +409,9 @@ export default function Home({
   // убираем её (и чистим старую hash-ссылку #/?e=, если вдруг осталась)
   function closeCard() {
     setSelected(null);
+    // Ответ дозагрузки полного объекта, пришедший после закрытия, не должен
+    // ни вернуть карточку, ни переписать мету страницы (номер выбора)
+    selectSeqRef.current++;
     // <head>: возврат к мете текущего маршрута (категория, город или главная)
     applyCurrentMeta();
     if (window.location.pathname.startsWith('/event/')) {
@@ -445,10 +456,35 @@ export default function Home({
   /** Факты ячейки — из них собираются тексты и description (lib/categoryPages).
    *  Считаются и для ПУСТОГО набора активных событий: восстановленная ячейка
    *  (RESTORED_CELLS) без активных событий всё равно рисует h1/интро/FAQ — их
-   *  тексты для count === 0 не зависят от данных и совпадают со статикой. */
+   *  тексты для count === 0 не зависят от данных и совпадают со статикой.
+   *  Первое событие ячейки берём из дозагруженного полного объекта: его
+   *  описание даёт «Подробности: …» в FAQ — облегчённый список описаний не
+   *  несёт, а текст должен совпадать со статикой (scripts/seo-prerender.mjs). */
+  const firstCellId = categoryCellItems[0]?.ev.id ?? null;
+  useEffect(() => {
+    if (!firstCellId || fullById[firstCellId]) return;
+    let alive = true;
+    getApi()
+      .getPublicEvent(firstCellId)
+      .then((ev) => {
+        if (alive && ev) setFullById((prev) => ({ ...prev, [firstCellId]: ev }));
+      })
+      .catch(() => {
+        // Нет сети/прав — текст ячейки соберётся без «Подробностей»
+      });
+    return () => {
+      alive = false;
+    };
+  }, [firstCellId, fullById]);
+  /** События ячейки с полными объектами там, где они уже дозагружены */
+  const categoryCellItemsFull = useMemo(
+    () =>
+      categoryCellItems.map((item) => ({ ...item, ev: fullById[item.ev.id] ?? item.ev })),
+    [categoryCellItems, fullById],
+  );
   const categoryFacts = useMemo(
-    () => (pageCityPath && categoryId ? cellFacts(categoryCellItems, seoLang) : null),
-    [categoryCellItems, pageCityPath, categoryId, seoLang],
+    () => (pageCityPath && categoryId ? cellFacts(categoryCellItemsFull, seoLang) : null),
+    [categoryCellItemsFull, pageCityPath, categoryId, seoLang],
   );
   /** Сколько в ячейке активных событий с EN-версией: EN-страница существует
    *  ровно при >= MIN_CATEGORY_EVENTS (то же условие в пре-рендере —
@@ -948,6 +984,23 @@ export default function Home({
       getApi().addHistory(ev.id).catch(() => {});
     }
     getApi().incrementCounter('card_views').catch(() => {});
+    // Облегчённый список (list_active_event_cards) не несёт описания, контактов,
+    // сайта и фото — дозагружаем полный объект открытого события тем же RPC,
+    // что и страницы прошедших (get_public_event). Карточка рисуется сразу по
+    // лёгким полям, полный набор приходит следом; устаревший ответ (карточку
+    // закрыли или открыли другое событие) отбрасываем по номеру выбора.
+    const seq = ++selectSeqRef.current;
+    try {
+      const full = await getApi().getPublicEvent(ev.id);
+      if (seq !== selectSeqRef.current || !full) return;
+      setSelected((cur) => (cur && cur.id === ev.id ? { ...cur, ...full } : cur));
+      setFullById((prev) => ({ ...prev, [full.id]: full }));
+      // Мета <head> (description/og) собирается из описания события —
+      // обновляем после дозагрузки, чтобы совпасть со статикой
+      applyEventMeta(full);
+    } catch {
+      // Нет сети/прав — карточка остаётся с лёгкими полями (без описания)
+    }
   }
 
   // Города и страны из базы — для автодополнения и фильтра.

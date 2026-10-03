@@ -760,8 +760,15 @@ export default function EventCard({
       </div>
 
       {/* Фото: маленькие превью, клик — карусель на весь экран.
-          Нет рабочих фото — заглушка вместо пустого верха карточки */}
-      {okPhotos.length === 0 ? (
+          Облегчённый список SPA фото не несёт (photos === undefined) — пока
+          дозагружается полный объект события, показываем скелет: заглушка
+          «нет фото» на долю секунды была бы враньём. */}
+      {event.photos === undefined ? (
+        <div
+          className="mb-3 h-32 w-full animate-pulse rounded-md border border-gray-200 bg-gray-100"
+          aria-hidden="true"
+        />
+      ) : okPhotos.length === 0 ? (
         <div className="mb-3 flex h-32 w-full items-center justify-center gap-2 rounded-md border border-gray-200 bg-gray-100">
           <span className="text-2xl leading-none">📷</span>
           <span className="text-sm text-gray-500">{t('card.noPhoto')}</span>

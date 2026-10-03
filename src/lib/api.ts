@@ -63,6 +63,16 @@ function otpErrorCode(error: { code?: string; message?: string } | null): OtpErr
   return 'otp_invalid';
 }
 
+/** Признак «функции нет в базе»: PostgREST отвечает PGRST202 / Could not find
+ *  the function. Облегчённый RPC мог ещё не примениться на проекте (миграции
+ *  применяются вручную) — тогда SPA читает старый полный набор, чтобы сайт не
+ *  остался без событий. */
+function isMissingFunction(err: unknown): boolean {
+  const e = err as { code?: string; message?: string } | null;
+  const raw = `${e?.code ?? ''} ${e?.message ?? ''}`.toLowerCase();
+  return raw.includes('pgrst202') || raw.includes('could not find the function');
+}
+
 /** Единый интерфейс доступа к данным */
 export interface DataApi {
   // --- Публичная часть ---
@@ -299,32 +309,56 @@ class SupabaseApi implements DataApi {
       return this.eventsCache.data;
     }
     // Публичный список — через security definer RPC: события заблокированных
-    // организаторов скрыты, работает и для анонимов. Читаем ВЕСЬ активный
-    // набор постранично: активных событий больше лимита PostgREST (1000 строк
-    // на запрос), и одиночный вызов терял события с поздними датами.
-    // Порядок (start_date, id) задан в самой функции и повторён здесь —
-    // по одной дате порядок строк в БД произволен, и без tie-breaker строки
-    // «прыгают» между страницами (дубли/пропуски). Пересечения гасим по id.
+    // организаторов скрыты, работает и для анонимов. Облегчённый RPC
+    // list_active_event_cards отдаёт только поля, нужные карте, ленте,
+    // фильтрам, календарю и внутренним ссылкам (замер 03.10 на 1127 активных:
+    // 645 КБ raw / 119 КБ gzip против 2981 КБ / 716 КБ у полного набора).
+    // Описания, контакты, сайт, фото и статус дозагружаются точечно при
+    // открытии события (get_public_event, см. Home.selectEvent).
+    let events: EventItem[];
+    try {
+      events = await this.fetchActiveEvents('list_active_event_cards');
+    } catch (err) {
+      // Функции ещё нет в базе (миграция не применена) — читаем полный набор
+      if (!isMissingFunction(err)) throw err;
+      events = await this.fetchActiveEvents('list_active_events');
+    }
+    this.eventsCache = { at: Date.now(), data: events };
+    return events;
+  }
+
+  /** Постраничное чтение активного набора: PostgREST отдаёт максимум 1000
+   *  строк на запрос, а активных событий больше — одиночный вызов RPC молча
+   *  терял события с поздними датами (декабрь+): их не было ни в списке, ни на
+   *  карте. Пагинация — query-параметрами limit/offset (.range()).
+   *  Порядок (start_date, id) задан в самой функции и повторён здесь: по одной
+   *  дате порядок строк в БД произволен, и без tie-breaker строки «прыгают»
+   *  между страницами (дубли/пропуски). Пересечения гасим по id. */
+  private async fetchActiveEvents(
+    rpc: 'list_active_event_cards' | 'list_active_events',
+  ): Promise<EventItem[]> {
     const all: EventItem[] = [];
     const seen = new Set<string>();
     for (let from = 0; ; from += SupabaseApi.EVENTS_PAGE_SIZE) {
       const { data, error } = await this.db
-        .rpc('list_active_events')
+        .rpc(rpc)
         .order('start_date', { ascending: true })
         .order('id', { ascending: true })
         .range(from, from + SupabaseApi.EVENTS_PAGE_SIZE - 1);
       if (error) throw error;
-      const rows = (data ?? []) as EventItem[];
+      const rows = (data ?? []) as Partial<EventItem>[];
       for (const row of rows) {
-        if (seen.has(row.id)) continue;
+        if (typeof row.id !== 'string' || seen.has(row.id)) continue;
         seen.add(row.id);
-        all.push(row);
+        // Облегчённый набор не несёт статуса и описания: статус всегда
+        // 'active' по определению функции; описание — пустое, пока не
+        // дозагружен полный объект события. Фолбэк на полный RPC значения
+        // из строки не перекрывает (они уже есть и идут последними).
+        all.push({ status: 'active', description: '', ...row } as EventItem);
       }
       if (rows.length < SupabaseApi.EVENTS_PAGE_SIZE) break;
     }
-    const events = all;
-    this.eventsCache = { at: Date.now(), data: events };
-    return events;
+    return all;
   }
 
   /** Публичное событие по id — активное ИЛИ прошедшее (RPC get_public_event,
