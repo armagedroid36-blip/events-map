@@ -118,9 +118,22 @@ function filledScore(e) {
   return n;
 }
 
-/** Какая запись остаётся: минимальный created_at, при равенстве — более заполненная, затем id */
+/** Какая запись остаётся: сначала — видимая публике (active > moderation > needs_changes >
+ *  rejected > archived), затем минимальный created_at, при равенстве — более заполненная, затем id.
+ *
+ *  Питфол (03.10.2026, «Tiên Sa Show» Дананг): правило «перекрытие расписания» свело
+ *  новую карточку [moderation] 2026-10-04 (ежедневное шоу) со старой [needs_changes] 2026-09-22.
+ *  Прежний порядок (только created_at + заполненность) оставлял СТАРУЮ — скрытую от публики,
+ *  а ЖИВУЮ отправлял в архив → событие исчезало с карты (публично видна только active).
+ *  Статус — приоритетнее и возраста, и заполненности: незачем беречь карточку, которой
+ *  публика не видит. Поля проигравших не теряются — их переносит enrich(). */
+const STATUS_KEEPER_RANK = { active: 0, moderation: 1, needs_changes: 2, rejected: 3, archived: 4 };
+
 function pickKeeper(rows) {
   return [...rows].sort((a, b) => {
+    const ra = STATUS_KEEPER_RANK[a.status] ?? 9;
+    const rb = STATUS_KEEPER_RANK[b.status] ?? 9;
+    if (ra !== rb) return ra - rb;
     const ca = a.created_at || '';
     const cb = b.created_at || '';
     if (ca !== cb) return ca < cb ? -1 : 1;
@@ -365,10 +378,17 @@ const isBlank = (v) =>
  */
 async function enrich(keeper, rest) {
   const patch = {};
+  // Питфол (03.10.2026, «Tiên Sa Show»): в старой карточке адресом оказалось само НАЗВАНИЕ
+  // события («Tiên Sa Show»), и enrich тащил этот мусор в живую карточку. Адрес, совпадающий
+  // с названием события (в любой раскладке), не переносим.
+  const titleKeys = new Set(
+    [keeper, ...rest].flatMap((e) => [e.title, e.title_ru, e.title_en]).filter(Boolean).map((t) => norm(t)),
+  );
   for (const f of ENRICH_FIELDS) {
     if (!isBlank(keeper[f])) continue;
     for (const dup of rest) {
       if (dup[f] === undefined || isBlank(dup[f])) continue;
+      if (f === 'address' && titleKeys.has(norm(dup[f]))) continue;
       patch[f] = dup[f];
       break;
     }
