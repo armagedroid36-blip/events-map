@@ -485,6 +485,10 @@ async function collectCyprusNow(seen, budget) {
       const lat = parseFloat(ev.venue_lat);
       const lng = parseFloat(ev.venue_lng);
       const priceNum = parseFloat(ev.price ?? ev.ticket_price);
+      // У части событий источник не даёт площадку вообще (venue_name/venue_lat = null) —
+      // такие карточки раньше уходили в ленту с пустым адресом. Пишем честный адрес
+      // уровня города (он же в поле city), а не выдуманную улицу.
+      const cityNm = cityRu(ev.city || citySlug) || citySlug;
       const row = await buildRow({
         title,
         description: stripHtml(ev.description || ev.excerpt || ''),
@@ -493,10 +497,10 @@ async function collectCyprusNow(seen, budget) {
         end_date: ev.end_at ? String(ev.end_at).slice(0, 10) : null,
         start_time: String(ev.start_at || '').slice(11, 16) || null,
         end_time: String(ev.end_at || '').slice(11, 16) || null,
-        city: cityRu(ev.city || citySlug),
+        city: cityNm,
         cityEn: ev.city || citySlug,
         venue: ev.venue_name || ev.venue?.name || '',
-        address: ev.venue_address || ev.address || ev.venue_name || ev.venue?.name || '',
+        address: ev.venue_address || ev.address || ev.venue_name || ev.venue?.name || `${cityNm}, Кипр`,
         lat: Number.isFinite(lat) && Math.abs(lat) > 1 ? lat : null,
         lng: Number.isFinite(lng) && Math.abs(lng) > 1 ? lng : null,
         website: ev.url || (ev.slug ? `https://cyprusnow.app/event/${ev.slug}` : null),
@@ -598,6 +602,7 @@ async function collectCyprusBz(seen, budget, websites = new Set()) {
     const loc = ev.location || {};
     const addrLoc = loc.address?.addressLocality || '';
     const place = loc.name || '';
+    const bzCity = cityRu(addrLoc) || cityRu(`${place} ${url}`);
     const photos = (Array.isArray(ev.image) ? ev.image : [ev.image])
       .map((i) => (typeof i === 'string' ? i : i?.url))
       .filter(Boolean)
@@ -610,10 +615,10 @@ async function collectCyprusBz(seen, budget, websites = new Set()) {
       end_date: ev.endDate ? String(ev.endDate).slice(0, 10) : null,
       start_time: String(ev.startDate || '').slice(11, 16) || null,
       end_time: String(ev.endDate || '').slice(11, 16) || null,
-      city: cityRu(addrLoc) || cityRu(`${place} ${url}`),
+      city: bzCity,
       cityEn: addrLoc || '',
       venue: place,
-      address: [place, addrLoc].filter(Boolean).join(', '),
+      address: [place, addrLoc].filter(Boolean).join(', ') || bzCity,
       website: ev.url || url,
       photos,
       category: 'festival',
