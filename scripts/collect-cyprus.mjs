@@ -329,7 +329,14 @@ async function save(row, seen) {
 
 /** Общая сборка строки события из нормализованных полей источника */
 async function buildRow(src) {
-  let city = src.city || cityRu(`${src.venue || ''} ${src.address || ''} ${src.title || ''}`) || '';
+  // Город источника может прийти латиницей («limassol», «nicosia») — нормализуем
+  // его в русский канон через cityRu, иначе на карте появляются города-дубли
+  // («limassol, Кипр» рядом с «Лимасол, Кипр») и ломается фильтр по городу.
+  let city =
+    cityRu(src.city || '') ||
+    src.city ||
+    cityRu(`${src.venue || ''} ${src.address || ''} ${src.title || ''}`) ||
+    '';
   let lat = src.lat;
   let lng = src.lng;
   if ((lat == null || lng == null) && (src.venue || src.address)) {
