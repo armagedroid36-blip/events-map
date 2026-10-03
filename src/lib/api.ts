@@ -280,6 +280,11 @@ class SupabaseApi implements DataApi {
   // обратно) список перезапрашивается многократно. 30 секунд свежести
   // достаточно: публикации редки, страница всё равно обновляется вручную.
   private static EVENTS_TTL_MS = 30_000;
+  /** Размер страницы при чтении активного набора: PostgREST отдаёт максимум
+   *  1000 строк на запрос, а активных событий уже больше — одиночный вызов RPC
+   *  молча терял события с поздними датами (декабрь+): их не было ни в списке,
+   *  ни на карте. Пагинация идёт query-параметрами limit/offset (.range()). */
+  private static EVENTS_PAGE_SIZE = 1000;
   private eventsCache: { at: number; data: EventItem[] } | null = null;
 
   constructor() {
@@ -294,11 +299,31 @@ class SupabaseApi implements DataApi {
       return this.eventsCache.data;
     }
     // Публичный список — через security definer RPC: события заблокированных
-    // организаторов скрыты, работает и для анонимов
-    const { data, error } = await this.db.rpc('list_active_events');
-    if (error) throw error;
-    const events = (data ?? []) as EventItem[];
-    this.eventsCache = { at: now, data: events };
+    // организаторов скрыты, работает и для анонимов. Читаем ВЕСЬ активный
+    // набор постранично: активных событий больше лимита PostgREST (1000 строк
+    // на запрос), и одиночный вызов терял события с поздними датами.
+    // Порядок (start_date, id) задан в самой функции и повторён здесь —
+    // по одной дате порядок строк в БД произволен, и без tie-breaker строки
+    // «прыгают» между страницами (дубли/пропуски). Пересечения гасим по id.
+    const all: EventItem[] = [];
+    const seen = new Set<string>();
+    for (let from = 0; ; from += SupabaseApi.EVENTS_PAGE_SIZE) {
+      const { data, error } = await this.db
+        .rpc('list_active_events')
+        .order('start_date', { ascending: true })
+        .order('id', { ascending: true })
+        .range(from, from + SupabaseApi.EVENTS_PAGE_SIZE - 1);
+      if (error) throw error;
+      const rows = (data ?? []) as EventItem[];
+      for (const row of rows) {
+        if (seen.has(row.id)) continue;
+        seen.add(row.id);
+        all.push(row);
+      }
+      if (rows.length < SupabaseApi.EVENTS_PAGE_SIZE) break;
+    }
+    const events = all;
+    this.eventsCache = { at: Date.now(), data: events };
     return events;
   }
 

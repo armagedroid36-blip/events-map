@@ -2299,6 +2299,10 @@ const MIN_SIMILAR = 3;
 const PAST_SITEMAP_MONTHS = 12;
 // Сколько прошедших событий тянем за один запрос (лимит PostgREST — 1000 строк)
 const PAST_PAGE_SIZE = 1000;
+// То же для АКТИВНЫХ: активных событий уже больше 1000, а PostgREST отдаёт
+// максимум 1000 строк за запрос — без пагинации события с поздними датами
+// (декабрь+) молча выпадали из статики, sitemap и карты.
+const ACTIVE_PAGE_SIZE = 1000;
 
 /** Последний день события (end_date или start_date) как ISO-строка или null */
 function eventLastDay(ev) {
@@ -2351,6 +2355,43 @@ async function loadPastEvents(db) {
     const rows = data ?? [];
     all.push(...rows);
     if (rows.length < PAST_PAGE_SIZE) break;
+  }
+  return all;
+}
+
+/**
+ * Все АКТИВНЫЕ события постранично. RPC list_active_events одним запросом
+ * отдавал ровно 1000 строк (лимит PostgREST), а активных уже 1127: события с
+ * поздними датами (весь декабрь 2026 и январь 2027) молча выпадали — у них не
+ * было страницы /event/<id>/, они не попадали в sitemap, а карта показывала не
+ * всё. Пагинация — через query-параметры limit/offset (.range(): заголовок
+ * Range у POST /rest/v1/rpc игнорируется).
+ * Порядок — start_date, id: по одной дате порядок строк в БД произволен, и без
+ * tie-breaker строки «прыгают» между страницами (дубли и пропуски). Тот же
+ * порядок задан в самой функции (миграция 20261003) и повторён в запросе —
+ * так пагинация детерминирована, даже если функция отдаст строки иначе.
+ * Пересечения страниц гасим по Set(id), о размере набора пишем в лог сборки.
+ */
+async function loadActiveEvents(db) {
+  const all = [];
+  const seen = new Set();
+  for (let from = 0; ; from += ACTIVE_PAGE_SIZE) {
+    const { data, error } = await db
+      .rpc('list_active_events')
+      .order('start_date', { ascending: true })
+      .order('id', { ascending: true })
+      .range(from, from + ACTIVE_PAGE_SIZE - 1);
+    if (error) {
+      console.error(`seo-prerender: ошибка list_active_events: ${error.message}`);
+      process.exit(1);
+    }
+    const rows = data ?? [];
+    for (const row of rows) {
+      if (seen.has(row.id)) continue;
+      seen.add(row.id);
+      all.push(row);
+    }
+    if (rows.length < ACTIVE_PAGE_SIZE) break;
   }
   return all;
 }
@@ -4185,12 +4226,10 @@ async function main() {
   assertRestoredCellsSync();
 
   const db = createClient(SUPABASE_URL, ANON_KEY, { auth: { persistSession: false } });
-  const { data, error } = await db.rpc('list_active_events');
-  if (error) {
-    console.error(`seo-prerender: ошибка list_active_events: ${error.message}`);
-    process.exit(1);
-  }
-  const events = data ?? [];
+  const events = await loadActiveEvents(db);
+  // Фактическое число прочитанных активных событий — в лог сборки: иначе
+  // «часть страниц исчезла» замечаешь только по 404 на проде.
+  console.log(`  активных событий: ${events.length}`);
   if (!events.length) {
     console.error('seo-prerender: list_active_events вернул пустой список — не деплоим пустые страницы.');
     process.exit(1);
