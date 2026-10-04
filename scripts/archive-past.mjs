@@ -1,11 +1,15 @@
-// Архивация прошедших событий: active, у которых событие уже закончилось → archived.
+// Архивация прошедших событий: active И записи в очереди модерации
+// (needs_changes/rejected/moderation), у которых событие уже закончилось → archived.
 // Условие: (end_date < сегодня) ИЛИ (end_date пусто И start_date < сегодня).
-// Запускается в GitHub Actions после сборки, чтобы на карте не висели прошедшие.
+// Запускается в GitHub Actions после сборки, чтобы на карте не висели прошедшие,
+// а в админке не копилась вечная очередь из мёртвых карточек (прошедшее событие
+// нельзя ни опубликовать, ни исправить: с 04.10.2026 очередь чистится тем же шагом).
 // DRY_RUN=1 — только показать список кандидатов, ничего не менять.
 import { createClient } from '@supabase/supabase-js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
+const PAST_STATUSES = ['active', 'needs_changes', 'rejected', 'moderation'];
 
 if (!SUPABASE_URL || !SERVICE_ROLE) {
   console.error('Нужны переменные: SUPABASE_URL, SUPABASE_SERVICE_ROLE');
@@ -31,13 +35,13 @@ async function main() {
   // 1) Есть end_date и он в прошлом
   const { data: byEnd, error: e1 } = await db
     .from('events')
-    .select('id, title')
-    .eq('status', 'active')
+    .select('id, title, status')
+    .in('status', PAST_STATUSES)
     .lt('end_date', today);
   if (e1) {
     console.error('Ошибка выборки по end_date:', e1.message);
   }
-  (byEnd || []).forEach((r) => reasons.set(r.id, `end_date < ${today}`));
+  (byEnd || []).forEach((r) => reasons.set(r.id, `end_date < ${today} [${r.status}]`));
 
   // 2) end_date нет, start_date в прошлом (бессрочные регулярные НЕ архивируются).
   //    ПИТФОЛ: recurrence мог содержать jsonb 'null' (JSON-null, а не SQL NULL) —
@@ -49,8 +53,8 @@ async function main() {
   //    но проверка остаётся — на случай старых и внешних записей.
   const { data: byStart, error: e2 } = await db
     .from('events')
-    .select('id, title, recurrence')
-    .eq('status', 'active')
+    .select('id, title, recurrence, status')
+    .in('status', PAST_STATUSES)
     .is('end_date', null)
     .lt('start_date', today);
   if (e2) {
@@ -58,7 +62,7 @@ async function main() {
   }
   (byStart || [])
     .filter((r) => !hasRecurrence(r.recurrence))
-    .forEach((r) => reasons.set(r.id, `start_date < ${today}, без правила повтора`));
+    .forEach((r) => reasons.set(r.id, `start_date < ${today}, без правила повтора [${r.status}]`));
 
   if (!reasons.size) {
     console.log('Прошедших активных событий нет.');
@@ -79,7 +83,12 @@ async function main() {
     console.error('Ошибка архивации:', error.message);
     process.exit(1);
   }
-  console.log(`Архивировано прошедших событий: ${reasons.size}.`);
+  const byStatusArchived = {};
+  for (const why of reasons.values()) {
+    const st = (why.match(/\[([a-z_]+)\]/) || [, '?'])[1];
+    byStatusArchived[st] = (byStatusArchived[st] || 0) + 1;
+  }
+  console.log(`Архивировано прошедших событий: ${reasons.size}.`, JSON.stringify(byStatusArchived));
 }
 
 main().catch((e) => {
