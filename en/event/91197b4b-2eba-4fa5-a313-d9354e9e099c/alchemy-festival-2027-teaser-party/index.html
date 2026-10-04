@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alchemy Festival 2027 – Teaser… — November 14, 2026 · Cyprus</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-5hUJ1v_P.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-BC0-w3Jb.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CyICpBbB.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-DYO_cZ0p.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-BdFvzPV9.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro--G1TI1EZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BQm3giQY.css" />
+      <meta name="description" content="Cyprus, November 14, 2026. Respect the property that hosts our events Any activity that disrespects the environment and the property that hosts our event will…" />
+    <link rel="canonical" href="https://mypins.site/en/event/91197b4b-2eba-4fa5-a313-d9354e9e099c/alchemy-festival-2027-teaser-party/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Alchemy Festival 2027 – Teaser… — November 14, 2026 · Cyprus" />
+    <meta property="og:description" content="Cyprus, November 14, 2026. Respect the property that hosts our events Any activity that disrespects the environment and the property that hosts our event will…" />
+    <meta property="og:url" content="https://mypins.site/en/event/91197b4b-2eba-4fa5-a313-d9354e9e099c/alchemy-festival-2027-teaser-party/" />
+    <meta property="og:image" content="https://www.cyprusunderground.com.cy/storage/app/uploads/public/6a4/4d8/5a0/6a44d85a0c674716707379.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/91197b4b-2eba-4fa5-a313-d9354e9e099c/alchemy-festival-2027-teaser-party/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/91197b4b-2eba-4fa5-a313-d9354e9e099c/alchemy-festival-2027-teaser-party/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Alchemy Festival 2027 – Teaser Party","url":"https://mypins.site/en/event/91197b4b-2eba-4fa5-a313-d9354e9e099c/alchemy-festival-2027-teaser-party/","startDate":"2026-11-14T15:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Ktima Camelot, Cyprus","address":{"@type":"PostalAddress","addressLocality":"Cyprus","streetAddress":"Ktima Camelot, Cyprus","addressCountry":"cyprus"},"geo":{"@type":"GeoCoordinates","latitude":35.0793206,"longitude":33.193694}},"description":"Respect the property that hosts our events Any activity that disrespects the environment and the property that hosts our event will be persecuted and the ones responsible will get banned from the festival We are not responsible for any loss injury or accident that happens during the festival YOU are responsible for yourself and others and together we make a beautiful peaceful event ANY behaviour that shows disrespect will not be tolerated Fires and barbecue are not allowed food will be provided as well as non vegeterian options Illegal substances will not be tolerated If you get caught us","endDate":"2026-11-14","image":"https://www.cyprusunderground.com.cy/storage/app/uploads/public/6a4/4d8/5a0/6a44d85a0c674716707379.jpg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/alchemy-festival-2027-teaser-party-2026-11-14"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Alchemy Festival 2027 – Teaser Party","item":"https://mypins.site/en/event/91197b4b-2eba-4fa5-a313-d9354e9e099c/alchemy-festival-2027-teaser-party/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Alchemy Festival 2027 – Teaser Party</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-11-14">November 14, 2026</time></p>
+  <p><time datetime="2026-11-14T15:00:00">November 14, 2026, 3:00 PM</time></p>
+  <address>Ktima Camelot, Cyprus</address>
+  <p>Respect the property that hosts our events
+
+Any activity that disrespects the environment and the property that hosts our event will be persecuted and the ones responsible will get banned from the festival
+
+We are not responsible for any loss injury or accident that happens during the festival YOU are responsible for yourself and others and together we make a beautiful peaceful event ANY behaviour that shows disrespect will not be tolerated
+
+Fires and barbecue are not allowed food will be provided as well as non vegeterian options
+
+Illegal substances will not be tolerated
+
+If you get caught us</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Alchemy Festival 2027 – Teaser Party</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/festival/">🎉 Festivals</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/1aa0ea86-e8df-4699-9b78-f5352fa87802/zivania-festival-2026-pelendri-village/">Zivania Festival 2026 @ Pelendri Village <time datetime="2026-11-07">November 7, 2026</time></a></li>
+    <li><a href="/en/event/428c8398-2e4f-48ba-8160-eef6c49dd04e/sia-chilli-fes/">Sia Chilli Fes <time datetime="2026-11-07">November 7, 2026</time></a></li>
+    <li><a href="/en/event/1ad13fd9-a7b7-492e-a40a-360871d9b852/presentation-of-the-virgin-mary-to-the-temple-traditional-panigiri/">Presentation of the Virgin Mary to the Temple – Traditional Panigiri <time datetime="2026-11-20">November 20, 2026</time></a></li>
+    <li><a href="/en/event/ee035f94-a93c-4378-959c-8d6d53206d36/christmas-villages-it-s-beginning-to-feel-like-christmas/">Christmas Villages – It’s Beginning to Feel Like Christmas! <time datetime="2026-11-20">November 20, 2026</time></a></li>
+    <li><a href="/en/event/2372d539-039b-4d0e-8084-fbcbf098be1b/deryneia-christmas-village-2026-programme-dates/">Deryneia Christmas Village 2026: Programme &amp; Dates <time datetime="2026-11-21">November 21, 2026</time></a></li>
+    <li><a href="/en/event/2a81f375-cbfb-4136-909c-575a57480a1f/kalopanagiotis-christmas-village-2026-programme-dates/">Kalopanagiotis Christmas Village 2026: Programme &amp; Dates <time datetime="2026-11-21">November 21, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/63997b15-bee2-4153-89e1-1947bc728a79/the-mind-body-spirit-wellbeing-festival/">The Mind, Body &amp; Spirit Wellbeing Festival</a> <time datetime="2026-11-14">November 14, 2026</time></li>
+    <li>Next: <a href="/en/event/96f2865c-5021-4f78-a42c-c11d3286455a/the-mind-body-spirit-wellbeing-festival-2026/">The Mind, Body &amp; Spirit Wellbeing Festival 2026</a> <time datetime="2026-11-14">November 14, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>
