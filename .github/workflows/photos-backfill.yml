@@ -1,0 +1,22 @@
+name: Backfill event photos
+
+on:
+  schedule:
+    # Раз в сутки в 05:10 UTC — после основного сбора (04:30 UTC), дешёвый добор.
+    - cron: '10 5 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  photos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci --no-audit --no-fund || npm install --no-audit --no-fund
+      - name: Добор фото для active-карточек без фото (og:image источника)
+        run: APPLY=1 BUDGET_MS=480000 node scripts/dot-photos-fill.mjs
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
