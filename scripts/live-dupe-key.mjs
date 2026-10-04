@@ -85,3 +85,92 @@ export function liveDupeMatch(a, b) {
   const place = samePlace(a, b);
   return place ? `живой дубль (${place})` : null;
 }
+
+// ===== Класс «аббревиатура в названии» (S.V.E.T. / С.В.Е.Т.) =====
+// Обычный words() режет «S.V.E.T.» на токены длиной 1 и выбрасывает их, поэтому
+// пары одного события с аббревиатурой в названии строгий ключ не видит.
+// Здесь точки схлопываются («S.V.E.T.» → «svet»), а проверка места мягче
+// (общий токен адреса ИЛИ координаты ≤1 км). Калибровка 04.10.2026: 9 ложных
+// пар отсеяны — правила ниже (индекс-число, дистанция >2 км у пары из 2 слов,
+// слова-«вода» площадки) добавлены именно для этого.
+
+/** Слова адреса, не доказывающие одно место. */
+export const ADDR_STOP = new Set(['municipal', 'community', 'square', 'centre', 'center', 'cultural', 'площадь',
+  'central', 'theatre', 'theater', 'bar', 'resto', 'hotel', 'stage', 'park', 'парк']);
+/** Слова-«вода» площадки («studio», «street»): общий токен такого слова ничего не доказывает. */
+export const EXTRA_STOP = new Set(['studio', 'studios', 'street', 'road', 'cafe', 'coffee']);
+
+/** «S.V.E.T.» → «svet», «С.В.Е.Т.» → «свет». */
+export const collapseAbbrev = (s) => String(s || '').replace(/(\p{L})\./gu, '$1');
+
+// Транслитерация кириллических аббревиатур в латиницу: «свет» и «svet» — одна
+// аббревиатура, записанная двумя алфавитами (реальная пара ETKO 10.10: «S.V.E.T. at ETKO»
+// ↔ «С.В.Е.Т: Симфоническое оркестровое визуальное шоу», оба active, склеивались только
+// по месту). Без неё такой дубль не ловит ни строгий ключ, ни аббревиатурный.
+const TRANSLIT = { а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ж: 'zh', з: 'z', и: 'i', й: 'i', к: 'k', л: 'l',
+  м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u', ф: 'f', х: 'h', ц: 'ts', ч: 'ch', ш: 'sh',
+  щ: 'sch', ы: 'y', э: 'e', ю: 'yu', я: 'ya', ь: '', ъ: '' };
+export const translit = (s) => [...norm(s)].map((c) => (TRANSLIT[c] !== undefined ? TRANSLIT[c] : c)).join('');
+
+/** Каноничные аббревиатуры названия: последовательности «буква+точка» (2+ подряд),
+ *  схлопнутые и приведённые к латинице: «С.В.Е.Т.» → свет → svet. */
+export function abbrevCanon(r) {
+  const out = new Set();
+  for (const t of [r.title, r.title_ru, r.title_en]) {
+    const m = String(t || '').match(/(?:\p{L}\.){2,}\p{L}?/gu);
+    if (!m) continue;
+    for (const seq of m) out.add(translit(collapseAbbrev(seq)));
+  }
+  return out;
+}
+
+/** Общая аббревиатура (в любом алфавите) — и сама по себе сигнал, если день+город+место совпали. */
+export function sameAbbrev(a, b) {
+  const sa = abbrevCanon(a), sb = abbrevCanon(b);
+  for (const w of sa) if (sb.has(w) && w.length >= 2) return w;
+  return null;
+}
+
+/** Слова названия для аббревиатурного ключа: длина 2+, есть буква. */
+export const abbrevWords = (s) => [...new Set(norm(collapseAbbrev(s)).split(' ')
+  .filter((w) => w.length > 2 && /\p{L}/u.test(w) && !STOP.has(w) && !GENERIC.has(w)))];
+
+/** Сколько значимых слов общих у лучшей пары псевдонимов (с учётом аббревиатур). */
+export function abbrevOverlap(a, b) {
+  let best = 0;
+  for (const ta of [a.title, a.title_ru, a.title_en].filter(Boolean).map(collapseAbbrev))
+    for (const tb of [b.title, b.title_ru, b.title_en].filter(Boolean).map(collapseAbbrev)) {
+      const sb = new Set(abbrevWords(tb));
+      let n = 0;
+      for (const w of abbrevWords(ta)) if (sb.has(w)) n++;
+      best = Math.max(best, n);
+    }
+  return best;
+}
+
+/** Проверка пары с аббревиатурой в названии: причина склейки или null.
+ *  Сигнал: 3+ общих слова по имени ИЛИ 2 слова + общий токен адреса.
+ *  Место: общий токен адреса ИЛИ координаты ≤1 км (адрес-заглушка «<город>, Кипр»
+ *  у обеих карточек не считается — там координаты = центр города). */
+export function liveAbbrevMatch(a, b) {
+  if (dayKey(a) !== dayKey(b)) return null;
+  const placeTokens = (s) => new Set(words(s).filter((w) => !GENERIC.has(w) && !PLACE_STOP.has(w) && !ADDR_STOP.has(w)));
+  const sa = placeTokens(norm(a.address)), sb = placeTokens(norm(b.address));
+  let common = null;
+  for (const w of sa) if (sb.has(w)) { common = w; break; }
+  const stubBoth = isCityLevelAddr(a) && isCityLevelAddr(b);
+  const near = hasCoords(a) && hasCoords(b) ? distanceM(a, b) : null;
+  const ov = abbrevOverlap(a, b);
+  const ab = sameAbbrev(a, b);
+  const why = ov >= 3 ? `аббрев-имя ${ov}сл`
+    : (ov >= 2 && common) ? `аббрев-имя ${ov}сл+адрес~${common}`
+      : (ab && (common || (near !== null && near <= 300))) ? `общая аббревиатура ${ab}`
+        : null;
+  if (!why) return null;
+  const near1k = !stubBoth && near !== null && near <= 1000;
+  if (!common && !near1k) return null;
+  if (ov < 3 && common && /^\d+$/.test(common)) return null;       // почтовый индекс/номер дома
+  if (ov < 3 && near !== null && near > 2000) return null;          // разные площадки в разных концах города
+  if (ov < 3 && common && EXTRA_STOP.has(common)) return null;      // «studio»/«street» — вода
+  return why + (near !== null ? ` / ${Math.round(near)}м` : '');
+}

@@ -225,6 +225,9 @@ function buildGroups(rows) {
   // 4) живой дубль одного события под разными URL/переводом у источника:
   //    тот же день + тот же город + >=3 общих значимых слова по любой паре
   //    псевдонимов названия + «то же место» (scripts/live-dupe-key.mjs).
+  //    4б) тот же класс, но с аббревиатурой в названии («S.V.E.T.» / «С.В.Е.Т.»):
+  //    обычный ключ слеп, т.к. токены аббревиатуры длиной 1 отбрасываются —
+  //    liveAbbrevMatch схлопывает точки и требует ту же проверку места.
   const liveEdges = [];
   const byDayCity = new Map();
   for (const e of rows) push(byDayCity, liveDupe.dayKey(e), e);
@@ -232,7 +235,7 @@ function buildGroups(rows) {
     if (list.length < 2) continue;
     for (let i = 0; i < list.length; i++) {
       for (let j = i + 1; j < list.length; j++) {
-        const reason = liveDupe.liveDupeMatch(list[i], list[j]);
+        const reason = liveDupe.liveDupeMatch(list[i], list[j]) || liveDupe.liveAbbrevMatch(list[i], list[j]);
         if (reason && union(list[i], list[j], reason)) liveEdges.push({ a: list[i], b: list[j], rule: reason });
       }
     }
