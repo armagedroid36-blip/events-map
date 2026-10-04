@@ -66,6 +66,14 @@ const BALI_DISTRICT_CENTERS = {
   'munduk': { lat: -8.2683, lng: 115.0798 },
   'tabanan': { lat: -8.5435, lng: 115.1176 },
   'gianyar': { lat: -8.5449, lng: 115.3282 },
+  // Каноны, которые попадают в city (см. DISTRICTS_RU/ADDRESS_DISTRICTS ниже):
+  // без них район падал на центр острова, а метка уезжала на 20–40 км.
+  'печату (улувату)': { lat: -8.8115, lng: 115.1000 },
+  'беноа (нуса дуа)': { lat: -8.801, lng: 115.23 },
+  'керобокан': { lat: -8.6605, lng: 115.1560 },
+  'унгасан': { lat: -8.8217, lng: 115.1583 },
+  'сукавати': { lat: -8.5784, lng: 115.2628 },
+  'джакарта': { lat: -6.2088, lng: 106.8456 },
   // Запасной вариант — центр острова
   'bali': { lat: -8.4095, lng: 115.1889 },
 };
@@ -348,14 +356,48 @@ async function main() {
       const endTime = when.raw.endAt ? when.raw.endAt.slice(11, 16) : null;
       // districtName от источника бывает латиницей («Ubud», «Jimbaran») — в базу пишем русский
       // канон, иначе фильтр по городу на карте расщепляется («Ubud, Bali» vs «Убуд, Bali»).
+      // Район: у Балифорума districtName непостоянен — один район приходит в разных
+      // написаниях (Улувату / Печату (Улувату), Нуса-Дуа / Беноа (Нуса Дуа)), а иногда
+      // «Нет в списке». Фильтр по городу на карте от этого расщепляется, поэтому:
+      // 1) адрес карточки (самый надёжный источник: «Kerobokan Kelod, Kec. Kuta Utara»);
+      // 2) словарь синонимов districtName; 3) как пришло.
+      // Дубли-написания, уже разобранные в базе (04.10.2026): Гианьяр→Убуд, Букит→Беноа,
+      // Денпасар (адрес Керобокан)→Керобокан, Бангли (адрес Джакарта)→вне Бали.
+      const ADDRESS_DISTRICTS = [
+        ['kerobokan', 'Керобокан'], ['ubud', 'Убуд'], ['sayan', 'Убуд'],
+        ['penestanan', 'Убуд'], ['lodtunduh', 'Убуд'], ['singakerta', 'Убуд'],
+        ['pecatu', 'Печату (Улувату)'], ['uluwatu', 'Печату (Улувату)'],
+        ['ungasan', 'Унгасан'], ['jimbaran', 'Джимбаран'],
+        ['nusa dua', 'Беноа (Нуса Дуа)'], ['benoa', 'Беноа (Нуса Дуа)'],
+        ['tanjung', 'Беноа (Нуса Дуа)'],
+        ['canggu', 'Чангу'], ['pererenan', 'Чангу'], ['seminyak', 'Семиньяк'],
+        ['legian', 'Легиан'], ['sanur', 'Санур'], ['sukawati', 'Сукавати'],
+        ['kediri', 'Табанан'], ['tabanan', 'Табанан'], ['denpasar', 'Денпасар'],
+        ['jakarta', 'Джакарта'],
+      ];
       const DISTRICTS_RU = {
         ubud: 'Убуд', jimbaran: 'Джимбаран', canggu: 'Чангу', seminyak: 'Семиньяк',
-        kuta: 'Кута', sanur: 'Санур', pecatu: 'Печату (Улувату)', uluwatu: 'Улувату',
-        denpasar: 'Денпасар', 'nusa dua': 'Нуса-Дуа', benoa: 'Беноа (Нуса Дуа)',
-        tabanan: 'Табанан', amed: 'Амед', sidemen: 'Сидемен', lovina: 'Ловина',
+        kuta: 'Кута', sanur: 'Санур', pecatu: 'Печату (Улувату)',
+        uluwatu: 'Печату (Улувату)', denpasar: 'Денпасар', 'nusa dua': 'Беноа (Нуса Дуа)',
+        benoa: 'Беноа (Нуса Дуа)', tabanan: 'Табанан', amed: 'Амед', sidemen: 'Сидемен',
+        lovina: 'Ловина', legian: 'Легиан', kerobokan: 'Керобокан',
+        unggasan: 'Унгасан', ungasan: 'Унгасан', sukawati: 'Сукавати',
+        // кириллические варианты, которые уже попадали в базу
+        улувату: 'Печату (Улувату)', 'нуса-дуа': 'Беноа (Нуса Дуа)',
+        'нуса дуа': 'Беноа (Нуса Дуа)', букит: 'Беноа (Нуса Дуа)',
+        гианьяр: 'Убуд', унгасан: 'Унгасан', сукавати: 'Сукавати', керобокан: 'Керобокан',
+        'нет в списке': 'Bali',
       };
-      const rawDistrict = place.districtName || 'Bali';
-      const district = DISTRICTS_RU[String(rawDistrict).trim().toLowerCase()] || rawDistrict;
+      const OUT_OF_BALI = new Set(['Джакарта']);
+      const addressText = String((loc && loc.address) || place.title || '').toLowerCase();
+      let district = null;
+      for (const [needle, canon] of ADDRESS_DISTRICTS) {
+        if (addressText.includes(needle)) { district = canon; break; }
+      }
+      if (!district) {
+        const rawDistrict = place.districtName || 'Bali';
+        district = DISTRICTS_RU[String(rawDistrict).trim().toLowerCase()] || rawDistrict;
+      }
       // Фото: у большинства событий Балифорума images пустой, реальные фото —
       // в media.content (previewUrl) и desktopPreview (обложка). Собираем из всех.
       const photos = [
@@ -381,7 +423,7 @@ async function main() {
         end_date: endDate || null,
         start_time: startTime,
         end_time: endTime,
-        city: `${district}, Bali`,
+        city: OUT_OF_BALI.has(district) ? district : `${district}, Bali`,
         address: (loc && loc.address) || place.title || null,
         lat,
         lng,
