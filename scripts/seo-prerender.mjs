@@ -1373,10 +1373,11 @@ function eventJsonLd(ev, url, lang = 'ru', image = null, mode = 'active') {
   // (их вернул пре-рендер ради 404 из GSC), поэтому узел Event для события с
   // прошедшей датой вовсе не выводится (mode='past'), а для архивного с
   // будущей датой (mode='removed') остаётся без offers/availability/validFrom.
-  const isPast = !sd || sd < TODAY_ISO;
   // endDate для БУДУЩИХ событий — всегда (требование Search Console):
-  //   1) end_time известен → конец вхождения с временем (occurrenceEnd);
-  //   2) end_time нет, РАЗОВОЕ событие на несколько дней → end_date без времени;
+  //   1) РАЗОВОЕ событие на несколько дней → последний день (end_date), без времени:
+  //      событие идёт до этого дня, и «конец вхождения» от ДАТЫ СТАРТА (occurrenceEnd)
+  //      тут врёт — у идущего события он вообще в прошлом;
+  //   2) иначе end_time известен → конец вхождения с временем (occurrenceEnd);
   //   3) иначе (однодневное или серия) → дата начала, без времени: правдиво —
   //      событие проходит в эту дату.
   // Для СЕРИЙ (recurrence) end_date не берём: это конец серии, а не конец
@@ -1387,11 +1388,22 @@ function eventJsonLd(ev, url, lang = 'ru', image = null, mode = 'active') {
     !(typeof ev.recurrence === 'object' && Object.keys(ev.recurrence).length === 0);
   const endDateRaw = typeof ev.end_date === 'string' ? ev.end_date.slice(0, 10) : '';
   const multiDay = !seriesEvent && !!endDateRaw && !!sd && endDateRaw > sd;
-  const endDateIso = ed || (multiDay ? endDateRaw : sd);
+  // Конец события: у многодневного разового — последний день (end_date), у серии —
+  // конец вхождения (occurrenceEnd) либо дата вхождения. Приоритет end_date у
+  // многодневного обязателен: occurrenceEnd считается от ДАТЫ НАЧАЛА вхождения и у
+  // идущего события (старт в прошлом) даёт уже прошедшую дату.
+  const endDateIso = multiDay ? endDateRaw : ed || sd;
+  // «Завершилось» считаем по ПОСЛЕДНЕМУ дню события, а не по дате начала вхождения:
+  // идущее многодневное событие (старт в прошлом, последний день ещё не наступил)
+  // НЕ прошедшее — иначе у него пропадали offers.availability и endDate (прогон 74:
+  // 16 активных событий / 32 страницы RU+EN). Для серий правило прежнее — последний
+  // день вхождения (end_date у серии это конец серии, а не конец вхождения).
+  const lastDayIso = eventLastDay(ev);
+  const ended = seriesEvent ? !sd || sd < TODAY_ISO : !lastDayIso || lastDayIso < TODAY_ISO;
   // availability — всегда: InStock (бесплатные, донатные, с ценой). SoldOut —
   // только при явном признаке в данных (сейчас такого поля в events нет, но
   // код к нему готов); PreOrder не используем, пока нет данных о предзаказе.
-  const availability = isPast
+  const availability = ended
     ? ''
     : ev.sold_out === true || ev.availability === 'SoldOut'
       ? 'https://schema.org/SoldOut'
@@ -1436,7 +1448,7 @@ function eventJsonLd(ev, url, lang = 'ru', image = null, mode = 'active') {
         }),
   };
   if (text) doc.description = cleanText(text);
-  if (!isPast) doc.endDate = endDateIso;
+  if (!ended) doc.endDate = endDateIso;
   if (photo) doc.image = photo;
   if (organizerName) {
     doc.organizer = {
