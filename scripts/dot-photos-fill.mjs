@@ -18,6 +18,21 @@ const targets = rows.filter(
 );
 console.log('карточек active без фото:', targets.length, '| режим:', APPLY ? 'APPLY' : 'dry');
 
+// Индекс «URL фото → название события-владельца»: одна картинка не должна уезжать
+// в разные события (признак картинки страницы-списка/афиши зала, а не фото события).
+const toks = (t) =>
+  String(t || '')
+    .toLowerCase()
+    .split(/[^\p{L}\p{N}]+/u)
+    .filter((w) => w.length > 2 && !/^\d+$/.test(w));
+const sameEvent = (a, b) => {
+  const A = toks(a).slice(0, 3).join(' ');
+  const B = toks(b).slice(0, 3).join(' ');
+  return A && B && A === B;
+};
+const usedFoto = new Map();
+for (const r of rows) for (const u of r.photos || []) if (!usedFoto.has(u)) usedFoto.set(u, r);
+
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126 Safari/537.36';
 
 async function grab(url) {
@@ -75,8 +90,14 @@ for (const r of targets) {
   }
   const out = await grab(r.website);
   if (out.img) {
+    const owner = usedFoto.get(out.img);
+    if (owner && !sameEvent(owner.title, r.title)) {
+      console.log('  -', r.id.slice(0, 8), r.city, 'картинка уже у другого события:', owner.title.slice(0, 40));
+      continue;
+    }
     found++;
     plan.push({ id: r.id, img: out.img });
+    usedFoto.set(out.img, r);
     console.log('  +', r.id.slice(0, 8), r.city, out.img.slice(0, 90));
   } else {
     console.log('  -', r.id.slice(0, 8), r.city, out.err || 'нет og:image', `(${out.len} байт)`);
