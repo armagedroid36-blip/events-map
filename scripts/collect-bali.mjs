@@ -346,7 +346,16 @@ async function main() {
       const endDate = when.raw.endAt ? when.raw.endAt.slice(0, 10) : null;
       const startTime = when.raw.startAt.slice(11, 16) || null;
       const endTime = when.raw.endAt ? when.raw.endAt.slice(11, 16) : null;
-      const district = place.districtName || 'Bali';
+      // districtName от источника бывает латиницей («Ubud», «Jimbaran») — в базу пишем русский
+      // канон, иначе фильтр по городу на карте расщепляется («Ubud, Bali» vs «Убуд, Bali»).
+      const DISTRICTS_RU = {
+        ubud: 'Убуд', jimbaran: 'Джимбаран', canggu: 'Чангу', seminyak: 'Семиньяк',
+        kuta: 'Кута', sanur: 'Санур', pecatu: 'Печату (Улувату)', uluwatu: 'Улувату',
+        denpasar: 'Денпасар', 'nusa dua': 'Нуса-Дуа', benoa: 'Беноа (Нуса Дуа)',
+        tabanan: 'Табанан', amed: 'Амед', sidemen: 'Сидемен', lovina: 'Ловина',
+      };
+      const rawDistrict = place.districtName || 'Bali';
+      const district = DISTRICTS_RU[String(rawDistrict).trim().toLowerCase()] || rawDistrict;
       // Фото: у большинства событий Балифорума images пустой, реальные фото —
       // в media.content (previewUrl) и desktopPreview (обложка). Собираем из всех.
       const photos = [
