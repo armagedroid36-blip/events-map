@@ -165,24 +165,10 @@ const SEEDS = [
     ],
     start_time: null, price: null, currency: null,
   },
-  {
-    title: 'Once Show в VinWonders',
-    title_en: 'Once Show at VinWonders',
-    days: [1, 2, 3, 4, 5, 6, 7],
-    description:
-      'Мультимедийное шоу «Once»: танец, 3D-проекции на воду и музыку. Ежедневно в парке VinWonders Nha Trang.',
-    description_en:
-      'The "Once" multimedia show: dance, 3D water projections and music. Daily at VinWonders Nha Trang.',
-    city: 'Нячанг',
-    address: 'VinWonders Nha Trang, Hon Tre Island, Vinh Nguyen, Nha Trang',
-    lat: 12.2186, lng: 109.241,
-    website: 'https://vinwonders.com/en/once-show/',
-    photos: [
-      'https://static.vinwonders.com/2022/05/ONCE-SHOW-Water-Screen-Sorceress.jpg',
-      'https://static.vinwonders.com/2022/05/ONCE-SHOW-Underwater-MEDIUM.jpg',
-    ],
-    start_time: null, price: null, currency: null,
-  },
+  // «Once Show» (vinwonders.com/en/once-show/) — шоу парка VinWonders Phú Quốc
+  // (Fire Phoenix Square, 18:45–19:05 ежедневно), а не Нячанга; Фукуок вне четырёх
+  // направлений сайта (Бали/Дананг/Нячанг/Кипр). Карточку 29206756, ошибочно вставленную
+  // в Нячанг, точка «События» заархивировала 04.10.2026 (dot-once-show-fix.mjs).
   {
     title: 'Шоу Charming Danang в Дананге',
     title_en: 'Charming Danang Show',
