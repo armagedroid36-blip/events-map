@@ -27,6 +27,7 @@
 // Переменные окружения: SUPABASE_URL (или VITE_SUPABASE_URL), SUPABASE_SERVICE_ROLE.
 import { createClient } from '@supabase/supabase-js';
 import { selectAll, countRows } from './db-rows.mjs';
+import * as liveDupe from './live-dupe-key.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -221,13 +222,29 @@ function buildGroups(rows) {
     }
   }
 
+  // 4) живой дубль одного события под разными URL/переводом у источника:
+  //    тот же день + тот же город + >=3 общих значимых слова по любой паре
+  //    псевдонимов названия + «то же место» (scripts/live-dupe-key.mjs).
+  const liveEdges = [];
+  const byDayCity = new Map();
+  for (const e of rows) push(byDayCity, liveDupe.dayKey(e), e);
+  for (const list of byDayCity.values()) {
+    if (list.length < 2) continue;
+    for (let i = 0; i < list.length; i++) {
+      for (let j = i + 1; j < list.length; j++) {
+        const reason = liveDupe.liveDupeMatch(list[i], list[j]);
+        if (reason && union(list[i], list[j], reason)) liveEdges.push({ a: list[i], b: list[j], rule: reason });
+      }
+    }
+  }
+
   const groups = new Map();
   for (const e of rows) {
     const root = find(e.id);
     if (!groups.has(root)) groups.set(root, []);
     groups.get(root).push(e);
   }
-  return { groups: [...groups.values()].filter((g) => g.length > 1), rules, coordsEdges, seriesEdges };
+  return { groups: [...groups.values()].filter((g) => g.length > 1), rules, coordsEdges, seriesEdges, liveEdges };
 }
 
 async function archive(ids) {
@@ -426,7 +443,7 @@ async function main() {
   console.log(`Строк в events: ${total}. Карточек в статусах ${STATUSES.join('/')}: ${rows.length}${DRY_RUN ? ' (DRY_RUN: только отчёт)' : ''}`);
   console.log(`Статусы: ${STATUSES.map((s) => `${s}=${byStatus[s] || 0}`).join(', ')}`);
 
-  const { groups, rules, coordsEdges, seriesEdges } = buildGroups(rows);
+  const { groups, rules, coordsEdges, seriesEdges, liveEdges } = buildGroups(rows);
 
   const idsToArchive = [];
   const extraGroups = [];
@@ -450,8 +467,10 @@ async function main() {
   console.log(`Групп дублей: ${groups.length} (записей в них ${groups.reduce((n, g) => n + g.length, 0)})`);
   console.log(`  из них склеено по месту (координаты): ${coordsEdges.length} связок`);
   console.log(`  из них склеено по перекрытию расписания: ${seriesEdges.length} связок`);
+  console.log(`  из них склеено как живой дубль (разные URL/перевод): ${liveEdges.length} связок`);
   for (const e of coordsEdges) console.log(`    место ~${e.d} м: ${short(e.a)} ↔ ${short(e.b)}`);
   for (const e of seriesEdges) console.log(`    расписание ${e.overlap.join(',')}: ${short(e.a)} ↔ ${short(e.b)}`);
+  for (const e of liveEdges) console.log(`    живой дубль (${e.rule}): ${short(e.a)} ↔ ${short(e.b)}`);
 
   const archived = await archive(idsToArchive);
   console.log('');
