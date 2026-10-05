@@ -23,6 +23,20 @@ const CENTERS = {
 const SNAP_KM = 6; // ближе 6 км к центру — считаем этот город
 const CITY_RADIUS = { 'Фамагуста': 12, 'Пафос': 14 }; // дальше порога — оставляем имя округа
 
+// Русская метка города -> округ. Нужна, чтобы сверять метку источника с округом точки
+// (cyprus.bz даёт «limassol» для площадки в Paliometocho — округ Никосия).
+const CITY_DISTRICT = {
+  'лимасол': 'Лимасол', 'никосия': 'Никосия', 'ларнака': 'Ларнака', 'лернака': 'Ларнака',
+  'пафос': 'Пафос', 'фамагуста': 'Фамагуста', 'ая-напа': 'Фамагуста',
+  'протарас': 'Фамагуста', 'паралимни': 'Фамагуста', 'полис': 'Пафос',
+};
+
+/** Округ по русской метке города («Лимасол, Кипр» -> «Лимасол») или null. */
+export function districtOfCity(city) {
+  const key = String(city || '').replace(/,\s*кипр/gi, '').trim().toLowerCase();
+  return CITY_DISTRICT[key] || null;
+}
+
 const R = 6371;
 export function km(aLat, aLng, bLat, bLng) {
   const dLat = (bLat - aLat) * Math.PI / 180, dLng = (bLng - aLng) * Math.PI / 180;

@@ -13,6 +13,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { extractCategory } from './category-llm.mjs';
 import { selectAll } from './db-rows.mjs';
+import { districtOf, districtNear, districtOfCity, cityForPoint } from './cy-districts.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -357,6 +358,21 @@ async function buildRow(src) {
   const center = CY_CITIES[city] || CY_CITIES[nearestCity(lat ?? 34.7, lng ?? 33.03)];
   lat = lat ?? center.lat;
   lng = lng ?? center.lng;
+
+  // Кипр: метка города от источника врёт (cyprus.bz отдаёт «limassol» для площадки
+  // в Paliometocho, округ Никосия). Сверяем округ метки с округом точки и при
+  // расхождении берём город по координатам — иначе карточка стоит в чужом городе,
+  // а фильтр по городу на карте расщепляется. Если координаты — fallback-центр
+  // города (геокодер не нашёл площадку), округа совпадут и метка не меняется.
+  const dPoint = districtOf(lat, lng) || districtNear(lat, lng);
+  const dLabel = districtOfCity(city);
+  if (dPoint && dLabel && dPoint !== dLabel) {
+    const byPoint = cityForPoint(lat, lng);
+    if (byPoint && byPoint !== city) {
+      console.log(`  [city по точке] «${city}» (${dLabel}) -> «${byPoint}» (${dPoint}): ${String(src.title || '').slice(0, 50)}`);
+      city = byPoint;
+    }
+  }
 
   const cat = (await extractCategory(src.description || src.title, src.catHint)) || src.category || 'festival';
 
