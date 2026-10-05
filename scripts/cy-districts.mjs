@@ -48,9 +48,30 @@ export function districtOf(lat, lng) {
   return null;
 }
 
+const FALLBACK_KM = 15; // точка вне полигона Республики (север Фамагусты, база Акротири) — берём ближайший округ
+
+/**
+ * Ближайший округ для точки ВНЕ полигонов Республики (северная часть Фамагусты,
+ * база Акротири): расстояние до ближайшей вершины упрощённых контуров.
+ * Возвращает null, если ближайший округ дальше FALLBACK_KM.
+ */
+export function districtNear(lat, lng) {
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  let best = null;
+  for (const d of data.districts) {
+    for (const ring of d.rings) {
+      for (const p of ring) {
+        const k = km(lat, lng, p[1], p[0]);
+        if (!best || k < best.k) best = { name: d.name, k };
+      }
+    }
+  }
+  return best && best.k <= FALLBACK_KM ? best.name : null;
+}
+
 /** Канонический city для координат: округ + уточнение по ближайшему центру. */
 export function cityForPoint(lat, lng) {
-  const d = districtOf(lat, lng);
+  const d = districtOf(lat, lng) || districtNear(lat, lng);
   if (!d) return null;
   const cs = CENTERS[d];
   if (!cs) return d;
