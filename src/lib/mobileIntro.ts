@@ -224,6 +224,44 @@ export function dismissHomePanel(): void {
 }
 
 /**
+ * URL пришёл из статики как ОПУБЛИКОВАННАЯ посадочная «город × категория»?
+ *
+ * Soft-404: пре-рендер публикует страницу ячейки по снимку БД (>= MIN_CATEGORY_EVENTS
+ * активных событий на момент сборки), а SPA считает тот же счётчик по ЖИВЫМ данным и
+ * при падении ниже порога рисовал <NotFound/> — на один URL поисковик получал два
+ * несовместимых ответа: статика «страница есть» (200, h1, ItemList), рендер «страницы
+ * нет». Фиксируем факт публикации ДО удаления статических блоков и отдаём Home: если
+ * блок ячейки был в HTML пре-рендера, страница рисуется как посадочная даже при
+ * упавшем живом счётчике. Политику гейта и пре-рендер это не меняет: у ячеек, которые
+ * на сборке порог не прошли (и вообще у несуществующих URL), блока в статике нет —
+ * там по-прежнему 404-заглушка с noindex.
+ */
+let staticCategoryPath: string | null = null;
+
+/** Путь без завершающего слэша — сравнение «та же ли это страница» устойчиво к /x и /x/. */
+function normalizedPath(pathname: string): string {
+  const trimmed = pathname.replace(/\/+$/, '');
+  return trimmed === '' ? '/' : trimmed;
+}
+
+/** Вызывается из src/main.tsx ДО keepSeoBlocksForIntro(): блок #seo-category-block
+ *  есть в HTML — значит этот URL статика отдала как посадочную страницу ячейки.
+ *  Запоминаем и путь: после клиентской навигации флаг не должен «протекать» на
+ *  другую ячейку, которую гейт по живым данным не публикует (там 404-заглушка). */
+export function noteStaticBlocks(): void {
+  staticCategoryPath =
+    document.getElementById('seo-category-block') !== null
+      ? normalizedPath(window.location.pathname)
+      : null;
+}
+
+/** true — страница пришла из статики как опубликованная посадочная «город × категория»
+ *  И мы всё ещё на том же пути (клиентский переход на другую ячейку флаг снимает). */
+export function wasCategoryPublished(): boolean {
+  return staticCategoryPath !== null && staticCategoryPath === normalizedPath(window.location.pathname);
+}
+
+/**
  * Вызывается из src/main.tsx ДО монтирования React. Удаляет статические
  * SEO-блоки (при живом React страницу рисует SPA — на ней должен остаться
  * ровно один h1), кроме:

@@ -5,7 +5,7 @@ import './i18n';
 import './index.css';
 import App from './App';
 import { AuthProvider } from './lib/auth';
-import { keepSeoBlocksForIntro } from './lib/mobileIntro';
+import { keepSeoBlocksForIntro, noteStaticBlocks } from './lib/mobileIntro';
 
 // Статические SEO-блоки кладёт в HTML пре-рендер (scripts/seo-prerender.mjs):
 // главная (h1+абзацы+ссылки, id=seo-home-block), городские страницы
@@ -27,6 +27,12 @@ import { keepSeoBlocksForIntro } from './lib/mobileIntro';
 // блок, ни главный. Тогда блоки главной/города не удаляются, а переезжают в
 // скрытый контейнер в конце <body> (см. lib/mobileIntro.ts) — Home удаляет их,
 // как только интро закрыто.
+//
+// Ещё одно исключение — посадочные «город × категория»: пре-рендер публикует их
+// по снимку БД, и SPA обязан согласовать свой гейт с фактом публикации, иначе
+// на одном URL статика отдаёт 200, а рендер — 404 (soft-404). Факт публикации
+// фиксируем ДО удаления блоков, пока #seo-category-block ещё в DOM.
+noteStaticBlocks();
 keepSeoBlocksForIntro();
 
 createRoot(document.getElementById('root')!).render(

@@ -26,7 +26,7 @@ import { addDaysIso, nextOccurrenceDate } from '../lib/recurrence';
 import { formatDate, todayIso } from '../lib/dates';
 import { cityCrumbLabel, cityCrumbLabelLocative, cityPageHref, cityPath } from '../lib/address';
 import type { CityPath } from '../lib/address';
-import { MAP_INTRO_KEY, MOBILE_INTRO_QUERY, HOME_PANEL_QUERY, dropIntroSeoBlocks, setHomePanelHidden } from '../lib/mobileIntro';
+import { MAP_INTRO_KEY, MOBILE_INTRO_QUERY, HOME_PANEL_QUERY, dropIntroSeoBlocks, setHomePanelHidden, wasCategoryPublished } from '../lib/mobileIntro';
 import {
   MIN_CATEGORY_EVENTS,
   categoriesBlockTitle,
@@ -498,16 +498,23 @@ export default function Home({
    *  RU: прошла порог MIN_CATEGORY_EVENTS ИЛИ ячейка восстановлена
    *  (RESTORED_CELLS — URL из списка 404 GSC: страница отдаётся всегда);
    *  EN: только при >= MIN_CATEGORY_EVENTS EN-событий (у восстановленных
-   *  ячеек EN-версии нет — их URL из GSC русские). */
+   *  ячеек EN-версии нет — их URL из GSC русские).
+   *  Третий вариант — согласование со статикой (wasCategoryPublished): если
+   *  URL уже отдан пре-рендером как посадочная (блок #seo-category-block был в
+   *  HTML до гидратации), SPA обязан нарисовать ту же страницу, даже когда
+   *  ЖИВОЙ счётчик ячейки упал ниже порога — иначе на один URL два ответа
+   *  (статика 200, рендер 404 = soft-404). Гейт пре-рендера не меняется. */
   const categoryPageOk =
     !categoryId ||
     (pageCityPath !== null &&
       category !== null &&
       (seoLang === 'en'
-        ? categoryEnCount >= MIN_CATEGORY_EVENTS
+        ? categoryEnCount >= MIN_CATEGORY_EVENTS || wasCategoryPublished()
         : categoryPageExists(cells, pageCityPath, categoryId) ||
-          isRestoredCell(pageCityPath, categoryId)));
-  // Пары без набора событий страницы не имеют — существующая 404-заглушка
+          isRestoredCell(pageCityPath, categoryId) ||
+          wasCategoryPublished()));
+  // Пары без набора событий страницы не имеют — 404-заглушка (кроме случая,
+  // когда страницу уже отдала статика: см. wasCategoryPublished в гейте выше)
   const categoryNotFound = Boolean(categoryId) && !loading && !categoryPageOk;
   /** Видимый блок ячейки (h1 + интро + FAQ) — как статический seo-category-block */
   const categorySeo = useMemo(() => {
