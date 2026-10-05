@@ -507,7 +507,13 @@ async function main() {
   }
 
   if (!DRY_RUN) {
-    const after = await selectAll(db, 'events', 'id,title,title_en,start_date,city,status,created_at,start_time,recurrence,end_date,lat,lng', {
+    // ВАЖНО: читаем ТЕМ ЖЕ набором колонок, что и основной проход (COLUMNS).
+    // Питфол 05.10.2026: контрольное чтение брало список без address — а
+    // live-dupe-key.isCityLevelAddr() считает отсутствующий адрес «адресом
+    // уровня города», из-за чего правило «живой дубль» вырождалось и контроль
+    // печатал «групп дублей осталось — 11» на карточках, где дублей нет
+    // (проверка: scripts/dedupe-leftover-probe.mjs — 14 пар без address, 0 с ним).
+    const after = await selectAll(db, 'events', COLUMNS, {
       filter: (q) => q.in('status', STATUSES),
     });
     const { groups: leftGroups } = buildGroups(after);
