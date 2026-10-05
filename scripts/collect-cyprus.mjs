@@ -17,6 +17,32 @@ import { districtOf, districtNear, districtOfCity, cityForPoint } from './cy-dis
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
+// Время площадки — кипрское (Asia/Nicosia). Источники отдают ISO в UTC
+// (cyprus.bz: "2026-12-19T08:30:00+00:00" при показе на странице 10:30; cyprusnow API — то же),
+// поэтому slice(11,16) писал UTC-час и карточки стояли на 2–3 часа раньше реального времени.
+// Форматируем в часовом поясе острова: работает и для '+00:00', и для '+03:00'.
+const CY_HM = new Intl.DateTimeFormat('ru-RU', {
+  timeZone: 'Asia/Nicosia', hour: '2-digit', minute: '2-digit', hour12: false,
+});
+function cyHM(iso) {
+  const s = String(iso || '');
+  if (!s) return null;
+  // Формат VisitCyprus (Tribe API): "2026-10-17 20:00:00" — уже местное время острова.
+  if (!s.includes('T')) return s.includes(' ') ? (s.slice(11, 16) || null) : null;
+  const d = new Date(s);
+  if (Number.isNaN(d.getTime())) return s.slice(11, 16) || null;
+  return CY_HM.format(d);
+}
+// Дата события тоже кипрская: 21:30Z 30.10 — это 00:30 31.10 по острову, а slice(0,10) давал 30.10.
+const CY_DATE = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Nicosia', year: 'numeric', month: '2-digit', day: '2-digit' });
+function cyDate(iso) {
+  const s = String(iso || '');
+  if (!s) return null;
+  if (!s.includes('T')) return s.slice(0, 10) || null;
+  const d = new Date(s);
+  return Number.isNaN(d.getTime()) ? s.slice(0, 10) || null : CY_DATE.format(d);
+}
+
 const DRY_RUN = process.env.DRY_RUN === '1';
 
 if ((!SUPABASE_URL || !SERVICE_ROLE) && !DRY_RUN) {
@@ -449,8 +475,8 @@ async function collectVisitCyprus(seen, budget) {
         lang: 'en',
         start_date: start,
         end_date: ev.end_date ? String(ev.end_date).slice(0, 10) : null,
-        start_time: ev.all_day ? null : String(ev.start_date || '').slice(11, 16) || null,
-        end_time: ev.all_day ? null : String(ev.end_date || '').slice(11, 16) || null,
+        start_time: ev.all_day ? null : cyHM(ev.start_date),
+        end_time: ev.all_day ? null : cyHM(ev.end_date),
         city: cityRu(v.city || '') || cityRu(`${v.venue || ''} ${v.address || ''}`) || '',
         cityEn: v.city || '',
         venue: [v.venue, v.address, v.zip].filter(Boolean).join(', '),
@@ -499,7 +525,7 @@ async function collectCyprusNow(seen, budget) {
     for (const ev of events) {
       if (added >= budget || cityAdded >= perCity) break;
       const title = decodeEntities(ev.title || ev.name || '').trim();
-      const start = String(ev.start_at || ev.start_date || '').slice(0, 10);
+      const start = cyDate(ev.start_at || ev.start_date);
       if (!title || !start) continue;
       if (seen.has(normKey(title, start))) {
         stats.skipped++;
@@ -517,9 +543,9 @@ async function collectCyprusNow(seen, budget) {
         description: stripHtml(ev.description || ev.excerpt || ''),
         lang: 'en',
         start_date: start,
-        end_date: ev.end_at ? String(ev.end_at).slice(0, 10) : null,
-        start_time: String(ev.start_at || '').slice(11, 16) || null,
-        end_time: String(ev.end_at || '').slice(11, 16) || null,
+        end_date: ev.end_at ? cyDate(ev.end_at) : null,
+        start_time: cyHM(ev.start_at),
+        end_time: cyHM(ev.end_at),
         city: cityNm,
         cityEn: ev.city || citySlug,
         venue: ev.venue_name || ev.venue?.name || '',
@@ -616,7 +642,7 @@ async function collectCyprusBz(seen, budget, websites = new Set()) {
     await new Promise((r) => setTimeout(r, 400)); // вежливая пауза между страницами
     if (!ev) continue;
     const title = decodeEntities(ev.name || '').trim();
-    const start = String(ev.startDate || '').slice(0, 10);
+    const start = cyDate(ev.startDate);
     if (!title || !start) continue;
     if (seen.has(normKey(title, start))) {
       stats.skipped++;
@@ -635,9 +661,9 @@ async function collectCyprusBz(seen, budget, websites = new Set()) {
       description: stripHtml(ev.description || ''),
       lang: 'ru',
       start_date: start,
-      end_date: ev.endDate ? String(ev.endDate).slice(0, 10) : null,
-      start_time: String(ev.startDate || '').slice(11, 16) || null,
-      end_time: String(ev.endDate || '').slice(11, 16) || null,
+      end_date: ev.endDate ? cyDate(ev.endDate) : null,
+      start_time: cyHM(ev.startDate),
+      end_time: cyHM(ev.endDate),
       city: bzCity,
       cityEn: addrLoc || '',
       venue: place,
@@ -694,7 +720,7 @@ async function collectCyprusBzCities(seen, budget) {
     for (const ev of events) {
       if (added >= budget || cityAdded >= 10) break;
       const title = decodeEntities(ev.name || '').trim();
-      const start = String(ev.startDate || '').slice(0, 10);
+      const start = cyDate(ev.startDate);
       if (!title || !start) continue;
       if (seen.has(normKey(title, start))) {
         stats.skipped++;
@@ -716,9 +742,9 @@ async function collectCyprusBzCities(seen, budget) {
         description,
         lang,
         start_date: start,
-        end_date: ev.endDate ? String(ev.endDate).slice(0, 10) : null,
-        start_time: String(ev.startDate || '').slice(11, 16) || null,
-        end_time: String(ev.endDate || '').slice(11, 16) || null,
+        end_date: ev.endDate ? cyDate(ev.endDate) : null,
+        start_time: cyHM(ev.startDate),
+        end_time: cyHM(ev.endDate),
         city: cityRu(locality) || cityRu(`${place} ${title}`) || cityRuName,
         cityEn: locality || slug,
         venue: place,
