@@ -302,6 +302,18 @@ async function geocode(query) {
   return out;
 }
 
+// ===== Канонический ключ страницы Cyprus.BZ =====
+// Одна и та же карточка живёт под двумя слагами: /ru/event/<id>/... и
+// /en/event/<id>/... (плюс /event/<id>/<slug> в карте сайта) с РАЗНЫМИ
+// переводами названия. Поэтому normKey(title|start_date) и множество website
+// их не склеивают, и копия вставляется заново (Rantevou дал три копии).
+// Ключ страницы = host + /event/<id>/ — одинаков для всех слагов.
+function canonBzPage(u) {
+  const s = (u || '').trim();
+  const m = /^https?:\/\/(?:www\.)?cyprus\.bz\/(?:[a-z]{2}\/)?event\/([^/?#]+)/i.exec(s);
+  return m ? `cyprus.bz/event/${m[1].toLowerCase()}` : null;
+}
+
 // ===== Дедупликация по базе =====
 async function existingKeys() {
   if (!db) return { keys: new Set(), websites: new Set(), rows: 0 };
@@ -326,11 +338,14 @@ async function existingKeys() {
   // по 30+ секунд, поэтому повторно их не скачиваем — каждый запуск продвигается
   // глубже по карте сайта, а не топчется на первых страницах.
   const websites = new Set(rows.map((e) => (e.website || '').trim()).filter(Boolean));
-  return { keys, websites, rows: rows.length };
+  // Канонические страницы Cyprus.BZ: одна страница под разными слагами
+  // (ru/en) — по этому набору копия события не скачивается и не вставляется.
+  const bzPages = new Set(rows.map((e) => canonBzPage(e.website)).filter(Boolean));
+  return { keys, websites, bzPages, rows: rows.length };
 }
 
 // ===== Запись события =====
-const stats = { visitcyprus: 0, cyprusnow: 0, cyprusbz: 0, cyprusbzCities: 0, skipped: 0, errors: 0 };
+const stats = { visitcyprus: 0, cyprusnow: 0, cyprusbz: 0, cyprusbzCities: 0, skipped: 0, bzDup: 0, errors: 0 };
 
 async function save(row, seen) {
   const key = normKey(row.title, row.start_date);
@@ -595,7 +610,7 @@ function jsonLdEvents(html) {
   return out;
 }
 
-async function collectCyprusBz(seen, budget, websites = new Set()) {
+async function collectCyprusBz(seen, budget, websites = new Set(), bzPages = new Set()) {
   let added = 0;
   const deadline = Date.now() + BUDGET.cyprusbz;
   console.log('Собираю: Cyprus.BZ (русскоязычная афиша)...');
@@ -625,8 +640,9 @@ async function collectCyprusBz(seen, budget, websites = new Set()) {
   let scanned = 0;
   for (const url of urls) {
     if (added >= budget || Date.now() > deadline || fails >= 8) break;
-    if (websites.has(url)) {
+    if (websites.has(url) || (canonBzPage(url) && bzPages.has(canonBzPage(url)))) {
       stats.skipped++;
+      if (canonBzPage(url) && bzPages.has(canonBzPage(url))) stats.bzDup++;
       continue; // страница уже разобрана в прошлых запусках — не тратим на неё время
     }
     scanned++;
@@ -679,7 +695,11 @@ async function collectCyprusBz(seen, budget, websites = new Set()) {
       row.source_lang = 'ru';
       row.language = 'ru';
     }
-    if (await save(row, seen)) added++;
+    if (await save(row, seen)) {
+      added++;
+      const pg = canonBzPage(row.website);
+      if (pg) bzPages.add(pg);
+    }
   }
   console.log(
     `  Cyprus.BZ: просмотрено страниц ${scanned}, добавлено ${added}`
@@ -702,7 +722,7 @@ const BZ_CITY_PAGES = [
   ['famagusta', 'Фамагуста'],
 ];
 
-async function collectCyprusBzCities(seen, budget) {
+async function collectCyprusBzCities(seen, budget, bzPages = new Set()) {
   const deadline = Date.now() + BUDGET.cyprusbzCities;
   let added = 0;
   console.log('Собираю: Cyprus.BZ, афиши городов Восточного Кипра...');
@@ -724,6 +744,13 @@ async function collectCyprusBzCities(seen, budget) {
       if (!title || !start) continue;
       if (seen.has(normKey(title, start))) {
         stats.skipped++;
+        continue;
+      }
+      // Копия страницы cyprus.bz под другим слагом (ru/en) — не вставляем.
+      const pg = canonBzPage(ev.url || '');
+      if (pg && bzPages.has(pg)) {
+        stats.skipped++;
+        stats.bzDup++;
         continue;
       }
       const loc = ev.location || {};
@@ -760,6 +787,8 @@ async function collectCyprusBzCities(seen, budget) {
       if (await save(row, seen)) {
         added++;
         cityAdded++;
+        const pg = canonBzPage(row.website);
+        if (pg) bzPages.add(pg);
       }
     }
     console.log(`  ${slug}: событий на странице ${events.length}, добавлено ${cityAdded}`);
@@ -770,11 +799,12 @@ async function collectCyprusBzCities(seen, budget) {
 
 // ===== Основной цикл =====
 async function main() {
-  const { keys: seen, websites, rows: dbRows } = await existingKeys();
+  const { keys: seen, websites, bzPages, rows: dbRows } = await existingKeys();
   const started = new Date();
   console.log(
     `Старт сбора событий Кипра${DRY_RUN ? ' (DRY_RUN)' : ''}. `
-    + `Уже в базе строк: ${dbRows}, ключей дублей: ${seen.size}, ссылок источников: ${websites.size}`,
+    + `Уже в базе строк: ${dbRows}, ключей дублей: ${seen.size}, ссылок источников: ${websites.size}, `
+    + `канонических страниц Cyprus.BZ: ${bzPages.size}`,
   );
 
   // VisitCyprus отдаёт небольшой официальный календарь (~30 событий),
@@ -782,10 +812,10 @@ async function main() {
   if (want('visitcyprus')) await collectVisitCyprus(seen, Math.min(60, MAX_EVENTS));
   if (want('cyprusnow')) await collectCyprusNow(seen, Math.min(120, MAX_EVENTS));
   if (want('cyprusbzCities')) {
-    await collectCyprusBzCities(seen, Math.min(25, Math.max(0, MAX_EVENTS - stats.visitcyprus - stats.cyprusnow)));
+    await collectCyprusBzCities(seen, Math.min(25, Math.max(0, MAX_EVENTS - stats.visitcyprus - stats.cyprusnow)), bzPages);
   }
   if (want('cyprusbz')) {
-    await collectCyprusBz(seen, Math.max(0, MAX_EVENTS - stats.visitcyprus - stats.cyprusnow - stats.cyprusbzCities), websites);
+    await collectCyprusBz(seen, Math.max(0, MAX_EVENTS - stats.visitcyprus - stats.cyprusnow - stats.cyprusbzCities), websites, bzPages);
   }
 
   const mins = ((Date.now() - started) / 60000).toFixed(1);
@@ -793,11 +823,11 @@ async function main() {
     `Готово: добавлено ${stats.visitcyprus + stats.cyprusnow + stats.cyprusbz + stats.cyprusbzCities} `
     + `(VisitCyprus ${stats.visitcyprus}, Cyprus Now ${stats.cyprusnow}, `
     + `Cyprus.BZ города Востока ${stats.cyprusbzCities}, Cyprus.BZ sitemap ${stats.cyprusbz}), `
-    + `пропущено ${stats.skipped}, ошибок ${stats.errors}, ${mins} мин.`,
+    + `пропущено ${stats.skipped} (из них копий страниц Cyprus.BZ ${stats.bzDup}), ошибок ${stats.errors}, ${mins} мин.`,
   );
 }
 
-export { jsonLdEvents };
+export { jsonLdEvents, canonBzPage };
 
 // Модуль можно импортировать (скрипты проверки) — тогда сбор не запускается.
 const isDirectRun = /collect-cyprus\.mjs$/.test((process.argv[1] || '').replace(/\\/g, '/'));
