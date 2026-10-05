@@ -19,6 +19,8 @@ const PLAN = [
     why: 'Murder on the Orient Express 03.10 20:00 Никосия: THOC Theatre (Evis Gabrielides Aud.) = Main Stage; keep=карточка с адресом площадки и прогоном до 27.11, drop=дубль с пином на центре' },
   { keep: 'cd50ee20', drop: ['04f731ea', 'c8db8664'],
     why: 'Race for the Cure Cyprus 01.11 Никосия: с страницы cyprusnow «Sports event at UCY Sports Centre ... at 07:30», расписание 07:30 полумарафон / 08:00 10 км / 09:15 5 км — старт 07:30; у 04f731ea время 09:00 (голова 5-км забега) и пин в центре Никосии (35.1600,33.3771), у c8db8664 пин-заглушка 35.1856,33.3823 и cyprus.bz; keep=cd50ee20 (07:30, UCY Sports Centre, 35.1461934,33.4133854)' },
+  { keep: '287f1564', drop: ['36163812'],
+    why: 'Rantevou Stin Plateia Music Fest 26, 17.10 20:30 Никосия: третья копия того же cyprus.bz-события (URL /event/33c4/ с другим слагом-переводом); keep=cyprusnow с гео площадки Skali Amphitheatre 35.1520356,33.3977267 и фото, drop=cyprus.bz с пином на центре города 35.1856,33.3823 без фото' },
 ];
 
 const rows = await selectAll(db, 'events', 'id,status,title,title_ru,start_date,start_time,city,address,lat,lng,website');

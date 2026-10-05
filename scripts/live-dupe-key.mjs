@@ -148,6 +148,63 @@ export function abbrevOverlap(a, b) {
   return best;
 }
 
+// ===== Класс «одно место в двух языках» (RU ↔ EN) =====
+// У двух зеркал адрес ОДНОЙ площадки записан разными алфавитами, а координаты
+// второго источника стоят на центровой точке города (или отсутствуют), поэтому
+// строгий ключ и аббревиатурный такие пары пропускают:
+//   «Муниципальный садовый театр „Мариос Токас“» ↔ «Marios Tokas Municipal Garden Theatre»
+//   «Skali Amphitheatre, Aglantzia»              ↔ «Скали Агланцияс»
+// Условия намеренно жёсткие (иначе правило начнёт архивировать живые события):
+// тот же день + тот же город + ТО ЖЕ время + 3+ общих значимых слова названия
+// + общий топоним адреса после транслитерации; адреса-заглушки «<город>, Кипр»
+// места не называют и правило не включают.
+
+const PLACE_STOP_ALL = ADDR_STOP; // ссылка для читаемости ниже
+
+/** Токены адреса, приведённые к латинице (для сравнения RU↔EN). */
+export function langTokensOf(address) {
+  const out = new Set();
+  for (const w of norm(address).split(' ')) {
+    const t = translit(w);
+    if (t.length >= 4 && !STOP.has(t) && !GENERIC.has(t) && !PLACE_STOP.has(t)
+      && !PLACE_STOP_ALL.has(t) && !EXTRA_STOP.has(t) && !STOP.has(w) && !GENERIC.has(w)
+      && !PLACE_STOP.has(w) && !PLACE_STOP_ALL.has(w) && !EXTRA_STOP.has(w)) out.add(t);
+  }
+  return out;
+}
+
+const commonPrefix = (x, y) => {
+  let i = 0;
+  while (i < x.length && i < y.length && x[i] === y[i]) i++;
+  return i;
+};
+
+/** Общие топонимы адресов (в т.ч. один и тот же в двух алфавитах). */
+export function langPlaceTokens(a, b) {
+  const ta = langTokensOf(a.address), tb = langTokensOf(b.address);
+  const out = new Set();
+  for (const x of ta) for (const y of tb) {
+    if (x === y) { out.add(x); continue; }
+    const [s, l] = x.length <= y.length ? [x, y] : [y, x];
+    if (s.length >= 5 && l.startsWith(s)) { out.add(s); continue; }   // «marios» → «marios…»
+    const cp = commonPrefix(x, y);
+    if (cp >= 6) out.add(x.slice(0, cp));                             // «aglantsiyas» ~ «aglantzia»
+  }
+  return out;
+}
+
+/** Проверка пары «одно место в двух языках»: причина склейки или null. */
+export function liveLangPlaceMatch(a, b) {
+  if (dayKey(a) !== dayKey(b)) return null;
+  if (isCityLevelAddr(a) || isCityLevelAddr(b)) return null;
+  const ta = String(a.start_time || '').slice(0, 5), tb = String(b.start_time || '').slice(0, 5);
+  if (!ta || !tb || ta !== tb) return null;
+  if (overlap(a, b) < 3) return null;
+  const t = [...langPlaceTokens(a, b)];
+  if (!t.length) return null;
+  return `одно место в двух языках (${t.slice(0, 2).join(', ')})`;
+}
+
 /** Проверка пары с аббревиатурой в названии: причина склейки или null.
  *  Сигнал: 3+ общих слова по имени ИЛИ 2 слова + общий токен адреса.
  *  Место: общий токен адреса ИЛИ координаты ≤1 км (адрес-заглушка «<город>, Кипр»

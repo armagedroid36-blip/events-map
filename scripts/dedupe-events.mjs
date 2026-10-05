@@ -235,7 +235,9 @@ function buildGroups(rows) {
     if (list.length < 2) continue;
     for (let i = 0; i < list.length; i++) {
       for (let j = i + 1; j < list.length; j++) {
-        const reason = liveDupe.liveDupeMatch(list[i], list[j]) || liveDupe.liveAbbrevMatch(list[i], list[j]);
+        const reason = liveDupe.liveDupeMatch(list[i], list[j])
+          || liveDupe.liveAbbrevMatch(list[i], list[j])
+          || liveDupe.liveLangPlaceMatch(list[i], list[j]);
         if (reason && union(list[i], list[j], reason)) liveEdges.push({ a: list[i], b: list[j], rule: reason });
       }
     }
