@@ -197,14 +197,35 @@ function decodeEntities(s) {
   return out;
 }
 
-/** Название: первая строка без эмодзи и служебных слов */
-function extractTitle(text) {
-  const first = decodeEntities(text).split(/\n/)[0].trim();
-  const clean = first
+/** Строка-приветствие/служебный зачин — не название события */
+const GREETING_ONLY = /^(всем\s+привет|привет|здравствуй(те)?|добрый\s+(день|вечер)|доброе\s+утро|друзья|дорогие\s+\S+|уважаемые\s+\S+|внимание|анонс|афиша|напомина(ем|ю)|hello(\s+guys)?|hi(\s+guys)?|good\s+(morning|evening))$/iu;
+const GREETING_PREFIX = /^(всем\s+привет|привет|здравствуйте|здравствуй|добрый\s+(день|вечер)|доброе\s+утро|друзья|дорогие\s+\S+|уважаемые\s+\S+|внимание|анонс|афиша|hello(\s+guys)?|hi(\s+guys)?)[\s!,.…:)\-–—]+/iu;
+const INVITE_PREFIX = /^(приглашаю|приглашаем)\s+(вас\s+)?(на|в)\s+/iu;
+/** Служебная строка-ярлык («дата:», «где:», «стоимость:») — не название */
+const SERVICE_LINE = /^(дата|когда|время|начало|где|место|адрес|стоимость|цена|вход|билеты|контакты|запись|телефон|канал|подпис)\s*[:：]/iu;
+
+/** Название: первая содержательная строка без эмодзи и служебных слов.
+ *  Пост афиши часто начинается с приветствия («Всем привет!», «Друзья!») —
+ *  брать приветствие заголовком нельзя, ищем первую строку-название. */
+export function extractTitle(text) {
+  const clean = (s) => s
     .replace(/[^\p{L}\p{N}\s.,!?«»"':()\-]/gu, ' ')
     .replace(/\s+/g, ' ')
     .trim();
-  if (clean.length >= 3) return clean.slice(0, 120);
+  const lines = decodeEntities(text).split(/\n/).map((l) => l.trim()).filter(Boolean);
+  for (const line of lines) {
+    let cand = clean(line);
+    const bare = cand.replace(/[\s!,.…:)\-–—]+$/u, '');
+    if (!cand || GREETING_ONLY.test(bare) || SERVICE_LINE.test(cand)) continue;
+    cand = cand.replace(GREETING_PREFIX, '').replace(INVITE_PREFIX, '').trim();
+    if (cand.length < 8) continue;
+    return cand.charAt(0).toUpperCase() + cand.slice(1, 120);
+  }
+  const fallback = lines.map(clean).find((l) => {
+    const bare = l.replace(/[\s!,.…:)\-–—]+$/u, '');
+    return l.length >= 3 && !GREETING_ONLY.test(bare);
+  });
+  if (fallback) return fallback.slice(0, 120);
   return 'Событие в ' + (text.includes('Нячанг') ? 'Нячанге' : 'городе');
 }
 
@@ -680,7 +701,9 @@ async function main() {
   console.log(`Готово: добавлено ${inserted}.`);
 }
 
-main().catch((e) => {
-  console.error('Критическая ошибка:', e.message);
-  process.exit(1);
-});
+if (process.env.COLLECT_TG_NO_RUN !== '1') {
+  main().catch((e) => {
+    console.error('Критическая ошибка:', e.message);
+    process.exit(1);
+  });
+}
