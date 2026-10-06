@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brainstorming in Bali💜 Themed game… — October 7, 2026 · Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-ajIoFpuA.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-TyMVBYM7.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DgUs3JJi.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CzoCTSgU.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-DYO_cZ0p.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CxksY7cq.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BDWkCv6C.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BIyBA1U-.css" />
+      <meta name="description" content="Bali, October 7, 2026. Quiz Night in Bali💜 Themed game &quot;Cringe&quot; (https://www.instagram.com/mzgb_bali/)😁 A game about cringeworthy facts, situations, and…" />
+    <link rel="canonical" href="https://mypins.site/en/event/a3ca9fcd-5a79-4075-93b3-1f84b3099581/brainstorming-in-bali-themed-game-cringe/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Brainstorming in Bali💜 Themed game… — October 7, 2026 · Bali" />
+    <meta property="og:description" content="Bali, October 7, 2026. Quiz Night in Bali💜 Themed game &quot;Cringe&quot; (https://www.instagram.com/mzgb_bali/)😁 A game about cringeworthy facts, situations, and…" />
+    <meta property="og:url" content="https://mypins.site/en/event/a3ca9fcd-5a79-4075-93b3-1f84b3099581/brainstorming-in-bali-themed-game-cringe/" />
+    <meta property="og:image" content="https://static.baliforum.ru/uploads/698820/conversions/Кринж--афиша-в-презентацию-копия —-копия-preview.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/a3ca9fcd-5a79-4075-93b3-1f84b3099581/brainstorming-in-bali-themed-game-cringe/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/a3ca9fcd-5a79-4075-93b3-1f84b3099581/mozgoboynya-na-bali-tematicheskaya-igra-krinzh/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Brainstorming in Bali💜 Themed game \"Cringe\"😁","url":"https://mypins.site/en/event/a3ca9fcd-5a79-4075-93b3-1f84b3099581/brainstorming-in-bali-themed-game-cringe/","startDate":"2026-10-07T19:30:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Jalan Batu Mejan, Canggu, Kuta Utara, Canggu, Kec. Kuta Utara, Kabupaten Badung, Bali 80351","address":{"@type":"PostalAddress","addressLocality":"Bali","streetAddress":"Jalan Batu Mejan, Canggu, Kuta Utara, Canggu, Kec. Kuta Utara, Kabupaten Badung, Bali 80351"},"geo":{"@type":"GeoCoordinates","latitude":-8.6513534,"longitude":115.1337595}},"description":"Quiz Night in Bali💜 Themed game \"Cringe\" (https://www.instagram.com/mzgb_bali/)😁 A game about cringeworthy facts, situations, and stories that people are usually embarrassed to admit they know. Inside — logic questions, absurd image hybrids, mashups, funny videos, and Asian trends. A package where every round delivers a dose of secondhand embarrassment and makes you laugh at things people usually stay silent about. And all of it strictly within the bounds of decency: no profanity or dark humor, 16+ only. 🫰🏻October 7 | Wednesday | 19:30 📍Luigi's Hot Pizza (https://maps.app.goo.gl/7xURJCimxb7h3w1b7) Game starts at 20:00 Quiz Night — an exciting team game of logic, quick thinking, and broad knowledge! 🌍Already played in 17 countries, 217 cities around the world! ✅Gather a team of 4 to 12 people, come up with an unusual team name, register, and come play! ✅ No team but want to play? Just message us, come to the game, and we'll add you to a team with our friends🙌","endDate":"2026-10-07T22:00:00","image":"https://static.baliforum.ru/uploads/698820/conversions/Кринж--афиша-в-презентацию-копия —-копия-preview.jpg","organizer":{"@type":"Organization","name":"BaliForum","url":"https://baliforum.ru/events/mozgoboynya-na-bali-tematicheskaya-igra-krinzh"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Bali","item":"https://mypins.site/en/bali/"},{"@type":"ListItem","position":3,"name":"Brainstorming in Bali💜 Themed game \"Cringe\"😁","item":"https://mypins.site/en/event/a3ca9fcd-5a79-4075-93b3-1f84b3099581/brainstorming-in-bali-themed-game-cringe/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Brainstorming in Bali💜 Themed game &quot;Cringe&quot;😁</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-10-07">October 7, 2026</time></p>
+  <p><time datetime="2026-10-07T19:30:00">October 7, 2026, 7:30 PM</time></p>
+  <address>Jalan Batu Mejan, Canggu, Kuta Utara, Canggu, Kec. Kuta Utara, Kabupaten Badung, Bali 80351</address>
+  <p>Quiz Night in Bali💜 Themed game &quot;Cringe&quot; (https://www.instagram.com/mzgb_bali/)😁
+A game about cringeworthy facts, situations, and stories that people are usually embarrassed to admit they know.
+Inside — logic questions, absurd image hybrids, mashups, funny videos, and Asian trends.
+A package where every round delivers a dose of secondhand embarrassment and makes you laugh at things people usually stay silent about.
+And all of it strictly within the bounds of decency: no profanity or dark humor, 16+ only.
+🫰🏻October 7 | Wednesday | 19:30
+📍Luigi&#39;s Hot Pizza (https://maps.app.goo.gl/7xURJCimxb7h3w1b7)
+Game starts at 20:00 Quiz Night — an exciting team game of logic, quick thinking, and broad knowledge!
+🌍Already played in 17 countries, 217 cities around the world!
+✅Gather a team of 4 to 12 people, come up with an unusual team name, register, and come play!
+✅ No team but want to play? Just message us, come to the game, and we&#39;ll add you to a team with our friends🙌</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/bali/">Bali</a> <span aria-hidden="true">›</span> <span>Brainstorming in Bali💜 Themed game &quot;Cringe&quot;😁</span></p>
+    <p>More events in Bali: <a href="/en/bali/">what&#39;s on</a> · <a href="/en/bali/games/">🎲 Games &amp; Quizzes</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/033bd9d5-2856-4a36-ad30-cad5be45360b/women-s-breakfast/">Women&#39;s breakfast❣️ <time datetime="2026-10-06">October 6, 2026</time></a></li>
+    <li><a href="/en/event/136e009b-b33b-4c8d-bf87-ab7e562e2495/what-where-haha/">What? Where? Haha! <time datetime="2026-10-06">October 6, 2026</time></a></li>
+    <li><a href="/en/event/4c7699f5-7980-4fac-810d-be250b020df5/city-mafia-on-bukita/">City Mafia on Bukita <time datetime="2026-10-06">October 6, 2026</time></a></li>
+    <li><a href="/en/event/ff8db23c-2f0a-46d0-aa1e-39bacf39d426/mafia-sports/">Mafia (sports) <time datetime="2026-10-06">October 6, 2026</time></a></li>
+    <li><a href="/en/event/8aacf420-e50a-426c-89b5-0132ab7debb4/lila-game/">Lila Game <time datetime="2026-10-07">October 7, 2026</time></a></li>
+    <li><a href="/en/event/af869235-2450-421d-8853-9afa8c06e789/quiz-game-mozgoboynya-bali-4-years-together/">Quiz game Mozgoboynya Bali💜 4 years together🏝️ <time datetime="2026-10-07">October 7, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Bali</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/0db832ca-afb9-4fcf-aea3-9fc49b1aecff/rosangela-silvestre-the-symbolism-of-orix-in-dance/">Rosangela Silvestre: The Symbolism of Orixá in Dance</a> <time datetime="2026-10-07">October 7, 2026</time></li>
+    <li>Next: <a href="/en/event/85fa0764-c3d8-4902-a671-0c080d26ac00/nuanu-kecak-dance-shows-on-saturdays-in-october/">Nuanu Kecak Dance: shows on Saturdays in October</a> <time datetime="2026-10-10">October 10, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/bali/">Upcoming events in Bali</a></p>
+</div>
+
+  </body>
+</html>
