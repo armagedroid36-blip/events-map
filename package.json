@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && node scripts/seo-prerender.mjs && node scripts/build-404.mjs",
+    "build": "node scripts/build-events-snapshot.mjs && tsc -b && vite build && node scripts/seo-prerender.mjs && node scripts/build-404.mjs",
     "lint": "oxlint",
     "preview": "vite preview"
   },

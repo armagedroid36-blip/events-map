@@ -43,3 +43,6 @@ logo3d/
 .work-gsc/
 
 .env.build
+
+# статический снапшот списка событий — генерируется сборкой (scripts/build-events-snapshot.mjs)
+public/data/events.json

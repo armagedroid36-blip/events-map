@@ -295,6 +295,10 @@ class SupabaseApi implements DataApi {
    *  молча терял события с поздними датами (декабрь+): их не было ни в списке,
    *  ни на карте. Пагинация идёт query-параметрами limit/offset (.range()). */
   private static EVENTS_PAGE_SIZE = 1000;
+  /** Снапшот старше этого возраста считаем протухшим и идём в живой RPC:
+   *  CI пересобирает data/events.json дважды в сутки, запас в 36 часов
+   *  перекрывает ночной прогон и даёт страховку от сбоя пайплайна. */
+  private static SNAPSHOT_MAX_AGE_MS = 36 * 60 * 60 * 1000;
   private eventsCache: { at: number; data: EventItem[] } | null = null;
 
   constructor() {
@@ -307,6 +311,14 @@ class SupabaseApi implements DataApi {
     const now = Date.now();
     if (this.eventsCache && now - this.eventsCache.at < SupabaseApi.EVENTS_TTL_MS) {
       return this.eventsCache.data;
+    }
+    // Основной путь — статический снапшот рядом с сайтом (data/events.json):
+    // его собирает CI перед сборкой статики, отдаёт GitHub Pages, и он не
+    // тратит egress Supabase (краулерский трафик съедал бесплатные 5 ГБ).
+    const snapshot = await this.fetchSnapshot();
+    if (snapshot) {
+      this.eventsCache = { at: Date.now(), data: snapshot };
+      return snapshot;
     }
     // Публичный список — через security definer RPC: события заблокированных
     // организаторов скрыты, работает и для анонимов. Облегчённый RPC
@@ -325,6 +337,28 @@ class SupabaseApi implements DataApi {
     }
     this.eventsCache = { at: Date.now(), data: events };
     return events;
+  }
+
+  /** Статический снапшот списка, опубликованный вместе с сайтом.
+   *  Путь относительный (BASE_URL) — работает и на mypins.site, и в preview.
+   *  cache: 'no-cache' — ревалидация по ETag: неизменённый файл даёт 304 без
+   *  повторной загрузки тела. Любая проблема (нет файла, битый JSON, старше
+   *  36 часов) — null, и вызывающий идёт в живой RPC, как раньше. */
+  private async fetchSnapshot(): Promise<EventItem[] | null> {
+    try {
+      const res = await fetch(`${import.meta.env.BASE_URL}data/events.json`, { cache: 'no-cache' });
+      if (!res.ok) return null;
+      const body = (await res.json()) as { generated_at?: string; cards?: Partial<EventItem>[] };
+      const at = Date.parse(body?.generated_at ?? '');
+      if (!Number.isFinite(at) || Date.now() - at > SupabaseApi.SNAPSHOT_MAX_AGE_MS) return null;
+      const cards = Array.isArray(body?.cards) ? body.cards : [];
+      const out = cards
+        .filter((c) => c && typeof c.id === 'string')
+        .map((c) => ({ status: 'active', description: '', ...c }) as EventItem);
+      return out.length ? out : null;
+    } catch {
+      return null;
+    }
   }
 
   /** Постраничное чтение активного набора: PostgREST отдаёт максимум 1000
