@@ -71,7 +71,14 @@ for (const c of cands) {
   // и их транслитерацию (достаточно одного совпадения с текстом страницы).
   const tokens = [...new Set(words.flatMap((w) => [w, translit(w)].filter((t) => t.length >= 4)))];
   const pageLow = html.toLowerCase();
-  const inPage = tokens.some((t) => pageLow.includes(t));
+  // «ph» на странице источника против «ф» в русском адресе (Пафос → Paphos), «kh» → «h»,
+  // «y»/«i» в транслите (Pezogefyra/Pezogefira, Kaimakli/Kaymakly) — иначе настоящая координата
+  // площадки отклоняется как «нет имени на странице».
+  const fold = (s) => s.replace(/ph/g, 'f').replace(/kh/g, 'h').replace(/y/g, 'i').replace(/ou/g, 'u');
+  const pageFold = fold(pageLow);
+  const pageWords = pageFold.match(/[a-z]{4,}/g) || [];
+  const nearWord = (t, w) => { let i = 0; const n = Math.min(t.length, w.length); while (i < n && t[i] === w[i]) i++; return i >= 5; };
+  const inPage = tokens.some((t) => { const tf = fold(t); return pageLow.includes(t) || pageFold.includes(tf) || pageWords.some((w) => nearWord(tf, w)); });
   const token = pick;
   if (!m) { console.log(`${id8} «${title}» (${c.venueKey}): embed-координаты нет`); rejected++; continue; }
   const latS = m[1], lngS = m[2];
