@@ -21,6 +21,7 @@ const db = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERV
 
 const CENTERS = new Set(['34.7071,33.0226', '34.9182,33.6194', '35.1856,33.3823', '34.7754,32.4245', '35.0375,34.0041', '35.1167,33.9432']);
 const isCenter = (lat, lng) => CENTERS.has(String(Number(lat)) + ',' + String(Number(lng)));
+const GENERIC = new Set(['отель', 'hotel', 'resort', 'marina', 'марина', 'bar', 'бар', 'club', 'клуб', 'restaurant', 'ресторан', 'cafe', 'кафе', 'square', 'park', 'парк', 'center', 'центр', 'street', 'улица', 'venue', 'place', 'hall', 'theatre', 'театр', 'house', 'хаус', 'beach', 'бич', 'mall', 'molos', 'ломос']);
 const CITY_WORDS = /^(лимасол|ларнака|никосия|пафос|ая-напа|ая напа|фамагуста|протарас|паралимни|полис|кирения|limassol|larnaca|nicosia|paphos|ayia napa|famagusta|cyprus|кипр)\b/i;
 
 const rows = await selectAll(db, 'events', 'id,title,title_ru,city,address,lat,lng,status,start_date,website');
@@ -58,7 +59,11 @@ for (const c of cands) {
   const title = (c.title_ru || c.title || '').slice(0, 40);
   if (!html) { console.log(`${id8} «${title}»: страница не скачалась`); rejected++; continue; }
   const m = html.match(/maps\/embed\/v1\/place[^"]*q=(-?\d+\.\d+)%2C(-?\d+\.\d+)/);
-  const token = (c.venueKey.match(/[a-zа-яё]{4,}/i) || [''])[0];
+  // Токен площадки — самое длинное НЕродовое слово (иначе «отель st raphael…» даёт токен
+  // «отель», его на странице нет, и настоящая площадка с 7 знаками отклоняется как ложная).
+  const words = (c.venueKey.match(/[a-zа-яё]{4,}/gi) || []).map((w) => w.toLowerCase()).filter((w) => !GENERIC.has(w));
+  words.sort((a, b) => b.length - a.length);
+  const token = words[0] || '';
   const inPage = token ? html.toLowerCase().includes(token) : false;
   if (!m) { console.log(`${id8} «${title}» (${c.venueKey}): embed-координаты нет`); rejected++; continue; }
   const latS = m[1], lngS = m[2];
