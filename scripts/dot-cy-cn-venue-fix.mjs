@@ -76,6 +76,15 @@ const TARGETS = [
     lng: 33.3498349,
     proof: 'cyprusnow venue "DownTown Live" 35.1649326,33.3498349 (та же площадка, что у события Samael 13.11 в ленте Никосии)',
   },
+  {
+    id: '776a44d3',
+    match: 'United by Pride: Afterparty at SLLIP Club',
+    venue: 'S//IP Slip Nightclub',
+    addr: ['sllip'],
+    lat: 35.168362,
+    lng: 33.35918065,
+    proof: 'cyprusnow /api/events?q=sllip: venue.name "S//IP Slip Nightclub", venue.city Nicosia, venue.lat/lng 35.168362,33.35918065 (площадка совпадает с адресом карточки «Sllip Club, Никосия»)',
+  },
 ];
 
 const rows = await selectAll(db, 'events', 'id,status,title,title_ru,city,address,lat,lng,start_date');
