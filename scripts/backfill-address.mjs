@@ -4,6 +4,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { extractAddressLLM } from './address-llm.mjs';
 import { extractAddress } from './address-regex.mjs';
+import { cleanAddress } from './address-junk.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -32,7 +33,7 @@ async function main() {
     const text = `${ev.description || ''} ${ev.title || ''}`.trim();
     if (!text) continue;
     const llm = await extractAddressLLM(text, ev.city);
-    const address = llm?.address || extractAddress(text, ev.city) || null;
+    const address = cleanAddress(llm?.address) || extractAddress(text, ev.city) || null;
     if (!address) continue;
 
     const { error: uErr } = DRY_RUN

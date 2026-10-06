@@ -15,6 +15,7 @@ const db = createClient(url, key, { auth: { persistSession: false } });
 
 const TARGETS = {
   '0fa641c3': ['Где: локация после регистрации', 't.me/nyachang_ru/24236'],
+  '9a6dc8bb': ['Центр', 't.me/nyachang_ru/24258 (backfill-address записал сырой ответ LLM)'],
   '157b225b': ['Центр (пришлем в личные сообщения)', 't.me/nyachang_ru/24207'],
   '1b988fc3': ['Центр, локация — после записи', 't.me/nyachang_ru/24157'],
   '5c572ad0': ['центр', 't.me/nyachang_ru/24110'],
