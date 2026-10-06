@@ -85,6 +85,24 @@ const TARGETS = [
     lng: 33.35918065,
     proof: 'cyprusnow /api/events?q=sllip: venue.name "S//IP Slip Nightclub", venue.city Nicosia, venue.lat/lng 35.168362,33.35918065 (площадка совпадает с адресом карточки «Sllip Club, Никосия»)',
   },
+  {
+    id: '38f1871c',
+    match: 'Halloween Festival 2026: Spooky Weekend at Cyherbia Botanical Park',
+    venue: 'Cyherbia Botanical Park',
+    addr: ['cyherbia'],
+    lat: 35.0139109,
+    lng: 33.830378,
+    proof: 'cyprusnow /api/events?q=CyHerbia: title "Halloween Festival 2026: Spooky Weekend at Cyherbia Botanical Park", venue.name "Cyherbia Botanical Park", venue.city Avgorou (округ Фамагуста), venue.lat/lng 35.0139109,33.830378 (адрес карточки — «CyHerbia Botanical Park & Maze»); карточка стояла на центровом фолбэке Фамагусты 35.1205,33.9432',
+  },
+  {
+    id: '57c33588',
+    match: 'Wheat Harvest Festival',
+    venue: 'Village square',
+    addr: ['acheritou'],
+    lat: 35.0719751,
+    lng: 33.8815901,
+    proof: 'cyprusnow /api/events?q=Acheritou: venue.name "Village square", venue.city "Acheritou-Vrysoulles", venue.lat/lng 35.0719751,33.8815901 (адрес карточки — «Village square, Acheritou»); вторая точка ленты «Central Square of Acheritou» 35.0996644,33.8613357 не подходит — карточка называет именно Village square',
+  },
 ];
 
 const rows = await selectAll(db, 'events', 'id,status,title,title_ru,city,address,lat,lng,start_date');
