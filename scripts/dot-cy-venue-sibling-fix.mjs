@@ -43,6 +43,13 @@ const GROUPS = [
     // не переносим, а архивируем через dot-lang-dupe-fix.mjs
     targets: ['b1fb7f9e'],
   },
+  {
+    venue: 'SynerJoy Music',
+    token: 'synerjoy',
+    point: '34.6786322,33.0413055',
+    evidence: 'соседи той же площадки в базе (Лимасол): 4f9d9029 «Джаз-соул-фанк трио: концерт на крыше», 639ec44e и da530204 («SynerJoy Music, Arts & Creativity School»), f8f2bc67 «SYNERJOY Music» — все 34.6786322,33.0413055 (7 знаков, точка площадки, не центровой фолбэк)',
+    targets: ['3ae3ae05'],
+  },
 ];
 
 const rows = await selectAll(db, 'events', 'id,status,title,title_ru,city,address,lat,lng,start_date,website');
