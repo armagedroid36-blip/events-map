@@ -24,6 +24,8 @@ const TARGETS = {
   '978dbee2': ['TBA', 'elevenblueevents.com (Bank of Cyprus Nicosia Marathon)'],
   '9b1e3389': ['Север Нячанга. Локация после записи. Комфортный зал с двумя кондерами', 't.me/nyachang_ru/23974'],
   'b9a0657f': ['проведения после регистрации', 't.me/nyachang_ru/23653'],
+  'f1734610': ['Локацию пришлю в личку (малолюдный пляж в районе мраморных гор в Дананге)', 't.me/danang_afisha/5709 (адреса в посте нет)'],
+  'fad4526a': ['Загородный Eco-Resort', 't.me/danang_afisha/5717 («📍 Загородный Eco-Resort», времени в посте нет)'],
 };
 
 const rows = await selectAll(db, 'events', 'id,status,title,title_ru,city,address,lat,lng,start_date,website');

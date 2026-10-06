@@ -12,6 +12,8 @@ const MUST_JUNK = [
   'TBD',
   'Где: локация при записи',
   'север',
+  'Локацию пришлю в личку (малолюдный пляж в районе мраморных гор в Дананге)',
+  'Загородный Eco-Resort',
 ];
 // --- обязаны проходить как настоящие адреса ---
 const MUST_PASS = [
@@ -21,6 +23,7 @@ const MUST_PASS = [
   'Famagusta Tennis Club, 3 Mesaorias Str, Limassol',
   'Кинематотеатр Acropol Lympia, Никосия',
   '1A Nguyễn Phúc Chu, Hội An',
+  'Загородный клуб «Тихий берег», Дананг',
 ];
 let ok = 0, bad = [];
 for (const s of MUST_JUNK) (isJunkAddress(s) ? ok++ : bad.push(`НЕ отсечён: ${s}`));
