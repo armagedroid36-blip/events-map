@@ -397,7 +397,31 @@ function normUrl(u) {
 function anchoredKey(url, title) {
   const n = normUrl(url);
   if (!n || !n.includes('#')) return null;
-  return `${n}|${normKey(title, null)}`;
+  // Служебный номер, который uniqueWebsite() добавляет при коллизии (#stem-2),
+  // не должен разрывать сопоставление с живой карточкой.
+  return `${n.replace(/#(.+?)-\d+$/, '#$1')}|${normKey(title, null)}`;
+}
+
+/** Слаг якоря в URL листинга — из английского названия (латиница без диакритики). */
+function anchorSlug(ev) {
+  return String(ev.title_en || ev.title || 'show')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60);
+}
+
+/** Ключ кандидата. Листинг отдаёт общий адрес и якорь появляется только при
+ *  вставке (uniqueWebsite) — поэтому якорь предсказывается заранее: иначе
+ *  findExisting не видит живую карточку серии и каждый день рождается клон
+ *  (06.10.2026: «Tiên Sa Show» вставилась как #tien-sa-show-2). */
+function candidateAnchoredKey(ev, src) {
+  const direct = anchoredKey(ev.website, ev.title);
+  if (direct) return direct;
+  const base = String(ev.website || (src && src.kind === 'listing' ? src.url : '') || '').split('#')[0];
+  const slug = anchorSlug(ev);
+  if (!base || !ev.title || !slug) return null;
+  return anchoredKey(`${base}#${slug}`, ev.title);
 }
 
 /** Значимые токены строки (для сравнения названий площадок). */
@@ -626,7 +650,7 @@ async function main() {
     // Серия на странице-листинге: якорь URL + название = та же карточка
     // (дата у серии меняется, адрес у новой копии может быть пуст — обычные
     // ключи её не видят и рождается клон).
-    const aKey = anchoredKey(ev.website, ev.title);
+    const aKey = candidateAnchoredKey(ev, src);
     const byAnchoredHit = aKey ? byAnchored.get(aKey) : null;
     if (byAnchoredHit) {
       if (DEDUP_DEBUG) console.log(`    · сопоставлено по якорю серии: «${ev.title}» → «${byAnchoredHit.title.slice(0, 45)}»`);
@@ -694,11 +718,7 @@ async function main() {
     const base = String(url || '').split('#')[0];
     const taken = (u) => live.some((e) => e.website && normUrl(e.website) === normUrl(u));
     if (!taken(url)) return url;
-    const slug = String(ev.title_en || ev.title || 'show')
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '')
-      .slice(0, 60);
+    const slug = anchorSlug(ev);
     if (slug && !taken(`${base}#${slug}`)) return `${base}#${slug}`;
     const stem = slug || 'event';
     let i = 2;
