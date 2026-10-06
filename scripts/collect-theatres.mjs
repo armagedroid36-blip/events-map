@@ -387,6 +387,19 @@ function normUrl(u) {
   }
 }
 
+/** Идентичность СЕРИИ на странице-листинге: если URL события содержит якорь
+ *  (#slug), он указывает на конкретное событие внутри общего списка, поэтому
+ *  якорь — надёжный различитель, а дата начала — нет. 06.10.2026: суточная
+ *  серия «Tiên Sa Show» (danang365.com/…/#tien-sa-show) вставлялась новой
+ *  карточкой каждый день — у копии пуст адрес, поэтому ключ city|title+address
+ *  не совпадал, а URL листинга (kind='listing') в byWebsite не участвовал.
+ *  Такие карточки штатный дедуп потом архивировал как близнецов. */
+function anchoredKey(url, title) {
+  const n = normUrl(url);
+  if (!n || !n.includes('#')) return null;
+  return `${n}|${normKey(title, null)}`;
+}
+
 /** Значимые токены строки (для сравнения названий площадок). */
 function tokens(s) {
   return new Set(
@@ -595,9 +608,12 @@ async function main() {
 
   const byWebsite = new Map();
   const byKey = new Map();
+  const byAnchored = new Map();
   for (const e of live) {
     if (e.website) byWebsite.set(normUrl(e.website), e);
     byKey.set(`${e.city}|${normKey(e.title, e.address)}`, e);
+    const ak = anchoredKey(e.website, e.title);
+    if (ak) byAnchored.set(ak, e);
   }
 
   /** Найти существующую карточку: URL → ключ title+venue → площадка/название.
@@ -607,6 +623,15 @@ async function main() {
    *  карточкам: иначе театральные данные дозаполняют чужое событие (был баг —
    *  «Legong» дозаполнил концерт Ghetto Kumbé по общему слову «Ubud/Kelod»). */
   function findExisting(ev, city, src) {
+    // Серия на странице-листинге: якорь URL + название = та же карточка
+    // (дата у серии меняется, адрес у новой копии может быть пуст — обычные
+    // ключи её не видят и рождается клон).
+    const aKey = anchoredKey(ev.website, ev.title);
+    const byAnchoredHit = aKey ? byAnchored.get(aKey) : null;
+    if (byAnchoredHit) {
+      if (DEDUP_DEBUG) console.log(`    · сопоставлено по якорю серии: «${ev.title}» → «${byAnchoredHit.title.slice(0, 45)}»`);
+      return byAnchoredHit;
+    }
     const urlUsable = ev.website && !(src && src.kind === 'listing' && normUrl(ev.website) === normUrl(src.url));
     const byUrl = urlUsable ? byWebsite.get(normUrl(ev.website)) : null;
     if (byUrl) {
@@ -660,17 +685,25 @@ async function main() {
   const totals = { inserted: 0, updated: 0, skipped: 0, sources: 0, failed: 0, ambiguous: 0 };
   let eventsSeen = 0;
 
-  /** URL уже занят другой живой карточкой → добавить якорь-различитель. */
+  /** URL уже занят другой живой карточкой → добавить якорь-различитель.
+   *  Слаг берём из названия, но он может СОВПАСТЬ с уже занятым якорем (якорь
+   *  изначально и делался из названия) — тогда добиваем номером, иначе в базу
+   *  уходит тот же самый URL и появляется карточка-близнец с тем же адресом
+   *  страницы (06.10.2026: суточная серия Tiên Sa Show). */
   function uniqueWebsite(url, ev) {
     const base = String(url || '').split('#')[0];
-    const n = normUrl(url);
-    if (!live.some((e) => e.website && normUrl(e.website) === n)) return url;
+    const taken = (u) => live.some((e) => e.website && normUrl(e.website) === normUrl(u));
+    if (!taken(url)) return url;
     const slug = String(ev.title_en || ev.title || 'show')
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '')
       .slice(0, 60);
-    return `${base}${slug ? `#${slug}` : `#event-${Date.now()}`}`;
+    if (slug && !taken(`${base}#${slug}`)) return `${base}#${slug}`;
+    const stem = slug || 'event';
+    let i = 2;
+    while (taken(`${base}#${stem}-${i}`)) i++;
+    return `${base}#${stem}-${i}`;
   }
 
   // --- Обход источников ---
@@ -752,6 +785,8 @@ async function main() {
       const created = { ...row, id: `new-${totals.inserted}`, status: 'moderation' };
       byWebsite.set(normUrl(row.website), created);
       byKey.set(`${row.city}|${normKey(row.title, row.address)}`, created);
+      const akNew = anchoredKey(row.website, row.title);
+      if (akNew) byAnchored.set(akNew, created);
       live.push(created);
     }
     await sleep(1000);
