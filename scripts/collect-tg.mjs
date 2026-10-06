@@ -10,6 +10,8 @@ import { extractCategory } from './category-llm.mjs';
 import { extractTime } from './time-llm.mjs';
 import { extractAddressLLM } from './address-llm.mjs';
 import { extractAddress } from './address-regex.mjs';
+// Мусорные «адреса» из постов («уточняйте у организаторов», «север») в карточку не берём.
+import { cleanAddress } from './address-junk.mjs';
 import { extractContacts } from './contacts-regex.mjs';
 import { extractDateLLM } from './date-llm.mjs';
 import { findCityZone } from './city-zones.mjs';
@@ -582,8 +584,8 @@ async function main() {
         // при ошибке/без ключа — fallback на regex. ПРИОРИТЕТ: адрес из ссылки на
         // карту (resolveMap, точный адрес Google) — он не должен затираться LLM.
         const llmAddr = await extractAddressLLM(post.text, ch.city);
-        const llmOrRegex = llmAddr?.address || extractAddress(post.text, ch.city) || null;
-        address = address || llmOrRegex || null;
+        const llmOrRegex = cleanAddress(llmAddr?.address) || extractAddress(post.text, ch.city) || null;
+        address = cleanAddress(address) || llmOrRegex || null;
         // Если адреса нет, но координаты есть — обратный геокодинг (fallback)
         if (!address && lat != null && lng != null) {
           address = await reverseGeocode(lat, lng);

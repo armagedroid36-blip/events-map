@@ -1,6 +1,7 @@
 // Общий regex-fallback: адрес из текста поста (используется collect-tg.mjs
 // и backfill-address.mjs, когда LLM недоступен или не дал ответа).
 // Понимает строки с эмодзи-указателями (🪧📍📌🗺️🏠 и др.) и «Локация/Адрес/Место:».
+import { isJunkAddress } from './address-junk.mjs';
 
 /** Эмодзи-указатели места (начало строки адреса): пин, плашка, дом, карта и т.п. */
 const ADDRESS_EMOJI = /[\u{1F3E0}\u{1F3E2}\u{1F3E6}\u{1F3E8}\u{1F3EA}\u{1F3EC}\u{1F3ED}\u{1F3EF}\u{1F4CD}\u{1F4CC}\u{1F5FA}\u{1F6A9}\u{1FAA7}\u{26EA}\u{26F2}]/u;
@@ -43,7 +44,7 @@ export function extractAddress(text, city) {
       const esc = city.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       rest = rest.replace(new RegExp(`^${esc}\\s*[,:-]\\s*`, 'i'), '').trim();
     }
-    if (rest.length >= 3) return rest;
+    if (rest.length >= 3) return isJunkAddress(rest) ? null : rest;
   }
   return null;
 }
