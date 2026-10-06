@@ -23,6 +23,9 @@ const CENTERS = new Set(['34.7071,33.0226', '34.9182,33.6194', '35.1856,33.3823'
 const isCenter = (lat, lng) => CENTERS.has(String(Number(lat)) + ',' + String(Number(lng)));
 const GENERIC = new Set(['отель', 'hotel', 'resort', 'marina', 'марина', 'bar', 'бар', 'club', 'клуб', 'restaurant', 'ресторан', 'cafe', 'кафе', 'square', 'park', 'парк', 'center', 'центр', 'street', 'улица', 'venue', 'place', 'hall', 'theatre', 'театр', 'house', 'хаус', 'beach', 'бич', 'mall', 'molos', 'ломос']);
 const CITY_WORDS = /^(лимасол|ларнака|никосия|пафос|ая-напа|ая напа|фамагуста|протарас|паралимни|полис|кирения|limassol|larnaca|nicosia|paphos|ayia napa|famagusta|cyprus|кипр)\b/i;
+// Транслитерация для сверки русского адреса карточки с латинской страницей источника.
+const TR = { а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'e', ж: 'zh', з: 'z', и: 'i', й: 'y', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u', ф: 'f', х: 'h', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'sch', ъ: '', ы: 'y', ь: '', э: 'e', ю: 'yu', я: 'ya' };
+const translit = (s) => s.toLowerCase().split('').map((ch) => TR[ch] ?? ch).join('');
 
 const rows = await selectAll(db, 'events', 'id,title,title_ru,city,address,lat,lng,status,start_date,website');
 
@@ -62,9 +65,14 @@ for (const c of cands) {
   // Токен площадки — самое длинное НЕродовое слово (иначе «отель st raphael…» даёт токен
   // «отель», его на странице нет, и настоящая площадка с 7 знаками отклоняется как ложная).
   const words = (c.venueKey.match(/[a-zа-яё]{4,}/gi) || []).map((w) => w.toLowerCase()).filter((w) => !GENERIC.has(w));
-  words.sort((a, b) => b.length - a.length);
-  const token = words[0] || '';
-  const inPage = token ? html.toLowerCase().includes(token) : false;
+  const pick = [...words].sort((a, b) => b.length - a.length)[0] || '';
+  // Адрес карточки бывает по-русски, а страница cyprus.bz — латиницей: «Мьюзик Холл» на странице
+  // это «Music Hall», «Троодос» — «Troodos». Поэтому проверяем ВСЕ значимые слова адреса
+  // и их транслитерацию (достаточно одного совпадения с текстом страницы).
+  const tokens = [...new Set(words.flatMap((w) => [w, translit(w)].filter((t) => t.length >= 4)))];
+  const pageLow = html.toLowerCase();
+  const inPage = tokens.some((t) => pageLow.includes(t));
+  const token = pick;
   if (!m) { console.log(`${id8} «${title}» (${c.venueKey}): embed-координаты нет`); rejected++; continue; }
   const latS = m[1], lngS = m[2];
   const decOk = (latS.split('.')[1] || '').length >= 5 && (lngS.split('.')[1] || '').length >= 5;
