@@ -15,6 +15,7 @@ const FIXES = {
   'e37a0231': { lat: 34.6824125, lng: 33.0259269, source: 'cyprusnow.app (geo площадки, run 39)', why: 'TEU16 — тот же клуб' },
   '38e9fe08': { lat: 34.6914554, lng: 33.0770619, source: 'Nominatim: Promachon Eleftherias, Λεμεσός (34.6914554,33.0770619)', why: 'Regatta of Champions — FAMAGUSTA NAUTICAL CLUB, Promachon Eleftherias 1, Лимасол' },
   'b65ba6ea': { lat: 34.8943595, lng: 33.2958595, source: 'Nominatim/OSM relation 9226119 Lefkara Dam (Pano Lefkara, Ларнака)', why: 'OMNIVA Events: Lefkara Reservoir' },
+  'cfd72366': { lat: 34.9978686, lng: 33.4626265, source: 'страница cyprus.bz/ru/event/3647 (площадка «Kinimatotheatro AKROPOL - LYMPIA», метка «Lympia, Никосия», карта-поиск «Lympia, Cyprus») + Nominatim «Λύμπια, Lympia, Δήμος Νότιας Λευκωσίας-Ιδαλίου, Епархия Никосии»', why: 'Скуликула и человеческий голос — точка НАСЕЛЁННОГО ПУНКТА Лимпья (уровень села, как Latsia в run 62)' },
 };
 
 const rows = await selectAll(db, 'events', 'id,title,city,address,lat,lng,status');
