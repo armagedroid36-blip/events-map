@@ -13,11 +13,15 @@ const CY_CENTERS = {
   'Ларнака, Кипр': [34.9182, 33.6197],
   'Пафос, Кипр': [34.7754, 32.4245],
 };
+// Точный радиус центрового фолбэка: настоящий фолбэк сборщика лежит РОВНО на константе
+// (расхождение — только float-округление), поэтому допуск 0.0012° (~130 м) отсекает
+// ложные срабатывания вроде «Markideio Theatre» (Пафос, 34.7781667,32.4231959) — это
+// НАСТОЯЩАЯ точка площадки в 330 м от центра города, а не подстановка.
 const isCenter = (lat, lng) =>
   Object.entries(CY_CENTERS).some(([c, [a, b]]) => {
     if (!c) return false;
     const d = Math.hypot(lat - a, lng - b);
-    return d < 0.0045;
+    return d < 0.0012;
   });
 
 const rows = await selectAll(db, 'events', 'id,title,title_ru,city,address,lat,lng,status,start_date,website,source_type');
