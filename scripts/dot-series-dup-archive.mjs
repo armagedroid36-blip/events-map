@@ -16,6 +16,10 @@ const db = createClient(process.env.VITE_SUPABASE_URL || process.env.SUPABASE_UR
 // keep -> drop + обоснование (проверено чтением базы 05.10.2026)
 const PLAN = [
   { keep: 'e92095ff', drop: 'b27660ee', why: 'та же серия (recurrence daily), тот же URL danang365.com; живая карточка уже с адресом Nhà hát Trưng Vương и гео 16.0688447,108.2207425' },
+  // 06.10.2026: та же серия, но ДРУГАЯ дата (06.10) — важна не дата, а то, что суточная серия уже
+  // представлена живой карточкой e92095ff; её 06.10-копия 791ef85e ушла в архив штатным дедупом,
+  // а 9d5dee25 пришла новой строкой из прогона 37385106443 (без гео и адреса) — публиковать нечего.
+  { keep: 'e92095ff', drop: '9d5dee25', why: 'копия суточной серии Tiên Sa Show (06.10, без гео/адреса) при живой серии e92095ff с адресом и гео; тот же URL danang365.com, тот же recurrence daily' },
 ];
 
 const rows = await selectAll(db, 'events', 'id,status,title,city,start_date,website,lat,address');
