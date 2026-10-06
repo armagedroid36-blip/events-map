@@ -457,13 +457,18 @@ export function applyEventMeta(ev: EventItem): void {
   // что крошка пре-рендера (cityNameEn: Нячанг→Nha Trang, Дананг→Da Nang,
   // Бали/районы→Bali); нераспознанный город — суффикс опущен. RU — как раньше.
   const enCity = useEn ? cityNameEn(ev.city) : '';
-  // Дата ближайшего вхождения в title/og:title (та же, что в JSON-LD статики:
-  // nextOccurrenceDate) — внутри серии «одно название + одно место, много дат»
-  // заголовки без даты совпадали. Шаблон синхронен с seo-prerender.mjs
-  // (eventTitle): обрезается только название, дата и город — всегда на месте.
-  const occDate = useEn
-    ? enDate(nextOccurrenceDate(ev, todayIso()))
-    : ruDate(nextOccurrenceDate(ev, todayIso()));
+  // Дата в title/og:title. У АКТИВНОЙ карточки — ближайшее вхождение (та же
+  // логика, что в JSON-LD статики: nextOccurrenceDate). У АРХИВНОЙ
+  // (status === 'archived') — СОБСТВЕННАЯ дата карточки: у дневной/недельной
+  // серии nextOccurrenceDate = max(start_date, сегодня), из-за чего десятки
+  // архивных страниц серии получали одинаковый title (день сборки) — 28 страниц
+  // «Tiên Sa Show», 38 групп дублей. Шаблон синхронен с seo-prerender.mjs
+  // (eventTitle, archiveDateIso): обрезается только название.
+  const occIso =
+    ev.status === 'archived' && ev.start_date
+      ? ev.start_date
+      : nextOccurrenceDate(ev, todayIso());
+  const occDate = useEn ? enDate(occIso) : ruDate(occIso);
   const title = eventTitle(
     titleName,
     occDate,

@@ -1362,10 +1362,15 @@ function eventJsonLd(ev, url, lang = 'ru', image = null, mode = 'active') {
   const photo =
     image != null ? image : Array.isArray(ev.photos) ? absPhoto(ev.photos[0]) : '';
 
-  // startDate повторяющихся событий — ближайшее БУДУЩЕЕ вхождение на дату
-  // сборки (иначе в JSON-LD уходит первое вхождение серии, часто в прошлом,
-  // и Google не показывает rich-результат). Разовые — как раньше (start_date).
-  const sd = nextOccurrenceDate(ev, TODAY_ISO);
+  // startDate: у АКТИВНОЙ страницы — ближайшее БУДУЩЕЕ вхождение серии (иначе в
+  // JSON-LD уходит первое вхождение, часто в прошлом, и Google не показывает
+  // rich-результат); разовые — как раньше (start_date). У АРХИВНОЙ страницы
+  // (mode 'past'/'removed', её пишет архивный писатель) — СОБСТВЕННАЯ дата
+  // карточки: у дневной/недельной серии nextOccurrenceDate возвращает
+  // max(start_date, сегодня), и десятки архивных карточек серии получали один
+  // startDate (день сборки) при одинаковом title.
+  const startIso = typeof ev.start_date === 'string' ? ev.start_date.slice(0, 10) : '';
+  const sd = mode === 'active' || !startIso ? nextOccurrenceDate(ev, TODAY_ISO) : startIso;
   // Конец вхождения (не путать с events.end_date — конец серии): null, когда
   // длительность неизвестна (нет end_time или это заглушка «23:59:00»).
   const ed = occurrenceEnd(sd, ev.start_time, ev.end_time);
@@ -2169,6 +2174,16 @@ function titleAliases(ev) {
 /** Дата вхождения события для сравнения серий (как JSON-LD startDate) */
 function occurrence(ev) {
   return String(nextOccurrenceDate(ev, TODAY_ISO));
+}
+
+/** Дата АРХИВНОЙ карточки для title/og:title: собственная start_date карточки,
+ *  иначе прежний fallback — ближайшее вхождение серии. Нужна потому, что у
+ *  дневной/недельной серии nextOccurrenceDate = max(start_date, сегодня): на
+ *  архивных страницах все карточки серии получали дату сборки и одинаковый
+ *  заголовок (28 страниц «Tiên Sa Show», 38 групп дублей title). */
+function archiveDateIso(ev) {
+  const iso = typeof ev.start_date === 'string' ? ev.start_date.slice(0, 10) : '';
+  return iso || occurrence(ev);
 }
 
 /** Разница дат в днях (ISO YYYY-MM-DD): b − a; нечисловая дата — «далеко» */
@@ -3106,7 +3121,7 @@ function eventPageMetaFor(ev, lang, opts) {
     const prefixEn = [cityEn, dateEn].filter(Boolean).join(', ');
     const descriptionEn = snippet(prefixEn ? `${prefixEn}. ${enText}` : enText, 160);
     const titleEn =
-      eventTitle(nameEn, enDate(occurrence(ev)), cityEn, 'en') || 'Event';
+      eventTitle(nameEn, enDate(archiveDateIso(ev)), cityEn, 'en') || 'Event';
     return {
       lang: 'en',
       title: titleEn,
@@ -3129,7 +3144,7 @@ function eventPageMetaFor(ev, lang, opts) {
   // перевод, иначе оригинал (если он русский), иначе EN-перевод. Иначе у
   // греческих афиш Кипра в <title> и описании стоял греческий текст.
   const nameRu = ev.title_ru || (ev.source_lang === 'en' ? ev.title : ev.title_en) || ev.title;
-  const title = eventTitle(nameRu, ruDate(occurrence(ev)), city, 'ru') || 'Событие';
+  const title = eventTitle(nameRu, ruDate(archiveDateIso(ev)), city, 'ru') || 'Событие';
   const ruText =
     ev.description_ru || (ev.source_lang === 'ru' ? ev.description : ev.description_en) || ev.description || '';
   const prefix = [city, ruDate(ev.start_date)].filter(Boolean).join(', ');
