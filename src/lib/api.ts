@@ -373,24 +373,35 @@ class SupabaseApi implements DataApi {
   ): Promise<EventItem[]> {
     const all: EventItem[] = [];
     const seen = new Set<string>();
+    // list_active_event_cards принимает p_limit/p_offset (миграция 20261006):
+    // PostgREST игнорирует заголовок Range для этой функции — любой диапазон
+    // отдаёт одну и ту же первую тысячу строк, поэтому .range() здесь бесполезен
+    // и молча урезал выдачу. У полного list_active_events параметров нет —
+    // для него остаётся .range().
+    const paged = rpc === 'list_active_event_cards';
     for (let from = 0; ; from += SupabaseApi.EVENTS_PAGE_SIZE) {
-      const { data, error } = await this.db
-        .rpc(rpc)
+      const builder = paged
+        ? this.db.rpc(rpc, { p_limit: SupabaseApi.EVENTS_PAGE_SIZE, p_offset: from })
+        : this.db.rpc(rpc).range(from, from + SupabaseApi.EVENTS_PAGE_SIZE - 1);
+      const { data, error } = await builder
         .order('start_date', { ascending: true })
-        .order('id', { ascending: true })
-        .range(from, from + SupabaseApi.EVENTS_PAGE_SIZE - 1);
+        .order('id', { ascending: true });
       if (error) throw error;
       const rows = (data ?? []) as Partial<EventItem>[];
+      let fresh = 0;
       for (const row of rows) {
         if (typeof row.id !== 'string' || seen.has(row.id)) continue;
         seen.add(row.id);
+        fresh += 1;
         // Облегчённый набор не несёт статуса и описания: статус всегда
         // 'active' по определению функции; описание — пустое, пока не
         // дозагружен полный объект события. Фолбэк на полный RPC значения
         // из строки не перекрывает (они уже есть и идут последними).
         all.push({ status: 'active', description: '', ...row } as EventItem);
       }
-      if (rows.length < SupabaseApi.EVENTS_PAGE_SIZE) break;
+      // Страница не принесла новых строк = пагинация не сработала: выходим,
+      // иначе цикл крутится бесконечно на одной и той же тысяче.
+      if (rows.length < SupabaseApi.EVENTS_PAGE_SIZE || fresh === 0) break;
     }
     return all;
   }

@@ -50,24 +50,21 @@ if (!url || !key) {
 }
 
 async function fetchPage(from) {
-  // PostgREST игнорирует заголовок Range для этой функции (проверено: три разных
-  // Range отдают одну и ту же первую тысячу), а query-параметры limit/offset
-  // работают — на них и пагинируем. Без этого выборка молча упиралась бы в
-  // 1000 строк.
-  const res = await fetch(
-    `${url}/rest/v1/rpc/list_active_event_cards?limit=${PAGE}&offset=${from}`,
-    {
-      method: 'POST',
-      headers: {
-        apikey: key,
-        Authorization: `Bearer ${key}`,
-        'Content-Type': 'application/json',
-        Prefer: 'count=none',
-      },
-      body: '{}',
-      signal: AbortSignal.timeout(45_000),
+  // Пагинация — параметрами функции (миграция 20261006). Заголовок Range
+  // PostgREST для неё игнорирует, поэтому запросы с Range отдавали одну и ту
+  // же первую тысячу; query-параметры limit/offset тоже работают, но явные
+  // аргументы читаются однозначнее.
+  const res = await fetch(`${url}/rest/v1/rpc/list_active_event_cards`, {
+    method: 'POST',
+    headers: {
+      apikey: key,
+      Authorization: `Bearer ${key}`,
+      'Content-Type': 'application/json',
+      Prefer: 'count=none',
     },
-  );
+    body: JSON.stringify({ p_limit: PAGE, p_offset: from }),
+    signal: AbortSignal.timeout(45_000),
+  });
   if (!res.ok) throw new Error(`HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
   const rows = await res.json();
   if (!Array.isArray(rows)) throw new Error('ожидался массив строк');
