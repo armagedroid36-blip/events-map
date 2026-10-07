@@ -71,6 +71,13 @@ const TIME_BUDGET_MS = MAX_MINUTES * 60 * 1000;
 // человеку без вызова API (иначе серия таймаутов растянет прогон на часы).
 const LLM_FAIL_LIMIT = Math.max(1, Number(process.env.MODERATION_LLM_FAIL_LIMIT || 3) || 3);
 const RECHECK_HOURS = Math.max(1, Number(process.env.MODERATION_RECHECK_HOURS || 24) || 24);
+
+// Отличает «карточка проверена правилами/LLM» от «судья не смог ответить».
+function isInfraVerdict(prev) {
+  if (!prev) return false;
+  if (Array.isArray(prev.flags) && prev.flags.includes('unchecked')) return true;
+  return /LLM-проверка недоступна/.test(String(prev.reason || ''));
+}
 const REPORT_PATH = process.env.MODERATION_REPORT || path.join(here, '..', 'auto-moderation-report.json');
 
 // Отказ провайдера по ключу/аккаунту (401/402/403, «Insufficient Balance», «invalid api key»)
@@ -189,7 +196,10 @@ async function decide(ev, budget) {
   // updated_at — триггер базы, поэтому разница в доли секунды не должна выглядеть
   // как «карточку изменили» (иначе кэш не работает и модель дёргается каждый прогон).
   const changed = updatedAt - prevAt > 2000;
-  const stale = !prevAt || Date.now() - prevAt > RECHECK_HOURS * 3600 * 1000;
+  // Вердикт «LLM-проверка недоступна» — это НЕ вердикт: судья карточку не видел.
+  // Кэшировать такое нельзя, иначе при живом ключе карточка ждёт RECHECK_HOURS
+  // (24 ч) и в очереди висит старая причина отказа провайдера.
+  const stale = !prevAt || isInfraVerdict(prev) || Date.now() - prevAt > RECHECK_HOURS * 3600 * 1000;
 
   if (prev && !changed && !stale) {
     return {
