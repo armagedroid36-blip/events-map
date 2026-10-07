@@ -1,9 +1,10 @@
-// Ремонт данных: описания-ярлыки («Balletto di Milano», «Vienna Mozart Orchestra») -> пусто.
-// Страховки: карточка active, текущее description РОВНО ожидаемое, фильтр считает его ярлыком.
+// Ремонт данных: описания-ярлыки («Balletto di Milano», «Vienna Mozart Orchestra») и
+// описания, повторяющие заголовок, -> пусто.
+// Страховки: карточка active, текущее description РОВНО ожидаемое, фильтр считает его мусором.
 // DRY по умолчанию, APPLY=1 для записи.
 import { createClient } from '@supabase/supabase-js';
 import { selectAll } from './db-rows.mjs';
-import { isJunkDescription } from './desc-junk.mjs';
+import { isJunkDescription, isTitleEcho } from './desc-junk.mjs';
 
 const APPLY = process.env.APPLY === '1';
 const TARGETS = [
@@ -12,6 +13,8 @@ const TARGETS = [
   ['c4955c62', 'Balletto di Milano', 'Cyprus Now/страница события: «About this event» = строка состава'],
   ['c934bdec', 'Balletto di Milano', 'то же (Лимасол)'],
   ['ea7d0490', 'Balletto di Milano', 'то же (Пафос)'],
+  ['22db6523', 'CHASING LIFE | COLLECTIVE FRAMES', 'Cyprus Now: description == title (API отдаёт название дважды)'],
+  ['73505e28', 'Bachata – Beginner Course Thursdays in Limassol', 'Cyprus Now: description == title'],
 ];
 
 const db = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
@@ -38,8 +41,8 @@ for (const [prefix, expected, why] of TARGETS) {
     skipped++;
     continue;
   }
-  if (!isJunkDescription(cur)) {
-    console.log(`ПРОПУСК ${prefix}: фильтр не считает описание ярлыком`);
+  if (!isJunkDescription(cur) && !isTitleEcho(cur, card.title)) {
+    console.log(`ПРОПУСК ${prefix}: фильтр не считает описание мусором`);
     skipped++;
     continue;
   }

@@ -418,9 +418,10 @@ async function buildRow(src) {
 
   const cat = (await extractCategory(src.description || src.title, src.catHint)) || src.category || 'festival';
 
-  // Описание-ярлык («Balletto di Milano» = строка состава) в поле описания не
-  // пишем: на карточке оно рендерится как блок «О событии» с одним именем.
-  const desc = cleanDescription(src.description);
+  // Описание-ярлык («Balletto di Milano» = строка состава) и описание, повторяющее
+  // заголовок, в поле описания не пишем: на карточке это рендерится как обрывок
+  // или дубль названия в блоке «О событии».
+  const desc = cleanDescription(src.description, src.title);
 
   // Язык по письменности: греческий заголовок важнее подсказки источника,
   // иначе агрегатор помечает греческую афишу как английскую.
