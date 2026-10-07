@@ -253,6 +253,19 @@ function normKey(title, date) {
   return `${String(title || '').trim().toLowerCase()}|${String(date || '').trim()}`;
 }
 
+/**
+ * Заголовок без эмодзи-мусора: Балифорум отдаёт название события вместе с
+ * пиктограммами поста («Игра-квиз Мозгобойня Бали💜 4 года вместе🏝️»).
+ * Снимаем пиктограммы/селекторы/zero-width и схлопываем пробелы.
+ */
+export function cleanTitle(text) {
+  return String(text || '')
+    .replace(/[\u{1F000}-\u{1FAFF}\u{2190}-\u{21FF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{200D}\u{20E3}]/gu, '')
+    .replace(/[ \t]{2,}/g, ' ')
+    .replace(/\s+([,.;:!?)])/g, '$1')
+    .trim();
+}
+
 /** Загрузка ключей дублей + живых ссылок Балифорума (для защиты от повторов по slug) */
 async function existingKeys() {
   let data;
@@ -306,7 +319,8 @@ async function main() {
 
       // ВАЖНО: ключ дубля строим по ДЕКОДИРОВАННОМУ title (как он ляжет в базу),
       // иначе «&amp;» и «&» дают разные ключи и одно событие дублируется каждым прогоном
-      const title = decodeEntities(ev.title);
+      // + снимаем эмодзи-мусор: Балифорум тащит ❣️🎨✨🍞 из поста прямо в название
+      const title = cleanTitle(decodeEntities(ev.title));
       const key = normKey(title, when.raw.startAt.slice(0, 10));
       if (seen.has(key)) {
         skipped++;
@@ -459,7 +473,12 @@ async function main() {
   console.log(`Готово: добавлено ${inserted}, пропущено дублей ${skipped}.`);
 }
 
-main().catch((e) => {
-  console.error('Критическая ошибка:', e.message);
-  process.exit(1);
-});
+// Импорт модуля (юнит-проверки, фикс-скрипты) не должен запускать полный сбор:
+// RUN сбор только когда модуль запущен напрямую (node scripts/collect-bali.mjs).
+const isDirectRun = process.argv[1] && import.meta.url === `file://${process.argv[1].replace(/\\/g, '/')}`;
+if (isDirectRun && !process.env.COLLECT_BALI_NO_RUN) {
+  main().catch((e) => {
+    console.error('Критическая ошибка:', e.message);
+    process.exit(1);
+  });
+}
