@@ -11,7 +11,7 @@ const db = createClient(
 const rows = await selectAll(
   db,
   'events',
-  'id,status,title,start_date,start_time,end_date,end_time,city,address,lat,lng,source_type,website,recurrence,created_at',
+  'id,status,title,start_date,start_time,end_date,end_time,city,address,lat,lng,source_type,website,recurrence,created_at,photos',
 );
 const act = rows.filter((r) => r.status === 'active');
 const empty = (v) => v === null || v === undefined || v === '';
@@ -19,7 +19,9 @@ console.log('events', rows.length, '| active', act.length);
 
 const noGeo = act.filter((r) => empty(r.lat) || empty(r.lng));
 const noCity = act.filter((r) => empty(r.city));
-const noImg = act.filter((r) => empty(r.image_url));
+// Фото в таблице живут в колонке photos (массив), а не в несуществующей image_url:
+// прежний select тянул несуществующее поле -> r.image_url всегда undefined -> ложные «1083 без фото».
+const noImg = act.filter((r) => !(Array.isArray(r.photos) && r.photos.filter(Boolean).length));
 const noTitle = act.filter((r) => empty(r.title) || (r.title || '').trim().length < 4);
 
 const today = new Date().toISOString().slice(0, 10);
