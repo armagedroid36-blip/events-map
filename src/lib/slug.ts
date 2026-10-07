@@ -59,6 +59,15 @@ export function slugify(title: string): string {
   return slugifyRaw(title) || 'event';
 }
 
+/** Есть ли в слаге названия хоть одна ЛАТИНСКАЯ буква — то есть может ли из
+ *  названия выйти настоящий адрес (в противном случае eventSlug отдаёт
+ *  фолбэк `event-<id8>`). Нужен, в частности, скрипту
+ *  scripts/legacy-slug-urls.mjs: фолбэк-адреса тоже жили на проде и требуют
+ *  страницы-алиаса. */
+export function slugHasLatin(title: unknown): boolean {
+  return /[a-z]/.test(slugifyRaw(title));
+}
+
 /** Название для RU-адреса: перевод, иначе оригинал, иначе EN-перевод */
 export function eventTitleRu(ev: EventSlugSource | null | undefined): string {
   return ev?.title_ru || ev?.title || ev?.title_en || '';
@@ -90,5 +99,5 @@ export function eventSlug(
 ): string {
   const title = lang === 'en' ? eventTitleEn(ev) : eventTitleRu(ev);
   const s = slugifyRaw(title);
-  return /[a-z]/.test(s) ? s : `event-${String(ev?.id ?? '').slice(0, 8)}`;
+  return slugHasLatin(title) ? s : `event-${String(ev?.id ?? '').slice(0, 8)}`;
 }

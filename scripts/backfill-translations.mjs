@@ -12,7 +12,11 @@
 //      греческую афишу), поэтому до перевода title_ru/description_ru пустые;
 //   3) греческий ЗАСТРЯЛ в полях перевода у события с английским оригиналом
 //      (копия до фикса) → пересобираем обе версии, язык остаётся 'en'.
-// Архив/отклонённые не трогаем (на сайте не видны).
+//
+// Что НЕ трогаем: rejected и архив по умолчанию. Архивные страницы при этом
+// ПУБЛИКУЮТСЯ (beta 0.67) и стоят в sitemap, поэтому греческий мусор в архиве
+// виден и посетителю, и Google: разовая починка — STATUSES=archived (из архива
+// берутся только карточки с греческим).
 //
 // Перевод: DeepSeek напрямую (DEEPSEEK_API_KEY, промпт — копия Edge Function
 // translate) либо, если ключа нет, через Edge Function translate (anon-ключ —
@@ -24,7 +28,9 @@
 //
 // env: LIMIT (по умолчанию 120) — максимум событий за запуск,
 //      CONCURRENCY (2) — параллельных событий, PAUSE_MS (400) — пауза воркера,
-//      DRY_RUN=1 — показать план без запросов к переводчику.
+//      DRY_RUN=1 — показать план без запросов к переводчику,
+//      STATUSES=archived — разовая починка архива (по умолчанию
+//      active,moderation,needs_changes — как в CI).
 //
 // Запуск: source .env (SUPABASE_URL/VITE_SUPABASE_URL, SUPABASE_SERVICE_ROLE,
 // VITE_SUPABASE_ANON_KEY, DEEPSEEK_API_KEY) && node scripts/backfill-translations.mjs
@@ -46,6 +52,18 @@ if (!SUPABASE_URL || !SERVICE_ROLE) {
 const db = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } });
 const DRY_RUN = process.env.DRY_RUN === '1';
 const LIMIT = Number(process.env.LIMIT || 120); // предохранитель токенов
+// Какие статусы обрабатываем. По умолчанию — как в CI: активные и ждущие
+// публикации. Архивные страницы ПУБЛИКУЮТСЯ (beta 0.67: страницы прошедших
+// событий + sitemap), поэтому мусор в архиве видит и посетитель, и Google:
+// разовая починка архива — STATUSES=archived. Из архива берутся только
+// карточки с греческим (см. main) — остальная работа по архиву дозаполняет
+// title_en и создаёт НОВЫЕ /en/-страницы, это отдельное решение владельца.
+const STATUSES = (process.env.STATUSES || 'active,moderation,needs_changes')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
+// Правка языка оригинала меняет ХВОСТ URL (src/lib/slug.ts eventSlug): после
+// такого прогона обязательно node scripts/legacy-slug-urls.mjs ДО сборки.
 const CONCURRENCY = Number(process.env.CONCURRENCY || 3); // параллельных переводов
 const PAUSE_MS = Number(process.env.PAUSE_MS || 400); // пауза между событиями в воркере
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || '';
@@ -323,17 +341,25 @@ async function main() {
   const rows = await selectAll(
     db,
     'events',
-    'id, title, description, title_ru, description_ru, title_en, description_en, source_lang, language',
+    'id, title, description, title_ru, description_ru, title_en, description_en, source_lang, language, status',
     // Переводим не только опубликованные, но и ждущие модерации/правок:
     // иначе одобренное событие попадает на сайт (и в следующий деплой) без
-    // EN-версии до следующего запуска сбора. Архив/отклонённые не трогаем.
-    { filter: (q) => q.in('status', ['active', 'moderation', 'needs_changes']) },
+    // EN-версии до следующего запуска сбора. Архив — по STATUSES=archived,
+    // и только карточки с греческим (см. фильтр ниже).
+    { filter: (q) => q.in('status', STATUSES) },
   );
 
   const planned = [];
   for (const ev of rows) {
     const plan = translationPlan(ev);
-    if (plan) planned.push({ ev, plan });
+    if (!plan) continue;
+    // Архив: берём ТОЛЬКО грязный греческий (греческий оригинал без перевода
+    // или греческий, застрявший в полях перевода) — это мусор на видимых
+    // страницах прошедших событий. Прочая работа по архиву (дозаполнение
+    // title_en у англоязычных карточек) создаёт новые /en/-страницы и меняет
+    // sitemap — это отдельное решение владельца, не побочный эффект починки.
+    if (ev.status === 'archived' && !plan.greek) continue;
+    planned.push({ ev, plan });
   }
   const greekCount = planned.filter((p) => p.plan.greek).length;
   const batch = planned.slice(0, LIMIT);
@@ -394,7 +420,8 @@ async function main() {
         }
       } catch (err) {
         fail += 1;
-        console.error(`  ! ${srcTitle.slice(0, 45)}: ${err.message}`);
+        console.error(`  ! ${srcTitle.slice(0, 45)}: ${err?.message || err}`);
+        if (process.env.DEBUG_STACK === '1') console.error(err?.stack || '');
       }
       await sleep(PAUSE_MS);
     }

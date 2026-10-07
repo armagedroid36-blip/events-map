@@ -18,12 +18,18 @@
 // продакшене ДО смены. Её нельзя «улучшать»: иначе список перестанет совпадать с
 // тем, что реально отдаёт сайт. При следующей смене формулы — сохранить текущую
 // (eventSlug) как следующую legacy-копию и добавить её в расчёт.
+//
+// ТРЕТИЙ вид прежнего адреса — фолбэк `event-<id8>` промежуточной формулы
+// (07.10.2026), который жил на проде у греческих карточек без перевода до
+// заполнения title_ru/title_en: он не выводится ни из одной формулы (зависит от
+// уже перезаписанных данных), поэтому признак — «в оригинале нет латиницы»
+// (см. slugHasLatin). Такие URL из архива/активных тоже попадают в список.
 
 import { createClient } from '@supabase/supabase-js';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { eventHasEn, eventSlug } from '../src/lib/slug.ts';
+import { eventHasEn, eventSlug, slugHasLatin } from '../src/lib/slug.ts';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(ROOT, 'scripts/data/legacy-slug-urls.txt');
@@ -60,6 +66,10 @@ function legacySlugify(title) {
   return s || 'event';
 }
 
+/** Греческие буквы (U+0370–U+03FF, U+1F00–U+1FFF) — признак оригинала-афиши,
+ *  у которого до правки не было title_en. */
+const GREEK = /[\u0370-\u03FF\u1F00-\u1FFF]/;
+
 const db = createClient(process.env.VITE_SUPABASE_URL, process.env.VITE_SUPABASE_ANON_KEY, {
   auth: { persistSession: false },
 });
@@ -94,6 +104,25 @@ for (const ev of events) {
   if (eventHasEn(ev)) {
     current.add(`en/event/${ev.id}/${eventSlug(ev, 'en')}`);
     legacy.add(`en/event/${ev.id}/${legacySlugify(ev.title_en || ev.title)}`);
+    // У греческих карточек поле title_en до этой правки было ПУСТЫМ, поэтому
+    // прежний EN-адрес считался из ОРИГИНАЛА (латиница внутри греческого
+    // заголовка: «…Opening Street Fiesta at El Taller»). После заполнения
+    // title_en воспроизвести его замороженной формулой уже нельзя — добавляем
+    // вариант от оригинала явно.
+    if (GREEK.test(String(ev.title))) {
+      legacy.add(`en/event/${ev.id}/${legacySlugify(ev.title)}`);
+    }
+  }
+  // Третий вид прежнего адреса — фолбэк формулы 07.10.2026
+  // (`event-<первые 8 символов id>`): он появлялся у карточек, где в поле
+  // перевода ещё НЕ было латиницы (греческий оригинал без перевода, греческий
+  // лежал в title_ru), и именно этот адрес отдавал прод до заполнения
+  // переводов. Признак — в ОРИГИНАЛЕ нет ни одной латинской буквы (иначе слаг
+  // собрался бы из латиницы оригинала и совпал с прежним адресом).
+  if (!slugHasLatin(ev.title)) {
+    const fallback = `event-${ev.id.slice(0, 8)}`;
+    legacy.add(`event/${ev.id}/${fallback}`);
+    if (eventHasEn(ev)) legacy.add(`en/event/${ev.id}/${fallback}`);
   }
 }
 
