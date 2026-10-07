@@ -275,7 +275,7 @@ function pickLinks(links, username) {
 }
 
 /** Разрезолвить карту и достать координаты или адрес */
-async function resolveMap(url) {
+export async function resolveMap(url) {
   try {
     const res = await fetch(url, { headers: { 'User-Agent': UA }, redirect: 'follow' });
     const finalUrl = res.url || url;
@@ -284,6 +284,10 @@ async function resolveMap(url) {
     if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]), address: null, url: finalUrl };
     const m2 = finalUrl.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
     if (m2) return { lat: parseFloat(m2[1]), lng: parseFloat(m2[2]), address: null, url: finalUrl };
+    // координаты в пути/параметрах: /maps/search/12.195690,+109.206839, ?q=12.19,109.20, ll=..., center=...
+    const m3 = finalUrl.match(/\/(?:search|dir|place)\/(-?\d{1,3}\.\d+),\s*\+?(-?\d{1,3}\.\d+)/)
+      || finalUrl.match(/[?&](?:q|query|ll|center|daddr|destination)=(-?\d{1,3}\.\d+),\s*\+?(-?\d{1,3}\.\d+)/);
+    if (m3) return { lat: parseFloat(m3[1]), lng: parseFloat(m3[2]), address: null, url: finalUrl };
     // адрес из ?q=...
     const q = finalUrl.match(/[?&]q=([^&]+)/);
     if (q) return { lat: null, lng: null, address: decodeURIComponent(q[1].replace(/\+/g, ' ')).slice(0, 200), url: finalUrl };

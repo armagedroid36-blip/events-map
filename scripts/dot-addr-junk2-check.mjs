@@ -24,7 +24,12 @@ const MUST_PASS = [
   'Кинематотеатр Acropol Lympia, Никосия',
   '1A Nguyễn Phúc Chu, Hội An',
   'Загородный клуб «Тихий берег», Дананг',
+  'Набережная реки, 5',
+  'Youht Park, Nha Trang, Khánh Hòa',
 ];
+
+// «Место проведения:» без адреса — ярлык снимается, строка отсекается
+MUST_JUNK.push('Место проведения: На берегу залива', 'проведения: На берегу залива', 'На берегу залива', 'На берегу залива; Youht Park', 'на берегу озера');
 let ok = 0, bad = [];
 for (const s of MUST_JUNK) (isJunkAddress(s) ? ok++ : bad.push(`НЕ отсечён: ${s}`));
 for (const s of MUST_PASS) (!isJunkAddress(s) ? ok++ : bad.push(`ЛОЖНО отсечён: ${s}`));
