@@ -83,26 +83,20 @@ if (!SUPABASE_URL || !ANON_KEY) {
   process.exit(1);
 }
 
-// --- Транслит и slugify: держать синхронно с src/lib/navigate.ts (НЕ править src/) ---
-const RU_TRANSLIT = {
-  а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'e', ж: 'zh', з: 'z',
-  и: 'i', й: 'y', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r',
-  с: 's', т: 't', у: 'u', ф: 'f', х: 'kh', ц: 'ts', ч: 'ch', ш: 'sh',
-  щ: 'shch', ъ: '', ы: 'y', ь: '', э: 'e', ю: 'yu', я: 'ya',
-};
-
-/** Копия src/lib/navigate.ts:15-22 — «Вечеринка у бассейна» → vecherinka-u-basseyna */
-function slugify(title) {
-  const s = title
-    .toLowerCase()
-    .replace(/[а-яё]/g, (ch) => RU_TRANSLIT[ch] ?? '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-  return s || 'event';
-}
+// --- Слаг и транслит: ОДНА реализация на пре-рендер и на клиент —
+// src/lib/slug.ts (импортируется напрямую: Node 22.18+ срезает типы TS сам,
+// в CI node 22). Копии функции здесь больше нет: разъехавшиеся копии давали
+// canonical не на тот URL, что открыт у посетителя.
+// Адрес события строится из ПЕРЕВОДА: RU-хвост — из title_ru (eventSlug(ev,
+// 'ru')), EN-хвост — из title_en (eventSlug(ev, 'en')). Название на языке
+// оригинала (греческий и т.п.) в URL не попадает; самодельный греческий
+// транслит не нужен — таких URL не бывает. Пустой слаг (греческий оригинал
+// без перевода, одни цифры) → `event-<первые 8 символов id>`.
+import { eventHasEn, eventSlug } from '../src/lib/slug.ts';
 
 // --- Города: те же три, что в config.quickLocations (src/config.ts:46-50),
-// путь = slugify(labelEn): Bali→bali, Da Nang→da-nang, Nha Trang→nha-trang ---
+// путь = slugify(labelEn) из src/lib/slug.ts: Bali→bali, Da Nang→da-nang,
+// Nha Trang→nha-trang ---
 const CITY_PAGES = [
   {
     path: 'bali',
@@ -1704,7 +1698,7 @@ function citySeoHtml(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs = 
     lines.push(`  <h2>Ближайшие события ${esc(where)}</h2>`, '  <ul>');
     for (const ev of evs) {
       const sd = nextOccurrenceDate(ev, TODAY_ISO);
-      const url = `${SITE_URL}/event/${ev.id}/${slugify(ev.title)}/`;
+      const url = `${SITE_URL}/event/${ev.id}/${eventSlug(ev, 'ru')}/`;
       // RU-название: как в h1 статического блока события (eventSeoHtml)
       const name = ev.title_ru || ev.title || ev.title_en || '';
       // Цена — те же правила, что в eventSeoHtml (764-772)
@@ -1738,7 +1732,7 @@ function citySeoHtml(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs = 
     lines.push(`  <h2>Остальные события ${esc(restWhere)} (${restEvs.length})</h2>`, '  <ul>');
     for (const ev of restEvs) {
       const sd = nextOccurrenceDate(ev, TODAY_ISO);
-      const url = `${SITE_URL}/event/${ev.id}/${slugify(ev.title)}/`;
+      const url = `${SITE_URL}/event/${ev.id}/${eventSlug(ev, 'ru')}/`;
       const name = ev.title_ru || ev.title || ev.title_en || '';
       const parts = [];
       if (sd) parts.push(`<time datetime="${esc(sd)}">${esc(ruDate(sd))}</time>`);
@@ -1793,9 +1787,7 @@ function homeEvents(events, needEn = false) {
     .filter((ev) => nextOccurrenceDate(ev, TODAY_ISO) >= TODAY_ISO)
     .filter(
       (ev) =>
-        !needEn ||
-        (typeof ev.title_en === 'string' && ev.title_en) ||
-        ev.source_lang === 'en',
+        !needEn || eventHasEn(ev),
     )
     .sort((a, b) => {
       const byDate = String(nextOccurrenceDate(a, TODAY_ISO)).localeCompare(
@@ -1821,8 +1813,8 @@ function eventListItemsHtml(evs, lang) {
   return evs.map((ev) => {
     const sd = nextOccurrenceDate(ev, TODAY_ISO);
     const url = en
-      ? `${SITE_URL}/en/event/${ev.id}/${slugify(ev.title_en || ev.title)}/`
-      : `${SITE_URL}/event/${ev.id}/${slugify(ev.title)}/`;
+      ? `${SITE_URL}/en/event/${ev.id}/${eventSlug(ev, 'en')}/`
+      : `${SITE_URL}/event/${ev.id}/${eventSlug(ev, 'ru')}/`;
     const name = en
       ? ev.title_en || ev.title || ''
       : ev.title_ru || ev.title || ev.title_en || '';
@@ -1953,9 +1945,9 @@ function mapIntroSeoHtml(previewUrl, lang = 'ru') {
  * EN-версия статического SEO-блока города для /en/<city>/ (тот же id,
  * что у RU — SPA удаляет оба): h1/intro/FAQ EN (CITY_SEO_EN — синхронно
  * с en.ts:574-633), строка «Updated: …» (аналог «Афиша обновлена»), блок
- * ближайших событий — только события с EN-версией (title_en непуст ИЛИ
- * source_lang='en'): имя = title_en||title, ссылка на ЖИВУЮ EN-страницу
- * события /en/event/<id>/<slugify(title_en||title)>/ (п. 2.3: страницы
+ * ближайших событий — только события с EN-версией (eventHasEn: title_en непуст
+ * ИЛИ source_lang='en'): имя = title_en||title, ссылка на ЖИВУЮ EN-страницу
+ * события /en/event/<id>/<eventSlug(ev,'en')>/ (п. 2.3: страницы
  * сгенерированы пре-рендером — битых ссылок нет).
  */
 function citySeoHtmlEn(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs = []) {
@@ -1985,9 +1977,9 @@ function citySeoHtmlEn(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs 
     lines.push(`  <h2>Upcoming events in ${esc(where)}</h2>`, '  <ul>');
     for (const ev of evs) {
       const sd = nextOccurrenceDate(ev, TODAY_ISO);
-      // EN-версия события (Фаза 2: страница /en/event/<id>/<slugify(title_en||title)>/
+      // EN-версия события (Фаза 2: страница /en/event/<id>/<eventSlug(ev,'en')>/
       // сгенерирована пре-рендером — ссылка живая)
-      const url = `${SITE_URL}/en/event/${ev.id}/${slugify(ev.title_en || ev.title)}/`;
+      const url = `${SITE_URL}/en/event/${ev.id}/${eventSlug(ev, 'en')}/`;
       const name = ev.title_en || ev.title || '';
       const price = ev.price != null ? Number(ev.price) : null;
       const currency = (
@@ -2016,7 +2008,7 @@ function citySeoHtmlEn(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs 
     lines.push(`  <h2>More events in ${esc(restWhere)} (${restEvs.length})</h2>`, '  <ul>');
     for (const ev of restEvs) {
       const sd = nextOccurrenceDate(ev, TODAY_ISO);
-      const url = `${SITE_URL}/en/event/${ev.id}/${slugify(ev.title_en || ev.title)}/`;
+      const url = `${SITE_URL}/en/event/${ev.id}/${eventSlug(ev, 'en')}/`;
       const name = ev.title_en || ev.title || '';
       const parts = [];
       if (sd) parts.push(`<time datetime="${esc(sd)}">${esc(enDate(sd))}</time>`);
@@ -2093,8 +2085,9 @@ function cityJsonLd(seo, evs, path, lang) {
         name: en
           ? ev.title_en || ev.title || ''
           : ev.title_ru || ev.title || ev.title_en || '',
-        url: `${SITE_URL}${en ? '/en' : ''}/event/${ev.id}/${slugify(
-          en ? ev.title_en || ev.title : ev.title,
+        url: `${SITE_URL}${en ? '/en' : ''}/event/${ev.id}/${eventSlug(
+          ev,
+          en ? 'en' : 'ru',
         )}/`,
       })),
     });
@@ -2288,10 +2281,10 @@ function seriesDatesHtml(sibs, lang = 'ru') {
   const en = lang === 'en';
   const items = (sibs ?? [])
     .filter((s) => s && typeof s.id === 'string' && typeof s.title === 'string')
-    .filter((s) => !en || Boolean(s.title_en) || s.source_lang === 'en')
+    .filter((s) => !en || eventHasEn(s))
     .map((s) => {
       const date = occurrence(s);
-      const slug = en ? slugify(s.title_en || s.title) : slugify(s.title);
+      const slug = eventSlug(s, en ? 'en' : 'ru');
       const href = en ? `/en/event/${s.id}/${slug}/` : `/event/${s.id}/${slug}/`;
       const text = en ? enDate(date) : ruDate(date);
       return `    <li><a href="${esc(href)}"><time datetime="${esc(date)}">${esc(text)}</time></a></li>`;
@@ -2442,6 +2435,26 @@ function loadGscEventUrls() {
 }
 
 /**
+ * Прежние URL событий после смены ФОРМУЛЫ слага (scripts/data/legacy-slug-urls.txt):
+ * до 07.10.2026 RU-хвост URL строился из оригинала — slugify(title), теперь из
+ * перевода — title_ru (EN-хвост из title_en), поэтому у ~650 живых страниц
+ * адрес изменился. Файл (его готовит scripts/legacy-slug-urls.mjs по базе)
+ * перечисляет URL, которых в новой сборке больше нет: им выдаётся страница-алиас
+ * с canonical на канонический URL — так же, как историческим URL из GSC. Иначе
+ * Google получил бы 404 на 655 адресах из своей выдачи. Файла нет — алиасов нет.
+ */
+function loadLegacySlugUrls() {
+  try {
+    return readFileSync(join(ROOT, 'scripts/data/legacy-slug-urls.txt'), 'utf8')
+      .split('\n')
+      .map((s) => s.trim())
+      .filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+/**
  * Снимки событий, которых УЖЕ НЕТ в базе, но чьи URL есть в списке GSC
  * (scripts/data/legacy-events.json): их страницы тоже должны отдавать 200.
  * Записи обрабатываются как прошедшие (в карту не попадают).
@@ -2540,7 +2553,7 @@ function dedupeCopies(rows) {
   const byKey = new Map(); // ключ → [id]
   for (const lang of ['ru', 'en']) {
     for (const ev of rows) {
-      if (lang === 'en' && !(ev.title_en || ev.source_lang === 'en')) continue;
+      if (lang === 'en' && !eventHasEn(ev)) continue;
       const k = `${lang}|${dupKey(ev, lang)}`;
       if (!byKey.has(k)) byKey.set(k, []);
       byKey.get(k).push(ev.id);
@@ -2593,7 +2606,7 @@ function archiveChronoIndex(list, lang) {
   const en = lang === 'en';
   const buckets = new Map(); // путь города | 'other' → события
   for (const ev of list) {
-    if (en && !(ev.title_en || ev.source_lang === 'en')) continue;
+    if (en && !eventHasEn(ev)) continue;
     const crumb = cityCrumb(ev.city);
     const key = crumb ? crumb.path : 'other';
     if (!buckets.has(key)) buckets.set(key, []);
@@ -2625,7 +2638,7 @@ function archiveChronoIndex(list, lang) {
     if (sorted.length === 1) singles.push(sorted[0]);
   }
   if (singles.length) {
-    const global = [...list.filter((ev) => !en || ev.title_en || ev.source_lang === 'en')].sort(byDate);
+    const global = [...list.filter((ev) => !en || eventHasEn(ev))].sort(byDate);
     for (const ev of singles) {
       const i = global.findIndex((x) => x.id === ev.id);
       const prev = i > 0 ? global[i - 1] : null;
@@ -2651,7 +2664,7 @@ function archiveChronoIndex(list, lang) {
 function eventPageLink(ev, lang) {
   const en = lang === 'en';
   return {
-    href: `${en ? '/en' : ''}/event/${ev.id}/${slugify(en ? ev.title_en || ev.title : ev.title)}/`,
+    href: `${en ? '/en' : ''}/event/${ev.id}/${eventSlug(ev, en ? 'en' : 'ru')}/`,
     name: en ? ev.title_en || ev.title || '' : ev.title_ru || ev.title || ev.title_en || '',
     date: eventLastDay(ev) || '',
   };
@@ -2807,7 +2820,7 @@ function similarItems(ev, lang, groups, sibs, archiveGroups = null) {
           o &&
           o.id !== ev.id &&
           !skip.has(o.id) &&
-          (!en || Boolean(o.title_en) || o.source_lang === 'en'),
+          (!en || eventHasEn(o)),
       )
       .map((o) => ({ ev: o, occ: occurrence(o) }))
       .sort(byProximity)
@@ -2835,7 +2848,7 @@ function similarEventsHtml(items, lang = 'ru') {
   if (!items || !items.length) return '';
   const rows = items.map((s) => {
     const date = occurrence(s);
-    const slug = en ? slugify(s.title_en || s.title) : slugify(s.title);
+    const slug = eventSlug(s, en ? 'en' : 'ru');
     const href = en ? `/en/event/${s.id}/${slug}/` : `/event/${s.id}/${slug}/`;
     const name = en
       ? s.title_en || s.title || ''
@@ -2859,7 +2872,7 @@ function similarEventsHtml(items, lang = 'ru') {
  *  RU-URL из GSC). */
 function cellHasEnPage(cell) {
   return (
-    cell.items.filter(({ ev }) => Boolean(ev.title_en) || ev.source_lang === 'en').length >=
+    cell.items.filter(({ ev }) => eventHasEn(ev)).length >=
     MIN_CATEGORY_EVENTS
   );
 }
@@ -4087,7 +4100,7 @@ function categorySeoHtml(cell, lang, cells) {
   if (items.length) {
     lines.push(`  <h2>${en ? `Upcoming events: ${esc(catName)}` : `Ближайшие события: ${esc(catName)}`}</h2>`, '  <ul>');
     for (const { ev, date } of items) {
-      const slug = en ? slugify(ev.title_en || ev.title) : slugify(ev.title);
+      const slug = eventSlug(ev, en ? 'en' : 'ru');
       const url = `${SITE_URL}${en ? '/en' : ''}/event/${ev.id}/${slug}/`;
       const name = en
         ? ev.title_en || ev.title || ''
@@ -4209,7 +4222,7 @@ function categoryJsonLd(cell, lang) {
         itemListOrder: 'https://schema.org/ItemListOrderAscending',
         itemListElement: items.map((item, i) => {
           const ev = item.ev;
-          const slug = en ? slugify(ev.title_en || ev.title) : slugify(ev.title);
+          const slug = eventSlug(ev, en ? 'en' : 'ru');
           const name = en
             ? ev.title_en || ev.title || ''
             : ev.title_ru || ev.title || ev.title_en || '';
@@ -4496,7 +4509,7 @@ async function main() {
     if (!crumb) continue;
     if (!archiveByCityRu.has(crumb.path)) archiveByCityRu.set(crumb.path, []);
     if (archiveByCityRu.get(crumb.path).length < 20) archiveByCityRu.get(crumb.path).push(ev);
-    if (ev.title_en || ev.source_lang === 'en') {
+    if (eventHasEn(ev)) {
       if (!archiveByCityEn.has(crumb.path)) archiveByCityEn.set(crumb.path, []);
       if (archiveByCityEn.get(crumb.path).length < 20) archiveByCityEn.get(crumb.path).push(ev);
     }
@@ -4615,7 +4628,7 @@ async function main() {
           typeof ev.title === 'string' &&
           ev.title &&
           cityCrumb(ev.city)?.path === c.path &&
-          ((typeof ev.title_en === 'string' && ev.title_en) || ev.source_lang === 'en'),
+          eventHasEn(ev),
       )
       .sort((a, b) =>
         String(nextOccurrenceDate(a, TODAY_ISO)).localeCompare(
@@ -4672,7 +4685,7 @@ async function main() {
     // непарная и hreflang не выводит (иначе аннотация вела бы на несуществующий
     // URL — как у событий без перевода, см. hreflangRu ниже).
     const itemsEn = cell.items.filter(
-      ({ ev }) => Boolean(ev.title_en) || ev.source_lang === 'en',
+      ({ ev }) => eventHasEn(ev),
     );
     // Условие «EN-страница есть» — общее с ссылками (город/событие): cellHasEnPage
     const hasEnPage = cellHasEnPage(cell);
@@ -4779,9 +4792,11 @@ async function main() {
   );
 
   // События: URL должен совпадать с тем, что строит SPA, —
-  // /event/<id>/<slugify(title)> (src/pages/Home.tsx replaceState).
-  // События с EN-версией (title_en непуст ИЛИ source_lang='en') получают
-  // пару /en/event/<id>/<slugify(title_en||title)>/ (п. 2.3): RU-страница —
+  // /event/<id>/<хвост из перевода> (src/pages/Home.tsx replaceState,
+  // src/lib/slug.ts eventSlug): RU-хвост из title_ru (транслит русского
+  // названия), EN-хвост из title_en (транслит английского).
+  // События с английским названием (title_en непуст ИЛИ source_lang='en')
+  // получают пару /en/event/<id>/<EN-хвост>/ (п. 2.3): RU-страница —
   // hreflang на EN, EN-страница — свой h1/описание/JSON-LD и hreflang на RU.
   // Пары «одно название + одно место, много дат» (Фаза 2): считаются один раз
   // по всему активному набору, сюда приходит только Map id → соседи серии.
@@ -4797,12 +4812,15 @@ async function main() {
 
   const pageEvents = [];
   let pageEnEvents = 0;
+  // Мета активных страниц: нужна страницам-алиасам прежних URL (см. ниже) —
+  // у алиаса та же мета, что у канонической страницы.
+  const activePathMeta = new Map();
   for (const ev of events) {
     if (!ev || typeof ev.id !== 'string' || typeof ev.title !== 'string') continue;
-    const hasEn = Boolean(ev.title_en) || ev.source_lang === 'en';
-    const path = `event/${ev.id}/${slugify(ev.title)}`;
+    const hasEn = eventHasEn(ev);
+    const path = `event/${ev.id}/${eventSlug(ev, 'ru')}`;
     const url = `${SITE_URL}/${path}/`;
-    const enPath = `en/event/${ev.id}/${slugify(hasEn ? ev.title_en || ev.title : ev.title)}`;
+    const enPath = `en/event/${ev.id}/${eventSlug(ev, 'en')}`;
     const enUrl = `${SITE_URL}/${enPath}/`;
     const city = typeof ev.city === 'string' ? ev.city.trim() : '';
     const sibs = series.byId.get(ev.id) ?? [];
@@ -4837,7 +4855,7 @@ async function main() {
           { hreflang: 'x-default', href: enRoot },
         ]
       : undefined;
-    writePage(baseHtml, path, {
+    const metaRu = {
       title,
       description,
       canonical: url,
@@ -4848,7 +4866,9 @@ async function main() {
       jsonLd: eventJsonLd(ev, url, 'ru', evImage),
       ...(hasEn ? { hreflang: hreflangRu } : {}),
       bodySeo: eventSeoHtml(ev, url, 'ru', sibs, eventCategoryLink(ev, 'ru', cells), similarRu),
-    });
+    };
+    writePage(baseHtml, path, metaRu);
+    activePathMeta.set(path, metaRu);
     locs.push(url);
     // lastmod активного события = updated_at (см. activeLastmod), не дата сборки
     lastmods.set(url, activeLastmod(ev));
@@ -4870,7 +4890,7 @@ async function main() {
       const titleEn = eventTitle(nameEn, enDate(occEn), cityEn, 'en') || 'Event';
       const similarEn = similarItems(ev, 'en', similarGroups, sibs);
       if (similarEn.length) similarEnPages += 1;
-      writePage(baseHtml, enPath, {
+      const metaEn = {
         lang: 'en',
         title: titleEn,
         description: descriptionEn,
@@ -4886,7 +4906,9 @@ async function main() {
           { hreflang: 'x-default', href: enRoot },
         ],
         bodySeo: eventSeoHtml(ev, enUrl, 'en', sibs, eventCategoryLink(ev, 'en', cells), similarEn),
-      });
+      };
+      writePage(baseHtml, enPath, metaEn);
+      activePathMeta.set(enPath, metaEn);
       locs.push(enUrl);
       lastmods.set(enUrl, activeLastmod(ev));
       hreflangPairs.set(url, enUrl);
@@ -4925,10 +4947,10 @@ async function main() {
   let pastInSitemap = 0;
   for (const ev of allPastPages) {
     if (!ev || typeof ev.id !== 'string' || typeof ev.title !== 'string') continue;
-    const hasEn = Boolean(ev.title_en) || ev.source_lang === 'en';
-    const path = `event/${ev.id}/${slugify(ev.title)}`;
+    const hasEn = eventHasEn(ev);
+    const path = `event/${ev.id}/${eventSlug(ev, 'ru')}`;
     const url = `${SITE_URL}/${path}/`;
-    const enPath = `en/event/${ev.id}/${slugify(hasEn ? ev.title_en || ev.title : ev.title)}`;
+    const enPath = `en/event/${ev.id}/${eventSlug(ev, 'en')}`;
     const enUrl = `${SITE_URL}/${enPath}/`;
     const evImage = eventImage(ev, imageMap);
     const chronoOneRu = chronoForEvent(chronoRu, ev, 'ru');
@@ -4990,29 +5012,31 @@ async function main() {
     `  прошедших событий: страниц RU ${pastRuPages}, EN ${pastEnPages} (в sitemap ${pastInSitemap} пар), страниц всего: ${locs.length}`,
   );
 
-  // --- Алиасы исторических URL (список Google Search Console): слаг события
-  // менялся вместе с заголовком, поэтому ссылка, которую Google проиндексировал,
-  // не совпадает с текущей расчётной. У алиаса ТА ЖЕ мета, что у канонической
-  // страницы — canonical указывает на неё (редирект и noindex запрещены ТЗ).
-  // В sitemap алиасы не попадают: это дубли, их место указывает canonical.
+  // --- Алиасы исторических URL: (1) список Google Search Console (слаг менялся
+  // вместе с заголовком) и (2) список прежних URL после смены формулы слага
+  // 07.10.2026 (scripts/data/legacy-slug-urls.txt). У алиаса ТА ЖЕ мета, что у
+  // канонической страницы — canonical указывает на неё (редирект и noindex
+  // запрещены ТЗ). В sitemap алиасы не попадают: это дубли, их место указывает
+  // canonical.
   const byIdAnyCase = new Map([...events, ...allPastPages].map((e) => [String(e.id).toLowerCase(), e]));
   let aliasPages = 0;
   const aliasSeen = new Set();
-  for (const raw of loadGscEventUrls()) {
+  for (const raw of [...loadGscEventUrls(), ...loadLegacySlugUrls()]) {
     const rel = raw.startsWith(SITE_URL) ? raw.slice(SITE_URL.length) : raw;
     const m = /^\/(en\/)?event\/([0-9a-fA-F-]{36})\/([^/]+)\/$/.exec(rel);
     if (!m) continue;
     const en = Boolean(m[1]);
     const ev = byIdAnyCase.get(m[2].toLowerCase());
     if (!ev) continue;
-    const hasEn = Boolean(ev.title_en) || ev.source_lang === 'en';
+    const hasEn = eventHasEn(ev);
     if (en && !hasEn) continue;
-    const curSlug = slugify(en ? ev.title_en || ev.title : ev.title);
+    const curSlug = eventSlug(ev, en ? 'en' : 'ru');
     const curPath = `${en ? 'en/' : ''}event/${ev.id}/${curSlug}`;
     const aliasPath = `${en ? 'en/' : ''}event/${ev.id}/${m[3]}`;
     if (aliasPath === curPath || aliasSeen.has(aliasPath)) continue;
-    const meta = pastPathMeta.get(curPath);
-    if (!meta) continue; // канонической страницы нет (напр. событие активно) — алиас не нужен
+    // Мета канонической страницы: активной (activePathMeta) или архивной
+    const meta = activePathMeta.get(curPath) ?? pastPathMeta.get(curPath);
+    if (!meta) continue; // канонической страницы нет (напр. событие вне сборки) — алиас не нужен
     pastPagesBuffer.push({ path: aliasPath, html: renderPage(pastBaseHtml, meta) });
     aliasSeen.add(aliasPath);
     aliasPages += 1;
@@ -5086,8 +5110,8 @@ async function main() {
       const head = `  <h1>${esc(name)}</h1>${bio ? `\n  <p>${esc(bio)}</p>` : ''}`;
       const list = orgEventsBlockHtml(
         lang,
-        en ? items.active.filter(({ ev }) => Boolean(ev.title_en) || ev.source_lang === 'en') : items.active,
-        en ? items.past.filter(({ ev }) => Boolean(ev.title_en) || ev.source_lang === 'en') : items.past,
+        en ? items.active.filter(({ ev }) => eventHasEn(ev)) : items.active,
+        en ? items.past.filter(({ ev }) => eventHasEn(ev)) : items.past,
       );
       return `<div id="seo-org-block">\n${head}\n${list}\n</div>`;
     };

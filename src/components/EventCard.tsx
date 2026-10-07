@@ -20,7 +20,8 @@ import {
   placeLabel,
 } from '../lib/address';
 import { nextZ } from '../lib/zindex';
-import { navigate, slugify } from '../lib/navigate';
+import { navigate } from '../lib/navigate';
+import { eventHasEn, eventSlug } from '../lib/slug';
 import { occurrenceDate } from '../lib/series';
 import FavoriteButton from './FavoriteButton';
 import { useOrgProfilePublished } from '../lib/orgProfiles';
@@ -621,20 +622,20 @@ export default function EventCard({
   // URL события для «Поделиться» и клика по названию: при EN-интерфейсе и
   // наличии EN-версии события (title_en или исходник en) — /en/event/<id>/…,
   // иначе RU /event/<id>/… (п. 1.2/2.4 промпта R)
-  const hasEnVersion = Boolean(event.title_en) || event.source_lang === 'en';
+  const hasEnVersion = eventHasEn(event);
   const shareUrl =
     lang === 'en' && hasEnVersion
-      ? `${window.location.origin}/en/event/${event.id}/${slugify(event.title_en || event.title)}`
-      : `${window.location.origin}/event/${event.id}/${slugify(event.title)}`;
+      ? `${window.location.origin}/en/event/${event.id}/${eventSlug(event, 'en')}`
+      : `${window.location.origin}/event/${event.id}/${eventSlug(event, 'ru')}`;
   // Ссылка на страницу события из списка дат серии — та же схема URL, что у
   // shareUrl: язык интерфейса + наличие EN-версии у самого события серии.
   // Слэш на конце обязателен: canonical, sitemap и hreflang страниц событий —
   // со слэшем, а без него GitHub Pages отдаёт 301, и Google помечает страницу
   // «Страница с переадресацией» / «копия с другим каноническим» (17.09.2026).
   const eventPath = (ev: EventItem) =>
-    lang === 'en' && (Boolean(ev.title_en) || ev.source_lang === 'en')
-      ? `/en/event/${ev.id}/${slugify(ev.title_en || ev.title)}/`
-      : `/event/${ev.id}/${slugify(ev.title)}/`;
+    lang === 'en' && eventHasEn(ev)
+      ? `/en/event/${ev.id}/${eventSlug(ev, 'en')}/`
+      : `/event/${ev.id}/${eventSlug(ev, 'ru')}/`;
   const description = localizedText(
     event.description,
     event.description_ru,

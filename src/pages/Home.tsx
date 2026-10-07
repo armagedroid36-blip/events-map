@@ -20,6 +20,7 @@ import { ruToEn } from '../lib/cities';
 import { eventCountry } from '../lib/countries';
 import { DEFAULT_FILTERS, eventMatchesFilters } from '../lib/eventFilters';
 import { navigate, slugify } from '../lib/navigate';
+import { eventHasEn, eventSlug } from '../lib/slug';
 import { seriesSiblings } from '../lib/series';
 import { similarEvents } from '../lib/similar';
 import { addDaysIso, nextOccurrenceDate } from '../lib/recurrence';
@@ -69,7 +70,7 @@ function categoryEnCountIn(
       ev &&
       cityPath(ev.city) === cityPathValue &&
       ev.category_id === categoryId &&
-      (Boolean(ev.title_en) || ev.source_lang === 'en'),
+      eventHasEn(ev),
   ).length;
 }
 
@@ -107,11 +108,12 @@ const MAX_CITY_EVENTS = 8;
 /** Относительный href страницы события своего языка (схема URL как canonical
  *  статики: /event/<id>/<slug>/ на RU, /en/event/<id>/<slug>/ на EN —
  *  со СЛЭШЕМ на конце, без него GitHub Pages отдаёт 301 на каноникал).
- *  Слаг — RU по title, EN по title_en||title (как EventCard.eventPath). */
+ *  Слаг — RU по title_ru, EN по title_en (src/lib/slug.ts, та же функция у
+ *  пре-рендера — как EventCard.eventPath). */
 function cityEventHref(ev: EventItem, lang: 'ru' | 'en'): string {
   return lang === 'en'
-    ? `/en/event/${encodeURIComponent(ev.id)}/${slugify(ev.title_en || ev.title)}/`
-    : `/event/${encodeURIComponent(ev.id)}/${slugify(ev.title)}/`;
+    ? `/en/event/${encodeURIComponent(ev.id)}/${eventSlug(ev, 'en')}/`
+    : `/event/${encodeURIComponent(ev.id)}/${eventSlug(ev, 'ru')}/`;
 }
 
 /** Вид главной: лента (список), календарь, только карта */
@@ -491,7 +493,7 @@ export default function Home({
    *  cellHasEnPage), поэтому же выводится hreflang-пара. */
   const categoryEnCount = useMemo(
     () =>
-      categoryCellItems.filter(({ ev }) => Boolean(ev.title_en) || ev.source_lang === 'en').length,
+      categoryCellItems.filter(({ ev }) => eventHasEn(ev)).length,
     [categoryCellItems],
   );
   /** Гейт публикации страницы пары «город × категория».
@@ -610,7 +612,7 @@ export default function Home({
           typeof ev.id === 'string' &&
           Boolean(ev.title) &&
           cityPath(ev.city) === pageCityPath &&
-          (!en || Boolean(ev.title_en) || ev.source_lang === 'en'),
+          (!en || eventHasEn(ev)),
       )
       .map((ev) => ({ ev, occ: nextOccurrenceDate(ev, today) }))
       .filter((x) => Boolean(x.occ) && x.occ >= today)
@@ -711,18 +713,18 @@ export default function Home({
           // URL уже чистый? Всё равно replaceState — убирает старый hash из
           // ссылки #/?e= и приводит slug к актуальному названию события.
           const enPath = window.location.pathname.startsWith('/en');
-          const hasEn = Boolean(ev.title_en) || ev.source_lang === 'en';
+          const hasEn = eventHasEn(ev);
           if (enPath && hasEn) {
             window.history.replaceState(
               null,
               '',
-              `/en/event/${encodeURIComponent(ev.id)}/${slugify(ev.title_en || ev.title)}`,
+              `/en/event/${encodeURIComponent(ev.id)}/${eventSlug(ev, 'en')}`,
             );
           } else if (!enPath) {
             window.history.replaceState(
               null,
               '',
-              `/event/${encodeURIComponent(ev.id)}/${slugify(ev.title)}`,
+              `/event/${encodeURIComponent(ev.id)}/${eventSlug(ev, 'ru')}`,
             );
           }
           // enPath && !hasEn: URL не трогаем (EN-версии события нет —
@@ -1453,7 +1455,7 @@ export default function Home({
                     {date && <time dateTime={date}>{formatDate(date)}</time>}
                     {date ? ' — ' : ''}
                     <a
-                      href={`/event/${ev.id}/${slugify(ev.title)}/`}
+                      href={`/event/${ev.id}/${eventSlug(ev, 'ru')}/`}
                       className="text-[#0F766E] hover:underline"
                     >
                       {ev.title_ru || ev.title || ev.title_en || ''}

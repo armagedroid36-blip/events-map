@@ -26,7 +26,7 @@
 import { config } from '../config';
 import { photoUrl } from './api';
 import { todayIso } from './dates';
-import { slugify } from './navigate';
+import { eventHasEn, eventSlug } from './slug';
 import { nextOccurrenceDate } from './recurrence';
 import { cityNameEn } from './address';
 import type { CityPath } from './address';
@@ -240,10 +240,10 @@ function setHreflang(pairs: { hreflang: string; href: string }[] | null): void {
   }
 }
 
-/** Хвост URL события по языку: slug по имени на языке UI */
+/** Хвост URL события по языку: слаг названия на языке страницы (RU — title_ru,
+ *  EN — title_en; та же функция у пре-рендера — src/lib/slug.ts) */
 function eventTail(ev: EventItem, en: boolean): string {
-  const name = en && (ev.title_en || ev.source_lang === 'en') ? ev.title_en || ev.title : ev.title;
-  return slugify(name);
+  return eventSlug(ev, en ? 'en' : 'ru');
 }
 
 /** Полный URL события на языке страницы (en → /en/event/... при EN-версии) */
@@ -445,7 +445,7 @@ export function applyEventMeta(ev: EventItem): void {
   // события с переводом. Карточка поверх городской EN-карты URL не меняет —
   // canonical остаётся на RU-версии события (живой URL).
   const en = p.startsWith('/en/event/');
-  const hasEn = Boolean(ev.title_en) || ev.source_lang === 'en';
+  const hasEn = eventHasEn(ev);
   const useEn = en && hasEn;
   const city = typeof ev.city === 'string' ? ev.city.trim() : '';
   // RU-заголовок: перевод, иначе оригинал (если он русский), иначе EN-перевод —

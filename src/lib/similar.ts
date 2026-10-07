@@ -10,6 +10,7 @@
 import type { EventItem } from './types';
 import { cityPath } from './address';
 import { occurrenceDate, seriesSiblings } from './series';
+import { eventHasEn } from './slug';
 
 /** Сколько похожих событий максимум в блоке (как в пре-рендере) */
 export const MAX_SIMILAR = 6;
@@ -17,10 +18,11 @@ export const MAX_SIMILAR = 6;
 export const MIN_SIMILAR = 3;
 
 /** Есть ли у события EN-версия страницы (title_en непуст ИЛИ исходник EN) —
- *  тот же признак hasEn, что в пре-рендере: на EN-странице ссылаться можно
- *  только на существующие /en/event/… (иначе ссылка ведёт в 404). */
+ *  тот же признак hasEn, что в пре-рендере (eventHasEn из lib/slug): на
+ *  EN-странице ссылаться можно только на существующие /en/event/… (иначе
+ *  ссылка ведёт в 404). */
 function hasEnVersion(ev: EventItem): boolean {
-  return Boolean(ev.title_en) || ev.source_lang === 'en';
+  return eventHasEn(ev);
 }
 
 /** Разница дат в днях (ISO YYYY-MM-DD): b − a; нечисловая дата — «далеко» */
