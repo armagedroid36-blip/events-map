@@ -14,6 +14,7 @@ import { createClient } from '@supabase/supabase-js';
 import { extractCategory } from './category-llm.mjs';
 import { selectAll } from './db-rows.mjs';
 import { districtOf, districtNear, districtOfCity, cityForPoint } from './cy-districts.mjs';
+import { cleanDescription } from './desc-junk.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -417,6 +418,10 @@ async function buildRow(src) {
 
   const cat = (await extractCategory(src.description || src.title, src.catHint)) || src.category || 'festival';
 
+  // Описание-ярлык («Balletto di Milano» = строка состава) в поле описания не
+  // пишем: на карточке оно рендерится как блок «О событии» с одним именем.
+  const desc = cleanDescription(src.description);
+
   // Язык по письменности: греческий заголовок важнее подсказки источника,
   // иначе агрегатор помечает греческую афишу как английскую.
   const titleLang = detectLang(src.title);
@@ -429,8 +434,8 @@ async function buildRow(src) {
     // Греческий текст в RU-поля НЕ копируем (иначе RU-страница показывает
     // греческую афишу): перевод подставит scripts/backfill-translations.mjs.
     title_ru: titleLang === 'el' ? null : src.title,
-    description: src.description || '',
-    description_ru: greek ? null : (src.description || ''),
+    description: desc,
+    description_ru: greek ? null : desc,
     source_lang: lang,
     language: lang,
     start_date: src.start_date,
