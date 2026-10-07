@@ -14,7 +14,7 @@
 // node --env-file=.env scripts/dot-cy-cn-venue-fix.mjs [--apply]
 import { createClient } from '@supabase/supabase-js';
 import { selectAll } from './db-rows.mjs';
-import { districtOf, districtOfCity, cityForPoint, km } from './cy-districts.mjs';
+import { districtOf, districtOfCity, cyCityLabel, km } from './cy-districts.mjs';
 
 const APPLY = process.argv.includes('--apply') || process.env.APPLY === '1';
 const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -124,7 +124,7 @@ for (const t of TARGETS) {
     skip++; continue;
   }
   if (d < 0.05) { console.log(`${t.id} «${title}»: уже на месте (${d.toFixed(3)} км) — пропуск`); skip++; continue; }
-  const newCity = cityForPoint(t.lat, t.lng);
+  const newCity = cyCityLabel(t.lat, t.lng);
   const pointDistrict = districtOf(t.lat, t.lng);
   const cityDistrict = districtOfCity(card.city);
   const cityToUse = cityDistrict && pointDistrict && cityDistrict === pointDistrict ? card.city : newCity;

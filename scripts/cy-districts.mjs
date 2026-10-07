@@ -98,3 +98,16 @@ export function cityForPoint(lat, lng) {
   if (best.k <= (CITY_RADIUS[d] ?? 12)) return best.name;
   return d;
 }
+
+/**
+ * Каноническая метка города Кипра для ЗАПИСИ В БАЗУ — «Никосия, Кипр».
+ * Сборщик (collect-cyprus.mjs, buildRow) всегда дописывает «, Кипр»; фикс-скрипты,
+ * которые ставили city по точке напрямую, писали голое «Никосия» и разъединяли
+ * фильтр по городу на карте (4 карточки, ремонт запуска 76). Любая запись city
+ * из cityForPoint — только через эту функцию.
+ */
+export function cyCityLabel(lat, lng) {
+  const name = cityForPoint(lat, lng);
+  if (!name) return name;
+  return /кипр/i.test(name) ? name : `${name}, Кипр`;
+}

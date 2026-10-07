@@ -5,7 +5,7 @@
 // node --env-file=.env scripts/dot-cy-place-sibling-fix.mjs [--apply]
 import { createClient } from '@supabase/supabase-js';
 import { selectAll } from './db-rows.mjs';
-import { districtOf, districtOfCity, cityForPoint, km } from './cy-districts.mjs';
+import { districtOf, districtOfCity, cyCityLabel, km } from './cy-districts.mjs';
 
 const APPLY = process.argv.includes('--apply') || process.env.APPLY === '1';
 const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -47,7 +47,7 @@ for (const t of TARGETS) {
     console.log(`${t.id} «${title}»: сосед сам в чужом округе (${ref.city} vs ${sibPointDistrict}) — пропуск`);
     continue;
   }
-  const newCity = cityForPoint(lat, lng);
+  const newCity = cyCityLabel(lat, lng);
   const d = km(card.lat, card.lng, lat, lng);
   if (newCity === card.city) { console.log(`${t.id} «${title}»: city уже верный (${newCity}) — нужен только пин? пропуск`); continue; }
   const line = `${t.id} «${title}» (${card.start_date}, ${card.city}) -> ${newCity}, ${lat},${lng} | сдвиг ${d.toFixed(2)} км | сосед ${String(ref.id).slice(0, 8)} «${(ref.address || '').slice(0, 55)}» (${ref.city}) ×${n}`;
