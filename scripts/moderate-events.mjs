@@ -73,6 +73,16 @@ const LLM_FAIL_LIMIT = Math.max(1, Number(process.env.MODERATION_LLM_FAIL_LIMIT 
 const RECHECK_HOURS = Math.max(1, Number(process.env.MODERATION_RECHECK_HOURS || 24) || 24);
 const REPORT_PATH = process.env.MODERATION_REPORT || path.join(here, '..', 'auto-moderation-report.json');
 
+// Отказ провайдера по ключу/аккаунту (401/402/403, «Insufficient Balance», «invalid api key»)
+// НЕ транзиентный: сам не пройдёт, очередь будет копиться. Такой прогон обязан быть
+// красным, иначе GitHub рапортует «success», а конвейер стоит (случай 07.10.2026: ключ
+// репозитория с нулевым балансом, ложный зелёный прогон 37612991714).
+function isFatalLlmError(text) {
+  return /HTTP\s*(401|402|403)\b|Insufficient Balance|insufficient_quota|Unauthorized|invalid[_ ]?api[_ ]?key|authentication/i.test(
+    String(text || ''),
+  );
+}
+
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
 
@@ -388,6 +398,17 @@ async function main() {
   }
   if (cursorUnchanged) console.log('Пагинация остановлена страховкой от зацикливания — проверь фильтр пакета.');
   console.log(`Очередь модерации сборщика после прогона: ${remaining}.`);
+
+  // Ложный «success» недопустим: если модель отвергнута провайдером по ключу/балансу,
+  // шаг падает, запуск в GitHub становится красным и проблема видна без чтения логов.
+  if (budget.down && isFatalLlmError(budget.errors.join(' | '))) {
+    console.error(
+      `СТОП: LLM отвергнут провайдером (${budget.downError || budget.errors[0]}) — ` +
+        `в очереди осталось ${remaining}, переводы и автопроверка без модели не работают. ` +
+        'Проверь ключ DEEPSEEK_API_KEY в секретах репозитория (баланс/срок).',
+    );
+    process.exitCode = 1;
+  }
 }
 
 main().catch((e) => {
