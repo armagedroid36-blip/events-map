@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cyprus Innovation Awards Ceremony… — October 26, 2026 · Cyprus</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DDChyaMR.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-BxZzHcvh.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CwvY_jr7.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-DJQQ7I9x.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-DELNJlyf.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BIyBA1U-.css" />
+      <meta name="description" content="Cyprus, October 26, 2026. The Federation of Employers and Industrialists (OEB) and the Research and Innovation Foundation (IIdEK) are once again awarding…" />
+    <link rel="canonical" href="https://mypins.site/en/event/ba77e669-79a0-4138-8143-1435070caac7/cyprus-innovation-awards-ceremony-by-oeb-and-cyprus-research-awards-by-idek/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Cyprus Innovation Awards Ceremony… — October 26, 2026 · Cyprus" />
+    <meta property="og:description" content="Cyprus, October 26, 2026. The Federation of Employers and Industrialists (OEB) and the Research and Innovation Foundation (IIdEK) are once again awarding…" />
+    <meta property="og:url" content="https://mypins.site/en/event/ba77e669-79a0-4138-8143-1435070caac7/cyprus-innovation-awards-ceremony-by-oeb-and-cyprus-research-awards-by-idek/" />
+    <meta property="og:image" content="https://www.imhbusiness.com/wp-content/uploads/2026/09/AWARDS-BANNERS-╬ƒ╬o╬AE-2025-287x140-1.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/ba77e669-79a0-4138-8143-1435070caac7/cyprus-innovation-awards-ceremony-by-oeb-and-cyprus-research-awards-by-idek/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/ba77e669-79a0-4138-8143-1435070caac7/tseremoniya-vrucheniya-kiprskikh-premiy-za-innovatsii-oeb-i-kiprskikh-premiy-za-issledovaniya-idek/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Cyprus Innovation Awards Ceremony by OEB and Cyprus Research Awards by IdEK","url":"https://mypins.site/en/event/ba77e669-79a0-4138-8143-1435070caac7/cyprus-innovation-awards-ceremony-by-oeb-and-cyprus-research-awards-by-idek/","startDate":"2026-10-26T16:30:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Cyprus","address":{"@type":"PostalAddress","addressLocality":"Cyprus","streetAddress":"Cyprus","addressCountry":"cyprus"},"geo":{"@type":"GeoCoordinates","latitude":35.1856,"longitude":33.3823}},"offers":{"@type":"Offer","url":"https://mypins.site/en/event/ba77e669-79a0-4138-8143-1435070caac7/cyprus-innovation-awards-ceremony-by-oeb-and-cyprus-research-awards-by-idek/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-09-29"},"description":"The Federation of Employers and Industrialists (OEB) and the Research and Innovation Foundation (IIdEK) are once again awarding Cypriot enterprises and Cypriot researchers who have distinguished themselves for their innovative activity and scientific work at a special ceremony, which will take place on 26 October 2026 at the Nicosia Municipal Theatre, in the presence of H.E. the President of the Republic, Mr. Nikos Christodoulides. Through the institution of the OEB Cyprus Innovation Awards and the IIdEK Cyprus Research Awards, scientific excellence and innovative entrepreneurial activity are rewarded,","endDate":"2026-10-26","image":"https://www.imhbusiness.com/wp-content/uploads/2026/09/AWARDS-BANNERS-╬ƒ╬o╬AE-2025-287x140-1.jpg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CF%84%CE%B5%CE%BB%CE%B5%CF%84%CE%AE-%CE%B1%CF%80%CE%BF%CE%BD%CE%BF%CE%BC%CE%AE%CF%82-%CE%BA%CF%85%CF%80%CF%81%CE%B9%CE%B1%CE%BA%CF%8E%CE%BD-%CE%B2%CF%81%CE%B1%CE%B2%CE%B5%CE%AF%CF%89%CE%BD-%CE%BA%CE%B1%CE%B9%CE%BD%CE%BF%CF%84%CE%BF%CE%BC%CE%AF%CE%B1%CF%82-%CE%BF%CE%B5%CE%B2-%CE%BA%CE%B1%CE%B9-%CE%BA%CF%85%CF%80%CF%81%CE%B9%CE%B1%CE%BA%CF%8E%CE%BD-%CE%B2%CF%81%CE%B1%CE%B2%CE%B5%CE%AF%CF%89%CE%BD-%CE%AD%CF%81%CE%B5%CF%85%CE%BD%CE%B1%CF%82-%CE%B9%CE%B4%CE%B5%CE%BA-2026-10-26"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Cyprus Innovation Awards Ceremony by OEB and Cyprus Research Awards by IdEK","item":"https://mypins.site/en/event/ba77e669-79a0-4138-8143-1435070caac7/cyprus-innovation-awards-ceremony-by-oeb-and-cyprus-research-awards-by-idek/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Cyprus Innovation Awards Ceremony by OEB and Cyprus Research Awards by IdEK</h1>
+  <p><time datetime="2026-10-26T16:30:00">October 26, 2026, 4:30 PM</time></p>
+  <address>Cyprus</address>
+  <p>The Federation of Employers and Industrialists (OEB) and the Research and Innovation Foundation (IIdEK) are once again awarding Cypriot enterprises and Cypriot researchers who have distinguished themselves for their innovative activity and scientific work at a special ceremony, which will take place on 26 October 2026 at the Nicosia Municipal Theatre, in the presence of H.E. the President of the Republic, Mr. Nikos Christodoulides.
+
+Through the institution of the OEB Cyprus Innovation Awards and the IIdEK Cyprus Research Awards, scientific excellence and innovative entrepreneurial activity are rewarded,</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Cyprus Innovation Awards Ceremony by OEB and Cyprus Research Awards by IdEK</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/meetup/">🤝 Meetups &amp; Networking</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/b7d4f469-0d76-4d1f-91ef-55291a264740/clickup-comes-to-cyprus-ai-productivity-evening-in-limassol/">ClickUp Comes to Cyprus: AI &amp; Productivity Evening in Limassol <time datetime="2026-10-08">October 8, 2026</time></a></li>
+    <li><a href="/en/event/0c4a3587-919e-4478-a9d8-328ded46b138/pets-friends-birthday-meet-up-at-the-warehouse-limassol/">Pets &amp; Friends Birthday Meet Up at The Warehouse, Limassol <time datetime="2026-10-11">October 11, 2026</time></a></li>
+    <li><a href="/en/event/3d6bca50-7308-4082-98af-ba27815aaecb/national-memorial-service-for-the-fallen-of-the-community/">National Memorial Service for the Fallen of the Community <time datetime="2026-10-25">October 25, 2026</time></a></li>
+    <li><a href="/en/event/92235b13-9f20-4eb1-b712-01b9b32f8f9c/official-inauguration-ceremony-honorary-consulate-of-the-republic-of-moldova-in-the-republic-of-cyprus/">Official Inauguration Ceremony: Honorary Consulate of the Republic of Moldova in the Republic of Cyprus <time datetime="2026-10-26">October 26, 2026</time></a></li>
+    <li><a href="/en/event/9fff9ae6-ada2-45d3-8a1b-7b2c39404777/let-s-do-it-cyprus-2026-island-wide-clean-up-week/">Let&#39;s Do It! Cyprus 2026: Island-Wide Clean-Up Week <time datetime="2026-10-26">October 26, 2026</time></a></li>
+    <li><a href="/en/event/9fc80d10-b2ad-4cf1-a46a-d34f26979886/sum-it-up-2026-health-happiness-balance-summit/">Sum It Up 2026: Health, Happiness &amp; Balance Summit <time datetime="2026-11-12">November 12, 2026</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>

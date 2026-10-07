@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bald Singer — October 30, 2026 · Cyprus</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DDChyaMR.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-BxZzHcvh.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CwvY_jr7.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-DJQQ7I9x.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-DELNJlyf.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BIyBA1U-.css" />
+      <meta name="description" content="Cyprus, October 30, 2026. The theater group &quot;Dodeka kai kati&quot; presents one of the most iconic works of the Theater of the Absurd, &quot;The Bald Soprano&quot; by Eugène…" />
+    <link rel="canonical" href="https://mypins.site/en/event/38bdd6f3-8daa-48b9-8ca2-207b9a77a442/bald-singer/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Bald Singer — October 30, 2026 · Cyprus" />
+    <meta property="og:description" content="Cyprus, October 30, 2026. The theater group &quot;Dodeka kai kati&quot; presents one of the most iconic works of the Theater of the Absurd, &quot;The Bald Soprano&quot; by Eugène…" />
+    <meta property="og:url" content="https://mypins.site/en/event/38bdd6f3-8daa-48b9-8ca2-207b9a77a442/bald-singer/" />
+    <meta property="og:image" content="https://www.eventshub.cy/wp-content/uploads/2026/09/falakri-tragoudistria-oct-26.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/38bdd6f3-8daa-48b9-8ca2-207b9a77a442/bald-singer/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/38bdd6f3-8daa-48b9-8ca2-207b9a77a442/lysaya-pevitsa/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Bald Singer","url":"https://mypins.site/en/event/38bdd6f3-8daa-48b9-8ca2-207b9a77a442/bald-singer/","startDate":"2026-10-30T20:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Artos House, Cyprus","address":{"@type":"PostalAddress","addressLocality":"Cyprus","streetAddress":"Artos House, Cyprus","addressCountry":"cyprus"},"geo":{"@type":"GeoCoordinates","latitude":35.1607645,"longitude":33.3510539}},"offers":{"@type":"Offer","url":"https://mypins.site/en/event/38bdd6f3-8daa-48b9-8ca2-207b9a77a442/bald-singer/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-09-28"},"description":"The theater group \"Dodeka kai kati\" presents one of the most iconic works of the Theater of the Absurd, \"The Bald Soprano\" by Eugène Ionesco, in four performances at ARTOS HOUSE in Nicosia, on October 30 and 31 and November 1 and 4, 2026, at 8:00 p.m.","endDate":"2026-11-01","image":"https://www.eventshub.cy/wp-content/uploads/2026/09/falakri-tragoudistria-oct-26.jpg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CF%86%CE%B1%CE%BB%CE%B1%CE%BA%CF%81%CE%AE-%CF%84%CF%81%CE%B1%CE%B3%CE%BF%CF%85%CE%B4%CE%AF%CF%83%CF%84%CF%81%CE%B9%CE%B1-2026-10-30"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Bald Singer","item":"https://mypins.site/en/event/38bdd6f3-8daa-48b9-8ca2-207b9a77a442/bald-singer/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Bald Singer</h1>
+  <p><time datetime="2026-10-30T20:00:00">October 30, 2026, 8:00 PM</time></p>
+  <address>Artos House, Cyprus</address>
+  <p>The theater group &quot;Dodeka kai kati&quot; presents one of the most iconic works of the Theater of the Absurd, &quot;The Bald Soprano&quot; by Eugène Ionesco, in four performances at ARTOS HOUSE in Nicosia, on October 30 and 31 and November 1 and 4, 2026, at 8:00 p.m.</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Bald Singer</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/theatre/">🎭 Theatres &amp; Shows</a></p>
+  </nav>
+  <p>Other dates in this series:</p>
+  <ul>
+    <li><a href="/en/event/61f9be26-c77a-4e53-90ce-02990509e860/bald-singer/"><time datetime="2026-11-04">November 4, 2026</time></a></li>
+  </ul>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/0a2f3b96-1d43-46e4-b02f-880949d081b7/dr-palomero-s-method-at-the-rik-theater/">Dr. Palomero&#39;s method at the RIK Theater <time datetime="2026-10-25">October 25, 2026</time></a></li>
+    <li><a href="/en/event/143674be-9415-448a-8262-4da633e84f76/sl-show-live-lebanese-comedy-night-at-city-of-dreams/">SL Show Live: Lebanese Comedy Night at City of Dreams <time datetime="2026-10-25">October 25, 2026</time></a></li>
+    <li><a href="/en/event/1e1a8bce-b761-4a4b-9509-c1b035720b84/educational-experiential-workshop-mila-mou/">Educational Experiential Workshop Mila mou <time datetime="2026-10-25">October 25, 2026</time></a></li>
+    <li><a href="/en/event/10c0fa2f-c7bc-47b9-b65e-5ef51762f52f/one-dark-knight-a-batman-musical/">One Dark Knight: A Batman Musical <time datetime="2026-10-28">October 28, 2026</time></a></li>
+    <li><a href="/en/event/74321e3c-3972-4ebd-964d-d7080bef4015/the-smurfs-the-green-mission-live-theatre-show-in-limassol-nicosia/">The Smurfs: The Green Mission - Live Theatre Show in Limassol &amp; Nicosia <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/a9877216-8b63-433b-8d54-ea88c25ef0bd/one-weekend-with-teatro-angelico/">One Weekend With Teatro Angelico <time datetime="2026-10-31">October 31, 2026</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>

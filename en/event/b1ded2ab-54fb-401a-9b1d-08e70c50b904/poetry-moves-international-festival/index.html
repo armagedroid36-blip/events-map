@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Poetry MOVES International Festival… — October 13, 2026 · Cyprus</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DDChyaMR.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-BxZzHcvh.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CwvY_jr7.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-DJQQ7I9x.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-DELNJlyf.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BIyBA1U-.css" />
+      <meta name="description" content="Cyprus, October 13, 2026. The Poetry MOVES International Festival / International Festival of Poetry and Syn+Movement includes exhibitions, music, videos, and…" />
+    <link rel="canonical" href="https://mypins.site/en/event/b1ded2ab-54fb-401a-9b1d-08e70c50b904/poetry-moves-international-festival-international-festival-of-poetry-and-syn-movement/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Poetry MOVES International Festival… — October 13, 2026 · Cyprus" />
+    <meta property="og:description" content="Cyprus, October 13, 2026. The Poetry MOVES International Festival / International Festival of Poetry and Syn+Movement includes exhibitions, music, videos, and…" />
+    <meta property="og:url" content="https://mypins.site/en/event/b1ded2ab-54fb-401a-9b1d-08e70c50b904/poetry-moves-international-festival-international-festival-of-poetry-and-syn-movement/" />
+    <meta property="og:image" content="https://www.eventshub.cy/wp-content/uploads/2026/10/poetry-moves-fest-oct-26.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/b1ded2ab-54fb-401a-9b1d-08e70c50b904/poetry-moves-international-festival-international-festival-of-poetry-and-syn-movement/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/b1ded2ab-54fb-401a-9b1d-08e70c50b904/mezhdunarodnyy-festival-poezii-i-sin-dvizheniya/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Poetry MOVES International Festival / International Festival of Poetry and Syn+Movement","url":"https://mypins.site/en/event/b1ded2ab-54fb-401a-9b1d-08e70c50b904/poetry-moves-international-festival-international-festival-of-poetry-and-syn-movement/","startDate":"2026-10-13T20:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Artos House, Cyprus","address":{"@type":"PostalAddress","addressLocality":"Cyprus","streetAddress":"Artos House, Cyprus","addressCountry":"cyprus"},"geo":{"@type":"GeoCoordinates","latitude":35.1607645,"longitude":33.3510539}},"offers":{"@type":"Offer","url":"https://mypins.site/en/event/b1ded2ab-54fb-401a-9b1d-08e70c50b904/poetry-moves-international-festival-international-festival-of-poetry-and-syn-movement/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-10-06"},"description":"The Poetry MOVES International Festival / International Festival of Poetry and Syn+Movement includes exhibitions, music, videos, and performances. For the 4th consecutive year, the Poetry MOVES International Festival returns, having now been established as an international, annual institution. Poetry MOVES is not a poetry festival in the traditional sense. It is an innovative, multi-thematic festival that places poetry at the core of all the arts and functions as a platform for dialogue between poetry, music, contemporary dance, song, photography, and other","endDate":"2026-10-13","image":"https://www.eventshub.cy/wp-content/uploads/2026/10/poetry-moves-fest-oct-26.jpg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/poetry-moves-international-festival-%CE%B4%CE%B9%CE%B5%CE%B8%CE%BD%CE%AD%CF%82-%CF%86%CE%B5%CF%83%CF%84%CE%B9%CE%B2%CE%AC%CE%BB-%CF%80%CE%BF%CE%AF%CE%B7%CF%83%CE%B7%CF%82-%CE%BA%CE%B1%CE%B9-%CF%83%CF%85%CE%BD-%CE%BA%CE%AF%CE%BD%CE%B7%CF%83%CE%B7%CF%82-2026-10-13"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Poetry MOVES International Festival / International Festival of Poetry and Syn+Movement","item":"https://mypins.site/en/event/b1ded2ab-54fb-401a-9b1d-08e70c50b904/poetry-moves-international-festival-international-festival-of-poetry-and-syn-movement/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Poetry MOVES International Festival / International Festival of Poetry and Syn+Movement</h1>
+  <p><time datetime="2026-10-13T20:00:00">October 13, 2026, 8:00 PM</time></p>
+  <address>Artos House, Cyprus</address>
+  <p>The Poetry MOVES International Festival / International Festival of Poetry and Syn+Movement includes exhibitions, music, videos, and performances.
+
+For the 4th consecutive year, the Poetry MOVES International Festival returns, having now been established as an international, annual institution.
+
+Poetry MOVES is not a poetry festival in the traditional sense. It is an innovative, multi-thematic festival that places poetry at the core of all the arts and functions as a platform for dialogue between poetry, music, contemporary dance, song, photography, and other</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Poetry MOVES International Festival / International Festival of Poetry and Syn+Movement</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/festival/">🎉 Festivals</a></p>
+  </nav>
+  <p>Other dates in this series:</p>
+  <ul>
+    <li><a href="/en/event/1a2409c9-3291-4e49-848e-0d2c43a8c24b/poetry-moves-international-festival-international-festival-of-poetry-and-syn-movement/"><time datetime="2026-10-16">October 16, 2026</time></a></li>
+    <li><a href="/en/event/2eacddd0-3007-4588-bf7b-85de4ba77dfa/poetry-moves-international-festival-international-festival-of-poetry-and-syn-movement/"><time datetime="2026-10-21">October 21, 2026</time></a></li>
+  </ul>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/7f5c41bb-ec79-4795-8c71-2f3058a28008/access-for-all-festival-2026-old-port-limassol/">Access For All Festival 2026 @ Old Port Limassol <time datetime="2026-10-13">October 13, 2026</time></a></li>
+    <li><a href="/en/event/9390742d-025a-4feb-b940-ec7a3ad86de3/paralimni-deryneia-municipality-music-festival-2026/">Paralimni - Deryneia Municipality Music Festival 2026 <time datetime="2026-10-13">October 13, 2026</time></a></li>
+    <li><a href="/en/event/c2b11c4a-9ebf-45b3-834f-5b8714c17664/2nd-music-festival-municipality-of-paralimni-deryneia/">2nd Music Festival – Municipality of Paralimni – Deryneia <time datetime="2026-10-13">October 13, 2026</time></a></li>
+    <li><a href="/en/event/e6d9431d-5cdd-4d0d-92f9-0ed8feb7f4c2/2026-music-festival-in-the-municipality-of-paralimni-deryneia/">2026 Music Festival in the Municipality of Paralimni-Deryneia <time datetime="2026-10-13">October 13, 2026</time></a></li>
+    <li><a href="/en/event/ed17b27b-8d7b-447a-9f02-c4fd77fbaaf4/music-festival-2026-in-the-municipality-of-paralimni-deryneia/">Music Festival 2026 in the Municipality of Paralimni-Deryneia <time datetime="2026-10-13">October 13, 2026</time></a></li>
+    <li><a href="/en/event/a4397873-6347-4623-9eb3-c295fdb23268/21st-agia-napa-medieval-festival/">21st Agia Napa Medieval Festival <time datetime="2026-10-14">October 14, 2026</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>

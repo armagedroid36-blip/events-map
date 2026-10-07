@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cyprus Advertising and… — November 20, 2026 · Cyprus</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DDChyaMR.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-BxZzHcvh.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CwvY_jr7.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-DJQQ7I9x.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-DELNJlyf.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BIyBA1U-.css" />
+      <meta name="description" content="Cyprus, November 20, 2026. General Information The Cyprus Advertising and Communication Association (CACA) is organizing a Conference on Friday, November 20…" />
+    <link rel="canonical" href="https://mypins.site/en/event/5e680358-cff1-4357-b889-587c607e0714/cyprus-advertising-and-communication-association-caca-conference/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Cyprus Advertising and… — November 20, 2026 · Cyprus" />
+    <meta property="og:description" content="Cyprus, November 20, 2026. General Information The Cyprus Advertising and Communication Association (CACA) is organizing a Conference on Friday, November 20…" />
+    <meta property="og:url" content="https://mypins.site/en/event/5e680358-cff1-4357-b889-587c607e0714/cyprus-advertising-and-communication-association-caca-conference/" />
+    <meta property="og:image" content="https://www.imhbusiness.com/wp-content/uploads/2026/08/BANNERS-SDEK-2026_287x140-.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/5e680358-cff1-4357-b889-587c607e0714/cyprus-advertising-and-communication-association-caca-conference/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/5e680358-cff1-4357-b889-587c607e0714/konferentsiya-assotsiatsii-reklamy-i-kommunikatsii-kipra-sdek/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Cyprus Advertising and Communication Association (CACA) Conference","url":"https://mypins.site/en/event/5e680358-cff1-4357-b889-587c607e0714/cyprus-advertising-and-communication-association-caca-conference/","startDate":"2026-11-20T08:30:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"University of Nicosia, Cyprus","address":{"@type":"PostalAddress","addressLocality":"Cyprus","streetAddress":"University of Nicosia, Cyprus","addressCountry":"cyprus"},"geo":{"@type":"GeoCoordinates","latitude":35.1657908,"longitude":33.3146993}},"offers":{"@type":"Offer","url":"https://mypins.site/en/event/5e680358-cff1-4357-b889-587c607e0714/cyprus-advertising-and-communication-association-caca-conference/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-10-01"},"description":"General Information The Cyprus Advertising and Communication Association (CACA) is organizing a Conference on Friday, November 20, 2026 at 08:30, at Discovery Hall, University of Nicosia. The Conference aspires to become a point of reference for the future of communication in Cyprus. Its aim is to bring the State, regulatory authorities, the Media, advertisers, and advertising businesses into substantial dialogue, with the goal of shaping a common framework of principles around transparency, accountability, and the responsible use of new technologies. The purpose is","endDate":"2026-11-20","image":"https://www.imhbusiness.com/wp-content/uploads/2026/08/BANNERS-SDEK-2026_287x140-.jpg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CF%83%CF%85%CE%BD%CE%AD%CE%B4%CF%81%CE%B9%CE%BF-%CF%84%CE%BF%CF%85-%CF%83%CF%85%CE%BD%CE%B4%CE%AD%CF%83%CE%BC%CE%BF%CF%85-%CE%B4%CE%B9%CE%B1%CF%86%CE%AE%CE%BC%CE%B9%CF%83%CE%B7%CF%82-%CE%BA%CE%B1%CE%B9-%CE%B5%CF%80%CE%B9%CE%BA%CE%BF%CE%B9%CE%BD%CF%89%CE%BD%CE%AF%CE%B1%CF%82-%CE%BA%CF%8D%CF%80%CF%81%CE%BF%CF%85-%CF%83%CE%B4%CE%B5%CE%BA-2026-11-20"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Cyprus Advertising and Communication Association (CACA) Conference","item":"https://mypins.site/en/event/5e680358-cff1-4357-b889-587c607e0714/cyprus-advertising-and-communication-association-caca-conference/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Cyprus Advertising and Communication Association (CACA) Conference</h1>
+  <p><time datetime="2026-11-20T08:30:00">November 20, 2026, 8:30 AM</time></p>
+  <address>University of Nicosia, Cyprus</address>
+  <p>General Information
+
+The Cyprus Advertising and Communication Association (CACA) is organizing a Conference on Friday, November 20, 2026 at 08:30, at Discovery Hall, University of Nicosia.
+
+The Conference aspires to become a point of reference for the future of communication in Cyprus. Its aim is to bring the State, regulatory authorities, the Media, advertisers, and advertising businesses into substantial dialogue, with the goal of shaping a common framework of principles around transparency, accountability, and the responsible use of new technologies.
+
+The purpose is</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Cyprus Advertising and Communication Association (CACA) Conference</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/conference/">💼 Conferences</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/d4647828-9bef-4553-a611-b4d0d54606ca/ai-wars-digital-agenda-cyprus-summit-in-nicosia/">AI Wars: Digital Agenda Cyprus Summit in Nicosia <time datetime="2026-10-14">October 14, 2026</time></a></li>
+    <li><a href="/en/event/ad9ebc1f-cf68-44b6-b893-7acf645593b9/8th-pancyprian-sports-management-conference-in-larnaca/">8th Pancyprian Sports Management Conference in Larnaca <time datetime="2026-10-20">October 20, 2026</time></a></li>
+    <li><a href="/en/event/5f2740cd-290f-44a7-89e2-61cbecd226d4/17th-limassol-economic-forum/">17th Limassol Economic Forum <time datetime="2026-10-23">October 23, 2026</time></a></li>
+    <li><a href="/en/event/64414723-adcd-45fc-8d00-89996e1a5f63/air-currents-2026-aviation-strategy-forum-in-limassol/">Air Currents 2026: Aviation Strategy Forum in Limassol <time datetime="2026-10-26">October 26, 2026</time></a></li>
+    <li><a href="/en/event/a181d6ac-e79b-4ce4-8cd6-966d168441ec/cyprus-property-week-real-estate-conference-in-paphos/">Cyprus Property Week: Real Estate Conference in Paphos <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/9ef17e83-27a5-4555-b498-474f4483373f/cyprus-fintech-week-2026/">Cyprus Fintech Week ‘2026 <time datetime="2026-12-13">December 13, 2026</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>

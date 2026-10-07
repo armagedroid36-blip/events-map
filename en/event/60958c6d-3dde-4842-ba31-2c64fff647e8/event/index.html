@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>I run for Kyrenia — December 6, 2026 · Cyprus</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DDChyaMR.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-BxZzHcvh.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CwvY_jr7.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-DJQQ7I9x.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-DELNJlyf.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BIyBA1U-.css" />
+      <meta name="description" content="Cyprus, December 6, 2026. RUN FOR KERYNEIA – Running in Cyprus Disclaimer: Running in Cyprus provides this Race Calendar as a service to the running community…" />
+    <link rel="canonical" href="https://mypins.site/en/event/60958c6d-3dde-4842-ba31-2c64fff647e8/i-run-for-kyrenia/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="I run for Kyrenia — December 6, 2026 · Cyprus" />
+    <meta property="og:description" content="Cyprus, December 6, 2026. RUN FOR KERYNEIA – Running in Cyprus Disclaimer: Running in Cyprus provides this Race Calendar as a service to the running community…" />
+    <meta property="og:url" content="https://mypins.site/en/event/60958c6d-3dde-4842-ba31-2c64fff647e8/i-run-for-kyrenia/" />
+    <meta property="og:image" content="https://www.eventshub.cy/wp-content/uploads/2026/07/trecho-gia-tin-keryneia.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/60958c6d-3dde-4842-ba31-2c64fff647e8/i-run-for-kyrenia/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/60958c6d-3dde-4842-ba31-2c64fff647e8/begu-za-keriniyu/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"I run for Kyrenia","url":"https://mypins.site/en/event/60958c6d-3dde-4842-ba31-2c64fff647e8/i-run-for-kyrenia/","startDate":"2026-12-06T09:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Cyprus","address":{"@type":"PostalAddress","addressLocality":"Cyprus","streetAddress":"Cyprus","addressCountry":"cyprus"},"geo":{"@type":"GeoCoordinates","latitude":35.1856,"longitude":33.3823}},"offers":{"@type":"Offer","url":"https://mypins.site/en/event/60958c6d-3dde-4842-ba31-2c64fff647e8/i-run-for-kyrenia/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-09-29"},"description":"RUN FOR KERYNEIA – Running in Cyprus Disclaimer: Running in Cyprus provides this Race Calendar as a service to the running community, listing various running events across Cyprus. However, we are not the organizers of all these events. For any inquiries, please contact the official event organizers directly. Their contact details are provided below. 10km – 5km – 1km Sunday – 6th December 2026 Start and Finish at Keryneia Municipality (Markou Drakou Street, Nicosia) Start time: 09:00 Information: 99 411411 REGISTER [LINK:https://getyourtickets.eu/event/trexogiatinkeryneia]","endDate":"2026-12-06","image":"https://www.eventshub.cy/wp-content/uploads/2026/07/trecho-gia-tin-keryneia.png","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CF%84%CF%81%CE%AD%CF%87%CF%89-%CE%B3%CE%B9%CE%B1-%CF%84%CE%B7%CE%BD-%CE%BA%CE%B5%CF%81%CF%8D%CE%BD%CE%B5%CE%B9%CE%B1-2026-12-06"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"I run for Kyrenia","item":"https://mypins.site/en/event/60958c6d-3dde-4842-ba31-2c64fff647e8/i-run-for-kyrenia/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>I run for Kyrenia</h1>
+  <p><time datetime="2026-12-06T09:00:00">December 6, 2026, 9:00 AM</time></p>
+  <address>Cyprus</address>
+  <p>RUN FOR KERYNEIA – Running in Cyprus
+
+Disclaimer: Running in Cyprus provides this Race Calendar as a service to the running community, listing various running events across Cyprus. However, we are not the organizers of all these events. For any inquiries, please contact the official event organizers directly. Their contact details are provided below.
+
+10km – 5km – 1km
+
+Sunday – 6th December 2026
+
+Start and Finish at Keryneia Municipality (Markou Drakou Street, Nicosia)
+
+Start time: 09:00
+
+Information: 99 411411
+
+REGISTER [LINK:https://getyourtickets.eu/event/trexogiatinkeryneia]</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>I run for Kyrenia</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/sport/">🏃 Sports</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/ad6c4d40-b8c6-4479-b4e2-3aae7c5bdb84/regatta-of-champions-the-r-o-c-ilca4-limassol/">Regatta of Champions – The R.O.C. ILCA4 @ Limassol <time datetime="2026-11-23">November 23, 2026</time></a></li>
+    <li><a href="/en/event/57d775cb-4e4e-4bcf-91e8-4cdc182933fc/leptos-cyprus-international-4-day-challenge/">Leptos Cyprus International 4-day Challenge <time datetime="2026-11-25">November 25, 2026</time></a></li>
+    <li><a href="/en/event/4116c490-a226-46ad-aa49-506b759ede54/leptos-cyprus-international-4-day-challenge-26-29-11-2026/">Leptos Cyprus International 4-day Challenge – 26-29.11.2026 <time datetime="2026-11-26">November 26, 2026</time></a></li>
+    <li><a href="/en/event/b2d3fbda-393d-4f51-8d3d-84cc4f6a2355/paphos-international-marathon/">Paphos International Marathon <time datetime="2026-11-26">November 26, 2026</time></a></li>
+    <li><a href="/en/event/0342fad2-4070-46aa-828c-d3917f78eb54/teu16-european-tennis-tournament-k16/">TEU16 (European Tennis Tournament K16) <time datetime="2026-11-29">November 29, 2026</time></a></li>
+    <li><a href="/en/event/60b4de86-7e77-4150-a533-d12302382500/runidalion-2026-road-race-and-fun-run-in-dali-nicosia/">RunIdalion 2026: Road Race and Fun Run in Dali Nicosia <time datetime="2026-11-29">November 29, 2026</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>

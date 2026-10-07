@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Giorgos Dalaras – Rembetiko — October 8, 2026 · Cyprus</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DDChyaMR.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-BxZzHcvh.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CwvY_jr7.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-DJQQ7I9x.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-DELNJlyf.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BIyBA1U-.css" />
+      <meta name="description" content="Cyprus, October 8, 2026. George Dalaras brings his legendary &quot;Rebetiko&quot; program to Limassol in October 2026, as part of the 3rd Rebetiko Song Festival. Tickets…" />
+    <link rel="canonical" href="https://mypins.site/en/event/7339a83f-e94e-40c6-a3b8-4a89b8efe23c/giorgos-dalaras-rembetiko/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Giorgos Dalaras – Rembetiko — October 8, 2026 · Cyprus" />
+    <meta property="og:description" content="Cyprus, October 8, 2026. George Dalaras brings his legendary &quot;Rebetiko&quot; program to Limassol in October 2026, as part of the 3rd Rebetiko Song Festival. Tickets…" />
+    <meta property="og:url" content="https://mypins.site/en/event/7339a83f-e94e-40c6-a3b8-4a89b8efe23c/giorgos-dalaras-rembetiko/" />
+    <meta property="og:image" content="https://eventor-images-s3.s3.eu-west-2.amazonaws.com/high-res/5a63171c-61bf-4fba-be0e-417e02c0edcf.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/7339a83f-e94e-40c6-a3b8-4a89b8efe23c/giorgos-dalaras-rembetiko/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/7339a83f-e94e-40c6-a3b8-4a89b8efe23c/giorgos-dalaras-rebetiko/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Giorgos Dalaras – Rembetiko","url":"https://mypins.site/en/event/7339a83f-e94e-40c6-a3b8-4a89b8efe23c/giorgos-dalaras-rembetiko/","startDate":"2026-10-08T20:30:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Pattihio Municipal Theatre, Cyprus","address":{"@type":"PostalAddress","addressLocality":"Cyprus","streetAddress":"Pattihio Municipal Theatre, Cyprus","addressCountry":"cyprus"},"geo":{"@type":"GeoCoordinates","latitude":34.6813906,"longitude":33.0440049}},"offers":{"@type":"Offer","url":"https://mypins.site/en/event/7339a83f-e94e-40c6-a3b8-4a89b8efe23c/giorgos-dalaras-rembetiko/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-09-27"},"description":"George Dalaras brings his legendary \"Rebetiko\" program to Limassol in October 2026, as part of the 3rd Rebetiko Song Festival. Tickets available. --- Scroll down for English version 👇 --- One of the greatest Greek artists of all time, George Dalaras, is coming to Pattihio Municipal Theatre of Limassol on October 8 and 9, 2026, at 20:30. After an impressive European tour in iconic venues of London, Paris, Stockholm, Hamburg, and Amsterdam, the concert program \"Rebetiko\" now arrives in Cyprus. 🎟️ Tick","endDate":"2026-10-09","image":"https://eventor-images-s3.s3.eu-west-2.amazonaws.com/high-res/5a63171c-61bf-4fba-be0e-417e02c0edcf.jpg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CE%B3%CE%B9%CF%8E%CF%81%CE%B3%CE%BF%CF%82-%CE%BD%CF%84%CE%B1%CE%BB%CE%AC%CF%81%CE%B1%CF%82-%CF%81%CE%B5%CE%BC%CF%80%CE%AD%CF%84%CE%B9%CE%BA%CE%BF-2026-10-08"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Giorgos Dalaras – Rembetiko","item":"https://mypins.site/en/event/7339a83f-e94e-40c6-a3b8-4a89b8efe23c/giorgos-dalaras-rembetiko/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Giorgos Dalaras – Rembetiko</h1>
+  <p><time datetime="2026-10-08T20:30:00">October 8, 2026, 8:30 PM</time></p>
+  <address>Pattihio Municipal Theatre, Cyprus</address>
+  <p>George Dalaras brings his legendary &quot;Rebetiko&quot; program to Limassol in October 2026, as part of the 3rd Rebetiko Song Festival. Tickets available.
+
+---
+
+Scroll down for English version 👇
+
+---
+
+One of the greatest Greek artists of all time, George Dalaras, is coming to Pattihio Municipal Theatre of Limassol on October 8 and 9, 2026, at 20:30. After an impressive European tour in iconic venues of London, Paris, Stockholm, Hamburg, and Amsterdam, the concert program &quot;Rebetiko&quot; now arrives in Cyprus.
+
+🎟️ Tick</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Giorgos Dalaras – Rembetiko</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/concert/">🎤 Concerts</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/33f14772-291e-431e-9987-20b9d5797073/rebetiko-the-three-string-journey-wednesday-7-10-26-20-30-dim-theatro-strovolou-as-part-of-the-autumn-concerts/">Rebetiko – The Three-String Journey, Wednesday 7/10/26 | 20:30 – Dim. Theatro Strovolou, as part of the autumn concerts <time datetime="2026-10-07">October 7, 2026</time></a></li>
+    <li><a href="/en/event/973a88e8-34bf-4111-8207-d217cee9dc79/performance-by-eymelia-from-the-golden-age-of-greek-cinema/">Performance by EYMELIA - From the golden age of Greek cinema <time datetime="2026-10-07">October 7, 2026</time></a></li>
+    <li><a href="/en/event/a71821a0-1713-46cf-81ea-481c91677dd3/tribute-to-dimitris-mitropanos-greatest-hits-live-in-nicosia/">Tribute to Dimitris Mitropanos: Greatest Hits Live in Nicosia <time datetime="2026-10-07">October 7, 2026</time></a></li>
+    <li><a href="/en/event/5befc231-4edd-4a56-b328-b69b05868a24/musical-journeys-into-the-dream-8-10-26-19-30-courtyard-of-the-church-of-apostolos-andreas-synoikismos-strovolos-iii/">Musical Journeys into the Dream, 8/10/26, 19:30 | courtyard of the church of Apostolos Andreas, Synoikismos Strovolos III <time datetime="2026-10-08">October 8, 2026</time></a></li>
+    <li><a href="/en/event/c9854676-cad1-4cd2-92c1-9504bdd86f85/the-marios-toumbas-jazz-trio-live-at-sarah-s-jazz-club/">The Marios Toumbas Jazz Trio Live at Sarah’s jazz club <time datetime="2026-10-08">October 8, 2026</time></a></li>
+    <li><a href="/en/event/fae3ca01-a1e2-432e-ab11-6d546e0a110e/y2k-2000s-throwback-night-at-zonkey-bar/">Y2K³: 2000s Throwback Night at Zonkey Bar <time datetime="2026-10-08">October 8, 2026</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>

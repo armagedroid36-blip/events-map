@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Performance by EYMELIA - From the… — October 7, 2026 · Cyprus</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DDChyaMR.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-BxZzHcvh.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CwvY_jr7.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-DJQQ7I9x.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-DELNJlyf.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BIyBA1U-.css" />
+      <meta name="description" content="Cyprus, October 7, 2026. Greek cinema showcases the everyday life and emotions of Greek society across the different eras it has gone through. Its &quot;Golden Age&quot;…" />
+    <link rel="canonical" href="https://mypins.site/en/event/973a88e8-34bf-4111-8207-d217cee9dc79/performance-by-eymelia-from-the-golden-age-of-greek-cinema/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Performance by EYMELIA - From the… — October 7, 2026 · Cyprus" />
+    <meta property="og:description" content="Cyprus, October 7, 2026. Greek cinema showcases the everyday life and emotions of Greek society across the different eras it has gone through. Its &quot;Golden Age&quot;…" />
+    <meta property="og:url" content="https://mypins.site/en/event/973a88e8-34bf-4111-8207-d217cee9dc79/performance-by-eymelia-from-the-golden-age-of-greek-cinema/" />
+    <meta property="og:image" content="https://www.nicosia.org.cy/CMSPages/GetFile.aspx?guid=b9041db8-bc80-4d85-b7c0-7cdde36f0452&amp;width=320" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/973a88e8-34bf-4111-8207-d217cee9dc79/performance-by-eymelia-from-the-golden-age-of-greek-cinema/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/973a88e8-34bf-4111-8207-d217cee9dc79/spektakl-evmelii-iz-zolotogo-veka-grecheskogo-kino/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Performance by EYMELIA - From the golden age of Greek cinema","url":"https://mypins.site/en/event/973a88e8-34bf-4111-8207-d217cee9dc79/performance-by-eymelia-from-the-golden-age-of-greek-cinema/","startDate":"2026-10-07T19:30:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Αίθουσα Μελίνα Μερκούρη, Cyprus","address":{"@type":"PostalAddress","addressLocality":"Cyprus","streetAddress":"Αίθουσα Μελίνα Μερκούρη, Cyprus","addressCountry":"cyprus"},"geo":{"@type":"GeoCoordinates","latitude":35.126413,"longitude":33.429859}},"offers":{"@type":"Offer","url":"https://mypins.site/en/event/973a88e8-34bf-4111-8207-d217cee9dc79/performance-by-eymelia-from-the-golden-age-of-greek-cinema/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-09-26"},"description":"Greek cinema showcases the everyday life and emotions of Greek society across the different eras it has gone through. Its \"Golden Age\" was the time when theaters were packed and film production reached an admirable level. As for the music, it was written with a simplicity but also with very creative inspiration, to such an extent that the film songs have remained beloved and \"classic\" to this day. The vocal ensemble \"EVMELIA\" and its conductor promise to let you relive wonderful moments from your youth or even your childhood.","endDate":"2026-10-07","image":"https://www.nicosia.org.cy/CMSPages/GetFile.aspx?guid=b9041db8-bc80-4d85-b7c0-7cdde36f0452&width=320","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CF%80%CE%B1%CF%81%CE%AC%CF%83%CF%84%CE%B1%CF%83%CE%B7-%CE%B5%CF%85%CE%BC%CE%B5%CE%BB%CE%B5%CE%B9%CE%B1%CF%82-%CE%B1%CF%80%CF%8C-%CF%84%CE%B7-%CF%87%CF%81%CF%85%CF%83%CE%AE-%CE%B5%CF%80%CE%BF%CF%87%CE%AE-%CF%84%CE%BF%CF%85-%CE%B5%CE%BB%CE%BB%CE%B7%CE%BD%CE%B9%CE%BA%CE%BF%CF%8D-%CF%83%CE%B9%CE%BD%CE%B5%CE%BC%CE%AC-2026-10-07"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Performance by EYMELIA - From the golden age of Greek cinema","item":"https://mypins.site/en/event/973a88e8-34bf-4111-8207-d217cee9dc79/performance-by-eymelia-from-the-golden-age-of-greek-cinema/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Performance by EYMELIA - From the golden age of Greek cinema</h1>
+  <p><time datetime="2026-10-07T19:30:00">October 7, 2026, 7:30 PM</time></p>
+  <address>Αίθουσα Μελίνα Μερκούρη, Cyprus</address>
+  <p>Greek cinema showcases the everyday life and emotions of Greek society across the different eras it has gone through. Its &quot;Golden Age&quot; was the time when theaters were packed and film production reached an admirable level. As for the music, it was written with a simplicity but also with very creative inspiration, to such an extent that the film songs have remained beloved and &quot;classic&quot; to this day.
+
+The vocal ensemble &quot;EVMELIA&quot; and its conductor promise to let you relive wonderful moments from your youth or even your childhood.</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Performance by EYMELIA - From the golden age of Greek cinema</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/concert/">🎤 Concerts</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/cea123c3-5639-4dad-9555-462b30cbc7ba/always-laughing-and-deceived-thanos-mikroutsikos-tribute-in-nicosia-larnaca/">Always Laughing and Deceived: Thanos Mikroutsikos Tribute in Nicosia &amp; Larnaca <time datetime="2026-10-06">October 6, 2026</time></a></li>
+    <li><a href="/en/event/33f14772-291e-431e-9987-20b9d5797073/rebetiko-the-three-string-journey-wednesday-7-10-26-20-30-dim-theatro-strovolou-as-part-of-the-autumn-concerts/">Rebetiko – The Three-String Journey, Wednesday 7/10/26 | 20:30 – Dim. Theatro Strovolou, as part of the autumn concerts <time datetime="2026-10-07">October 7, 2026</time></a></li>
+    <li><a href="/en/event/a71821a0-1713-46cf-81ea-481c91677dd3/tribute-to-dimitris-mitropanos-greatest-hits-live-in-nicosia/">Tribute to Dimitris Mitropanos: Greatest Hits Live in Nicosia <time datetime="2026-10-07">October 7, 2026</time></a></li>
+    <li><a href="/en/event/ea2d3c6d-3443-47e0-b063-dc37508bf5aa/boost-percussion-group-and-george-georgiou-bass-clarinet-in-andys-skordis-s-zourrrrr/">BOOST PERCUSSION GROUP and George Georgiou (bass clarinet) in Andys Skordis&#39;s &quot;Zourrrrr...&quot; <time datetime="2026-10-07">October 7, 2026</time></a></li>
+    <li><a href="/en/event/5befc231-4edd-4a56-b328-b69b05868a24/musical-journeys-into-the-dream-8-10-26-19-30-courtyard-of-the-church-of-apostolos-andreas-synoikismos-strovolos-iii/">Musical Journeys into the Dream, 8/10/26, 19:30 | courtyard of the church of Apostolos Andreas, Synoikismos Strovolos III <time datetime="2026-10-08">October 8, 2026</time></a></li>
+    <li><a href="/en/event/7339a83f-e94e-40c6-a3b8-4a89b8efe23c/giorgos-dalaras-rembetiko/">Giorgos Dalaras – Rembetiko <time datetime="2026-10-08">October 8, 2026</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>

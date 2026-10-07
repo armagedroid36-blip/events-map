@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Olive &amp; Aromas Festival in Evrychou — October 10, 2026 · Cyprus</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DDChyaMR.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-BxZzHcvh.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CwvY_jr7.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-DJQQ7I9x.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-DELNJlyf.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BIyBA1U-.css" />
+      <meta name="description" content="Cyprus, October 10, 2026. A special celebration dedicated to the olive, aromatic plants, and the richness of the Cypriot countryside is being organized by…" />
+    <link rel="canonical" href="https://mypins.site/en/event/f38ba9db-53c3-4d5c-a97e-009b78bd837d/olive-aromas-festival-in-evrychou/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Olive &amp; Aromas Festival in Evrychou — October 10, 2026 · Cyprus" />
+    <meta property="og:description" content="Cyprus, October 10, 2026. A special celebration dedicated to the olive, aromatic plants, and the richness of the Cypriot countryside is being organized by…" />
+    <meta property="og:url" content="https://mypins.site/en/event/f38ba9db-53c3-4d5c-a97e-009b78bd837d/olive-aromas-festival-in-evrychou/" />
+    <meta property="og:image" content="https://www.eventshub.cy/wp-content/uploads/2026/08/festival-elias-aromaton-i-eyrychou-giortazei-tis-geyseis-kai-tin-paradosi-tis-ky-1.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/f38ba9db-53c3-4d5c-a97e-009b78bd837d/olive-aromas-festival-in-evrychou/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/f38ba9db-53c3-4d5c-a97e-009b78bd837d/festival-olivy-i-aromatov-v-evrikhu/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Olive & Aromas Festival in Evrychou","url":"https://mypins.site/en/event/f38ba9db-53c3-4d5c-a97e-009b78bd837d/olive-aromas-festival-in-evrychou/","startDate":"2026-10-10T10:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Evrychou Village Square, Cyprus","address":{"@type":"PostalAddress","addressLocality":"Cyprus","streetAddress":"Evrychou Village Square, Cyprus","addressCountry":"cyprus"},"geo":{"@type":"GeoCoordinates","latitude":35.0427354,"longitude":32.9012972}},"offers":{"@type":"Offer","url":"https://mypins.site/en/event/f38ba9db-53c3-4d5c-a97e-009b78bd837d/olive-aromas-festival-in-evrychou/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-09-26"},"description":"A special celebration dedicated to the olive, aromatic plants, and the richness of the Cypriot countryside is being organized by Evrychou. On Saturday, October 10, the village square will host the Olive & Aromatics Festival, offering visitors a full day of flavors, aromas, music, and tradition. From 10:00 in the morning until 22:00 at night, the public will have the opportunity to discover and taste products connected to the olive and aromatic plants, while discovering people and customs that keep the authentic character of the Cypriot countryside alive. The program","endDate":"2026-10-10T22:00:00","image":"https://www.eventshub.cy/wp-content/uploads/2026/08/festival-elias-aromaton-i-eyrychou-giortazei-tis-geyseis-kai-tin-paradosi-tis-ky-1.jpg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CF%86%CE%B5%CF%83%CF%84%CE%B9%CE%B2%CE%AC%CE%BB-%CE%B5%CE%BB%CE%B9%CE%AC%CF%82-%CE%B1%CF%81%CF%89%CE%BC%CE%AC%CF%84%CF%89%CE%BD-%CF%83%CF%84%CE%B7%CE%BD-%CE%B5%CF%85%CF%81%CF%8D%CF%87%CE%BF%CF%85-2026-10-10"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Olive & Aromas Festival in Evrychou","item":"https://mypins.site/en/event/f38ba9db-53c3-4d5c-a97e-009b78bd837d/olive-aromas-festival-in-evrychou/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Olive &amp; Aromas Festival in Evrychou</h1>
+  <p><time datetime="2026-10-10T10:00:00">October 10, 2026, 10:00 AM</time></p>
+  <address>Evrychou Village Square, Cyprus</address>
+  <p>A special celebration dedicated to the olive, aromatic plants, and the richness of the Cypriot countryside is being organized by Evrychou. On Saturday, October 10, the village square will host the Olive &amp; Aromatics Festival, offering visitors a full day of flavors, aromas, music, and tradition.
+
+From 10:00 in the morning until 22:00 at night, the public will have the opportunity to discover and taste products connected to the olive and aromatic plants, while discovering people and customs that keep the authentic character of the Cypriot countryside alive.
+
+The program</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Olive &amp; Aromas Festival in Evrychou</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/festival/">🎉 Festivals</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/162f7ff0-9c50-46e5-b1a8-39f36a1a2bfd/apple-festival-2026-kyperounta-central-square/">Apple Festival 2026 @ Kyperounta Central Square <time datetime="2026-10-10">October 10, 2026</time></a></li>
+    <li><a href="/en/event/1acc1d7b-7a9f-4eef-8bc4-ff1e22e5d24b/mestinpoli-music-festival-two-day-open-air-festival-in-nicosia/">Mestinpoli Music Festival: Two-Day Open-Air Festival in Nicosia <time datetime="2026-10-10">October 10, 2026</time></a></li>
+    <li><a href="/en/event/2abba9c7-2ee2-4f4f-a469-698aa08f053c/mitsikouri-international-performing-arts-festival-for-children-across-cyprus/">Mitsikouri: International Performing Arts Festival for Children across Cyprus <time datetime="2026-10-10">October 10, 2026</time></a></li>
+    <li><a href="/en/event/2d7e30a9-b597-4130-a402-d6b8231eab23/festival-thalassa/">Festival &#39;Thalassa&#39; <time datetime="2026-10-10">October 10, 2026</time></a></li>
+    <li><a href="/en/event/36a87826-2bc4-41fe-b05b-427151267245/cultural-festival/">Cultural Festival <time datetime="2026-10-10">October 10, 2026</time></a></li>
+    <li><a href="/en/event/37e240dc-9138-484e-b4b3-26224cbc2487/veneror-larnaca-the-heart-of-the-city-comes-alive-festival/">Veneror Larnaca: The Heart of the City Comes Alive Festival <time datetime="2026-10-10">October 10, 2026</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>
