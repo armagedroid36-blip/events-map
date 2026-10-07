@@ -38,7 +38,23 @@ const JUNK = [
   /^на\s+берегу(?=[\s,(]|$)/i,
 ];
 
-/** true — строка не является адресом (пустая, служебная, расплывчатая). */
+/** true — «адрес» это просто название города («Нячанг», «Дананг, Вьетнам»): улицы в нём нет. */
+export function isCityAddress(raw, city) {
+  const a = normCity(raw);
+  if (!a) return false;
+  const c = normCity(city);
+  if (c && a === c) return true;
+  // «г. Нячанг», «город Дананг», «Nha Trang, Vietnam» → снять служебное и хвост страны
+  const a2 = a.replace(/^(?:г|город|city)\.?\s*/, '').replace(/\s*,?\s*(?:vietnam|вьетнам|кипр|cyprus|индонезия|indonesia)$/, '').trim();
+  return !!c && a2 === c;
+}
+
+function normCity(raw) {
+  if (!raw) return '';
+  return String(raw).toLowerCase().replace(/ё/g, 'е').replace(/[.,;:!?—–-]+/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+/** Адрес для карточки: мусор → null, иначе строка без служебного ярлыка. */
 export function isJunkAddress(raw) {
   const s = stripAddressLabel(raw);
   if (!s || s.length < 3) return true;
