@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import { selectAll } from './db-rows.mjs';
 const db = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
 const rows = await selectAll(db, 'events', 'id,title_ru,title,city,address,lat,lng,start_date,website,source_type',
-  (q) => q.eq('status', 'active'));
+  { filter: (q) => q.eq('status', 'active') });
 const no = rows.filter((e) => !e.address);
 console.log('active без адреса:', no.length);
 const byCoord = new Map();

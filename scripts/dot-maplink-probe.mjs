@@ -18,7 +18,7 @@ const FALLBACKS = [
 
 let rows = [];
 for (let i = 0; i < 4; i++) {
-  try { rows = await selectAll(db, 'events', 'id,status,city,address,description,website,title,start_date,lat,lng,source_type', q => q.eq('status', 'active')); break; }
+  try { rows = await selectAll(db, 'events', 'id,status,city,address,description,website,title,start_date,lat,lng,source_type', { filter: q => q.eq('status', 'active') }); break; }
   catch (e) { console.log('retry', e.message); await new Promise(r => setTimeout(r, 2500)); }
 }
 console.log('живых', rows.length);

@@ -18,7 +18,7 @@ const FALLBACKS = {
 const MAP_URL_RE = /https?:\/\/[^\s)\]"'<>]*(?:maps\.app\.goo\.gl|goo\.gl\/maps|google\.[a-z.]{2,6}\/maps|maps\.google\.[a-z.]{2,6})[^\s)\]"'<>]*/i;
 const dist = (a, b, c, d) => Math.hypot((a - c) * 111320, (b - d) * 111320 * Math.cos((a * Math.PI) / 180));
 
-const rows = await selectAll(db, 'events', 'id,status,city,address,description,title,lat,lng,start_date', (q) => q.in('status', ['active', 'moderation']));
+const rows = await selectAll(db, 'events', 'id,status,city,address,description,title,lat,lng,start_date', { filter: (q) => q.in('status', ['active', 'moderation']) });
 const fb = Object.entries(FALLBACKS);
 const cands = rows.filter((r) =>
   r.lat != null && MAP_URL_RE.test(`${r.description || ''}\n${r.address || ''}`) &&
