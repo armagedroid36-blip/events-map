@@ -190,8 +190,10 @@ async function decide(ev, budget) {
     };
   }
   if (NO_LLM || budget.down) {
+    // Причина отказа в причине карточки, а не голая «серия отказов»:
+    // по ней в админке сразу видно, что случилось (напр. 402 «Insufficient Balance»).
     const reason = budget.down
-      ? 'LLM-проверка недоступна (серия отказов, карточка отложена)'
+      ? `LLM-проверка недоступна (${budget.downError || 'серия отказов'}, карточка отложена)`.slice(0, 200)
       : 'LLM-проверка недоступна';
     return { verdict: 'review', flags: [...rules.flags, 'unchecked'], reason, engine: 'rules' };
   }
@@ -212,6 +214,7 @@ async function decide(ev, budget) {
     budget.errors.push(judged.error);
     if (budget.fails >= LLM_FAIL_LIMIT && !budget.down) {
       budget.down = true;
+      budget.downError = judged.error;
       console.warn(
         `! LLM: ${budget.fails} отказов подряд (${judged.error}) — остальные карточки ` +
           'отправляются человеку без вызова модели',
