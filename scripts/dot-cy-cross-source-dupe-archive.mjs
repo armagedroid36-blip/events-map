@@ -28,6 +28,22 @@ const PAIRS = [
     keep: 'b10ba6d1', archive: 'a593accd', token: /spartacus|спартак/i,
     note: 'Spartacus Ballet 27.11 Никосия 19:30, 35.1726381,33.3550588 (Nicosia Municipal Theatre): cyprus.bz (адрес площадки «Nicosia Municipal Theatre, Nicosia», полное описание 600+ знаков, 3 фото) vs cyprusnow (адрес уровня тура «Nicosia Municipal Theatre/ Pattihio Theatre Limassol», описание со служебным хвостом «Scroll down for English version», 1 фото)',
   },
+  {
+    keep: 'ed200c34', archive: '09a142aa', token: /(jack|beanstalk|τζακ|φασολ|fasolia)/i,
+    note: 'Jack and the Beanstalk 14.11 Никосия 11:00, Latsia Theatre (35.1063639,33.3782668): cyprus.bz (slug /event/3578/jack-and-the-beanstalk-2026 — греч. название «O Tzak Kai I Fasolia», 3 фото) vs cyprusnow (1 фото) — одна постановка, разные языковые названия источника',
+  },
+  {
+    keep: '5f0a1b94', archive: '0ac76029', token: /scalifornia/i,
+    note: 'Scalifornia 10.10 Ларнака 11:00, Salina Municipal Park (34.916,33.625): cyprus.bz (slug /event/3233/scalifornia-a-food-festival-2026, 3 фото) vs cyprusnow (1 фото)',
+  },
+  {
+    keep: '4de25efe', archive: '268e5e70', token: /2sides/i,
+    note: '2Sides 09.10 Лимасол 20:00, Dusty Munky (34.680,33.046): cyprusnow «2Sides at Dusty Munky» vs cyprusnow «2SIDES LIMASSOL» — два слага одной страницы источника, названия разошлись',
+  },
+  {
+    keep: 'a3d16f5f', archive: '1685ff91', token: /samael/i,
+    note: 'Samael 13.11 Никосия 20:00, DownTown Live (35.165,33.350): cyprusnow (адрес площадки «DownTown Live») vs cyprus.bz (адрес «DownTown Live, Limassol» — ложный город источника внутри никосийской карточки)',
+  },
 ];
 
 const rows = await selectAll(db, 'events', 'id,title,title_ru,start_date,start_time,city,address,lat,lng,website,status,photos,description,description_en');
