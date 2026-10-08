@@ -20,7 +20,7 @@ const APPLY = process.argv.includes('--apply') || process.env.APPLY === '1';
 const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const db = createClient(url, process.env.SUPABASE_SERVICE_ROLE, { auth: { persistSession: false } });
 
-const FALLBACKS = new Set(['34.7071', '35.1856', '34.9167', '34.7754', '34.6802', '35.1699', '34.9182']);
+const FALLBACKS = new Set(['34.7071', '35.1856', '34.9167', '34.7754', '34.6802', '35.1699', '34.9182', '35.1205']);
 const isFallback = (lat) => lat && FALLBACKS.has(String(Number(lat).toFixed(4)));
 
 // id -> { match: событие в ленте Cyprus Now, venue: площадка оттуда, lat/lng, proof: цитата поля из API }
@@ -102,6 +102,51 @@ const TARGETS = [
     lat: 35.0719751,
     lng: 33.8815901,
     proof: 'cyprusnow /api/events?q=Acheritou: venue.name "Village square", venue.city "Acheritou-Vrysoulles", venue.lat/lng 35.0719751,33.8815901 (адрес карточки — «Village square, Acheritou»); вторая точка ленты «Central Square of Acheritou» 35.0996644,33.8613357 не подходит — карточка называет именно Village square',
+  },
+  {
+    id: '369135b1',
+    match: 'The Seven Little Goats and the Wolf. A Children’s Play in Sotira',
+    venue: 'Sotira Municipal Theatre (Δημοτικό Θέατρο Σωτήρας)',
+    addr: ['sotira', 'сотира', 'σωτήρας'],
+    lat: 35.0284699,
+    lng: 33.9513191,
+    proof: 'cyprusnow /api/events?q=sotira: две карточки того же зала — «Τα μαγικά Χριστούγεννα του Ρούντολφ στην Αμμόχωστο» и «Grinchmas στην Αμμόχωστο» — venue.name "Δημοτικό Θέατρο Σωτήρας", venue.city Cyprus, venue.lat/lng 35.0284699,33.9513191; сама карточка «The Seven Little Goats…» в ленте есть (q=sotira municipal), venue у неё не заполнен. Деревня Сотира — округ Фамагуста, метка city карточки верна',
+  },
+  {
+    id: '0bcecb83',
+    match: 'Grinchmas',
+    venue: 'Sotira Municipal Theatre (Δημοτικό Θέατρο Σωτήρας)',
+    addr: ['sotira'],
+    lat: 35.0284699,
+    lng: 33.9513191,
+    proof: 'cyprusnow /api/events?q=sotira: title «Grinchmas στην Αμμόχωστο», venue.name "Δημοτικό Θέατρο Σωτήρας", venue.lat/lng 35.0284699,33.9513191',
+  },
+  {
+    id: '78eb1c5c',
+    match: 'Rudolph',
+    venue: 'Sotira Municipal Theatre (Δημοτικό Θέατρο Σωτήρας)',
+    addr: ['sotira'],
+    lat: 35.0284699,
+    lng: 33.9513191,
+    proof: 'cyprusnow /api/events?q=sotira: title «Τα μαγικά Χριστούγεννα του Ρούντολφ στην Αμμόχωστο», venue.name "Δημοτικό Θέατρο Σωτήρας", venue.lat/lng 35.0284699,33.9513191',
+  },
+  {
+    id: '2b39ece2',
+    match: 'Christmas Festival at CyHerbia',
+    venue: 'Cyherbia Botanical Park',
+    addr: ['cyherbia'],
+    lat: 35.0139109,
+    lng: 33.830378,
+    proof: 'та же площадка, что у карточки 38f1871c (запуск 70): cyprusnow /api/events?q=CyHerbia → venue.name "Cyherbia Botanical Park", venue.city Avgorou (округ Фамагуста), venue.lat/lng 35.0139109,33.830378',
+  },
+  {
+    id: '2c7a6d58',
+    match: 'Pumpkin Carving at CyHerbia',
+    venue: 'Cyherbia Botanical Park',
+    addr: ['cyherbia'],
+    lat: 35.0139109,
+    lng: 33.830378,
+    proof: 'та же площадка, что у карточки 38f1871c (запуск 70): cyprusnow /api/events?q=CyHerbia → venue.name "Cyherbia Botanical Park", venue.city Avgorou (округ Фамагуста), venue.lat/lng 35.0139109,33.830378',
   },
 ];
 
