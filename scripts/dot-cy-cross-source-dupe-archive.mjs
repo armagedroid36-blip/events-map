@@ -84,6 +84,16 @@ const PAIRS = [
     keep: '4cf5d3f2', archive: '2a81f375', token: /christmas\s*village/i,
     note: 'Рождественская деревня Калопанайотиса 21.11.2026-06.01.2027, 34.993,32.830: cyprus.bz (3 фото, адрес «Fairytale Christmas Village Kalopanayiotis», JSON-LD 21.11 11:00 местного) vs cyprusnow (1 фото, «Kalopanagiotis Christmas Village 2026: Programme & Dates», JSON-LD 21.11 11:00+02:00) — одна сезонная площадка, два источника',
   },
+  {
+    // подкласс «одно событие — ДВА слага ОДНОГО источника в разных городах»: cyprusnow держит
+    // две страницы одного события, одна помечена Лимасолом (20:30), другая — Никосией (18:00),
+    // поэтому карточки стоят в РАЗНЫХ городах и на разных центровых фолбэках. Арбитр — третьи
+    // источники: RA (20:30-11:30, venue TBA), rave-pulse (страница события в разделе Limassol),
+    // lima.events (20:30, Tba) → верны 20:30 и Лимасол; площадка у события TBA, пин остаётся центровым.
+    keep: '9a506e8a', archive: '33fb1c5f', token: /lotus\s*parable/i,
+    source: { start_date: '2026-10-17', start_time: '20:30:00' },
+    note: 'Lotus Parable Label Night 17.10: страница /event/lotus-parable-2026-10-17 (Лимасол 20:30) оставлена, архив — /event/lotus-parable-label-night-outdoor-techno-gathering-in-cyprus-2026-10-17 (Никосия 18:00, центр Никосии 35.1856,33.3823) — тот же лейбл-найт, разные город и время у одного источника',
+  },
 ];
 
 const rows = await selectAll(db, 'events', 'id,title,title_ru,start_date,start_time,city,address,lat,lng,website,status,photos,description,description_en');
