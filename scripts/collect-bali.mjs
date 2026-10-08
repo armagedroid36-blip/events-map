@@ -7,6 +7,7 @@ import { extractPrice } from './price-llm.mjs';
 import { extractCategory } from './category-llm.mjs';
 import { isInternationalArtist } from './intl-llm.mjs';
 import { extractContacts as extractSharedContacts } from './contacts-regex.mjs';
+import { districtFor, districtCenter, OUT_OF_BALI } from './bali-districts.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -45,38 +46,8 @@ const TYPE_MAP = {
 };
 const DEFAULT_CAT = 'lecture';
 
-// Центры районов Бали: используются, когда у события нет точных координат,
-// чтобы маркер всё равно появился на карте (в карточке — «место уточнить»).
-const BALI_DISTRICT_CENTERS = {
-  'canggu': { lat: -8.6475, lng: 115.1436 },
-  'pererenan': { lat: -8.6395, lng: 115.1479 },
-  'ubud': { lat: -8.5069, lng: 115.2625 },
-  'seminyak': { lat: -8.6911, lng: 115.1605 },
-  'legian': { lat: -8.7069, lng: 115.1667 },
-  'kuta': { lat: -8.7235, lng: 115.1705 },
-  'sanur': { lat: -8.6866, lng: 115.2629 },
-  'denpasar': { lat: -8.65, lng: 115.2167 },
-  'uluwatu': { lat: -8.8291, lng: 115.0849 },
-  'pecatu': { lat: -8.7743, lng: 115.0989 },
-  'jimbaran': { lat: -8.7901, lng: 115.1638 },
-  'nusa dua': { lat: -8.801, lng: 115.23 },
-  'sidemen': { lat: -8.4836, lng: 115.4431 },
-  'amed': { lat: -8.3339, lng: 115.6543 },
-  'lovina': { lat: -8.158, lng: 115.0295 },
-  'munduk': { lat: -8.2683, lng: 115.0798 },
-  'tabanan': { lat: -8.5435, lng: 115.1176 },
-  'gianyar': { lat: -8.5449, lng: 115.3282 },
-  // Каноны, которые попадают в city (см. DISTRICTS_RU/ADDRESS_DISTRICTS ниже):
-  // без них район падал на центр острова, а метка уезжала на 20–40 км.
-  'печату (улувату)': { lat: -8.8115, lng: 115.1000 },
-  'беноа (нуса дуа)': { lat: -8.801, lng: 115.23 },
-  'керобокан': { lat: -8.6605, lng: 115.1560 },
-  'унгасан': { lat: -8.8217, lng: 115.1583 },
-  'сукавати': { lat: -8.5784, lng: 115.2628 },
-  'джакарта': { lat: -6.2088, lng: 106.8456 },
-  // Запасной вариант — центр острова
-  'bali': { lat: -8.4095, lng: 115.1889 },
-};
+// Центры районов и словари синонимов — в scripts/bali-districts.mjs (проверяются юнит-тестом).
+
 
 // ===== Утилиты =====
 
@@ -377,41 +348,7 @@ async function main() {
       // 2) словарь синонимов districtName; 3) как пришло.
       // Дубли-написания, уже разобранные в базе (04.10.2026): Гианьяр→Убуд, Букит→Беноа,
       // Денпасар (адрес Керобокан)→Керобокан, Бангли (адрес Джакарта)→вне Бали.
-      const ADDRESS_DISTRICTS = [
-        ['kerobokan', 'Керобокан'], ['ubud', 'Убуд'], ['sayan', 'Убуд'],
-        ['penestanan', 'Убуд'], ['lodtunduh', 'Убуд'], ['singakerta', 'Убуд'],
-        ['pecatu', 'Печату (Улувату)'], ['uluwatu', 'Печату (Улувату)'],
-        ['ungasan', 'Унгасан'], ['jimbaran', 'Джимбаран'],
-        ['nusa dua', 'Беноа (Нуса Дуа)'], ['benoa', 'Беноа (Нуса Дуа)'],
-        ['tanjung', 'Беноа (Нуса Дуа)'],
-        ['canggu', 'Чангу'], ['pererenan', 'Чангу'], ['seminyak', 'Семиньяк'],
-        ['legian', 'Легиан'], ['sanur', 'Санур'], ['sukawati', 'Сукавати'],
-        ['kediri', 'Табанан'], ['tabanan', 'Табанан'], ['denpasar', 'Денпасар'],
-        ['jakarta', 'Джакарта'],
-      ];
-      const DISTRICTS_RU = {
-        ubud: 'Убуд', jimbaran: 'Джимбаран', canggu: 'Чангу', seminyak: 'Семиньяк',
-        kuta: 'Кута', sanur: 'Санур', pecatu: 'Печату (Улувату)',
-        uluwatu: 'Печату (Улувату)', denpasar: 'Денпасар', 'nusa dua': 'Беноа (Нуса Дуа)',
-        benoa: 'Беноа (Нуса Дуа)', tabanan: 'Табанан', amed: 'Амед', sidemen: 'Сидемен',
-        lovina: 'Ловина', legian: 'Легиан', kerobokan: 'Керобокан',
-        unggasan: 'Унгасан', ungasan: 'Унгасан', sukawati: 'Сукавати',
-        // кириллические варианты, которые уже попадали в базу
-        улувату: 'Печату (Улувату)', 'нуса-дуа': 'Беноа (Нуса Дуа)',
-        'нуса дуа': 'Беноа (Нуса Дуа)', букит: 'Беноа (Нуса Дуа)',
-        гианьяр: 'Убуд', унгасан: 'Унгасан', сукавати: 'Сукавати', керобокан: 'Керобокан',
-        'нет в списке': 'Bali',
-      };
-      const OUT_OF_BALI = new Set(['Джакарта']);
-      const addressText = String((loc && loc.address) || place.title || '').toLowerCase();
-      let district = null;
-      for (const [needle, canon] of ADDRESS_DISTRICTS) {
-        if (addressText.includes(needle)) { district = canon; break; }
-      }
-      if (!district) {
-        const rawDistrict = place.districtName || 'Bali';
-        district = DISTRICTS_RU[String(rawDistrict).trim().toLowerCase()] || rawDistrict;
-      }
+      const district = districtFor((loc && loc.address) || place.title || '', place.districtName);
       // Фото: у большинства событий Балифорума images пустой, реальные фото —
       // в media.content (previewUrl) и desktopPreview (обложка). Собираем из всех.
       const photos = [
@@ -422,7 +359,7 @@ async function main() {
 
       // Точных координат нет — ставим центр района: событие видно на карте,
       // а в карточке будет «место уточнить у организатора».
-      const center = BALI_DISTRICT_CENTERS[district.toLowerCase()] || BALI_DISTRICT_CENTERS['bali'];
+      const center = districtCenter(district);
       const lat = loc && loc.lat != null ? loc.lat : center.lat;
       const lng = loc && loc.lng != null ? loc.lng : center.lng;
 
