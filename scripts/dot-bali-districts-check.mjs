@@ -10,6 +10,9 @@ t('Чемаги→Табанан', districtFor('', 'Чемаги'), 'Табан�
 t('Далунг→Керобокан', districtFor('', 'Далунг'), 'Керобокан');
 t('Переренан→Чангу', districtFor('', 'Переренан'), 'Чангу');
 t('Пекату→Печату (Улувату)', districtFor('', 'Пекату'), 'Печату (Улувату)');
+t('Пандава→Кутух (кир)', districtFor('', 'Пандава'), 'Кутух');
+t('Pandawa→Кутух (лат)', districtFor('', 'Pandawa'), 'Кутух');
+t('адрес Пандава-бич → Кутух', districtFor('Jl. Pantai Pandawa, Kutuh, Kec. Kuta Sel.', 'Пандава'), 'Кутух');
 t('Тегалаланг', districtFor('', 'Тегалаланг'), 'Тегалаланг');
 t('Tegallalang лат', districtFor('', 'Tegallalang'), 'Тегалаланг');
 t('адрес важнее района', districtFor('Jl. Bumbak, Kerobokan', 'Dalung'), 'Керобокан');
