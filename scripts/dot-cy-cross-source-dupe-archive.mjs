@@ -44,6 +44,13 @@ const PAIRS = [
     keep: 'a3d16f5f', archive: '1685ff91', token: /samael/i,
     note: 'Samael 13.11 Никосия 20:00, DownTown Live (35.165,33.350): cyprusnow (адрес площадки «DownTown Live») vs cyprus.bz (адрес «DownTown Live, Limassol» — ложный город источника внутри никосийской карточки)',
   },
+  {
+    // подкласс «два слага ОДНОЙ страницы источника»: website совпадает, поэтому штатная страховка
+    // «разные website» заменяется явным ожиданием этой страницы у обеих карточек.
+    keep: '1c5a27ba', archive: 'bc52f4e4', token: /halloween/i, sameSite: true,
+    website: 'https://cyprusnow.app/event/halloween-extravaganza-drag-show-dj-night-in-limassol-2026-10-30',
+    note: 'Halloween Extravaganza 30.10 Лимасол 21:00, Rooftop Bar at Limassol Agora (34.6761,33.0434): оставляю cyprusnow-слаг с адресом площадки и переводом ru+en (1 фото), архив — карточка того же события с адресом «Limassol Agora» и описанием без перевода (1 фото)',
+  },
 ];
 
 const rows = await selectAll(db, 'events', 'id,title,title_ru,start_date,start_time,city,address,lat,lng,website,status,photos,description,description_en');
@@ -61,7 +68,9 @@ for (const p of PAIRS) {
   if ((kill.start_time || '') !== (keep.start_time || '')) fail.push(`время разное (${kill.start_time} / ${keep.start_time})`);
   if (!near(kill.lat, keep.lat, kill.lng, keep.lng)) fail.push(`точки разные (${kill.lat},${kill.lng} / ${keep.lat},${keep.lng})`);
   if (!p.token.test(kill.title) || !p.token.test(keep.title)) fail.push('заголовки не про одно событие');
-  if (kill.website === keep.website) fail.push('одинаковый website');
+  if (p.sameSite) {
+    if (kill.website !== p.website || keep.website !== p.website) fail.push('website не та страница, что ожидалась');
+  } else if (kill.website === keep.website) fail.push('одинаковый website');
   // третьи копии на той же точке/дате
   const same = live.filter((r) => r.id.slice(0, 8) !== p.keep && r.id.slice(0, 8) !== p.archive
     && r.start_date === keep.start_date && near(r.lat, keep.lat, r.lng, keep.lng));
