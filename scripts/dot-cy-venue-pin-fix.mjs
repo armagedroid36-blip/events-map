@@ -18,6 +18,9 @@ const FIXES = {
   // run 106: фолбэк Ларнаки — адрес карточки называет площадку, точка взята из ленты Cyprus Now (city=larnaca&limit=200)
   '591cba27': { lat: 34.9108675, lng: 33.6329481, source: 'лента Cyprus Now city=larnaca (venue «Larnaka Multi-functional Centre», 7 знаков; та же точка у 7 событий ленты, первое «IDO Couple Dance Championships»)', why: 'IDO World Championship — адрес «Multi-functional Center for Social Activities and Welfare of Larnaka Municipality, 63 Faneromenis Str.»' },
   '72eea8d4': { lat: 34.9140131, lng: 33.6383829, source: 'лента Cyprus Now city=larnaca (venue «Finikoudes Larnaka», 7 знаков; точка у марафона Radisson Blu — то же событие источника)', why: 'Radisson Blu Larnaka International Marathon — адрес «Finikoudes Promenade, Athinon Avenue»' },
+  // run 107: фолбэки Никосии/Лимасола — адрес карточки называет площадку, точка из city-срезов Cyprus Now
+  '988b4e49': { lat: 35.17277, lng: 33.3547068, source: 'лента Cyprus Now city=nicosia (venue «Nicosia Municipal Theatre», одна и та же точка у 4 событий ленты)', why: 'Симфонический оркестр Кипра — STARLIGHT 1 — адрес «Nicosia Municipal Theatre, Mouseiou 4, Lefkosia»' },
+  '72e8b381': { lat: 34.6844593, lng: 33.060337, source: 'лента Cyprus Now city=limassol (venue «Free2dive, AIDA», 7 знаков)', why: 'World Apnea Championships — адрес «Free2dive, AIDA, 28 October Ave, Limassol»' },
   '137c58e9': { lat: 34.6824125, lng: 33.0259269, source: 'cyprusnow.app (geo площадки, run 39)', why: 'ITF MASTERS 400 — Famagusta Tennis Club, 3 Mesaorias Str, Лимасол' },
   '707055aa': { lat: 34.6824125, lng: 33.0259269, source: 'cyprusnow.app (geo площадки, run 39)', why: 'TEU14 — тот же клуб' },
   'e37a0231': { lat: 34.6824125, lng: 33.0259269, source: 'cyprusnow.app (geo площадки, run 39)', why: 'TEU16 — тот же клуб' },
