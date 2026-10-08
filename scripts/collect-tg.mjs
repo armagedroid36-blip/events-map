@@ -12,6 +12,7 @@ import { extractAddressLLM } from './address-llm.mjs';
 import { extractAddress } from './address-regex.mjs';
 // Мусорные «адреса» из постов («уточняйте у организаторов», «север») в карточку не берём.
 import { cleanAddress, isCityAddress } from './address-junk.mjs';
+import { cleanCardText } from './text-safe.mjs';
 import { extractContacts } from './contacts-regex.mjs';
 import { extractDateLLM } from './date-llm.mjs';
 import { findCityZone } from './city-zones.mjs';
@@ -525,7 +526,7 @@ async function main() {
           }
         }
 
-        const title = extractTitle(post.text);
+        const title = cleanCardText(extractTitle(post.text));
         const key = normKey(title, when.date);
         if (seen.has(key)) continue;
 
@@ -652,10 +653,10 @@ async function main() {
         const website = `https://t.me/${post.pid}`;
 
         const row = {
-          title,
-          title_ru: title,
-          description: cleanText.slice(0, 3000),
-          description_ru: cleanText.slice(0, 3000),
+          title: cleanCardText(title),
+          title_ru: cleanCardText(title),
+          description: cleanCardText(cleanText).slice(0, 3000),
+          description_ru: cleanCardText(cleanText).slice(0, 3000),
           source_lang: 'ru',
           language: 'ru',
           start_date: when.date,

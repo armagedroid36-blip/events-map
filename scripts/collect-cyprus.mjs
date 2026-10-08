@@ -15,6 +15,7 @@ import { extractCategory } from './category-llm.mjs';
 import { selectAll } from './db-rows.mjs';
 import { districtOf, districtNear, districtOfCity, cityForPoint } from './cy-districts.mjs';
 import { cleanDescription } from './desc-junk.mjs';
+import { cleanCardText } from './text-safe.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -421,7 +422,8 @@ async function buildRow(src) {
   // Описание-ярлык («Balletto di Milano» = строка состава) и описание, повторяющее
   // заголовок, в поле описания не пишем: на карточке это рендерится как обрывок
   // или дубль названия в блоке «О событии».
-  const desc = cleanDescription(src.description, src.title);
+  const cTitle = cleanCardText(src.title);
+  const desc = cleanCardText(cleanDescription(src.description, cTitle));
 
   // Язык по письменности: греческий заголовок важнее подсказки источника,
   // иначе агрегатор помечает греческую афишу как английскую.
@@ -431,10 +433,10 @@ async function buildRow(src) {
   const lang = titleLang === 'en' ? (src.lang || 'en') : titleLang;
 
   return {
-    title: src.title,
+    title: cTitle,
     // Греческий текст в RU-поля НЕ копируем (иначе RU-страница показывает
     // греческую афишу): перевод подставит scripts/backfill-translations.mjs.
-    title_ru: titleLang === 'el' ? null : src.title,
+    title_ru: titleLang === 'el' ? null : cTitle,
     description: desc,
     description_ru: greek ? null : desc,
     source_lang: lang,
@@ -444,7 +446,7 @@ async function buildRow(src) {
     start_time: src.start_time || null,
     end_time: src.end_time || null,
     city: `${city}, Кипр`,
-    address: src.address || src.venue || null,
+    address: cleanCardText(src.address || src.venue || '') || null,
     lat,
     lng,
     category_id: cat,

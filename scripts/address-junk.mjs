@@ -2,6 +2,7 @@
 // Организаторы пишут «уточняйте у организаторов», «север», «локация при записи» —
 // это не адрес: в карточке такое поле врёт и сбивает геокодер.
 // Проверка: node scripts/dot-addr-junk-check.mjs
+import { cleanCardText } from './text-safe.mjs';
 
 /** Ведущий служебный ярлык: «Где:», «Локация:», «Адрес — », «Место проведения:», «Where:». */
 const LABEL = /^(?:где|where|локаци[яи]|адрес|место(?:\s+проведени[яе])?|проведени[яе]|place)\s*[:—-]\s*/i;
@@ -74,5 +75,5 @@ export function stripAddressLabel(raw) {
 /** Адрес для карточки: мусор → null, иначе строка без служебного ярлыка. */
 export function cleanAddress(raw) {
   if (isJunkAddress(raw)) return null;
-  return stripAddressLabel(raw);
+  return cleanCardText(stripAddressLabel(raw)) || null;
 }

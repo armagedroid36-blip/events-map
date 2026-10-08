@@ -50,3 +50,36 @@ export function clipText(str, max) {
 export function hasLoneSurrogate(str) {
   return wellFormedText(str).length !== String(str ?? '').length;
 }
+
+// ===== Невидимый мусор и двойные пробелы =====
+// Посты и страницы-источники тянут в текст символы нулевой ширины и «висячие»
+// пробелы: U+200B (zero-width space), U+FEFF (BOM), U+2060 (word joiner),
+// U+200E/U+200F (LMR/RLM), U+00AD (мягкий перенос). На карточке это невидимые
+// разрывы и «дырки» в словах. ZWJ (U+200D) и ZWNJ (U+200C) НЕ трогаем — они
+// часть эмодзи-последовательностей (🧘‍♀️), удаление развалит эмодзи.
+const INVISIBLE = /[\u200b\u200e\u200f\u2060\ufeff\u00ad]/g;
+const INVISIBLE_TEST = /[\u200b\u200e\u200f\u2060\ufeff\u00ad]/;
+
+/** Убрать невидимые символы (эмодзи-последовательности не ломаются) */
+export function stripInvisible(str) {
+  return String(str ?? '').replace(INVISIBLE, '');
+}
+
+/** Схлопнуть двойные пробелы/табы; переносы строк сохраняются */
+export function squeezeSpaces(str) {
+  return String(str ?? '').replace(/[ \t]{2,}/g, ' ').replace(/[ \t]+$/gm, '');
+}
+
+/**
+ * Текст для карточки (заголовок, адрес, описание) без невидимого мусора
+ * и двойных пробелов. Переносы строк сохраняем — ими размечена афиша.
+ */
+export function cleanCardText(str) {
+  return squeezeSpaces(stripInvisible(str)).trim();
+}
+
+/** Диагностика: есть ли в строке невидимый мусор */
+export function hasInvisible(str) {
+  return INVISIBLE_TEST.test(String(str ?? ''));
+}
+

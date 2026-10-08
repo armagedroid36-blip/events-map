@@ -8,6 +8,7 @@ import { extractCategory } from './category-llm.mjs';
 import { isInternationalArtist } from './intl-llm.mjs';
 import { extractContacts as extractSharedContacts } from './contacts-regex.mjs';
 import { districtFor, districtCenter, OUT_OF_BALI } from './bali-districts.mjs';
+import { stripInvisible } from './text-safe.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -230,7 +231,7 @@ function normKey(title, date) {
  * Снимаем пиктограммы/селекторы/zero-width и схлопываем пробелы.
  */
 export function cleanTitle(text) {
-  return String(text || '')
+  return stripInvisible(text || '')
     .replace(/[\u{1F000}-\u{1FAFF}\u{2190}-\u{21FF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{200D}\u{20E3}]/gu, '')
     .replace(/[ \t]{2,}/g, ' ')
     .replace(/\s+([,.;:!?)])/g, '$1')
