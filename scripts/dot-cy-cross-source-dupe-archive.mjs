@@ -72,6 +72,18 @@ const PAIRS = [
     source: { start_date: '2026-10-10', start_time: '15:30:00' },
     note: 'Cultural Festival 10.10 Klirou Village Square (35.0213564,33.1777225): страница даёт 10.10 15:30; оставляю карточку с этой датой, архив — карточка с устаревшей датой 09.10 18:00 (та же точка и адрес)',
   },
+  {
+    keep: '007d21be', archive: '3312ee32', token: /comic\s*con/i,
+    note: 'Comic Con / Halloween 31.10 Никосия 12:00-21:00, Mall of Engomi: cyprus.bz (страница /event/35b5, 3 фото, название «Halloween in the World of Comics. Comic Con 2026», JSON-LD 10:00-19:00Z = 12:00-21:00 EET) vs cyprusnow (1 фото, «NecroComicCon 2026: Halloween at Mall of Engomi», JSON-LD 12:00-21:00+02:00) — та же площадка, та же дата и часы; страница cyprus.bz сама упоминает NecroComicCon',
+  },
+  {
+    keep: '2627b94c', archive: '7abd838b', token: /aglanjazz/i,
+    note: 'AglanJazz Festival 2026 10.10 Никосия 19:00, Skali Amphitheatre (Aglantzia): две записи одного фестиваля в ленте cyprusnow (разные слаги, JSON-LD обеих 2026-10-10T19:00+03:00); оставляю карточку с адресом «Skali Amphitheatre, Aglantzia», архив — «AglanJazz Festival 2026: Live Jazz Night in Nicosia» с адресом «Skali Aglantzas»',
+  },
+  {
+    keep: '4cf5d3f2', archive: '2a81f375', token: /christmas\s*village/i,
+    note: 'Рождественская деревня Калопанайотиса 21.11.2026-06.01.2027, 34.993,32.830: cyprus.bz (3 фото, адрес «Fairytale Christmas Village Kalopanayiotis», JSON-LD 21.11 11:00 местного) vs cyprusnow (1 фото, «Kalopanagiotis Christmas Village 2026: Programme & Dates», JSON-LD 21.11 11:00+02:00) — одна сезонная площадка, два источника',
+  },
 ];
 
 const rows = await selectAll(db, 'events', 'id,title,title_ru,start_date,start_time,city,address,lat,lng,website,status,photos,description,description_en');
