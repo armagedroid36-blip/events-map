@@ -8,6 +8,8 @@
 //
 // Экспорт: checkRules(ev) -> { verdict, flags[], reason }
 
+import { clipText } from './text-safe.mjs';
+
 // --- Мат и оскорбления -------------------------------------------------------
 // Корни, которые безопасно искать подстрокой: слова с такими началами — мат.
 // ВАЖНО: проверять новые корни на всей базе (node scripts/check-moderation-rules.mjs),
@@ -204,8 +206,8 @@ export function checkRules(ev) {
 export function eventTextForLlm(ev) {
   const { title, desc } = textOf(ev);
   return {
-    title: title.slice(0, 200),
-    description: desc.slice(0, 1200),
+    title: clipText(title, 200),
+    description: clipText(desc, 1200),
     city: norm(ev.city),
     address: norm(ev.address),
     category: norm(ev.category_id),

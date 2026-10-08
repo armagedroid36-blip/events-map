@@ -36,6 +36,7 @@
 // VITE_SUPABASE_ANON_KEY, DEEPSEEK_API_KEY) && node scripts/backfill-translations.mjs
 import { createClient } from '@supabase/supabase-js';
 import { selectAll } from './db-rows.mjs';
+import { clipText } from './text-safe.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -150,7 +151,7 @@ async function translateViaDeepSeek(text, targetLang, strict = false) {
         {
           role: 'user',
           content:
-            `Переведи на ${langName} язык:\n\n${String(text).slice(0, MAX_INPUT_CHARS)}` +
+            `Переведи на ${langName} язык:\n\n${clipText(text, MAX_INPUT_CHARS)}` +
             (strict ? strictSuffix(targetLang) : ''),
         },
       ],

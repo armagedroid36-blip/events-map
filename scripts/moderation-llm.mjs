@@ -11,6 +11,8 @@
 // judgeEvent(card) → { verdict, flags, reason } | null  (null = «на проверку человеку»)
 // judgeEventWithReason(card) → { ok: true, verdict, flags, reason } | { ok: false, error }
 
+import { wellFormedText } from './text-safe.mjs';
+
 const DEEPSEEK_URL = process.env.MODERATION_LLM_URL || 'https://api.deepseek.com/v1/chat/completions';
 const TIMEOUT_MS = Math.max(3000, Number(process.env.MODERATION_LLM_TIMEOUT_MS || 25000) || 25000);
 const ATTEMPTS = Math.max(1, Number(process.env.MODERATION_LLM_ATTEMPTS || 3) || 3);
@@ -88,13 +90,16 @@ export async function judgeEventWithReason(card) {
             { role: 'system', content: SYSTEM_PROMPT },
             {
               role: 'user',
-              content:
+              // wellFormedText: одиночный суррогат (обрезанная эмодзи) роняет
+              // парсер провайдера в HTTP 400 — см. scripts/text-safe.mjs
+              content: wellFormedText(
                 `Название: ${card.title}\n` +
                 `Категория: ${card.category || '—'}\n` +
                 `Город: ${card.city || '—'}\n` +
                 `Адрес: ${card.address || '—'}\n` +
                 `Ссылка: ${card.website || '—'}\n` +
                 `Описание: ${card.description || '—'}`,
+              ),
             },
           ],
         }),
