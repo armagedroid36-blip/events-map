@@ -51,6 +51,27 @@ const PAIRS = [
     website: 'https://cyprusnow.app/event/halloween-extravaganza-drag-show-dj-night-in-limassol-2026-10-30',
     note: 'Halloween Extravaganza 30.10 Лимасол 21:00, Rooftop Bar at Limassol Agora (34.6761,33.0434): оставляю cyprusnow-слаг с адресом площадки и переводом ru+en (1 фото), архив — карточка того же события с адресом «Limassol Agora» и описанием без перевода (1 фото)',
   },
+  {
+    // подкласс «одна страница источника, ДВЕ карточки с разными временем»: страница обновилась,
+    // одна карточка осталась со старыми данными. Арбитр — JSON-LD страницы (`source`): оставляем
+    // ту карточку, что совпадает с источником, устаревшую — в архив.
+    keep: '9c9a2952', archive: '3da16852', token: /kazanias/i, sameSite: true,
+    website: 'https://cyprusnow.app/event/grape-harvest-festival-2026-08-16',
+    source: { start_date: '2026-10-25', start_time: '18:00:00' },
+    note: 'Festival "Kazaniasmata" 25.10 Arsos Village Square (34.8409,32.7691): страница даёт 18:00-21:00; оставляю карточку с адресом «Arsos Village Square» (18:00), архив — «Kazaniasmata Festival 2026 @ Arsos» с устаревшим временем 17:00 и адресом уровня города «Лимасол, Кипр»',
+  },
+  {
+    keep: '9a506e8a', archive: 'b3ca7316', token: /lotus\s*parable/i, sameSite: true,
+    website: 'https://cyprusnow.app/event/lotus-parable-2026-10-17',
+    source: { start_date: '2026-10-17', start_time: '20:30:00' },
+    note: 'Lotus Parable 17.10 Лимасол: страница даёт 20:30-11:00 без площадки; оставляю «Lotus Parable – Label Night» (20:30, title источника), архив — «Lotus Parable» с временем 22:00 и площадкой «Sacred Garden», которой на странице источника НЕТ (не подтверждается)',
+  },
+  {
+    keep: '36a87826', archive: '7db533dc', token: /cultural\s*fe?s?tival/i, sameSite: true,
+    website: 'https://cyprusnow.app/event/cultural-festival-2026-10-09',
+    source: { start_date: '2026-10-10', start_time: '15:30:00' },
+    note: 'Cultural Festival 10.10 Klirou Village Square (35.0213564,33.1777225): страница даёт 10.10 15:30; оставляю карточку с этой датой, архив — карточка с устаревшей датой 09.10 18:00 (та же точка и адрес)',
+  },
 ];
 
 const rows = await selectAll(db, 'events', 'id,title,title_ru,start_date,start_time,city,address,lat,lng,website,status,photos,description,description_en');
@@ -64,9 +85,17 @@ for (const p of PAIRS) {
   if (!keep) { console.log(`ПРОПУСК ${p.keep}: оставляемая карточка не active/нет в базе`); skipped++; continue; }
   if (!kill) { console.log(`ПРОПУСК ${p.archive}: карточка не active/нет в базе`); skipped++; continue; }
   const fail = [];
-  if (kill.start_date !== keep.start_date) fail.push(`даты разные (${kill.start_date} / ${keep.start_date})`);
-  if ((kill.start_time || '') !== (keep.start_time || '')) fail.push(`время разное (${kill.start_time} / ${keep.start_time})`);
-  if (!near(kill.lat, keep.lat, kill.lng, keep.lng)) fail.push(`точки разные (${kill.lat},${kill.lng} / ${keep.lat},${keep.lng})`);
+  if (p.source) {
+    // арбитр — страница источника: обе карточки с одного website, а верные дата/время берём из JSON-LD
+    if (keep.start_date !== p.source.start_date || (keep.start_time || '') !== p.source.start_time)
+      fail.push(`оставляемая не совпадает с источником (${keep.start_date} ${keep.start_time} vs ${p.source.start_date} ${p.source.start_time})`);
+    if (kill.start_date === p.source.start_date && (kill.start_time || '') === p.source.start_time)
+      fail.push('обе карточки совпадают с источником — разбирать вручную');
+  } else {
+    if (kill.start_date !== keep.start_date) fail.push(`даты разные (${kill.start_date} / ${keep.start_date})`);
+    if ((kill.start_time || '') !== (keep.start_time || '')) fail.push(`время разное (${kill.start_time} / ${keep.start_time})`);
+    if (!near(kill.lat, keep.lat, kill.lng, keep.lng)) fail.push(`точки разные (${kill.lat},${kill.lng} / ${keep.lat},${keep.lng})`);
+  }
   if (!p.token.test(kill.title) || !p.token.test(keep.title)) fail.push('заголовки не про одно событие');
   if (p.sameSite) {
     if (kill.website !== p.website || keep.website !== p.website) fail.push('website не та страница, что ожидалась');
