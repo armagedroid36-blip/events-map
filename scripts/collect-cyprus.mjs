@@ -249,6 +249,12 @@ async function fetchJson(url, timeoutMs = 60000) {
  * успели прочитать — для sitemap этого достаточно (обрезанный XML всё ещё
  * содержит полные <loc>-записи).
  */
+// Последний URL, который реально отдал сервер (после 301/302). Нужен, чтобы
+// страницы, которые источник слил в другую (cyprus.bz/event/<a> → 301 → /event/<b>),
+// не превращались в отдельные карточки: в базу пишем канонический адрес, и его
+// находит проверка `bzPages` при следующем сборе.
+let lastFetchUrl = null;
+
 async function fetchPartial(url, budgetMs = 90000, accept = 'application/xml,text/html;q=0.9,*/*;q=0.8') {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), budgetMs);
@@ -256,6 +262,7 @@ async function fetchPartial(url, budgetMs = 90000, accept = 'application/xml,tex
   try {
     const res = await fetch(url, { headers: { 'User-Agent': UA, Accept: accept, 'Accept-Language': 'ru,en;q=0.8' }, signal: ctrl.signal });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    lastFetchUrl = res.url || url;
     const reader = res.body?.getReader();
     if (!reader) return await res.text();
     const dec = new TextDecoder();
@@ -655,14 +662,24 @@ async function collectCyprusBz(seen, budget, websites = new Set(), bzPages = new
     }
     scanned++;
     let ev;
+    let pageUrl = url;
     try {
-      ev = jsonLdEvents(await fetchPartial(url, 25000))[0];
+      const html = await fetchPartial(url, 25000);
+      if (lastFetchUrl && lastFetchUrl !== url) pageUrl = lastFetchUrl;
+      ev = jsonLdEvents(html)[0];
     } catch (e) {
       console.error(`  ${url.slice(-40)}: ${e.message}`);
       fails++;
       continue;
     }
     fails = 0;
+    // Источник слил страницу в другую (301): если каноническая уже в базе — это
+    // та же карточка, вставлять копию нельзя (иначе на карте две метки одного события).
+    if (pageUrl !== url && (websites.has(pageUrl) || (canonBzPage(pageUrl) && bzPages.has(canonBzPage(pageUrl))))) {
+      stats.skipped++;
+      stats.bzDup++;
+      continue;
+    }
     await new Promise((r) => setTimeout(r, 400)); // вежливая пауза между страницами
     if (!ev) continue;
     const title = decodeEntities(ev.name || '').trim();
@@ -692,7 +709,7 @@ async function collectCyprusBz(seen, budget, websites = new Set(), bzPages = new
       cityEn: addrLoc || '',
       venue: place,
       address: [place, addrLoc].filter(Boolean).join(', ') || bzCity,
-      website: ev.url || url,
+      website: ev.url || pageUrl,
       photos,
       category: 'festival',
       catHint: `Источник: афиша Cyprus.BZ (русскоязычная), место: ${place}, ${addrLoc}`,

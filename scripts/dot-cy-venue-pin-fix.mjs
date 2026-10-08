@@ -11,6 +11,10 @@ const db = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERV
 
 // id -> { lat, lng, source, why }
 const FIXES = {
+  // run 104: остаток фолбэка Фамагусты — села/город уровня населённого пункта (Nominatim)
+  '0eaa1378': { lat: 35.0421958, lng: 33.9223452, source: 'Nominatim: Φρέναρος (relation 12315121, place=village, район Фамагуста)', why: 'A Poet Is Like a River — адрес «Frenaros Municipal Amphitheater» = село Френарос (уровень села, как Latsia/Лимпья)' },
+  '789f8502': { lat: 35.0149462, lng: 34.0531284, source: 'Nominatim: Πρωταράς (node 21422489, place=town, район Фамагуста)', why: 'Protaras SwimRun — адрес «Protaras» = центр городка Протарас (уровень города)' },
+  'e2129973': { lat: 35.0719751, lng: 33.8815901, source: 'лента Cyprus Now (Village square, Acheritou-Vrysoulles) — та же точка, что у переставленной run 70 карточки; слитая страница cyprus.bz/event/349f подтверждает локацию «Village Square, Acheritou-Vrysoulles»', why: '4th Cyprus-Wide Cultural Wheat Harvest Festival — площадь села Ахериту' },
   '137c58e9': { lat: 34.6824125, lng: 33.0259269, source: 'cyprusnow.app (geo площадки, run 39)', why: 'ITF MASTERS 400 — Famagusta Tennis Club, 3 Mesaorias Str, Лимасол' },
   '707055aa': { lat: 34.6824125, lng: 33.0259269, source: 'cyprusnow.app (geo площадки, run 39)', why: 'TEU14 — тот же клуб' },
   'e37a0231': { lat: 34.6824125, lng: 33.0259269, source: 'cyprusnow.app (geo площадки, run 39)', why: 'TEU16 — тот же клуб' },
@@ -25,7 +29,7 @@ const FIXES = {
 const rows = await selectAll(db, 'events', 'id,title,city,address,lat,lng,status');
 const byId = new Map(rows.map((r) => [r.id.slice(0, 8), r]));
 const near = (a, b) => a != null && Math.abs(a - b) < 0.002;
-const CENTERS = [[34.7071, 33.0226], [34.9182, 33.6194], [35.1856, 33.3823], [34.7754, 32.4245]];
+const CENTERS = [[34.7071, 33.0226], [34.9182, 33.6194], [35.1856, 33.3823], [34.7754, 32.4245], [35.1205, 33.9432]];
 
 let applied = 0, skipped = 0;
 for (const [prefix, fix] of Object.entries(FIXES)) {
