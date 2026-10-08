@@ -21,6 +21,7 @@ const FIXES = {
   // run 107: фолбэки Никосии/Лимасола — адрес карточки называет площадку, точка из city-срезов Cyprus Now
   '988b4e49': { lat: 35.17277, lng: 33.3547068, source: 'лента Cyprus Now city=nicosia (venue «Nicosia Municipal Theatre», одна и та же точка у 4 событий ленты)', why: 'Симфонический оркестр Кипра — STARLIGHT 1 — адрес «Nicosia Municipal Theatre, Mouseiou 4, Lefkosia»' },
   '72e8b381': { lat: 34.6844593, lng: 33.060337, source: 'лента Cyprus Now city=limassol (venue «Free2dive, AIDA», 7 знаков)', why: 'World Apnea Championships — адрес «Free2dive, AIDA, 28 October Ave, Limassol»' },
+  'ea7d0490': { lat: 34.7781598, lng: 32.4232334, source: 'лента Cyprus Now city=paphos: тот же концерт 18.10.2026 в англ. версии «Scheherazade: One Thousand and One Nights» стоит на venue «Markideio Municipal Theatre» (34.7781598,32.4232334, 7 знаков); в базе 31 карточка Markideio с этой же точкой', why: 'Балет Шехеразада в Пафосе — источник дал только адрес уровня города (центровой фолбэк Пафоса)' },
   '137c58e9': { lat: 34.6824125, lng: 33.0259269, source: 'cyprusnow.app (geo площадки, run 39)', why: 'ITF MASTERS 400 — Famagusta Tennis Club, 3 Mesaorias Str, Лимасол' },
   '707055aa': { lat: 34.6824125, lng: 33.0259269, source: 'cyprusnow.app (geo площадки, run 39)', why: 'TEU14 — тот же клуб' },
   'e37a0231': { lat: 34.6824125, lng: 33.0259269, source: 'cyprusnow.app (geo площадки, run 39)', why: 'TEU16 — тот же клуб' },
