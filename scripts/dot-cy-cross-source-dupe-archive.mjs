@@ -244,6 +244,19 @@ const PAIRS = [
     seriesLastDay: true, venue: 'gamezone',
     note: 'Archery Tag Нячанг, GameZone (12.3007872,109.2072767): оставлена карточка недельной серии 03–10.10 16:30–18:00 (post 24058, recurrence weekly), архив — напоминание о последнем занятии 10.10 16:30–18:00 (post 24318)',
   },
+  {
+    // тот же подкласс «финальный день многодневного» (запуск 132), источник — Cyprus Now:
+    // Lefkara Classic идёт 12–15.11.2026 (велогонка-бревет + фестиваль, The Agora Hotel, Пано Лефкара).
+    // Лента отдаёт ДВЕ записи одного события: каноническая `lefkara-classic-2026-15-11-2026-2026-11-15`
+    // → start_at 2026-11-12T14:00Z (=16:00 местного) / end_at 2026-11-15T15:00Z (=17:00), и
+    // `lefkara-classic-endurance-cycling-challenge-in-lefkara-2026-11-15` → только 2026-11-15T04:30Z
+    // (=06:30), финальный день. Проверено 09.10.2026 через прокси 10809: API `?q=lefkara` отдаёт обе
+    // записи, площадка у обеих «The Agora Hotel».
+    keep: '3845e750', archive: '3a8400bb', token: /lefkara/i,
+    windowInside: true, venue: 'agora',
+    source: { start_date: '2026-11-12', start_time: '16:00:00', end_date: '2026-11-15' },
+    note: 'Lefkara Classic 12–15.11.2026 Ларнака, Пано Лефкара (34.8665517,33.3068524): оставлена карточка полного интервала 12.11 16:00 → 15.11 17:00 (адрес «The Agora Hotel / Pano Lefkara Square», сайт lefkaraclassic.com); архив — карточка того же события, датированная только финальным днём 15.11 06:30',
+  },
 ];
 
 const rows = await selectAll(db, 'events', 'id,title,title_ru,start_date,start_time,end_time,end_date,recurrence,city,address,lat,lng,website,status,photos,description,description_en');
