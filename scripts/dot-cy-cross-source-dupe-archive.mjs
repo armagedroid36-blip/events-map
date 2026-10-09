@@ -132,6 +132,13 @@ const PAIRS = [
     source: { start_date: '2026-10-18', start_time: '10:00:00' },
     note: 'Nicosia Kids Festival (2-е издание) 18.10 10:00: страница /event/nicosia-kids-festival-2nd-edition-free-family-festival-in-nicosia-2026-10-18 (Old GSP Park, 35.1684711,33.3566973) оставлена; архив — /event/2ο-nicosia-kids-festival-…-2026-10-18 (греческая страница, адрес это перечень мест, пин = центр Никосии)',
   },
+  {
+    // подкласс «одно событие — латинский и греческий слаг источника, разные пин и адрес» (запуск 121):
+    // латинская страница даёт площадку «Central Square of Acheritou», греческая — только город.
+    keep: '8030fb70', archive: '12076f2e', token: /(παγκ|pan.?cypriot)/i, cityAddr: true,
+    source: { start_date: '2026-10-09', start_time: '19:00:00' },
+    note: '4-й Паγκипрский летний культурный фестиваль 09.10 19:00 Фамагуста: страница /event/4th-pan-cypriot-summer-cultural-festival-in-famagusta-2026-10-09 (Central Square of Acheritou, 35.0996644,33.8613357) оставлена; архив — /event/4o-παγκύπριο-πολιτιστικό-φεστιβάλ-θέρους-2026-10-09 (греческий слаг, адрес уровня города «Фамагуста, Кипр», пин 35.139128,33.8478462)',
+  },
 ];
 
 const rows = await selectAll(db, 'events', 'id,title,title_ru,start_date,start_time,city,address,lat,lng,website,status,photos,description,description_en');
@@ -167,6 +174,18 @@ for (const p of PAIRS) {
     if (keep.city === kill.city) console.log(`   (инфо: город один и тот же — ${keep.city}; различие только в слаге и пине)`);
     if (weakPin(keep)) fail.push('оставляемая сама стоит на центровом/общем пине — разбирать вручную');
     if (!weakPin(kill)) fail.push('архивируемая НЕ на центровом/общем пине — разбирать вручную');
+  } else if (p.cityAddr) {
+    // подкласс «одно событие — два слага источника, разные точки»: обе страницы дают одну дату и время,
+    // поэтому арбитр — адрес: архивируемая стоит с адресом УРОВНЯ ГОРОДА, оставляемая — с площадкой.
+    if (kill.start_date !== keep.start_date) fail.push(`даты разные (${kill.start_date} / ${keep.start_date})`);
+    if ((kill.start_time || '') !== (keep.start_time || '')) fail.push(`время разное (${kill.start_time} / ${keep.start_time})`);
+    const cityCore = (kill.city || '').split(',')[0].trim().toLowerCase();
+    const cityLevel = (r) => {
+      const a = (r.address || '').trim().toLowerCase();
+      return a === '' || a === (r.city || '').trim().toLowerCase() || a === cityCore;
+    };
+    if (!cityLevel(kill)) fail.push(`архивируемая с адресом площадки («${kill.address}») — разбирать вручную`);
+    if (cityLevel(keep)) fail.push('оставляемая тоже с адресом уровня города — разбирать вручную');
   } else if (p.source) {
     // арбитр — страница источника: обе карточки с одного website, а верные дата/время берём из JSON-LD
     if (keep.start_date !== p.source.start_date || (keep.start_time || '') !== p.source.start_time)
