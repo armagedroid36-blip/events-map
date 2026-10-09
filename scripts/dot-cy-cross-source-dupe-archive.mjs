@@ -300,6 +300,20 @@ const PAIRS = [
     source: { start_date: '2026-11-23', start_time: null, end_date: '2026-11-29' },
     note: 'TEU16 (Tennis Europe U16) Лимасол: оставлена карточка полного интервала 23–29.11.2026 (адрес «Famagusta Tennis Club, 3 Mesaorias Str, Limassol», сайт famagustatc.com), архив — карточка того же турнира, датированная только финальным днём 29.11 09:00 (греч. слаг cyprusnow); пин 34.6824125,33.0259269 у обеих',
   },
+  {
+    // обратный случай того же класса (запуск 137): у источника ОДИН вечер, а карточка второго
+    // источника растянула то же событие на интервал тура. Источник Cyprus Now, проверено 09.10.2026
+    // через прокси 10809: страница `/event/η-αλίκη-…-στην-πάφο-2026-12-07` в JSON-LD даёт только
+    // startDate 2026-12-07T18:30+02:00 (endDate нет) и venue Markideio Municipal Theatre;
+    // API `?q=αλίκη` отдаёт ту же запись start_at 2026-12-07T16:30Z (=18:30 местного), end_at = тот же.
+    // Карточка cyprus.bz (`/event/35a2/…`, канон уводит на никосийский показ тура) держит окно
+    // 04.12 → 07.12 — это интервал тура по городам, а не вечер в Пафосе: город и площадка у обеих
+    // совпадают, пин одинаковый (34.7781…,32.4232…), расходится только окно.
+    keep: '2e39d8d4', archive: 'a14e7afe', token: /alice|αλίκ|αλικ/i,
+    sourceOneDay: true, venue: 'markideio',
+    source: { start_date: '2026-12-07', start_time: '18:30:00' },
+    note: 'Alice in Wonderland on Ice, Пафос: оставлена карточка источника Cyprus Now (07.12 18:30, Markideio Municipal Theatre), архив — карточка cyprus.bz с окном тура 04–07.12 (её канонический URL описывает никосийский показ)',
+  },
 ];
 
 const rows = await selectAll(db, 'events', 'id,title,title_ru,start_date,start_time,end_time,end_date,recurrence,city,address,lat,lng,website,status,photos,description,description_en');
@@ -313,7 +327,24 @@ for (const p of PAIRS) {
   if (!keep) { console.log(`ПРОПУСК ${p.keep}: оставляемая карточка не active/нет в базе`); skipped++; continue; }
   if (!kill) { console.log(`ПРОПУСК ${p.archive}: карточка не active/нет в базе`); skipped++; continue; }
   const fail = [];
-  if (p.windowInside) {
+  if (p.sourceOneDay) {
+    // обратный подкласс: страница источника подтверждает РОВНО один вечер (JSON-LD без endDate),
+    // а вторая карточка растянула то же событие на интервал тура. Оставляемая обязана совпадать
+    // с источником (дата+время), архивируемая — быть многодневной, и её интервал обязан СОДЕРЖАТЬ
+    // день оставляемой; город и площадка — совпадать.
+    const s = p.source || {};
+    const kEnd = kill.end_date || kill.start_date;
+    if (keep.start_date !== s.start_date || (keep.start_time || '') !== (s.start_time || ''))
+      fail.push(`оставляемая не совпадает с источником (${keep.start_date} ${keep.start_time} vs ${s.start_date} ${s.start_time})`);
+    if (kill.start_date === kEnd) fail.push('архивируемая однодневная — разбирать вручную');
+    if (kill.start_date > s.start_date || kEnd < s.start_date)
+      fail.push(`день оставляемой не внутри интервала архивируемой (${kill.start_date}…${kEnd})`);
+    if (kill.city !== keep.city) fail.push(`города разные (${kill.city} / ${keep.city})`);
+    const vRe1 = new RegExp(p.venue || '', 'i');
+    if (!p.venue || !vRe1.test(kill.address || '') || !vRe1.test(keep.address || ''))
+      fail.push(`площадка «${p.venue}» не совпадает у обеих карточек (${keep.address} / ${kill.address})`);
+    if (!near(keep.lat, kill.lat, keep.lng, kill.lng)) fail.push('пины карточек расходятся');
+  } else if (p.windowInside) {
     // подкласс «одно событие — две страницы источника, архивируемая датирована финальным днём»:
     // арбитр — страница источника (JSON-LD даёт полный интервал события). Интервал архивируемой
     // обязан лежать ВНУТРИ интервала источника (start >= start и end <= end), площадка и город —

@@ -15,6 +15,14 @@
 // продублируется/потеряется.
 
 const PAGE_SIZE = 1000; // серверный максимум PostgREST; больше не отдаст
+const PAGE_RETRIES = 5; // обрывы ответа («terminated», ECONNRESET) транзиентны — повторяем страницу
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/** Обрыв сети/шлюза — повторяем; ошибка данных (схема, права) — падаем сразу. */
+function isTransient(message) {
+  return /terminated|fetch failed|ECONNRESET|ECONNREFUSED|socket hang up|other side closed|ETIMEDOUT|UND_ERR|50[234]|429/i.test(String(message || ''));
+}
 
 /**
  * Прочитать все строки таблицы постранично.
@@ -26,13 +34,26 @@ const PAGE_SIZE = 1000; // серверный максимум PostgREST; бол
  */
 export async function selectAll(db, table, columns, opts = {}) {
   const { order = 'id', ascending = true, filter, log } = opts;
-  const rows = [];
-  for (let from = 0; ; from += PAGE_SIZE) {
+  const build = (from) => {
     let query = db.from(table).select(columns);
     if (filter) query = filter(query);
-    query = query.order(order, { ascending }).range(from, from + PAGE_SIZE - 1);
-    const { data, error } = await query;
-    if (error) throw new Error(`${table}: ${error.message}`);
+    return query.order(order, { ascending }).range(from, from + PAGE_SIZE - 1);
+  };
+  const rows = [];
+  for (let from = 0; ; from += PAGE_SIZE) {
+    let data = null;
+    let lastErr = null;
+    for (let attempt = 1; attempt <= PAGE_RETRIES; attempt++) {
+      // запрос пересобираем каждую попытку: билдер одноразовый, повторное await
+      // того же объекта вернуло бы прежний сбой
+      const res = await build(from).then((r) => r, (e) => ({ error: { message: String((e && e.message) || e) } }));
+      if (!res.error) { data = res.data; lastErr = null; break; }
+      lastErr = res.error.message;
+      if (!isTransient(lastErr) || attempt === PAGE_RETRIES) break;
+      if (log) log(`${table}: повтор ${attempt}/${PAGE_RETRIES - 1} после «${lastErr}»`);
+      await sleep(1200 * attempt);
+    }
+    if (lastErr) throw new Error(`${table}: ${lastErr}`);
     const page = data || [];
     rows.push(...page);
     if (log) log(`${table}: загружено ${rows.length} строк`);
