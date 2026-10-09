@@ -289,6 +289,17 @@ const PAIRS = [
     source: { start_date: '2026-10-08', start_time: '21:00:00', end_date: '2026-10-22' },
     note: 'Κατερίνα Γώγου – Με λένε Οδύσσεια, Никосия (Mikri Arktos): оставлена карточка полного интервала 08.10 21:00 → 22.10 (слаг …2026-10-08), архив — карточка второго вечера 22.10 21:00–23:30 (слаг …2026-10-22); площадка и пин те же',
   },
+  {
+    // тот же подкласс «финальный день многодневного» (запуск 136), источник — Cyprus Now.
+    // Проверено 09.10.2026 через прокси 10809: API `?q=teu16` отдаёт ДВЕ записи турнира
+    // (Famagusta Tennis Club, Лимасол): каноническая `teu16-tennis-europe-u16-23-29-11-2026-2026-11-22`
+    // → start_at 2026-11-22T22:00Z (=23.11 00:00 местного) / end_at 2026-11-29T21:59:59Z (=29.11 23:59),
+    // и `teu16-ευρωπαϊκό-τουρνουά-τένις-κ16-2026-11-23` → только 29.11 07:00Z (=09:00), финальный день.
+    keep: 'e37a0231', archive: '0342fad2', token: /teu16/i,
+    windowInside: true, venue: 'famagusta tennis',
+    source: { start_date: '2026-11-23', start_time: null, end_date: '2026-11-29' },
+    note: 'TEU16 (Tennis Europe U16) Лимасол: оставлена карточка полного интервала 23–29.11.2026 (адрес «Famagusta Tennis Club, 3 Mesaorias Str, Limassol», сайт famagustatc.com), архив — карточка того же турнира, датированная только финальным днём 29.11 09:00 (греч. слаг cyprusnow); пин 34.6824125,33.0259269 у обеих',
+  },
 ];
 
 const rows = await selectAll(db, 'events', 'id,title,title_ru,start_date,start_time,end_time,end_date,recurrence,city,address,lat,lng,website,status,photos,description,description_en');
