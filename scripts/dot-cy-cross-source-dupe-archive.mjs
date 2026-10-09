@@ -185,9 +185,23 @@ const PAIRS = [
     source: { start_date: '2026-10-11', start_time: '10:00:00' },
     note: 'Nicosia Book Fest 2026 11.10 10:00 Никосия: оставлена «Nicosia Book Fest 2026 – Παγκόσμια Ημέρα Βιβλίου» (адрес «Caves of Acropolis Park», пин площадки фестиваля 35.1464346,33.3615795); архив — «Τα βιβλία είναι παράθυρα, καθρέφτες και πόρτες στον κόσμο» (адрес уровня города «Никосия, Кипр», пин = центр Никосии 35.1856,33.3823)',
   },
+  {
+    // подкласс «одно событие — две страницы источника, одна датирована финальным днём» (запуск 128).
+    // 16-й Международный фестиваль короткометражных фильмов Кипра идёт 10–16.10.2026 (Rialto Theatre,
+    // Лимасол). Английская страница /event/international-short-film-festival-2026-2026-10-10 даёт
+    // JSON-LD 2026-10-10T20:00 → 2026-10-16T23:00 (полный интервал, описание «From October 10-16…»);
+    // греческая /event/16ο-…-2026-10-10 — та же площадка и то же событие, но JSON-LD 2026-10-16T20:00 →
+    // 23:00 (только финальный день), при том что её описание прямо говорит «από τις 10 έως τις 16
+    // Οκτωβρίου 2026». Интервал архивируемой целиком внутри интервала оставляемой → это дубль.
+    keep: 'a4eedb5c', archive: 'c473b13c', token: /(short\s*film|φεστιβαλ|фестивал)/i,
+    windowInside: true, venue: 'rialto',
+    source: { start_date: '2026-10-10', start_time: '20:00:00', end_date: '2026-10-16' },
+    setEnd: { end_date: '2026-10-16', end_time: '23:00:00' },
+    note: 'International Short Film Festival 2026 10–16.10 Лимасол, Rialto Theatre (34.679538,33.0458112): оставлена англ. карточка «International Short Film Festival 2026» (start 10.10 20:00 = startDate источника; ей проставлен end_date 16.10 23:00 из JSON-LD); архив — греческая «16ο ΔΙΕΘΝΕΣ ΦΕΣΤΙΒΑΛ ΤΑΙΝΙΩΝ ΜΙΚΡΟΥ ΜΗΚΟΥΣ ΚΥΠΡΟΥ» (start 16.10 20:00 — только финальный день того же фестиваля)',
+  },
 ];
 
-const rows = await selectAll(db, 'events', 'id,title,title_ru,start_date,start_time,city,address,lat,lng,website,status,photos,description,description_en');
+const rows = await selectAll(db, 'events', 'id,title,title_ru,start_date,start_time,end_date,city,address,lat,lng,website,status,photos,description,description_en');
 const live = rows.filter((r) => r.status === 'active');
 const byId = new Map(live.map((r) => [r.id.slice(0, 8), r]));
 const near = (a, b, c, d) => Math.abs(Number(a) - b) < 0.0015 && Math.abs(Number(c) - d) < 0.0015;
@@ -198,7 +212,24 @@ for (const p of PAIRS) {
   if (!keep) { console.log(`ПРОПУСК ${p.keep}: оставляемая карточка не active/нет в базе`); skipped++; continue; }
   if (!kill) { console.log(`ПРОПУСК ${p.archive}: карточка не active/нет в базе`); skipped++; continue; }
   const fail = [];
-  if (p.citySplit) {
+  if (p.windowInside) {
+    // подкласс «одно событие — две страницы источника, архивируемая датирована финальным днём»:
+    // арбитр — страница источника (JSON-LD даёт полный интервал события). Интервал архивируемой
+    // обязан лежать ВНУТРИ интервала источника (start >= start и end <= end), площадка и город —
+    // совпадать; если интервалы равны, пара разбирается вручную.
+    const s = p.source || {};
+    const kEnd = kill.end_date || kill.start_date;
+    if (keep.start_date !== s.start_date || (keep.start_time || '') !== (s.start_time || ''))
+      fail.push(`оставляемая не совпадает со стартом источника (${keep.start_date} ${keep.start_time} vs ${s.start_date} ${s.start_time})`);
+    if (!s.end_date) fail.push('у источника не задан end_date');
+    if (kill.city !== keep.city) fail.push(`города разные (${kill.city} / ${keep.city})`);
+    const vRe = new RegExp(p.venue || '', 'i');
+    if (!p.venue || !vRe.test(kill.address || '') || !vRe.test(keep.address || ''))
+      fail.push(`площадка «${p.venue}» не совпадает у обеих карточек (${keep.address} / ${kill.address})`);
+    if (kill.start_date < s.start_date) fail.push(`архивируемая начинается раньше источника (${kill.start_date} < ${s.start_date})`);
+    if (kEnd > s.end_date) fail.push(`архивируемая выходит за интервал источника (${kEnd} > ${s.end_date})`);
+    if (kill.start_date === s.start_date && kEnd === s.end_date) fail.push('интервалы совпадают — разбирать вручную');
+  } else if (p.citySplit) {
     // подкласс «одно событие — два слага источника в РАЗНЫХ городах»: обе страницы дают одну дату и
     // время, поэтому арбитр — не время, а данные карточек: архив обязан стоять на пине, который
     // НЕ является местом события (центровой фолбэк города либо точка, которую источник раздаёт
@@ -270,5 +301,11 @@ for (const p of PAIRS) {
   if (error || !data?.length || data[0].status !== 'archived') { console.log(`   ОШИБКА записи: ${error?.message || JSON.stringify(data)}`); skipped++; continue; }
   applied++;
   console.log('   записано: archived');
+  if (p.setEnd) {
+    // добивка данных оставляемой карточки из JSON-LD страницы источника (дата окончания события)
+    const { data: d2, error: e2 } = await db.from('events').update(p.setEnd).eq('id', keep.id).select('id,status,end_date,end_time');
+    if (e2 || !d2?.length) console.log(`   ОШИБКА записи end_date: ${e2?.message || JSON.stringify(d2)}`);
+    else console.log(`   записано оставляемой: end_date ${d2[0].end_date} ${d2[0].end_time || ''} (status ${d2[0].status})`);
+  }
 }
 console.log(`\n${APPLY ? 'APPLY' : 'DRY'}: применено ${applied}, пропущено ${skipped}`);
