@@ -213,6 +213,18 @@ const PAIRS = [
     source: { start_date: '2026-10-10', start_time: '10:00:00', end_date: '2026-10-11' },
     note: 'Nicosia Book Fest 2026 10–11.10 Никосия, Πάρκο Ακροπόλεως (35.1464346,33.3615795): оставлена англ. карточка «Nicosia Book Fest 2026: Free Book & Literature Festival» (start 10.10 10:00, end 11.10 22:00, адрес «Akropolis Park», канонический живой слаг источника); архив — греческая «Nicosia Book Fest 2026 – Παγκόσμια Ημέρα Βιβλίου» (start 11.10 — только финальный день того же фестиваля; её слаг 308-редиректит на канон)',
   },
+  {
+    // подкласс «одно событие — две страницы источника, архивируемая датирована финальным днём» (запуск 130).
+    // Wellness Retreat '26 (уикенд 23–24.10, Aelia Wellness Retreat, Никосия): у источника ДВЕ живые страницы
+    // одного и того же события — канонический слаг `…aelia-nicosia-2026-10-23` даёт JSON-LD
+    // startDate 2026-10-23T09:00+03:00 / endDate 2026-10-24T17:00+03:00 (весь уикенд), а слаг с двойной
+    // датой `…2026-10-23-2026-10-24` — только startDate 2026-10-24T09:00 (финальный день, без endDate).
+    // Проверено 09.10.2026 через прокси 10809: обе страницы 200 (306 и 309 КБ), название у обеих одно.
+    keep: '4e20045e', archive: '8fa34b89', token: /wellness/i,
+    windowInside: true, venue: 'aelia',
+    source: { start_date: '2026-10-23', start_time: '09:00:00', end_date: '2026-10-24' },
+    note: 'Wellness Retreat 26 (Women’s Wellness Weekend) 23–24.10 Никосия, Aelia Wellness Retreat (35.0273355,33.3058124): оставлена карточка с каноническим слагом и полным интервалом 23.10 09:00 → 24.10 17:00; архив — карточка того же события со слагом финального дня и start_date 24.10 09:00',
+  },
 ];
 
 const rows = await selectAll(db, 'events', 'id,title,title_ru,start_date,start_time,end_date,city,address,lat,lng,website,status,photos,description,description_en');
