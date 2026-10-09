@@ -225,6 +225,17 @@ const PAIRS = [
     source: { start_date: '2026-10-23', start_time: '09:00:00', end_date: '2026-10-24' },
     note: 'Wellness Retreat 26 (Women’s Wellness Weekend) 23–24.10 Никосия, Aelia Wellness Retreat (35.0273355,33.3058124): оставлена карточка с каноническим слагом и полным интервалом 23.10 09:00 → 24.10 17:00; архив — карточка того же события со слагом финального дня и start_date 24.10 09:00',
   },
+  {
+    // тот же подкласс (запуск 130), театральная постановка двумя вечерами: канонический слаг
+    // `…-2026-11-09` даёт JSON-LD startDate 09.11 20:30 / endDate 10.11 20:30 (оба вечера, одна
+    // страница = одно событие), слаг `…-2026-11-10` — только startDate 10.11 20:30 (второй вечер).
+    // Проверено 09.10.2026 через прокси 10809: обе страницы 200 (288 и 290 КБ), адрес площадки
+    // «Γενεθλίου Μιτέλλα 34» (Palio Xidadiko, Лимасол) один и тот же.
+    keep: '5ed3ad05', archive: '9a816063', token: /ανακουτρεύκω/i,
+    windowInside: true, venue: 'xidadiko',
+    source: { start_date: '2026-11-09', start_time: '20:30:00', end_date: '2026-11-10' },
+    note: 'Ανακουτρεύκω στη Λεμεσό 09–10.11 Лимасол, Palio Xidadiko (34.6732045,33.0436665): оставлена карточка канонического слага с интервалом 09.11 20:30 → 10.11 20:30; архив — карточка слага второго вечера (start 10.11 20:30)',
+  },
 ];
 
 const rows = await selectAll(db, 'events', 'id,title,title_ru,start_date,start_time,end_date,city,address,lat,lng,website,status,photos,description,description_en');
