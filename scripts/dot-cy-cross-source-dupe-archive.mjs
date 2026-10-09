@@ -155,6 +155,15 @@ const PAIRS = [
     osmPin: { lat: 35.1188618, lng: 33.3780548, tol: 0.0005 },
     note: 'то же шоу, вторая копия того же класса: архив — слаг cyprusnow «…bubble-theatre-for-kids-in-nicosia…» (пин 35.1186931,33.3787897 — 70 м от площадки OSM, греческое описание со служебным хвостом «Scroll down for English version», 1 фото)',
   },
+  {
+    // подкласс «одно событие — два слага источника, РАЗНЫЕ пины» (запуск 123). Третий источник —
+    // eventshub.cy (страница организатора Louis Patsalides): «20 Χρόνια Stand Up Comedy στη Λευκωσία»
+    // → Κινηματοθέατρο Παλλάς, Rigenis 24, Λευκωσία. OSM/Nominatim даёт ту же площадку
+    // (35.1731528,33.3576336): карточка с пином в 24 м — оставляем, вторая («Sonhe Bar», 1.5 км) — архив.
+    keep: '3754bb3d', archive: '5f0716ef', token: /(patsalidis|πατσαλ|stand\s*up)/i,
+    osmPin: { lat: 35.1731528, lng: 33.3576336, tol: 0.0005 },
+    note: 'Louis Patsalidis «20 χρόνια Stand Up Comedy» 23.10 21:00 Никосия: оставлена карточка /event/louis-patsalidis-20-years-of-stand-up-comedy-live-in-cyprus-2026-10-23 (PALLAS THEATRE NICOSIA, 35.1730032,33.3574477 — 24 м от точки OSM, end_date 25.10 = тур из трёх городов); архив — /event/20-χρόνια-stand-up-comedy-2026-10-23 (площадка «Sonhe Bar», 35.1608518,33.3692247 — 1.5 км от театра, третьим источником не подтверждается)',
+  },
 ];
 
 const rows = await selectAll(db, 'events', 'id,title,title_ru,start_date,start_time,city,address,lat,lng,website,status,photos,description,description_en');
