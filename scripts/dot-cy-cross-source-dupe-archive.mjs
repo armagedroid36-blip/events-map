@@ -279,6 +279,16 @@ const PAIRS = [
     source: { start_date: '2026-10-09', start_time: '19:00:00', end_date: '2026-10-11' },
     note: 'OinoFest 2026, Омодос (Omodos), Лимасол: оставлена карточка полного интервала 09.10 19:00 → 11.10 23:30 (адрес «Omodos Square», слаг …village-2026-10-09), архив — карточка того же события, датированная финальным днём 11.10 10:00–23:30 (адрес «Omodos Central Square», слаг …2026-10-11)',
   },
+  {
+    // второй вечер двухвечернего показа = та же пара класса «финальный день» (запуск 135), источник Cyprus Now.
+    // Проверено 09.10.2026 через прокси 10809: API `?q=mikri arktos` отдаёт ОДНУ запись события
+    // `κατερίνα-γώγου-με-λένε-οδύσσεια-2026-10-08` → start_at 2026-10-08T18:00Z (=21:00 местного) /
+    // end_at 2026-10-22T18:00Z, «Δύο βραδιές … Την Πέμπτη 8 και 22 Οκτωβρίου» — спектакль идёт те же две даты.
+    keep: '930c9994', archive: 'b36cf5b2', token: /γώγου|οδύσσεια|odyss/i,
+    windowInside: true, venue: 'mikri arktos',
+    source: { start_date: '2026-10-08', start_time: '21:00:00', end_date: '2026-10-22' },
+    note: 'Κατερίνα Γώγου – Με λένε Οδύσσεια, Никосия (Mikri Arktos): оставлена карточка полного интервала 08.10 21:00 → 22.10 (слаг …2026-10-08), архив — карточка второго вечера 22.10 21:00–23:30 (слаг …2026-10-22); площадка и пин те же',
+  },
 ];
 
 const rows = await selectAll(db, 'events', 'id,title,title_ru,start_date,start_time,end_time,end_date,recurrence,city,address,lat,lng,website,status,photos,description,description_en');
