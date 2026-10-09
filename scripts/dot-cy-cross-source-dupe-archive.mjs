@@ -268,6 +268,17 @@ const PAIRS = [
     source: { start_date: '2026-10-10', start_time: '20:00:00', end_date: '2026-10-11' },
     note: 'Amalia Melancholia η Βασίλισσα των Φοινίκων – Διεθνές Φεστιβάλ Λευκωσίας 2026, Никосия, Nicosia Municipal Theatre: оставлена карточка полного интервала 10.10 20:00 → 11.10 19:00 (слаг …-2026-10-10), архив — карточка того же события, датированная финальным днём 11.10 19:00 (слаг …-2026-10-11)',
   },
+  {
+    // тот же подкласс «финальный день многодневного» (запуск 134), источник — Cyprus Now.
+    // Проверено 09.10.2026 через прокси 10809: API `?q=oinofest` отдаёт ДВЕ записи —
+    // каноническая `…the-modern-wine-festival-in-omodos-village-2026-10-09` → start_at
+    // 2026-10-09T16:00Z (=19:00 местного) / end_at 2026-10-11T20:30Z (=23:30), venue «Omodos Square»;
+    // вторая `…2026-10-11` → только 11.10 10:00–23:30 (venue не задан).
+    keep: 'd4302240', archive: 'dbb4cbec', token: /oinofest/i,
+    windowInside: true, venue: 'omodos',
+    source: { start_date: '2026-10-09', start_time: '19:00:00', end_date: '2026-10-11' },
+    note: 'OinoFest 2026, Омодос (Omodos), Лимасол: оставлена карточка полного интервала 09.10 19:00 → 11.10 23:30 (адрес «Omodos Square», слаг …village-2026-10-09), архив — карточка того же события, датированная финальным днём 11.10 10:00–23:30 (адрес «Omodos Central Square», слаг …2026-10-11)',
+  },
 ];
 
 const rows = await selectAll(db, 'events', 'id,title,title_ru,start_date,start_time,end_time,end_date,recurrence,city,address,lat,lng,website,status,photos,description,description_en');
