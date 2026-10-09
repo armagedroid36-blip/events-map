@@ -236,9 +236,17 @@ const PAIRS = [
     source: { start_date: '2026-11-09', start_time: '20:30:00', end_date: '2026-11-10' },
     note: 'Ανακουτρεύκω στη Λεμεσό 09–10.11 Лимасол, Palio Xidadiko (34.6732045,33.0436665): оставлена карточка канонического слага с интервалом 09.11 20:30 → 10.11 20:30; архив — карточка слага второго вечера (start 10.11 20:30)',
   },
+  {
+    // подкласс «карточка СЕРИИ с недельным повтором + карточка последнего дня серии» (канал collect-tg):
+    // у оставляемой задана recurrence (weekly), её end_date = дата архивируемой, время начала/окончания,
+    // площадка и пин совпадают → архивируемая — то же последнее занятие, а не новое событие.
+    keep: '0b4951f8', archive: '98859e2b', token: /archery\s*tag|лучн/i,
+    seriesLastDay: true, venue: 'gamezone',
+    note: 'Archery Tag Нячанг, GameZone (12.3007872,109.2072767): оставлена карточка недельной серии 03–10.10 16:30–18:00 (post 24058, recurrence weekly), архив — напоминание о последнем занятии 10.10 16:30–18:00 (post 24318)',
+  },
 ];
 
-const rows = await selectAll(db, 'events', 'id,title,title_ru,start_date,start_time,end_date,city,address,lat,lng,website,status,photos,description,description_en');
+const rows = await selectAll(db, 'events', 'id,title,title_ru,start_date,start_time,end_time,end_date,recurrence,city,address,lat,lng,website,status,photos,description,description_en');
 const live = rows.filter((r) => r.status === 'active');
 const byId = new Map(live.map((r) => [r.id.slice(0, 8), r]));
 const near = (a, b, c, d) => Math.abs(Number(a) - b) < 0.0015 && Math.abs(Number(c) - d) < 0.0015;
@@ -266,6 +274,22 @@ for (const p of PAIRS) {
     if (kill.start_date < s.start_date) fail.push(`архивируемая начинается раньше источника (${kill.start_date} < ${s.start_date})`);
     if (kEnd > s.end_date) fail.push(`архивируемая выходит за интервал источника (${kEnd} > ${s.end_date})`);
     if (kill.start_date === s.start_date && kEnd === s.end_date) fail.push('интервалы совпадают — разбирать вручную');
+  } else if (p.seriesLastDay) {
+    // подкласс «серия с недельным повтором + карточка последнего дня серии»: арбитр — сами карточки.
+    // Оставляемая обязана быть серией (recurrence weekly), её конец = дата архивируемой, у обеих
+    // одно время начала/окончания, одна площадка в адресе и один пин.
+    const rec = keep.recurrence || {};
+    const weekly = typeof rec === 'string' ? /weekly/i.test(rec) : rec.freq === 'weekly';
+    const vRe2 = new RegExp(p.venue || '', 'i');
+    if (!weekly) fail.push('у оставляемой нет недельного повтора — разбирать вручную');
+    if (keep.end_date !== kill.start_date) fail.push(`end_date оставляемой (${keep.end_date}) не равен дате архивируемой (${kill.start_date})`);
+    if (kill.end_date && kill.end_date !== kill.start_date) fail.push(`архивируемая не однодневная (${kill.start_date}→${kill.end_date})`);
+    if ((kill.start_time || '') !== (keep.start_time || '')) fail.push(`время начала разное (${kill.start_time} / ${keep.start_time})`);
+    if ((kill.end_time || '') !== (keep.end_time || '')) fail.push(`время окончания разное (${kill.end_time} / ${keep.end_time})`);
+    if (kill.city !== keep.city) fail.push(`города разные (${kill.city} / ${keep.city})`);
+    if (!p.venue || !vRe2.test(kill.address || '') || !vRe2.test(keep.address || ''))
+      fail.push(`площадка «${p.venue}» не совпадает у обеих карточек (${keep.address} / ${kill.address})`);
+    if (!near(keep.lat, kill.lat, keep.lng, kill.lng)) fail.push('пины карточек расходятся');
   } else if (p.citySplit) {
     // подкласс «одно событие — два слага источника в РАЗНЫХ городах»: обе страницы дают одну дату и
     // время, поэтому арбитр — не время, а данные карточек: архив обязан стоять на пине, который
