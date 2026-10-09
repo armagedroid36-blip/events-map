@@ -164,6 +164,16 @@ const PAIRS = [
     osmPin: { lat: 35.1731528, lng: 33.3576336, tol: 0.0005 },
     note: 'Louis Patsalidis «20 χρόνια Stand Up Comedy» 23.10 21:00 Никосия: оставлена карточка /event/louis-patsalidis-20-years-of-stand-up-comedy-live-in-cyprus-2026-10-23 (PALLAS THEATRE NICOSIA, 35.1730032,33.3574477 — 24 м от точки OSM, end_date 25.10 = тур из трёх городов); архив — /event/20-χρόνια-stand-up-comedy-2026-10-23 (площадка «Sonhe Bar», 35.1608518,33.3692247 — 1.5 км от театра, третьим источником не подтверждается)',
   },
+  {
+    // подкласс «одно событие — латинский и греческий слаг источника, разные пин и адрес» (запуск 126).
+    // Латинская страница /event/2nd-music-festival-municipality-of-paralimni-deryneia-2026-10-13 несёт
+    // площадку «Around the Paralimni-Deryneia district» (JSON-LD 2026-10-13T20:00+03:00); греческая
+    // /event/φεστιβάλ-μουσικής…-2026-08-25 — та же дата и время, но площадки нет (location = Famagusta),
+    // поэтому карточка стоит на центровом фолбэке Фамагусты с адресом «Фамагуста, Кипр».
+    keep: 'c2b11c4a', archive: 'ed17b27b', token: /(music\s*fe?s?tival|μουσικ)/i, cityAddr: true,
+    source: { start_date: '2026-10-13', start_time: '20:00:00' },
+    note: '2nd Music Festival – Municipality of Paralimni – Deryneia 13.10 20:00 Фамагуста: оставлена англ. страница (площадка «Around the Paralimni-Deryneia district», пин 35.062854,33.960628); архив — греческий слаг (адрес уровня города «Фамагуста, Кипр», пин = центр Фамагусты 35.139128,33.8478462) — одно событие двумя страницами одного источника',
+  },
 ];
 
 const rows = await selectAll(db, 'events', 'id,title,title_ru,start_date,start_time,city,address,lat,lng,website,status,photos,description,description_en');
