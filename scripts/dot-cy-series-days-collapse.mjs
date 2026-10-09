@@ -65,6 +65,8 @@ const GROUPS = [
 const SERIES_DO_NOT_COLLAPSE = [
   { title: 'Ψαθαρούδες', sessions: 4, venue: 'Kalavasos Village Square', src: 'series_count=4, 18.10/25.10/28.10/01.11' },
   { title: 'Μια νύκτα στον παράδεισο (Χειμερινή Περιοδεία) στη', sessions: 3, venue: 'Markideio Municipal Theatre', src: 'series_count=3, 22/23/24.01.2027' },
+  { title: 'All of It', sessions: 3, venue: 'Ktirion 53, Никосия', src: 'лента CN ?q=all of it: 4 отдельные записи 12/14/19/21.10 по 20:00, у каждой series_count=1 и end_at=null — вечера одного шоу, а не многодневное событие' },
+  { title: 'Poetry MOVES International Festival', sessions: 4, venue: 'Artos House, Никосия', src: 'лента CN ?q=poetry moves: series_count=4, 13/16/21/30.10 (first 13.10 20:00, last 30.10 19:30) — фестивальные дни' },
 ];
 
 const TOL = 0.0002;
