@@ -9,6 +9,15 @@ import { createClient } from '@supabase/supabase-js';
 import { selectAll } from './db-rows.mjs';
 
 const APPLY = process.env.APPLY === '1';
+// Центровые фолбэки городов Кипра (сборщик ставит их, когда у источника нет площадки).
+const CENTER_FALLBACKS = [
+  [34.7071, 33.0226], // Лимасол
+  [34.9182, 33.6194], // Ларнака
+  [35.1856, 33.3823], // Никосия
+  [34.7754, 32.4245], // Пафос
+  [35.0375, 34.0041], // Ая-Напа
+  [35.1167, 33.9432], // Фамагуста
+];
 const db = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE, { auth: { persistSession: false } });
 
 const PAIRS = [
@@ -94,6 +103,35 @@ const PAIRS = [
     source: { start_date: '2026-10-17', start_time: '20:30:00' },
     note: 'Lotus Parable Label Night 17.10: страница /event/lotus-parable-2026-10-17 (Лимасол 20:30) оставлена, архив — /event/lotus-parable-label-night-outdoor-techno-gathering-in-cyprus-2026-10-17 (Никосия 18:00, центр Никосии 35.1856,33.3823) — тот же лейбл-найт, разные город и время у одного источника',
   },
+  {
+    // тот же подкласс «одно событие — два слага одного источника в разных городах» (запуск 120).
+    // Оставляю карточку с реальной площадкой и её 7-значной точкой, архив — карточку, стоящую
+    // на центровом фолбэке Никосии (35.1856,33.3823).
+    keep: '98f22ee1', archive: '9dd8aba3', token: /social\s*frqns/i, citySplit: true,
+    source: { start_date: '2026-10-24', start_time: '18:00:00' },
+    note: 'Social FRQNS 24.10 18:00 Никосия: страница /event/social-frqns-2026-10-24 (площадка «Nonna Rosa, Pizeria», 35.1692541,33.3597735) оставлена; архив — /event/social-frqns-the-one-at-the-pizzeria-2026-10-24 («the Pizzeria», точка = центр Никосии) — тот же вечер двумя страницами источника',
+  },
+  {
+    // и ещё одна пара того же подкласса: у источника две страницы гонки, одна помечена Лимасолом
+    // и стоит РОВНО на центровом фолбэке Лимасола (34.6786322,33.0413055), вторая — деревня
+    // Камбос округа Никосии с реальной 7-значной точкой и временем окончания.
+    keep: 'e8437c73', archive: 'e3ca9a17', token: /kambos\s*mountain/i, citySplit: true,
+    source: { start_date: '2027-01-17', start_time: '07:00:00' },
+    note: 'Kambos Mountain Race 2027 17.01 07:00: страница /event/kambos-mountain-race-2027-trail-running-in-nicosia-2027-01-17 (Green Kampos, 35.0392022,32.7324144, end 15:00) оставлена; архив — /event/kambos-mountain-race-2027-trail-running-challenge-in-cyprus-2027-01-17 (метка «Лимасол» и пин на центре Лимасола, end_date нет)',
+  },
+  {
+    // тот же подкласс: у источника две страницы забега — латинская (с площадкой) и греческая
+    // (на центровом пине Никосии).
+    keep: '2079c478', archive: '5ba6bf21', token: /run\s*as\s*one/i, citySplit: true,
+    source: { start_date: '2026-10-18', start_time: '07:30:00' },
+    note: 'Alphamega Run as One 2026 18.10 07:30: страница /event/alphamega-run-as-one-2026-half-marathon-fun-run-in-nicosia-2026-10-18 (Alphamega Hypermarket Engomi, 35.1628227,33.3318634) оставлена; архив — /event/αλφαμεγα-run-as-one-2026-2026-10-18 (греческое написание, пин = центр Никосии)',
+  },
+  {
+    // тот же подкласс: латинский слаг с площадкой vs греческий слаг с центровым пином.
+    keep: '4099ed37', archive: '01d1be53', token: /kids\s*festival/i, citySplit: true,
+    source: { start_date: '2026-10-18', start_time: '10:00:00' },
+    note: 'Nicosia Kids Festival (2-е издание) 18.10 10:00: страница /event/nicosia-kids-festival-2nd-edition-free-family-festival-in-nicosia-2026-10-18 (Old GSP Park, 35.1684711,33.3566973) оставлена; архив — /event/2ο-nicosia-kids-festival-…-2026-10-18 (греческая страница, адрес это перечень мест, пин = центр Никосии)',
+  },
 ];
 
 const rows = await selectAll(db, 'events', 'id,title,title_ru,start_date,start_time,city,address,lat,lng,website,status,photos,description,description_en');
@@ -107,7 +145,29 @@ for (const p of PAIRS) {
   if (!keep) { console.log(`ПРОПУСК ${p.keep}: оставляемая карточка не active/нет в базе`); skipped++; continue; }
   if (!kill) { console.log(`ПРОПУСК ${p.archive}: карточка не active/нет в базе`); skipped++; continue; }
   const fail = [];
-  if (p.source) {
+  if (p.citySplit) {
+    // подкласс «одно событие — два слага источника в РАЗНЫХ городах»: обе страницы дают одну дату и
+    // время, поэтому арбитр — не время, а данные карточек: архив обязан стоять на пине, который
+    // НЕ является местом события (центровой фолбэк города либо точка, которую источник раздаёт
+    // разным адресам), оставляемая — на собственном адресе/площадке.
+    const key = (lat, lng) => `${Number(lat).toFixed(6)},${Number(lng).toFixed(6)}`;
+    const addrsAtPoint = new Map();
+    for (const r of live) {
+      const k = key(r.lat, r.lng);
+      if (!addrsAtPoint.has(k)) addrsAtPoint.set(k, new Set());
+      addrsAtPoint.get(k).add(r.address || '');
+    }
+    const nearCenter = (lat, lng) =>
+      CENTER_FALLBACKS.some(([cLat, cLng]) => Math.abs(Number(lat) - cLat) < 0.0012 && Math.abs(Number(lng) - cLng) < 0.0012);
+    const weakPin = (r) => nearCenter(r.lat, r.lng) || (addrsAtPoint.get(key(r.lat, r.lng))?.size || 0) >= 2;
+    if (keep.start_date !== p.source.start_date || (keep.start_time || '') !== p.source.start_time)
+      fail.push(`оставляемая не совпадает с источником (${keep.start_date} ${keep.start_time})`);
+    if (kill.start_date !== p.source.start_date || (kill.start_time || '') !== p.source.start_time)
+      fail.push(`архивируемая не совпадает с источником (${kill.start_date} ${kill.start_time})`);
+    if (keep.city === kill.city) console.log(`   (инфо: город один и тот же — ${keep.city}; различие только в слаге и пине)`);
+    if (weakPin(keep)) fail.push('оставляемая сама стоит на центровом/общем пине — разбирать вручную');
+    if (!weakPin(kill)) fail.push('архивируемая НЕ на центровом/общем пине — разбирать вручную');
+  } else if (p.source) {
     // арбитр — страница источника: обе карточки с одного website, а верные дата/время берём из JSON-LD
     if (keep.start_date !== p.source.start_date || (keep.start_time || '') !== p.source.start_time)
       fail.push(`оставляемая не совпадает с источником (${keep.start_date} ${keep.start_time} vs ${p.source.start_date} ${p.source.start_time})`);
