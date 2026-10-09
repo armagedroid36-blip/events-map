@@ -11,7 +11,16 @@
 // (scripts/dedupe-events.mjs) — логика не копипастится.
 
 export const STOP = new Set(['festival', 'фестиваль', 'day', 'night', 'the', 'and', 'for', 'with', 'from', '2026', '2027',
-  'для', 'день', 'ночь', 'при', 'как', 'или', 'это', 'bali', 'кипр', 'cyprus', 'international', 'международный']);
+  'для', 'день', 'ночь', 'при', 'как', 'или', 'это', 'bali', 'кипр', 'cyprus', 'international', 'международный',
+  // «Что это за событие» и месяц: не доказывают, что событие ОДНО.
+  // Без них разные фильмы одного кинотеатра склеивались («Кинопоказ Gran Torino
+  // в Paradiso Ubud 9 октября» ↔ «Кинопоказ Brave в Paradiso Ubud 9 октября»:
+  // общих слов 4 — кинопоказ/paradiso/ubud/октября — и общий адрес).
+  'кинопоказ', 'показ', 'показа', 'screening', 'screening', 'film', 'movie', 'кино',
+  'января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября',
+  'октября', 'ноября', 'декабря',
+  'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september',
+  'october', 'november', 'december']);
 
 // Слова-шаблоны: сами по себе не доказывают, что это одно событие
 // (иначе «Деревня Рождества Фикарду» склеится с «Деревней Рождества Какопетрия»).
@@ -131,9 +140,14 @@ export function sameAbbrev(a, b) {
   return null;
 }
 
-/** Слова названия для аббревиатурного ключа: длина 2+, есть буква. */
+/** Слова названия для аббревиатурного ключа: длина 2+, есть буква.
+ *  Топонимы площадки (PLACE_STOP: ubud, bali, limassol, …) исключены: слова
+ *  самой площадки не доказывают, что событие одно — иначе разные фильмы одного
+ *  кинотеатра («Кинопоказ Gran Torino в Paradiso Ubud» ↔ «…Sense and
+ *  Sensibility…») склеивались по 2 общим словам + общему токену адреса. */
 export const abbrevWords = (s) => [...new Set(norm(collapseAbbrev(s)).split(' ')
-  .filter((w) => w.length > 2 && /\p{L}/u.test(w) && !STOP.has(w) && !GENERIC.has(w)))];
+  .filter((w) => w.length > 2 && /\p{L}/u.test(w) && !STOP.has(w) && !GENERIC.has(w)
+    && !PLACE_STOP.has(w) && !ADDR_STOP.has(w) && !EXTRA_STOP.has(w)))];
 
 /** Сколько значимых слов общих у лучшей пары псевдонимов (с учётом аббревиатур). */
 export function abbrevOverlap(a, b) {
