@@ -28,6 +28,43 @@ const GROUPS = [
     last: '2026-10-15',
     source: 'cyprusnow.app/event/ido-couple-dance-championships-diamond-grand-prix',
   },
+  // Ниже — группы-СЕРИИ: добавлены, чтобы страховка SERIES_DO_NOT_COLLAPSE срабатывала при каждом прогоне.
+  {
+    name: 'Ψαθαρούδες (Ларнака, Kalavasos Village Square) — СЕРИЯ 4 представлений',
+    ids: ['3976c97c', 'edc69c83', '97f93c29', 'de689d06'],
+    title: 'Ψαθαρούδες',
+    city: 'Ларнака, Кипр',
+    address: 'Kalavasos Village Square',
+    lat: 34.7717166,
+    lng: 33.296221,
+    first: '2026-10-18',
+    last: '2026-11-01',
+    source: 'cyprusnow.app/event/ψαθαρούδες',
+  },
+  {
+    name: 'Μια νύκτα στον παράδεισο (Пафос, Markideio) — СЕРИЯ 3 представлений',
+    ids: ['cd3c378c', 'fc1dbba1', '89159e6b'],
+    title: 'Μια νύκτα στον παράδεισο (Χειμερινή Περιοδεία) στη',
+    city: 'Пафос, Кипр',
+    address: 'Markideio Municipal Theatre',
+    lat: 34.7781598,
+    lng: 32.4232334,
+    first: '2027-01-22',
+    last: '2027-01-24',
+    source: 'cyprusnow.app/event/μια-νύκτα-στον-παράδεισο-χειμερινή-περιοδεία-στην-πάφο',
+  },
+];
+
+// СЕРИИ, которые сворачивать НЕЛЬЗЯ (проверено по ленте источника 10.10.2026).
+// Отличие от IDO: там источник, кроме записей по дням, отдаёт независимую запись-интервал
+// одного турнира, а сам чемпионат — одно событие на одной площадке. Здесь источник моделирует
+// СЕРИЮ отдельных представлений: у каждой записи `series_count` = число вечеров и `series_first/last`
+// (Ψαθαρούδες, Kalavasos Village Square: 4 записи 18/25.10, 28.10, 01.11, series_count=4, end_at у всех null;
+// «Μια νύκτα στον παράδεισο», Пафос, Markideio Municipal Theatre: 3 записи 22/23/24.01.2027, series_count=3).
+// Свернуть такую группу = удалить с карты отдельные спектакли. Проверка — `dot-cy-series-guard-probe.mjs`.
+const SERIES_DO_NOT_COLLAPSE = [
+  { title: 'Ψαθαρούδες', sessions: 4, venue: 'Kalavasos Village Square', src: 'series_count=4, 18.10/25.10/28.10/01.11' },
+  { title: 'Μια νύκτα στον παράδεισο (Χειμερινή Περιοδεία) στη', sessions: 3, venue: 'Markideio Municipal Theatre', src: 'series_count=3, 22/23/24.01.2027' },
 ];
 
 const TOL = 0.0002;
@@ -37,6 +74,11 @@ function fail(g, msg) { console.log(`  ОТКЛОНЕНО ${g.name}: ${msg}`); r
 
 async function run(g) {
   console.log(`== ${g.name}`);
+  const series = SERIES_DO_NOT_COLLAPSE.find(s => g.title.startsWith(s.title));
+  if (series) {
+    console.log(`  ОТКЛОНЕНО: источник моделирует СЕРИЮ из ${series.sessions} представлений (${series.src}, ${series.venue}) — дни не терять`);
+    return;
+  }
   const { data, error } = await db.from('events')
     .select('id,title,start_date,end_date,start_time,city,address,lat,lng,status,website,category_id,source_type')
     .eq('title', g.title).eq('city', g.city);
