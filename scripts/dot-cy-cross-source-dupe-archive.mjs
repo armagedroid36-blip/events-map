@@ -257,6 +257,17 @@ const PAIRS = [
     source: { start_date: '2026-11-12', start_time: '16:00:00', end_date: '2026-11-15' },
     note: 'Lefkara Classic 12–15.11.2026 Ларнака, Пано Лефкара (34.8665517,33.3068524): оставлена карточка полного интервала 12.11 16:00 → 15.11 17:00 (адрес «The Agora Hotel / Pano Lefkara Square», сайт lefkaraclassic.com); архив — карточка того же события, датированная только финальным днём 15.11 06:30',
   },
+  {
+    // тот же подкласс «финальный день многодневного» (запуск 133), источник — Cyprus Now.
+    // Проверено 09.10.2026 через прокси 10809: API `?q=melancholia` отдаёт ДВЕ записи с ОДНИМ названием
+    // и одной площадкой («Nicosia Municipal Theatre») — каноническая `…-2026-10-10` → start_at
+    // 2026-10-10T17:00Z (=20:00 местного) / end_at 2026-10-11T16:00Z (=19:00), и `…-2026-10-11`
+    // → только 11.10 19:00 (финальный день).
+    keep: '8a693a07', archive: '8a7f366d', token: /melancholia/i,
+    windowInside: true, venue: 'municipal theatre',
+    source: { start_date: '2026-10-10', start_time: '20:00:00', end_date: '2026-10-11' },
+    note: 'Amalia Melancholia η Βασίλισσα των Φοινίκων – Διεθνές Φεστιβάλ Λευκωσίας 2026, Никосия, Nicosia Municipal Theatre: оставлена карточка полного интервала 10.10 20:00 → 11.10 19:00 (слаг …-2026-10-10), архив — карточка того же события, датированная финальным днём 11.10 19:00 (слаг …-2026-10-11)',
+  },
 ];
 
 const rows = await selectAll(db, 'events', 'id,title,title_ru,start_date,start_time,end_time,end_date,recurrence,city,address,lat,lng,website,status,photos,description,description_en');
