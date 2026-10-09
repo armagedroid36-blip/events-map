@@ -139,6 +139,22 @@ const PAIRS = [
     source: { start_date: '2026-10-09', start_time: '19:00:00' },
     note: '4-й Паγκипрский летний культурный фестиваль 09.10 19:00 Фамагуста: страница /event/4th-pan-cypriot-summer-cultural-festival-in-famagusta-2026-10-09 (Central Square of Acheritou, 35.0996644,33.8613357) оставлена; архив — /event/4o-παγκύπριο-πολιτιστικό-φεστιβάλ-θέρους-2026-10-09 (греческий слаг, адрес уровня города «Фамагуста, Кипр», пин 35.139128,33.8478462)',
   },
+  {
+    // подкласс «одно событие — два слага источника, разные пины» (запуск 122) — здесь на самом
+    // деле ТРИ живые карточки одного шоу (cyprus.bz + два слага cyprusnow) на 14.11 16:00.
+    // Арбитр — OSM: Θέατρο Μασκαρίνι (way 1047395017), 4 Athalassis, Агландзия/Латсия, округ
+    // Никосии — 35.1188618,33.3780548. Ровно на этой точке стоит карточка cyprus.bz (`08fdfad2`,
+    // полное описание + фото); слаг cyprusnow «…bubble-theatre-for-kids-in-nicosia…» в 70 м
+    // (8969bb4b), слаг «…soap-bubble-show-in-nicosia-larnaca…» — в 2.1 км (317cdd54) → оба в архив.
+    keep: '08fdfad2', archive: '317cdd54', token: /bubble/i,
+    osmPin: { lat: 35.1188618, lng: 33.3780548, tol: 0.0005 },
+    note: 'Mr and Mrs Bubble Show 14.11 16:00 Никосия: оставлена карточка cyprus.bz /event/30b5/… (пин ровно на точке OSM «Θέατρο Μασκαρίνι», адрес «Theatro Maskarini, Nicosia», фото, полное EN-описание); архив — слаг cyprusnow «…soap-bubble-show-in-nicosia-larnaca…» (адрес «Theatro Maskarini», пин 35.0995648,33.3815988 — 2.1 км мимо площадки)',
+  },
+  {
+    keep: '08fdfad2', archive: '8969bb4b', token: /bubble/i,
+    osmPin: { lat: 35.1188618, lng: 33.3780548, tol: 0.0005 },
+    note: 'то же шоу, вторая копия того же класса: архив — слаг cyprusnow «…bubble-theatre-for-kids-in-nicosia…» (пин 35.1186931,33.3787897 — 70 м от площадки OSM, греческое описание со служебным хвостом «Scroll down for English version», 1 фото)',
+  },
 ];
 
 const rows = await selectAll(db, 'events', 'id,title,title_ru,start_date,start_time,city,address,lat,lng,website,status,photos,description,description_en');
@@ -186,6 +202,16 @@ for (const p of PAIRS) {
     };
     if (!cityLevel(kill)) fail.push(`архивируемая с адресом площадки («${kill.address}») — разбирать вручную`);
     if (cityLevel(keep)) fail.push('оставляемая тоже с адресом уровня города — разбирать вручную');
+  } else if (p.osmPin) {
+    // подкласс «одно событие — два слага источника, у карточек РАЗНЫЕ пины»: третьего источника
+    // координат нет, но реальная площадка есть в OSM/Nominatim — оставляем карточку, стоящую на
+    // точке площадки, архивируем ту, чей пин от неё далеко (потерянный фолбэк/чужой адрес).
+    if (kill.start_date !== keep.start_date) fail.push(`даты разные (${kill.start_date} / ${keep.start_date})`);
+    if ((kill.start_time || '') !== (keep.start_time || '')) fail.push(`время разное (${kill.start_time} / ${keep.start_time})`);
+    const tol = p.osmPin.tol || 0.002;
+    const dist = (r) => Math.hypot(Number(r.lat) - p.osmPin.lat, Number(r.lng) - p.osmPin.lng);
+    if (dist(keep) > tol) fail.push(`оставляемая не на площадке из OSM (${dist(keep).toFixed(4)}° > ${tol})`);
+    if (dist(kill) <= tol) fail.push('архивируемая тоже на площадке из OSM — разбирать вручную');
   } else if (p.source) {
     // арбитр — страница источника: обе карточки с одного website, а верные дата/время берём из JSON-LD
     if (keep.start_date !== p.source.start_date || (keep.start_time || '') !== p.source.start_time)
