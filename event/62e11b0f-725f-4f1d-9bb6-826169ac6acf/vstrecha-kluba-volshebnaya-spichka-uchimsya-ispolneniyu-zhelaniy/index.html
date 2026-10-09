@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Встреча Клуба ВОЛШЕБНАЯ СПИЧКА… — 10 октября 2026 · Нячанг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DDChyaMR.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-BxZzHcvh.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CwvY_jr7.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-DJQQ7I9x.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-DELNJlyf.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BIyBA1U-.css" />
+      <meta name="description" content="Нячанг, 10 октября 2026. Встреча Клуба ВОЛШЕБНАЯ СПИЧКА — учимся исполнению желаний 10.10 в 10:10 — первая открытая встреча. Передаю знания о технологии…" />
+    <link rel="canonical" href="https://mypins.site/event/62e11b0f-725f-4f1d-9bb6-826169ac6acf/vstrecha-kluba-volshebnaya-spichka-uchimsya-ispolneniyu-zhelaniy/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Встреча Клуба ВОЛШЕБНАЯ СПИЧКА… — 10 октября 2026 · Нячанг" />
+    <meta property="og:description" content="Нячанг, 10 октября 2026. Встреча Клуба ВОЛШЕБНАЯ СПИЧКА — учимся исполнению желаний 10.10 в 10:10 — первая открытая встреча. Передаю знания о технологии…" />
+    <meta property="og:url" content="https://mypins.site/event/62e11b0f-725f-4f1d-9bb6-826169ac6acf/vstrecha-kluba-volshebnaya-spichka-uchimsya-ispolneniyu-zhelaniy/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/62e11b0f-725f-4f1d-9bb6-826169ac6acf/vstrecha-kluba-volshebnaya-spichka-uchimsya-ispolneniyu-zhelaniy/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/62e11b0f-725f-4f1d-9bb6-826169ac6acf/meeting-of-the-magic-match-club-learning-to-fulfill-wishes/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Встреча Клуба ВОЛШЕБНАЯ СПИЧКА учимся исполнению желаний","url":"https://mypins.site/event/62e11b0f-725f-4f1d-9bb6-826169ac6acf/vstrecha-kluba-volshebnaya-spichka-uchimsya-ispolneniyu-zhelaniy/","startDate":"2026-10-10T10:10:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"PRAVILO, Đ. Ng. Đức Kế, Nha Trang, Khánh Hòa 650000","address":{"@type":"PostalAddress","addressLocality":"Нячанг","streetAddress":"PRAVILO, Đ. Ng. Đức Kế, Nha Trang, Khánh Hòa 650000"},"geo":{"@type":"GeoCoordinates","latitude":12.1985862,"longitude":109.211651}},"description":"Встреча Клуба ВОЛШЕБНАЯ СПИЧКА — учимся исполнению желаний 10.10 в 10:10 — первая открытая встреча. Передаю знания о технологии, благодаря которой расширяю свои возможности. А что, если желание — это не то, чего нужно добиваться, а то, что уже есть внутри нас? Остаётся только освободить ему дорогу. На встрече узнаем, почему я не только \"имею право хотеть\" — \"я обязан хотеть\". Будем исследовать свои желания и создадим Намерение по достижению своего \"хочу\". Рассмотрим, что именно мешает им становиться реальностью. «Волшебная спичка» — это встречи о том, как замечать свои привычные программы, возвращать себе авторство и превращать желание в намерение и действие. 🕙 Когда: 10.10.2026 в 10:10 📍 Где: https://maps.app.goo.gl/7L7QXznDy5Ts7e776?g_st=an 🎟 Участие: бесплатно — первая встреча 🧠 С собой: блокнот, ручка для возможных записей 📩 Записаться: @anatolii_lobanov #дата: 10.10 P.S.: мой интерес — проявить формат проведения встреч, то есть я приглашаю вас в своего рода фокус-группу Пост от: Anatoliy Lobanov","endDate":"2026-10-10","image":"https://mypins.site/logo.png","organizer":{"@type":"Organization","name":"Telegram @nyachang_ru","url":"https://t.me/nyachang_ru/24343"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"Встреча Клуба ВОЛШЕБНАЯ СПИЧКА учимся исполнению желаний","item":"https://mypins.site/event/62e11b0f-725f-4f1d-9bb6-826169ac6acf/vstrecha-kluba-volshebnaya-spichka-uchimsya-ispolneniyu-zhelaniy/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Встреча Клуба ВОЛШЕБНАЯ СПИЧКА учимся исполнению желаний</h1>
+  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-10-10">10 октября 2026</time></p>
+  <p><time datetime="2026-10-10T10:10:00">10 октября 2026, 10:10</time></p>
+  <address>PRAVILO, Đ. Ng. Đức Kế, Nha Trang, Khánh Hòa 650000, Нячанг</address>
+  <p>Бесплатно</p>
+  <p>Встреча Клуба ВОЛШЕБНАЯ СПИЧКА — учимся исполнению желаний
+
+10.10 в 10:10 — первая открытая встреча.
+Передаю знания о технологии, благодаря которой расширяю свои возможности.
+А что, если желание — это не то, чего нужно добиваться, а то, что уже есть внутри нас? Остаётся только освободить ему дорогу.
+
+На встрече узнаем, почему я не только &quot;имею право хотеть&quot; — &quot;я обязан хотеть&quot;.
+
+Будем исследовать свои желания и создадим Намерение по достижению своего &quot;хочу&quot;.
+Рассмотрим, что именно мешает им становиться реальностью.
+
+«Волшебная спичка» — это встречи о том, как замечать свои привычные программы, возвращать себе авторство и превращать желание в намерение и действие.
+
+🕙 Когда: 10.10.2026 в 10:10
+📍 Где: https://maps.app.goo.gl/7L7QXznDy5Ts7e776?g_st=an
+🎟 Участие: бесплатно — первая встреча
+🧠 С собой: блокнот, ручка для возможных записей
+📩 Записаться: @anatolii_lobanov
+#дата: 10.10
+
+P.S.: мой интерес — проявить формат проведения встреч, то есть я приглашаю вас в своего рода фокус-группу
+Пост от: Anatoliy Lobanov</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/nha-trang/">Нячанг</a> <span aria-hidden="true">›</span> <span>Встреча Клуба ВОЛШЕБНАЯ СПИЧКА учимся исполнению желаний</span></p>
+    <p>Ещё события в Нячанге: <a href="/nha-trang/">афиша</a> · <a href="/nha-trang/meetup/">🤝 Встречи и нетворкинг</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/b68387b3-ca91-40c6-ae2b-9b806d75ed21/akterstvo-kak-sposob-poznat-sebya-vstrecha/">АКТЁРСТВО КАК СПОСОБ ПОЗНАТЬ СЕБЯ - ВСТРЕЧА <time datetime="2026-10-08">8 октября 2026</time></a></li>
+    <li><a href="/event/562c4949-0658-447d-b17e-81ab8887c56b/zhenskiy-zavtrak/">Женский завтрак <time datetime="2026-10-09">9 октября 2026</time></a></li>
+    <li><a href="/event/7a07f7d5-ba8e-43c7-bf33-d56786221f9e/literaturnyy-klub-v-nyachange/">Литературный клуб в Нячанге <time datetime="2026-10-10">10 октября 2026</time></a></li>
+    <li><a href="/event/836d676c-2153-4ced-bc09-9bab7f8a49ca/klub-volshebnaya-spichka-uchimsya-ispolneniyu-zhelaniy/">Клуб ВОЛШЕБНАЯ СПИЧКА учимся исполнению желаний <time datetime="2026-10-10">10 октября 2026</time></a></li>
+    <li><a href="/event/c79d5eeb-1b3b-423d-982c-3be8e3e9c24a/zavtrak-so-zvezdami/">ЗАВТРАК СО ЗВЁЗДАМИ <time datetime="2026-10-10">10 октября 2026</time></a></li>
+    <li><a href="/event/79b550f6-5e5e-42c3-84a9-fbac33b7d15d/inogda-tak-khochetsya-sprosit-soveta-no-ne-u-kogo-ili-nelovko-neumestno/">Иногда так хочется спросить совета, но не у кого или неловко, неуместно. <time datetime="2026-10-12">12 октября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Нячанг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/f02a5869-8dcc-4185-9cac-839bb756d77c/tantsevalnyy-master-klass-dlya-vzroslykh/">ТАНЦЕВАЛЬНЫЙ МАСТЕР-КЛАСС ДЛЯ ВЗРОСЛЫХ.</a> <time datetime="2026-10-09">9 октября 2026</time></li>
+    <li>Следующее: <a href="/event/98859e2b-87ec-4ae5-94de-e42fea87a11c/strely-ukrytiya-komandy-archery-tag-v-nyachange/">Стрелы, укрытия, команды: Archery Tag в Нячанге</a> <time datetime="2026-10-10">10 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/nha-trang/">Ближайшие события: Нячанг</a></p>
+</div>
+
+  </body>
+</html>
