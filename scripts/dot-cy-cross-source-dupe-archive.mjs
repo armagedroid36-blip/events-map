@@ -199,6 +199,20 @@ const PAIRS = [
     setEnd: { end_date: '2026-10-16', end_time: '23:00:00' },
     note: 'International Short Film Festival 2026 10–16.10 Лимасол, Rialto Theatre (34.679538,33.0458112): оставлена англ. карточка «International Short Film Festival 2026» (start 10.10 20:00 = startDate источника; ей проставлен end_date 16.10 23:00 из JSON-LD); архив — греческая «16ο ΔΙΕΘΝΕΣ ΦΕΣΤΙΒΑΛ ΤΑΙΝΙΩΝ ΜΙΚΡΟΥ ΜΗΚΟΥΣ ΚΥΠΡΟΥ» (start 16.10 20:00 — только финальный день того же фестиваля)',
   },
+  {
+    // подкласс «одно событие — две страницы источника» (запуск 129). Nicosia Book Fest 2026 идёт
+    // 10–11.10 в Πάρκο Ακροπόλεως (Никосия). В базе две живые карточки одного фестиваля: англ.
+    // «…Free Book & Literature Festival» (start 10.10 = первый день, end 11.10, адрес «Akropolis Park»)
+    // и греч. «…Παγκόσμια Ημέρα Βιβλίου» (start 11.10, адрес «Caves of Acropolis Park», описание —
+    // анонс/прессрелиз о фестивале). Проверено 09.10.2026 через прокси 10809: греческий слаг отдаёт
+    // 308 Permanent Redirect на англ. слаг (канон), англ. страница 200 и живая; API CN «?q=book fest»
+    // возвращает РОВНО одну запись с тем же каноническим слагом (title «…10-11/10/26 | Πάρκο Ακρόπολης»).
+    // Пин и город у карточек совпадают, интервал архивируемой (11.10) внутри интервала оставляемой (10–11.10).
+    keep: 'd3a4c641', archive: '6c026f18', token: /(book|βιβλ)/i,
+    windowInside: true, venue: 'ropolis|ακροπόλ',
+    source: { start_date: '2026-10-10', start_time: '10:00:00', end_date: '2026-10-11' },
+    note: 'Nicosia Book Fest 2026 10–11.10 Никосия, Πάρκο Ακροπόλεως (35.1464346,33.3615795): оставлена англ. карточка «Nicosia Book Fest 2026: Free Book & Literature Festival» (start 10.10 10:00, end 11.10 22:00, адрес «Akropolis Park», канонический живой слаг источника); архив — греческая «Nicosia Book Fest 2026 – Παγκόσμια Ημέρα Βιβλίου» (start 11.10 — только финальный день того же фестиваля; её слаг 308-редиректит на канон)',
+  },
 ];
 
 const rows = await selectAll(db, 'events', 'id,title,title_ru,start_date,start_time,end_date,city,address,lat,lng,website,status,photos,description,description_en');
