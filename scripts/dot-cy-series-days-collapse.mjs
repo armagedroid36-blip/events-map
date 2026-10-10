@@ -67,6 +67,17 @@ const SERIES_DO_NOT_COLLAPSE = [
   { title: 'Μια νύκτα στον παράδεισο (Χειμερινή Περιοδεία) στη', sessions: 3, venue: 'Markideio Municipal Theatre', src: 'series_count=3, 22/23/24.01.2027' },
   { title: 'All of It', sessions: 3, venue: 'Ktirion 53, Никосия', src: 'лента CN ?q=all of it: 4 отдельные записи 12/14/19/21.10 по 20:00, у каждой series_count=1 и end_at=null — вечера одного шоу, а не многодневное событие' },
   { title: 'Poetry MOVES International Festival', sessions: 4, venue: 'Artos House, Никосия', src: 'лента CN ?q=poetry moves: series_count=4, 13/16/21/30.10 (first 13.10 20:00, last 30.10 19:30) — фестивальные дни' },
+  // Остаток класса разобран приёмкой ленты CN 10.10.2026 (?q= по каждому названию): у ВСЕХ групп
+  // источник отдаёт записи по дням/занятиям с одним series_id, но НЕ отдаёт независимой интервальной
+  // записи события целиком (как ido-world-championships-2026). Сворачивать нельзя — потеряются дни/вечера.
+  { title: 'Puffy Edition – Εργαστήριο Πλεξίματος για Αρχάριους', sessions: 2, venue: 'Никосия (мастер-класс)', src: '?q=puffy edition: 2 записи одного series_id (sc=2) — 10.10 10:00→11.10 10:00 и 11.10 10:00, end_at у второй null; два занятия воркшопа, не многодневное событие' },
+  { title: 'Silva Immersion: Mind Development Seminar in Nicosia', sessions: 2, venue: 'Silva Education Centre, Latsia', src: '?q=silva: 2 записи (sc=2), 10.10 и 11.10 09:00, end_at null у обеих — двухдневный семинар по записям, интервальной записи нет' },
+  { title: 'The Marios Toumbas Jazz Trio Live at Sarah’s jazz club', sessions: 105, venue: "Sarah's Jazz Club, Никосия", src: '?q=toumbas: series_count=105 — регулярные концерты трио (расписание до 2028), сворачивать в один интервал нельзя' },
+  { title: 'Leptos Cyprus International 4-day Challenge', sessions: 4, venue: 'Arena Sports, Пафос', src: '?q=leptos: 4 записи (sc=4) 08.11, 09.11, 25.11, 26.11 — заезды челленджа по дням, интервала на всё событие нет' },
+  { title: 'The Neighborhood of Cine Volos Festival – 3rd Edition', sessions: 2, venue: 'Лимасол (фестиваль)', src: '?q=cine volos: 2 записи (sc=2) по одному дню каждая (04.11 и 08.11, 09:00→20:59) — фестивальные дни, не сплошной интервал' },
+  { title: 'Regatta of Champions – The R.O.C. ILCA4 @ Limassol', sessions: 2, venue: 'Лимасол (регата)', src: '?q=regatta: 2 записи (sc=2) 21–22.11 и 23–24.11 — два этапа одного слагa, интервальной записи на всё событие нет' },
+  { title: 'Regatta of Champions – The R.O.C. Optimist', sessions: 2, venue: 'Лимасол (регата)', src: '?q=regatta: 2 записи (sc=2) 09–10.11 и 11–12.11 — два этапа, интервала нет' },
+  { title: 'Η Κοιλιά', sessions: 2, venue: 'Ktirion 53, Никосия', src: 'две живые карточки со слагами η-κοιλιά-2026-10-17 и -10-18 (записи по дням 20:00), интервальной записи у источника нет' },
 ];
 
 const TOL = 0.0002;
