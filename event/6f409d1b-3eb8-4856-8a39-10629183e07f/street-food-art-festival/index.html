@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Street Food &amp; Art festival — 10 октября 2026 · Никосия, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DDChyaMR.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-BxZzHcvh.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CwvY_jr7.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-BG70FeuA.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-DJQQ7I9x.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-DELNJlyf.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BIyBA1U-.css" />
+      <meta name="description" content="Никосия, Кипр, 10 октября 2026. Learn the secrets of the Cypriot cuisine, tantalize your palate with unique traditional flavors, meet ardent handcrafters and…" />
+    <link rel="canonical" href="https://mypins.site/event/6f409d1b-3eb8-4856-8a39-10629183e07f/street-food-art-festival/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Street Food &amp; Art festival — 10 октября 2026 · Никосия, Кипр" />
+    <meta property="og:description" content="Никосия, Кипр, 10 октября 2026. Learn the secrets of the Cypriot cuisine, tantalize your palate with unique traditional flavors, meet ardent handcrafters and…" />
+    <meta property="og:url" content="https://mypins.site/event/6f409d1b-3eb8-4856-8a39-10629183e07f/street-food-art-festival/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/6f409d1b-3eb8-4856-8a39-10629183e07f/street-food-art-festival/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/6f409d1b-3eb8-4856-8a39-10629183e07f/street-food-art-festival/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Street Food & Art festival","url":"https://mypins.site/event/6f409d1b-3eb8-4856-8a39-10629183e07f/street-food-art-festival/","startDate":"2026-10-10T15:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Livadero Park","address":{"@type":"PostalAddress","addressLocality":"Никосия, Кипр","streetAddress":"Livadero Park","addressCountry":"cyprus"},"geo":{"@type":"GeoCoordinates","latitude":34.92102399,"longitude":33.09486335}},"description":"Learn the secrets of the Cypriot cuisine, tantalize your palate with unique traditional flavors, meet ardent handcrafters and enjoy a scenery of mountain tops dotted with fruit-bearing trees and pine trees at the Gastronomy and Traditional Festivals taking place at our picturesque villages in the Tr Venue: Livadero Park.","endDate":"2026-10-11","image":"https://mypins.site/logo.png","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/street-food-art-festival-5th-edition-in-palaichori-2026-10-10"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Street Food & Art festival","item":"https://mypins.site/event/6f409d1b-3eb8-4856-8a39-10629183e07f/street-food-art-festival/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Street Food &amp; Art festival</h1>
+  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-10-11">11 октября 2026</time></p>
+  <p><time datetime="2026-10-10T15:00:00">10 октября 2026, 15:00</time></p>
+  <address>Livadero Park, Никосия, Кипр</address>
+  <p>Learn the secrets of the Cypriot cuisine, tantalize your palate with unique traditional flavors, meet ardent handcrafters and enjoy a scenery of mountain tops dotted with fruit-bearing trees and pine trees at the Gastronomy and Traditional Festivals taking place at our picturesque villages in the Tr Venue: Livadero Park.</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Street Food &amp; Art festival</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/festival/">🎉 Фестивали</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/1acc1d7b-7a9f-4eef-8bc4-ff1e22e5d24b/muzykalnyy-festival-mestinpoli-dvukhdnevnyy-festival-pod-otkrytym-nebom-v-nikosii/">Музыкальный фестиваль Mestinpoli: двухдневный фестиваль под открытым небом в Никосии <time datetime="2026-10-10">10 октября 2026</time></a></li>
+    <li><a href="/event/1d4a17aa-a193-450c-b6da-02a685723e42/thalassa-festival-2026-limassol/">THALASSA Festival 2026 – Limassol <time datetime="2026-10-10">10 октября 2026</time></a></li>
+    <li><a href="/event/2abba9c7-2ee2-4f4f-a469-698aa08f053c/mitsikuri-mezhdunarodnyy-festival-ispolnitelskikh-iskusstv-dlya-detey-po-vsemu-kipru/">Мицикури: Международный фестиваль исполнительских искусств для детей по всему Кипру <time datetime="2026-10-10">10 октября 2026</time></a></li>
+    <li><a href="/event/2d7e30a9-b597-4130-a402-d6b8231eab23/festival-talassa/">Фестиваль «Та́ласса» <time datetime="2026-10-10">10 октября 2026</time></a></li>
+    <li><a href="/event/36a87826-2bc4-41fe-b05b-427151267245/cultural-festival/">Cultural Festival <time datetime="2026-10-10">10 октября 2026</time></a></li>
+    <li><a href="/event/37e240dc-9138-484e-b4b3-26224cbc2487/veneror-larnaca-festival-ozhivlyayushchiy-serdtse-goroda/">Veneror Larnaca: Фестиваль, оживляющий сердце города <time datetime="2026-10-10">10 октября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/6c026f18-a36f-4a58-bc83-435dfc43bac7/knizhnyy-festival-nikosii-2026-vsemirnyy-den-knigi/">Книжный фестиваль Никосии 2026 – Всемирный день книги</a> <time datetime="2026-10-11">11 октября 2026</time></li>
+    <li>Следующее: <a href="/event/899e0ae9-15a0-4797-ba8b-76be204e9af9/master-klassy-paradoksalnaya-tykva/">Мастер-классы «Парадоксальная тыква»</a> <time datetime="2026-10-11">11 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>
