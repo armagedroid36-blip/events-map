@@ -34,6 +34,8 @@ const FIXES = {
   'a9877216': { lat: 35.1632112, lng: 33.3864655, source: 'embed карты страницы cyprus.bz/event/34c3 (q=35.1632112%2C33.3864655, 7 знаков); Nominatim: Αγλαντζιά, район Никосия', why: 'One Weekend With Teatro Angelico — площадка Old Xydadiko, Никосия (округ точки = округ метки, city не меняется)' },
   'a380fc2c': { lat: 34.9364894, lng: 32.4082095, source: 'embed карты страницы cyprus.bz/event/35fb (q=34.9364894%2C32.4082095, 7 знаков); Nominatim: «Пано Ародес, район Пафос»', why: 'Santa’s Embassy in Pano-Arodes — село Пано Ародес (в самом заголовке события); метка Лимасола была ложной меткой источника', cityFromPoint: true },
   '8db46e84': { lat: 34.7087687, lng: 32.5749517, source: 'JSON-LD страницы cyprus.bz/ru/event/3303: location.name «Площадь», addressLocality «Куклия» (в тексте страницы — Пафос, Лимасол не упомянут); Nominatim: «Куклия, район Пафос»', why: 'Культурная децентрализация — площадь села Куклия (округ Пафос); метка Лимасола была ложной меткой источника', cityFromPoint: true },
+  // run 152: фолбэк Никосии — событие в лесу Махера, а не в городе (источник дал только точку города)
+  'd59a9331': { lat: 34.9347492, lng: 33.2034303, source: 'Nominatim: «Εθνικό Δασικό Πάρκο Μαχαιράς / Machairas National Forest Park», leisure=nature_reserve, Επαρχία Λευκωσίας (34.9347492,33.2034303); страница события cyprusnow.app даёт только центр Никосии (35.1855659,33.3822764) при адресе «Machairas Forest»', why: 'Поход с собакой «Hike, Paws & Brunch» — адрес карточки это лес Махера в ~30 км от Никосии; округ точки = округ метки (Левкосия), city не меняется' },
 };
 
 const rows = await selectAll(db, 'events', 'id,title,city,address,lat,lng,status');
