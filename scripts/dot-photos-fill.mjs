@@ -20,9 +20,14 @@ const db = createClient(process.env.VITE_SUPABASE_URL || process.env.SUPABASE_UR
 });
 
 const rows = await selectAll(db, 'events', 'id,status,title,city,start_date,photos,website,source_type');
-const targets = rows.filter(
-  (r) => r.status === 'active' && !(r.photos || []).length && /^https?:/.test(r.website || ''),
-);
+const targetFilter = (r) =>
+  r.status === 'active' &&
+  /^https?:/.test(r.website || '') &&
+  (!(r.photos || []).length ||
+    // REFILL: перезабрать обложку cyprusnow, если записан мелкий вариант (cover-400)
+    (process.env.REFILL === '1' &&
+      (r.photos || []).some((u) => /cover-(\d+)\.webp/i.test(u) && Number((u.match(/cover-(\d+)/) || [])[1]) < 800)));
+const targets = rows.filter(targetFilter);
 console.log('карточек active без фото:', targets.length, '| режим:', APPLY ? 'APPLY' : 'dry');
 
 // Индекс «URL фото → название события-владельца»: одна картинка не должна уезжать
@@ -42,7 +47,7 @@ for (const r of rows) for (const u of r.photos || []) if (!usedFoto.has(u)) used
 
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126 Safari/537.36';
 
-function parseImg(html) {
+function parseImg(html, url = '') {
   const pick = (re) => {
     const m = html.match(re);
     return m ? m[1].trim() : null;
@@ -73,6 +78,33 @@ function parseImg(html) {
     }
   }
   if (img && /og-default|placeholder|default\.(png|jpg|jpeg|webp)|\/logo|sprite|opengraph-image/i.test(img)) img = null; // заглушки сайта (в т.ч. генератор OG-карточек cyprusnow) — не фото события
+  if (!img) {
+    // cyprusnow: og:image — генератор OG-карточек, а настоящая обложка события лежит
+    // в их Storage по слагу страницы (…/forecast-events/events/<slug>/cover-NNN.webp).
+    // Вариантов на странице несколько (400/800/1600) — берём самый крупный.
+    // СТРАХОВКА: обложку принимаем только от СВОЕГО слага страницы — иначе со страницы
+    // подтягивается картинка «похожего события» из блока рекомендаций (так у карточки
+    // рынка антиквариата нашлись обложки двух чужих событий 30.10 и 19.10).
+    const ownSlug = (() => {
+      try {
+        const p = new URL(url).pathname.split('/').filter(Boolean);
+        return p[p.length - 1] || '';
+      } catch {
+        return '';
+      }
+    })();
+    const covers = html.match(
+      /https:\/\/[a-z0-9.-]+\.supabase\.co\/storage\/v1\/object\/public\/forecast-events\/events\/[^"'\s\\]*?cover-(\d+)\.webp/gi,
+    );
+    const own = ownSlug
+      ? (covers || []).filter((u) => u.includes(`/events/${ownSlug}/`))
+      : covers || [];
+    if (own.length) {
+      img = [...new Set(own)].sort(
+        (a, b) => (Number((b.match(/cover-(\d+)/) || [])[1]) || 0) - (Number((a.match(/cover-(\d+)/) || [])[1]) || 0),
+      )[0];
+    }
+  }
   return img;
 }
 
@@ -95,7 +127,7 @@ async function grab(url) {
     const res = await fetch(url, { signal: ctrl.signal, headers: { 'user-agent': UA, accept: 'text/html' } });
     if (res.ok) {
       const html = await res.text();
-      const img = parseImg(html);
+      const img = parseImg(html, url);
       if (img) return { img, len: html.length, via: 'direct' };
       return { img: null, len: html.length };
     }
@@ -103,7 +135,7 @@ async function grab(url) {
   } catch (e) {
     const html = await viaProxy(url);
     if (html) {
-      const img = parseImg(html);
+      const img = parseImg(html, url);
       return { img, len: html.length, via: 'proxy', err: img ? null : 'нет og:image (proxy)' };
     }
     return { img: null, err: String(e.message || e).slice(0, 60) + ' / proxy пусто' };
@@ -130,6 +162,9 @@ async function checkImage(url) {
     }
   }
 }
+
+// Экспорт для юнит-проверки scripts/dot-photos-pageimg-check.mjs
+export { parseImg };
 
 let found = 0;
 let written = 0;
