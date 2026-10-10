@@ -72,7 +72,21 @@ function parseBaliDate(s) {
   return new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4] - 8, +m[5]));
 }
 
-/** Выбрать ближайшую будущую дату события (в пределах горизонта) */
+/**
+ * Выбрать ближайшую будущую дату события (в пределах горизонта).
+ * Возвращает { start, end, raw, lastRaw }: raw — запись-начало (её startAt/endAt идут
+ * в start_date/start_time), lastRaw — запись, которой закончился НЕПРЕРЫВНЫЙ ряд дат.
+ * Зачем lastRaw: у многодневных событий Балифорум ставит КАЖДЫЙ день отдельной записью
+ * с endAt=null (чемпионат 10–11 октября = две записи), поэтому end_date, взятый только
+ * из raw.endAt, у таких событий оставался пустым, хотя диапазон в ленте есть.
+ * Ряд тянем только внутри короткого набора «безвременных» записей (разрыв ≤ 36 ч,
+ * максимум MAX_RUN_RECORDS записей и MAX_RUN_DAYS дней) — длинные ежедневные серии
+ * (вечеринки, занятия, выставки) остаются без end_date, иначе диапазон был бы выдуман.
+ */
+/** Границы авто-диапазона: ряд из коротких «безвременных» записей (см. pickDate) */
+const MAX_RUN_DAYS = 3;
+const MAX_RUN_RECORDS = 3;
+
 function pickDate(eventDates) {
   if (!Array.isArray(eventDates) || !eventDates.length) return null;
   const now = todayUtc();
@@ -82,8 +96,39 @@ function pickDate(eventDates) {
     .filter((d) => d.start && d.start >= now && d.start <= horizon)
     .sort((a, b) => a.start - b.start);
   if (!future.length) return null;
-  return future[0];
+
+  const H = 3600 * 1000;
+  const limit = future[0].start.getTime() + MAX_RUN_DAYS * 24 * H;
+  let end = future[0].end && future[0].end > future[0].start ? future[0].end : future[0].start;
+  let lastRaw = future[0].raw;
+  // Диапазон тянем ТОЛЬКО по короткому ряду «безвременных» записей (startAt без endAt):
+  // так источник отдаёт настоящие многодневные события (чемпионат 10–11 октября — две
+  // записи 09:00→null), тогда как у сеансов/занятий/вечеринок у каждой записи есть своё
+  // время (13:00→15:00), а у длинных рядов — свой смысл (выставка на месяц, ежедневная
+  // вечеринка): растягивать их в один диапазон нельзя, это была бы выдуманная дата.
+  if (!future[0].raw.endAt && future.length <= MAX_RUN_RECORDS) {
+    for (let i = 1; i < future.length; i++) {
+      if (future[i].raw.endAt) break;
+      const gap = future[i].start - end;
+      if (gap < 0 || gap > 36 * H) break;
+      if (future[i].start.getTime() > limit) break;
+      end = future[i].start;
+      lastRaw = future[i].raw;
+    }
+  }
+  return { start: future[0].start, end, raw: future[0].raw, lastRaw };
 }
+
+/** Конец диапазона события по выбранному pickDate() */
+export function endDateOf(when) {
+  if (!when) return null;
+  const endRaw = when.lastRaw || when.raw;
+  if (endRaw.endAt) return endRaw.endAt.slice(0, 10);
+  if (endRaw !== when.raw) return endRaw.startAt.slice(0, 10);
+  return null;
+}
+
+export { pickDate };
 
 function pickCategory(types) {
   if (!Array.isArray(types)) return DEFAULT_CAT;
@@ -337,7 +382,7 @@ async function main() {
         MUSIC_TYPES.some((w) => String(t.name || '').toLowerCase().includes(w)),
       );
       const isInternational = isMusic ? !!(await isInternationalArtist(ev.title, description)) : false;
-      const endDate = when.raw.endAt ? when.raw.endAt.slice(0, 10) : null;
+      const endDate = endDateOf(when);
       const startTime = when.raw.startAt.slice(11, 16) || null;
       const endTime = when.raw.endAt ? when.raw.endAt.slice(11, 16) : null;
       // districtName от источника бывает латиницей («Ubud», «Jimbaran») — в базу пишем русский
