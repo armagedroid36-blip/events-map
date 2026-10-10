@@ -534,7 +534,7 @@ async function collectVisitCyprus(seen, budget) {
 // Порядок — восточные первыми: они и есть цель (курортные зоны туристов).
 const CYPRUSNOW_CITIES = ['famagusta', 'protaras', 'paralimni', 'larnaca', 'paphos', 'limassol', 'nicosia'];
 
-async function collectCyprusNow(seen, budget) {
+async function collectCyprusNow(seen, budget, websites = new Set()) {
   const deadline = Date.now() + BUDGET.cyprusnow;
   // Квота на город: не меньше 15, но так, чтобы всем городам хватило общего бюджета
   const perCity = Math.max(15, Math.ceil(budget / CYPRUSNOW_CITIES.length));
@@ -561,6 +561,16 @@ async function collectCyprusNow(seen, budget) {
         stats.skipped++;
         continue;
       }
+      // Ссылка на страницу источника. Ту же страницу агрегатор правит (заголовок,
+      // время) — ключ title|start_date такую правку не ловит, и событие вставляется
+      // второй карточкой на карту (карточка «Street Food & Art festival» 10.10.2026:
+      // одна и та же страница, заголовок источника изменён, адреса разные — штатный
+      // дедуп её не видит). Поэтому уже разобранную страницу повторно не берём.
+      const pageUrl = ev.url || (ev.slug ? `https://cyprusnow.app/event/${ev.slug}` : null);
+      if (pageUrl && websites.has(String(pageUrl).trim())) {
+        stats.skipped++;
+        continue;
+      }
       const lat = parseFloat(ev.venue_lat);
       const lng = parseFloat(ev.venue_lng);
       const priceNum = parseFloat(ev.price ?? ev.ticket_price);
@@ -582,7 +592,7 @@ async function collectCyprusNow(seen, budget) {
         address: ev.venue_address || ev.address || ev.venue_name || ev.venue?.name || `${cityNm}, Кипр`,
         lat: Number.isFinite(lat) && Math.abs(lat) > 1 ? lat : null,
         lng: Number.isFinite(lng) && Math.abs(lng) > 1 ? lng : null,
-        website: ev.url || (ev.slug ? `https://cyprusnow.app/event/${ev.slug}` : null),
+        website: pageUrl,
         photos: [ev.image_url || ev.image || ev.cover_image].filter(Boolean),
         price: Number.isFinite(priceNum) ? priceNum : null,
         currency: Number.isFinite(priceNum) ? 'eur' : null,
@@ -835,7 +845,7 @@ async function main() {
   // VisitCyprus отдаёт небольшой официальный календарь (~30 событий),
   // Cyprus Now — самый насыщенный источник, Cyprus.BZ добирает остаток бюджета.
   if (want('visitcyprus')) await collectVisitCyprus(seen, Math.min(60, MAX_EVENTS));
-  if (want('cyprusnow')) await collectCyprusNow(seen, Math.min(120, MAX_EVENTS));
+  if (want('cyprusnow')) await collectCyprusNow(seen, Math.min(120, MAX_EVENTS), websites);
   if (want('cyprusbzCities')) {
     await collectCyprusBzCities(seen, Math.min(25, Math.max(0, MAX_EVENTS - stats.visitcyprus - stats.cyprusnow)), bzPages);
   }
