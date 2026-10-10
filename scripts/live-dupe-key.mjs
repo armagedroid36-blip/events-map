@@ -233,14 +233,32 @@ export function liveAbbrevMatch(a, b) {
   if (dayKey(a) !== dayKey(b)) return null;
   const placeTokens = (s) => new Set(words(s).filter((w) => !GENERIC.has(w) && !PLACE_STOP.has(w) && !ADDR_STOP.has(w)));
   const sa = placeTokens(norm(a.address)), sb = placeTokens(norm(b.address));
-  let common = null;
-  for (const w of sa) if (sb.has(w)) { common = w; break; }
+  const common = (() => {
+    for (const w of sa) if (sb.has(w)) return w;
+    return null;
+  })();
   const stubBoth = isCityLevelAddr(a) && isCityLevelAddr(b);
   const near = hasCoords(a) && hasCoords(b) ? distanceM(a, b) : null;
   const ov = abbrevOverlap(a, b);
+  // Слова площадки исключаем из доказательства: если название клуба стоит и в
+  // заголовке, и в адресе («Lubimaya – ION at Dusty Munky» ↔ «Jepe at Dusty Munky»,
+  // адрес у обеих «Dusty Munky»), то «2 общих слова + адрес» — это НЕ одно событие,
+  // а два разных вечера одного клуба. Считаем отдельно слова, которых нет в адресах.
+  const addrWords = new Set([...sa, ...sb]);
+  const ovCore = (() => {
+    let best = 0;
+    for (const ta of [a.title, a.title_ru, a.title_en].filter(Boolean).map(collapseAbbrev))
+      for (const tb of [b.title, b.title_ru, b.title_en].filter(Boolean).map(collapseAbbrev)) {
+        const s = new Set(abbrevWords(tb));
+        let n = 0;
+        for (const w of abbrevWords(ta)) if (s.has(w) && !addrWords.has(w)) n++;
+        best = Math.max(best, n);
+      }
+    return best;
+  })();
   const ab = sameAbbrev(a, b);
   const why = ov >= 3 ? `аббрев-имя ${ov}сл`
-    : (ov >= 2 && common) ? `аббрев-имя ${ov}сл+адрес~${common}`
+    : (ov >= 2 && ovCore >= 1 && common) ? `аббрев-имя ${ov}сл+адрес~${common}`
       : (ab && (common || (near !== null && near <= 300))) ? `общая аббревиатура ${ab}`
         : null;
   if (!why) return null;
