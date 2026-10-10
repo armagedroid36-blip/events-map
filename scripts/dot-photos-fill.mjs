@@ -47,11 +47,58 @@ for (const r of rows) for (const u of r.photos || []) if (!usedFoto.has(u)) used
 
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126 Safari/537.36';
 
-function parseImg(html, url = '') {
+function parseImg(html, url = '', title = '') {
   const pick = (re) => {
     const m = html.match(re);
     return m ? m[1].trim() : null;
   };
+  // Страница-подборка (дайджест вида «10 шоу Дананга»): og:image — общая картинка статьи,
+  // а фото события лежит в ЕГО разделе страницы. Берём картинку раздела и только её:
+  // имя файла обязано содержать ВСЕ значимые слова названия события — это проверка,
+  // что картинка от этого события, а не от соседнего блока подборки.
+  if (title) {
+    const norm = (s) =>
+      String(s || '')
+        .normalize('NFD')
+        .replace(/\p{M}+/gu, '')
+        .replace(/đ/g, 'd')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, ' ')
+        .trim();
+    const words = norm(title).split(' ').filter((w) => w.length > 2);
+    if (words.length >= 2) {
+      let host = '';
+      try {
+        host = new URL(url).hostname.replace(/^www\./, '');
+      } catch {
+        /* нет хоста — по хосту не фильтруем */
+      }
+      const tags = html.match(/<img[^>]*src=["']https?:[^"'\s]+["'][^>]*>/gi) || [];
+      const bases = [];
+      for (const tag of tags) {
+        const m = tag.match(/src=["']([^"'\s]+)["']/i);
+        if (!m) continue;
+        const src = m[1];
+        if (host && !src.includes(host)) continue;
+        if (!/\.(jpe?g|png|webp)(\?|$)/i.test(src)) continue;
+        const base = norm(src.split('?')[0].split('/').pop());
+        bases.push({ src, base });
+        if (words.every((w) => base.includes(w))) return src;
+      }
+      // СТРАХОВКА от чужой картинки: если страница — дайджест (у нескольких её разделов-заголовков
+      // есть СВОИ фото в имени файла), а нашего события среди разделов нет, то общая картинка статьи
+      // к нашему событию не относится — лучше null, чем баннер другого шоу.
+      const heads = [...html.matchAll(/<h[23][^>]*>([\s\S]{0,200}?)<\/h[23]>/gi)]
+        .map((m) => norm(m[1].replace(/<[^>]+>/g, '')))
+        .filter(Boolean);
+      let sectionsWithPhoto = 0;
+      for (const hd of heads) {
+        const hw = hd.split(' ').filter((w) => w.length > 2);
+        if (hw.length >= 2 && bases.some((b) => hw.every((w) => b.base.includes(w)))) sectionsWithPhoto++;
+      }
+      if (sectionsWithPhoto >= 4) return null;
+    }
+  }
   let img =
     pick(/<meta[^>]+property=["']og:image(?::secure_url)?["'][^>]+content=["']([^"']+)["']/i) ||
     pick(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image(?::secure_url)?["']/i) ||
@@ -120,14 +167,14 @@ async function viaProxy(url) {
   }
 }
 
-async function grab(url) {
+async function grab(url, title) {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), 12000);
   try {
     const res = await fetch(url, { signal: ctrl.signal, headers: { 'user-agent': UA, accept: 'text/html' } });
     if (res.ok) {
       const html = await res.text();
-      const img = parseImg(html, url);
+      const img = parseImg(html, url, title);
       if (img) return { img, len: html.length, via: 'direct' };
       return { img: null, len: html.length };
     }
@@ -135,7 +182,7 @@ async function grab(url) {
   } catch (e) {
     const html = await viaProxy(url);
     if (html) {
-      const img = parseImg(html, url);
+      const img = parseImg(html, url, title);
       return { img, len: html.length, via: 'proxy', err: img ? null : 'нет og:image (proxy)' };
     }
     return { img: null, err: String(e.message || e).slice(0, 60) + ' / proxy пусто' };
@@ -174,7 +221,7 @@ for (const r of targets) {
     console.log('бюджет времени исчерпан, осталось', targets.length - plan.length, 'карточек');
     break;
   }
-  const out = await grab(r.website);
+  const out = await grab(r.website, r.title);
   if (out.img) {
     const owner = usedFoto.get(out.img);
     if (owner && !sameEvent(owner.title, r.title)) {

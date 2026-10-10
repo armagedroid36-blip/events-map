@@ -69,5 +69,19 @@ check(
   ),
   null,
 );
+
+// Страница-подборка danang365 (дайджест «10 шоу Дананга»): og:image — общая картинка статьи,
+// у каждого шоу в разделе своё фото (файл назван по шоу). Проверяем на реальной странице.
+const dnUrl = 'https://danang365.com/vi/du-lich-da-nang-show-dien-2/';
+if (fs.existsSync(`${T}/dn365.html`)) {
+  const h = fs.readFileSync(`${T}/dn365.html`, 'utf8');
+  check('подборка: фото СВОЕГО раздела (Hồn Việt Show)', parseImg(h, dnUrl, 'Hồn Việt Show'), /Hon-Viet-Show-\d\.(webp|jpg)$/);
+  check('подборка: соседнее шоу получает своё фото, а не первое', parseImg(h, dnUrl, 'Tiên Sa Show'), /Tien-Sa-Show-\d\.(webp|jpg)$/);
+  check(
+    'подборка: события нет среди разделов -> null (общий баннер статьи не пишем)',
+    parseImg(h, dnUrl, 'Sun World Ba Na Hills Show'),
+    null,
+  );
+} else console.log('SKIP dn365.html нет в Temp');
 console.log(`\nитог: OK ${ok}, FAIL ${bad}`);
 process.exit(bad ? 1 : 0);
