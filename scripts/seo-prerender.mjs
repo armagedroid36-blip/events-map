@@ -5018,7 +5018,15 @@ async function main() {
   // канонической страницы — canonical указывает на неё (редирект и noindex
   // запрещены ТЗ). В sitemap алиасы не попадают: это дубли, их место указывает
   // canonical.
-  const byIdAnyCase = new Map([...events, ...allPastPages].map((e) => [String(e.id).toLowerCase(), e]));
+  // Клоны, снятые дедупликацией (dupDropped), в events/allPastPages не лежат —
+  // их страниц нет по замыслу. Но их id должны узнаваться: для клона пишем
+  // страницу-алиас по прежнему URL с canonical на главную копию (консолидация).
+  const byIdAnyCase = new Map(
+    [...events, ...allPastPages, ...pageOnlyCandidates].map((e) => [String(e.id).toLowerCase(), e]),
+  );
+  const dupKeptByClone = new Map(
+    [...dupDropped.entries()].map(([id, info]) => [String(id).toLowerCase(), String(info.keptId).toLowerCase()]),
+  );
   let aliasPages = 0;
   const aliasSeen = new Set();
   for (const raw of [...loadGscEventUrls(), ...loadLegacySlugUrls()]) {
@@ -5030,8 +5038,18 @@ async function main() {
     if (!ev) continue;
     const hasEn = eventHasEn(ev);
     if (en && !hasEn) continue;
-    const curSlug = eventSlug(ev, en ? 'en' : 'ru');
-    const curPath = `${en ? 'en/' : ''}event/${ev.id}/${curSlug}`;
+    // Клон, снятый дедупликацией: своей страницы у него нет, поэтому canonical
+    // и мета берутся у страницы ГЛАВНОЙ копии (keptId) — иначе Google терял бы
+    // уже известный адрес клона (404) вместо консолидации на живой странице.
+    const keptId = dupKeptByClone.get(String(ev.id).toLowerCase());
+    let canonicalEv = ev;
+    if (keptId) {
+      const keptEv = byIdAnyCase.get(keptId);
+      if (!keptEv) continue; // страницы главной копии в сборке нет — алиас не пишем
+      canonicalEv = keptEv;
+    }
+    const curSlug = eventSlug(canonicalEv, en ? 'en' : 'ru');
+    const curPath = `${en ? 'en/' : ''}event/${canonicalEv.id}/${curSlug}`;
     const aliasPath = `${en ? 'en/' : ''}event/${ev.id}/${m[3]}`;
     if (aliasPath === curPath || aliasSeen.has(aliasPath)) continue;
     // Мета канонической страницы: активной (activePathMeta) или архивной
