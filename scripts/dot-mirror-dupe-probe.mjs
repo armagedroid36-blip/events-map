@@ -58,8 +58,30 @@ for (const [k, list] of groups) {
   }
 }
 
+// Насколько похожи сами названия: если ВСЕ значимые слова короткого псевдонима
+// встречаются в длинном — это уже не «одна тема», а то же название (подозрение),
+// а не просто общие слова площадки/типа события (законные пары Убуда/деревень).
+const titleFold = (r) => {
+  let best = [];
+  for (const x of aliases(r)) {
+    const w = words(x);
+    if (w.length > best.length) best = w;
+  }
+  return best;
+};
+const sameTitle = (a, b) => {
+  const wa = titleFold(a), wb = titleFold(b);
+  if (!wa.length || !wb.length) return false;
+  const [short, long] = wa.length <= wb.length ? [wa, wb] : [wb, wa];
+  const setLong = new Set(long);
+  return short.every((w) => setLong.has(w));
+};
+const timeConflict = (a, b) => Boolean(a.start_time && b.start_time && a.start_time !== b.start_time);
+
 const caught = pairs.filter((p) => p.caughtBy);
 const blind = pairs.filter((p) => !p.caughtBy);
+const suspect = blind.filter((p) => sameTitle(p.a, p.b));
+const conflicting = blind.filter((p) => timeConflict(p.a, p.b));
 
 const line = (p, tag) => [
   tag,
@@ -78,9 +100,17 @@ console.log(`Живых (active+moderation): ${rows.length}`);
 console.log(`Пар «день+город+3 значимых слова» (без требования места): ${pairs.length}`);
 console.log(`  из них штатный дедуп ловит: ${caught.length}`);
 console.log(`  СЛЕПЫХ для штатного дедупа (кандидаты в зеркала): ${blind.length}`);
+console.log(`    из них с тем же НАЗВАНИЕМ (подозрение на зеркало): ${suspect.length}`);
+console.log(`    из них с расхождением времени начала: ${conflicting.length}`);
+console.log(`  ПРИЁМКА: зеркал-подозрений должно быть 0, иначе разбирать по страницам источников`);
 console.log('');
 console.log('--- СЛЕПЫЕ ПАРЫ ---');
-for (const p of blind.sort((x, y) => (x.dist ?? 1e9) - (y.dist ?? 1e9))) console.log(line(p, 'СЛЕПАЯ'));
+for (const p of blind.sort((x, y) => (x.dist ?? 1e9) - (y.dist ?? 1e9))) {
+  const flags = [];
+  if (sameTitle(p.a, p.b)) flags.push('ОДНО НАЗВАНИЕ');
+  if (timeConflict(p.a, p.b)) flags.push('ВРЕМЯ РАСХОДИТСЯ');
+  console.log(line(p, 'СЛЕПАЯ') + (flags.length ? ` | ФЛАГ: ${flags.join(' + ')}` : ''));
+}
 console.log('');
 console.log('--- пойманные (для контроля ключа) ---');
 for (const p of caught) console.log(line(p, p.caughtBy));
