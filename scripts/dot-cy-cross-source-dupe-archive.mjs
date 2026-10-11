@@ -314,6 +314,27 @@ const PAIRS = [
     source: { start_date: '2026-12-07', start_time: '18:30:00' },
     note: 'Alice in Wonderland on Ice, Пафос: оставлена карточка источника Cyprus Now (07.12 18:30, Markideio Municipal Theatre), архив — карточка cyprus.bz с окном тура 04–07.12 (её канонический URL описывает никосийский показ)',
   },
+  {
+    // запуск 173: турнир ITF Masters 400 (Лимасол, Famagusta Tennis Club) стоял на карте ТРЕМЯ
+    // живыми карточками. Страница источника b725e327 `…/event/itf-masters-400-2-8-11-2026-2026-11-01`
+    // (200, 254 КБ) в JSON-LD даёт startDate 2026-11-02T00:00+02:00 / endDate 2026-11-08T23:59+02:00
+    // и geo 34.7434352,33.0034313 (addressLocality Limassol) — оставляем её.
+    // 137c58e9 пришла с сайта клуба (famagustatc.com, ссылка на главную, не на событие): тот же
+    // интервал 02–08.11, но нет времени и фото, пин 34.6824125,33.0259269.
+    keep: 'b725e327', archive: '137c58e9', token: /itf\s*masters/i,
+    sameWindow: true, venue: 'famagusta tennis',
+    source: { start_date: '2026-11-02', start_time: '00:00:00', end_date: '2026-11-08' },
+    note: 'ITF Masters 400 Лимасол (Famagusta Tennis Club): оставлена карточка Cyprus Now с интервалом 02–08.11 и пином источника 34.7434352,33.0034313; архив — карточка сайта клуба famagustatc.com (тот же интервал, без времени и фото, пин 34.6824125,33.0259269)',
+  },
+  {
+    // та же тройка, вторая пара: у 88b00ca1 страница `…/event/itf-masters-400-limassol-2026-11-07`
+    // даёт только один день (startDate 2026-11-04T23:00+02:00 / endDate 2026-11-05T22:59+02:00, без geo),
+    // карточка стоит на центровом фолбэке Лимасола 34.7071,33.0226 с адресом «Лимасол, Кипр».
+    keep: 'b725e327', archive: '88b00ca1', token: /itf\s*masters/i,
+    sameWindow: true, venue: 'famagusta tennis',
+    source: { start_date: '2026-11-02', start_time: '00:00:00', end_date: '2026-11-08' },
+    note: 'ITF Masters 400 Лимасол: архив — карточка того же турнира, датированная одним днём 04–05.11 (страница источника без geo, пин на центровом фолбэке Лимасола, адрес «Лимасол, Кипр»)',
+  },
 ];
 
 const rows = await selectAll(db, 'events', 'id,title,title_ru,start_date,start_time,end_time,end_date,recurrence,city,address,lat,lng,website,status,photos,description,description_en');
@@ -377,6 +398,29 @@ for (const p of PAIRS) {
     if (!p.venue || !vRe2.test(kill.address || '') || !vRe2.test(keep.address || ''))
       fail.push(`площадка «${p.venue}» не совпадает у обеих карточек (${keep.address} / ${kill.address})`);
     if (!near(keep.lat, kill.lat, keep.lng, kill.lng)) fail.push('пины карточек расходятся');
+  } else if (p.sameWindow) {
+    // подкласс «одно событие — карточки РАЗНЫХ источников с одним интервалом» (запуск 173, ITF Masters 400).
+    // Арбитр — страница источника: она даёт интервал и координаты события (JSON-LD cyprusnow:
+    // startDate 2026-11-02T00:00+02:00 / endDate 2026-11-08T23:59+02:00, geo 34.7434352,33.0034313).
+    // Оставляемая обязана совпадать с источником (даты/время/end_date), архивируемая — лежать внутри
+    // этого интервала и быть слабее по данным (пин на центровом фолбэке, нет фото или нет времени).
+    const s = p.source || {};
+    const kEnd = kill.end_date || kill.start_date;
+    if (keep.start_date !== s.start_date || (keep.start_time || '') !== (s.start_time || ''))
+      fail.push(`оставляемая не совпадает со стартом источника (${keep.start_date} ${keep.start_time} vs ${s.start_date} ${s.start_time})`);
+    if (!s.end_date || keep.end_date !== s.end_date)
+      fail.push(`конец оставляемой не совпадает с источником (${keep.end_date} vs ${s.end_date})`);
+    if (kill.city !== keep.city) fail.push(`города разные (${kill.city} / ${keep.city})`);
+    const vRe3 = new RegExp(p.venue || '', 'i');
+    if (!p.venue || !vRe3.test(keep.address || ''))
+      fail.push(`площадка «${p.venue}» не названа в адресе оставляемой (${keep.address})`);
+    if (kill.start_date < s.start_date || kEnd > s.end_date)
+      fail.push(`интервал архивируемой выходит за интервал источника (${kill.start_date}…${kEnd})`);
+    if ((keep.website || '') === (kill.website || '')) fail.push('ссылка источника одна и та же — разбирать вручную');
+    const nearCenter3 = (r) =>
+      CENTER_FALLBACKS.some(([cLat, cLng]) => Math.abs(Number(r.lat) - cLat) < 0.0012 && Math.abs(Number(r.lng) - cLng) < 0.0012);
+    const weaker = nearCenter3(kill) || !(kill.photos || []).length || !kill.start_time;
+    if (!weaker) fail.push('архивируемая не слабее оставляемой (пин не фолбэк, есть фото и время) — разбирать вручную');
   } else if (p.citySplit) {
     // подкласс «одно событие — два слага источника в РАЗНЫХ городах»: обе страницы дают одну дату и
     // время, поэтому арбитр — не время, а данные карточек: архив обязан стоять на пине, который
