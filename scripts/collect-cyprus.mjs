@@ -17,6 +17,7 @@ import { districtOf, districtNear, districtOfCity, cityForPoint } from './cy-dis
 import { cleanDescription } from './desc-junk.mjs';
 import { cleanCardText } from './text-safe.mjs';
 import { cleanEndTime } from './end-time-guard.mjs';
+import { normWebsite } from './site-url.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -463,7 +464,7 @@ async function buildRow(src) {
     lat,
     lng,
     category_id: cat,
-    website: src.website || null,
+    website: normWebsite(src.website),
     photos: src.photos || [],
     price: src.price ?? null,
     currency: src.currency ?? null,
