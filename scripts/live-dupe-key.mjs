@@ -256,9 +256,24 @@ export function liveAbbrevMatch(a, b) {
       }
     return best;
   })();
+  // Токен, стоящий в НАЗВАНИЯХ ОБЕИХ карточек (обычно название города), не может
+  // служить независимым доказательством одного МЕСТА: город уже совпал по dayKey, а
+  // площадку доказывает адрес, а не повтор её имени в заголовках. Прогон 38133851150:
+  // «Qigong in Nha Trang» ↔ «Sunday (October 11) Nha Trang» (TG-афиша Нячанга: в RU-псевдониме
+  // город в кириллице «нячанге»/«нячанг», в EN — латиницей «Nha Trang») дали 2 общих слова
+  // nha/trang + общий токен адреса «trang» = сам город → ложная склейка занятия 07:00
+  // и вечера в караоке 20:00 в 614 м.
+  const titleWordsOf = (r) => {
+    const out = new Set();
+    for (const t of [r.title, r.title_ru, r.title_en].filter(Boolean))
+      for (const w of words(collapseAbbrev(t))) out.add(w);
+    return out;
+  };
+  const twa = titleWordsOf(a), twb = titleWordsOf(b);
+  const commonOk = common && !(twa.has(common) && twb.has(common)) ? common : null;
   const ab = sameAbbrev(a, b);
   const why = ov >= 3 ? `аббрев-имя ${ov}сл`
-    : (ov >= 2 && ovCore >= 1 && common) ? `аббрев-имя ${ov}сл+адрес~${common}`
+    : (ov >= 2 && ovCore >= 1 && commonOk) ? `аббрев-имя ${ov}сл+адрес~${commonOk}`
       : (ab && (common || (near !== null && near <= 300))) ? `общая аббревиатура ${ab}`
         : null;
   if (!why) return null;
