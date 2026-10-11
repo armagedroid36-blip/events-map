@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Forecast consultation — October 10, 2026 · Nha Trang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DftYIG3g.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CT2HlWzc.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DXh7hCWw.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-D8K5433K.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BIyBA1U-.css" />
+      <meta name="description" content="Nha Trang, October 10, 2026. Forecast-consultation WISH MAP for 2027 ✨️ October 10 / Saturday / 10:00 - 15:00 At the meetup: You will write out your wishes by…" />
+    <link rel="canonical" href="https://mypins.site/en/event/999afcee-23c6-4643-88b0-641922fd68ca/forecast-consultation/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Forecast consultation — October 10, 2026 · Nha Trang" />
+    <meta property="og:description" content="Nha Trang, October 10, 2026. Forecast-consultation WISH MAP for 2027 ✨️ October 10 / Saturday / 10:00 - 15:00 At the meetup: You will write out your wishes by…" />
+    <meta property="og:url" content="https://mypins.site/en/event/999afcee-23c6-4643-88b0-641922fd68ca/forecast-consultation/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/999afcee-23c6-4643-88b0-641922fd68ca/forecast-consultation/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/999afcee-23c6-4643-88b0-641922fd68ca/prognoz-konsultatsiya/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"Forecast consultation","item":"https://mypins.site/en/event/999afcee-23c6-4643-88b0-641922fd68ca/forecast-consultation/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Forecast consultation</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-10">October 10, 2026</time></p>
+  <p><time datetime="2026-10-10T10:00:00">October 10, 2026, 10:00 AM</time></p>
+  <address>Nha Trang</address>
+  <p>950000 VND</p>
+  <p>Forecast-consultation
+WISH MAP for 2027 ✨️
+October 10 / Saturday /
+10:00 - 15:00
+
+At the meetup:
+You will write out your wishes by the months of the year and will know what actions you need to take to reach what you dream of.
+
+You will also receive keys to your spheres of life: personality, family line, money, relationships, health.
+And depending on the wish set for the month, you will use these keys.
+
+Everything will work out for you, but now without tension and fatigue, but with ease and flow ✨️
+
+Each participant will be guided by: Valentina Kirilova - certified digital psychologist, numerologist.
+
+Important: prepare 10-12 wishes in advance.
+
+Group up to 4 people.
+Date: 10.10, 10:00-15:00
+Participation 950 vdn
+Soul House (Svoi cafe near Okeanus)
+
+Registration: @valentinnab
+
+#date: 10.10.2026
+Post by: @annashumka
+Post by: Anna ✨</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>Forecast consultation</span></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a> · <a href="/en/nha-trang/workshop/">🎨 Workshops</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/7bfc264b-2a82-4266-b7b6-d2070fe30c4a/master-class/">Master class - <time datetime="2026-10-11">October 11, 2026</time></a></li>
+    <li><a href="/en/event/010270b3-43ce-4fac-a907-9f9e5d043ea3/breakfast-shadow-your-weakness-is-your-strength/">Breakfast &quot;Shadow: Your Weakness Is Your Strength&quot; <time datetime="2026-10-11">October 11, 2026</time></a></li>
+    <li><a href="/en/event/0538bb2e-cf7f-417b-a5d3-a1dd5f78c992/master-class-vector-of-destiny/">MASTER CLASS VECTOR OF DESTINY <time datetime="2026-10-11">October 11, 2026</time></a></li>
+    <li><a href="/en/event/145623a3-8191-4802-8120-d5f07da422bc/girls-i-invite-you-to-the-transformational-game-transitions/">Girls, I invite you to the transformational game &quot;Transitions&quot;. <time datetime="2026-10-11">October 11, 2026</time></a></li>
+    <li><a href="/en/event/3d00a0ac-bd5b-4e8c-a8ef-d9866e51a8bc/acting-training-in-nha-trang/">Acting training in Nha Trang <time datetime="2026-10-11">October 11, 2026</time></a></li>
+    <li><a href="/en/event/4e3cc490-74ed-414e-950a-c155958c80bf/new-vietnamese-group-learning-to-read/">NEW VIETNAMESE GROUP LEARNING TO READ! <time datetime="2026-10-11">October 11, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Nha Trang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/98859e2b-87ec-4ae5-94de-e42fea87a11c/arrows-cover-teams-archery-tag-in-nha-trang/">Arrows, cover, teams: Archery Tag in Nha Trang</a> <time datetime="2026-10-10">October 10, 2026</time></li>
+    <li>Next: <a href="/en/event/ac2969f3-59a6-44c6-abe8-92fcc070aad4/blood-on-the-clock-tower/">Blood on the Clock Tower</a> <time datetime="2026-10-10">October 10, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
+</div>
+
+  </body>
+</html>

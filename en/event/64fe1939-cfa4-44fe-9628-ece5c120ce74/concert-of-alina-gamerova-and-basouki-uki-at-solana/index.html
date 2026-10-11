@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Concert of Alina Gamerova and Basouki… — October 10, 2026 · Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DftYIG3g.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CT2HlWzc.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DXh7hCWw.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-D8K5433K.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BIyBA1U-.css" />
+      <meta name="description" content="Bali, October 10, 2026. On October 10, a musical evening LOVE Is The Answer will take place at Solana Luxury Wellness Retreat in Sukawati. Alina Gamerova and…" />
+    <link rel="canonical" href="https://mypins.site/en/event/64fe1939-cfa4-44fe-9628-ece5c120ce74/concert-of-alina-gamerova-and-basouki-uki-at-solana/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Concert of Alina Gamerova and Basouki… — October 10, 2026 · Bali" />
+    <meta property="og:description" content="Bali, October 10, 2026. On October 10, a musical evening LOVE Is The Answer will take place at Solana Luxury Wellness Retreat in Sukawati. Alina Gamerova and…" />
+    <meta property="og:url" content="https://mypins.site/en/event/64fe1939-cfa4-44fe-9628-ece5c120ce74/concert-of-alina-gamerova-and-basouki-uki-at-solana/" />
+    <meta property="og:image" content="https://static.baliforum.ru/uploads/699892/conversions/solana-concert-142160-preview.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/64fe1939-cfa4-44fe-9628-ece5c120ce74/concert-of-alina-gamerova-and-basouki-uki-at-solana/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/64fe1939-cfa4-44fe-9628-ece5c120ce74/kontsert-aliny-gamerovoy-i-basouki-uki-v-solana/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Bali","item":"https://mypins.site/en/bali/"},{"@type":"ListItem","position":3,"name":"Concert of Alina Gamerova and Basouki Uki at Solana","item":"https://mypins.site/en/event/64fe1939-cfa4-44fe-9628-ece5c120ce74/concert-of-alina-gamerova-and-basouki-uki-at-solana/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Concert of Alina Gamerova and Basouki Uki at Solana</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-10">October 10, 2026</time></p>
+  <p><time datetime="2026-10-10T17:30:00">October 10, 2026, 5:30 PM</time></p>
+  <address>Jl. Raya Silakarang Singapadu Kaler No.BR, Singapadu Kaler, Kec. Sukawati, Kabupaten Gianyar, Bali 80582, Indonesia</address>
+  <p>309000 IDR</p>
+  <p>On October 10, a musical evening LOVE Is The Answer will take place at Solana Luxury Wellness Retreat in Sukawati. Alina Gamerova and Basouki Uki will perform original music and songs in Russian, English, and Indonesian. The program features voice, piano, flute, acoustic guitar, and percussion; the music is created in interaction with the audience.
+
+Doors open at 17:30. The evening will begin with a meditation and Blue Lotus ceremony, followed by the musicians&#39; performance. A plant-based dinner can be ordered at the venue. Address: Jl. Raya Silakarang, Singapadu Kaler, Sukawati, Gianyar.
+
+General Admission ticket — 309,000 IDR. Limited seats. Buy tickets: https://megatix.co.id/events/new-moon-ceremony-love-is-the-answer</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/bali/">Bali</a> <span aria-hidden="true">›</span> <span>Concert of Alina Gamerova and Basouki Uki at Solana</span></p>
+    <p>More events in Bali: <a href="/en/bali/">what&#39;s on</a> · <a href="/en/bali/concert/">🎤 Concerts</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/673a421b-fbe8-440c-823c-55e78089f0a9/poetry-evening-open-mic/">Poetry evening. Open mic <time datetime="2026-10-11">October 11, 2026</time></a></li>
+    <li><a href="/en/event/6950d6c0-92de-4909-8992-220835560268/poet-not-dead-poetry-music-open-mic/">Poet Not Dead - poetry/music open mic <time datetime="2026-10-11">October 11, 2026</time></a></li>
+    <li><a href="/en/event/75d86010-9dae-4adb-84a2-6398c8bdf9ec/the-art-of-sound-healing-agustian-supriatna-concert/">The Art of Sound Healing: Agustian Supriatna Concert <time datetime="2026-10-11">October 11, 2026</time></a></li>
+    <li><a href="/en/event/947d4673-ffa1-456d-b129-ee4632b85ac6/sunday-club-at-sunset-beach-seminyak/">Sunday Club at Sunset Beach, Seminyak <time datetime="2026-10-11">October 11, 2026</time></a></li>
+    <li><a href="/en/event/4eb5eace-2924-471c-8b27-3ac2232705af/melody-night-at-boheme-pererenan-on-october-13/">Melody Night at Boheme Pererenan on October 13 <time datetime="2026-10-13">October 13, 2026</time></a></li>
+    <li><a href="/en/event/5ce2daae-fb77-496a-b6f1-3c5cbcff53d5/open-mic-at-bali-bohemia-on-october-15/">Open mic at Bali Bohemia on October 15 <time datetime="2026-10-15">October 15, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Bali</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/6212163d-4255-40d0-ac71-2fa237a0ea9b/mafia-sport/">Mafia (sport)</a> <time datetime="2026-10-10">October 10, 2026</time></li>
+    <li>Next: <a href="/en/event/665d495d-c280-4520-a003-293681ff594b/general-levy-concert-at-nuanu-on-october-10/">General Levy — concert at Nuanu on October 10</a> <time datetime="2026-10-10">October 10, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/bali/">Upcoming events in Bali</a></p>
+</div>
+
+  </body>
+</html>

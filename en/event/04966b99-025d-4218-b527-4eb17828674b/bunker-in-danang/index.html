@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BUNKER IN DANANG — October 10, 2026 · Da Nang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DftYIG3g.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CT2HlWzc.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DXh7hCWw.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-D8K5433K.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BIyBA1U-.css" />
+      <meta name="description" content="Da Nang, October 10, 2026. BUNKER IN DANANG ☢️ 🤗This Saturday we&#39;re playing one of the most fun discussion games — &quot;Bunker&quot;! ⤵️If you love heated debates…" />
+    <link rel="canonical" href="https://mypins.site/en/event/04966b99-025d-4218-b527-4eb17828674b/bunker-in-danang/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="BUNKER IN DANANG — October 10, 2026 · Da Nang" />
+    <meta property="og:description" content="Da Nang, October 10, 2026. BUNKER IN DANANG ☢️ 🤗This Saturday we&#39;re playing one of the most fun discussion games — &quot;Bunker&quot;! ⤵️If you love heated debates…" />
+    <meta property="og:url" content="https://mypins.site/en/event/04966b99-025d-4218-b527-4eb17828674b/bunker-in-danang/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/04966b99-025d-4218-b527-4eb17828674b/bunker-in-danang/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/04966b99-025d-4218-b527-4eb17828674b/bunker-v-danange/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Da Nang","item":"https://mypins.site/en/da-nang/"},{"@type":"ListItem","position":3,"name":"BUNKER IN DANANG","item":"https://mypins.site/en/event/04966b99-025d-4218-b527-4eb17828674b/bunker-in-danang/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>BUNKER IN DANANG</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-10">October 10, 2026</time></p>
+  <p><time datetime="2026-10-10T13:00:00">October 10, 2026, 1:00 PM</time></p>
+  <address>B&amp;B Bakery &amp; The Cups Coffee By The Sea, 268 Võ Nguyên Giáp, Ngũ Hành Sơn, Đà Nẵng 550000, Vietnam, Da Nang</address>
+  <p>100000 VND</p>
+  <p>BUNKER IN DANANG ☢️
+
+🤗This Saturday we&#39;re playing one of the most fun discussion games — &quot;Bunker&quot;!
+
+⤵️If you love heated debates, light dark humor, self-irony and want to spend your day off in great company — join us.
+
+When and where:
+🗓 Date: October 10 (Saturday)
+⏰ Time: 13:00 - game start (gathering at 12:30)
+☕️Game duration ~2 hours
+📍 Location: B&amp;B Bakery
+🔞 Age: 18+
+🎬Participation fee: 100,000VND
+⚠️ Number of spots is strictly limited! 😏
+📩 sign up: @Alexander_ButterB
+
+🎭 What you need: a great sense of humor, healthy self-irony and readiness to prove your irreplaceability even with the most absurd set of characteristics!
+
+#date: 10.10</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/da-nang/">Da Nang</a> <span aria-hidden="true">›</span> <span>BUNKER IN DANANG</span></p>
+    <p>More events in Da Nang: <a href="/en/da-nang/">what&#39;s on</a> · <a href="/en/da-nang/games/">🎲 Games &amp; Quizzes</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/12b316d5-1a71-4022-affe-f01972fbd4a3/quiz-please-in-da-nang/">Quiz, please! in Da Nang. <time datetime="2026-10-11">October 11, 2026</time></a></li>
+    <li><a href="/en/event/13b68809-a41a-4ad5-923f-76d6e90247da/today-mafia-at-restaurant-369-in-da-nang-easy-fun-together/">Today MAFIA at restaurant 369 in Da Nang — easy, fun, together! <time datetime="2026-10-11">October 11, 2026</time></a></li>
+    <li><a href="/en/event/86f129bf-c4c3-4e36-bd44-9bca82eeb6bc/sunday-tac-at-restaurant-369/">SUNDAY TAC AT RESTAURANT 369! <time datetime="2026-10-11">October 11, 2026</time></a></li>
+    <li><a href="/en/event/847ba8b1-3bb4-4a43-b956-169ca7971f94/transformational-game-the-wisdom-of-lila/">TRANSFORMATIONAL GAME &quot;THE WISDOM OF LILA&quot; <time datetime="2026-10-13">October 13, 2026</time></a></li>
+    <li><a href="/en/event/c411ab9b-7947-4ad7-8fe4-44205d9c0324/wednesday-evening-tac-in-danang/">WEDNESDAY EVENING TAC IN DANANG! <time datetime="2026-10-14">October 14, 2026</time></a></li>
+    <li><a href="/en/event/97d0a6fc-8f8b-4ccc-a23f-05cf285c7c5a/predictor-mix-three-mafia-games-in-one-evening/">PREDICTOR MIX three Mafia games in one evening <time datetime="2026-10-14">October 14, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Da Nang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/da9e4017-0e26-402d-a82a-f2596794dea7/ashtanga-yoga/">Ashtanga Yoga</a> <time datetime="2026-10-09">October 9, 2026</time></li>
+    <li>Next: <a href="/en/event/5d31310e-84b1-46a9-b8f8-8bc177544647/therapeutic-analysis-session/">Therapeutic analysis session:</a> <time datetime="2026-10-10">October 10, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/da-nang/">Upcoming events in Da Nang</a></p>
+</div>
+
+  </body>
+</html>

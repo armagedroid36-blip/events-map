@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gathering: Three Restaurants, One… — October 10, 2026 · Cyprus</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DftYIG3g.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CT2HlWzc.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DXh7hCWw.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-D8K5433K.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BIyBA1U-.css" />
+      <meta name="description" content="Cyprus, October 10, 2026. A landmark communal dining event in Limassol — Zebra, Leila, and Poly BBQ unite for one evening at Geometry Park on October 10, 2026…" />
+    <link rel="canonical" href="https://mypins.site/en/event/d7ea5f59-651c-496c-b735-d76c71087c52/gathering-three-restaurants-one-table-in-limassol/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Gathering: Three Restaurants, One… — October 10, 2026 · Cyprus" />
+    <meta property="og:description" content="Cyprus, October 10, 2026. A landmark communal dining event in Limassol — Zebra, Leila, and Poly BBQ unite for one evening at Geometry Park on October 10, 2026…" />
+    <meta property="og:url" content="https://mypins.site/en/event/d7ea5f59-651c-496c-b735-d76c71087c52/gathering-three-restaurants-one-table-in-limassol/" />
+    <meta property="og:image" content="https://eventor-images-s3.s3.eu-west-2.amazonaws.com/high-res/ee507485-9a9b-4e9c-be0b-f67bd8fd76ac.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/d7ea5f59-651c-496c-b735-d76c71087c52/gathering-three-restaurants-one-table-in-limassol/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/d7ea5f59-651c-496c-b735-d76c71087c52/vstrecha-tri-restorana-odin-stol-v-limasole/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Gathering: Three Restaurants, One Table in Limassol","item":"https://mypins.site/en/event/d7ea5f59-651c-496c-b735-d76c71087c52/gathering-three-restaurants-one-table-in-limassol/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Gathering: Three Restaurants, One Table in Limassol</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-10">October 10, 2026</time></p>
+  <p><time datetime="2026-10-10T18:00:00">October 10, 2026, 6:00 PM</time></p>
+  <address>Geometry Park, Cyprus</address>
+  <p>A landmark communal dining event in Limassol — Zebra, Leila, and Poly BBQ unite for one evening at Geometry Park on October 10, 2026. Tickets available.
+
+---
+
+Scroll down for English version 👇
+
+---
+
+Three of Limassol&#39;s most beloved restaurants — Poly BBQ, Leila, and Zebra — come together for the first time around one table. The Gathering is an evening dedicated to all those who made these places what they are today: more than 50,000 visitors over three years of operation.
+
+On October 10, 2026, at 18:00, Geometry Park hosts a special evening under the open sky</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Gathering: Three Restaurants, One Table in Limassol</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/food/">🍜 Food &amp; Drink</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/5f0a1b94-1f8b-4438-8bdb-297387d51c70/scalifornia-gastronomic-festival/">Scalifornia. Gastronomic Festival <time datetime="2026-10-10">October 10, 2026</time></a></li>
+    <li><a href="/en/event/909dd160-534a-4d52-88e3-a4d51643f470/festival-of-authentic-traditional-flavours-11-10-2026/">Festival of Authentic Traditional Flavours – 11.10.2026 <time datetime="2026-10-11">October 11, 2026</time></a></li>
+    <li><a href="/en/event/bff5f35f-097a-44bb-9b29-050cfc06f585/grape-traditional-delicacies-festival-agios-georgios-silikou/">Grape &amp; Traditional Delicacies Festival – Agios Georgios Silikou <time datetime="2026-10-11">October 11, 2026</time></a></li>
+    <li><a href="/en/event/2397e05b-7a4f-4b6f-af3a-7773189c93aa/the-cookout-live-fire-bbq-night-at-notes-spirits-nicosia/">The Cookout: Live Fire BBQ Night at Notes &amp; Spirits, Nicosia <time datetime="2026-10-15">October 15, 2026</time></a></li>
+    <li><a href="/en/event/ffc00fc8-d643-4e2c-9f00-33cd6d602f41/seaside-street-food-festival-autumn-edition/">Seaside Street Food Festival – Autumn Edition <time datetime="2026-10-16">October 16, 2026</time></a></li>
+    <li><a href="/en/event/f11532ee-e6bf-4d43-8a5f-b7af4eafd14f/commandaria-tradition-festival-17-18-10-2026/">COMMANDARIA &amp; TRADITION FESTIVAL – 17-18.10.2026 <time datetime="2026-10-17">October 17, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/cd39e0dd-8084-4d6a-9ca7-e7834d20b3fe/breach-festival-2026-improvised-experimental-music-in-nicosia/">Breach Festival 2026: Improvised &amp; Experimental Music in Nicosia</a> <time datetime="2026-10-10">October 10, 2026</time></li>
+    <li>Next: <a href="/en/event/db3c5297-bf8e-4de3-abde-d3978a2d621c/greek-language-class-while-baking/">Greek Language Class while baking</a> <time datetime="2026-10-10">October 10, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

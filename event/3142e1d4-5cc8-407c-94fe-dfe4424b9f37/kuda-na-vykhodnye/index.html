@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>КУДА НА ВЫХОДНЫЕ? — 10 октября 2026 · Нячанг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DftYIG3g.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CT2HlWzc.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DXh7hCWw.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-D8K5433K.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BIyBA1U-.css" />
+      <meta name="description" content="Нячанг, 10 октября 2026. 🌿 КУДА НА ВЫХОДНЫЕ? Едем на Остров Орхидей! 🌴 Собираемся компанией и отправляемся на день на остров, где можно покормить слонов…" />
+    <link rel="canonical" href="https://mypins.site/event/3142e1d4-5cc8-407c-94fe-dfe4424b9f37/kuda-na-vykhodnye/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="КУДА НА ВЫХОДНЫЕ? — 10 октября 2026 · Нячанг" />
+    <meta property="og:description" content="Нячанг, 10 октября 2026. 🌿 КУДА НА ВЫХОДНЫЕ? Едем на Остров Орхидей! 🌴 Собираемся компанией и отправляемся на день на остров, где можно покормить слонов…" />
+    <meta property="og:url" content="https://mypins.site/event/3142e1d4-5cc8-407c-94fe-dfe4424b9f37/kuda-na-vykhodnye/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/3142e1d4-5cc8-407c-94fe-dfe4424b9f37/kuda-na-vykhodnye/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/3142e1d4-5cc8-407c-94fe-dfe4424b9f37/where-to-go-this-weekend/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"КУДА НА ВЫХОДНЫЕ?","item":"https://mypins.site/event/3142e1d4-5cc8-407c-94fe-dfe4424b9f37/kuda-na-vykhodnye/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>КУДА НА ВЫХОДНЫЕ?</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-10">10 октября 2026</time></p>
+  <p><time datetime="2026-10-10T08:00:00">10 октября 2026, 08:00</time></p>
+  <address>Старт, Нячанг</address>
+  <p>150000 USD</p>
+  <p>🌿 КУДА НА ВЫХОДНЫЕ?
+
+Едем на Остров Орхидей! 🌴
+
+Собираемся компанией и отправляемся на день на остров, где можно покормить слонов, посмотреть на оленей и бабочек, увидеть выступление птиц и гусиные бега, а потом отдохнуть на пляже 🐘🦋🦜🏖️
+
+🗓️ Дата 10 октября
+📍 Старт:
+Nha Trang Center → Oceanus → Порт
+🕗 Выезд: 8:00
+🕞 Возвращение: 16:00
+🚐 Трансфер туда и обратно:
+150 000 VND за МЕСТО.
+
+🎟 Вход на остров оплачивается отдельно:
+• взрослый — 280 000 VND
+• ребёнок от 1 м до 1,4 м — 170 000 VND
+• ребёнок до 1 м — бесплатно
+
+В программе 🌴
+• кормление слонов (за доп плату внутри острова)
+• небольшой зоопарк с оленями
+• бабочки
+• выступление птиц
+• гусиные бега
+• пляж и купание
+
+💡 С собой: защита от солнца, купальник, полотенце, удобную обувь и немного наличных.
+
+#дата: 10.10
+📩 Запись: @malikonti
+
+Мест немного 🫶 успейте занять свое. 😉</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/nha-trang/">Нячанг</a> <span aria-hidden="true">›</span> <span>КУДА НА ВЫХОДНЫЕ?</span></p>
+    <p>Ещё события в Нячанге: <a href="/nha-trang/">афиша</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/01909b99-47f9-40ca-9960-db2bfc7408ef/druzya-priglashaem-na-khudozhestvennuyu-vystavku-istina-dobrota-terpenie/">Друзья, приглашаем на художественную выставку «Истина Доброта Терпение»! <time datetime="2026-09-06">6 сентября 2026</time></a></li>
+    <li><a href="/event/99c177e2-8885-4096-9a18-de0f6e5b07f8/druzya-priglashaem-na-khudozhestvennuyu-vystavku-istina-dobrota-terpenie/">Друзья, приглашаем на художественную выставку «Истина Доброта Терпение»! <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/68110585-cd02-43f4-904e-c90031a8b78c/druzya-priglashaem-na-khudozhestvennuyu-vystavku-istina-dobrota-terpenie/">Друзья, приглашаем на художественную выставку «Истина Доброта Терпение»! <time datetime="2026-09-27">27 сентября 2026</time></a></li>
+    <li><a href="/event/e4dee995-6226-49bb-929a-4893ef6ed92b/druzya-priglashaem-na-khudozhestvennuyu-vystavku-istina-dobrota-terpenie/">Друзья, приглашаем на художественную выставку «Истина Доброта Терпение»! <time datetime="2026-10-04">4 октября 2026</time></a></li>
+    <li><a href="/event/46943467-e713-426c-b19f-875f7fa03b15/khudozhestvennuyu-vystavku-istina-dobrota-terpenie/">Художественную выставку «Истина Доброта Терпение»! <time datetime="2026-10-11">11 октября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Нячанг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/2a453f16-95a4-43dc-9190-faf785ec7726/puteshestvie-v-zapovednik-nui-chua/">Путешествие в заповедник Núi Chúa</a> <time datetime="2026-10-10">10 октября 2026</time></li>
+    <li>Следующее: <a href="/event/47eb475a-fb46-4767-b9ce-8fec3d9e7474/om-chanting/">ОМ-ЧАНТИНГ</a> <time datetime="2026-10-10">10 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/nha-trang/">Ближайшие события: Нячанг</a></p>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Grand Antiques &amp; Vintage… — October 10, 2026 · Cyprus</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DftYIG3g.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CT2HlWzc.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DXh7hCWw.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-D8K5433K.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BIyBA1U-.css" />
+      <meta name="description" content="Cyprus, October 10, 2026. The Grand Antiques &amp; Vintage Market After three particularly successful events filled with unique treasures, beautiful moments, and…" />
+    <link rel="canonical" href="https://mypins.site/en/event/dd59c1c2-ca11-42fd-a1c0-24984cf4ea38/the-grand-antiques-vintage-market-10-10-26-10-00-17-00-strovolos-town-hall-courtyard/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="The Grand Antiques &amp; Vintage… — October 10, 2026 · Cyprus" />
+    <meta property="og:description" content="Cyprus, October 10, 2026. The Grand Antiques &amp; Vintage Market After three particularly successful events filled with unique treasures, beautiful moments, and…" />
+    <meta property="og:url" content="https://mypins.site/en/event/dd59c1c2-ca11-42fd-a1c0-24984cf4ea38/the-grand-antiques-vintage-market-10-10-26-10-00-17-00-strovolos-town-hall-courtyard/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/dd59c1c2-ca11-42fd-a1c0-24984cf4ea38/the-grand-antiques-vintage-market-10-10-26-10-00-17-00-strovolos-town-hall-courtyard/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/dd59c1c2-ca11-42fd-a1c0-24984cf4ea38/bolshoy-rynok-antikvariata-i-vintazha-10-10-26-10-00-17-00-dvor-merii-strovolosa/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"The Grand Antiques & Vintage Market, 10/10/26 | 10:00-17:00 – Strovolos Town Hall courtyard","item":"https://mypins.site/en/event/dd59c1c2-ca11-42fd-a1c0-24984cf4ea38/the-grand-antiques-vintage-market-10-10-26-10-00-17-00-strovolos-town-hall-courtyard/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>The Grand Antiques &amp; Vintage Market, 10/10/26 | 10:00-17:00 – Strovolos Town Hall courtyard</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-10">October 10, 2026</time></p>
+  <p><time datetime="2026-10-10T10:00:00">October 10, 2026, 10:00 AM</time></p>
+  <address>Strovolos Municipal Theatre, Cyprus</address>
+  <p>The Grand Antiques &amp; Vintage Market
+
+After three particularly successful events filled with unique treasures, beautiful moments, and wonderful people, the Grand Antiques &amp; Vintage Market returns on Saturday, October 10 for yet another special celebration dedicated to antiques and vintage.
+
+Discover a world full of character and history, where our selected exhibitors present unique items: antiques, furniture, vintage decor, clothing, vinyl records, jewelry, artworks, collectibles, and much more.
+
+Whether you are a collector, love vintage, or simply</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>The Grand Antiques &amp; Vintage Market, 10/10/26 | 10:00-17:00 – Strovolos Town Hall courtyard</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/exhibition/">🖼️ Exhibitions</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/0b09c2d7-31fa-420b-9b36-d6f71fc9b590/murmur-kairos/">MURMUR kairos <time datetime="2026-10-09">October 9, 2026</time></a></li>
+    <li><a href="/en/event/a7a7aae6-c79a-4947-bae0-1f81e2713e7d/marion-paschali-in-the-garden-of-a-universe/">Marion Paschali In the Garden of a Universe <time datetime="2026-10-09">October 9, 2026</time></a></li>
+    <li><a href="/en/event/b6136fff-1f55-46df-bbd6-4aedd5c446f1/limassol-art-walks-2026/">Limassol Art Walks 2026 <time datetime="2026-10-09">October 9, 2026</time></a></li>
+    <li><a href="/en/event/c13289d9-b7a0-4748-8d37-80be3f145c7e/whispers-of-legacy-the-art-of-john-corbidge/">Whispers of Legacy: The Art of John Corbidge <time datetime="2026-10-09">October 9, 2026</time></a></li>
+    <li><a href="/en/event/1c7690f0-02ab-4c21-b3f6-a7f432b67c26/paphos-classic-vehicle-club-harbour-show-the-return/">Paphos Classic Vehicle Club – Harbour Show: The Return <time datetime="2026-10-10">October 10, 2026</time></a></li>
+    <li><a href="/en/event/8dd661fb-e949-49d6-9e03-6d1db03b8f6c/deconstruct-the-division-art-residency-exhibition-in-nicosia/">Deconstruct the Division: Art Residency Exhibition in Nicosia <time datetime="2026-10-12">October 12, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/dd1d7523-6fbc-44a9-8e86-4c48f247c8e8/hike-to-troodos-observatory/">Hike to Troodos Observatory</a> <time datetime="2026-10-10">October 10, 2026</time></li>
+    <li>Next: <a href="/en/event/ddf41b78-d08d-4a6c-a871-c21c5d159ebd/castle-club-saturdays/">Castle Club Saturdays</a> <time datetime="2026-10-10">October 10, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>
