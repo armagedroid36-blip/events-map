@@ -25,6 +25,8 @@ const PLAN = [
     why: 'Sum It Up 2026, 12–13.11 Лимасол, St Raphael Resort: cyprus.bz-зеркало того же события; keep=cyprusnow с гео площадки 34.7131365,33.1674229 и временем 08:30, drop=cyprus.bz с пином на центре Лимасола 34.7071,33.0226 и временем 08:00 (строгий ключ слеп: общих слов названия «sum up 2026» < 3)' },
   { keep: '14f32b9b', drop: ['0734f033'],
     why: 'Psyloween 31.10 20:00–01.11 Ktima Camelot: cyprus.bz-зеркало («Psyloween 2026 (Delight Project x Infinity Crew)»); keep=cyprusnow «Psyloween at Ktima Camelot» с гео площадки 35.0793206,33.193694, drop=cyprus.bz с пином на центре Никосии 35.1856,33.3823; названия дают 1 общее слово — ключ слеп' },
+  { keep: 'f582be45', drop: ['4ea76971'],
+    why: 'Los Vivancos Live, 04–05.11 19:30 Никосия: у обеих карточек ОДИН слаг страницы-источника (…/los-vivancos-live-spanish-dance-music-show-in-cyprus-2026), т.е. одно событие в двух афишах; keep=cyprusnow с пином площадки Strovolos Municipal Theatre 35.1439977,33.343091 и title_en, drop=cyprus.bz с адресом «Pattihio Theatre, Nicosia» и пином на центровом фолбэке Никосии 35.1856,33.3823; штатный дедуп слеп — пины в 5.8 км, samePlace не срабатывает (лид 169)' },
 ];
 
 const rows = await selectAll(db, 'events', 'id,status,title,title_ru,start_date,start_time,city,address,lat,lng,website');
