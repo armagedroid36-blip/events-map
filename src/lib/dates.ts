@@ -68,6 +68,28 @@ export function isUpcoming(event: {
   if (endDate < today) return false;
   // Дата — сегодня: без времени — весь день
   if (!event.start_time) return true;
-  const endTime = event.end_time ?? event.start_time;
+  const endTime = endTimeOf(event) ?? event.start_time;
   return nowHHMM() < endTime;
+}
+
+/**
+ * Время окончания, пригодное для сравнения и показа.
+ * Заглушка источника «окончание 00:00 в тот же день, что и начало» (Cyprus Now,
+ * cyprus.bz, Балифорум отдают её, когда времени окончания в источнике нет) означает
+ * «окончание неизвестно»: иначе событие дня считалось бы прошедшим с полуночи и
+ * исчезало из предстоящих, а на карточке печаталось «16:00 – 00:00».
+ */
+export function endTimeOf(event: {
+  start_date: string;
+  end_date?: string;
+  start_time?: string;
+  end_time?: string;
+}): string | undefined {
+  const st = event.start_time;
+  const et = event.end_time;
+  if (!et) return undefined;
+  if (!st) return et;
+  const sameDay = (event.end_date ?? event.start_date) === event.start_date;
+  if (sameDay && et <= st) return undefined;
+  return et;
 }

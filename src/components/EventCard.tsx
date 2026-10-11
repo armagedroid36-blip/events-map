@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import type { Category, EventItem } from '../lib/types';
 import { localizedText } from '../lib/translate';
 import { languageName } from '../lib/languages';
-import { formatDate, formatTimeHM, todayIso } from '../lib/dates';
+import { endTimeOf, formatDate, formatTimeHM, todayIso } from '../lib/dates';
 import { recurrenceLabel } from '../lib/recurrence';
 import { getApi, photoUrl } from '../lib/api';
 import { isValidCoords } from '../lib/coords';
@@ -655,8 +655,8 @@ export default function EventCard({
 
   // Точное время, если указано (без секунд: БД отдаёт HH:MM:SS)
   const startTime = formatTimeHM(event.start_time);
-  const timeLabel =
-    startTime && (event.end_time ? `${startTime} – ${formatTimeHM(event.end_time)}` : startTime);
+  const endTime = endTimeOf(event);
+  const timeLabel = startTime && (endTime ? `${startTime} – ${formatTimeHM(endTime)}` : startTime);
 
   // Напоминание «за день» включено для этого события?
   const hasReminder = reminderIds?.includes(event.id) ?? false;
