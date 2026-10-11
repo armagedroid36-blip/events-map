@@ -16,6 +16,7 @@ import { selectAll } from './db-rows.mjs';
 import { districtOf, districtNear, districtOfCity, cityForPoint } from './cy-districts.mjs';
 import { cleanDescription } from './desc-junk.mjs';
 import { cleanCardText } from './text-safe.mjs';
+import { cleanEndTime } from './end-time-guard.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -451,7 +452,12 @@ async function buildRow(src) {
     start_date: src.start_date,
     end_date: src.end_date || null,
     start_time: src.start_time || null,
-    end_time: src.end_time || null,
+    end_time: cleanEndTime({
+      start_date: src.start_date,
+      start_time: src.start_time,
+      end_date: src.end_date,
+      end_time: src.end_time,
+    }),
     city: `${city}, Кипр`,
     address: cleanCardText(src.address || src.venue || '') || null,
     lat,

@@ -9,6 +9,7 @@ import { isInternationalArtist } from './intl-llm.mjs';
 import { extractContacts as extractSharedContacts } from './contacts-regex.mjs';
 import { districtFor, districtCenter, OUT_OF_BALI } from './bali-districts.mjs';
 import { stripInvisible } from './text-safe.mjs';
+import { cleanEndTime } from './end-time-guard.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -419,7 +420,7 @@ async function main() {
         start_date: startDate,
         end_date: endDate || null,
         start_time: startTime,
-        end_time: endTime,
+        end_time: cleanEndTime({ start_date: startDate, start_time: startTime, end_date: endDate, end_time: endTime }),
         city: OUT_OF_BALI.has(district) ? district : `${district}, Bali`,
         address: (loc && loc.address) || place.title || null,
         lat,
