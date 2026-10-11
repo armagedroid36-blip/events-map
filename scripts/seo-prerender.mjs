@@ -1526,6 +1526,12 @@ function eventJsonLd(ev, url, lang = 'ru', image = null, mode = 'active') {
 let cleanedBaseSrc = null;
 let cleanedBaseOut = null;
 
+/** JSON для вставки в <script type="application/json">: экранируем '<', чтобы
+ *  содержимое не могло закрыть тег (id/слаги такого не дают, но правило общее) */
+function jsonForScript(value) {
+  return JSON.stringify(value).replace(/</g, '\\u003c');
+}
+
 /** Базовый HTML без description/canonical/alternate/og — «чистая» голова для renderPage */
 function cleanedBase(baseHtml) {
   if (cleanedBaseSrc === baseHtml && cleanedBaseOut !== null) return cleanedBaseOut;
@@ -1603,6 +1609,16 @@ function renderPage(baseHtml, meta) {
   }
   if (meta.jsonLd) {
     lines.push(`    <script type="application/ld+json">${ldJson(meta.jsonLd)}</script>`);
+  }
+  // Карта алиасов исторических URL (только страницы-алиасы, см. цикл ниже):
+  // машиночитаемое соответствие «id клона → адреса главной копии». SPA при
+  // гидратации читает её (src/lib/seo.ts, noteSeoAliasMap) и ставит
+  // canonical/og:url/hreflang главной копии вместо адреса с id клона, которого
+  // на сайте нет (404). На обычных страницах карты нет — поведение прежнее.
+  if (meta.aliasMap) {
+    lines.push(
+      `    <script type="application/json" id="seo-alias-map">${jsonForScript(meta.aliasMap)}</script>`,
+    );
   }
   out = out.replace(/<\/head>/i, `${lines.join('\n')}\n  </head>`);
   if (meta.bodySeo) {
@@ -5055,7 +5071,22 @@ async function main() {
     // Мета канонической страницы: активной (activePathMeta) или архивной
     const meta = activePathMeta.get(curPath) ?? pastPathMeta.get(curPath);
     if (!meta) continue; // канонической страницы нет (напр. событие вне сборки) — алиас не нужен
-    pastPagesBuffer.push({ path: aliasPath, html: renderPage(pastBaseHtml, meta) });
+    // Карта соответствия для SPA (id клона → адреса главной копии): без неё
+    // гидратация подменяла бы canonical на /event/<cloneId>/... — такого URL
+    // нет (404). Пишем только те версии, что реально есть в сборке.
+    const keptRuPath = `event/${canonicalEv.id}/${eventSlug(canonicalEv, 'ru')}`;
+    const keptEnPath = `en/event/${canonicalEv.id}/${eventSlug(canonicalEv, 'en')}`;
+    const hasPath = (p) => activePathMeta.has(p) || pastPathMeta.has(p);
+    const aliasMap = {
+      cloneId: String(ev.id),
+      keptId: String(canonicalEv.id),
+      ru: hasPath(keptRuPath) ? `${SITE_URL}/${keptRuPath}/` : null,
+      en: eventHasEn(canonicalEv) && hasPath(keptEnPath) ? `${SITE_URL}/${keptEnPath}/` : null,
+    };
+    pastPagesBuffer.push({
+      path: aliasPath,
+      html: renderPage(pastBaseHtml, { ...meta, aliasMap }),
+    });
     aliasSeen.add(aliasPath);
     aliasPages += 1;
   }

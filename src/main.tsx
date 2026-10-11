@@ -6,6 +6,7 @@ import './index.css';
 import App from './App';
 import { AuthProvider } from './lib/auth';
 import { keepSeoBlocksForIntro, noteStaticBlocks } from './lib/mobileIntro';
+import { noteSeoAliasMap } from './lib/seo';
 
 // Статические SEO-блоки кладёт в HTML пре-рендер (scripts/seo-prerender.mjs):
 // главная (h1+абзацы+ссылки, id=seo-home-block), городские страницы
@@ -32,6 +33,10 @@ import { keepSeoBlocksForIntro, noteStaticBlocks } from './lib/mobileIntro';
 // по снимку БД, и SPA обязан согласовать свой гейт с фактом публикации, иначе
 // на одном URL статика отдаёт 200, а рендер — 404 (soft-404). Факт публикации
 // фиксируем ДО удаления блоков, пока #seo-category-block ещё в DOM.
+// Исключение — страница-алиас исторического URL: карта #seo-alias-map нужна
+// SPA, чтобы не перетереть canonical главной копии (см. lib/seo.ts). Читаем
+// её ДО удаления статических блоков.
+noteSeoAliasMap();
 noteStaticBlocks();
 keepSeoBlocksForIntro();
 

@@ -432,13 +432,65 @@ function isDeadImageHost(url: string): boolean {
   return DEAD_IMAGE_HOSTS.some((h) => host === h || host.endsWith(`.${h}`));
 }
 
-/** Событие (карточка открыта / /event/<id>/<slug>): title/description как в
+// --- Карта алиасов исторических URL (страницы-алиасы клонов) ---
+// Клоны, снятые дедупликацией, своих страниц не имеют, но их прежние URL
+// остались в индексе Google. Пре-рендер пишет по такому URL страницу-алиас с
+// метой ГЛАВНОЙ копии и встраивает в её <head> карту соответствия:
+//   <script type="application/json" id="seo-alias-map">
+//     {"cloneId":"<id клона>","keptId":"<id главной копии>","ru":"<URL RU>","en":"<URL EN|null>"}
+// SPA при гидратации ставит canonical/og:url/hreflang главной копии — иначе
+// canonical получал адрес с id КЛОНА и свежим слагом (такого URL на сайте нет,
+// GET = 404), и консолидация, ради которой писались алиасы, терялась.
+// Карту читаем ОДИН раз при старте (noteSeoAliasMap, src/main.tsx) — до
+// удаления статических SEO-блоков.
+interface SeoAliasMap {
+  cloneId: string;
+  keptId: string;
+  ru: string | null;
+  en: string | null;
+}
+
+let seoAliasMap: SeoAliasMap | null = null;
+
+/** Прочитать #seo-alias-map из HTML алиаса. Вызывается из main.tsx до
+ *  удаления статических блоков. На обычных страницах карты нет — no-op.
+ *  Значения принимаем только как абсолютные URL нашего сайта. */
+export function noteSeoAliasMap(): void {
+  const el = document.getElementById('seo-alias-map');
+  if (!el) return;
+  const own = (v: unknown): v is string => typeof v === 'string' && v.startsWith(`${SITE_URL}/`);
+  try {
+    const raw = JSON.parse(el.textContent ?? '') as Partial<SeoAliasMap>;
+    if (typeof raw.cloneId !== 'string' || typeof raw.keptId !== 'string') return;
+    if (!own(raw.ru) && !own(raw.en)) return;
+    seoAliasMap = {
+      cloneId: raw.cloneId,
+      keptId: raw.keptId,
+      ru: own(raw.ru) ? raw.ru : null,
+      en: own(raw.en) ? raw.en : null,
+    };
+  } catch {
+    /* битая карта — работаем как на обычной странице */
+  }
+}
+
+/** Адреса главной копии для события, если текущая страница — алиас её клона */
+function aliasUrlsFor(ev: EventItem): { ru: string; en: string | null } | null {
+  if (!seoAliasMap?.ru) return null;
+  if (String(ev.id).toLowerCase() !== seoAliasMap.cloneId.toLowerCase()) return null;
+  return { ru: seoAliasMap.ru, en: seoAliasMap.en };
+}
+
+/**
+ * Событие (карточка открыта / /event/<id>/<slug>): title/description как в
  * пре-рендере (seo-prerender.mjs), canonical и og со слэшем; og:image — первое
  * фото (абсолютный URL) или логотип сайта. Данные только из объекта события —
  * никаких новых запросов. EN-версия (/en/event/... с переводом события):
  * имя/текст = title_en/description_en, canonical на /en/...; событие без
  * EN-перевода, открытое по /en/event/... — мета RU-версии с canonical на RU
- * URL (как ТЗ 2.4: показать как есть, canonical на RU URL). */
+ * URL (как ТЗ 2.4: показать как есть, canonical на RU URL).
+ * Страница-алиас (карта #seo-alias-map): canonical/og:url/hreflang берём у
+ * ГЛАВНОЙ копии, а не у открытого события-клона. */
 export function applyEventMeta(ev: EventItem): void {
   const p = window.location.pathname;
   // EN-версия реально существует, только когда открыт /en/event/... У
@@ -447,6 +499,10 @@ export function applyEventMeta(ev: EventItem): void {
   const en = p.startsWith('/en/event/');
   const hasEn = eventHasEn(ev);
   const useEn = en && hasEn;
+  // Страница-алиас исторического URL (карта #seo-alias-map в HTML алиаса):
+  // canonical/og:url/hreflang берём у ГЛАВНОЙ копии — у события-клона своей
+  // страницы нет (адрес с его id и свежим слагом отдаёт 404).
+  const alias = aliasUrlsFor(ev);
   const city = typeof ev.city === 'string' ? ev.city.trim() : '';
   // RU-заголовок: перевод, иначе оригинал (если он русский), иначе EN-перевод —
   // как localizedText. Без этого у греческих афиш Кипра в мете стоял греческий.
@@ -483,7 +539,7 @@ export function applyEventMeta(ev: EventItem): void {
   const date = useEn ? enDate(ev.start_date) : ruDate(ev.start_date);
   const prefix = [useEn ? enCity : city, date].filter(Boolean).join(', ');
   const description = snippet(prefix ? `${prefix}. ${text}` : text, 160);
-  const canonical = eventUrl(ev, useEn);
+  const canonical = alias ? (useEn && alias.en ? alias.en : alias.ru) : eventUrl(ev, useEn);
   const photo = ev.photos?.[0];
   const absolute = photo
     ? photo.startsWith('http')
@@ -507,10 +563,15 @@ export function applyEventMeta(ev: EventItem): void {
       'og:url': canonical,
       'og:image': image,
     },
-    // hreflang-пара только если у события есть обе версии (после Фазы 2)
-    hreflang: hasEn
-      ? hreflangPairsFor(eventUrl(ev, false), eventUrl(ev, true))
-      : null,
+    // hreflang-пара только если у события есть обе версии (после Фазы 2);
+    // на алиасе — пара главной копии (обе аннотации ведут на её страницы)
+    hreflang: alias
+      ? alias.en
+        ? hreflangPairsFor(alias.ru, alias.en)
+        : null
+      : hasEn
+        ? hreflangPairsFor(eventUrl(ev, false), eventUrl(ev, true))
+        : null,
   });
 }
 
