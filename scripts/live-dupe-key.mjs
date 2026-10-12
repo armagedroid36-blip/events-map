@@ -48,8 +48,26 @@ export const PLACE_STOP = new Set(['ubud', 'bali', 'jl', 'jalan', 'raya', 'ин�
   // «парк» есть в адресах десятков площадок — как общий токен места не годится
   'park', 'парк', 'парке', 'парка']);
 
+// Служебные/местоименные слова RU и EN: сами по себе не доказывают, что событие ОДНО.
+// Прогон 38282590591: «Йога у ОКЕАНУСА для тех, кто хочет результат» (здание Атласа
+// на 6 этаже, 09:30) ↔ «ЙОГА ДЛЯ ТЕХ, КОМУ «ПРОСТО ПОТЯНУТЬСЯ» НЕДОСТАТОЧНО»
+// (Orhideya Ballet Studio, 08:00–10:30) — РАЗНЫЕ занятия (разные площадки в 219 м,
+// разные часы и инструкторы), но англ. псевдонимы дали «3 общих слова»
+// yoga/those/who, где два последних — служебные. Ветка «имя 3сл» склеила их.
+export const FUNC = new Set([
+  // EN
+  'who', 'whose', 'whom', 'those', 'these', 'this', 'that', 'than', 'then', 'there', 'here',
+  'they', 'them', 'their', 'your', 'yours', 'you', 'our', 'ours', 'will', 'would', 'can', 'could',
+  'should', 'have', 'has', 'had', 'just', 'more', 'most', 'need', 'needs', 'want', 'wants',
+  'about', 'into', 'over', 'very', 'also', 'only', 'some', 'any', 'all', 'come', 'comes',
+  // RU
+  'тех', 'кто', 'кому', 'кем', 'чем', 'что', 'чтобы', 'себе', 'меня', 'тебя', 'вас', 'нас',
+  'них', 'если', 'тоже', 'также', 'очень', 'всех', 'всем', 'будет', 'будем', 'есть', 'можно',
+  'нужно', 'надо', 'этом', 'этого', 'этой', 'такие', 'такой', 'много', 'даже', 'еще', 'ещё',
+  'когда', 'где']);
+
 export const norm = (s) => String(s || '').toLowerCase().replace(/[^\p{L}\p{N} ]/gu, ' ').replace(/\s+/g, ' ').trim();
-export const words = (s) => [...new Set(norm(s).split(' ').filter((w) => w.length > 3 && !STOP.has(w)))];
+export const words = (s) => [...new Set(norm(s).split(' ').filter((w) => w.length > 3 && !STOP.has(w) && !FUNC.has(w)))];
 export const aliases = (r) => [r.title, r.title_ru, r.title_en].map(norm).filter(Boolean);
 export const cityKey = (r) => norm(r.city).replace(/,\s*(кипр|bali|бали|vietnam|вьетнам)$/, '');
 export const dayKey = (r) => `${String(r.start_date || '').slice(0, 10)}|${cityKey(r)}`;
@@ -153,7 +171,7 @@ export function sameAbbrev(a, b) {
  *  Sensibility…») склеивались по 2 общим словам + общему токену адреса. */
 export const abbrevWords = (s) => [...new Set(norm(collapseAbbrev(s)).split(' ')
   .filter((w) => w.length > 2 && /\p{L}/u.test(w) && !STOP.has(w) && !GENERIC.has(w)
-    && !PLACE_STOP.has(w) && !ADDR_STOP.has(w) && !EXTRA_STOP.has(w)))];
+    && !PLACE_STOP.has(w) && !ADDR_STOP.has(w) && !EXTRA_STOP.has(w) && !FUNC.has(w)))];
 
 /** Сколько значимых слов общих у лучшей пары псевдонимов (с учётом аббревиатур). */
 export function abbrevOverlap(a, b) {

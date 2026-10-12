@@ -35,6 +35,16 @@ const cases = [
     b: mk({ id: 'h', title: 'Женский завтрак и рисование нейрографики', title_en: 'Women breakfast and neurographics drawing', city: 'Чангу, Bali', address: 'Jl. Pantai Berawa Gang The Beji, Canggu, Kec. Kuta Utara, Kabupaten Badung', start_date: '2026-10-12', start_time: '12:00:00', lat: -8.6540, lng: 115.1397 }),
     want: null,
   },
+  // Кейс из прогона 38282590591 (dispatch 17:11Z, 12.10): две РАЗНЫЕ йоги в Нячанге
+  // (Orhideya Ballet Studio 08:00–10:30 ↔ 6-й этаж здания Атласа 09:30, 219 м) были
+  // склеены веткой «имя 3сл», потому что англ. псевдонимы дали yoga/those/who —
+  // из них два слова служебные. Служебные слова (FUNC) теперь не доказывают тождество.
+  {
+    name: 'ЛОЖНАЯ: две разные йоги Нячанга (Orhideya 08:00 ↔ Атлас 09:30, 219 м)',
+    a: mk({ id: 'i', title: 'Йога у ОКЕАНУСА для тех, кто хочет результат', title_en: 'Yoga at OKEANUS for those who want results', city: 'Нячанг', address: 'в здании Атласа на 6 этаже', start_date: '2026-10-13', start_time: '09:30:00', lat: 12.273779, lng: 109.202092 }),
+    b: mk({ id: 'j', title: 'ЙОГА ДЛЯ ТЕХ, КОМУ «ПРОСТО ПОТЯНУТЬСЯ» НЕДОСТАТОЧНО', title_en: 'YOGA FOR THOSE WHO NEED MORE THAN "JUST A STRETCH"', city: 'Нячанг', address: 'Orhideya Ballet Studio, 46 Hòn Chồng, Bắc Nha Trang, Khánh Hòa 650000', start_date: '2026-10-13', start_time: '08:00:00', lat: 12.2744037, lng: 109.2001794 }),
+    want: null,
+  },
 ];
 
 let ok = 0, bad = 0;
