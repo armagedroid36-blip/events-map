@@ -14,6 +14,7 @@ import { createClient } from '@supabase/supabase-js';
 import { extractCategory } from './category-llm.mjs';
 import { selectAll } from './db-rows.mjs';
 import { districtOf, districtNear, districtOfCity, cityForPoint } from './cy-districts.mjs';
+import { buildVenueCityRegistry, cityForVenue } from './venue-city.mjs';
 import { cleanDescription } from './desc-junk.mjs';
 import { cleanCardText } from './text-safe.mjs';
 import { cleanEndTime } from './end-time-guard.mjs';
@@ -327,14 +328,14 @@ function canonBzPage(u) {
 
 // ===== Дедупликация по базе =====
 async function existingKeys() {
-  if (!db) return { keys: new Set(), websites: new Set(), rows: 0 };
+  if (!db) return { keys: new Set(), websites: new Set(), venues: new Map(), rows: 0 };
   let data;
   try {
     // Постранично (selectAll): PostgREST отдаёт максимум 1000 строк на запрос,
     // поэтому одиночный select оставлял без ключей все события за первой
     // тысячей — они вставлялись заново на каждом прогоне, а счётчик
     // «добавлено» показывал их как новые (их потом сносил dedupe-events.mjs).
-    data = await selectAll(db, 'events', 'title, start_date, website', {
+    data = await selectAll(db, 'events', 'title, start_date, website, city, address, lat, lng', {
       log: (msg) => console.log(`  ключи дублей — ${msg}`),
     });
   } catch (e) {
@@ -352,7 +353,7 @@ async function existingKeys() {
   // Канонические страницы Cyprus.BZ: одна страница под разными слагами
   // (ru/en) — по этому набору копия события не скачивается и не вставляется.
   const bzPages = new Set(rows.map((e) => canonBzPage(e.website)).filter(Boolean));
-  return { keys, websites, bzPages, rows: rows.length };
+  return { keys, websites, bzPages, rows: rows.length, venues: buildVenueCityRegistry(rows) };
 }
 
 // ===== Запись события =====
@@ -541,7 +542,7 @@ async function collectVisitCyprus(seen, budget) {
 // Порядок — восточные первыми: они и есть цель (курортные зоны туристов).
 const CYPRUSNOW_CITIES = ['famagusta', 'protaras', 'paralimni', 'larnaca', 'paphos', 'limassol', 'nicosia'];
 
-async function collectCyprusNow(seen, budget, websites = new Set()) {
+async function collectCyprusNow(seen, budget, websites = new Set(), venueCities = new Map()) {
   const deadline = Date.now() + BUDGET.cyprusnow;
   // Квота на город: не меньше 15, но так, чтобы всем городам хватило общего бюджета
   const perCity = Math.max(15, Math.ceil(budget / CYPRUSNOW_CITIES.length));
@@ -585,6 +586,24 @@ async function collectCyprusNow(seen, budget, websites = new Set()) {
       // такие карточки раньше уходили в ленту с пустым адресом. Пишем честный адрес
       // уровня города (он же в поле city), а не выдуманную улицу.
       const cityNm = cityRu(ev.city || citySlug) || citySlug;
+      const venueName = ev.venue_name || ev.venue?.name || '';
+      const venueAddr = ev.venue_address || ev.address || venueName;
+      // Метка города одной площадки у агрегатора плавает (Fyti Village Square:
+      // «Paphos»/«Polis», Castle Club: «famagusta»/«ayia-napa») — фильтр по
+      // городу на карте расщепляется. Арбитр — реестр уже собранных карточек
+      // той же площадки (venue-city.mjs); округ тут не помогает: Полис и Пафос
+      // в одном округе, а Ая-Напа законно лежит в округе Фамагуста.
+      const vLat = Number.isFinite(lat) && Math.abs(lat) > 1 ? lat : null;
+      const vLng = Number.isFinite(lng) && Math.abs(lng) > 1 ? lng : null;
+      const byVenue = cityForVenue(
+        { address: venueAddr, lat: vLat, lng: vLng },
+        venueCities,
+        vLat != null ? (districtOf(vLat, vLng) || districtNear(vLat, vLng)) : null,
+      );
+      const cityFinal = byVenue || cityNm;
+      if (byVenue && byVenue !== cityNm) {
+        console.log(`  [city по площадке] «${cityNm}» -> «${byVenue}»: ${title.slice(0, 50)}`);
+      }
       const row = await buildRow({
         title,
         description: stripHtml(ev.description || ev.excerpt || ''),
@@ -593,10 +612,10 @@ async function collectCyprusNow(seen, budget, websites = new Set()) {
         end_date: ev.end_at ? cyDate(ev.end_at) : null,
         start_time: cyHM(ev.start_at),
         end_time: cyHM(ev.end_at),
-        city: cityNm,
+        city: cityFinal,
         cityEn: ev.city || citySlug,
         venue: ev.venue_name || ev.venue?.name || '',
-        address: ev.venue_address || ev.address || ev.venue_name || ev.venue?.name || `${cityNm}, Кипр`,
+        address: ev.venue_address || ev.address || ev.venue_name || ev.venue?.name || `${cityFinal}, Кипр`,
         lat: Number.isFinite(lat) && Math.abs(lat) > 1 ? lat : null,
         lng: Number.isFinite(lng) && Math.abs(lng) > 1 ? lng : null,
         website: pageUrl,
@@ -841,7 +860,7 @@ async function collectCyprusBzCities(seen, budget, bzPages = new Set()) {
 
 // ===== Основной цикл =====
 async function main() {
-  const { keys: seen, websites, bzPages, rows: dbRows } = await existingKeys();
+  const { keys: seen, websites, bzPages, rows: dbRows, venues } = await existingKeys();
   const started = new Date();
   console.log(
     `Старт сбора событий Кипра${DRY_RUN ? ' (DRY_RUN)' : ''}. `
@@ -852,7 +871,7 @@ async function main() {
   // VisitCyprus отдаёт небольшой официальный календарь (~30 событий),
   // Cyprus Now — самый насыщенный источник, Cyprus.BZ добирает остаток бюджета.
   if (want('visitcyprus')) await collectVisitCyprus(seen, Math.min(60, MAX_EVENTS));
-  if (want('cyprusnow')) await collectCyprusNow(seen, Math.min(120, MAX_EVENTS), websites);
+  if (want('cyprusnow')) await collectCyprusNow(seen, Math.min(120, MAX_EVENTS), websites, venues);
   if (want('cyprusbzCities')) {
     await collectCyprusBzCities(seen, Math.min(25, Math.max(0, MAX_EVENTS - stats.visitcyprus - stats.cyprusnow)), bzPages);
   }
