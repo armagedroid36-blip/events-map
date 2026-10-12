@@ -11,6 +11,7 @@ import { districtFor, districtCenter, OUT_OF_BALI } from './bali-districts.mjs';
 import { buildVenueDistrictRegistry, districtForVenue } from './venue-district.mjs';
 import { stripInvisible } from './text-safe.mjs';
 import { cleanEndTime } from './end-time-guard.mjs';
+import { cleanStartTime } from './start-time-stub.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -388,7 +389,7 @@ async function main() {
       );
       const isInternational = isMusic ? !!(await isInternationalArtist(ev.title, description)) : false;
       const endDate = endDateOf(when);
-      const startTime = when.raw.startAt.slice(11, 16) || null;
+      const startTime = cleanStartTime(when.raw.startAt);
       const endTime = when.raw.endAt ? when.raw.endAt.slice(11, 16) : null;
       // districtName от источника бывает латиницей («Ubud», «Jimbaran») — в базу пишем русский
       // канон, иначе фильтр по городу на карте расщепляется («Ubud, Bali» vs «Убуд, Bali»).
