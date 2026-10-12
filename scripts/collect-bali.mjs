@@ -8,6 +8,7 @@ import { extractCategory } from './category-llm.mjs';
 import { isInternationalArtist } from './intl-llm.mjs';
 import { extractContacts as extractSharedContacts } from './contacts-regex.mjs';
 import { districtFor, districtCenter, OUT_OF_BALI } from './bali-districts.mjs';
+import { buildVenueDistrictRegistry, districtForVenue } from './venue-district.mjs';
 import { stripInvisible } from './text-safe.mjs';
 import { cleanEndTime } from './end-time-guard.mjs';
 
@@ -290,10 +291,10 @@ async function existingKeys() {
   try {
     // Постранично: PostgREST отдаёт максимум 1000 строк на запрос, иначе ключи
     // части событий не загружаются и те же карточки вставляются заново.
-    data = await selectAll(db, 'events', 'title, start_date, website, status');
+    data = await selectAll(db, 'events', 'title, start_date, website, status, city, address, lat, lng');
   } catch (e) {
     console.error('Ошибка чтения дублей:', e.message);
-    return { seen: new Set(), liveWebsites: [] };
+    return { seen: new Set(), liveWebsites: [], districtRegistry: new Map() };
   }
   const seen = new Set();
   const liveWebsites = [];
@@ -303,13 +304,16 @@ async function existingKeys() {
       liveWebsites.push({ website: e.website, start_date: e.start_date });
     }
   }
-  return { seen, liveWebsites };
+  // Реестр «площадка -> район»: у Балифорума одна площадка приходит с разными
+  // адресными хвостами, поэтому район берём у большинства её карточек
+  // (см. venue-district.mjs). Данные уже прочитаны — отдельного запроса нет.
+  return { seen, liveWebsites, districtRegistry: buildVenueDistrictRegistry(data) };
 }
 
 // ===== Основной цикл =====
 
 async function main() {
-  const { seen, liveWebsites } = await existingKeys();
+  const { seen, liveWebsites, districtRegistry } = await existingKeys();
   let inserted = 0;
   let skipped = 0;
 
@@ -409,6 +413,17 @@ async function main() {
       const center = districtCenter(district);
       const lat = loc && loc.lat != null ? loc.lat : center.lat;
       const lng = loc && loc.lng != null ? loc.lng : center.lng;
+      const rowAddress = (loc && loc.address) || place.title || null;
+
+      // Метку района арбитрит реестр «площадка -> район»: Балифорум одной площадке
+      // отдаёт разные адресные хвосты («…, Seminyak …» / «…, Kerobokan Kelod …»),
+      // отчего площадка давала две метки в фильтре по городу (разбор — запуск 188).
+      // Пин не трогаем: у площадки с реальными координатами он и так её собственный.
+      const regDistrict = districtForVenue({ address: rowAddress, lat, lng }, districtRegistry);
+      const cityDistrict = regDistrict && regDistrict !== district ? regDistrict : district;
+      if (cityDistrict !== district) {
+        console.log(`  [район по площадке] «${district}» -> «${cityDistrict}» (${title.slice(0, 40)})`);
+      }
 
       const row = {
         title,
@@ -421,8 +436,8 @@ async function main() {
         end_date: endDate || null,
         start_time: startTime,
         end_time: cleanEndTime({ start_date: startDate, start_time: startTime, end_date: endDate, end_time: endTime }),
-        city: OUT_OF_BALI.has(district) ? district : `${district}, Bali`,
-        address: (loc && loc.address) || place.title || null,
+        city: OUT_OF_BALI.has(cityDistrict) ? cityDistrict : `${cityDistrict}, Bali`,
+        address: rowAddress,
         lat,
         lng,
         category_id: llmCat || pickCategory(ev.types),
