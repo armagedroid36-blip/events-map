@@ -24,6 +24,22 @@ const FIXES = [
     // start_at 2026-11-28T13:30Z (=15:30 местного), city Limassol.
     why: 'промоутер + лента CN: 28.11 тур играет в Лимасоле, Pattihio, 15:30',
   },
+  {
+    id: '41f6f989-28b5-4109-9710-51fa83b19993',
+    expectTitle: 'Wiener Mozart',
+    from: { city: 'Пафос, Кипр', address: 'Markideio Theatre, Paphos' },
+    to: {
+      start_time: '19:30:00',
+      city: 'Лимасол, Кипр',
+      address: 'Pattihio Theatre, Limassol',
+      lat: 34.6813906,
+      lng: 33.0440049,
+    },
+    // Арбитры: (1) промоутер atriamusic.com/mozart — «December 11, Friday, 7:30 PM, Limassol,
+    // Pattihio Theatre» (12.12 Пафос 20:00, 13.12 Никосия 20:30 — так и стоят); (2) лента Cyprus Now,
+    // запись a86f4fa2 (slug …в-лимасоле…-2026-12-11) start_at 2026-12-11T17:30Z = 19:30 местного, city Limassol.
+    why: 'промоутер (Atria, тур Mozart) + лента CN: 11.12 концерт в Лимасоле, Pattihio, 19:30',
+  },
 ];
 
 const db = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
