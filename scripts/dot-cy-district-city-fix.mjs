@@ -12,6 +12,16 @@ const db = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERV
 // Алона (Αλόνα) — деревня округа Никосия, точка 34.9343,33.0396 внутри полигона Никосии.
 const FIXES = [
   { id: 'd39ce2c3', from: 'Лимасол', to: 'Никосия, Кипр', why: 'Алона — деревня округа Никосия (точка в полигоне Никосии)' },
+  // Fyti Village Square (Φύτη) — одна площадка 34.9287321,32.5437806 получала на карточках
+  // две разные метки города в зависимости от городского среза ленты Cyprus Now (paphos -> «Пафос»,
+  // polis -> «Полис»). Арбитр — сам источник: venue.slug площадки = «fyti-village-square-paphos»,
+  // venue.city = Fyti, деревня Фита в округе Пафос. Канон — «Пафос, Кипр».
+  { id: 'b7e2b7f4', from: 'Полис', to: 'Пафос, Кипр', why: 'Fyti Village Square, venue.slug источника …-paphos' },
+  { id: '2e35d25b', from: 'Полис', to: 'Пафос, Кипр', why: 'Fyti Village Square, venue.slug источника …-paphos' },
+  { id: '0b219087', from: 'Полис', to: 'Пафос, Кипр', why: 'Fyti Village Square, venue.slug источника …-paphos' },
+  // Castle Club (Ая-Напа, 34.9898,33.9980): 22 живые карточки в метке «Ая-Напа», одна — «Фамагуста»,
+  // хотя название события прямо говорит «in Ayia Napa». Метка приводится к соседям по площадке.
+  { id: '64df71ce', from: 'Фамагуста', to: 'Ая-Напа, Кипр', why: 'Castle Club, Ayia Napa — 22 соседние карточки той же площадки в метке «Ая-Напа»' },
 ];
 
 const rows = await selectAll(db, 'events', 'id,status,city,address,lat,lng,website,title');
