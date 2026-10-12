@@ -25,6 +25,16 @@ const cases = [
     b: mk({ id: 'f', title: 'Воскресенье (11 октября) Нячанг', title_en: 'Sunday (October 11) Nha Trang', city: 'Нячанг', address: 'Кафе-Караоке Голос, 84A Trần Phú, Nha Trang, Khánh Hòa', start_date: '2026-10-11', start_time: '20:00:00', lat: 12.1986, lng: 109.2117 }),
     want: null,
   },
+  // Кейс из прогона 38248519181 (расписной 12:21Z, 12.10): «женский завтрак❣️» (ZAI cafe,
+  // 12:00–15:00, 11/12/15.10) и «Женский завтрак и рисование нейрографики» (Murmur lounge
+  // restaurant, 12:00–13:00, 12/13/14.10) — 2 общих слова + общий токен адреса «kuta»
+  // (район, а не площадка), 1017 м → правило архивировало живую карточку сразу после сбора.
+  {
+    name: 'ЛОЖНАЯ: два завтрака одного района (Чангу: ZAI cafe 15:00 ↔ Murmur lounge 13:00)',
+    a: mk({ id: 'g', title: 'женский завтрак', title_en: "women's breakfast", city: 'Чангу, Bali', address: 'Jl. Pantai Batu Bolong, Canggu, Kec. Kuta Utara, Kabupaten Badung', start_date: '2026-10-12', start_time: '12:00:00', lat: -8.6451, lng: 115.1414 }),
+    b: mk({ id: 'h', title: 'Женский завтрак и рисование нейрографики', title_en: 'Women breakfast and neurographics drawing', city: 'Чангу, Bali', address: 'Jl. Pantai Berawa Gang The Beji, Canggu, Kec. Kuta Utara, Kabupaten Badung', start_date: '2026-10-12', start_time: '12:00:00', lat: -8.6540, lng: 115.1397 }),
+    want: null,
+  },
 ];
 
 let ok = 0, bad = 0;
