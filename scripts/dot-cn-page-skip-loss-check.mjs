@@ -13,13 +13,22 @@ function curl(url) {
   return execFileSync('curl', a, { encoding: 'utf8', maxBuffer: 60 * 1024 * 1024 });
 }
 const db = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
-const rows = await selectAll(db, 'events', 'title, start_date, website, status');
+const rows = await selectAll(db, 'events', 'title, start_date, end_date, website, status');
 const byPage = new Map();
 for (const r of rows) { const w = (r.website || '').trim(); if (!w) continue; if (!byPage.has(w)) byPage.set(w, []); byPage.get(w).push(r); }
 
 const dayDiff = (a, b) => Math.abs((Date.parse(String(a).slice(0, 10)) - Date.parse(String(b).slice(0, 10))) / 86400000);
-let total = 0; let onPage = 0; let lossy = 0;
+let total = 0; let onPage = 0; let lossy = 0; let coveredByRange = 0;
 const losses = [];
+// Дата ленты считается покрытой, если у карточки той же страницы есть карточка на ту же
+// дату (±1 день) ИЛИ дата попадает в ИНТЕРВАЛ карточки (start_date..end_date) — у фестивалей
+// лента даёт отдельные дни, а на карте стоит одна карточка-интервал: это не потеря.
+const coversDate = (c, start) => {
+  if (dayDiff(c.start_date, start) <= 1) return true;
+  if (!c.end_date) return false;
+  const s = String(c.start_date).slice(0, 10); const e = String(c.end_date).slice(0, 10);
+  return start >= s && start <= e;
+};
 for (const city of ['famagusta', 'protaras', 'paralimni', 'larnaca', 'paphos', 'limassol', 'nicosia']) {
   let data = null;
   try { data = JSON.parse(curl(`https://cyprusnow.app/api/events?city=${city}&limit=200`)); } catch (e) { console.log(city, 'ERR', e.message); continue; }
@@ -31,10 +40,13 @@ for (const city of ['famagusta', 'protaras', 'paralimni', 'larnaca', 'paphos', '
     if (!cards) continue;
     onPage++;
     const near = cards.some((c) => dayDiff(c.start_date, start) <= 1);
-    if (!near) { lossy++; losses.push({ city, url, start, titles: cards.map((c) => `${c.start_date.slice(0, 10)}/${c.status}`).join(' ') }); }
+    const inRange = !near && cards.some((c) => coversDate(c, start));
+    if (inRange) coveredByRange++;
+    if (!near && !inRange) { lossy++; losses.push({ city, url, start, titles: cards.map((c) => `${c.start_date.slice(0, 10)}→${c.end_date ? c.end_date.slice(0, 10) : '-'}/${c.status}`).join(' ') }); }
   }
 }
 console.log(`записей в ленте (7 городов): ${total}`);
 console.log(`страница уже в базе (страховка 154 пропустит): ${onPage}`);
+console.log(`из них дата покрыта ИНТЕРВАЛОМ карточки (не потеря): ${coveredByRange}`);
 console.log(`из них БЕЗ карточки на ту же дату (±1 день) — кандидаты в потерю: ${lossy}`);
 for (const l of losses.slice(0, 15)) console.log('  ПОТЕРЯ?', l.city, l.start, '|', l.url.slice(0, 80), '|', l.titles);
