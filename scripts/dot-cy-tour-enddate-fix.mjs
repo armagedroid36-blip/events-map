@@ -72,14 +72,40 @@ const FIXES = [
     newEnd: '2026-10-04',
     quote: 'Лента Cyprus Now ?q=satiriko (200 НАПРЯМУЮ с RU-IP): у записей серии «Η Βασίλισσα του Χιονιού» series_id 01659915, series_count 11, series_first 2026-10-04, series_last 2026-12-20, и каждая запись идёт СВОИМ днём (18.10: start_at 08:00Z -> end_at 09:30Z = 11:00-12:30 местного, venue Satiriko Theatre 35.1632112,33.3864655) — 04.10 это одна из 11 постановок, а не интервал. Двойник той же страницы источника (карточка 32f55a5f, status archived, start_date 04.10 08:00) держит однодневную дату 04.10.',
   },
+  {
+    // 13.10.2026: САТЕЛЛИТЫ той же серии Brandy Sour (Никосия) — у каждой карточки
+    // end_date = конец ближайшего двухдневного окна ленты, а не её собственный вечер.
+    // Две карточки серии носят ОДНО название, поэтому фильтр по слагу страницы.
+    titleLike: 'Brandy Sour στη Λευκωσία',
+    websiteLike: 'brandy-sour-στη-λευκωσία-2026-10-16',
+    expectCityPrefix: 'Никосия',
+    expectStart: '2026-10-16',
+    expectEnd: '2026-10-18',
+    newEnd: '2026-10-16',
+    quote: 'Лента Cyprus Now ?q=brandy sour (200 через прокси 10809), запись brandy-sour-στη-λευκωσία-2026-10-16: start_at 2026-10-16T18:00Z (=21:00 местного, совпадает с карточкой), venue Goethe-Institut Zypern 35.1729874,33.3760007, end_at 2026-10-18T17:00Z, но series_count = 3 (series_first 16.10, series_last 30.10) — записи серии идут ПО ДНЯМ (20.10, 30.10 — отдельные записи), поэтому 18.10 это окно серии, а не длительность вечера 16.10.',
+  },
+  {
+    titleLike: 'Brandy Sour στη Λευκωσία',
+    websiteLike: 'brandy-sour-στη-λευκωσία-2026-10-30',
+    expectCityPrefix: 'Никосия',
+    expectStart: '2026-10-30',
+    expectEnd: '2026-11-01',
+    newEnd: '2026-10-30',
+    quote: 'Лента Cyprus Now ?q=brandy sour, запись brandy-sour-στη-λευκωσία-2026-10-30: start_at 2026-10-30T19:00Z (=21:00 местного, совпадает с карточкой), venue Goethe-Institut Zypern 35.1729874,33.3760007, end_at 2026-11-01T18:00Z, series_count = 3, series_first = 2026-10-16, series_last = 2026-10-30 — 30.10 это ПОСЛЕДНИЙ вечер серии, значит 01.11 не может быть датой окончания карточки этого вечера.',
+  },
 ];
 
 let applied = 0, skipped = 0, errors = 0;
 for (const f of FIXES) {
-  const { data, error } = await db.from('events')
+  let q = db.from('events')
     .select('id,title,city,start_date,end_date,status,website')
     .ilike('title', `%${f.titleLike}%`)
     .eq('status', 'active');
+  // 13.10.2026: у одной постановки-серии бывает НЕСКОЛЬКО живых карточек с ОДНИМ названием
+  // («Brandy Sour στη Λευκωσία» 16/20/30.10) — их различает только слаг страницы источника,
+  // без websiteLike ilike даёт 2+ совпадения и карточка молча пропускается.
+  if (f.websiteLike) q = q.ilike('website', `%${f.websiteLike}%`);
+  const { data, error } = await q;
   if (error) { console.log('ОШИБКА чтения:', f.titleLike, error.message); errors++; continue; }
   const rows = (data || []).filter(r => (r.city || '').startsWith(f.expectCityPrefix));
   if (rows.length !== 1) { console.log('ПРОПУСК (совпадений', rows.length, '):', f.titleLike); skipped++; continue; }
