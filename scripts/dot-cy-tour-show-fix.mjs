@@ -48,6 +48,24 @@ const FIXES = [
     // (04.12 Ларнака Municipal 18:30, 06.12 Лимасол Pattihio 15:00, 07.12 Пафос Markideio 18:30).
     why: 'промоутер Atria: Alice on Ice 05.12 — Никосия, Municipal Theatre, 15:30',
   },
+  {
+    // run 212: карточка-зеркало Cyprus Now у фестиваля Limassol Fashion Week 2026.
+    // Лента CN держит ТРИ записи одного фестиваля (11.11, 12.11, 15.11) с разными series_id,
+    // у записи 12.11 интервал-мусор (start_at 12.11 21:00Z → end_at 13.11 20:59Z) — отсюда
+    // карточка печатала «12.11 23:00 → 13.11 22:59». Официальный сайт промоутера даёт рамку
+    // фестиваля 11–15.11 у площадки The Warehouse (Лимасол), а запись 11.11 — точный слот открытия.
+    website: 'https://cyprusnow.app/event/limassol-fashion-week-2026-2026-11-14',
+    expectTitle: 'Limassol Fashion Week',
+    expectAddress: 'Лимасол',
+    expectCity: 'Лимасол',
+    from: { start_date: '2026-11-12', start_time: '23:00:00' },
+    to: { start_date: '2026-11-11', end_date: '2026-11-11', start_time: '18:00:00', end_time: '22:00:00' },
+    // limassolfashionweek.com: «THE WAREHOUSE / 11-15 NOVEMBER 2026», страница /venue/ — «Located in the
+    // heart of Limassol, The Warehouse»; запись ленты CN «limassol-fashion-week-2026-runway-shows-fashion-
+    // events-2026-11-11»: start_at 11.11T16:00Z → end_at 11.11T20:00Z (= 18:00–22:00 местного),
+    // venue «The Warehouse by IT», Limassol 34.6628593,33.0261341, ticket_url = limassolfashionweek.com.
+    why: 'промоутер limassolfashionweek.com: LIMFW 11–15.11 у The Warehouse (Лимасол), слот открытия 11.11 18:00–22:00',
+  },
 ];
 
 const db = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
@@ -76,12 +94,14 @@ for (const f of FIXES) {
     start_date: f.to.start_date,
     end_date: f.to.end_date,
     start_time: f.to.start_time,
+    ...(f.to.end_time ? { end_time: f.to.end_time } : {}),
   }).eq('id', data.id);
   if (upErr) { console.log('ОШИБКА записи', data.id.slice(0, 8), upErr.message); skipped++; continue; }
 
   const { data: back } = await db.from('events').select(FIELDS).eq('id', data.id).single();
   const ok = back && String(back.start_date) === f.to.start_date &&
     String(back.end_date) === f.to.end_date && String(back.start_time) === f.to.start_time &&
+    (!f.to.end_time || String(back.end_time) === f.to.end_time) &&
     back.city === data.city && back.address === data.address;
   console.log(ok ? 'ЗАПИСАНО' : 'КОНТРОЛЬ НЕ СОШЁЛСЯ', data.id.slice(0, 8), back?.start_date, back?.start_time,
     back?.end_date, '|', back?.city, '|', back?.address);
