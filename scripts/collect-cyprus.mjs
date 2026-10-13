@@ -18,6 +18,7 @@ import { buildVenueCityRegistry, cityForVenue } from './venue-city.mjs';
 import { cleanDescription } from './desc-junk.mjs';
 import { cleanCardText } from './text-safe.mjs';
 import { cleanEndTime } from './end-time-guard.mjs';
+import { cnDuplicateOf } from './cy-duplicate-pages.mjs';
 import { normWebsite } from './site-url.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -576,6 +577,16 @@ async function collectCyprusNow(seen, budget, websites = new Set(), venueCities 
       // дедуп её не видит). Поэтому уже разобранную страницу повторно не берём.
       const pageUrl = ev.url || (ev.slug ? `https://cyprusnow.app/event/${ev.slug}` : null);
       if (pageUrl && websites.has(String(pageUrl).trim())) {
+        stats.skipped++;
+        continue;
+      }
+      // Вторая запись ленты на УЖЕ собранное событие (другой слаг + другое
+      // название + своя дата): ключ и множество website её не ловят, а на карте
+      // получается «одно событие, две карточки» — поэтому список известных
+      // дублей ленты (cy-duplicate-pages.mjs) отсекается явно.
+      const dup = pageUrl ? cnDuplicateOf(pageUrl) : null;
+      if (dup) {
+        console.log(`  [страница-дубль CN] пропускаю ${pageUrl} — уже собрано как ${dup.keep}`);
         stats.skipped++;
         continue;
       }
