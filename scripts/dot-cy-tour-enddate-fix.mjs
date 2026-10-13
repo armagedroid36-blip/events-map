@@ -41,6 +41,25 @@ const FIXES = [
     quote: 'Лента Cyprus Now, запись one-night-in-paradise-greek-comedy-theatre-tour-in-nicosia-2026-11-27: start_at 2026-11-27T18:30Z (=20:30 местного, совпадает с карточкой), end_at 2027-02-08T18:30Z, venue Latsia Municipal Theatre, series_count = 1, series_first = series_last = 2026-11-27T18:30Z; описание записи: «Η θεατρική κωμωδία … περιοδεύει σε όλες τις πόλεις της Κύπρου από τον Νοέμβριο 2026 έως τον Φεβρουάριο 2027 … ξεκινά στις 27 Νοεμβρίου 2026 στο Δημοτικό Θέατρο Λατσιών» — карточка в Латсии открывает тур 27.11, 08.02 это конец тура по острову.',
   },
   {
+    // 13.10.2026: тот же класс, что и «Снежная королева» — у англ. записи ленты CN
+    // end_at = конец СЕЗОНА постановки, а не её собственный вечер.
+    titleLike: 'Orient Express',
+    expectCityPrefix: 'Никосия',
+    expectStart: '2026-10-03',
+    expectEnd: '2026-11-27',
+    newEnd: '2026-10-03',
+    quote: 'Лента Cyprus Now ?q=orient express (200 НАПРЯМУЮ с RU-IP), запись murder-on-the-orient-express-agatha-christie-theatre-at-thoc-nicosia-2026-10-03: start_at 2026-10-03T17:00Z (=20:00 местного, совпадает с карточкой), venue THOC Theatre – Evis Gabrielides Auditorium 35.1627039,33.3592448 (совпадает с пином карточки), end_at 2026-11-27T18:30Z, но series_count = 1 и series_first = series_last = 2026-10-03T17:00Z — запись описывает ОДИН вечер, а end_at это окно показов сезона. Вторая запись той же ленты (murder-on-the-orient-express-2026-10-03) держит те же start/end_at начала и series_first = series_last = 03.10.',
+  },
+  {
+    // 13.10.2026: тот же класс — карточка печаталась «событием с 09.10 по 01.11».
+    titleLike: 'Bilingual Theatre Production',
+    expectCityPrefix: 'Никосия',
+    expectStart: '2026-10-09',
+    expectEnd: '2026-11-01',
+    newEnd: '2026-10-09',
+    quote: 'Лента Cyprus Now ?q=brandy sour (200 НАПРЯМУЮ с RU-IP), запись brandy-sour-bilingual-theatre-production-in-nicosia-2026-10-09: start_at 2026-10-09T18:00Z (=21:00 местного, совпадает с карточкой), venue Goethe-Institut Cyprus 35.1772179,33.35465 (совпадает с пином карточки), end_at 2026-11-01T18:00Z, но series_count = 1 и series_first = series_last = 2026-10-09T18:00Z — 01.11 это последняя дата серии показов по острову (записи Ларнака 13.10, Пафос 14.10, Никосия 16/20/30.10 идут отдельными записями), а не длительность никосийского вечера.',
+  },
+  {
     // 13.10.2026: живая англ. карточка одной из постановок серии «Снежная королева»
     // (Satiriko Theatre) несла ИНТЕРВАЛ СЕРИИ в end_date: 04.10 -> 20.12, т.е. печаталась
     // «событием на 2.5 месяца» с началом В ПРОШЛОМ (04.10). Источник моделирует эту серию
