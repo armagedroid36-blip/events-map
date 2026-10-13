@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kakopetria Christmas Village — November 21, 2026 · Cyprus</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-Cm98-5sq.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-BSdtuxTk.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CAjIvkmG.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CzwEzmfc.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BIyBA1U-.css" />
+      <meta name="description" content="Cyprus, November 21, 2026. Kakopetria is located at an altitude of 670 m southwest of Lefkosia, the capital of Cyprus. It is a relatively large community with…" />
+    <link rel="canonical" href="https://mypins.site/en/event/d446ba6b-37db-4d39-b1e1-e4a8262598d4/kakopetria-christmas-village/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Kakopetria Christmas Village — November 21, 2026 · Cyprus" />
+    <meta property="og:description" content="Cyprus, November 21, 2026. Kakopetria is located at an altitude of 670 m southwest of Lefkosia, the capital of Cyprus. It is a relatively large community with…" />
+    <meta property="og:url" content="https://mypins.site/en/event/d446ba6b-37db-4d39-b1e1-e4a8262598d4/kakopetria-christmas-village/" />
+    <meta property="og:image" content="https://www.eventshub.cy/wp-content/uploads/2026/10/christougenniatika-choria-2.webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/d446ba6b-37db-4d39-b1e1-e4a8262598d4/kakopetria-christmas-village/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/d446ba6b-37db-4d39-b1e1-e4a8262598d4/rozhdestvenskaya-derevnya-kakopetrii/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Kakopetria Christmas Village","url":"https://mypins.site/en/event/d446ba6b-37db-4d39-b1e1-e4a8262598d4/kakopetria-christmas-village/","startDate":"2026-11-21T10:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Kakopetria Village Square, Cyprus","address":{"@type":"PostalAddress","addressLocality":"Cyprus","streetAddress":"Kakopetria Village Square, Cyprus","addressCountry":"cyprus"},"geo":{"@type":"GeoCoordinates","latitude":34.9899859,"longitude":32.9036838}},"description":"Kakopetria is located at an altitude of 670 m southwest of Lefkosia, the capital of Cyprus. It is a relatively large community with 1300 permanent residents, built at the foothills of Troodos amidst dense vegetation between the banks of the Karkotis and Garyllis rivers. The two rivers meet in the center of the village creating the Klarios river. The village is known for its excellent quality apples while it also produces other fruits and vegetables such as pears, plums, apricots, peaches, cherries, potatoes, vines and tomatoes. Kakopetria is famous for its wall-painted churches","endDate":"2026-11-22","image":"https://www.eventshub.cy/wp-content/uploads/2026/10/christougenniatika-choria-2.webp","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CF%87%CF%81%CE%B9%CF%83%CF%84%CE%BF%CF%85%CE%B3%CE%B5%CE%BD%CE%BD%CE%B9%CE%AC%CF%84%CE%B9%CE%BA%CE%BF-%CF%87%CF%89%CF%81%CE%B9%CF%8C-%CE%BA%CE%B1%CE%BA%CE%BF%CF%80%CE%B5%CF%84%CF%81%CE%B9%CE%AC%CF%82-2026-11-21"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Kakopetria Christmas Village","item":"https://mypins.site/en/event/d446ba6b-37db-4d39-b1e1-e4a8262598d4/kakopetria-christmas-village/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Kakopetria Christmas Village</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-11-22">November 22, 2026</time></p>
+  <p><time datetime="2026-11-21T10:00:00">November 21, 2026, 10:00 AM</time></p>
+  <address>Kakopetria Village Square, Cyprus</address>
+  <p>Kakopetria is located at an altitude of 670 m southwest of Lefkosia, the capital of Cyprus. It is a relatively large community with 1300 permanent residents, built at the foothills of Troodos amidst dense vegetation between the banks of the Karkotis and Garyllis rivers. The two rivers meet in the center of the village creating the Klarios river. The village is known for its excellent quality apples while it also produces other fruits and vegetables such as pears, plums, apricots, peaches, cherries, potatoes, vines and tomatoes. Kakopetria is famous for its wall-painted churches</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Kakopetria Christmas Village</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/tour/">🗺️ Tours &amp; Excursions</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/0863b0c6-71b5-4c44-9fa2-8ba2acf18871/historic-limassol-walk/">Historic Limassol Walk <time datetime="2026-11-18">November 18, 2026</time></a></li>
+    <li><a href="/en/event/1fcf8fd1-0840-4328-aed4-cdf10b779c3a/birdwatching-in-the-troodos-mountains/">Birdwatching in the Troodos Mountains <time datetime="2026-11-21">November 21, 2026</time></a></li>
+    <li><a href="/en/event/17b2c999-dbda-4cbc-889e-545ae4d8cc1d/kyperounta-christmas-village/">Kyperounta Christmas Village <time datetime="2026-11-22">November 22, 2026</time></a></li>
+    <li><a href="/en/event/d51ea7ec-bc18-4f8c-89df-80ea52699cfc/historic-limassol-walk/">Historic Limassol Walk <time datetime="2026-11-25">November 25, 2026</time></a></li>
+    <li><a href="/en/event/04d6b2ee-6db7-4761-973e-e9c2d00cd912/christmas-village-of-kyperounta/">Christmas Village of Kyperounta <time datetime="2026-11-29">November 29, 2026</time></a></li>
+    <li><a href="/en/event/15b005c0-7e4c-41f8-9835-ad33aadeb658/machairas-trail-series-vol-9-kionia-hike-in-nicosia/">Machairas Trail Series Vol. 9: Kionia Hike in Nicosia <time datetime="2026-11-29">November 29, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/cdfbc52c-a77c-4808-a6e8-544c5c3b6893/kevin-de-vries-at-etko/">Kevin De Vries at Etko</a> <time datetime="2026-11-22">November 22, 2026</time></li>
+    <li>Next: <a href="/en/event/45e4a8d0-4869-4d53-945a-70e7fa7e9fc4/jay-jay-johanson-live-concert-in-limassol/">Jay-Jay Johanson: Live Concert in Limassol</a> <time datetime="2026-11-28">November 28, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>
