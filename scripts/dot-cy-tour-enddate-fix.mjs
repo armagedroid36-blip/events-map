@@ -9,6 +9,16 @@ const db = createClient(process.env.VITE_SUPABASE_URL || process.env.SUPABASE_UR
 // titleLike | expectCityPrefix | expectStart | expectEnd | newEnd | цитата арбитра
 const FIXES = [
   {
+    // 13.10.2026: у записи ленты CN end_at = ВТОРОЙ вечер той же серии (два четверга — 8 и 22.10),
+    // а не длительность: карточка печаталась «событием на 14 дней» с началом в прошлом.
+    titleLike: 'Γώγου',
+    expectCityPrefix: 'Никосия',
+    expectStart: '2026-10-08',
+    expectEnd: '2026-10-22',
+    newEnd: '2026-10-08',
+    quote: 'Лента Cyprus Now ?q=mikri (200 через прокси 10809): у серии ДВЕ отдельные записи — κατερίνα-γώγου-με-λένε-οδύσσεια-2026-10-08 (start_at 2026-10-08T18:00Z = 21:00 местного, совпадает с карточкой; end_at 2026-10-22T18:00Z) и …-2026-10-22 (start_at 22.10T18:00Z -> end_at 20:30Z = один вечер), series_count 2, series_first 08.10, series_last 22.10, venue Mikri Arktos 35.1723903,33.3651917 (совпадает с пином карточки); описание записи: «Δύο βραδιές … Την Πέμπτη 8 και 22 Οκτωβρίου» — два вечера, а не 14 дней. Второй вечер уже лежит в базе отдельной карточкой b36cf5b2 (22.10 21:00), её архивировал штатный дедуп как копию интервала — возвращается из архива.',
+  },
+  {
     titleLike: 'Luca Minnelli',
     expectCityPrefix: 'Никосия',
     expectStart: '2027-01-10',
