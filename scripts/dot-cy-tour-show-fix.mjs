@@ -66,6 +66,22 @@ const FIXES = [
     // venue «The Warehouse by IT», Limassol 34.6628593,33.0261341, ticket_url = limassolfashionweek.com.
     why: 'промоутер limassolfashionweek.com: LIMFW 11–15.11 у The Warehouse (Лимасол), слот открытия 11.11 18:00–22:00',
   },
+  {
+    // run 214: запись-агрегат Cyprus Now у детского спектакля-тура «Rudolph’s Magical Christmas».
+    // Лента отдаёт ОДНУ запись на весь тур: city «Limassol», start_at 12.12 09:00Z (=11:00 местного,
+    // это время показа в Сотире/Фамагусте), end_at 27.12 08:30Z, series_count 1 и
+    // series_first = series_last = 12.12. Страница самой записи несёт ПРОГРАММУ тура:
+    // 12.12 11:00 Sotira Municipal (Фамагуста), 12.12 16:00 G. Lykurgos (Ларнака),
+    // 13.12 10:30 Markideio (Пафос), 20.12 10:30 Strovolos (Никосия), 27.12 10:30 Pattichio (Лимасол).
+    // Карточка печатала «событие 12.12→27.12 в Лимасоле» со временем чужого города.
+    website: 'https://cyprusnow.app/event/rudolph-s-magical-christmas-children-s-theatre-show-across-cyprus-2026-12-12',
+    expectTitle: 'Rudolph',
+    expectAddress: 'Axiou',
+    expectCity: 'Лимасол',
+    from: { start_date: '2026-12-12', start_time: '11:00:00' },
+    to: { start_date: '2026-12-27', end_date: '2026-12-27', start_time: '10:30:00' },
+    why: 'программа тура на странице записи Cyprus Now: показ в Лимасоле 27.12 10:30, Pattichio Municipal Theatre',
+  },
 ];
 
 const db = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
