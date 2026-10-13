@@ -82,6 +82,21 @@ const FIXES = [
     to: { start_date: '2026-12-27', end_date: '2026-12-27', start_time: '10:30:00' },
     why: 'программа тура на странице записи Cyprus Now: показ в Лимасоле 27.12 10:30, Pattichio Municipal Theatre',
   },
+  {
+    // run 228: запись ленты CN у пьесы «Μπαμ!» (MPAM!) несёт конец СЕРИИ в end_at:
+    // start_at 09.10 17:00Z (=20:00 местного), end_at 16.10 17:00Z, series_count 1,
+    // series_first = series_last = 09.10, а описание прямо говорит «ανεβαίνει δύο Παρασκευές
+    // τον Οκτώβριο 2026 στη Λυμπιά» — два вечера (пятницы 09 и 16.10), а не событие на 7 дней.
+    // 09.10 в прошлом, предстоящий вечер 16.10 своей карточки не имеет (в ленте записи по нему нет) —
+    // карточка переводится на свой предстоящий показ, как Rudolph (run 214).
+    website: 'https://cyprusnow.app/event/mpam-new-cypriot-theatre-play-in-nicosia-2026-10-09',
+    expectTitle: 'MPAM',
+    expectAddress: 'Lympia',
+    expectCity: 'Никосия',
+    from: { start_date: '2026-10-09', start_time: '20:00:00' },
+    to: { start_date: '2026-10-16', end_date: '2026-10-16', start_time: '20:00:00' },
+    why: 'описание записи CN: «δύο Παρασκευές τον Οκτώβριο 2026 στη Λυμπιά» — второй (предстоящий) вечер 16.10 20:00, end_at записи = окно серии',
+  },
 ];
 
 const db = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
