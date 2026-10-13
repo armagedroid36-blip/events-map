@@ -21,12 +21,19 @@ const sample = LIMIT ? cards.slice(0, LIMIT) : cards;
 console.log(`Живых карточек CN: ${cards.length}; проверяю ${sample.length}\n`);
 
 function head(url) {
+  // Ссылки в базе хранятся с РАВЫМИ не-ASCII символами (греческие слаги).
+  // curl шлёт такие байты как есть и сервер отдаёт 404 — кодируем перед запросом
+  // (проверено 13.10.2026: тот же URL без кодирования → 404, с кодированием → 200).
+  const safe = String(url).replace(/[^\x00-\x7F]/g, ch => encodeURIComponent(ch));
   try {
-    const out = execFileSync('curl', ['-sI', '--max-time', '15', '-x', PROXY, url], {
+    const out = execFileSync('curl', ['-sI', '--max-time', '15', '-x', PROXY, safe], {
       encoding: 'utf8',
       maxBuffer: 4 * 1024 * 1024,
     });
-    const code = (out.match(/^HTTP\/1\.1 (\d{3})/m) || [])[1] || '?';
+    // ВАЖНО: через прокси `curl -I` печатает сначала строку CONNECT
+    // («HTTP/1.1 200 Connection established»), и первый матч врёт — берём ПОСЛЕДНЮЮ.
+    const codes = [...out.matchAll(/^HTTP\/1\.1 (\d{3})/gm)].map(m => m[1]);
+    const code = codes.length ? codes[codes.length - 1] : '?';
     const loc = (out.match(/^location: (.+)$/im) || [])[1] || '';
     return { code, loc: loc.trim() };
   } catch {
