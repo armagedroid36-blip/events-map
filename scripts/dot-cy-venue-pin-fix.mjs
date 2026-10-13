@@ -52,7 +52,12 @@ const FIXES = {
   '96b52dde': { lat: 34.6628593, lng: 33.0261341, source: 'лента Cyprus Now (запись limassol-fashion-week-2026-runway-shows-fashion-events-2026-11-11): venue_name «The Warehouse by IT», venue_city Limassol, venue_lat 34.6628593, venue_lng 33.0261341 (7 знаков), ticket_url = https://limassolfashionweek.com; независимое подтверждение — сайт промоутера: страница /venue/ «Located in the heart of Limassol, The Warehouse» и баннер «THE WAREHOUSE / 11-15 NOVEMBER 2026»', why: 'Limassol Fashion Week 2026 — адрес карточки «Лимасол, Кипр» (уровень города), пин стоял ровно на центровой константе Лимасола (34.7071,33.0226 = collect-cyprus.mjs:88) в ~5 км от The Warehouse; округ точки — Лимасол, city не меняется' },
  // run 214: фолбэк Лимасола — туристический спектакль-тур, площадку называет программа на странице записи CN
  '0fc79fd4': { lat: 34.6813906, lng: 33.0440049, source: 'лента Cyprus Now ?q=pattichio — записи с venue_name «Pattihio Municipal Theatre», venue_lat 34.68139060, venue_lng 33.04400490 (7 знаков, Лимасол); та же точка у карточек Паттихо, переставленных в запусках 200/201; программу тура со залами несёт и сама страница карточки cyprusnow.app/event/rudolph-s-magical-christmas-…-2026-12-12', why: 'Волшебное Рождество Рудольфа (показ в Лимасоле 27.12 10:30) — адрес карточки «Axiou, Agia Fylaxis, Лимасол», пин стоял ровно на центровой константе Лимасола (34.7071,33.0226 = collect-cyprus.mjs:88) в ~3.6 км от зала; округ точки — Лимасол, city не меняется' },
- };
+   // СТАБ-ТОЧКА ЛЕНТЫ Cyprus Now для Лимасола (34.6786322,33.0413055): лента отдаёт её РАЗНЫМ
+  // площадкам без гео (проверено ?q=pumpkin festival / wacko maniacs / pilates / river park —
+  // четыре разных venue_name с одной и той же точкой до 7 знаков), поэтому «стоит на этой точке»
+  // не значит «стоит на площадке». Живых карточек на ней 12 (10 разных адресов).
+  'c9a4f256': { lat: 34.9840395, lng: 32.8246630, from: { lat: 34.6786322, lng: 33.0413055 }, cityFromPoint: true, source: 'слаг самой записи ленты Cyprus Now — pumpkin-festival-free-autumn-celebration-in-moutoullas-2026-10-18: деревню называет ИСТОЧНИК, а не карточка; Nominatim/OSM «Moutoullas, Σύμπλεγμα Κοινοτήτων Βόρειας Μαραθάσας, Επαρχία Λευκωσίας» (village, 34.9840395,32.8246630; административная единица того же села 34.9780610,32.8449086)', why: 'Фестиваль тыквы в Мутулласе (18.10 11:00–20:00): лента дала площадку «Gefyri (The Bridge)» с СТАБ-точкой Лимасола и city Limassol, хотя деревня Мутуллас — в округе Никосия (≈30 км от пина); пин ставим на село по OSM, city — округом точки' },
+};
 
 const rows = await selectAll(db, 'events', 'id,title,city,address,lat,lng,status');
 const byId = new Map(rows.map((r) => [r.id.slice(0, 8), r]));
@@ -63,7 +68,12 @@ let applied = 0, skipped = 0;
 for (const [prefix, fix] of Object.entries(FIXES)) {
   const r = byId.get(prefix);
   if (!r) { console.log(`ПРОПУСК ${prefix}: карточки нет в базе`); skipped++; continue; }
-  const onCenter = CENTERS.some(([la, ln]) => near(r.lat, la) && near(r.lng, ln));
+  // «from» — ожидаемая ИСХОДНАЯ точка (стаб-точка источника, а не центровой фолбэк города):
+  // у карточек, которые стоят не на константе города, а на «точке-заглушке» агрегатора.
+  const onFrom = fix.from
+    ? Math.abs(r.lat - fix.from.lat) < 0.0005 && Math.abs(r.lng - fix.from.lng) < 0.0005
+    : null;
+  const onCenter = onFrom != null ? onFrom : CENTERS.some(([la, ln]) => near(r.lat, la) && near(r.lng, ln));
   const shiftKm = Math.hypot((fix.lat - (r.lat ?? 0)) * 111, (fix.lng - (r.lng ?? 0)) * 91);
   console.log(`${prefix} | ${r.status} | ${r.city} | ${r.lat},${r.lng} -> ${fix.lat},${fix.lng} | сдвиг ${shiftKm.toFixed(2)} км | на центровой: ${onCenter ? 'да' : 'НЕТ'}`);
   console.log(`   ${String(r.title).slice(0, 60)}`);
