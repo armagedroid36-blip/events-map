@@ -46,6 +46,26 @@ jobs:
           ref: main
           fetch-depth: 0
 
+      # Sitemap ПРЕДЫДУЩЕЙ опубликованной сборки — источник правды о URL
+      # событий, которые прод отдавал до этой сборки. Хвост URL строится из
+      # перевода (title_ru/title_en), поэтому правка заголовка опубликованного
+      # события меняет адрес, и прежний URL иначе отдаёт 404. Снимок нужен
+      # пре-рендеру (env PREV_SITEMAP): URL, которых нет в новой сборке, но чьё
+      # событие есть под другим хвостом, получают страницу-алиас штатным циклом.
+      # Недоступность прода или пустой файл — НЕ фатальны: файл не создаём,
+      # пре-рендер пропустит источник и напишет в build.log
+      # «prev-sitemap недоступен — алиасы по дифу пропущены».
+      - name: Снимок sitemap предыдущей сборки
+        shell: bash
+        run: |
+          if curl -sSfL --max-time 60 https://mypins.site/sitemap.xml -o "$RUNNER_TEMP/prev-sitemap.xml" \
+             && grep -q '<loc>' "$RUNNER_TEMP/prev-sitemap.xml"; then
+            echo "prev-sitemap: $(grep -c '<loc>' "$RUNNER_TEMP/prev-sitemap.xml") URL → $RUNNER_TEMP/prev-sitemap.xml"
+          else
+            rm -f "$RUNNER_TEMP/prev-sitemap.xml"
+            echo "prev-sitemap недоступен — алиасы по дифу пропущены"
+          fi
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -71,6 +91,10 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          # Снимок прода из шага выше: пре-рендер сверяет хвосты URL событий и
+          # пишет страницы-алиасы для прежних адресов (недоступный файл — не
+          # ошибка, источник просто пропускается).
+          PREV_SITEMAP: ${{ runner.temp }}/prev-sitemap.xml
 
       # Лог сборки сохраняем ВСЕГДА (даже когда шаг упал): логи Actions по API
       # отдают 403, поэтому без артефакта причину сбоя 28.09 установить было нечем.

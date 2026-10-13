@@ -340,6 +340,7 @@
 /en/event/ff41dfa8-580a-4ced-b481-802277a86587/event-ff41dfa8/
 /en/event/ff8b70f7-6298-4b14-80e0-da732b16255b/lecture-post-impressionism-c-zanne-van-gogh-gauguin/
 /en/event/ffd05172-3f30-4135-baf2-ba6bbfcc79a4/journey-to-the-mysterious-island-and-i-l-nh-lighthouse/
+/en/event/93d6257b-e861-40cf-8789-c424bd6544da/artcargo-performing-arts-festival/
 /event/0086113e-71d1-4a00-9ca1-d25a5852f04c/event/
 /event/0086113e-71d1-4a00-9ca1-d25a5852f04c/event-0086113e/
 /event/012892cf-489c-4e4e-ac32-903c73de8193/2026/

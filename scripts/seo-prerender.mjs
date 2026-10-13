@@ -2471,6 +2471,54 @@ function loadLegacySlugUrls() {
 }
 
 /**
+ * URL событий из sitemap ПРЕДЫДУЩЕЙ опубликованной сборки: файл из env
+ * PREV_SITEMAP (пайплайн скачивает прод-sitemap ДО сборки — см.
+ * .github/workflows/rebuild-pages.yml). Хвост URL строится из перевода
+ * (RU — title_ru, EN — title_en), поэтому правка заголовка уже
+ * опубликованного события меняет адрес: прошлая сборка отдавала один URL, в
+ * новой сборке его нет — Google получает 404 на адрес из своей выдачи.
+ * gsc-404-urls.txt и legacy-slug-urls.txt покрывают только вписанные в них
+ * адреса (GSC — выгрузка, legacy — разовая смена формулы слага 07.10) и сами
+ * не пополняются; sitemap прошлой сборки — единственный автоматический
+ * источник прежних URL, он обновляется каждой сборкой.
+ *
+ * Возвращаем URL событий (/event/<id>/<slug>/, /en/event/<id>/<slug>/); города,
+ * статьи, блог-посты и профили организаторов отсеет регулярка цикла алиасов.
+ * Алиас получают только те прежние URL, для которых в НОВОЙ сборке есть
+ * страница того же события под другим хвостом (иначе canonical указывать
+ * некуда), и только при живой EN-версии — правило eventHasEn не меняется.
+ *
+ * Файла нет / не читается / в нём нет URL событий — источника нет, сборка
+ * идёт как раньше, в лог уходит явная причина (недоступность prev-sitemap
+ * НЕ фатальна).
+ */
+function loadPrevSitemapUrls() {
+  const file = process.env.PREV_SITEMAP;
+  if (!file) {
+    console.log('  prev-sitemap недоступен — алиасы по дифу пропущены (PREV_SITEMAP не задан)');
+    return [];
+  }
+  let xml;
+  try {
+    xml = readFileSync(file, 'utf8');
+  } catch {
+    console.log(`  prev-sitemap недоступен — алиасы по дифу пропущены (файл не прочитать: ${file})`);
+    return [];
+  }
+  const urls = [];
+  for (const m of xml.matchAll(/<loc>([^<]+)<\/loc>/g)) {
+    const u = m[1].trim();
+    if (u.includes('/event/')) urls.push(u);
+  }
+  if (!urls.length) {
+    console.log('  prev-sitemap недоступен — алиасы по дифу пропущены (URL событий в файле нет)');
+    return [];
+  }
+  console.log(`  prev-sitemap прошлой сборки: URL событий ${urls.length}`);
+  return urls;
+}
+
+/**
  * Снимки событий, которых УЖЕ НЕТ в базе, но чьи URL есть в списке GSC
  * (scripts/data/legacy-events.json): их страницы тоже должны отдавать 200.
  * Записи обрабатываются как прошедшие (в карту не попадают).
@@ -5029,8 +5077,11 @@ async function main() {
   );
 
   // --- Алиасы исторических URL: (1) список Google Search Console (слаг менялся
-  // вместе с заголовком) и (2) список прежних URL после смены формулы слага
-  // 07.10.2026 (scripts/data/legacy-slug-urls.txt). У алиаса ТА ЖЕ мета, что у
+  // вместе с заголовком), (2) список прежних URL после смены формулы слага
+  // 07.10.2026 (scripts/data/legacy-slug-urls.txt) и (3) URL событий из
+  // sitemap прошлой опубликованной сборки (loadPrevSitemapUrls) — правка
+  // title_ru/title_en у опубликованного события меняет хвост URL, и прежний
+  // адрес из выдачи Google иначе отдал бы 404. У алиаса ТА ЖЕ мета, что у
   // канонической страницы — canonical указывает на неё (редирект и noindex
   // запрещены ТЗ). В sitemap алиасы не попадают: это дубли, их место указывает
   // canonical.
@@ -5045,7 +5096,16 @@ async function main() {
   );
   let aliasPages = 0;
   const aliasSeen = new Set();
-  for (const raw of [...loadGscEventUrls(), ...loadLegacySlugUrls()]) {
+  // Источники алиасов: gsc — выгрузка Search Console, legacy — прежние слаги
+  // после смены формулы (07.10), prev — хвосты из sitemap прошлой сборки.
+  // Счётчики по источникам уходят в лог сборки, чтобы дифф был виден.
+  const aliasSources = [
+    ...loadGscEventUrls().map((url) => ({ url, src: 'gsc' })),
+    ...loadLegacySlugUrls().map((url) => ({ url, src: 'legacy' })),
+    ...loadPrevSitemapUrls().map((url) => ({ url, src: 'prev' })),
+  ];
+  const aliasBySrc = { gsc: 0, legacy: 0, prev: 0 };
+  for (const { url: raw, src: aliasSrc } of aliasSources) {
     const rel = raw.startsWith(SITE_URL) ? raw.slice(SITE_URL.length) : raw;
     const m = /^\/(en\/)?event\/([0-9a-fA-F-]{36})\/([^/]+)\/$/.exec(rel);
     if (!m) continue;
@@ -5089,9 +5149,12 @@ async function main() {
     });
     aliasSeen.add(aliasPath);
     aliasPages += 1;
+    aliasBySrc[aliasSrc] += 1;
   }
   if (pastPagesBuffer.length) await writePagesParallel(pastPagesBuffer);
-  console.log(`  страниц-алиасов исторических URL: ${aliasPages}`);
+  console.log(
+    `  страниц-алиасов исторических URL: ${aliasPages} (GSC ${aliasBySrc.gsc}, legacy-слаг ${aliasBySrc.legacy}, sitemap прошлой сборки ${aliasBySrc.prev})`,
+  );
   if (pastNoChrono) {
     console.log(
       `  внимание: архивных страниц без соседей по хронологии: ${pastNoChrono} — у них может не быть входящих ссылок`,
