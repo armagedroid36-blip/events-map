@@ -261,10 +261,6 @@ export default function MapView({
       (ev) => isValidCoords(ev.lat, ev.lng) && ev.lat != null && ev.lng != null,
     );
     const evById = new Map(withCoords.map((ev) => [ev.id, ev]));
-    // Zoom, на котором источник ПОСЛЕДНИЙ раз подтвердил кластеризацию
-    // (sourcedata). querySourceFeatures между сменой зума и пересчётом
-    // источника отдаёт УСТАРЕВШИЕ кластеры — показывать по ним нельзя.
-    let lastClusterZoom: number | null = null;
 
     // Spiderfy-раскладка на ТЕКУЩЕМ зуме. В БД много событий с координатами
     // ЦЕНТРА ГОРОДА (одинаковые lat/lng) — такие пины лежат друг на друге.
@@ -305,11 +301,14 @@ export default function MapView({
         m.getElement().style.display = '';
       });
     };
-    const hideAll = () => {
-      markersRef.current.forEach((m) => {
-        m.getElement().style.display = 'none';
-      });
-    };
+
+    // Сколько событий с координатами попадает в видимую область карты.
+    // Нужно, чтобы отличить «источник ещё не посчитал кластеры» от «в этой
+    // области событий нет»: в первом случае фич в querySourceFeatures нет,
+    // хотя события на карте есть.
+    const eventsInView = () =>
+      withCoords.filter((ev) => map.getBounds().contains([ev.lng!, ev.lat!])).length;
+
     const updateVisibility = () => {
       if (map.getZoom() >= MARKER_MIN_ZOOM) {
         showAll();
@@ -320,20 +319,22 @@ export default function MapView({
       // отдельными фичами не приходят вовсе. querySourceFeatures отдаёт
       // состояние кластеризации (в видимой области).
       const src = map.getSource('events');
-      if (!src || !map.isSourceLoaded('events')) {
-        // Источник ещё не подтвердил кластеризацию (setData/зум пересчитывает
-        // асинхронно) — пины прячем, чтобы не мелькали до sourcedata
-        hideAll();
-        return;
-      }
-      // Кластеризация в источнике могла не догнать текущий зум (пересчёт
-      // асинхронный) — querySourceFeatures отдаст устаревшее. Прячем пины
-      // до sourcedata, который подтвердит состояние на актуальном зуме.
-      if (lastClusterZoom === null || Math.abs(map.getZoom() - lastClusterZoom) > 0.05) {
-        hideAll();
-        return;
-      }
+      if (!src) return;
       const feats = map.querySourceFeatures('events');
+      const hasClusterData = feats.some(
+        (f) => f.properties && (f.properties.point_count || typeof f.properties.id === 'string'),
+      );
+      // Источник ещё не пересчитал кластеры под текущий зум: фич нет, хотя
+      // события в видимой области есть. НЕ прячем пины (раньше здесь был
+      // hideAll) — оставляем прежнюю видимость до следующего пересчёта,
+      // иначе при каждом приближении все пины исчезали на секунды и
+      // «то появлялись, то пропадали». Пересчёт придёт с zoomend/moveend/idle.
+      //
+      // Ждать событие 'sourcedata' нельзя: MapLibre НЕ эмитит его, когда
+      // тайлы кластеров берутся из кэша прошлого зума (проверено на проде:
+      // после шага колеса приходят только zoomend/moveend/idle, а данные
+      // querySourceFeatures в них уже актуальны).
+      if (!hasClusterData && eventsInView() > 0) return;
       const free = new Set<string>();
       for (const f of feats) {
         const p = f.properties;
@@ -396,7 +397,8 @@ export default function MapView({
       });
 
       // z >= 14: показать всех сразу (кластеризации нет — источник не нужен);
-      // z < 14: пока скрыты, финальную видимость выставит sourcedata
+      // z < 14: первый пересчёт по данным источника; если источник ещё не
+      // посчитал кластеры, пины останутся скрытыми до zoomend/moveend/idle
       updateVisibility();
     };
 
@@ -421,33 +423,36 @@ export default function MapView({
     const onZoomEnd = () => {
       if (!map.getSource('events')) return;
       relayout();
-      // z >= 14: пины видны сразу (кластеров нет на любом состоянии источника)
-      if (map.getZoom() >= MARKER_MIN_ZOOM) updateVisibility();
-      // z < 14: видимость обновит sourcedata — после пересчёта кластеров
-      // источником под новый зум (до него состояние пинов валидно)
+      updateVisibility();
     };
     map.on('zoomend', onZoomEnd);
 
-    // Пересчёт видимости пинов: после пересчёта кластеров источником
-    // (sourcedata) и по окончании панорамирования (события, въехавшие во
-    // вьюпорт, могли выйти из кластера или попасть в него).
+    // Пересчёт видимости пинов по фактическим данным источника: после его
+    // пересчёта (sourcedata), по окончании панорамирования (moveend) и когда
+    // карта полностью успокоилась (idle — все тайлы догружены). Опора на
+    // sourcedata НЕДОСТАТОЧНА: при зуме MapLibre часто переиспользует тайлы
+    // кластеров из кэша и sourcedata не эмитит — видимость тогда оставалась
+    // не пересчитанной (пины «то появляются, то пропадают»).
     const onSourceData = (e: maplibregl.MapSourceDataEvent) => {
-      if (e.sourceId === 'events' && e.isSourceLoaded) {
-        lastClusterZoom = map.getZoom();
-        updateVisibility();
-      }
+      if (e.sourceId === 'events') updateVisibility();
     };
     const onMoveEnd = () => {
       if (!map.getSource('events')) return;
       updateVisibility();
     };
+    const onIdle = () => {
+      if (!map.getSource('events')) return;
+      updateVisibility();
+    };
     map.on('sourcedata', onSourceData);
     map.on('moveend', onMoveEnd);
+    map.on('idle', onIdle);
 
     return () => {
       map.off('zoomend', onZoomEnd);
       map.off('sourcedata', onSourceData);
       map.off('moveend', onMoveEnd);
+      map.off('idle', onIdle);
       markersRef.current.forEach((m) => m.remove());
       markersRef.current = [];
     };
