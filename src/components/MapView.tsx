@@ -420,10 +420,24 @@ export default function MapView({
       });
     };
 
+    // Источник пересчитывает тайлы кластеров АСИНХРОННО: сразу после
+    // zoomend/moveend querySourceFeatures может ещё отдавать состояние
+    // прошлого зума. Поэтому видимость пересчитываем сразу и повторно с
+    // небольшой задержкой (дважды — на медленных машинах пересчёт дольше).
+    const visTimers: number[] = [];
+    const scheduleVisibility = () => {
+      for (const t of visTimers) window.clearTimeout(t);
+      visTimers.length = 0;
+      for (const delay of [150, 500]) {
+        visTimers.push(window.setTimeout(updateVisibility, delay));
+      }
+    };
+
     const onZoomEnd = () => {
       if (!map.getSource('events')) return;
       relayout();
       updateVisibility();
+      scheduleVisibility();
     };
     map.on('zoomend', onZoomEnd);
 
@@ -439,6 +453,7 @@ export default function MapView({
     const onMoveEnd = () => {
       if (!map.getSource('events')) return;
       updateVisibility();
+      scheduleVisibility();
     };
     const onIdle = () => {
       if (!map.getSource('events')) return;
@@ -449,6 +464,8 @@ export default function MapView({
     map.on('idle', onIdle);
 
     return () => {
+      for (const t of visTimers) window.clearTimeout(t);
+      visTimers.length = 0;
       map.off('zoomend', onZoomEnd);
       map.off('sourcedata', onSourceData);
       map.off('moveend', onMoveEnd);
