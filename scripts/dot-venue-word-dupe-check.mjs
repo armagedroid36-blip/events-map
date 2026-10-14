@@ -45,6 +45,15 @@ const cases = [
     b: mk({ id: 'j', title: 'ЙОГА ДЛЯ ТЕХ, КОМУ «ПРОСТО ПОТЯНУТЬСЯ» НЕДОСТАТОЧНО', title_en: 'YOGA FOR THOSE WHO NEED MORE THAN "JUST A STRETCH"', city: 'Нячанг', address: 'Orhideya Ballet Studio, 46 Hòn Chồng, Bắc Nha Trang, Khánh Hòa 650000', start_date: '2026-10-13', start_time: '08:00:00', lat: 12.2744037, lng: 109.2001794 }),
     want: null,
   },
+  // Кейс из окна прогона 38601237058 (14.10 16:49Z): «Занятие по Робототехнике в Unicorns»
+  // (16:00) и «Занятие по рисованию в Unicorns» (12:00) — один адрес, 2 общих слова
+  // (занятие = тип, unicorns = площадка), но РАЗЛИЧАЮЩЕЕ слово разное → ложный архив.
+  {
+    name: 'ЛОЖНАЯ: два занятия одной студии (Unicorns: робототехника 16:00 ↔ рисование 12:00)',
+    a: mk({ id: 'k', title: 'Занятие по Робототехнике в Unicorns', title_en: 'Robotics class at Unicorns', city: 'Чангу, Bali', address: 'Jl. Baru Indah, Tibubeneng, Kec. Kuta Utara, Kabupaten Badung, Bali, Индонезия', start_date: '2026-10-14', start_time: '16:00:00', lat: -8.6284384, lng: 115.1676003 }),
+    b: mk({ id: 'l', title: 'Занятие по рисованию в Unicorns', title_en: 'Drawing class at Unicorns', city: 'Чангу, Bali', address: 'Jl. Baru Indah, Tibubeneng, Kec. Kuta Utara, Kabupaten Badung, Bali, Индонезия', start_date: '2026-10-14', start_time: '12:00:00', lat: -8.6284384, lng: 115.1676003 }),
+    want: null,
+  },
 ];
 
 let ok = 0, bad = 0;
