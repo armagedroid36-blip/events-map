@@ -11,6 +11,20 @@ const CATEGORIES =
   'games — Игры и квизы, meetup — Встречи и нетворкинг, tour — Экскурсии и туры, ' +
   'speaking — Разговорный клуб, theatre — Театры и шоу';
 
+// id уходит прямо в FK events_category_id_fkey: значения, которого нет в таблице
+// categories, роняет ВСТАВКУ целиком, и событие теряется на каждом прогоне
+// (15.10.2026: «A Poem Is Being Written by a Landscape» падало в двух прогонах
+// подряд — лента Cyprus Now отдаёт ярлык «Culture & Community», а судья возвращал
+// свой id). Принимаем только id из таблицы categories, остальное → null:
+// звонящий подставит свой проверенный фолбэк (pickCategory / 'festival').
+export const CATEGORY_IDS = new Set([
+  'conference', 'exhibition', 'concert', 'sport', 'lecture', 'party', 'festival',
+  'food', 'cinema', 'wellness', 'workshop', 'games', 'meetup', 'tour', 'speaking', 'theatre',
+  // Есть в таблице categories, но не в промпте судьи: принимать обязательно, иначе
+  // легитимный ответ судьи («show») затирался бы фолбэком источника («festival»).
+  'show',
+]);
+
 const SYSTEM_PROMPT =
   'Определи категорию события. Ответь ТОЛЬКО JSON: {"category": "<id>"}. ' +
   `Доступные категории (id — русское название): ${CATEGORIES}. ` +
@@ -58,7 +72,12 @@ export async function extractCategory(text, hint) {
 
     const parsed = JSON.parse(content);
     const cat = typeof parsed.category === 'string' ? parsed.category.trim() : '';
-    return cat || null;
+    if (!cat) return null;
+    if (!CATEGORY_IDS.has(cat)) {
+      console.log(`[категория-неизвестна] «${cat}» -> фолбэк источника`);
+      return null;
+    }
+    return cat;
   } catch {
     return null;
   } finally {
