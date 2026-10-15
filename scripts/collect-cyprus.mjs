@@ -542,6 +542,11 @@ async function collectVisitCyprus(seen, budget) {
 // (Фамагуста, Ая-Напа, Протарас, Паралимни) не доходила до сбора вообще.
 // Порядок — восточные первыми: они и есть цель (курортные зоны туристов).
 const CYPRUSNOW_CITIES = ['famagusta', 'protaras', 'paralimni', 'larnaca', 'paphos', 'limassol', 'nicosia'];
+// Глубина пагинации ленты по offset. limit=200 отдаёт только ПЕРВЫЕ 200 записей города,
+// а хвост (события 27.10, 01.11, 29.11, 27.12 …) в них не попадает вовсе — из-за этого
+// три прогона подряд Кипр добавлял 0, хотя лента не исчерпана (проверено 15.10.2026:
+// offset=200/300/400 отдают записи, offset=600 — пусто).
+const CYPRUSNOW_MAX_OFFSET = 600;
 
 async function collectCyprusNow(seen, budget, websites = new Set(), venueCities = new Map()) {
   const deadline = Date.now() + BUDGET.cyprusnow;
@@ -560,6 +565,22 @@ async function collectCyprusNow(seen, budget, websites = new Set(), venueCities 
       continue;
     }
     const events = data?.events || [];
+    // Хвост ленты за первыми 200 записями города (пагинация по offset; проверено
+    // 15.10.2026: offset=200/300/400 отдают записи, offset=600 — пусто). Без этого
+    // события 27.10 … 27.12 в сбор не попадают вообще, и прогон рапортует «0 новых»,
+    // хотя лента не исчерпана.
+    for (let offset = 200; offset <= CYPRUSNOW_MAX_OFFSET && Date.now() < deadline; offset += 200) {
+      let more;
+      try {
+        more = await fetchJson(`https://cyprusnow.app/api/events?city=${citySlug}&limit=200&offset=${offset}`, 90000);
+      } catch (e) {
+        console.error(`  Cyprus Now ${citySlug} (offset ${offset}): ${e.message}`);
+        break;
+      }
+      const page = more?.events || [];
+      events.push(...page);
+      if (page.length < 200) break;
+    }
     let cityAdded = 0;
     for (const ev of events) {
       if (added >= budget || cityAdded >= perCity) break;
