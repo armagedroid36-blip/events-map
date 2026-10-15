@@ -20,10 +20,20 @@ const PROXY = 'http://127.0.0.1:10809';
 // id -> { old: фрагмент старого URL, neu: канонический URL, feedSlug, startAt, why }
 const PLAN = [
   {
+    id: '2a4e08ed',
+    old: 'sooshi-mango-home-made-world-tour-in-nicosia-2026-10-20',
+    neu: 'https://cyprusnow.app/event/θεατρική-παράσταση-sooshi-mango-20-10-26-2026-10-20',
+    feedSlug: 'θεατρική-παράσταση-sooshi-mango-20-10-26-2026-10-20',
+    qTerm: 'sooshi',
+    startAt: '2026-10-20T17:00:00.000Z', // = 20:00 местного, совпадает со start_time карточки
+    why: 'старый слаг отдаёт 500; лента CN по ?q=sooshi даёт единственную запись 20.10 17:00Z в зале Strovolos Municipal Theatre = адрес и время карточки',
+  },
+  {
     id: '71d2943a',
     old: 'ανακαλύπτουμε-συνδεόμαστε-τολμάμε-erasmus-days-2026-2026-10-16',
     neu: 'https://cyprusnow.app/event/erasmus-days-2026-στο-δήμο-νότιας-λευκωσίας-ιδαλίου-2026-10-16',
     feedSlug: 'erasmus-days-2026-στο-δήμο-νότιας-λευκωσίας-ιδαλίου-2026-10-16',
+    qTerm: 'erasmus',
     startAt: '2026-10-16T15:00:00.000Z', // = 18:00 местного, совпадает со start_time карточки
     why: 'старый слаг «ανακαλύπτουμε…» отдаёт 500; лента CN по ?q=erasmus даёт запись того же дня 15:00Z с площадкой Κοινοτικό Πάρκο Λυμπιών = адрес карточки (Lympia Park Amphitheatre)',
   },
@@ -32,6 +42,7 @@ const PLAN = [
     old: 'giorgos-giannias-live-at-zazza-music-theater-2026-10-16',
     neu: 'https://cyprusnow.app/event/zazza-music-theater-opening-με-γιώργο-γιαννιά-2026-10-16',
     feedSlug: 'zazza-music-theater-opening-με-γιώργο-γιαννιά-2026-10-16',
+    qTerm: 'zazza',
     startAt: '2026-10-16T19:00:00.000Z',
     why: 'старый слаг отдаёт 500; лента CN по ?q=zazza/?q=γιαννιά даёт ровно одну запись 16.10 в зале ZAZZA Music Theatre = адрес карточки (время у записи 22:00 местного против 21:00 у карточки — время НЕ трогаем)',
   },
@@ -53,9 +64,17 @@ function code(url) {
   return 'ERR';
 }
 
-async function feed(slug) {
-  const out = execFileSync('curl', ['-s', '--max-time', '25', `https://cyprusnow.app/api/events?q=${encodeURIComponent(slug.split('-')[0])}`], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 });
-  try { return (JSON.parse(out).events || []); } catch { return []; }
+async function feed(term) {
+  // Термин задаётся в PLAN (qTerm): широкий термин (греческое слово, «мango») отдаёт
+  // многомегабайтный ответ и curl падает по таймауту (exit 28) — ошибку НЕ глотаем молча,
+  // но и не роняем весь прогон: карточка просто не применяется.
+  try {
+    const out = execFileSync('curl', ['-s', '--max-time', '25', `https://cyprusnow.app/api/events?q=${encodeURIComponent(term)}`], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
+    return (JSON.parse(out).events || []);
+  } catch (e) {
+    console.log(`   лента по ?q=${term} не прочитана (${e.status || 'err'})`);
+    return null;
+  }
 }
 
 let applied = 0, skipped = 0, errors = 0;
@@ -66,7 +85,9 @@ for (const p of PLAN) {
   const oldCode = code(card.website);
   const newCode = code(p.neu);
   if (newCode !== '200') { console.log(`${p.id} | пропуск: новая страница отдаёт ${newCode}`); skipped++; errors++; continue; }
-  const rec = (await feed(p.feedSlug)).find(e => e.slug === p.feedSlug);
+  const events = await feed(p.qTerm || p.feedSlug.split('-')[0]);
+  if (!events) { console.log(`${p.id} | пропуск: лента CN недоступна`); skipped++; continue; }
+  const rec = events.find(e => e.slug === p.feedSlug);
   if (!rec) { console.log(`${p.id} | пропуск: записи ленты с новым слагом нет`); skipped++; errors++; continue; }
   const feedDate = String(rec.start_at || '').slice(0, 10);
   if (feedDate !== card.start_date) { console.log(`${p.id} | пропуск: дата ленты ${feedDate} != start_date ${card.start_date}`); skipped++; errors++; continue; }
