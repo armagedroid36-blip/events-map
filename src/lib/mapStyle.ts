@@ -16,6 +16,23 @@ const env = import.meta.env as Record<string, string | undefined>;
 
 const clone = <T,>(v: T): T => JSON.parse(JSON.stringify(v)) as T;
 
+// OpenFreeMap planet отдаёт векторные тайлы только до z14: на z>=15 сервер
+// возвращает «пустой» ответ (HTTP 200 с телом нулевой длины). MapLibre GL 5.x
+// при источнике, подключённом по url и без явного maxzoom, такие тайлы
+// запрашивает и рисует пустоту — вместо overzoom получается белый экран при
+// приближении. Поэтому maxzoom у векторного источника задаём принудительно.
+const OPENFREEMAP_TILES_MAX_ZOOM = 14;
+
+function withTilesMaxZoom(style: StyleSpecification): StyleSpecification {
+  const next = clone(style);
+  const sources = (next.sources ?? {}) as Record<string, any>;
+  const openmaptiles = sources.openmaptiles;
+  if (openmaptiles && openmaptiles.type === 'vector') {
+    openmaptiles.maxzoom = OPENFREEMAP_TILES_MAX_ZOOM;
+  }
+  return next;
+}
+
 function withOverrides(style: StyleSpecification): StyleSpecification {
   const vector = env.VITE_TILES_URL;
   const raster = env.VITE_TILES_RASTER_URL;
@@ -34,7 +51,7 @@ function withOverrides(style: StyleSpecification): StyleSpecification {
   return next;
 }
 
-export const mapStyle = withOverrides(brandStyle as StyleSpecification);
+export const mapStyle = withOverrides(withTilesMaxZoom(brandStyle as StyleSpecification));
 
 /** Аварийный стиль: растровые тайлы OpenStreetMap, без ключей и лимитов на ключ. */
 export const fallbackRasterStyle: StyleSpecification = {
@@ -53,6 +70,44 @@ export const fallbackRasterStyle: StyleSpecification = {
 
 export const isFallbackStyle = (style?: StyleSpecification) =>
   !!style?.sources && 'osm' in style.sources && (style.layers?.length ?? 0) === 1;
+
+/**
+ * Детализация при глубоком приближении.
+ *
+ * Векторные тайлы OpenFreeMap заканчиваются на z14 — выше работает только
+ * overzoom, то есть та же самая обобщённая геометрия, растянутая на весь экран:
+ * ни улиц, ни домов, ни POI на большом зуме там нет (выглядит как пустая карта).
+ * Поэтому с z14 под слоями событий включается растровая подложка OSM
+ * (тайлы до z19): она плавно проявляется к z15 и даёт привычную детальную карту.
+ */
+export const DEEP_ZOOM_RASTER_FROM = 14;
+
+export function addDeepZoomRasterLayer(map: MapLibreMap, beforeId?: string) {
+  if (map.getSource('osm-deep')) return;
+  map.addSource('osm-deep', {
+    type: 'raster',
+    tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+    tileSize: 256,
+    maxzoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  });
+  map.addLayer(
+    {
+      id: 'osm-deep',
+      type: 'raster',
+      source: 'osm-deep',
+      minzoom: DEEP_ZOOM_RASTER_FROM,
+      paint: {
+        'raster-opacity': [
+          'interpolate', ['linear'], ['zoom'],
+          DEEP_ZOOM_RASTER_FROM, 0,
+          15, 1,
+        ],
+      },
+    },
+    beforeId,
+  );
+}
 
 /**
  * Следит за загрузкой векторных тайлов и при сбое переключает карту на растровый резерв.

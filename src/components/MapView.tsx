@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import type { Category, EventItem } from '../lib/types';
 import { isValidCoords } from '../lib/coords';
 import { config } from '../config';
-import { mapStyle, attachTilesFallback } from '../lib/mapStyle';
+import { mapStyle, attachTilesFallback, addDeepZoomRasterLayer } from '../lib/mapStyle';
 
 // Акцентные цвета — только для категорий (по спецификации дизайна)
 const CATEGORY_COLORS = [
@@ -79,6 +79,10 @@ export default function MapView({
       center: initial,
       zoom: zoom ?? config.defaultZoom,
       minZoom: 3,
+      // Тайлы OpenFreeMap заканчиваются на z14, выше включается растровая
+      // подложка OSM (до z19). Глубже данных о зданиях нет, поэтому
+      // ограничиваем максимальный зум браузера и жестов.
+      maxZoom: 19,
       attributionControl: false,
     });
     // Атрибуция OpenFreeMap + OSM (компактный контрол, внизу справа)
@@ -132,6 +136,9 @@ export default function MapView({
         },
         paint: { 'text-color': '#ffffff' },
       });
+      // Детализация на большом зуме: векторные тайлы OpenFreeMap кончаются на
+      // z14, поэтому поверх них (но под кластерами) кладём растровую подложку OSM.
+      addDeepZoomRasterLayer(map, 'clusters');
       // Бейдж «в кластере есть избранное»: маленькое сердечко у правого
       // верхнего края круга. Сердечко рисуется слоем-символом (иконка
       // 'heart-fav'), favCount приходит из clusterProperties источника.

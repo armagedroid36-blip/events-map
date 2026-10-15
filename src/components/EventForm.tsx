@@ -10,7 +10,7 @@ import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { nextZ } from '../lib/zindex';
 import * as maplibregl from 'maplibre-gl';
-import { mapStyle, attachTilesFallback } from '../lib/mapStyle';
+import { mapStyle, attachTilesFallback, addDeepZoomRasterLayer } from '../lib/mapStyle';
 import { z } from 'zod';
 import type { Category, EventItem, Recurrence } from '../lib/types';
 import { getApi, photoUrl } from '../lib/api';
@@ -69,6 +69,7 @@ function MiniMap({
       style: mapStyle,
       center: [lng, lat],
       zoom: 6,
+      maxZoom: 19,
       attributionControl: false,
     });
     map.addControl(
@@ -101,6 +102,9 @@ function MiniMap({
       .addTo(map);
     // Клик по мини-карте передвигает маркер и подставляет адрес
     map.on('click', (e: maplibregl.MapMouseEvent) => onMoveRef.current(e.lngLat.lat, e.lngLat.lng));
+    // При приближении (z>=14) векторные тайлы OpenFreeMap кончаются — под
+    // маркером включаем растровую подложку OSM с улицами и домами.
+    map.on('load', () => addDeepZoomRasterLayer(map));
     mapRef.current = map;
     markerRef.current = marker;
     return () => {
