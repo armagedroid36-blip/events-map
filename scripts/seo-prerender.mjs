@@ -2471,28 +2471,41 @@ function loadLegacySlugUrls() {
 }
 
 /**
- * URL событий из sitemap ПРЕДЫДУЩЕЙ опубликованной сборки: файл из env
- * PREV_SITEMAP (пайплайн скачивает прод-sitemap ДО сборки — см.
- * .github/workflows/rebuild-pages.yml). Хвост URL строится из перевода
- * (RU — title_ru, EN — title_en), поэтому правка заголовка уже
- * опубликованного события меняет адрес: прошлая сборка отдавала один URL, в
- * новой сборке его нет — Google получает 404 на адрес из своей выдачи.
+ * URL из sitemap ПРЕДЫДУЩЕЙ опубликованной сборки: файл из env PREV_SITEMAP
+ * (пайплайн скачивает прод-sitemap ДО сборки — см.
+ * .github/workflows/rebuild-pages.yml). Возвращаем URL ДВУХ классов:
+ *
+ * 1) СОБЫТИЯ (/event/<id>/<slug>/, /en/event/<id>/<slug>/): хвост строится из
+ *    перевода (RU — title_ru, EN — title_en), поэтому правка заголовка уже
+ *    опубликованного события меняет адрес: прошлая сборка отдавала один URL, в
+ *    новой сборке его нет — Google получает 404 на адрес из своей выдачи.
+ * 2) ПОСАДОЧНЫЕ «город × категория» (RU /<city>/<cat>/, EN /en/<city>/<cat>/,
+ *    city из CITY_PAGES/CITY_PAGES_EN, cat из id таблицы categories): живой
+ *    счётчик ячейки может упасть ниже MIN_CATEGORY_EVENTS, и раньше файл просто
+ *    не записывался (публикация keep_files:false затирает прежний) → 404 на уже
+ *    проиндексированный URL. Такой URL получает страницу-алиас с canonical на
+ *    живого «соседа» (RU-версия ячейки либо городская страница) — см. цикл
+ *    алиасов ниже; в sitemap алиас не попадает.
+ *
  * gsc-404-urls.txt и legacy-slug-urls.txt покрывают только вписанные в них
  * адреса (GSC — выгрузка, legacy — разовая смена формулы слага 07.10) и сами
  * не пополняются; sitemap прошлой сборки — единственный автоматический
  * источник прежних URL, он обновляется каждой сборкой.
  *
- * Возвращаем URL событий (/event/<id>/<slug>/, /en/event/<id>/<slug>/); города,
- * статьи, блог-посты и профили организаторов отсеет регулярка цикла алиасов.
- * Алиас получают только те прежние URL, для которых в НОВОЙ сборке есть
- * страница того же события под другим хвостом (иначе canonical указывать
- * некуда), и только при живой EN-версии — правило eventHasEn не меняется.
+ * Города, статьи, блог-посты и профили организаторов отсеет регулярка цикла
+ * алиасов. Алиас события получают только те прежние URL, для которых в НОВОЙ
+ * сборке есть страница того же события под другим хвостом (иначе canonical
+ * указывать некуда), и только при живой EN-версии — правило eventHasEn не
+ * меняется.
  *
- * Файла нет / не читается / в нём нет URL событий — источника нет, сборка
- * идёт как раньше, в лог уходит явная причина (недоступность prev-sitemap
- * НЕ фатальна).
+ * Файла нет / не читается / в нём нет нужных URL — источника нет, сборка идёт
+ * как раньше, в лог уходит явная причина (недоступность prev-sitemap НЕ
+ * фатальна).
+ *
+ * @param {string[]} cityPaths пути городских страниц (CITY_PAGES)
+ * @param {string[]} categoryIds id категорий из таблицы categories
  */
-function loadPrevSitemapUrls() {
+function loadPrevSitemapUrls(cityPaths = [], categoryIds = []) {
   const file = process.env.PREV_SITEMAP;
   if (!file) {
     console.log('  prev-sitemap недоступен — алиасы по дифу пропущены (PREV_SITEMAP не задан)');
@@ -2505,16 +2518,32 @@ function loadPrevSitemapUrls() {
     console.log(`  prev-sitemap недоступен — алиасы по дифу пропущены (файл не прочитать: ${file})`);
     return [];
   }
+  const citySet = new Set(cityPaths);
+  const catSet = new Set(categoryIds);
   const urls = [];
+  let eventUrls = 0;
+  let categoryUrls = 0;
   for (const m of xml.matchAll(/<loc>([^<]+)<\/loc>/g)) {
     const u = m[1].trim();
-    if (u.includes('/event/')) urls.push(u);
+    if (u.includes('/event/')) {
+      urls.push(u);
+      eventUrls += 1;
+      continue;
+    }
+    const rel = u.startsWith(SITE_URL) ? u.slice(SITE_URL.length) : u;
+    const mc = /^\/(en\/)?([a-z0-9-]+)\/([a-z0-9_-]+)\/$/.exec(rel);
+    if (mc && citySet.has(mc[2]) && catSet.has(mc[3])) {
+      urls.push(u);
+      categoryUrls += 1;
+    }
   }
   if (!urls.length) {
-    console.log('  prev-sitemap недоступен — алиасы по дифу пропущены (URL событий в файле нет)');
+    console.log('  prev-sitemap недоступен — алиасы по дифу пропущены (URL событий и категорий в файле нет)');
     return [];
   }
-  console.log(`  prev-sitemap прошлой сборки: URL событий ${urls.length}`);
+  console.log(
+    `  prev-sitemap прошлой сборки: URL событий ${eventUrls}, посадочных «город × категория» ${categoryUrls}`,
+  );
   return urls;
 }
 
@@ -5095,20 +5124,107 @@ async function main() {
     [...dupDropped.entries()].map(([id, info]) => [String(id).toLowerCase(), String(info.keptId).toLowerCase()]),
   );
   let aliasPages = 0;
+  let aliasCategoryPages = 0;
   const aliasSeen = new Set();
+  // URL, которые НОВАЯ сборка уже опубликовала (страницы + sitemap): если
+  // категорийный URL в наборе — страница живая, алиас ей не нужен. Границы
+  // допустимых категорийных URL — CITY_PAGES (пути городов) и таблица categories
+  // (id категорий), как в buildCategoryCells.
+  const locsSet = new Set(locs);
+  const aliasCityPaths = new Set(CITY_PAGES.map((c) => c.path));
+  const catById = new Map(categories.map((c) => [c.id, c]));
   // Источники алиасов: gsc — выгрузка Search Console, legacy — прежние слаги
   // после смены формулы (07.10), prev — хвосты из sitemap прошлой сборки.
   // Счётчики по источникам уходят в лог сборки, чтобы дифф был виден.
   const aliasSources = [
     ...loadGscEventUrls().map((url) => ({ url, src: 'gsc' })),
     ...loadLegacySlugUrls().map((url) => ({ url, src: 'legacy' })),
-    ...loadPrevSitemapUrls().map((url) => ({ url, src: 'prev' })),
+    ...loadPrevSitemapUrls(
+      [...aliasCityPaths],
+      [...catById.keys()],
+    ).map((url) => ({ url, src: 'prev' })),
   ];
-  const aliasBySrc = { gsc: 0, legacy: 0, prev: 0 };
+  const aliasBySrc = { gsc: 0, legacy: 0, prev: 0, prevCategory: 0 };
   for (const { url: raw, src: aliasSrc } of aliasSources) {
     const rel = raw.startsWith(SITE_URL) ? raw.slice(SITE_URL.length) : raw;
     const m = /^\/(en\/)?event\/([0-9a-fA-F-]{36})\/([^/]+)\/$/.exec(rel);
-    if (!m) continue;
+    if (!m) {
+      // Посадочная «город × категория» (RU /<city>/<cat>/, EN /en/<city>/<cat>/)
+      // из sitemap прошлой сборки: в новой сборке страницу гейт не пропустил
+      // (активных событий ячейки / EN-событий < MIN_CATEGORY_EVENTS), и без
+      // алиаса прежний файл исчез бы (публикация keep_files:false затирает
+      // старый) — 404 на URL из выдачи Google. Пишем страницу-алиас 200 с
+      // canonical на живого «соседа»: RU-версия той же ячейки, а если и её нет —
+      // городская страница /<city>/ (она публикуется всегда). В sitemap алиас не
+      // попадает (locs не трогаем), noindex не ставится, hreflang не выводится.
+      const mc = /^\/(en\/)?([a-z0-9-]+)\/([a-z0-9_-]+)\/$/.exec(rel);
+      if (!mc) continue;
+      const en = Boolean(mc[1]);
+      const cityAliasPath = mc[2];
+      const catId = mc[3];
+      if (!aliasCityPaths.has(cityAliasPath)) continue;
+      const cat = catById.get(catId);
+      if (!cat) continue;
+      const aliasPath = `${en ? 'en/' : ''}${cityAliasPath}/${catId}`;
+      const selfUrl = `${SITE_URL}/${aliasPath}/`;
+      // Страница ячейки в новой сборке есть — URL живой, алиас не нужен.
+      if (locsSet.has(selfUrl) || aliasSeen.has(aliasPath)) continue;
+      const cellPageUrl = `${SITE_URL}/${cityAliasPath}/${catId}/`;
+      const cityPageUrl = `${SITE_URL}/${cityAliasPath}/`;
+      // canonical: RU-версия той же ячейки (только если реально опубликована)
+      // либо городская страница — «сосед», который точно отдаёт 200.
+      const canonical = en && locsSet.has(cellPageUrl) ? cellPageUrl : cityPageUrl;
+      const cell = cells.get(cellKey(cityAliasPath, catId));
+      const items = cell
+        ? en
+          ? cell.items.filter(({ ev }) => eventHasEn(ev))
+          : cell.items
+        : [];
+      const lang = en ? 'en' : 'ru';
+      const pageCell = { path: cityAliasPath, cat, items };
+      const title = categoryTitle(cat, cityAliasPath, lang);
+      const description = categoryDescription(
+        cat,
+        cityAliasPath,
+        lang,
+        catCellFacts(items, lang),
+      );
+      // Структурированные данные — как у алиасов событий: описывают ЖИВОГО
+      // «соседа» (canonical), а не сам алиас, иначе CollectionPage.url и крошка
+      // противоречили бы canonical.
+      const aliasJsonLd = categoryJsonLd(pageCell, lang);
+      const cpNode = aliasJsonLd['@graph'].find((n) => n['@type'] === 'CollectionPage');
+      if (cpNode) cpNode.url = canonical;
+      const bcNode = aliasJsonLd['@graph'].find((n) => n['@type'] === 'BreadcrumbList');
+      if (bcNode?.itemListElement?.length) {
+        bcNode.itemListElement[bcNode.itemListElement.length - 1].item = canonical;
+      }
+      // Мета — как у посадочной страницы ячейки (title/description), но
+      // canonical и og:url указывают на живого «соседа», hreflang не выводится.
+      // #seo-category-block в HTML обязателен: по нему SPA (wasCategoryPublished)
+      // рисует страницу, а не 404; карта #seo-alias-map не даёт гидратации
+      // перетереть canonical на self (src/lib/seo.ts, applyCategoryMeta).
+      pastPagesBuffer.push({
+        path: aliasPath,
+        html: renderPage(baseHtml, {
+          lang,
+          title,
+          description,
+          canonical,
+          ogTitle: title,
+          ogDescription: description,
+          ogUrl: canonical,
+          ogImage: LOGO_URL,
+          jsonLd: aliasJsonLd,
+          aliasMap: { aliasFrom: `/${aliasPath}/`, aliasTo: canonical },
+          bodySeo: categorySeoHtml(pageCell, lang, cells),
+        }),
+      });
+      aliasSeen.add(aliasPath);
+      aliasCategoryPages += 1;
+      aliasBySrc.prevCategory += 1;
+      continue;
+    }
     const en = Boolean(m[1]);
     const ev = byIdAnyCase.get(m[2].toLowerCase());
     if (!ev) continue;
@@ -5154,6 +5270,9 @@ async function main() {
   if (pastPagesBuffer.length) await writePagesParallel(pastPagesBuffer);
   console.log(
     `  страниц-алиасов исторических URL: ${aliasPages} (GSC ${aliasBySrc.gsc}, legacy-слаг ${aliasBySrc.legacy}, sitemap прошлой сборки ${aliasBySrc.prev})`,
+  );
+  console.log(
+    `  страниц-алиасов «город × категория» (URL из sitemap прошлой сборки, гейт не пройден): ${aliasCategoryPages}`,
   );
   if (pastNoChrono) {
     console.log(

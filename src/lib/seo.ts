@@ -388,26 +388,36 @@ export function applyCategoryMeta(
   const description = categoryDescription(category, path, lang, facts);
   const href = categoryPageHref(path, category.id, lang);
   const url = `${SITE_URL}${href}`;
+  // Страница-алиас категорийной посадочной (карта #seo-alias-map в HTML алиаса):
+  // живой счётчик ячейки упал ниже MIN_CATEGORY_EVENTS, и статика отдаёт этот
+  // URL как алиас с canonical на живого «соседа» (RU-версия ячейки или городская
+  // страница). Гидратация не должна перетирать canonical на self — берём его из
+  // карты и не выводим hreflang (аннотации вели бы на несуществующий URL).
+  const aliasCanonical = categoryAliasCanonical(window.location.pathname);
+  const canonical = aliasCanonical ?? url;
   apply({
     title,
     description,
     lang,
-    canonical: url,
+    canonical,
     og: {
       'og:title': title,
       'og:description': description,
-      'og:url': url,
+      'og:url': canonical,
       'og:image': `${SITE_URL}/logo.png`,
     },
     // Аннотации только у ПАРНЫХ страниц: EN-версии нет, если EN-событий в
     // ячейке меньше порога MIN_CATEGORY_EVENTS (в т.ч. у восстановленных
     // RU-URL, RESTORED_CELLS) — иначе hreflang вёл бы на несуществующий URL.
-    hreflang: hasEn
-      ? hreflangPairsFor(
-          `${SITE_URL}${categoryPageHref(path, category.id, 'ru')}`,
-          `${SITE_URL}${categoryPageHref(path, category.id, 'en')}`,
-        )
-      : null,
+    // У алиаса аннотаций нет вовсе.
+    hreflang: aliasCanonical
+      ? null
+      : hasEn
+        ? hreflangPairsFor(
+            `${SITE_URL}${categoryPageHref(path, category.id, 'ru')}`,
+            `${SITE_URL}${categoryPageHref(path, category.id, 'en')}`,
+          )
+        : null,
   });
 }
 
@@ -444,34 +454,71 @@ function isDeadImageHost(url: string): boolean {
 // Карту читаем ОДИН раз при старте (noteSeoAliasMap, src/main.tsx) — до
 // удаления статических SEO-блоков.
 interface SeoAliasMap {
+  /** id события-клона и главной копии (алиасы исторических URL событий) */
   cloneId: string;
   keptId: string;
+  /** Адреса RU/EN главной копии события (алиас события) */
   ru: string | null;
   en: string | null;
+  /** Алиас категорийной посадочной: относительный путь алиаса («/en/bali/cinema/») */
+  aliasFrom?: string;
+  /** Алиас категорийной посадочной: canonical живого «соседа» (абсолютный URL) */
+  aliasTo?: string;
 }
 
 let seoAliasMap: SeoAliasMap | null = null;
 
 /** Прочитать #seo-alias-map из HTML алиаса. Вызывается из main.tsx до
  *  удаления статических блоков. На обычных страницах карты нет — no-op.
- *  Значения принимаем только как абсолютные URL нашего сайта. */
+ *  Значения принимаем только как абсолютные URL нашего сайта (canonical) и
+ *  относительные пути (адрес самого алиаса). */
 export function noteSeoAliasMap(): void {
   const el = document.getElementById('seo-alias-map');
   if (!el) return;
   const own = (v: unknown): v is string => typeof v === 'string' && v.startsWith(`${SITE_URL}/`);
+  const ownPath = (v: unknown): v is string => typeof v === 'string' && v.startsWith('/');
   try {
     const raw = JSON.parse(el.textContent ?? '') as Partial<SeoAliasMap>;
-    if (typeof raw.cloneId !== 'string' || typeof raw.keptId !== 'string') return;
-    if (!own(raw.ru) && !own(raw.en)) return;
+    // Алиас события: нужны оба id и хотя бы один живой адрес главной копии.
+    const eventOk =
+      typeof raw.cloneId === 'string' &&
+      typeof raw.keptId === 'string' &&
+      (own(raw.ru) || own(raw.en));
+    // Алиас категорийной посадочной («город × категория»): относительный путь
+    // страницы-алиаса + абсолютный canonical живого «соседа» (RU-версия ячейки
+    // или городская страница).
+    const categoryOk = ownPath(raw.aliasFrom) && own(raw.aliasTo);
+    if (!eventOk && !categoryOk) return;
     seoAliasMap = {
-      cloneId: raw.cloneId,
-      keptId: raw.keptId,
+      cloneId: typeof raw.cloneId === 'string' ? raw.cloneId : '',
+      keptId: typeof raw.keptId === 'string' ? raw.keptId : '',
       ru: own(raw.ru) ? raw.ru : null,
       en: own(raw.en) ? raw.en : null,
+      aliasFrom: categoryOk ? raw.aliasFrom : undefined,
+      aliasTo: categoryOk ? raw.aliasTo : undefined,
     };
   } catch {
     /* битая карта — работаем как на обычной странице */
   }
+}
+
+/** Путь без завершающего слэша — сравнение «та же ли это страница» устойчиво
+ *  к /x и /x/ (как normalizedPath в lib/mobileIntro) */
+function normalizeAliasPath(pathname: string): string {
+  const trimmed = pathname.replace(/\/+$/, '');
+  return trimmed === '' ? '/' : trimmed;
+}
+
+/** Canonical живого «соседа» для страницы-алиаса категорийной посадочной:
+ *  живой счётчик ячейки упал ниже MIN_CATEGORY_EVENTS, и URL из выдачи Google
+ *  статика отдаёт как алиас с canonical на RU-версию ячейки либо городскую
+ *  страницу. Текущий путь совпал с путём алиаса из карты → возвращаем canonical;
+ *  null — страница не алиас (обычная категорийная или другой маршрут). */
+export function categoryAliasCanonical(pathname: string): string | null {
+  const from = seoAliasMap?.aliasFrom;
+  const to = seoAliasMap?.aliasTo;
+  if (!from || !to) return null;
+  return normalizeAliasPath(pathname) === normalizeAliasPath(from) ? to : null;
 }
 
 /** Адреса главной копии для события, если текущая страница — алиас её клона */
