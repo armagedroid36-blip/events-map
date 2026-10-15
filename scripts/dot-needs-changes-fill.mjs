@@ -53,9 +53,31 @@ const ENTRIES = [
       + 'организатора «Δήμος Λάρνακας», язык «Greek», дату/время «Friday, 23 October 2026 at 19:30» и место '
       + '«ΠΟΛΙΤΙΣΤΙΚΟ ΚΕΝΤΡΟ «ΑΜΜΟΧΩΣΤΟΣ», Famagusta»; JSON-LD подтверждает startDate 2026-10-23T19:30:00+03:00',
   },
+  {
+    id: '89a8599f-c26e-4e99-b407-f69f8ffed2ce',
+    titleLike: 'Dolphinarium Show',
+    expectStart: '2026-09-22',
+    expectOldTime: '10:00:00',
+    newStartTime: null,
+    lat: 15.9465129,
+    lng: 108.2959303,
+    description:
+      'Family dolphinarium show at «Thiên Đường Cổ Cò» (Da Nang Dolphinarium, phường Điện Bàn Đông, '
+      + 'Đà Nẵng) — 35–40 minutes of trained dolphins and seals: jumps through rings, balancing, '
+      + 'interaction with trainers, plus a free visit to the Jurassic dinosaur park. '
+      + 'Performances daily, approx. 10:00 and 15:00; tickets about 350,000 VND.',
+    why:
+      'у карточки не было координат (вывод судьи «нет координат»); источник danang365.com адреса площадки не даёт, '
+      + 'только название «Khu biểu diễn cá heo Đà Nẵng». Арбитры: (1) билетные страницы дают адрес использования '
+      + '«Da Nang Dolphinarium, phường Điện Bàn Đông, Thành phố Đà Nẵng» (danago.com.vn, danaticket.com); '
+      + '(2) danago.com.vn и eholiday.vn называют площадку «Thiên Đường Cổ Cò» (Cổ Cò Paradise) — там идёт шоу '
+      + '«Vũ điệu đại dương» (14:00/15:00 и 19:00/20:00, кроме вторника); (3) карт-ссылка с билетной страницы '
+      + 'tixgo.vn (maps.app.goo.gl/xiCFymMwL1XxHAZ16) резолвится в плейс Google Maps «Thiên Đường Cổ Cò» '
+      + '15.9465129,108.2959303. Адрес карточки НЕ трогаю — он входит в ключ дедупа.',
+  },
 ];
 
-const FIELDS = 'id,title,status,source_type,start_date,start_time,description,description_en,address,city,website';
+const FIELDS = 'id,title,status,source_type,start_date,start_time,description,description_en,address,city,website,lat,lng';
 
 async function main() {
   console.log(`Режим: ${APPLY ? 'APPLY' : 'DRY'}`);
@@ -74,13 +96,18 @@ async function main() {
     if (e.expectOldTime && (ev.start_time || '').slice(0, 8) !== e.expectOldTime) {
       console.log(`[${e.id.slice(0, 8)}] пропуск: start_time ${ev.start_time}, ожидалось ${e.expectOldTime}`); skipped++; continue;
     }
+    if (e.lat != null && ev.lat != null) {
+      console.log(`[${e.id.slice(0, 8)}] пропуск: координаты уже стоят (${ev.lat},${ev.lng}) — не перезаписываю`); skipped++; continue;
+    }
 
     const patch = { description: e.description, status: 'moderation' };
     if (e.newStartTime) patch.start_time = e.newStartTime;
+    if (e.lat != null) { patch.lat = e.lat; patch.lng = e.lng; }
 
     console.log(`[${e.id.slice(0, 8)}] ${ev.title.slice(0, 60)} | ${ev.city} | ${ev.start_date} `
       + `${ev.start_time ? String(ev.start_time).slice(0, 5) : '—'}${e.newStartTime ? ' -> ' + e.newStartTime.slice(0, 5) : ''}`);
-    console.log(`   update: status -> moderation${e.newStartTime ? ', start_time' : ''}, description (${e.description.length} симв.)`);
+    console.log(`   update: status -> moderation${e.newStartTime ? ', start_time' : ''}`
+      + `${e.lat != null ? `, lat/lng -> ${e.lat},${e.lng}` : ''}, description (${e.description.length} симв.)`);
     console.log(`   почему: ${e.why}`);
 
     if (!APPLY) continue;
@@ -98,6 +125,7 @@ async function main() {
   const { data: after } = await db.from('events').select(FIELDS).in('id', ids);
   for (const r of after || []) {
     console.log(`КОНТРОЛЬ ${r.id.slice(0, 8)} [${r.status}] ${r.start_date} ${r.start_time ? String(r.start_time).slice(0, 5) : '—'} `
+      + `| пин ${r.lat != null ? r.lat + ',' + r.lng : 'НЕТ'} `
       + `| описание ${r.description ? r.description.length + ' симв.' : 'ПУСТОЕ'} | city/адрес не тронуты: ${r.city} / ${r.address}`);
   }
 }

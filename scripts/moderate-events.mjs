@@ -103,7 +103,7 @@ const db = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: fa
 const COLUMNS = [
   'id', 'title', 'title_ru', 'title_en', 'description', 'description_ru', 'description_en',
   'city', 'address', 'lat', 'lng', 'category_id', 'website', 'photos',
-  'start_date', 'end_date', 'source_type', 'status', 'created_at', 'updated_at',
+  'start_date', 'end_date', 'recurrence', 'source_type', 'status', 'created_at', 'updated_at',
   'auto_review', 'auto_reviewed_at',
 ].join(', ');
 

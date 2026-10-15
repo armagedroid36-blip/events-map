@@ -151,6 +151,14 @@ function todayDay() {
 }
 
 /**
+ * Есть ли у события РЕАЛЬНОЕ правило повтора (та же логика, что в archive-past.mjs).
+ * jsonb 'null' (JSON-null), SQL NULL и пустой объект — не правило.
+ */
+function hasRecurrence(rec) {
+  return Boolean(rec && typeof rec === 'object' && !Array.isArray(rec) && typeof rec.freq === 'string' && rec.freq);
+}
+
+/**
  * Проверить событие правилами.
  * @param {Record<string, any>} ev строка из таблицы events
  * @returns {{verdict: 'pass'|'review'|'reject', flags: string[], reason: string}}
@@ -188,7 +196,13 @@ export function checkRules(ev) {
   if (title.length < 3) problems.push('нет названия');
   const day = parseDay(ev.start_date);
   if (!day) problems.push('нет даты');
-  else if (day < todayDay()) problems.push('дата в прошлом');
+  // Дата в прошлом — дефект только у РАЗОВОГО события. У бессрочных регулярных
+  // (recurrence с freq) start_date — начало серии, а фронт считает ближайшую дату
+  // от сегодня (src/lib/recurrence.ts) — архивация такие тоже не забирает
+  // (archive-past.mjs). Иначе регулярное шоу с датой начала в прошлом навсегда
+  // застревает: правила ставят review, moderate-events.mjs читает только
+  // status='moderation' — карточка не публикуется и не архивируется.
+  else if (day < todayDay() && !hasRecurrence(ev.recurrence)) problems.push('дата в прошлом');
   if (!norm(ev.city)) problems.push('нет города');
   if (!hasValidCoords(ev)) problems.push('нет координат');
   if (desc.length < 20 && !norm(ev.website)) problems.push('нет описания и ссылки');
