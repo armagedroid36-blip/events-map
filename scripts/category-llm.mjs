@@ -25,6 +25,38 @@ export const CATEGORY_IDS = new Set([
   'show',
 ]);
 
+// Судья отвечает не только id, но иногда НАЗВАНИЕМ категории: промпт перечисляет
+// «id — русское название», и 15.10.2026 на ярлык ленты «Culture & Community» пришло
+// «выставки» — вставка падала на FK, событие терялось. Названия (RU из промпта и
+// EN из таблицы categories) сводим к id; всё остальное — null.
+export const CATEGORY_LABELS = {
+  'конференции': 'conference', 'conferences': 'conference',
+  'выставки': 'exhibition', 'exhibitions': 'exhibition',
+  'концерты': 'concert', 'concerts': 'concert',
+  'спорт': 'sport', 'sports': 'sport',
+  'лекции': 'lecture', 'lectures': 'lecture',
+  'вечеринки': 'party', 'parties': 'party',
+  'фестивали': 'festival', 'festivals': 'festival',
+  'еда и напитки': 'food', 'food & drink': 'food',
+  'киноклуб': 'cinema', 'cinema club': 'cinema',
+  'йога и здоровье': 'wellness', 'yoga & wellness': 'wellness',
+  'мастер-классы': 'workshop', 'workshops': 'workshop',
+  'игры и квизы': 'games', 'games & quizzes': 'games',
+  'встречи и нетворкинг': 'meetup', 'meetups & networking': 'meetup',
+  'экскурсии и туры': 'tour', 'tours & excursions': 'tour',
+  'разговорный клуб': 'speaking', 'speaking club': 'speaking',
+  'театры и шоу': 'theatre', 'театр и шоу': 'theatre', 'theatre': 'theatre', 'theatres & shows': 'theatre',
+  'шоу и представления': 'show', 'show': 'show', 'shows & performances': 'show',
+};
+
+/** id категории из ответа судьи: точный id, название RU/EN или null. */
+export function normalizeCategory(raw) {
+  const key = String(raw ?? '').trim().toLowerCase().replace(/ё/g, 'е').replace(/[«»"'`]/g, '');
+  if (CATEGORY_IDS.has(key)) return key;
+  const byLabel = CATEGORY_LABELS[key];
+  return byLabel && CATEGORY_IDS.has(byLabel) ? byLabel : null;
+}
+
 const SYSTEM_PROMPT =
   'Определи категорию события. Ответь ТОЛЬКО JSON: {"category": "<id>"}. ' +
   `Доступные категории (id — русское название): ${CATEGORIES}. ` +
@@ -71,12 +103,9 @@ export async function extractCategory(text, hint) {
     if (!content) return null;
 
     const parsed = JSON.parse(content);
-    const cat = typeof parsed.category === 'string' ? parsed.category.trim() : '';
-    if (!cat) return null;
-    if (!CATEGORY_IDS.has(cat)) {
-      console.log(`[категория-неизвестна] «${cat}» -> фолбэк источника`);
-      return null;
-    }
+    const raw = typeof parsed.category === 'string' ? parsed.category.trim() : '';
+    const cat = normalizeCategory(raw);
+    if (!cat && raw) console.log(`[категория-неизвестна] «${raw}» -> фолбэк источника`);
     return cat;
   } catch {
     return null;
