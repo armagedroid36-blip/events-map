@@ -46,6 +46,15 @@ const PLAN = [
     startAt: '2026-10-16T19:00:00.000Z',
     why: 'старый слаг отдаёт 500; лента CN по ?q=zazza/?q=γιαννιά даёт ровно одну запись 16.10 в зале ZAZZA Music Theatre = адрес карточки (время у записи 22:00 местного против 21:00 у карточки — время НЕ трогаем)',
   },
+  {
+    id: '6336f3a3',
+    old: 'lords-of-the-sound-the-music-of-ennio-morricone-in-cyprus-2027-01-20',
+    neu: 'https://cyprusnow.app/event/the-music-of-ennio-morricone-στην-πάφο-2027-01-20',
+    feedSlug: 'the-music-of-ennio-morricone-στην-πάφο-2027-01-20',
+    qTerm: 'morricone',
+    startAt: '2027-01-20T17:00:00.000Z', // = 19:00 местного (EET), совпадает со start_time карточки
+    why: 'страница карточки отдаёт 500 (агрегатор переименовал её); лента CN по ?q=morricone даёт запись 20.01.2027 17:00Z в зале Markideio Municipal Theatre = адрес карточки (пафосский показ тура; никосийский 24.01 — отдельная запись)',
+  },
 ];
 
 const db = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
