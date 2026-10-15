@@ -72,7 +72,10 @@ const FIXES = {
  // координату даёт только OSM (у записи ленты CN venue_name null, страница CN гео не несёт,
  // Overpass в этом запуске отдавал 504, рабочий арбитр — Nominatim/OSM).
  'b3fe5a49': { lat: 35.6593475, lng: 34.5742256, source: 'Nominatim/OSM «Apostolos Andreas» (amenity=place_of_worship, Manastır Yolu, Polatpaşa Mahallesi, Dipkarpaz, Erenköy-Karpaz — мыс Апостола Андрея, Карпаз) = 35.6593475,34.5742256; описание самой карточки подтверждает место: «The monastery is located on a picturesque cape at the n…»; лента Cyprus Now по термину «apostolos» даёт только запись-агрегат без площадки и координат (venue null)', why: 'Pilgrimage to Apostolos Andreas Monastery (17.10) — адрес карточки «Apostolos Andreas Monastery, Cyprus», пин стоял ровно на центровой константе Фамагусты (35.1205,33.9432 = collect-cyprus.mjs:88) в ~83 км от монастыря; округ точки — Фамагуста (Карпаз), city не меняется' },
- };
+   // run 250: СТАБ-точка ленты Cyprus Now для Лимасола — карточка, у которой РАЙОН назван
+  // в тексте САМОЙ записи источника (не в карточке): «στο River Park Γερμασόγεια».
+  '3c3e9b07': { lat: 34.7130838, lng: 33.0879427, from: { lat: 34.6786322, lng: 33.0413055 }, source: 'описание записи СВОЕЙ ленты (cyprusnow.app/api/events?q=river park, запись halloween-messy-play-sensory-kids-event-in-limassol-2026-10-31): «…σας περιμένει στο River Park Γερμασόγεια!» — район называет ИСТОЧНИК; Nominatim/OSM «Γερμασόγεια / Germasogeia» (place=administrative, East Limassol Municipality, район Лимасол) = 34.7130838,33.0879427; одноимённый OSM-объект «River Park» есть только в Какопетрии (район Никосия) и к событию не относится', why: 'Halloween Messy Play (31.10 10:00, площадка «River Park») стояла на СТАБ-точке ленты 34.6786322,33.0413055 — той же, что лента отдаёт другим лимассольским площадкам без гео; район Гермасойя из описания источника в 5.4 км от неё, city «Лимасол, Кипр» округу точки соответствует и не меняется' },
+};
 
 const rows = await selectAll(db, 'events', 'id,title,city,address,lat,lng,status');
 const byId = new Map(rows.map((r) => [r.id.slice(0, 8), r]));
