@@ -29,6 +29,20 @@ const FIXES = [
     dead: 'https://oceanmanswim.com/ayianapa-cyprus',
     live: 'https://oceanmanswim.com/races/ayia-napa-cyprus',
   },
+  // Запуск 258 (16.10.2026): cyprus.bz снял страницу фестиваля (410 Gone, страницы нет
+  // ни в одном sitemap bz — events-1 / events-el-1 / events-ru-1, снапшота в Wayback нет).
+  // Арбитр — независимая афиша cypruspassion.com: «2026-11-05T10:00+02:00», «Erimi Village
+  // Square», «Erimi, Limassol District», описание «two-day introduction to mushroom culture»
+  // → дата 05.11 и 10:00 карточки подтверждены (той же карточкой в 258 закрыт и вопрос
+  // «21.11 у Кипра другая дата»: запись ленты CN `mushroom-festival-2026-11-21` — про село
+  // Spilia, это ДРУГОЙ фестиваль, а не арбитр). Официальный сайт mushroomfestival.cy жив,
+  // но держит прошлогоднюю редакцию (01–02.11.2025, Erimi Village).
+  {
+    id: '4f1c6fef-5f6b-423b-b9d8-259a533fb437',
+    title: 'Mushroom Festival',
+    dead: 'https://cyprus.bz/event/32ed/mushroom-festival-2026',
+    live: 'https://cypruspassion.com/events-in-cyprus/mushroom-festival-erimi-2026/',
+  },
 ];
 
 const APPLY = process.env.APPLY === '1';
