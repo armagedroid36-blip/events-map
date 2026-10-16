@@ -13,7 +13,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { extractCategory } from './category-llm.mjs';
 import { selectAll } from './db-rows.mjs';
-import { districtOf, districtNear, districtOfCity, cityForPoint, snapDistrictLabel } from './cy-districts.mjs';
+import { districtOf, districtNear, districtOfCity, cityForPoint, snapDistrictLabel, isCityOnlyVenue } from './cy-districts.mjs';
 import { buildVenueCityRegistry, cityForVenue } from './venue-city.mjs';
 import { cleanDescription } from './desc-junk.mjs';
 import { cleanCardText } from './text-safe.mjs';
@@ -618,7 +618,9 @@ async function collectCyprusNow(seen, budget, websites = new Set(), venueCities 
       // такие карточки раньше уходили в ленту с пустым адресом. Пишем честный адрес
       // уровня города (он же в поле city), а не выдуманную улицу.
       const cityNm = cityRu(ev.city || citySlug) || citySlug;
-      const venueName = ev.venue_name || ev.venue?.name || '';
+      // «Limassol, Cypus» (опечатка ленты) — это имя города, а не площадка: в адрес не пишем.
+      const venueRaw = ev.venue_name || ev.venue?.name || '';
+      const venueName = isCityOnlyVenue(venueRaw) ? '' : venueRaw;
       const venueAddr = ev.venue_address || ev.address || venueName;
       // Метка города одной площадки у агрегатора плавает (Fyti Village Square:
       // «Paphos»/«Polis», Castle Club: «famagusta»/«ayia-napa») — фильтр по
@@ -657,8 +659,8 @@ async function collectCyprusNow(seen, budget, websites = new Set(), venueCities 
         end_time: cyHM(ev.end_at),
         city: cityOut,
         cityEn: ev.city || citySlug,
-        venue: ev.venue_name || ev.venue?.name || '',
-        address: ev.venue_address || ev.address || ev.venue_name || ev.venue?.name || `${cityOut}, Кипр`,
+        venue: venueName,
+        address: ev.venue_address || ev.address || venueName || `${cityOut}, Кипр`,
         lat: Number.isFinite(lat) && Math.abs(lat) > 1 ? lat : null,
         lng: Number.isFinite(lng) && Math.abs(lng) > 1 ? lng : null,
         website: pageUrl,

@@ -148,3 +148,20 @@ export function snapDistrictLabel(city, lat, lng, snapKm = TOWN_SNAP_KM) {
   if (town && town.km <= snapKm && town.district === districtOfCity(city) && town.name !== city) return town.name;
   return city;
 }
+
+// У ленты Cyprus Now поле venue.name иногда несёт не площадку, а ИМЯ ГОРОДА
+// («Limassol, Cypus» с опечаткой сайта, «Nicosia») — в адрес такая строка попадать
+// не должна: карточка получает адрес-латиницу вместо честного «<город>, Кипр».
+// Матч только по ТОЧНОМУ имени города: законные площадки начинаются с него
+// («Limassol Marina», «Nicosia Municipal Theatre») и под фильтр не попадают.
+const CITY_ONLY_VENUE = new Set([
+  'nicosia', 'lefkosia', 'limassol', 'lemesos', 'larnaca', 'paphos',
+  'famagusta', 'ayia napa', 'agia napa', 'protaras', 'paralimni', 'polis',
+]);
+
+export function isCityOnlyVenue(name) {
+  let s = String(name || '').toLowerCase().replace(/[.,;:()/\-–—"']/g, ' ').replace(/\s+/g, ' ').trim();
+  if (!s) return false;
+  s = s.replace(/\b(cyprus|cypus|kipr)\b/g, ' ').replace(/\s+/g, ' ').trim();
+  return CITY_ONLY_VENUE.has(s);
+}
