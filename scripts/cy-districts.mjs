@@ -111,3 +111,40 @@ export function cyCityLabel(lat, lng) {
   if (!name) return name;
   return /кипр/i.test(name) ? name : `${name}, Кипр`;
 }
+
+/**
+ * Ближайший ГОРОДОК из списка центров округа — { name, km, district }.
+ * Нужен там, где имя округа нельзя принимать за город: агрегатор Cyprus Now пишет
+ * city «Famagusta» событиям Ая-Напы/Протараса/Паралимни. В отличие от cityForPoint
+ * (снап 6 км / радиус 12–14 км) здесь порог задаёт вызывающий, а расстояние остаётся
+ * видимым — село Сотира в 3.5 км от Паралимни не должно становиться Паралимни.
+ */
+export function nearestTown(lat, lng) {
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  let best = null;
+  for (const [district, list] of Object.entries(CENTERS)) {
+    for (const [name, clat, clng] of list) {
+      const k = km(lat, lng, clat, clng);
+      if (!best || k < best.km) best = { name, km: k, district };
+    }
+  }
+  return best;
+}
+
+// Порог «точка внутри ГОРОДКА» для метки-округа источника: 3 км — Ая-Напа 0.4, Протарас 0.02,
+// Diamonds Showbar 1.3 попадают; село Сотира (3.5 км) и Golden Coast (3.2 км) — нет, метка
+// остаётся округом. Границы держит юнит scripts/dot-town-snap-check.mjs.
+export const TOWN_SNAP_KM = 3;
+
+/**
+ * Метка округа («Фамагуста», «Пафос») → ГОРОДОК по координатам, если точка лежит внутри
+ * городка ТОГО ЖЕ округа (иначе метка возвращается как есть). Единая точка правды для
+ * сборщика (collect-cyprus.mjs, ветка Cyprus Now) и её юнита.
+ */
+export function snapDistrictLabel(city, lat, lng, snapKm = TOWN_SNAP_KM) {
+  const key = String(city || '').replace(/,\s*кипр/gi, '').trim().toLowerCase();
+  if (key !== 'фамагуста' && key !== 'пафос') return city;
+  const town = nearestTown(lat, lng);
+  if (town && town.km <= snapKm && town.district === districtOfCity(city) && town.name !== city) return town.name;
+  return city;
+}

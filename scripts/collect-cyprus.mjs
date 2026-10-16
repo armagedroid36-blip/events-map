@@ -13,7 +13,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { extractCategory } from './category-llm.mjs';
 import { selectAll } from './db-rows.mjs';
-import { districtOf, districtNear, districtOfCity, cityForPoint } from './cy-districts.mjs';
+import { districtOf, districtNear, districtOfCity, cityForPoint, snapDistrictLabel } from './cy-districts.mjs';
 import { buildVenueCityRegistry, cityForVenue } from './venue-city.mjs';
 import { cleanDescription } from './desc-junk.mjs';
 import { cleanCardText } from './text-safe.mjs';
@@ -636,6 +636,17 @@ async function collectCyprusNow(seen, budget, websites = new Set(), venueCities 
       if (byVenue && byVenue !== cityNm) {
         console.log(`  [city по площадке] «${cityNm}» -> «${byVenue}»: ${title.slice(0, 50)}`);
       }
+      // Источник может назвать ОКРУГ вместо городка: Cyprus Now пишет city «Famagusta»
+      // событиям Ая-Напы/Протараса/Паралимни, и фильтр по городу на карте расщепляется
+      // (Ая-Напа 29 живых карточек против 20 «Фамагуста», run 269). Если точка лежит внутри
+      // ГОРОДКА того же округа — берём городок по точке (правило snapDistrictLabel, порог
+      // TOWN_SNAP_KM = 3 км, юнит dot-town-snap-check.mjs). Метку-городок и координаты не трогаем.
+      let cityOut = cityFinal;
+      const citySnapped = snapDistrictLabel(cityFinal, vLat, vLng);
+      if (citySnapped !== cityFinal) {
+        console.log(`  [city по точке вместо округа] «${cityFinal}» -> «${citySnapped}»: ${title.slice(0, 50)}`);
+        cityOut = citySnapped;
+      }
       const row = await buildRow({
         title,
         description: stripHtml(ev.description || ev.excerpt || ''),
@@ -644,10 +655,10 @@ async function collectCyprusNow(seen, budget, websites = new Set(), venueCities 
         end_date: ev.end_at ? cyDate(ev.end_at) : null,
         start_time: cyHM(ev.start_at),
         end_time: cyHM(ev.end_at),
-        city: cityFinal,
+        city: cityOut,
         cityEn: ev.city || citySlug,
         venue: ev.venue_name || ev.venue?.name || '',
-        address: ev.venue_address || ev.address || ev.venue_name || ev.venue?.name || `${cityFinal}, Кипр`,
+        address: ev.venue_address || ev.address || ev.venue_name || ev.venue?.name || `${cityOut}, Кипр`,
         lat: Number.isFinite(lat) && Math.abs(lat) > 1 ? lat : null,
         lng: Number.isFinite(lng) && Math.abs(lng) > 1 ? lng : null,
         website: pageUrl,
