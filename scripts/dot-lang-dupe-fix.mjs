@@ -11,6 +11,8 @@ const db = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERV
 
 // keep -> archive[]  (обоснование в комментарии, проверено по страницам источников)
 const PLAN = [
+  { keep: 'd35aa2a1', drop: ['e0b5fde7'],
+    why: 'Angelo Tsarouhas (Tsarouchas) «Diaspora», стендап, Лимасол 16.10.2026 21:00 — ОДНО выступление ДВУМЯ живыми карточками из ОДНОЙ ленты Cyprus Now (две записи: «angelo-tsarouhas-diaspora-eu-tour-2026-10-16» и «angelo-tsarouchas-diaspora-tour-στη-λευκωσία-2026-10-17»), пины в 1.39 км (Lanitio Theatre 34.6890572,33.041294 ↔ Marios Tokas Municipal Garden Theatre 34.6837781,33.0550723), дата/время у карточек совпадают (16.10 21:00 = 18:00Z у обеих записей). keep=d35aa2a1: её страница совпадает с данными 1:1 (JSON-LD startDate 2026-10-16T21:00:00+03:00, location «Lanitio Theatre»), площадку поддерживает сводка билетного источника (ticketmaster.cy: «at Lanitio Theatre, Limassol on 16 October 2026, 21:00»). drop=e0b5fde7: её страница противоречит сама себе — слаг кодирует Никосию и 17.10, title страницы «@ Lanitico Theatre», а venue-поле «Marios Tokas Municipal Garden Theatre»; её ticket_url — idEvent=7491, тот же, что у записи НИКОСИЙСКОГО показа 17.10 («stand-up-comedy-diaspora-17-10-26-2026-10-17», Strovolos Municipal Theatre, текст промоутера «17 Οκτωβρίου 2026 21:00 Δημοτικό Θέατρο Στροβόλου»), т.е. это запись уровня тура, свёрнутая в один город (питфол гастролей). Штатный дедуп слеп: адреса разные, названия дают 2 общих слова' },
   { keep: '287f1564', drop: ['d6d536c7'],
     why: 'Rantevou Stin Plateia Music Fest 26, 17.10 20:30 Никосия: Шкали/Агланция одна площадка; keep=cyprusnow со скидкой 35.1520356,33.3977267 и end_date, drop=cyprus.bz с пином на центре города' },
   { keep: 'c918d845', drop: ['be61af07'],
