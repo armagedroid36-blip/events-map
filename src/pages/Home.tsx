@@ -53,6 +53,7 @@ import {
   isEnPath,
 } from '../lib/seo';
 import { config } from '../config';
+import { loadLegacyEvents } from '../lib/legacyEvents';
 import { useAuth } from '../lib/auth';
 import NotFound from '../components/NotFound';
 import type { Category, EventItem, Filters } from '../lib/types';
@@ -688,6 +689,10 @@ export default function Home({
     let alive = true;
     (async () => {
       const api = getApi();
+      // Снимки удалённых событий читаем ПАРАЛЛЕЛЬНО с основным набором: он
+      // нужен только в ветке «события нет в активном наборе», и его загрузка
+      // не должна задерживать первый рендер (см. lib/legacyEvents.ts).
+      const legacyPromise = loadLegacyEvents();
       const [evs, cats] = await Promise.all([api.listEvents(), api.getCategories()]);
       if (!alive) return;
       setEvents(evs);
@@ -746,10 +751,26 @@ export default function Home({
             // Мета — как у статической страницы: canonical на сам URL события
             applyEventMeta(archived);
           } else {
-            // События нет вовсе (удалено/скрыто) — вместо карты заглушка.
-            // Глубокий URL мёртв — мета базовая, canonical/og снимаем (404)
-            applyGenericMeta();
-            setEventNotFound(true);
+            // В базе события нет вовсе. Но это может быть СНИМОК удалённого
+            // события (scripts/data/legacy-events.json → /data/legacy-events.json):
+            // пре-рендер по нему пишет страницу 200 с h1, датой, адресом и
+            // JSON-LD, а SPA показывала заглушку — для Google это Soft 404,
+            // ровно та причина в GSC. Рисуем ТУ ЖЕ карточку, что статика.
+            const snapshot = (await legacyPromise)[eventId];
+            if (!alive) return;
+            if (snapshot) {
+              setPastEvent(snapshot);
+              // Мета как у статической страницы: canonical на САМ URL (не на
+              // соседний), JSON-LD и hreflang статики остаются на месте —
+              // applyGenericMeta/404-заглушка здесь не вызываются.
+              applyEventMeta(snapshot);
+            } else {
+              // События нет вовсе (удалено/скрыто/не публиковалось) — вместо
+              // карты заглушка. Глубокий URL мёртв — мета базовая, canonical/og
+              // снимаем (404)
+              applyGenericMeta();
+              setEventNotFound(true);
+            }
           }
         }
       }

@@ -139,6 +139,38 @@ jobs:
           user_email: 'github-actions[bot]@users.noreply.github.com'
           commit_message: 'Auto rebuild: prerender + sitemap'
 
+      # GitHub Pages отдаёт свежие файлы не мгновенно (CDN/кэш ~минута): без
+      # паузы гейты ниже проверяли бы прежнюю публикацию и падали бы «на
+      # ровном месте» — например, на /data/legacy-events.json, которого в
+      # прошлой сборке ещё не было.
+      - name: Ожидание публикации
+        run: sleep 45
+
+      # Гейт 1: КАЖДЫЙ URL события из прод-sitemap резолвится тем же путём, что
+      # в SPA (активный набор → get_public_event → снимок удалённого события).
+      # Нерезолвящийся URL с ответом 200 = «ложная ошибка 404» в Search Console.
+      # Выход 1 — есть нерезолвящиеся, выход 2 — проверить не удалось (сетевые
+      # сбои); оба валят шаг: молча публиковать такое нельзя.
+      - name: Гейт «резолв SPA по sitemap»
+        shell: bash
+        run: node scripts/check-sitemap-resolve.mjs
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+
+      # Гейт 2: рендер настоящим браузером (headless Chrome на раннере) — оба
+      # URL снимков удалённых событий и 5 случайных страниц из sitemap. В
+      # отрендеренном DOM не должно быть заглушек «Событие не найдено или уже
+      # завершено» / «404 — страница не найдена», а у страниц снимков должны
+      # быть h1 с названием, canonical на сам URL и hreflang-пара.
+      - name: Гейт «рендер страниц событий»
+        shell: bash
+        run: node scripts/check-render-soft404.mjs
+        env:
+          # Раннеры GitHub держат Chrome в /usr/bin/google-chrome; путь можно
+          # переопределить через RENDER_BROWSER (Edge на Windows, chromium).
+          RENDER_BROWSER: ${{ vars.RENDER_BROWSER }}
+
       # Оповещаем Яндекс и Bing о свежих страницах (IndexNow): новые события,
       # карточки и посадочные попадают в очередь обхода в тот же день.
       # Ключ — публичный файл из dist, ничего секретного.
