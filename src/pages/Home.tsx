@@ -689,10 +689,11 @@ export default function Home({
     let alive = true;
     (async () => {
       const api = getApi();
-      // Снимки удалённых событий читаем ПАРАЛЛЕЛЬНО с основным набором: он
-      // нужен только в ветке «события нет в активном наборе», и его загрузка
-      // не должна задерживать первый рендер (см. lib/legacyEvents.ts).
-      const legacyPromise = loadLegacyEvents();
+      // Снимки удалённых событий нужны ТОЛЬКО на странице события (deep-link
+      // /event/<id>/...): на карте, городских и категорийных страницах файл
+      // не запрашивается. Стартует параллельно основному набору — первый
+      // рендер его не ждёт (см. lib/legacyEvents.ts).
+      const legacyPromise = eventId ? loadLegacyEvents() : null;
       const [evs, cats] = await Promise.all([api.listEvents(), api.getCategories()]);
       if (!alive) return;
       setEvents(evs);
@@ -756,7 +757,7 @@ export default function Home({
             // пре-рендер по нему пишет страницу 200 с h1, датой, адресом и
             // JSON-LD, а SPA показывала заглушку — для Google это Soft 404,
             // ровно та причина в GSC. Рисуем ТУ ЖЕ карточку, что статика.
-            const snapshot = (await legacyPromise)[eventId];
+            const snapshot = legacyPromise ? (await legacyPromise)[eventId] : undefined;
             if (!alive) return;
             if (snapshot) {
               setPastEvent(snapshot);
