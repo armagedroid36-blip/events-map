@@ -32,7 +32,12 @@ export const STOP = new Set(['festival', 'фестиваль', 'day', 'night', '
   // → ложная склейка (прогон 38024912841: ΙΔΑΙΟΝ PROJECT ↔ Andreas Krambias Quintet,
   // 24.10 19:00, Nicosia Municipal Theatre). Тип события — не признак одного события.
   'διεθνές', 'φεστιβάλ', 'λευκωσίας',
-  'october', 'november', 'december']);
+  'october', 'november', 'december',
+  // Бренд программы студии, а не событие: у Kuns Studio (Никосия, 07.11) две РАЗНЫЕ
+  // гончарные мастерские названы «… – One Off Experience» и склеились по общим
+  // one/off/experience + адресу, хотя идут в 10:30 и 15:30 (прогон 39003436064,
+  // «Fruit Bowl Hand-Building and Paint» ↔ «Breakfast Set of 2»).
+  'one', 'off', 'experience', 'workshops']);
 
 // Слова-шаблоны: сами по себе не доказывают, что это одно событие
 // (иначе «Деревня Рождества Фикарду» склеится с «Деревней Рождества Какопетрия»).
