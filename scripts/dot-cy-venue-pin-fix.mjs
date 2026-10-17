@@ -11,6 +11,8 @@ const db = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERV
 
 // id -> { lat, lng, source, why }
 const FIXES = {
+  // run 295: Ая-Напа — запись той же ленты CN на ту же дату 1:1 даёт площадку и её координаты
+  '23a9e498': { lat: 34.98803913, lng: 33.99982276, source: 'лента Cyprus Now ?q=biennale — запись agia-napa-biennale-2026-2026-11-07 (start 07.11.2026 17:00Z = 19:00 местного, дата 1:1 с карточкой), venue «Πολιτιστικό Κέντρο Γεωργίου Σεφέρη» (Georgios Seferis Cultural Centre), venue_lat/lng 34.98803913,33.99982276 (7 знаков); обратный геокодер Nominatim по точке → Archiepiskopou Makariou III, Αγία Νάπα, Επαρχία Αμμοχώστου = округ метки', why: 'Agia Napa Biennale 2026 (07.11–07.01) — адрес «Ayia Napa Monument, Ayia Napa», пин стоял ровно на центровой константе Ая-Напы 34.9889,33.9993 (110 м от площадки)' },
   // run 289: фолбэк Лимасола — площадку «Maze» называет адрес карточки, точку даёт карта самой страницы источника
   '899ba819': { lat: 34.6762972, lng: 33.0425209, source: 'embed-карта САМОЙ страницы источника cyprus.bz/ru/event/381a/allure-2026: iframe «maps/embed/v1/place?q=34.6762972%2C33.0425209» (7 знаков, zoom 15) + ссылка «maps/dir/?destination=34.6762972,33.0425209»; JSON-LD той же страницы: location.name «Maze», addressLocality «Лимассол» (= адрес карточки); округ точки — Лимасол, city не меняется', why: 'Allure (MAZE VENUE, 30.10 21:00) — адрес карточки «Площадка Maze, Лимассол», пин стоял ровно на центровой константе Лимасола (34.7071,33.0226 = collect-cyprus.mjs:88) в 3.9 км от клуба' },
   // run 104: остаток фолбэка Фамагусты — села/город уровня населённого пункта (Nominatim)
@@ -144,7 +146,8 @@ const FIXES = {
 const rows = await selectAll(db, 'events', 'id,title,city,address,lat,lng,status');
 const byId = new Map(rows.map((r) => [r.id.slice(0, 8), r]));
 const near = (a, b) => a != null && Math.abs(a - b) < 0.002;
-const CENTERS = [[34.7071, 33.0226], [34.9182, 33.6194], [35.1856, 33.3823], [34.7754, 32.4245], [35.1205, 33.9432]];
+const CENTERS = [[34.7071, 33.0226], [34.9182, 33.6194], [35.1856, 33.3823], [34.7754, 32.4245], [35.1205, 33.9432],
+  [34.9889, 33.9993] /* Ая-Напа (collect-cyprus.mjs:86) — в списке не было, из-за чего карточки на её константе давали «на центровой: НЕТ» (run 295) */];
 
 let applied = 0, skipped = 0;
 for (const [prefix, fix] of Object.entries(FIXES)) {
