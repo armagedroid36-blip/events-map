@@ -255,8 +255,15 @@ const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 const geoCache = new Map();
 let lastGeo = 0;
 
-async function nominatim(query, rejectNear) {
-  const key = String(query || '').trim().toLowerCase();
+/** Совпадает ли адрес результата с городом-ограничителем (любой из алиасов). */
+function matchesCity(displayName, must) {
+  const s = String(displayName || '').toLowerCase();
+  const list = Array.isArray(must) ? must : [must];
+  return list.some((m) => m && s.includes(String(m).toLowerCase()));
+}
+
+async function nominatim(query, rejectNear, must) {
+  const key = String(query || '').trim().toLowerCase() + (must ? `|${must}` : '');
   if (!key) return null;
   if (geoCache.has(key)) return geoCache.get(key);
   const wait = Math.max(0, 1100 - (Date.now() - lastGeo));
@@ -264,16 +271,24 @@ async function nominatim(query, rejectNear) {
   lastGeo = Date.now();
   let out = null;
   try {
-    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`, {
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=5&q=${encodeURIComponent(query)}`, {
       headers: { 'User-Agent': UA, Accept: 'application/json' },
     });
     if (res.ok) {
       const data = await res.json();
-      if (data?.[0]) {
-        const lat = parseFloat(data[0].lat);
-        const lng = parseFloat(data[0].lon);
-        const near = rejectNear && (lat - rejectNear.lat) ** 2 + (lng - rejectNear.lng) ** 2 < 0.01 ** 2;
-        if (!near) out = { lat, lng };
+      for (const item of Array.isArray(data) ? data : []) {
+        const lat = parseFloat(item.lat);
+        const lng = parseFloat(item.lon);
+        const displayName = String(item.display_name || '');
+        // Город из текста обязан быть в адресе результата: иначе тот же номер дома
+        // в другой деревне округа («12 Agias Zonis» → Апесия в 17 км от Лимасола).
+        // Локальная запись адреса бывает греческой («Λεμεσός»), поэтому список алиасов.
+        if (must && !matchesCity(displayName, must)) continue;
+        // Точка ровно на центровой константе (~50 м) — это фолбэк, а не площадка.
+        const near = rejectNear && (lat - rejectNear.lat) ** 2 + (lng - rejectNear.lng) ** 2 < 0.0005 ** 2;
+        if (near) continue;
+        out = { lat, lng, displayName };
+        break;
       }
     }
   } catch {
@@ -312,17 +327,38 @@ function cyLabel(lat, lng) {
 /**
  * Гео для карточки Кипра: сначала честный геокодинг адреса, затем метка по точке,
  * иначе метка по тексту, иначе 'Кипр' без координат.
+ *
+ * Питфол: запрос без города находит ТУ ЖЕ улицу/номер в другой деревне округа
+ * («Agias Zonis 12, Cyprus» → Апесия в 17 км от Лимасола), поэтому адрес сначала
+ * геокодится с городом из текста, а результат принимается, только если в его
+ * display_name назван этот город; несвязанный запрос — лишь последний вариант.
  */
+const CY_CITY_EN = {
+  'Ая-Напа': { en: 'Ayia Napa', aliases: ['ayia napa', 'agia napa', 'αγία ναπα'] },
+  'Протарас': { en: 'Protaras', aliases: ['protaras', 'πρωταράς'] },
+  'Паралимни': { en: 'Paralimni', aliases: ['paralimni', 'παραλίμνι'] },
+  'Лимасол': { en: 'Limassol', aliases: ['limassol', 'lemesos', 'λεμεσός'] },
+  'Никосия': { en: 'Nicosia', aliases: ['nicosia', 'lefkosia', 'λευκωσία'] },
+  'Ларнака': { en: 'Larnaca', aliases: ['larnaca', 'larnaka', 'λάρνακα'] },
+  'Пафос': { en: 'Paphos', aliases: ['paphos', 'pafos', 'πάφος'] },
+  'Фамагуста': { en: 'Famagusta', aliases: ['famagusta', 'αμμόχωστος', 'ammochostos'] },
+  'Полис': { en: 'Polis', aliases: ['polis', 'πόλις'] },
+};
+
 async function resolveCyprusGeo(address, text, hintCity) {
+  const cityEn = hintCity ? (CY_CITY_EN[hintCity]?.en || null) : null;
+  const aliases = hintCity ? (CY_CITY_EN[hintCity]?.aliases || null) : null;
   const queries = [];
-  if (address) queries.push(`${address}, Cyprus`);
-  if (hintCity && hintCity !== address) queries.push(`${hintCity}, Cyprus`);
-  for (const q of queries) {
-    const g = await nominatim(q);
-    if (g) {
-      const label = cyLabel(g.lat, g.lng);
-      return { lat: g.lat, lng: g.lng, city: label || 'Кипр', address, source: 'geocode' };
-    }
+  if (address && cityEn) queries.push({ q: `${address}, ${cityEn}, Cyprus`, must: aliases });
+  if (address) queries.push({ q: `${address}, Cyprus`, must: aliases });
+  if (address && cityEn) queries.push({ q: `${address}, Cyprus`, must: null });
+  if (hintCity && !address) queries.push({ q: `${hintCity}, Cyprus`, must: null });
+  for (const { q, must } of queries) {
+    const g = await nominatim(q, null, must);
+    if (!g) continue;
+    if (must && !matchesCity(g.displayName, must)) continue;
+    const label = cyLabel(g.lat, g.lng);
+    return { lat: g.lat, lng: g.lng, city: label || 'Кипр', address, source: 'geocode' };
   }
   const fromText = cyCityFromText(text);
   if (fromText) return { lat: null, lng: null, city: `${fromText}, Кипр`, address, source: 'text' };
@@ -337,6 +373,19 @@ async function resolveVnGeo(group, address, text) {
     const variants = [address];
     const short = address.split(',').slice(1).join(', ').trim();
     if (short) variants.push(short); // без названия заведения
+    // Питфол: вьетнамская диакритика ломает поиск улицы («12 Nguyễn Thiện Thuật,
+    // Nha Trang, Vietnam» → [], а «Nguyen Thien Thuat» → highway). Добавляем
+    // вариант без диакритики и без номера дома.
+    for (const v of [...variants]) {
+      const ascii = v.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+      if (ascii && ascii !== v) variants.push(ascii);
+      const noHouse = v.replace(/^\s*\d+[a-zA-Z]?[\s,/]+/, '').trim();
+      if (noHouse && noHouse !== v) {
+        variants.push(noHouse);
+        const noHouseAscii = noHouse.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+        if (noHouseAscii !== noHouse) variants.push(noHouseAscii);
+      }
+    }
     for (const v of variants) {
       for (const city of cities) {
         const g = await nominatim(`${v}, ${city}, Vietnam`, group.fallback);
@@ -516,6 +565,14 @@ async function handleMessage(msg, group, state, stats) {
   } else {
     geo = await resolveCyprusGeo(address, text, cyCityFromText(text));
   }
+  // Фолбэк-пин «центр города» — это не площадка: карточка встанет на карте в
+  // километрах от места (класс, который потом ремонтируется вручную). Лучше
+  // не вставлять: событие с неверной точкой хуже отсутствующего.
+  if (geo.source === 'центр города') {
+    stats.noGeo++;
+    console.log(`  пропуск ${group.username}/${messageId}: адрес не геокодировался, пин только центр города`);
+    return;
+  }
 
   // Фото: последний (самый крупный) размер; максимум 3
   const photos = [];
@@ -581,7 +638,7 @@ async function handleMessage(msg, group, state, stats) {
 }
 
 async function main() {
-  const stats = { updates: 0, ours: 0, dupes: 0, noDate: 0, past: 0, garbage: 0, created: 0, errors: 0 };
+  const stats = { updates: 0, ours: 0, dupes: 0, noDate: 0, past: 0, garbage: 0, noGeo: 0, created: 0, errors: 0 };
 
   // Смещение читаем ДО запроса: сохраняем только после обработки, чтобы при
   // падении прогона апдейты не потерялись (повтор поймает дедуп по website).
@@ -636,7 +693,7 @@ async function main() {
 
   console.log(
     `Готово: апдейтов ${stats.updates}, из наших групп ${stats.ours}, `
-    + `не дата ${stats.noDate}, прошедшие ${stats.past}, мусор ${stats.garbage}, `
+    + `не дата ${stats.noDate}, прошедшие ${stats.past}, мусор ${stats.garbage}, без гео ${stats.noGeo}, `
     + `дубли ${stats.dupes}, карточек ${stats.created}, ошибок ${stats.errors}.`,
   );
   if (stats.ours === 0 && stats.updates > 0) {
