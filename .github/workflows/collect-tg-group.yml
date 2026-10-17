@@ -1,0 +1,32 @@
+name: Collect events from Telegram groups
+
+# Группы (не каналы) не имеют веб-ленты t.me/s/, поэтому собираем через бота:
+# сообщения из групп приходят в getUpdates. Бот должен быть в группе; при
+# включённом privacy mode он видит только команды/реплаи.
+#
+# Каждые 2 часа: Telegram хранит обновления getUpdates 24 часа, простой больше
+# суток = безвозвратная потеря постов (сбор не восполняется задним числом —
+# боты не видят историю).
+on:
+  schedule:
+    - cron: '13 */2 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci --no-audit --no-fund || npm install --no-audit --no-fund
+      - name: Сбор анонсов из групп Boardgames_CY и GGcafeNhaTrang
+        # Новые карточки создаются со status='moderation' — публикация остаётся
+        # за существующей автопроверкой модерации (collect-events.yml).
+        run: node scripts/collect-tg-group.mjs
+        env:
+          TELEGRAM_READER_BOT_TOKEN: ${{ secrets.TELEGRAM_READER_BOT_TOKEN }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
