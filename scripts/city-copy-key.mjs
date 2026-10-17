@@ -1,16 +1,21 @@
-// Класс «городская карточка-копия»: одно событие, две ЖИВЫЕ карточки, у одной адрес —
-// просто имя города («Лимасол, Кипр»), у другой названа площадка. Штатный дедуп такое
-// видит не всегда: liveAbbrevMatch требует 3 значимых слова ЛИБО совпадения адресов, а здесь
-// адреса разные по построению (у копии адрес-заглушка). Разбор run 297: 4 пары этого класса
-// пришлось закрывать вручную скриптом keep/drop.
+// Близнецы «одно событие — две карточки», которых не видит штатный дедуп.
+// Признак-основа: ТОТ ЖЕ ДЕНЬ, ТО ЖЕ ВРЕМЯ (±10 мин), пины рядом — а ключ дедупа
+// (title|start_date, liveDupeMatch/liveAbbrevMatch) пару не склеил, потому что адреса
+// записаны по-разному или название переведено.
 //
-// Отличие от зонда dot-cross-source-dupe-probe: здесь добавлено ТОЧНОЕ совпадение времени
-// (±10 минут) и требование «ровно один адрес городской» — без них зонд отдавал и пару
-// «полнолуние» 19:30 ↔ 16:10 (расхождение 3 ч 20 м, разные каналы противоречат), которую
-// верно оставлять без правки. Точность на разборе run 297: 4/4 против 4/5.
-import { words, isCityLevelAddr, distanceM, cityKey } from './live-dupe-key.mjs';
+// Уровни:
+//  A — названия пересекаются по >=2 значимым словам, пины <= 1500 м: вероятный дубль,
+//      закрывать можно после сверки зала/времени по страницам источников;
+//  B — общих слов 0-1 (перевод названия), но пины <= 300 м: та же площадка, кандидат
+//      в дубли — нужен ручной арбитр (перевод/фото/организатор).
+// Почему не «городская карточка-копия» (узкое определение): проверка на базе 17.10.2026
+// (run 298) показала, что из 4 пар, закрытых вручную в run 297, адрес уровня города был
+// только у ОДНОЙ — остальные три различались написанием зала (Pattichio/Pattihio) либо
+// языком адреса. Узкое правило «ровно один адрес-заглушка» давало 0 пар даже с архивом.
+import { words, isCityLevelAddr, distanceM } from './live-dupe-key.mjs';
 
 export const DEFAULT_MAX_DIST_M = 1500;
+export const TIER_B_MAX_DIST_M = 300;
 export const DEFAULT_MAX_TIME_DIFF_MIN = 10;
 export const DEFAULT_MIN_WORDS = 2;
 
@@ -52,12 +57,13 @@ export function commonWords(a, b) {
 }
 
 /**
- * Пара «городская карточка-копия». Возвращает { distM, timeDiffMin, common, keep, drop } или null.
- * keep — карточка с названной площадкой, drop — копия с адресом уровня города.
- * Опции: maxDistM (1500), maxTimeDiffMin (10), minWords (2).
+ * Пара-близнец. Возвращает { tier: 'A'|'B', distM, timeDiffMin, common, keep, drop } или null.
+ * keep — карточка с более информативным адресом (не город-заглушка) и/или не CN-копия;
+ * drop — копия (адрес уровня города, иначе вторая по порядку).
  */
-export function cityCopyMatch(a, b, opt = {}) {
+export function twinMatch(a, b, opt = {}) {
   const maxDistM = opt.maxDistM ?? DEFAULT_MAX_DIST_M;
+  const tierBDistM = opt.tierBDistM ?? TIER_B_MAX_DIST_M;
   const maxTimeDiffMin = opt.maxTimeDiffMin ?? DEFAULT_MAX_TIME_DIFF_MIN;
   const minWords = opt.minWords ?? DEFAULT_MIN_WORDS;
   if (!a || !b || a.id === b.id) return null;
@@ -65,41 +71,43 @@ export function cityCopyMatch(a, b, opt = {}) {
   if (!hasGeo(a) || !hasGeo(b)) return null;
   const day = dayOf(a);
   if (!day || day !== dayOf(b)) return null;
-  if (cityKey(a) !== cityKey(b)) return null;
-  const cityA = isCityLevelAddr(a), cityB = isCityLevelAddr(b);
-  if (cityA === cityB) return null; // нужен ровно один адрес-заглушка
   const dt = timeDiffMin(a, b);
   if (dt === null || dt > maxTimeDiffMin) return null;
   const d = distanceM(a, b);
   if (d > maxDistM) return null;
   const common = commonWords(a, b);
-  if (common.length < minWords) return null;
-  return {
-    distM: Math.round(d),
-    timeDiffMin: dt,
-    common,
-    keep: cityA ? b.id : a.id,
-    drop: cityA ? a.id : b.id,
-  };
+  let tier = null;
+  if (common.length >= minWords) tier = 'A';
+  else if (d <= tierBDistM) tier = 'B';
+  if (!tier) return null;
+  const cityA = isCityLevelAddr(a), cityB = isCityLevelAddr(b);
+  let keep = a.id, drop = b.id;
+  if (cityA && !cityB) { keep = b.id; drop = a.id; }
+  else if (!cityA && !cityB) {
+    // оба адреса называют площадку — копией считаем более куцый адрес (у копии адрес короче)
+    const la = String(a.address || '').length, lb = String(b.address || '').length;
+    if (lb > la) { keep = b.id; drop = a.id; }
+  }
+  return { tier, distM: Math.round(d), timeDiffMin: dt, common, keep, drop };
 }
 
-/** Все пары класса по массиву строк (группировка по день|город, затем попарно). */
-export function cityCopyPairs(rows, opt = {}) {
+/** Все пары по массиву строк (группировка по дню, затем попарно внутри дня). */
+export function twinPairs(rows, opt = {}) {
   const live = (rows || []).filter((r) => liveStatus(r.status) && hasGeo(r) && dayOf(r));
   const groups = new Map();
   for (const r of live) {
-    const k = `${dayOf(r)}|${cityKey(r)}`;
+    const k = dayOf(r);
     if (!groups.has(k)) groups.set(k, []);
     groups.get(k).push(r);
   }
   const pairs = [];
-  for (const [key, g] of groups) {
+  for (const [day, g] of groups) {
     for (let i = 0; i < g.length; i += 1) {
       for (let j = i + 1; j < g.length; j += 1) {
-        const m = cityCopyMatch(g[i], g[j], opt);
-        if (m) pairs.push({ key, a: g[i], b: g[j], ...m });
+        const m = twinMatch(g[i], g[j], opt);
+        if (m) pairs.push({ day, a: g[i], b: g[j], ...m });
       }
     }
   }
-  return pairs.sort((x, y) => x.distM - y.distM);
+  return pairs.sort((x, y) => (x.tier === y.tier ? x.distM - y.distM : x.tier < y.tier ? -1 : 1));
 }
