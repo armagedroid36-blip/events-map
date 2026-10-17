@@ -4,7 +4,7 @@
 // DRY по умолчанию; APPLY=1 — запись.
 import { createClient } from '@supabase/supabase-js';
 import { selectAll } from './db-rows.mjs';
-import { cyCityLabel } from './cy-districts.mjs';
+import { cyCityLabel, CY_CITY_CENTERS } from './cy-districts.mjs';
 
 const APPLY = process.env.APPLY === '1';
 const db = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE, { auth: { persistSession: false } });
@@ -146,8 +146,9 @@ const FIXES = {
 const rows = await selectAll(db, 'events', 'id,title,city,address,lat,lng,status');
 const byId = new Map(rows.map((r) => [r.id.slice(0, 8), r]));
 const near = (a, b) => a != null && Math.abs(a - b) < 0.002;
-const CENTERS = [[34.7071, 33.0226], [34.9182, 33.6194], [35.1856, 33.3823], [34.7754, 32.4245], [35.1205, 33.9432],
-  [34.9889, 33.9993] /* Ая-Напа (collect-cyprus.mjs:86) — в списке не было, из-за чего карточки на её константе давали «на центровой: НЕТ» (run 295) */];
+// Центровые константы городов — из общего источника (cy-districts.mjs), а не рукописный список:
+// в рукописном не было Ая-Напы/Протараса/Паралимни/Полиса, и верные цели молча пропускались (run 295).
+const CENTERS = CY_CITY_CENTERS.map(([, lat, lng]) => [lat, lng]);
 
 let applied = 0, skipped = 0;
 for (const [prefix, fix] of Object.entries(FIXES)) {
