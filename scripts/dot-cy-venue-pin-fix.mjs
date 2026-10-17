@@ -11,6 +11,8 @@ const db = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERV
 
 // id -> { lat, lng, source, why }
 const FIXES = {
+  // run 289: фолбэк Лимасола — площадку «Maze» называет адрес карточки, точку даёт карта самой страницы источника
+  '899ba819': { lat: 34.6762972, lng: 33.0425209, source: 'embed-карта САМОЙ страницы источника cyprus.bz/ru/event/381a/allure-2026: iframe «maps/embed/v1/place?q=34.6762972%2C33.0425209» (7 знаков, zoom 15) + ссылка «maps/dir/?destination=34.6762972,33.0425209»; JSON-LD той же страницы: location.name «Maze», addressLocality «Лимассол» (= адрес карточки); округ точки — Лимасол, city не меняется', why: 'Allure (MAZE VENUE, 30.10 21:00) — адрес карточки «Площадка Maze, Лимассол», пин стоял ровно на центровой константе Лимасола (34.7071,33.0226 = collect-cyprus.mjs:88) в 3.9 км от клуба' },
   // run 104: остаток фолбэка Фамагусты — села/город уровня населённого пункта (Nominatim)
   '0eaa1378': { lat: 35.0421958, lng: 33.9223452, source: 'Nominatim: Φρέναρος (relation 12315121, place=village, район Фамагуста)', why: 'A Poet Is Like a River — адрес «Frenaros Municipal Amphitheater» = село Френарос (уровень села, как Latsia/Лимпья)' },
   '789f8502': { lat: 35.0149462, lng: 34.0531284, source: 'Nominatim: Πρωταράς (node 21422489, place=town, район Фамагуста)', why: 'Protaras SwimRun — адрес «Protaras» = центр городка Протарас (уровень города)' },
