@@ -7,6 +7,7 @@ import { selectAll } from './db-rows.mjs';
 import { execFile, spawnSync } from 'node:child_process';
 import { promisify } from 'node:util';
 import fs from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 
 const execFileP = promisify(execFile);
 const PROXY = 'http://127.0.0.1:10809';
@@ -68,7 +69,7 @@ for (const r of targets) {
       const small = `${TMP}/p304_${ch}_${mid}_${i}_s.jpg`;
       const r = spawnSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', img,
         '-frames:v', '1', '-update', '1', '-vf', 'scale=1600:-2', '-q:v', '4', small], { encoding: 'utf8' });
-      const ok = r.status === 0 && fs.existsSync(small);
+      const ok = r.status === 0 && existsSync(small);
       useSize = ok ? (await fs.stat(small)).size : 0;
       if (!ok || useSize > MAX_BYTES) { console.log('  пропуск фото (больше лимита бакета, ужать не вышло)', i, size, useSize); continue; }
       console.log('  ужато ffmpeg-ом:', size, '->', useSize);
