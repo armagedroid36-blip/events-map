@@ -15,8 +15,8 @@ import { isValidCoords } from '../lib/coords';
 import {
   cityCrumbLabel,
   cityCrumbLabelLocative,
-  cityNameEn,
   cityPageHref,
+  placeCityLabel,
   placeLabel,
 } from '../lib/address';
 import { nextZ } from '../lib/zindex';
@@ -601,9 +601,10 @@ export default function EventCard({
   const title = localizedText(event.title, event.title_ru, event.title_en, event.source_lang, lang);
 
   // Город в строке метаданных: RU — как в данных, EN — английское имя
-  // (Нячанг→Nha Trang, Дананг→Da Nang, Бали/районы→Bali), см. lib/address.
-  // Не распознан — исходная строка (не пустая), как в placeLabel.
-  const cityLabel = lang === 'ru' ? event.city : (cityNameEn(event.city) || event.city);
+  // (Кипр → город события, Нячанг→Nha Trang, Дананг→Da Nang, Бали/районы→Bali),
+  // см. lib/address.placeCityLabel. Не распознан — исходная строка (не пустая),
+  // как в placeLabel.
+  const cityLabel = placeCityLabel(event.city, lang) || event.city;
 
   // Видимая хлебная крошка страницы события (титул как h1 = /event/ и
   // /en/event/): «Главная › город › название» — та же иерархия, что

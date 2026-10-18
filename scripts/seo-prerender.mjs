@@ -1083,7 +1083,7 @@ function cityCrumb(rawCity) {
     'фамагуста', 'famagusta', 'ammochostos',
     'ая-напа', 'ая напа', 'ayia napa', 'agia napa', 'ayanapa',
     'паралимни', 'paralimni', 'протарас', 'protaras', 'дериния', 'deryneia',
-    'полис', 'polis', 'latchi',
+    'полис', 'polis', 'latchi', 'sotira', 'geroskipou',
   ];
   if (cyprusKeys.some((k) => city.includes(k))) {
     return { name: 'Кипр', path: 'cyprus' };
@@ -1111,18 +1111,74 @@ const CITY_NAME_RU_LOCATIVE = {
   cyprus: 'на Кипре',
 };
 
+/** Кипрские города, которые выводим в мете события (RU/EN). Распознавание —
+ * подстрока в lowercase-строке ev.city, регистр не важен; порядок проверок
+ * задан вручную (Никосия → Лимасол → Пафос → Ларнака → Ая-Напа → Фамагуста →
+ * Протарас → Паралимни → Полис): у «Протарас, Паралимни» побеждает Протарас,
+ * у Паралимни ключа «фамагуста» нет. Городская страница у Кипра одна
+ * (/cyprus/), поэтому эти имена идут ТОЛЬКО в title/description/адрес/JSON-LD
+ * события; крошка, hub-ссылки и «Ещё события в …» остаются CITY_NAME_EN.
+ * Город вне списка (Платрес, Агридия, Иерокипия …) → null, мета остаётся
+ * «Кипр»/«Cyprus» — список расширяем по мере надобности.
+ * ЗЕРКАЛО: src/lib/address.ts (CYPRUS_TOWNS) — менять оба файла. */
+const CYPRUS_TOWNS = [
+  { ru: 'Никосия', en: 'Nicosia', keys: ['никосия', 'nicosia', 'lefkosia', 'lefkosa', 'strovolos', 'latsia'] },
+  { ru: 'Лимасол', en: 'Limassol', keys: ['лимасол', 'limassol', 'lemesos', 'lemessos'] },
+  { ru: 'Пафос', en: 'Paphos', keys: ['пафос', 'paphos', 'pafos', 'peyia', 'pegeia', 'kouklia', 'geroskipou'] },
+  { ru: 'Ларнака', en: 'Larnaca', keys: ['ларнака', 'larnaca', 'larnaka'] },
+  { ru: 'Ая-Напа', en: 'Ayia Napa', keys: ['ая-напа', 'ая напа', 'ayia napa', 'agia napa', 'ayanapa'] },
+  { ru: 'Фамагуста', en: 'Famagusta', keys: ['фамагуста', 'famagusta', 'ammochostos'] },
+  { ru: 'Протарас', en: 'Protaras', keys: ['протарас', 'protaras'] },
+  { ru: 'Паралимни', en: 'Paralimni', keys: ['паралимни', 'paralimni', 'sotira', 'deryneia', 'дериния'] },
+  { ru: 'Полис', en: 'Polis', keys: ['полис', 'polis', 'latchi'] },
+];
+
+/** Кипрский город события по свободному тексту ev.city: {ru, en} или null */
+function cyprusTown(rawCity) {
+  const city = String(rawCity ?? '').toLowerCase();
+  if (!city) return null;
+  for (const town of CYPRUS_TOWNS) {
+    if (town.keys.some((k) => city.includes(k))) return town;
+  }
+  return null;
+}
+
+/** EN-имя города для title/JSON-LD addressLocality: Кипр → город (не
+ * распознан — «Cyprus», как было), прочие города — CITY_NAME_EN. Город не
+ * распознан вовсе → '' (суффикса города в мете нет). */
+function cityEnLabel(rawCity) {
+  const crumb = cityCrumb(rawCity);
+  if (!crumb) return '';
+  if (crumb.path === 'cyprus') return (cyprusTown(rawCity) || {}).en || 'Cyprus';
+  return CITY_NAME_EN[crumb.path] || crumb.name;
+}
+
 /**
- * Имя города для страницы языка lang: RU — как в данных (ev.city), EN — из
- * CITY_NAME_EN по распознанному cityCrumb (Нячанг→Nha Trang, Дананг→Da Nang,
- * Бали и районы→Bali). Город не распознан → возвращаем исходную строку
- * (не пустую), локализуется только название города, свободный текст адреса
+ * Имя города для страницы языка lang: RU — как в данных (ev.city, мета RU не
+ * меняется), EN — cityEnLabel (Кипр → город, Нячанг→Nha Trang, Дананг→Da Nang,
+ * Бали и районы→Bali). Город не распознан → исходная строка (не пустая),
+ * локализуется только название города, свободный текст адреса
  * (улица/заведение) остаётся как в данных.
  */
 function cityLabel(rawCity, lang) {
   const raw = String(rawCity ?? '').trim();
   if (lang !== 'en') return raw;
+  return cityEnLabel(raw) || raw;
+}
+
+/** Части EN-префикса описания события: у Кипра страна в описании обязательна
+ * («Nicosia, Cyprus, October 9, 2026.»), у остальных городов — только имя
+ * (как было: «Bali, October 9, 2026.»). Город не распознан → [] (в префиксе
+ * остаётся одна дата). */
+function enCityPrefixParts(rawCity) {
   const crumb = cityCrumb(rawCity);
-  return (crumb && CITY_NAME_EN[crumb.path]) || raw;
+  if (!crumb) return [];
+  if (crumb.path === 'cyprus') {
+    const town = cyprusTown(rawCity);
+    return town ? [town.en, 'Cyprus'] : ['Cyprus'];
+  }
+  const name = CITY_NAME_EN[crumb.path] || crumb.name;
+  return name ? [name] : [];
 }
 
 /**
@@ -1169,10 +1225,21 @@ const COUNTRY_NAME_EN = {
   камбоджа: 'Cambodia',
   сингапур: 'Singapore',
   филиппины: 'Philippines',
+  кипр: 'Cyprus',
 };
 
 /** Признак остаточной кириллицы в строке адреса */
 const CYRILLIC_RE = /[\u0400-\u04FF]/;
+
+/** Страна в конце строки адреса/города («Никосия, Кипр» → «Никосия»,
+ * «Gloria Gallery, Nicosia, Cyprus» → «…, Nicosia»). Нужна кипрским событиям:
+ * страна живёт в addressCountry («CY»), а в addressLocality/streetAddress её
+ * не повторяем. Не кипрским событиям функция не применяется. */
+const COUNTRY_TAIL_RE = /,\s*(?:Кипр|Cyprus)\s*$/i;
+
+function stripCountryTail(text) {
+  return String(text ?? '').replace(COUNTRY_TAIL_RE, '').trim();
+}
 
 /** Показывать на EN-странице только EN-имя города, если RU-фрагмент адреса
  * перевести нечем: город распознан (cityCrumb), а в строке после замены
@@ -1221,7 +1288,10 @@ function stripRedundantCityTail(text, city) {
  * (убирает двойной «…, Indonesia, Bali»); (c) если после (a)-(b) осталась
  * кириллица И город распознан (cityCrumb) — возвращается только EN-имя города
  * (EN_DROP_UNTRANSLATED_ADDRESS), RU-фрагмент не выводится; (d) город не
- * распознан — строка как в данных. Пустой адрес → город (как раньше).
+ * распознан — строка как в данных; (e) Кипр — в конце адреса ОДИН раз стоит
+ * страна («<адрес>, <Город>, Cyprus», «, Кипр» из данных переводится), пустой
+ * адрес → «<Город>, Cyprus» (раньше отдавали просто «Cyprus»). Пустой адрес →
+ * город (как раньше).
  * Один и тот же результат идут в <address> (eventSeoHtml) и в JSON-LD
  * (location.name и location.address.streetAddress).
  */
@@ -1240,15 +1310,22 @@ function placeLabel(address, ev, lang) {
     return raw;
   }
   let place = localizeCountryNames(raw);
+  // Кипр: страна в данных идёт хвостом адреса («Axiou, Лимасол, Кипр») —
+  // убираем её из свободного текста и приписываем ниже по-английски один раз.
+  const crumb = cityCrumb(ev ? ev.city : '');
+  const isCyprus = !!crumb && crumb.path === 'cyprus';
+  if (isCyprus) place = stripCountryTail(place);
   place = stripRedundantCityTail(place, cityL);
   if (cityL && !hasWord(place, cityL)) {
     place = place ? `${place}, ${cityL}` : cityL;
   }
   if (EN_DROP_UNTRANSLATED_ADDRESS && CYRILLIC_RE.test(place)) {
-    const crumb = cityCrumb(ev ? ev.city : '');
-    const enCity = (crumb && CITY_NAME_EN[crumb.path]) || '';
+    const enCity = cityEnLabel(ev ? ev.city : '');
     if (enCity) place = enCity;
   }
+  // Кипр: видимый адрес всегда со страной — «<адрес>, <Город>, Cyprus»,
+  // пустой адрес → «<Город>, Cyprus» (раньше отдавали просто «Cyprus»).
+  if (isCyprus && place && !hasWord(place, 'Cyprus')) place = `${place}, Cyprus`;
   return place;
 }
 
@@ -1314,13 +1391,23 @@ function eventJsonLd(ev, url, lang = 'ru', image = null, mode = 'active') {
   const removed = mode === 'removed';
   const dropEvent = mode === 'past';
   const en = lang === 'en';
-  const city = cityLabel(ev.city, lang);
+  const cityLd = cityLabel(ev.city, lang);
+  const townCrumb = cityCrumb(ev.city);
+  // Кипр: город в addressLocality БЕЗ страны («Никосия», а не «Никосия, Кипр»),
+  // страна — в addressCountry кодом ISO 3166-1 alpha-2 («CY», в данных
+  // события «cyprus» строчными). Прочие города (Бали/Дананг/Нячанг) — как было.
+  const isCyprus = !!townCrumb && townCrumb.path === 'cyprus';
+  const city = isCyprus ? stripCountryTail(cityLd) || cityLd : cityLd;
   const address = typeof ev.address === 'string' ? ev.address.trim() : '';
   // Адрес для разметки: на EN-страницах — локализованный (placeLabel: страны
   // RU→EN, без дубля города, без нетронутого RU-фрагмента), на RU — строка из
   // данных, как раньше. Пустой адрес → streetAddress не выводим (как было).
-  const place = !address ? '' : en ? placeLabel(address, ev, 'en') : address;
+  const placeRaw = !address ? '' : en ? placeLabel(address, ev, 'en') : address;
+  // Кипр: страна уже в addressCountry — из streetAddress её убираем
+  // («Gloria Gallery, Nicosia», а не «…, Cyprus»).
+  const place = isCyprus ? stripCountryTail(placeRaw) : placeRaw;
   const country = typeof ev.country === 'string' ? ev.country.trim() : '';
+  const countryCode = isCyprus ? 'CY' : country;
   const lat = Number(ev.lat);
   const lng = Number(ev.lng);
   // Как isValidCoords (src/lib/coords.ts): (0,0) и |lat|>90 / |lng|>180 — нет
@@ -1426,7 +1513,7 @@ function eventJsonLd(ev, url, lang = 'ru', image = null, mode = 'active') {
         '@type': 'PostalAddress',
         addressLocality: city,
         ...(place ? { streetAddress: place } : {}),
-        ...(country ? { addressCountry: country } : {}),
+        ...(countryCode ? { addressCountry: countryCode } : {}),
       },
       ...(hasCoords
         ? { geo: { '@type': 'GeoCoordinates', latitude: lat, longitude: lng } }
@@ -3329,11 +3416,13 @@ function eventPageMetaFor(ev, lang, opts) {
   const mode = past ? (isPastEvent(ev) ? 'past' : 'removed') : 'active';
   if (en) {
     const nameEn = ev.title_en || ev.title || '';
-    const crumb = cityCrumb(ev.city);
-    const cityEn = crumb ? CITY_NAME_EN[crumb.path] || crumb.name : '';
+    // EN-имя города: Кипр → город (fallback «Cyprus»), прочие — CITY_NAME_EN.
+    const cityEn = cityEnLabel(ev.city);
     const enText = ev.description_en || ev.description || ev.description_ru || '';
     const dateEn = enDate(ev.start_date);
-    const prefixEn = [cityEn, dateEn].filter(Boolean).join(', ');
+    // У Кипра в описании город И страна («Nicosia, Cyprus, October 9, 2026.»),
+    // у остальных городов — только имя (см. enCityPrefixParts).
+    const prefixEn = [...enCityPrefixParts(ev.city), dateEn].filter(Boolean).join(', ');
     const descriptionEn = snippet(prefixEn ? `${prefixEn}. ${enText}` : enText, 160);
     const titleEn =
       eventTitle(nameEn, enDate(archiveDateIso(ev)), cityEn, 'en') || 'Event';
@@ -5078,14 +5167,14 @@ async function main() {
     // EN-версия события — только если у события есть перевод/англ. оригинал
     if (hasEn) {
       const nameEn = ev.title_en || ev.title || '';
-      // EN-имя города той же логикой, что в крошке (crumb выше): распознан —
-      // CITY_NAME_EN (Нячанг→Nha Trang, Дананг→Da Nang, Бали/районы→Bali),
-      // не распознан — суффикса города нет (prefixEn = только дата)
-      const crumb = cityCrumb(ev.city);
-      const cityEn = crumb ? CITY_NAME_EN[crumb.path] || crumb.name : '';
+      // EN-имя города той же логикой, что в крошке (crumb выше): Кипр → город
+      // (fallback «Cyprus»), прочие — CITY_NAME_EN (Нячанг→Nha Trang,
+      // Дананг→Da Nang, Бали/районы→Bali); не распознан — суффикса города нет
+      const cityEn = cityEnLabel(ev.city);
       const enText = ev.description_en || ev.description || ev.description_ru || '';
       const dateEn = enDate(ev.start_date);
-      const prefixEn = [cityEn, dateEn].filter(Boolean).join(', ');
+      // Кипр: «Nicosia, Cyprus, October 9, 2026.»; прочие — «Bali, <дата>.»
+      const prefixEn = [...enCityPrefixParts(ev.city), dateEn].filter(Boolean).join(', ');
       const descriptionEn = snippet(prefixEn ? `${prefixEn}. ${enText}` : enText, 160);
       // Дата ближайшего вхождения — в EN title/og:title (та же логика, что в RU)
       const occEn = occurrence(ev);

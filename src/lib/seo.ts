@@ -28,7 +28,7 @@ import { photoUrl } from './api';
 import { todayIso } from './dates';
 import { eventHasEn, eventSlug } from './slug';
 import { nextOccurrenceDate } from './recurrence';
-import { cityNameEn } from './address';
+import { placeCityLabel, placeCityPrefix } from './address';
 import type { CityPath } from './address';
 import { categoryDescription, categoryPageHref, categoryTitle } from './categoryPages';
 import type { CellFacts } from './categoryPages';
@@ -557,9 +557,10 @@ export function applyEventMeta(ev: EventItem): void {
     ? ev.title_en || ev.title
     : ev.title_ru || (ev.source_lang === 'en' ? ev.title : ev.title_en) || ev.title;
   // Город в мете — на языке страницы: EN-версия локализует той же логикой,
-  // что крошка пре-рендера (cityNameEn: Нячанг→Nha Trang, Дананг→Da Nang,
-  // Бали/районы→Bali); нераспознанный город — суффикс опущен. RU — как раньше.
-  const enCity = useEn ? cityNameEn(ev.city) : '';
+  // что крошка пре-рендера (placeCityLabel: кипрский город, Нячанг→Nha Trang,
+  // Дананг→Da Nang, Бали/районы→Bali); нераспознанный город — суффикс опущен.
+  // RU — как раньше.
+  const enCity = useEn ? placeCityLabel(ev.city, 'en') : '';
   // Дата в title/og:title. У АКТИВНОЙ карточки — ближайшее вхождение (та же
   // логика, что в JSON-LD статики: nextOccurrenceDate). У АРХИВНОЙ
   // (status === 'archived') — СОБСТВЕННАЯ дата карточки: у дневной/недельной
@@ -584,7 +585,9 @@ export function applyEventMeta(ev: EventItem): void {
     ? ev.description_en || (ev.source_lang === 'en' ? ev.description : ev.description_ru) || ev.description
     : ev.description_ru || (ev.source_lang === 'ru' ? ev.description : ev.description_en) || ev.description || '';
   const date = useEn ? enDate(ev.start_date) : ruDate(ev.start_date);
-  const prefix = [useEn ? enCity : city, date].filter(Boolean).join(', ');
+  const prefix = useEn
+    ? [...placeCityPrefix(ev.city), date].filter(Boolean).join(', ')
+    : [city, date].filter(Boolean).join(', ');
   const description = snippet(prefix ? `${prefix}. ${text}` : text, 160);
   const canonical = alias ? (useEn && alias.en ? alias.en : alias.ru) : eventUrl(ev, useEn);
   const photo = ev.photos?.[0];
