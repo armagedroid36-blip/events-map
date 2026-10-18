@@ -46,3 +46,7 @@ logo3d/
 
 # статический снапшот списка событий — генерируется сборкой (scripts/build-events-snapshot.mjs)
 public/data/events.json
+
+# реестр страниц-алиасов — генерируется сборкой (scripts/build-alias-registry.mjs),
+# источник истины в репозитории — scripts/data/alias-urls.json
+public/data/alias-urls.json

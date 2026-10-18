@@ -13,6 +13,12 @@
  * Для адресов снимков дополнительно требуется: <h1> с названием события,
  * canonical на САМ адрес, hreflang-пара — то есть паритет со статикой.
  *
+ * Алиасы (URL из /data/alias-urls.json): после гидратации canonical должен
+ * вести на ЖИВУЮ страницу (цель из карты #seo-alias-map, для событий — ru/en),
+ * а не на сам алиас и не на несуществующий URL; цель обязана отдавать 200.
+ * Так ловится регрессия, из-за которой SPA перетирала canonical алиаса на
+ * адрес, которого нет (тогда страница-алиас бесполезна для Google).
+ *
  * Запуск:
  *   node scripts/check-render-soft404.mjs                      # прод, 2 снимка + 5 активных
  *   node scripts/check-render-soft404.mjs --base http://127.0.0.1:4173
@@ -52,6 +58,9 @@ function onBase(u) {
   return BASE === 'https://mypins.site' ? u : u.replace(/^https?:\/\/[^/]+/, BASE);
 }
 const ACTIVE_COUNT = Number(arg('active', '5'));
+/** Сколько страниц-алиасов проверять рендером (детерминированная выборка из
+ *  /data/alias-urls.json: один «город × категория» + адреса событий). */
+const ALIAS_COUNT = Number(arg('alias', '3'));
 const BUDGET_MS = Number(arg('budget', '40000'));
 const SEED = Number(arg('seed', '0')) || 0;
 
@@ -129,14 +138,47 @@ function dumpDom(browser, url, tag) {
 }
 
 /** Проблемы одной страницы: тексты-заглушки + (для снимков) паритет со статикой */
-function inspect(dom, url, legacyNames) {
+function inspect(dom, url, legacyNames, alias = false) {
   const problems = [];
   const notes = [];
+  const result = { problems, notes, canonical: '' };
   for (const text of FORBIDDEN) {
     if (dom.includes(text)) problems.push(`в DOM есть «${text}»`);
   }
   const h1 = dom.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
   const h1Text = h1 ? h1[1].replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim() : '';
+  if (alias) {
+    // Алиас: canonical обязан вести на ЖИВУЮ цель, а не на сам алиас.
+    const canonical = dom.match(/<link[^>]+rel="canonical"[^>]+href="([^"]+)"/i);
+    const canon = canonical ? canonical[1] : '';
+    result.canonical = canon;
+    // Цель — из карты #seo-alias-map, которую пишет пре-рендер: aliasTo у
+    // посадочной «город × категория», ru/en у алиаса события.
+    const mapRaw = dom.match(/id="seo-alias-map">([\s\S]*?)<\/script>/);
+    let expected = '';
+    if (mapRaw) {
+      try {
+        const map = JSON.parse(mapRaw[1].replace(/\\u003c/g, '<'));
+        expected = map.aliasTo || (url.includes('/en/event/') ? map.en : map.ru) || '';
+      } catch {
+        /* карту не разобрали — проверим хотя бы «canonical не на себя» */
+      }
+    }
+    if (!canon) problems.push('нет canonical');
+    else {
+      let samePath = false;
+      try {
+        samePath = decodeURIComponent(new URL(canon).pathname) === decodeURIComponent(new URL(url).pathname);
+      } catch {
+        samePath = false;
+      }
+      if (samePath) problems.push(`canonical на сам алиас: ${canon}`);
+      if (expected && canon !== expected) problems.push(`canonical не равен цели алиаса: ${canon} ≠ ${expected}`);
+      notes.push(`canonical → ${canon}`);
+    }
+    if (!expected) notes.push('карты #seo-alias-map в DOM нет — цель не сверить');
+    return result;
+  }
   if (legacyNames) {
     if (!h1Text) problems.push('нет <h1>');
     else {
@@ -170,7 +212,7 @@ function inspect(dom, url, legacyNames) {
     if (h1Text) notes.push(`h1: «${h1Text.slice(0, 60)}»`);
     else notes.push('h1 нет (проверялся только текст заглушек)');
   }
-  return { problems, notes };
+  return result;
 }
 
 async function main() {
@@ -218,6 +260,32 @@ async function main() {
       `${BASE}/data/legacy-events.json НЕ опубликован — SPA не сможет отрисовать снимки удалённых событий (URL взяты из локального файла)`,
     );
   }
+
+  // Реестр страниц-алиасов: алиас обязан оставаться 200 с canonical на ЖИВУЮ
+  // цель и после гидратации SPA (иначе Google видит дубль, ведущий в никуда).
+  // Выборка детерминированная: сначала адрес посадочной «город × категория»,
+  // затем адреса событий.
+  let aliasPaths = [];
+  try {
+    const res = await fetch(`${BASE}/data/alias-urls.json`, { headers: GBOT });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const body = await res.json();
+    if (!Array.isArray(body)) throw new Error('ожидался JSON-массив путей');
+    aliasPaths = body.filter((p) => typeof p === 'string' && p);
+  } catch (err) {
+    // Не опубликован — это не «мелочь»: реестр перестал жить между сборками,
+    // значит следующий прогон останется без источника алиасов.
+    globalProblems.push(`${BASE}/data/alias-urls.json недоступен (${err.message}) — реестр алиасов не ведётся`);
+    console.log(`внимание: реестр алиасов не прочитан (${err.message})`);
+  }
+  const aliasCellLike = aliasPaths.filter((p) => /^(?:en\/)?[a-z0-9-]+\/[a-z0-9_-]+$/.test(p));
+  const aliasEventLike = aliasPaths.filter((p) => /^(?:en\/)?event\//.test(p));
+  const aliasPicked = [...aliasCellLike.slice(0, 1), ...aliasEventLike, ...aliasCellLike.slice(1)]
+    .filter(Boolean)
+    .slice(0, ALIAS_COUNT);
+  console.log(
+    `алиасы в реестре: ${aliasPaths.length} (посадочных ${aliasCellLike.length}, событий ${aliasEventLike.length}); к проверке ${aliasPicked.length}`,
+  );
   const legacyById = new Map(
     legacyList.filter((e) => e && typeof e.id === 'string').map((e) => [e.id.toLowerCase(), e]),
   );
@@ -245,9 +313,10 @@ async function main() {
   const targets = [
     ...legacyUrls.map((u) => ({ url: u, legacy: true })),
     ...picked.map((u) => ({ url: u, legacy: false })),
+    ...aliasPicked.map((p) => ({ url: `${BASE}/${p}/`, legacy: false, alias: true })),
   ];
   console.log(
-    `URL к проверке: ${targets.length} (снимков ${legacyUrls.length}, активных ${picked.length}; в sitemap событий ${legacyUrls.length + activeUrls.length})`,
+    `URL к проверке: ${targets.length} (снимков ${legacyUrls.length}, активных ${picked.length}, алиасов ${aliasPicked.length}; в sitemap событий ${legacyUrls.length + activeUrls.length})`,
   );
   if (!targets.length) {
     console.error('render-soft404: нет URL для проверки — проверка не выполнена');
@@ -277,7 +346,18 @@ async function main() {
       inconclusive.push({ url: t.url, reason: res.err });
       continue;
     }
-    const { problems, notes } = inspect(res.dom, t.url, t.legacy ? names : null);
+    const { problems, notes, canonical } = inspect(res.dom, t.url, t.legacy ? names : null, Boolean(t.alias));
+    // Цель canonical алиаса обязана отдавать 200: иначе страница-алиас ведёт
+    // Google на несуществующий адрес — хуже, чем 404 у самого алиаса.
+    if (t.alias && canonical) {
+      try {
+        const target = onBase(canonical);
+        const res2 = await fetch(target, { headers: GBOT, redirect: 'follow' });
+        if (!res2.ok) problems.push(`canonical-цель отдаёт HTTP ${res2.status}: ${target}`);
+      } catch (err) {
+        problems.push(`canonical-цель не проверена (${err.message}): ${canonical}`);
+      }
+    }
     const tag = problems.length ? 'ПРОВАЛ' : 'ок';
     console.log(`  [${i + 1}/${targets.length}] ${tag} ${t.url}${notes.length ? ` — ${notes.join('; ')}` : ''}`);
     for (const p of problems) console.log(`        ${p}`);

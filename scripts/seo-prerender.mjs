@@ -2471,6 +2471,111 @@ function loadLegacySlugUrls() {
 }
 
 /**
+ * Постоянный реестр страниц-алиасов (на проде — /data/alias-urls.json):
+ * пути, по которым страница-алиас была написана в ПРОШЛОЙ сборке.
+ *
+ * Зачем отдельный источник. Алиасы в sitemap не попадают по замыслу, поэтому
+ * их адреса не видны ни одному из источников выше: gsc-404-urls.txt и
+ * legacy-slug-urls.txt — разовые выгрузки, которые сами не пополняются, а
+ * sitemap прошлой сборки содержит только ЖИВЫЕ страницы — адрес алиаса из
+ * прошлой сборки в нём уже не появится. Итог: алиас жил ровно одну сборку, а
+ * публикация с keep_files:false затирала прежний файл → 404 на адрес, который
+ * Google держит в индексе (потеря /en/bali/cinema/ 17.10.2026 при GSC «Submitted
+ * and indexed»).
+ *
+ * Источники: scripts/data/alias-urls.json — «затравка», коммитится в
+ * репозиторий (битый JSON в ней валит сборку: это сломанный файл в репозитории,
+ * а не отсутствующий источник); env ALIAS_REGISTRY — файл с прода, скачанный
+ * пайплайном (.github/workflows/rebuild-pages.yml). Недоступность/пустота/
+ * битый JSON второго НЕ фатальны — в лог уходит причина.
+ *
+ * Формат файлов: JSON-массив путей БЕЗ домена и без ведущего слэша
+ * (["en/bali/cinema", "en/event/<id>/<slug>"]). Здесь пути приводятся к виду
+ * остальных источников (со слэшами); всё, что цикл алиасов не разобрал,
+ * отбрасывается с записью в лог (путь, причина) — см. aliasReject ниже.
+ */
+const ALIAS_REGISTRY_MAX = 10000;
+
+/** Путь из реестра в каноническом виде (без домена, query/hash и слэшей по
+ *  краям) либо '' — если запись непригодна. */
+function normalizeAliasPath(raw) {
+  if (typeof raw !== 'string') return '';
+  let p = raw.trim();
+  if (!p) return '';
+  p = p.replace(/^https?:\/\/[^/]+/i, '');
+  p = p.split('#')[0].split('?')[0];
+  p = p.replace(/^\/+/, '').replace(/\/+$/, '');
+  return p.includes('/') ? p : '';
+}
+
+/** Пути реестра: [{ path, raw }] — дедуп по пути, порядок файлов: затравка → прод. */
+function loadAliasRegistry() {
+  const sources = [
+    { file: join(ROOT, 'scripts/data/alias-urls.json'), label: 'затравка', strict: true },
+    { file: process.env.ALIAS_REGISTRY || '', label: 'прод-реестр (ALIAS_REGISTRY)', strict: false },
+  ];
+  const out = [];
+  const seen = new Set();
+  const parts = [];
+  for (const src of sources) {
+    const skip = (why) => {
+      if (src.strict) {
+        console.error(`seo-prerender: реестр алиасов: ${src.label} — ${why}`);
+        process.exit(1);
+      }
+      console.log(`  реестр алиасов: ${src.label} недоступен (${why}) — источник пропущен`);
+    };
+    if (!src.file) {
+      skip('путь не задан');
+      continue;
+    }
+    let text;
+    try {
+      text = readFileSync(src.file, 'utf8');
+    } catch (err) {
+      skip(`файл не прочитать: ${err.code || err.message}`);
+      continue;
+    }
+    if (!text.trim()) {
+      skip('файл пустой');
+      continue;
+    }
+    let arr;
+    try {
+      arr = JSON.parse(text);
+    } catch (err) {
+      skip(`битый JSON: ${err.message}`);
+      continue;
+    }
+    if (!Array.isArray(arr)) {
+      skip('ожидался JSON-массив путей');
+      continue;
+    }
+    let added = 0;
+    for (const raw of arr) {
+      const p = normalizeAliasPath(raw);
+      if (!p || seen.has(p)) continue;
+      seen.add(p);
+      out.push({ path: p, raw: String(raw) });
+      added += 1;
+    }
+    parts.push(`${src.label} ${added}`);
+  }
+  if (out.length > ALIAS_REGISTRY_MAX) {
+    console.log(
+      `  реестр алиасов: путей ${out.length} > ${ALIAS_REGISTRY_MAX} — обрабатываю первые ${ALIAS_REGISTRY_MAX}`,
+    );
+    out.length = ALIAS_REGISTRY_MAX;
+  }
+  console.log(
+    out.length
+      ? `  реестр алиасов: путей ${out.length} (${parts.join(', ')})`
+      : '  реестр алиасов: пусто — источник пропущен',
+  );
+  return out;
+}
+
+/**
  * URL из sitemap ПРЕДЫДУЩЕЙ опубликованной сборки: файл из env PREV_SITEMAP
  * (пайплайн скачивает прод-sitemap ДО сборки — см.
  * .github/workflows/rebuild-pages.yml). Возвращаем URL ДВУХ классов:
@@ -5134,8 +5239,14 @@ async function main() {
   const aliasCityPaths = new Set(CITY_PAGES.map((c) => c.path));
   const catById = new Map(categories.map((c) => [c.id, c]));
   // Источники алиасов: gsc — выгрузка Search Console, legacy — прежние слаги
-  // после смены формулы (07.10), prev — хвосты из sitemap прошлой сборки.
+  // после смены формулы (07.10), prev — хвосты из sitemap прошлой сборки,
+  // registry — постоянный реестр (затравка scripts/data/alias-urls.json + файл
+  // из env ALIAS_REGISTRY). Реестр идёт ПОСЛЕДНИМ: адрес, который виден
+  // обычным источникам, получает их метку, а реестр добавляет те алиасы,
+  // которых в sitemap прошлой сборки уже нет (алиасы в sitemap не попадают).
   // Счётчики по источникам уходят в лог сборки, чтобы дифф был виден.
+  const registryEntries = loadAliasRegistry();
+  const registryPaths = registryEntries.map((e) => e.path);
   const aliasSources = [
     ...loadGscEventUrls().map((url) => ({ url, src: 'gsc' })),
     ...loadLegacySlugUrls().map((url) => ({ url, src: 'legacy' })),
@@ -5143,8 +5254,22 @@ async function main() {
       [...aliasCityPaths],
       [...catById.keys()],
     ).map((url) => ({ url, src: 'prev' })),
+    ...registryEntries.map(({ path }) => ({ url: `${SITE_URL}/${path}/`, src: 'registry' })),
   ];
-  const aliasBySrc = { gsc: 0, legacy: 0, prev: 0, prevCategory: 0 };
+  const aliasBySrc = { gsc: 0, legacy: 0, prev: 0, registry: 0 };
+  // Отказы по путям реестра — в лог (путь, причина): реестр это внешний вход
+  // (файл с прода), и молча отброшенная запись уменьшает набор алиасов.
+  // Печатаю первые 20 отказов каждой причины, дальше — только итог.
+  const aliasRejects = new Map();
+  let aliasRegistryCategory = 0;
+  const aliasReject = (src, shown, reason) => {
+    if (src !== 'registry') return;
+    const n = (aliasRejects.get(reason) ?? 0) + 1;
+    aliasRejects.set(reason, n);
+    if (n <= 20) console.log(`  реестр алиасов: путь отброшен — ${shown} (${reason})`);
+    else if (n === 21) console.log(`  реестр алиасов: …остальные отказы «${reason}» не печатаю`);
+  };
+
   for (const { url: raw, src: aliasSrc } of aliasSources) {
     const rel = raw.startsWith(SITE_URL) ? raw.slice(SITE_URL.length) : raw;
     const m = /^\/(en\/)?event\/([0-9a-fA-F-]{36})\/([^/]+)\/$/.exec(rel);
@@ -5158,17 +5283,31 @@ async function main() {
       // городская страница /<city>/ (она публикуется всегда). В sitemap алиас не
       // попадает (locs не трогаем), noindex не ставится, hreflang не выводится.
       const mc = /^\/(en\/)?([a-z0-9-]+)\/([a-z0-9_-]+)\/$/.exec(rel);
-      if (!mc) continue;
+      if (!mc) {
+        aliasReject(aliasSrc, raw, 'не путь события и не «город × категория»');
+        continue;
+      }
       const en = Boolean(mc[1]);
       const cityAliasPath = mc[2];
       const catId = mc[3];
-      if (!aliasCityPaths.has(cityAliasPath)) continue;
+      if (!aliasCityPaths.has(cityAliasPath)) {
+        aliasReject(aliasSrc, raw, `город вне CITY_PAGES: ${cityAliasPath}`);
+        continue;
+      }
       const cat = catById.get(catId);
-      if (!cat) continue;
+      if (!cat) {
+        aliasReject(aliasSrc, raw, `категории нет в таблице categories: ${catId}`);
+        continue;
+      }
       const aliasPath = `${en ? 'en/' : ''}${cityAliasPath}/${catId}`;
       const selfUrl = `${SITE_URL}/${aliasPath}/`;
-      // Страница ячейки в новой сборке есть — URL живой, алиас не нужен.
-      if (locsSet.has(selfUrl) || aliasSeen.has(aliasPath)) continue;
+      // Страница ячейки в новой сборке есть — URL живой, алиас не нужен
+      // (и запись реестра снимается: адрес снова стал обычной страницей).
+      if (aliasSeen.has(aliasPath)) continue;
+      if (locsSet.has(selfUrl)) {
+        aliasReject(aliasSrc, raw, 'адрес снова стал обычной страницей (вошёл в sitemap)');
+        continue;
+      }
       const cellPageUrl = `${SITE_URL}/${cityAliasPath}/${catId}/`;
       const cityPageUrl = `${SITE_URL}/${cityAliasPath}/`;
       // canonical: RU-версия той же ячейки (только если реально опубликована)
@@ -5222,14 +5361,20 @@ async function main() {
       });
       aliasSeen.add(aliasPath);
       aliasCategoryPages += 1;
-      aliasBySrc.prevCategory += 1;
+      if (aliasSrc === 'registry') aliasRegistryCategory += 1;
       continue;
     }
     const en = Boolean(m[1]);
     const ev = byIdAnyCase.get(m[2].toLowerCase());
-    if (!ev) continue;
+    if (!ev) {
+      aliasReject(aliasSrc, raw, 'события нет в этой сборке');
+      continue;
+    }
     const hasEn = eventHasEn(ev);
-    if (en && !hasEn) continue;
+    if (en && !hasEn) {
+      aliasReject(aliasSrc, raw, 'у события нет EN-версии — EN-алиас не пишется');
+      continue;
+    }
     // Клон, снятый дедупликацией: своей страницы у него нет, поэтому canonical
     // и мета берутся у страницы ГЛАВНОЙ копии (keptId) — иначе Google терял бы
     // уже известный адрес клона (404) вместо консолидации на живой странице.
@@ -5237,16 +5382,32 @@ async function main() {
     let canonicalEv = ev;
     if (keptId) {
       const keptEv = byIdAnyCase.get(keptId);
-      if (!keptEv) continue; // страницы главной копии в сборке нет — алиас не пишем
+      if (!keptEv) {
+        aliasReject(aliasSrc, raw, 'страницы главной копии (дедуп) нет в сборке');
+        continue;
+      }
       canonicalEv = keptEv;
     }
     const curSlug = eventSlug(canonicalEv, en ? 'en' : 'ru');
     const curPath = `${en ? 'en/' : ''}event/${canonicalEv.id}/${curSlug}`;
     const aliasPath = `${en ? 'en/' : ''}event/${ev.id}/${m[3]}`;
-    if (aliasPath === curPath || aliasSeen.has(aliasPath)) continue;
+    if (aliasPath === curPath) {
+      aliasReject(aliasSrc, raw, 'хвост совпадает с каноническим URL — алиас не нужен');
+      continue;
+    }
+    if (aliasSeen.has(aliasPath)) continue;
+    // Адрес снова стал обычной страницей этой сборки — алиас не пишем и запись
+    // из реестра снимаем (заодно страховка от перезаписи живой страницы).
+    if (locsSet.has(`${SITE_URL}/${aliasPath}/`)) {
+      aliasReject(aliasSrc, raw, 'адрес снова стал обычной страницей (вошёл в sitemap)');
+      continue;
+    }
     // Мета канонической страницы: активной (activePathMeta) или архивной
     const meta = activePathMeta.get(curPath) ?? pastPathMeta.get(curPath);
-    if (!meta) continue; // канонической страницы нет (напр. событие вне сборки) — алиас не нужен
+    if (!meta) {
+      aliasReject(aliasSrc, raw, `канонической страницы нет в сборке: /${curPath}/`);
+      continue; // канонической страницы нет (напр. событие вне сборки) — алиас не нужен
+    }
     // Карта соответствия для SPA (id клона → адреса главной копии): без неё
     // гидратация подменяла бы canonical на /event/<cloneId>/... — такого URL
     // нет (404). Пишем только те версии, что реально есть в сборке.
@@ -5269,10 +5430,43 @@ async function main() {
   }
   if (pastPagesBuffer.length) await writePagesParallel(pastPagesBuffer);
   console.log(
-    `  страниц-алиасов исторических URL: ${aliasPages} (GSC ${aliasBySrc.gsc}, legacy-слаг ${aliasBySrc.legacy}, sitemap прошлой сборки ${aliasBySrc.prev})`,
+    `  страниц-алиасов исторических URL: ${aliasPages} (GSC ${aliasBySrc.gsc}, legacy-слаг ${aliasBySrc.legacy}, sitemap прошлой сборки ${aliasBySrc.prev}, реестр ${aliasBySrc.registry})`,
   );
   console.log(
-    `  страниц-алиасов «город × категория» (URL из sitemap прошлой сборки, гейт не пройден): ${aliasCategoryPages}`,
+    `  страниц-алиасов «город × категория» (URL из sitemap прошлой сборки, гейт не пройден): ${aliasCategoryPages} (реестр ${aliasRegistryCategory})`,
+  );
+  if (aliasRejects.size) {
+    const total = [...aliasRejects.values()].reduce((a, b) => a + b, 0);
+    console.log(
+      `  реестр алиасов: отброшено ${total} путей — ${[...aliasRejects.entries()]
+        .map(([reason, n]) => `${reason}: ${n}`)
+        .join('; ')}`,
+    );
+  }
+
+  // --- Перезапись постоянного реестра страниц-алиасов -----------------------
+  // Ровно те пути, для которых в ЭТОЙ сборке реально написана страница-алиас
+  // (aliasSeen): набор живёт между сборками и самоочищается — адрес, снова
+  // ставший обычной страницей (вошёл в sitemap), и алиас, у которого больше
+  // нет канонической цели, сюда не попадают и из реестра выпадают.
+  // Публикация идёт с keep_files:false, поэтому файл должен лежать в dist
+  // КАЖДОЙ сборки: иначе /data/alias-urls.json отдаст 404 и следующий прогон
+  // останется без реестра. Секретов в файле нет — только публичные пути.
+  // Детерминированно: сортировка, дедуп, без timestamp-полей, ≤ MAX путей.
+  const registryNow = [...aliasSeen].sort();
+  const registryPrevSet = new Set(registryPaths);
+  const registryAdded = registryNow.filter((p) => !registryPrevSet.has(p)).length;
+  const registryRemoved = registryPaths.filter((p) => !aliasSeen.has(p)).length;
+  if (registryNow.length > ALIAS_REGISTRY_MAX) {
+    console.log(
+      `  реестр алиасов: в сборке ${registryNow.length} путей > ${ALIAS_REGISTRY_MAX} — пишу первые ${ALIAS_REGISTRY_MAX} (лишние адреса потеряют страховку реестра)`,
+    );
+  }
+  const registryOut = registryNow.slice(0, ALIAS_REGISTRY_MAX);
+  mkdirSync(join(DIST, 'data'), { recursive: true });
+  writeFileSync(join(DIST, 'data', 'alias-urls.json'), `${JSON.stringify(registryOut)}\n`);
+  console.log(
+    `  реестр алиасов: ${registryOut.length} путей (новых ${registryAdded}, снято ${registryRemoved}) → /data/alias-urls.json`,
   );
   if (pastNoChrono) {
     console.log(

@@ -126,6 +126,30 @@ check('dist/assets содержит бандл .js', () => {
   return `${js.length} файлов`;
 });
 
+// Постоянный реестр страниц-алиасов (/data/alias-urls.json). Публикация идёт с
+// keep_files:false, поэтому файла нет в dist → прод отдаёт 404 → следующая
+// сборка остаётся без реестра и теряет алиасы, которых нет в sitemap (именно так
+// 15.10 пропал /en/bali/cinema/). Барьер: файл есть, это JSON-массив путей без
+// домена и без ведущего слэша. Пустой массив допустим (алиасов может не быть),
+// невалидные записи — нет.
+check('dist/data/alias-urls.json: валидный массив путей', () => {
+  const abs = need(join('data', 'alias-urls.json'));
+  let arr;
+  try {
+    arr = JSON.parse(readFileSync(abs, 'utf8'));
+  } catch (error) {
+    throw new Error(`не JSON: ${error.message}`);
+  }
+  if (!Array.isArray(arr)) throw new Error('ожидался JSON-массив путей');
+  const bad = arr.filter(
+    (p) => typeof p !== 'string' || !p || p.startsWith('/') || p.includes('://') || p.endsWith('/'),
+  );
+  if (bad.length > 0) {
+    throw new Error(`невалидных записей ${bad.length}, например «${String(bad[0])}»`);
+  }
+  return `${arr.length} путей`;
+});
+
 notes.push(`dist на диске: ${relative(ROOT, DIST)}`);
 
 if (failures.length > 0) {
