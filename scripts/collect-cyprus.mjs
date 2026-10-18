@@ -11,6 +11,7 @@
 // Запуск: GitHub Actions по расписанию или вручную. Переменные окружения:
 // SUPABASE_URL, SUPABASE_SERVICE_ROLE, DEEPSEEK_API_KEY (категория через LLM).
 import { createClient } from '@supabase/supabase-js';
+import { createHash } from 'node:crypto';
 import { extractCategory } from './category-llm.mjs';
 import { selectAll } from './db-rows.mjs';
 import { districtOf, districtNear, districtOfCity, cityForPoint, snapDistrictLabel, isCityOnlyVenue } from './cy-districts.mjs';
@@ -41,6 +42,48 @@ function cyHM(iso) {
 }
 // Дата события тоже кипрская: 21:30Z 30.10 — это 00:30 31.10 по острову, а slice(0,10) давал 30.10.
 const CY_DATE = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Nicosia', year: 'numeric', month: '2-digit', day: '2-digit' });
+// ===== Обложка Cyprus Now по слагу страницы (канал 321) =====
+// Лента отдаёт image_url/local_image_url не всегда (у ~50 живых карточек поля null),
+// но их Storage держит обложку события по слагу: …/forecast-events/events/<slug>/cover-800.webp.
+// Страховки: файл < MIN_BYTES — это thumb/заглушка, а ОДИН и тот же файл на РАЗНЫХ
+// событиях — брендовая обложка организатора (Kuns Studio: md5 7272cdc5…, 52 844 б),
+// такие обложкой не ставим: у карточки лучше пустая витрина, чем чужая картинка.
+const CN_COVER_BASE = 'https://ygyeyprogpawmjzjyrew.supabase.co/storage/v1/object/public/forecast-events/events/';
+const CN_COVER_MIN_BYTES = 8000; // настоящие карточки CN бывают 12.4 КБ (kosta-kritikos) — 15000 отсекало реальные
+const CN_COVER_STUBS = new Set(['7272cdc5db952c7e2f00e17a156f6622']);
+const cnCoverHashes = new Set();
+let cnCoverTries = 0;
+const CN_COVER_MAX_TRIES = 60;
+
+async function cnCoverBySlug(pageUrl) {
+  try {
+    if (!pageUrl || cnCoverTries >= CN_COVER_MAX_TRIES) return null;
+    const slug = new URL(pageUrl).pathname.split('/').filter(Boolean).pop();
+    if (!slug) return null;
+    cnCoverTries++;
+    const url = `${CN_COVER_BASE}${slug}/cover-800.webp`;
+    const res = await fetch(url, { headers: { 'user-agent': 'Mozilla/5.0 (compatible; events-map/1.0)' } });
+    if (!res.ok) return null;
+    const buf = Buffer.from(await res.arrayBuffer());
+    if (buf.length < CN_COVER_MIN_BYTES) return null;
+    const md5 = createHash('md5').update(buf).digest('hex');
+    if (CN_COVER_STUBS.has(md5) || cnCoverHashes.has(md5)) return null;
+    cnCoverHashes.add(md5);
+    return url;
+  } catch {
+    return null;
+  }
+}
+
+// Фото карточки CN: сначала поля ленты (в т.ч. local_image_url — их Storage), и только
+// если лента молчит — обложка по слагу страницы (cnCoverBySlug с фильтром уникальности).
+async function cnPhotosFor(ev, pageUrl) {
+  const direct = [ev.local_image_url, ev.image_url, ev.image, ev.cover_image].filter(Boolean);
+  if (direct.length) return direct;
+  const cover = await cnCoverBySlug(pageUrl);
+  return cover ? [cover] : [];
+}
+
 function cyDate(iso) {
   const s = String(iso || '');
   if (!s) return null;
@@ -664,7 +707,7 @@ async function collectCyprusNow(seen, budget, websites = new Set(), venueCities 
         lat: Number.isFinite(lat) && Math.abs(lat) > 1 ? lat : null,
         lng: Number.isFinite(lng) && Math.abs(lng) > 1 ? lng : null,
         website: pageUrl,
-        photos: [ev.image_url || ev.image || ev.cover_image].filter(Boolean),
+        photos: await cnPhotosFor(ev, pageUrl),
         price: Number.isFinite(priceNum) ? priceNum : null,
         currency: Number.isFinite(priceNum) ? 'eur' : null,
         category: 'festival',
@@ -933,7 +976,7 @@ async function main() {
   );
 }
 
-export { jsonLdEvents, canonBzPage };
+export { jsonLdEvents, canonBzPage, cnCoverBySlug, cnPhotosFor };
 
 // Модуль можно импортировать (скрипты проверки) — тогда сбор не запускается.
 const isDirectRun = /collect-cyprus\.mjs$/.test((process.argv[1] || '').replace(/\\/g, '/'));
