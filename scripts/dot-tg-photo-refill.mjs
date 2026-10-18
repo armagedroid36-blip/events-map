@@ -14,6 +14,9 @@ const APPLY = process.env.APPLY === '1';
 const LIMIT = Number(process.env.LIMIT || 5);
 const TMP = process.env.LOCALAPPDATA + '/Temp';
 const MIN_BYTES = Number(process.env.MIN_BYTES || 15000);
+// Лимит размера объекта в бакете photos: файл больше лимита даёт ошибку
+// «The object exceeded the maximum allowed size», и карточка остаётся без фото.
+const MAX_BYTES = Number(process.env.MAX_BYTES || 5000000);
 
 const db = createClient(
   process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL,
@@ -60,6 +63,7 @@ for (const r of targets) {
     try { ic = await fetchTo(uniq[i], img); } catch { ic = 0; }
     const size = ic === 200 ? (await fs.stat(img)).size : 0;
     if (ic !== 200 || size < MIN_BYTES) { console.log('  пропуск фото', i, ic, size); continue; }
+    if (size > MAX_BYTES) { console.log('  пропуск фото (больше лимита бакета)', i, size); continue; }
     got.push({ i, size, img });
   }
   got.sort((a, b) => b.size - a.size);
