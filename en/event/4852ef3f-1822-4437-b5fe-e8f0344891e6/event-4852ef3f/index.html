@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Break the Ice in Nicosia — November 20, 2026 · Nicosia</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-CY9Di6jE.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-5Gu2k9hs.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DZZfR5ty.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Ds-yjfvD.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Nicosia, Cyprus, November 20, 2026. A stand-up comedy show COPYBET presents Hamis&#39; 2nd solo stand-up comedy show titled &quot;Breaking the Ice.&quot; This time Hamis is…" />
+    <link rel="canonical" href="https://mypins.site/en/event/4852ef3f-1822-4437-b5fe-e8f0344891e6/break-the-ice-in-nicosia/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Break the Ice in Nicosia — November 20, 2026 · Nicosia" />
+    <meta property="og:description" content="Nicosia, Cyprus, November 20, 2026. A stand-up comedy show COPYBET presents Hamis&#39; 2nd solo stand-up comedy show titled &quot;Breaking the Ice.&quot; This time Hamis is…" />
+    <meta property="og:url" content="https://mypins.site/en/event/4852ef3f-1822-4437-b5fe-e8f0344891e6/break-the-ice-in-nicosia/" />
+    <meta property="og:image" content="https://www.eventshub.cy/wp-content/uploads/2026/09/na-spasei-o-pagos-1.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/4852ef3f-1822-4437-b5fe-e8f0344891e6/break-the-ice-in-nicosia/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/4852ef3f-1822-4437-b5fe-e8f0344891e6/razbit-led-v-nikosii/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Break the Ice in Nicosia","url":"https://mypins.site/en/event/4852ef3f-1822-4437-b5fe-e8f0344891e6/break-the-ice-in-nicosia/","startDate":"2026-11-20T20:30:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Black Brick, Nicosia","address":{"@type":"PostalAddress","addressLocality":"Nicosia","streetAddress":"Black Brick, Nicosia","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1349525,"longitude":33.3551587}},"offers":{"@type":"Offer","url":"https://mypins.site/en/event/4852ef3f-1822-4437-b5fe-e8f0344891e6/break-the-ice-in-nicosia/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-10-15"},"description":"A stand-up comedy show COPYBET presents Hamis' 2nd solo stand-up comedy show titled \"Breaking the Ice.\" This time Hamis is not running for president, and after doing his self-critique, he tries to introduce himself in his favorite way, by breaking the ice. He will attempt to analyze: his grandmother's relationship with TikTok, why he is afraid to have kids, why he is considered the General Secretary of Cancellations, the particular reason he hates Christmas, the best hate comments people wrote about him, his experience in the central prisons, and how comedy helps","endDate":"2026-11-20","image":"https://www.eventshub.cy/wp-content/uploads/2026/09/na-spasei-o-pagos-1.jpg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CE%BD%CE%B1-%CF%83%CF%80%CE%AC%CF%83%CE%B5%CE%B9-%CE%BF-%CF%80%CE%AC%CE%B3%CE%BF%CF%82-%CF%83%CF%84%CE%B7-%CE%BB%CE%B5%CF%85%CE%BA%CF%89%CF%83%CE%AF%CE%B1-2026-11-20"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Break the Ice in Nicosia","item":"https://mypins.site/en/event/4852ef3f-1822-4437-b5fe-e8f0344891e6/break-the-ice-in-nicosia/"}]}]}</script>
+    <script type="application/json" id="seo-alias-map">{"cloneId":"4852ef3f-1822-4437-b5fe-e8f0344891e6","keptId":"4852ef3f-1822-4437-b5fe-e8f0344891e6","ru":"https://mypins.site/event/4852ef3f-1822-4437-b5fe-e8f0344891e6/razbit-led-v-nikosii/","en":"https://mypins.site/en/event/4852ef3f-1822-4437-b5fe-e8f0344891e6/break-the-ice-in-nicosia/"}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Break the Ice in Nicosia</h1>
+  <p><time datetime="2026-11-20T20:30:00">November 20, 2026, 8:30 PM</time></p>
+  <address>Black Brick, Nicosia, Cyprus</address>
+  <p>A stand-up comedy show
+
+COPYBET presents Hamis&#39; 2nd solo stand-up comedy show titled &quot;Breaking the Ice.&quot;
+
+This time Hamis is not running for president, and after doing his self-critique, he tries to introduce himself in his favorite way, by breaking the ice. He will attempt to analyze:
+
+his grandmother&#39;s relationship with TikTok,
+
+why he is afraid to have kids,
+
+why he is considered the General Secretary of Cancellations,
+
+the particular reason he hates Christmas,
+
+the best hate comments people wrote about him,
+
+his experience in the central prisons,
+
+and how comedy helps</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Break the Ice in Nicosia</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/theatre/">🎭 Theatres &amp; Shows</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/e32edbec-f266-4199-a3e1-7d9cbbaa274c/break-the-ice-in-limassol/">Break the Ice in Limassol <time datetime="2026-11-19">November 19, 2026</time></a></li>
+    <li><a href="/en/event/1009b879-82bb-4bf3-a8f7-8a91ce5492e3/here-and-there-in-dialogue-the-state-of-the-monument/">Here and There, In Dialogue: The State of the Monument <time datetime="2026-11-20">November 20, 2026</time></a></li>
+    <li><a href="/en/event/41aaf4ad-5957-443c-b7df-8cdec730d8a5/enta-gambler-hedda-gabler/">Enta Gambler | Hedda Gabler <time datetime="2026-11-20">November 20, 2026</time></a></li>
+    <li><a href="/en/event/c1de086c-a451-4e2c-b6e7-6343529d5271/the-cut-of-her-jib-comedy-theatre/">The Cut Of Her Jib - Comedy Theatre <time datetime="2026-11-20">November 20, 2026</time></a></li>
+    <li><a href="/en/event/03124443-ec46-4090-a627-17965125caa2/little-red-riding-hood-in-limassol/">Little Red Riding Hood in Limassol <time datetime="2026-11-21">November 21, 2026</time></a></li>
+    <li><a href="/en/event/7225a82a-d249-48dd-95da-1e6df24cfd10/italian-passions-with-a-cypriot-accent/">Italian Passions With A Cypriot Accent! <time datetime="2026-11-21">November 21, 2026</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>

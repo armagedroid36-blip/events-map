@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>I&#39;m recovering in Limassol — November 10, 2026 · Limassol</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-CY9Di6jE.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-5Gu2k9hs.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DZZfR5ty.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Ds-yjfvD.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Limassol, Cyprus, November 10, 2026. New cycle of performances for the theatrical monologue &#39;Anakoutreuko&#39; directed by Anna Giagkiozi. A monologue that…" />
+    <link rel="canonical" href="https://mypins.site/en/event/9a816063-5b88-4d3d-8158-ab603f527923/i-m-recovering-in-limassol/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="I&#39;m recovering in Limassol — November 10, 2026 · Limassol" />
+    <meta property="og:description" content="Limassol, Cyprus, November 10, 2026. New cycle of performances for the theatrical monologue &#39;Anakoutreuko&#39; directed by Anna Giagkiozi. A monologue that…" />
+    <meta property="og:url" content="https://mypins.site/en/event/9a816063-5b88-4d3d-8158-ab603f527923/i-m-recovering-in-limassol/" />
+    <meta property="og:image" content="https://www.eventshub.cy/wp-content/uploads/2026/10/ANAKOUTREFKO-oct-26.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/9a816063-5b88-4d3d-8158-ab603f527923/i-m-recovering-in-limassol/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/9a816063-5b88-4d3d-8158-ab603f527923/vstrechayus-v-limasole/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"I'm recovering in Limassol","url":"https://mypins.site/en/event/9a816063-5b88-4d3d-8158-ab603f527923/i-m-recovering-in-limassol/","startDate":"2026-11-10T20:30:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Palio Xidadiko, Limassol","address":{"@type":"PostalAddress","addressLocality":"Limassol","streetAddress":"Palio Xidadiko, Limassol","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.6732045,"longitude":33.0436665}},"description":"New cycle of performances for the theatrical monologue 'Anakoutreuko' directed by Anna Giagkiozi. A monologue that balances between a cry of existential anguish and a call to keep our memory alive. Inspired by contemporary essays and texts of world literature (Samuel Beckett, Chronis Missios, Thomas Ostermeier). A character in waiting. An urgent situation. A bench. A pyrotechnic critique of modern life. Depression or emotional strike? A game. Memory. The daughter depicted on the Cypriot pound returns as a symbol of memory.","endDate":"2026-11-10","image":"https://www.eventshub.cy/wp-content/uploads/2026/10/ANAKOUTREFKO-oct-26.png","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CE%B1%CE%BD%CE%B1%CE%BA%CE%BF%CF%85%CF%84%CF%81%CE%B5%CF%8D%CE%BA%CF%89-%CF%83%CF%84%CE%B7-%CE%BB%CE%B5%CE%BC%CE%B5%CF%83%CF%8C-2026-11-10"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"I'm recovering in Limassol","item":"https://mypins.site/en/event/9a816063-5b88-4d3d-8158-ab603f527923/i-m-recovering-in-limassol/"}]}]}</script>
+    <script type="application/json" id="seo-alias-map">{"cloneId":"9a816063-5b88-4d3d-8158-ab603f527923","keptId":"9a816063-5b88-4d3d-8158-ab603f527923","ru":"https://mypins.site/event/9a816063-5b88-4d3d-8158-ab603f527923/vstrechayus-v-limasole/","en":"https://mypins.site/en/event/9a816063-5b88-4d3d-8158-ab603f527923/i-m-recovering-in-limassol/"}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>I&#39;m recovering in Limassol</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-11-10">November 10, 2026</time></p>
+  <p><time datetime="2026-11-10T20:30:00">November 10, 2026, 8:30 PM</time></p>
+  <address>Palio Xidadiko, Limassol, Cyprus</address>
+  <p>New cycle of performances for the theatrical monologue &#39;Anakoutreuko&#39; directed by Anna Giagkiozi.
+
+A monologue that balances between a cry of existential anguish and a call to keep our memory alive. Inspired by contemporary essays and texts of world literature (Samuel Beckett, Chronis Missios, Thomas Ostermeier).
+
+A character in waiting. An urgent situation. A bench.
+
+A pyrotechnic critique of modern life.
+
+Depression or emotional strike?
+
+A game.
+
+Memory.
+
+The daughter depicted on the Cypriot pound returns as a symbol of memory.</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>I&#39;m recovering in Limassol</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/festival/">🎉 Festivals</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/14e86070-daeb-4976-992f-bbfe9841058c/an-urban-festival-of-contemporary-art-and-community/">An urban festival of contemporary art and community <time datetime="2026-11-04">November 4, 2026</time></a></li>
+    <li><a href="/en/event/1bed95c6-a83a-4222-b916-da2e57bafabe/art-explora-festival-at-limassol-marina/">Art Explora Festival at Limassol Marina <time datetime="2026-11-04">November 4, 2026</time></a></li>
+    <li><a href="/en/event/4f1c6fef-5f6b-423b-b9d8-259a533fb437/mushroom-festival/">Mushroom Festival <time datetime="2026-11-05">November 5, 2026</time></a></li>
+    <li><a href="/en/event/1aa0ea86-e8df-4699-9b78-f5352fa87802/zivania-festival-2026-pelendri-village/">Zivania Festival 2026 @ Pelendri Village <time datetime="2026-11-07">November 7, 2026</time></a></li>
+    <li><a href="/en/event/428c8398-2e4f-48ba-8160-eef6c49dd04e/sia-chilli-fes/">Sia Chilli Fes <time datetime="2026-11-07">November 7, 2026</time></a></li>
+    <li><a href="/en/event/5ecf6442-1838-4c86-892a-c763eb737397/the-neighborhood-of-cine-volos-festival-3rd-edition/">The Neighborhood of Cine Volos Festival – 3rd Edition <time datetime="2026-11-08">November 8, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/6f07b75c-5e49-4928-807d-6e573d61c765/john-cleese-last-time-to-see-me-before-i-die-at-eleftheria-arena/">John Cleese: Last Time to See Me Before I Die at Eleftheria Arena</a> <time datetime="2026-11-10">November 10, 2026</time></li>
+    <li>Next: <a href="/en/event/63ef3d90-9787-450e-94a0-1758fd4fa2ea/limassol-fashion-week-2026-the-warehouse-by-itquarter/">Limassol Fashion Week 2026 @ The Warehouse by ITQuarter</a> <time datetime="2026-11-11">November 11, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

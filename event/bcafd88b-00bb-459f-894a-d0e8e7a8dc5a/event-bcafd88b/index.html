@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Продукты из оливок — 15 ноября 2026 · Никосия, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-CY9Di6jE.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-5Gu2k9hs.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DZZfR5ty.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Ds-yjfvD.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Никосия, Кипр, 15 ноября 2026. «Выучи ремесло и брось его, а если проголодаешься — подбери его» — говорит эта пословица, несущая мудрость народной традиции…" />
+    <link rel="canonical" href="https://mypins.site/event/bcafd88b-00bb-459f-894a-d0e8e7a8dc5a/produkty-iz-olivok/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Продукты из оливок — 15 ноября 2026 · Никосия, Кипр" />
+    <meta property="og:description" content="Никосия, Кипр, 15 ноября 2026. «Выучи ремесло и брось его, а если проголодаешься — подбери его» — говорит эта пословица, несущая мудрость народной традиции…" />
+    <meta property="og:url" content="https://mypins.site/event/bcafd88b-00bb-459f-894a-d0e8e7a8dc5a/produkty-iz-olivok/" />
+    <meta property="og:image" content="https://www.eventshub.cy/wp-content/uploads/2026/10/proionta-elias.webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/bcafd88b-00bb-459f-894a-d0e8e7a8dc5a/produkty-iz-olivok/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/bcafd88b-00bb-459f-894a-d0e8e7a8dc5a/olive-products/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Продукты из оливок","url":"https://mypins.site/event/bcafd88b-00bb-459f-894a-d0e8e7a8dc5a/produkty-iz-olivok/","startDate":"2026-11-15T10:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Lythrodontas Village Square","address":{"@type":"PostalAddress","addressLocality":"Никосия","streetAddress":"Lythrodontas Village Square","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.9399975,"longitude":33.2901556}},"offers":{"@type":"Offer","url":"https://mypins.site/event/bcafd88b-00bb-459f-894a-d0e8e7a8dc5a/produkty-iz-olivok/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-10-16"},"description":"«Выучи ремесло и брось его, а если проголодаешься — подбери его» — говорит эта пословица, несущая мудрость народной традиции. Она побуждает нас освоить ремесло, развить навыки, приобрести подспорье в жизни, даже если оно нам не нужно прямо сейчас. Если в какой-то момент дела пойдут не так, как мы планировали, ремесло, возможно, даст нам решение и выручит нас из трудного положения. Жители деревень маршрута “Heartland of Legends” были в основном земледельцами или пастухами, но знали и ремесло. Им приходилось быть творческими и многогранно одарёнными, чтобы иметь возможность дополнить доход","endDate":"2026-11-15","image":"https://www.eventshub.cy/wp-content/uploads/2026/10/proionta-elias.webp","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CF%80%CF%81%CE%BF%CE%B9%CF%8C%CE%BD%CF%84%CE%B1-%CE%B5%CE%BB%CE%B9%CE%AC%CF%82-2026-11-15"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Продукты из оливок","item":"https://mypins.site/event/bcafd88b-00bb-459f-894a-d0e8e7a8dc5a/produkty-iz-olivok/"}]}]}</script>
+    <script type="application/json" id="seo-alias-map">{"cloneId":"bcafd88b-00bb-459f-894a-d0e8e7a8dc5a","keptId":"bcafd88b-00bb-459f-894a-d0e8e7a8dc5a","ru":"https://mypins.site/event/bcafd88b-00bb-459f-894a-d0e8e7a8dc5a/produkty-iz-olivok/","en":"https://mypins.site/en/event/bcafd88b-00bb-459f-894a-d0e8e7a8dc5a/olive-products/"}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Продукты из оливок</h1>
+  <p><time datetime="2026-11-15T10:00:00">15 ноября 2026, 10:00</time></p>
+  <address>Lythrodontas Village Square, Никосия, Кипр</address>
+  <p>«Выучи ремесло и брось его, а если проголодаешься — подбери его» — говорит эта пословица, несущая мудрость народной традиции. Она побуждает нас освоить ремесло, развить навыки, приобрести подспорье в жизни, даже если оно нам не нужно прямо сейчас. Если в какой-то момент дела пойдут не так, как мы планировали, ремесло, возможно, даст нам решение и выручит нас из трудного положения. Жители деревень маршрута “Heartland of Legends” были в основном земледельцами или пастухами, но знали и ремесло. Им приходилось быть творческими и многогранно одарёнными, чтобы иметь возможность дополнить доход</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Продукты из оливок</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/workshop/">🎨 Мастер-классы</a></p>
+  </nav>
+  <p>Другие даты серии:</p>
+  <ul>
+    <li><a href="/event/4e082a51-2809-4a62-898d-e9cb05f4cb28/produkty-iz-olivok/"><time datetime="2026-11-07">7 ноября 2026</time></a></li>
+    <li><a href="/event/10f770ea-8250-4f5a-ab58-951173421d99/produkty-olivy/"><time datetime="2026-11-08">8 ноября 2026</time></a></li>
+    <li><a href="/event/f295fb78-c962-44aa-908d-720e7d80c127/produkty-iz-olivok/"><time datetime="2026-11-14">14 ноября 2026</time></a></li>
+    <li><a href="/event/c05ff1df-c4eb-4b06-8a60-627d071584eb/produkty-iz-olivok/"><time datetime="2026-11-18">18 ноября 2026</time></a></li>
+    <li><a href="/event/a8f2e711-0144-43b3-b57f-3c2f5e33aaa6/produkty-iz-olivok/"><time datetime="2026-11-21">21 ноября 2026</time></a></li>
+  </ul>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/06cc8bae-2ceb-4007-8da6-86b085051ab3/izgotovlenie-kiprskogo-avlosa/">Изготовление кипрского авлоса <time datetime="2026-11-14">14 ноября 2026</time></a></li>
+    <li><a href="/event/15cbd33e-3810-48b4-98d1-f1aaa94aa331/distillyatsiya-zivanii/">Дистилляция зивании <time datetime="2026-11-14">14 ноября 2026</time></a></li>
+    <li><a href="/event/721969ce-5720-4654-ac39-eeebf9113290/izgotovlenie-taburetov-iz-plavnika/">Изготовление табуретов из плавника <time datetime="2026-11-14">14 ноября 2026</time></a></li>
+    <li><a href="/event/87353d4c-496b-47d4-9b13-5015f84c37ba/materialnaya-perepiska-vorkshop-dikaya-glina-i-territoriya-v-nikosii/">Материальная переписка: воркшоп «Дикая глина и территория» в Никосии <time datetime="2026-11-14">14 ноября 2026</time></a></li>
+    <li><a href="/event/8a42856d-a99d-4670-852f-37b8de2ff51d/nabor-iz-2-kruzhek-ruchnaya-lepka-i-rospis-unikalnyy-opyt-noyabr/">Набор из 2 кружек: ручная лепка и роспись – уникальный опыт, ноябрь <time datetime="2026-11-14">14 ноября 2026</time></a></li>
+    <li><a href="/event/f8fef5ab-eceb-41f5-a5a7-1df861f47e70/master-klassy-traditsionnogo-tantsa-khor-traditsionnoy-pesni/">Мастер-классы традиционного танца - Хор традиционной песни <time datetime="2026-11-17">17 ноября 2026</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Вишня x Мат Руа — 22 октября 2026 · Никосия, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-CY9Di6jE.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-5Gu2k9hs.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DZZfR5ty.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Ds-yjfvD.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Никосия, Кипр, 22 октября 2026. Телевизор показывает старые любимые моменты. 📺 Мы пишем новые. 🍒♟️ КЕРАСИ — Эпизод 3. Четверг 22 октября в 20:00. Билеты…" />
+    <link rel="canonical" href="https://mypins.site/event/d5aa4217-d468-412c-b609-6026e0f2f155/vishnya-x-mat-rua/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Вишня x Мат Руа — 22 октября 2026 · Никосия, Кипр" />
+    <meta property="og:description" content="Никосия, Кипр, 22 октября 2026. Телевизор показывает старые любимые моменты. 📺 Мы пишем новые. 🍒♟️ КЕРАСИ — Эпизод 3. Четверг 22 октября в 20:00. Билеты…" />
+    <meta property="og:url" content="https://mypins.site/event/d5aa4217-d468-412c-b609-6026e0f2f155/vishnya-x-mat-rua/" />
+    <meta property="og:image" content="https://www.eventshub.cy/wp-content/uploads/2026/10/kerasi-roua-mat-oct-26.jpeg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/d5aa4217-d468-412c-b609-6026e0f2f155/vishnya-x-mat-rua/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/d5aa4217-d468-412c-b609-6026e0f2f155/cherry-x-roua-mat/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Вишня x Мат Руа","url":"https://mypins.site/event/d5aa4217-d468-412c-b609-6026e0f2f155/vishnya-x-mat-rua/","startDate":"2026-10-22T20:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Kerasi Bar","address":{"@type":"PostalAddress","addressLocality":"Никосия","streetAddress":"Kerasi Bar","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1630912,"longitude":33.3586414}},"offers":{"@type":"Offer","url":"https://mypins.site/event/d5aa4217-d468-412c-b609-6026e0f2f155/vishnya-x-mat-rua/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-10-14"},"description":"Телевизор показывает старые любимые моменты. 📺 Мы пишем новые. 🍒♟️ КЕРАСИ — Эпизод 3. Четверг 22 октября в 20:00. Билеты онлайн: www.fomo.com.cy","endDate":"2026-10-22","image":"https://www.eventshub.cy/wp-content/uploads/2026/10/kerasi-roua-mat-oct-26.jpeg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CE%BA%CE%B5%CF%81%CE%AC%CF%83%CE%B9-x-%CF%81%CE%BF%CF%85%CE%AC-%CE%BC%CE%B1%CF%84-2026-10-22"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Вишня x Мат Руа","item":"https://mypins.site/event/d5aa4217-d468-412c-b609-6026e0f2f155/vishnya-x-mat-rua/"}]}]}</script>
+    <script type="application/json" id="seo-alias-map">{"cloneId":"d5aa4217-d468-412c-b609-6026e0f2f155","keptId":"d5aa4217-d468-412c-b609-6026e0f2f155","ru":"https://mypins.site/event/d5aa4217-d468-412c-b609-6026e0f2f155/vishnya-x-mat-rua/","en":"https://mypins.site/en/event/d5aa4217-d468-412c-b609-6026e0f2f155/cherry-x-roua-mat/"}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Вишня x Мат Руа</h1>
+  <p><time datetime="2026-10-22T20:00:00">22 октября 2026, 20:00</time></p>
+  <address>Kerasi Bar, Никосия, Кипр</address>
+  <p>Телевизор показывает старые любимые моменты. 📺
+
+Мы пишем новые. 🍒♟️
+
+КЕРАСИ — Эпизод 3.
+
+Четверг 22 октября в 20:00.
+
+Билеты онлайн: www.fomo.com.cy</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Вишня x Мат Руа</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/theatre/">🎭 Театры и шоу</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/0c44fc76-40b7-4ad2-85e5-dbe10c13f002/vse-eto/">Всё это <time datetime="2026-10-21">21 октября 2026</time></a></li>
+    <li><a href="/event/4a027538-7ec0-4c23-ab20-62de77db7ea3/moloko/">Молоко <time datetime="2026-10-21">21 октября 2026</time></a></li>
+    <li><a href="/event/5782b262-194a-4d13-b9b6-a035af5e0075/aproetimatos-vecher-stendap-komedii-v-bare-karanti/">Апроэтиматос: Вечер стендап-комедии в баре Каранти <time datetime="2026-10-21">21 октября 2026</time></a></li>
+    <li><a href="/event/9d72b5c6-cd6a-4c75-9c08-2432d9362fe1/budushchee-za-kotoroe-stoit-umeret/">Будущее, за которое стоит умереть <time datetime="2026-10-22">22 октября 2026</time></a></li>
+    <li><a href="/event/d340de35-ce25-454e-a7ef-a1cca86b123e/meropriyatie-mad-mozart-unique-sympho-show-22-10-26/">Мероприятие MAD MOZART: UNIQUE SYMPHO SHOW, 22/10/26 <time datetime="2026-10-22">22 октября 2026</time></a></li>
+    <li><a href="/event/d9c12397-105f-41fb-87c6-866c5519f665/kak-postroit-svoy-put-kogda-net-karty/">Как построить свой путь, когда нет карты <time datetime="2026-10-22">22 октября 2026</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>

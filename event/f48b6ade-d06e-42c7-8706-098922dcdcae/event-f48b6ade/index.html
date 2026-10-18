@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Рождественская деревня… — 6 декабря 2026 · Никосия, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-CY9Di6jE.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-5Gu2k9hs.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DZZfR5ty.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Ds-yjfvD.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Никосия, Кипр, 6 декабря 2026. Парк Айос Георгиос Лакатамия (открытая площадка Амфитеатра Лакатамия) Пятница 6 декабря 3:00 – 10:00 вечера, выходные (7 и 8…" />
+    <link rel="canonical" href="https://mypins.site/event/f48b6ade-d06e-42c7-8706-098922dcdcae/rozhdestvenskaya-derevnya-munitsipaliteta-lakatamii/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Рождественская деревня… — 6 декабря 2026 · Никосия, Кипр" />
+    <meta property="og:description" content="Никосия, Кипр, 6 декабря 2026. Парк Айос Георгиос Лакатамия (открытая площадка Амфитеатра Лакатамия) Пятница 6 декабря 3:00 – 10:00 вечера, выходные (7 и 8…" />
+    <meta property="og:url" content="https://mypins.site/event/f48b6ade-d06e-42c7-8706-098922dcdcae/rozhdestvenskaya-derevnya-munitsipaliteta-lakatamii/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/f48b6ade-d06e-42c7-8706-098922dcdcae/rozhdestvenskaya-derevnya-munitsipaliteta-lakatamii/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/f48b6ade-d06e-42c7-8706-098922dcdcae/lakatamia-municipality-christmas-village/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Рождественская деревня муниципалитета Лакатамии","url":"https://mypins.site/event/f48b6ade-d06e-42c7-8706-098922dcdcae/rozhdestvenskaya-derevnya-munitsipaliteta-lakatamii/","startDate":"2026-12-06T15:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Никосия","address":{"@type":"PostalAddress","addressLocality":"Никосия","streetAddress":"Никосия","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1746503,"longitude":33.3638783}},"offers":{"@type":"Offer","url":"https://mypins.site/event/f48b6ade-d06e-42c7-8706-098922dcdcae/rozhdestvenskaya-derevnya-munitsipaliteta-lakatamii/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-10-15"},"description":"Парк Айос Георгиос Лакатамия (открытая площадка Амфитеатра Лакатамия) Пятница 6 декабря 3:00 – 10:00 вечера, выходные (7 и 8 декабря) 11:00 утра – 10:00 вечера","endDate":"2026-12-06","image":"https://mypins.site/logo.png","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CF%87%CF%81%CE%B9%CF%83%CF%84%CE%BF%CF%85%CE%B3%CE%B5%CE%BD%CE%BD%CE%B9%CE%AC%CF%84%CE%B9%CE%BA%CE%BF-%CF%87%CF%89%CF%81%CE%B9%CF%8C-%CE%B4%CE%AE%CE%BC%CE%BF%CF%85-%CE%BB%CE%B1%CE%BA%CE%B1%CF%84%CE%AC%CE%BC%CE%B5%CE%B9%CE%B1%CF%82-2026-12-06"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Рождественская деревня муниципалитета Лакатамии","item":"https://mypins.site/event/f48b6ade-d06e-42c7-8706-098922dcdcae/rozhdestvenskaya-derevnya-munitsipaliteta-lakatamii/"}]}]}</script>
+    <script type="application/json" id="seo-alias-map">{"cloneId":"f48b6ade-d06e-42c7-8706-098922dcdcae","keptId":"f48b6ade-d06e-42c7-8706-098922dcdcae","ru":"https://mypins.site/event/f48b6ade-d06e-42c7-8706-098922dcdcae/rozhdestvenskaya-derevnya-munitsipaliteta-lakatamii/","en":"https://mypins.site/en/event/f48b6ade-d06e-42c7-8706-098922dcdcae/lakatamia-municipality-christmas-village/"}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Рождественская деревня муниципалитета Лакатамии</h1>
+  <p><time datetime="2026-12-06T15:00:00">6 декабря 2026, 15:00</time></p>
+  <address>Никосия, Кипр</address>
+  <p>Парк Айос Георгиос Лакатамия (открытая площадка Амфитеатра Лакатамия) Пятница 6 декабря 3:00 – 10:00 вечера, выходные (7 и 8 декабря) 11:00 утра – 10:00 вечера</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Рождественская деревня муниципалитета Лакатамии</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/festival/">🎉 Фестивали</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/d26c7381-63bd-4e1f-b539-26a395fee1a3/prazdnichnye-meropriyatiya/">Праздничные мероприятия <time datetime="2026-12-01">1 декабря 2026</time></a></li>
+    <li><a href="/event/64df71ce-028a-4a99-94d9-840e29ce7af3/zimniy-muzykalnyy-festival-dvukhdnevnoe-elektronnoe-sobytie-v-ayya-nape/">Зимний музыкальный фестиваль: двухдневное электронное событие в Айя-Напе <time datetime="2026-12-04">4 декабря 2026</time></a></li>
+    <li><a href="/event/52769ed7-da48-450c-b86e-6eea90a9eeb5/rozhdestvenskiy-rynok-germanii-2026/">Рождественский рынок Германии 2026 <time datetime="2026-12-06">6 декабря 2026</time></a></li>
+    <li><a href="/event/93b3e346-3511-4e58-ad29-640c757c03d8/zazhzhenie-rozhdestvenskoy-elki-u-gazebo-mare/">Зажжение рождественской ёлки у Gazebo Mare <time datetime="2026-12-07">7 декабря 2026</time></a></li>
+    <li><a href="/event/2b39ece2-a64f-4c4b-b513-dbcd1be6f44e/rozhdestvenskiy-festival-v-cyherbia/">Рождественский фестиваль в CyHerbia <time datetime="2026-12-12">12 декабря 2026</time></a></li>
+    <li><a href="/event/5e3c25fd-2dfa-4f4b-aed8-941b148478cf/limassolskoe-rozhdestvenskoe-shou-prazdnichnaya-magiya-v-sv-georgiya-khavuzas/">Лимассольское рождественское шоу: праздничная магия в Св. Георгия Хавузас <time datetime="2026-12-12">12 декабря 2026</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>

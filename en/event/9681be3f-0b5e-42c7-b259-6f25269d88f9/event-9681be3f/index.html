@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A Night in Paradise — February 7, 2027 · Limassol</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-CY9Di6jE.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-5Gu2k9hs.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DZZfR5ty.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Ds-yjfvD.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Limassol, Cyprus, February 7, 2027." />
+    <link rel="canonical" href="https://mypins.site/en/event/9681be3f-0b5e-42c7-b259-6f25269d88f9/a-night-in-paradise/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="A Night in Paradise — February 7, 2027 · Limassol" />
+    <meta property="og:description" content="Limassol, Cyprus, February 7, 2027." />
+    <meta property="og:url" content="https://mypins.site/en/event/9681be3f-0b5e-42c7-b259-6f25269d88f9/a-night-in-paradise/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/9681be3f-0b5e-42c7-b259-6f25269d88f9/a-night-in-paradise/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/9681be3f-0b5e-42c7-b259-6f25269d88f9/noch-v-rayu/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"A Night in Paradise","url":"https://mypins.site/en/event/9681be3f-0b5e-42c7-b259-6f25269d88f9/a-night-in-paradise/","startDate":"2027-02-07T20:30:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Pattihio Municipal Theatre, Limassol","address":{"@type":"PostalAddress","addressLocality":"Limassol","streetAddress":"Pattihio Municipal Theatre, Limassol","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.6813906,"longitude":33.0440049}},"offers":{"@type":"Offer","url":"https://mypins.site/en/event/9681be3f-0b5e-42c7-b259-6f25269d88f9/a-night-in-paradise/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-10-16"},"endDate":"2027-02-07","image":"https://mypins.site/logo.png","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CE%BC%CE%B9%CE%B1-%CE%BD%CF%8D%CE%BA%CF%84%CE%B1-%CF%83%CF%84%CE%BF%CE%BD-%CF%80%CE%B1%CF%81%CE%AC%CE%B4%CE%B5%CE%B9%CF%83%CE%BF-%CF%87%CE%B5%CE%B9%CE%BC%CE%B5%CF%81%CE%B9%CE%BD%CE%AE-%CF%80%CE%B5%CF%81%CE%B9%CE%BF%CE%B4%CE%B5%CE%AF%CE%B1-%CF%83%CF%84%CE%B7-%CE%BB%CE%B5%CE%BC%CE%B5%CF%83%CF%8C-2027-02-07"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"A Night in Paradise","item":"https://mypins.site/en/event/9681be3f-0b5e-42c7-b259-6f25269d88f9/a-night-in-paradise/"}]}]}</script>
+    <script type="application/json" id="seo-alias-map">{"cloneId":"9681be3f-0b5e-42c7-b259-6f25269d88f9","keptId":"9681be3f-0b5e-42c7-b259-6f25269d88f9","ru":"https://mypins.site/event/9681be3f-0b5e-42c7-b259-6f25269d88f9/noch-v-rayu/","en":"https://mypins.site/en/event/9681be3f-0b5e-42c7-b259-6f25269d88f9/a-night-in-paradise/"}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>A Night in Paradise</h1>
+  <p><time datetime="2027-02-07T20:30:00">February 7, 2027, 8:30 PM</time></p>
+  <address>Pattihio Municipal Theatre, Limassol, Cyprus</address>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>A Night in Paradise</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/theatre/">🎭 Theatres &amp; Shows</a></p>
+  </nav>
+  <p>Other dates in this series:</p>
+  <ul>
+    <li><a href="/en/event/c8f4e64d-9b44-408f-9a9b-a4007b974777/a-night-in-paradise/"><time datetime="2027-02-05">February 5, 2027</time></a></li>
+    <li><a href="/en/event/ca7b6d87-a161-44f1-828a-ba2a5bf23726/a-night-in-paradise/"><time datetime="2027-02-06">February 6, 2027</time></a></li>
+    <li><a href="/en/event/35b31167-1149-428b-8062-7f2d17b2af63/a-night-in-paradise/"><time datetime="2027-02-08">February 8, 2027</time></a></li>
+  </ul>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/fc1dbba1-5be9-49a7-9a5b-9669d2932e54/a-night-in-paradise-winter-tour-in-paphos/">A Night in Paradise (Winter Tour) in Paphos <time datetime="2027-01-23">January 23, 2027</time></a></li>
+    <li><a href="/en/event/89159e6b-d21b-4440-ac9c-b8866d9c0475/a-night-in-paradise-winter-tour-in-paphos/">A Night in Paradise (Winter Tour) in Paphos <time datetime="2027-01-24">January 24, 2027</time></a></li>
+    <li><a href="/en/event/5a4428de-d48e-440f-8b5d-cec827b52730/the-biggest-problem-in-the-world-stand-up-comedy-with-victor-patrascan/">The Biggest Problem in the World – Stand-up Comedy with Victor Patrascan <time datetime="2027-01-29">January 29, 2027</time></a></li>
+    <li><a href="/en/event/7ef56cc0-f294-4ea2-8091-4d0939851502/jack-and-the-beanstalk/">Jack and the Beanstalk <time datetime="2027-02-06">February 6, 2027</time></a></li>
+    <li><a href="/en/event/9df476c2-7dcc-4ea6-99a9-c868dcf855c5/jack-and-the-beanstalk/">Jack and the Beanstalk <time datetime="2027-02-07">February 7, 2027</time></a></li>
+    <li><a href="/en/event/12918638-a30d-4eee-a9a2-18000de224d8/rock-opera-1984-in-limassol-aleksandr-krasovitskiy-teona-dolnikova-and-others/">Rock opera 1984 in Limassol: Aleksandr Krasovitskiy, Teona Dolnikova, and others <time datetime="2027-02-09">February 9, 2027</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>

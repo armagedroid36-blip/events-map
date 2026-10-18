@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Мастер-классы по традиционному… — 9 февраля 2027 · Никосия, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-CY9Di6jE.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-5Gu2k9hs.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DZZfR5ty.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Ds-yjfvD.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Никосия, Кипр, 9 февраля 2027. Начало работы мастерских 2025-2026 Культурная мастерская Агион Омологитон с большой радостью объявляет о начале работы своих…" />
+    <link rel="canonical" href="https://mypins.site/event/5c39e9f4-48ad-41ac-a478-47b69364943d/master-klassy-po-traditsionnomu-tantsu-khor-traditsionnoy-pesni/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Мастер-классы по традиционному… — 9 февраля 2027 · Никосия, Кипр" />
+    <meta property="og:description" content="Никосия, Кипр, 9 февраля 2027. Начало работы мастерских 2025-2026 Культурная мастерская Агион Омологитон с большой радостью объявляет о начале работы своих…" />
+    <meta property="og:url" content="https://mypins.site/event/5c39e9f4-48ad-41ac-a478-47b69364943d/master-klassy-po-traditsionnomu-tantsu-khor-traditsionnoy-pesni/" />
+    <meta property="og:image" content="https://www.letsculture.cy/wp-content/uploads/2025/09/528745377_1152652496895862_8892353909153920371_n.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/5c39e9f4-48ad-41ac-a478-47b69364943d/master-klassy-po-traditsionnomu-tantsu-khor-traditsionnoy-pesni/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/5c39e9f4-48ad-41ac-a478-47b69364943d/traditional-dance-workshops-traditional-song-choir/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Мастер-классы по традиционному танцу — Хор традиционной песни","url":"https://mypins.site/event/5c39e9f4-48ad-41ac-a478-47b69364943d/master-klassy-po-traditsionnomu-tantsu-khor-traditsionnoy-pesni/","startDate":"2027-02-09T18:15:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Agioi Omologites Cultural Workshop","address":{"@type":"PostalAddress","addressLocality":"Никосия","streetAddress":"Agioi Omologites Cultural Workshop","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1382125,"longitude":33.3523384}},"offers":{"@type":"Offer","url":"https://mypins.site/event/5c39e9f4-48ad-41ac-a478-47b69364943d/master-klassy-po-traditsionnomu-tantsu-khor-traditsionnoy-pesni/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-10-17"},"description":"Начало работы мастерских 2025-2026 Культурная мастерская Агион Омологитон с большой радостью объявляет о начале работы своих мастерских в новом творческом году! Танец и музыка начинаются, и мы ждём вас, чтобы разделить год, полный традиций, веселья и творчества. ￼ ТАНЦЕВАЛЬНЫЕ МАСТЕРСКИЕ ДЛЯ ДЕТЕЙ И ПОДРОСТКОВ ￼ Приходите учить танцы нашего края, тренироваться и веселиться! Начало: вторник, 23 сентября 2025 Время: Детские группы: 18:15 – 19:15 Подростковая группа: 18:15 – 19:45 ￼ ТАНЦЕВАЛЬНЫЕ МАСТЕРСКИЕ ДЛЯ ВЗРОСЛЫХ ￼ Для начинающих и продвинутых, любящих традицию","endDate":"2027-02-09T19:15:00","image":"https://www.letsculture.cy/wp-content/uploads/2025/09/528745377_1152652496895862_8892353909153920371_n.jpg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CE%B5%CF%81%CE%B3%CE%B1%CF%83%CF%84%CE%AE%CF%81%CE%B9%CE%B1-%CF%80%CE%B1%CF%81%CE%B1%CE%B4%CE%BF%CF%83%CE%B9%CE%B1%CE%BA%CE%BF%CF%8D-%CF%87%CE%BF%CF%81%CE%BF%CF%8D-%CF%87%CE%BF%CF%81%CF%89%CE%B4%CE%AF%CE%B1-%CF%80%CE%B1%CF%81%CE%B1%CE%B4%CE%BF%CF%83%CE%B9%CE%B1%CE%BA%CE%BF%CF%8D-%CF%84%CF%81%CE%B1%CE%B3%CE%BF%CF%85%CE%B4%CE%B9%CE%BF%CF%8D-2027-02-09"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Мастер-классы по традиционному танцу — Хор традиционной песни","item":"https://mypins.site/event/5c39e9f4-48ad-41ac-a478-47b69364943d/master-klassy-po-traditsionnomu-tantsu-khor-traditsionnoy-pesni/"}]}]}</script>
+    <script type="application/json" id="seo-alias-map">{"cloneId":"5c39e9f4-48ad-41ac-a478-47b69364943d","keptId":"5c39e9f4-48ad-41ac-a478-47b69364943d","ru":"https://mypins.site/event/5c39e9f4-48ad-41ac-a478-47b69364943d/master-klassy-po-traditsionnomu-tantsu-khor-traditsionnoy-pesni/","en":"https://mypins.site/en/event/5c39e9f4-48ad-41ac-a478-47b69364943d/traditional-dance-workshops-traditional-song-choir/"}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Мастер-классы по традиционному танцу — Хор традиционной песни</h1>
+  <p><time datetime="2027-02-09T18:15:00">9 февраля 2027, 18:15</time></p>
+  <address>Agioi Omologites Cultural Workshop, Никосия, Кипр</address>
+  <p>Начало работы мастерских 2025-2026
+
+Культурная мастерская Агион Омологитон с большой радостью объявляет о начале работы своих мастерских в новом творческом году! Танец и музыка начинаются, и мы ждём вас, чтобы разделить год, полный традиций, веселья и творчества.
+
+￼
+
+ТАНЦЕВАЛЬНЫЕ МАСТЕРСКИЕ ДЛЯ ДЕТЕЙ И ПОДРОСТКОВ
+
+￼
+
+Приходите учить танцы нашего края, тренироваться и веселиться!
+
+Начало: вторник, 23 сентября 2025
+
+Время:
+
+Детские группы: 18:15 – 19:15
+
+Подростковая группа: 18:15 – 19:45
+
+￼
+
+ТАНЦЕВАЛЬНЫЕ МАСТЕРСКИЕ ДЛЯ ВЗРОСЛЫХ
+
+￼
+
+Для начинающих и продвинутых, любящих традицию</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Мастер-классы по традиционному танцу — Хор традиционной песни</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/workshop/">🎨 Мастер-классы</a></p>
+  </nav>
+  <p>Другие даты серии:</p>
+  <ul>
+    <li><a href="/event/55b0df9f-bf92-4405-8384-fa228aefa2ef/master-klassy-traditsionnogo-tantsa-khor-traditsionnoy-pesni/"><time datetime="2027-01-05">5 января 2027</time></a></li>
+    <li><a href="/event/c7f41094-98ab-453f-8f02-4d2594dde04f/master-klassy-traditsionnogo-tantsa-khor-traditsionnoy-pesni/"><time datetime="2027-01-12">12 января 2027</time></a></li>
+    <li><a href="/event/dab0bcb4-6bfd-4acb-a3b1-cd8992a07a8d/master-klassy-traditsionnogo-tantsa-khor-traditsionnoy-pesni/"><time datetime="2027-01-19">19 января 2027</time></a></li>
+    <li><a href="/event/65bc715a-8a82-4523-8940-467a7c3e2f07/master-klassy-traditsionnogo-tantsa-khor-traditsionnoy-pesni/"><time datetime="2027-01-26">26 января 2027</time></a></li>
+    <li><a href="/event/125413a4-4444-4728-901a-695fc83c0053/master-klassy-traditsionnogo-tantsa-khor-traditsionnoy-pesni/"><time datetime="2027-02-02">2 февраля 2027</time></a></li>
+  </ul>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/d427e66a-bcaa-4dbc-bc0c-3f795a65eabc/master-klassy-traditsionnogo-tantsa-khor-traditsionnoy-pesni/">Мастер-классы традиционного танца - Хор традиционной песни <time datetime="2026-12-08">8 декабря 2026</time></a></li>
+    <li><a href="/event/7b8bb15a-6fa7-4bd9-a308-f1c86bd5d831/nabor-iz-2-bolshikh-tarelok-ruchnaya-lepka-i-rospis-unikalnyy-opyt/">Набор из 2 больших тарелок: ручная лепка и роспись – уникальный опыт <time datetime="2026-12-12">12 декабря 2026</time></a></li>
+    <li><a href="/event/9f05a118-c3f4-4974-be5a-f58481f9e6b7/master-klassy-traditsionnogo-tantsa-khor-traditsionnoy-pesni/">Мастер-классы традиционного танца - Хор традиционной песни <time datetime="2026-12-15">15 декабря 2026</time></a></li>
+    <li><a href="/event/270d82f8-7861-4955-a034-d5b9c1f957a5/nabor-iz-2-kruzhek-ruchnaya-lepka-i-rospis-unikalnyy-opyt-dekabr/">Набор из 2 кружек: ручная лепка и роспись – уникальный опыт, декабрь <time datetime="2026-12-19">19 декабря 2026</time></a></li>
+    <li><a href="/event/aa9db0df-6fc6-4b51-89c4-ba3123ebbe0d/master-klassy-traditsionnogo-tantsa-khor-traditsionnoy-pesni/">Мастер-классы традиционного танца — Хор традиционной песни <time datetime="2026-12-22">22 декабря 2026</time></a></li>
+    <li><a href="/event/25720a8c-688e-4b81-913d-9a10905bf333/master-klassy-traditsionnogo-tantsa-khor-traditsionnoy-pesni/">Мастер-классы традиционного танца — Хор традиционной песни <time datetime="2026-12-29">29 декабря 2026</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>

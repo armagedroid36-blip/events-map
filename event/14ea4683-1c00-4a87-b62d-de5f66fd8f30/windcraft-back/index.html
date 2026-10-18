@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WINDCRAFT BACK: Мастерская… — 31 октября 2026 · Никосия, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-CY9Di6jE.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-5Gu2k9hs.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DZZfR5ty.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Ds-yjfvD.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Никосия, Кипр, 31 октября 2026. Windcraft Back: 10 лет Windcraft Loud, музыка в центре внимания Некоммерческая организация Windcraft Loud отмечает десять лет…" />
+    <link rel="canonical" href="https://mypins.site/event/14ea4683-1c00-4a87-b62d-de5f66fd8f30/windcraft-back-masterskaya-tropicheskoy-muzyki-s-kharisom-lamprakisom/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WINDCRAFT BACK: Мастерская… — 31 октября 2026 · Никосия, Кипр" />
+    <meta property="og:description" content="Никосия, Кипр, 31 октября 2026. Windcraft Back: 10 лет Windcraft Loud, музыка в центре внимания Некоммерческая организация Windcraft Loud отмечает десять лет…" />
+    <meta property="og:url" content="https://mypins.site/event/14ea4683-1c00-4a87-b62d-de5f66fd8f30/windcraft-back-masterskaya-tropicheskoy-muzyki-s-kharisom-lamprakisom/" />
+    <meta property="og:image" content="https://www.letsculture.cy/wp-content/uploads/2026/10/Windcraft-Back-Fb-Event-Cover-MODAL.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/14ea4683-1c00-4a87-b62d-de5f66fd8f30/windcraft-back-masterskaya-tropicheskoy-muzyki-s-kharisom-lamprakisom/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/14ea4683-1c00-4a87-b62d-de5f66fd8f30/windcraft-back-tropical-music-workshop-with-haris-lampridis/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"WINDCRAFT BACK: Мастерская тропической музыки с Харисом Лампракисом","url":"https://mypins.site/event/14ea4683-1c00-4a87-b62d-de5f66fd8f30/windcraft-back-masterskaya-tropicheskoy-muzyki-s-kharisom-lamprakisom/","startDate":"2026-10-31T17:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Windcraft Music Centre","address":{"@type":"PostalAddress","addressLocality":"Никосия","streetAddress":"Windcraft Music Centre","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1698625,"longitude":33.3658681}},"offers":{"@type":"Offer","url":"https://mypins.site/event/14ea4683-1c00-4a87-b62d-de5f66fd8f30/windcraft-back-masterskaya-tropicheskoy-muzyki-s-kharisom-lamprakisom/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-10-18"},"description":"Windcraft Back: 10 лет Windcraft Loud, музыка в центре внимания Некоммерческая организация Windcraft Loud отмечает десять лет творчества, сотрудничества, музыкальных встреч и новых путей, и празднует это серией мероприятий под названием «Windcraft Back». Серия вновь выводит на первый план сотрудничества, родившиеся в ходе деятельности организации и Windcraft Music Fest. Наряду с серией концертов, мероприятие представляет 4 мастер-класса по тропической музыке, джазу, балканской и свинг-музыке, предлагая студентам, профессионалам и друзьям музыки возможность","endDate":"2026-10-31T19:00:00","image":"https://www.letsculture.cy/wp-content/uploads/2026/10/Windcraft-Back-Fb-Event-Cover-MODAL.png","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/windcraft-back-%CE%B5%CF%81%CE%B3%CE%B1%CF%83%CF%84%CE%AE%CF%81%CE%B9-%CF%84%CF%81%CE%BF%CF%80%CE%B9%CE%BA%CE%AE%CF%82-%CE%BC%CE%BF%CF%85%CF%83%CE%B9%CE%BA%CE%AE%CF%82-%CE%BC%CE%B5-%CF%84%CE%BF%CE%BD-%CF%87%CE%AC%CF%81%CE%B7-%CE%BB%CE%B1%CE%BC%CF%80%CF%81%CE%AC%CE%BA%CE%B7-2026-10-31"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"WINDCRAFT BACK: Мастерская тропической музыки с Харисом Лампракисом","item":"https://mypins.site/event/14ea4683-1c00-4a87-b62d-de5f66fd8f30/windcraft-back-masterskaya-tropicheskoy-muzyki-s-kharisom-lamprakisom/"}]}]}</script>
+    <script type="application/json" id="seo-alias-map">{"cloneId":"14ea4683-1c00-4a87-b62d-de5f66fd8f30","keptId":"14ea4683-1c00-4a87-b62d-de5f66fd8f30","ru":"https://mypins.site/event/14ea4683-1c00-4a87-b62d-de5f66fd8f30/windcraft-back-masterskaya-tropicheskoy-muzyki-s-kharisom-lamprakisom/","en":"https://mypins.site/en/event/14ea4683-1c00-4a87-b62d-de5f66fd8f30/windcraft-back-tropical-music-workshop-with-haris-lampridis/"}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>WINDCRAFT BACK: Мастерская тропической музыки с Харисом Лампракисом</h1>
+  <p><time datetime="2026-10-31T17:00:00">31 октября 2026, 17:00</time></p>
+  <address>Windcraft Music Centre, Никосия, Кипр</address>
+  <p>Windcraft Back: 10 лет Windcraft Loud, музыка в центре внимания
+
+Некоммерческая организация Windcraft Loud отмечает десять лет творчества, сотрудничества, музыкальных встреч и новых путей, и празднует это серией мероприятий под названием «Windcraft Back». Серия вновь выводит на первый план сотрудничества, родившиеся в ходе деятельности организации и Windcraft Music Fest.
+
+Наряду с серией концертов, мероприятие представляет 4 мастер-класса по тропической музыке, джазу, балканской и свинг-музыке, предлагая студентам, профессионалам и друзьям музыки возможность</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>WINDCRAFT BACK: Мастерская тропической музыки с Харисом Лампракисом</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/concert/">🎤 Концерты</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/01628702-0956-49ae-afb4-6207093e2295/mariya-vardaki-zhivoy-kontsert-s-gostey-nefeli-kapru-v-nikosii/">Мария Вардаки: Живой концерт с гостьей Нефели Капру в Никосии <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/14f32b9b-585c-4552-b034-e426ccb9b278/psilouin-v-ktima-camelot/">Псилоуин в Ktima Camelot <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/4ed00ddf-ac54-4245-bd6d-af7459f21633/luna-morada-proklyatyy-torgovyy-tsentr/">Luna Morada: Проклятый торговый центр <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/552ccab4-373f-4b37-ab79-a45656a4c6f3/khellouin-element-x-v-otele-nyx/">Хэллоуин: Element X в отеле NYX <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/5fdd8105-77ce-4130-bb83-1f6dd296e9b7/noch-khellouina-rok-i-metal-vecherinka-v-rock-city-nicosia/">Ночь Хэллоуина: рок- и метал-вечеринка в Rock City Nicosia <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/664f6e8f-5029-4fcb-bc83-3078b5faac68/gruppa-epidemiya-30-let-magii-i-metalla/">ГРУППА ЭПИДЕМИЯ: 30 ЛЕТ МАГИИ И МЕТАЛЛА <time datetime="2026-10-31">31 октября 2026</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>

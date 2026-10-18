@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Трибьют Йоргосу Мацонакису… — 27 октября 2026 · Никосия, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-CY9Di6jE.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-5Gu2k9hs.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DZZfR5ty.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Ds-yjfvD.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Никосия, Кипр, 27 октября 2026. Особый музыкальный трибьют Йоргосу Мазонакису от группы Antipeina в Никосии, 27 октября 2026 года. --- Прокрутите вниз для…" />
+    <link rel="canonical" href="https://mypins.site/event/ae343205-48b9-40c4-a1ef-61309b5edecd/tribyut-yorgosu-matsonakisu-zhivoe-vystuplenie-v-antipina/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Трибьют Йоргосу Мацонакису… — 27 октября 2026 · Никосия, Кипр" />
+    <meta property="og:description" content="Никосия, Кипр, 27 октября 2026. Особый музыкальный трибьют Йоргосу Мазонакису от группы Antipeina в Никосии, 27 октября 2026 года. --- Прокрутите вниз для…" />
+    <meta property="og:url" content="https://mypins.site/event/ae343205-48b9-40c4-a1ef-61309b5edecd/tribyut-yorgosu-matsonakisu-zhivoe-vystuplenie-v-antipina/" />
+    <meta property="og:image" content="https://eventor-images-s3.s3.eu-west-2.amazonaws.com/high-res/5b71bca6-0f99-4b59-8772-9cbe9c9f925f.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/ae343205-48b9-40c4-a1ef-61309b5edecd/tribyut-yorgosu-matsonakisu-zhivoe-vystuplenie-v-antipina/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/ae343205-48b9-40c4-a1ef-61309b5edecd/tribute-to-giorgos-mazonakis-live-show-at-antipina/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Трибьют Йоргосу Мацонакису: живое выступление в Antipina","url":"https://mypins.site/event/ae343205-48b9-40c4-a1ef-61309b5edecd/tribyut-yorgosu-matsonakisu-zhivoe-vystuplenie-v-antipina/","startDate":"2026-10-27T21:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Antipina","address":{"@type":"PostalAddress","addressLocality":"Никосия","streetAddress":"Antipina","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1653831,"longitude":33.3241468}},"offers":{"@type":"Offer","url":"https://mypins.site/event/ae343205-48b9-40c4-a1ef-61309b5edecd/tribyut-yorgosu-matsonakisu-zhivoe-vystuplenie-v-antipina/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-10-10"},"description":"Особый музыкальный трибьют Йоргосу Мазонакису от группы Antipeina в Никосии, 27 октября 2026 года. --- Прокрутите вниз для английской версии 👇 --- Вечер, посвящённый Йоргосу Мазонакису, выходит на сцену Antipeina в Никосии. Песни, которые мы полюбили, великие хиты и моменты, которые мы все пели, оживают вновь в атмосфере, полной энергии, эмоций и веселья. Группа Antipeina представляет музыкальный трибьют одному из самых ярких и любимых артистов греческой музыкальной сцены. Вечер, который обещает","endDate":"2026-10-27","image":"https://eventor-images-s3.s3.eu-west-2.amazonaws.com/high-res/5b71bca6-0f99-4b59-8772-9cbe9c9f925f.jpg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/tribute-to-giorgos-mazonakis-live-show-at-antipina-2026-10-27"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Трибьют Йоргосу Мацонакису: живое выступление в Antipina","item":"https://mypins.site/event/ae343205-48b9-40c4-a1ef-61309b5edecd/tribyut-yorgosu-matsonakisu-zhivoe-vystuplenie-v-antipina/"}]}]}</script>
+    <script type="application/json" id="seo-alias-map">{"cloneId":"ae343205-48b9-40c4-a1ef-61309b5edecd","keptId":"ae343205-48b9-40c4-a1ef-61309b5edecd","ru":"https://mypins.site/event/ae343205-48b9-40c4-a1ef-61309b5edecd/tribyut-yorgosu-matsonakisu-zhivoe-vystuplenie-v-antipina/","en":"https://mypins.site/en/event/ae343205-48b9-40c4-a1ef-61309b5edecd/tribute-to-giorgos-mazonakis-live-show-at-antipina/"}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Трибьют Йоргосу Мацонакису: живое выступление в Antipina</h1>
+  <p><time datetime="2026-10-27T21:00:00">27 октября 2026, 21:00</time></p>
+  <address>Antipina, Никосия, Кипр</address>
+  <p>Особый музыкальный трибьют Йоргосу Мазонакису от группы Antipeina в Никосии, 27 октября 2026 года.
+
+---
+
+Прокрутите вниз для английской версии 👇
+
+---
+
+Вечер, посвящённый Йоргосу Мазонакису, выходит на сцену Antipeina в Никосии. Песни, которые мы полюбили, великие хиты и моменты, которые мы все пели, оживают вновь в атмосфере, полной энергии, эмоций и веселья.
+
+Группа Antipeina представляет музыкальный трибьют одному из самых ярких и любимых артистов греческой музыкальной сцены. Вечер, который обещает</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Трибьют Йоргосу Мацонакису: живое выступление в Antipina</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/concert/">🎤 Концерты</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/188ba8ce-88e0-4e2e-8e6a-aa4dd1d2c5b1/pridi-v-lunnuyu-noch/">Приди в лунную ночь <time datetime="2026-10-26">26 октября 2026</time></a></li>
+    <li><a href="/event/4b708b73-3483-4151-9e94-9f8ebeb787f2/muzykalnoe-polnolunie-oktyabrya-v-prokimee/">МУЗЫКАЛЬНОЕ ПОЛНОЛУНИЕ ОКТЯБРЯ В ПРОКИМЕЕ <time datetime="2026-10-26">26 октября 2026</time></a></li>
+    <li><a href="/event/1b4c4ae3-b10f-48f6-9f11-ed12e9c45648/gala-kontsert-restart/">Гала-концерт RESTART <time datetime="2026-10-27">27 октября 2026</time></a></li>
+    <li><a href="/event/1e510877-6905-407c-ae57-6d366192c7b4/stelios-dionisiu-i-elena-anagiotu/">Стелиос Дионисиу и Елена Анагиоту <time datetime="2026-10-27">27 октября 2026</time></a></li>
+    <li><a href="/event/309cb57d-dbfb-437a-ada8-04a1c7b45da9/v-chest-metallica/">В честь Metallica <time datetime="2026-10-27">27 октября 2026</time></a></li>
+    <li><a href="/event/c43a3527-afe5-4bb1-b1fa-b962d1f2bdf2/lefteris-pantazis-noch-zhivoy-grecheskoy-muzyki-v-lush-beach-bar/">Лефтерис Пантазис: Ночь живой греческой музыки в Lush Beach Bar <time datetime="2026-10-27">27 октября 2026</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>
