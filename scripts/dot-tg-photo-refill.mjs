@@ -4,7 +4,7 @@
 // DRY по умолчанию; APPLY=1 пишет. LIMIT — сколько карточек за прогон.
 import { createClient } from '@supabase/supabase-js';
 import { selectAll } from './db-rows.mjs';
-import { execFile } from 'node:child_process';
+import { execFile, spawnSync } from 'node:child_process';
 import { promisify } from 'node:util';
 import fs from 'node:fs/promises';
 
@@ -63,8 +63,18 @@ for (const r of targets) {
     try { ic = await fetchTo(uniq[i], img); } catch { ic = 0; }
     const size = ic === 200 ? (await fs.stat(img)).size : 0;
     if (ic !== 200 || size < MIN_BYTES) { console.log('  пропуск фото', i, ic, size); continue; }
-    if (size > MAX_BYTES) { console.log('  пропуск фото (больше лимита бакета)', i, size); continue; }
-    got.push({ i, size, img });
+    let use = img, useSize = size;
+    if (size > MAX_BYTES) {
+      const small = `${TMP}/p304_${ch}_${mid}_${i}_s.jpg`;
+      const r = spawnSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', img,
+        '-frames:v', '1', '-update', '1', '-vf', 'scale=1600:-2', '-q:v', '4', small], { encoding: 'utf8' });
+      const ok = r.status === 0 && fs.existsSync(small);
+      useSize = ok ? (await fs.stat(small)).size : 0;
+      if (!ok || useSize > MAX_BYTES) { console.log('  пропуск фото (больше лимита бакета, ужать не вышло)', i, size, useSize); continue; }
+      console.log('  ужато ffmpeg-ом:', size, '->', useSize);
+      use = small;
+    }
+    got.push({ i, size: useSize, img: use });
   }
   got.sort((a, b) => b.size - a.size);
 
