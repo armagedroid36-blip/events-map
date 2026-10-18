@@ -140,7 +140,7 @@ const FIXES = [
 let applied = 0, skipped = 0, errors = 0;
 for (const f of FIXES) {
   let q = db.from('events')
-    .select('id,title,city,start_date,end_date,status,website')
+    .select('id,title,city,start_date,start_time,end_date,end_time,status,website')
     .ilike('title', `%${f.titleLike}%`)
     .eq('status', 'active');
   // 13.10.2026: у одной постановки-серии бывает НЕСКОЛЬКО живых карточек с ОДНИМ названием
@@ -159,7 +159,10 @@ for (const f of FIXES) {
   console.log((APPLY ? 'ЗАПИСЬ' : 'ПЛАН'), r.id, '|', r.title, '|', r.start_date, '->', r.end_date, '=>', f.newEnd);
   console.log('   цитата:', f.quote.slice(0, 160) + '…');
   if (!APPLY) continue;
-  const { data: upd, error: e2 } = await db.from('events').update({ end_date: f.newEnd }).eq('id', r.id).select('id,start_date,end_date,city,title');
+  // интервал свёрнут к одному дню: end_time остался от даты КОНЦА интервала и печатает «конец раньше начала»
+  const patch = { end_date: f.newEnd };
+  if (f.newEnd === String(r.start_date) && r.end_time && r.start_time && String(r.end_time) < String(r.start_time)) patch.end_time = null;
+  const { data: upd, error: e2 } = await db.from('events').update(patch).eq('id', r.id).select('id,start_date,start_time,end_date,end_time,city,title');
   if (e2) { console.log('  ОШИБКА записи:', e2.message); errors++; continue; }
   if (!upd || upd.length !== 1) { console.log('  ОШИБКА: обновлено строк', upd ? upd.length : 0); errors++; continue; }
   console.log('  контроль:', JSON.stringify(upd[0]));
