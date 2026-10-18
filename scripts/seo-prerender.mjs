@@ -2554,7 +2554,11 @@ function loadAliasRegistry() {
     let added = 0;
     for (const raw of arr) {
       const p = normalizeAliasPath(raw);
-      if (!p || seen.has(p)) continue;
+      if (!p) {
+        console.log(`  реестр алиасов: путь отброшен — ${String(raw)} (не путь: пустая запись или без «/»)`);
+        continue;
+      }
+      if (seen.has(p)) continue;
       seen.add(p);
       out.push({ path: p, raw: String(raw) });
       added += 1;
