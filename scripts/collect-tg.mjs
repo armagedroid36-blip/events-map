@@ -112,6 +112,20 @@ function parseDate(text) {
   const now = todayLocal();
   let date = null;
 
+  // 0) Служебный ярлык «#дата: 18.10» («дата: 18.10.26») — самой надёжной дате поста
+  //    отдаём приоритет: человеческая строка («Воскресенье, 17 октября») в афишах
+  //    бывает с опечаткой, и тогда LLM-фолбэк уводил дату на ГОД вперёд
+  //    (карточка 028cf582 «Йога для мам», 17.10.2026 — суббота, а событие 18.10).
+  const m0 = text.match(/(?:^|\n)\s*#?\s*дата\s*[:：]\s*(\d{1,2})[./](\d{1,2})(?:[./](\d{2,4}))?/iu);
+  if (m0) {
+    const day = +m0[1];
+    const month = +m0[2];
+    let year = m0[3] ? +m0[3] : now.getFullYear();
+    if (m0[3] && m0[3].length === 2) year += 2000;
+    const cand = new Date(year, month - 1, day);
+    if (month >= 1 && month <= 12 && day >= 1 && day <= 31 && cand >= now) date = cand;
+  }
+
   // 1) «21 августа» / «21 авг.» — число + месяц словом
   const m1 = text.match(/(\d{1,2})\s+(января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)/i);
   if (m1) {
@@ -515,6 +529,14 @@ async function main() {
         const todayCity = `${cityNow.getUTCFullYear()}-${String(cityNow.getUTCMonth() + 1).padStart(2, '0')}-${String(cityNow.getUTCDate()).padStart(2, '0')}`;
         if (when.date < todayCity) {
           console.log(`  - ${post.pid}: дата в прошлом (${when.date}) — пропуск`);
+          continue;
+        }
+        // Предохранитель «дата на год вперёд»: афиша канала не анонсирует событие
+        // за полгода вперёд, такая дата — следствие опечатки в посте или ошибки
+        // LLM-фолбэка (028cf582: «Воскресенье, 17 октября» → 2027-10-17).
+        const horizonDate = new Date(Date.parse(todayCity) + 180 * 86400000).toISOString().slice(0, 10);
+        if (when.date > horizonDate) {
+          console.log(`  - ${post.pid}: дата слишком далеко (${when.date} > ${horizonDate}) — пропуск`);
           continue;
         }
         if (when.date === todayCity && when.time) {
