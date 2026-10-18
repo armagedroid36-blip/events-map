@@ -3,15 +3,25 @@
 // версия, и заполняет её через service role. Возобновляемый: повторный запуск
 // добивает оставшиеся (уже переведённые не трогает — идемпотентно).
 //
-// Три случая (язык оригинала определяется по письменности, а не по подсказке
+// Четыре случая (язык оригинала определяется по письменности, а не по подсказке
 // источника — агрегаторы отдают греческие афиши под флагом 'en'):
-//   1) русский оригинал (source_lang='ru' или кириллица) → переводим на EN;
-//   2) греческий оригинал (буквы U+0370–U+03FF, U+1F00–U+1FFF) → переводим и
-//      на RU, и на EN, ставим source_lang/language='el'. Греческий в поля
-//      переводов не копируется (иначе и RU-, и EN-страница показывают
-//      греческую афишу), поэтому до перевода title_ru/description_ru пустые;
-//   3) греческий ЗАСТРЯЛ в полях перевода у события с английским оригиналом
+//   1) RU-версия нужна ВСЕГДА, когда оригинал не русский: английские афиши
+//      (Кипр, Бали, Вьетнам) переводятся на RU так же, как греческие —
+//      сборщики клали текст источника в RU-поля, и без перевода русская
+//      страница показывала английский заголовок;
+//   2) EN-версия нужна, когда английского поля нет или в нём битый текст:
+//      русский оригинал → перевод, английский → копия оригинала (LLM не
+//      вызывается), греческий → перевод;
+//   3) греческий оригинал уходит и в RU, и в EN, ставим source_lang='el'.
+//      Греческий в поля переводов не копируется;
+//   4) греческий ЗАСТРЯЛ в полях перевода у события с английским оригиналом
 //      (копия до фикса) → пересобираем обе версии, язык остаётся 'en'.
+//
+// Идемпотентность: после успешного перевода поле перестаёт быть копией
+// оригинала. Исключение — названия из имён и брендов без переводимых слов
+// («Oktoberfest 2026» → «Oktoberfest 2026»): их отмечаем в реестре
+// scripts/data/i18n-done.json (ключ — отпечаток оригинального текста, поэтому
+// правка события в БД снимает отметку сама).
 //
 // Что НЕ трогаем: rejected и архив по умолчанию. Архивные страницы при этом
 // ПУБЛИКУЮТСЯ (beta 0.67) и стоят в sitemap, поэтому греческий мусор в архиве
@@ -30,11 +40,17 @@
 //      CONCURRENCY (2) — параллельных событий, PAUSE_MS (400) — пауза воркера,
 //      DRY_RUN=1 — показать план без запросов к переводчику,
 //      STATUSES=archived — разовая починка архива (по умолчанию
-//      active,moderation,needs_changes — как в CI).
+//      active,moderation,needs_changes — как в CI),
+//      IDS=id1,id2 — точечная починка названных карточек (статус не важен,
+//      архив тоже берётся: так чинят страницы прошедших событий).
 //
 // Запуск: source .env (SUPABASE_URL/VITE_SUPABASE_URL, SUPABASE_SERVICE_ROLE,
 // VITE_SUPABASE_ANON_KEY, DEEPSEEK_API_KEY) && node scripts/backfill-translations.mjs
 import { createClient } from '@supabase/supabase-js';
+import { createHash } from 'node:crypto';
+import { readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { selectAll } from './db-rows.mjs';
 import { clipText } from './text-safe.mjs';
 
@@ -45,12 +61,9 @@ const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
 // этот заголовок не проверяет, контракт вызова не меняется).
 const ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY || SERVICE_ROLE;
 
-if (!SUPABASE_URL || !SERVICE_ROLE) {
-  console.error('Нужны переменные: SUPABASE_URL, SUPABASE_SERVICE_ROLE (VITE_SUPABASE_ANON_KEY опционален)');
-  process.exit(1);
-}
-
-const db = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } });
+const db = SUPABASE_URL && SERVICE_ROLE
+  ? createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } })
+  : null;
 const DRY_RUN = process.env.DRY_RUN === '1';
 const LIMIT = Number(process.env.LIMIT || 120); // предохранитель токенов
 // Какие статусы обрабатываем. По умолчанию — как в CI: активные и ждущие
@@ -63,6 +76,12 @@ const STATUSES = (process.env.STATUSES || 'active,moderation,needs_changes')
   .split(',')
   .map((s) => s.trim())
   .filter(Boolean);
+// Точечная починка названных карточек: статус и правила архива не действуют —
+// id назвал человек. Нужна для страниц прошедших событий, которые открыты
+// посетителю и стоят в sitemap.
+const ONLY_IDS = new Set(
+  (process.env.IDS || '').split(',').map((s) => s.trim()).filter(Boolean),
+);
 // Правка языка оригинала меняет ХВОСТ URL (src/lib/slug.ts eventSlug): после
 // такого прогона обязательно node scripts/legacy-slug-urls.mjs ДО сборки.
 const CONCURRENCY = Number(process.env.CONCURRENCY || 3); // параллельных переводов
@@ -70,9 +89,6 @@ const PAUSE_MS = Number(process.env.PAUSE_MS || 400); // пауза между �
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || '';
 
 const HAS_CYRILLIC = /[а-яё]/i;
-// Кириллица для проверки КАЧЕСТВА перевода: любая кириллическая буква
-// (в EN-тексте её быть не должно — критерий приёмки SEO).
-const CYR = /[\u0400-\u04FF]/;
 // Для гейта качества — только НАСТОЯЩИЕ русские слова: 2+ кириллических
 // символа подряд или одиночная буква-слово. Одиночные кириллические
 // «двойники» латинских букв внутри латинских слов/адресов (напр. «3Х Studio»,
@@ -273,6 +289,65 @@ const isCopyOfSource = (v, src) => {
   return s !== '' && s === str(src).trim();
 };
 
+/** Латиница без единой кириллической буквы: в RU-поле не перевод, а
+ *  переписанный оригинал (в том числе с другой расстановкой пробелов, как
+ *  «Argia ( Innervisions)» → «Argia (Innervisions)»). */
+const latinWithoutCyrillic = (v) => {
+  const s = str(v).trim();
+  return s !== '' && !HAS_CYRILLIC.test(s) && /[A-Za-z]/.test(s);
+};
+
+// --- Реестр «переводить нечего» --------------------------------------------
+// Названия из имён и брендов без переводимых слов («Oktoberfest 2026»)
+// переводятся в самих себя: поле остаётся копией оригинала, и без отметки
+// карточка уходила бы в LLM на каждом прогоне (ломает идемпотентность).
+// DDL из скрипта и CI недоступен, поэтому отметка — файл в репозитории (как
+// реестр алиасов scripts/data/alias-urls.json). Ключ отметки — отпечаток
+// оригинального текста: правка события в БД меняет отпечаток, и отметка
+// перестаёт действовать сама.
+const I18N_DONE_FILE = join(dirname(fileURLToPath(import.meta.url)), 'data', 'i18n-done.json');
+const i18nDone = loadI18nDone();
+
+function loadI18nDone() {
+  try {
+    const raw = JSON.parse(readFileSync(I18N_DONE_FILE, 'utf8'));
+    return new Map(Object.entries(raw?.marks || {}));
+  } catch {
+    return new Map(); // файла ещё нет — первый прогон
+  }
+}
+
+/** Отпечаток оригинального текста карточки (заголовок + описание) */
+const sourceFingerprint = (ev) =>
+  createHash('sha1')
+    .update(`${str(ev.title).trim()}\n${str(ev.description).trim()}`)
+    .digest('hex')
+    .slice(0, 16);
+
+/** Сохранить реестр. keepIds — id, которые ещё есть в выборке: отметки
+ *  ушедших карточек вычищаем, иначе файл растёт мусором. */
+function saveI18nDone(keepIds) {
+  const marks = {};
+  for (const [id, fp] of [...i18nDone].sort(([a], [b]) => String(a).localeCompare(String(b)))) {
+    if (keepIds && !keepIds.has(id)) continue;
+    marks[id] = fp;
+  }
+  writeFileSync(
+    I18N_DONE_FILE,
+    `${JSON.stringify(
+      {
+        note:
+          'Карточки, у которых перевод совпал с оригиналом (имена и бренды без переводимых ' +
+          'слов). Ключ — отпечаток title+description; файл ведёт scripts/backfill-translations.mjs.',
+        updated: new Date().toISOString().slice(0, 10),
+        marks,
+      },
+      null,
+      2,
+    )}\n`,
+  );
+}
+
 /** План перевода карточки; null — карточка в порядке, трогать не нужно
  *  (это и есть гарантия идемпотентности повторного прогона: после успешного
  *  прохода все поля заполнены и перевода не требуют).
@@ -295,48 +370,61 @@ function translationPlan(ev) {
     .some((v) => GREEK.test(str(v)));
   // «греческий случай»: греческий в оригинале либо застрял в переводах
   const greek = greekSource || greekStored;
-  // русский оригинал: прежний контракт скрипта (RU → EN)
-  const ruOrigin =
-    ev.source_lang === 'ru' ||
-    HAS_CYRILLIC.test(str(ev.title_ru) || title) ||
-    CYR.test([ev.title_ru, ev.description_ru, title, desc].map(str).join('\n'));
+  // Отметка «переводить нечего» действует, только пока оригинал не изменился
+  const done = i18nDone.get(ev.id) === sourceFingerprint(ev);
 
-  // Что реально требует работы (иначе карточку не берём — идемпотентность)
-  const ruTitleWork =
-    greek && titleLang !== 'ru' && (fieldDirty(ev.title_ru, 'ru') || isCopyOfSource(ev.title_ru, title));
-  const ruDescWork =
-    greek && hasDesc && descLang !== 'ru'
-    && (fieldDirty(ev.description_ru, 'ru') || isCopyOfSource(ev.description_ru, desc));
+  // RU-версия нужна ВСЕГДА, когда оригинал не русский: копия оригинала в
+  // RU-поле — не перевод (так писали сборщики), её заменяем. Исключение —
+  // карточки из реестра: там переводить действительно нечего.
+  const ruTitleCopy = isCopyOfSource(ev.title_ru, title);
+  const ruDescCopy = isCopyOfSource(ev.description_ru, desc);
+  const ruTitleBad =
+    titleLang !== 'ru'
+    && (fieldDirty(ev.title_ru, 'ru') || ruTitleCopy || latinWithoutCyrillic(ev.title_ru));
+  const ruDescBad =
+    hasDesc && descLang !== 'ru'
+    && (fieldDirty(ev.description_ru, 'ru') || ruDescCopy || latinWithoutCyrillic(ev.description_ru));
+  // Отметка снимает только случай «латиница осталась латиницей»; реально
+  // пустое/греческое поле чинится всегда, даже при отметке.
+  const ruTitleWork = ruTitleBad && !(done && !fieldDirty(ev.title_ru, 'ru'));
+  const ruDescWork = ruDescBad && !(done && !fieldDirty(ev.description_ru, 'ru'));
+  // EN-версия: пустое или битое поле. Для английского оригинала LLM не
+  // вызывается — resolveField вернёт текст как есть (это и есть перевод).
   const enWork =
     fieldDirty(ev.title_en, 'en') || (hasDesc && fieldDirty(ev.description_en, 'en'));
-  if (!ruTitleWork && !ruDescWork && !((greek || ruOrigin) && enWork)) return null;
+  if (!ruTitleWork && !ruDescWork && !enWork) return null;
 
-  // Язык, который покажем посетителю как «оригинал»: греческий — только когда
-  // греческий ЗАГОЛОВОК (греческое описание при английском заголовке оставляет
-  // 'en', иначе EN-страница теряет признак английского источника).
+  // Язык оригинала: греческий — когда греческий ЗАГОЛОВОК (греческое описание
+  // при английском заголовке оставляет прежний язык, иначе EN-страница теряет
+  // признак английского источника); кириллица — русский. Латинский заголовок
+  // язык НЕ переопределяет: у русских событий с латинским названием («BI-2 @
+  // ETKO») исходный source_lang='ru' верен, и переворот на 'en' сломал бы
+  // фолбэки localizedText/seo. Ставим 'en' только если язык не задан вовсе.
+  const storedLang = str(ev.source_lang).trim();
   const sourceLang = titleLang === 'el'
     ? 'el'
-    : titleLang === 'ru' || !greek
+    : titleLang === 'ru'
       ? 'ru'
-      : (ev.source_lang === 'ru' ? 'ru' : 'en');
+      : (storedLang === 'ru' ? 'ru' : 'en');
 
   return {
     greek,
-    // force — только когда в поле лежит копия не-русского оригинала: готовый
-    // перевод не перезаписываем (повторный прогон = 0 записей и 0 запросов).
-    titleRu: ruTitleWork
-      ? { src: title, force: isCopyOfSource(ev.title_ru, title) }
-      : null,
-    descRu: ruDescWork
-      ? { src: desc, force: isCopyOfSource(ev.description_ru, desc) }
-      : null,
+    // force — когда в поле лежит копия не-русского оригинала: готовый перевод
+    // не перезаписываем (повторный прогон = 0 записей и 0 запросов).
+    titleRu: ruTitleWork ? { src: title, force: ruTitleCopy } : null,
+    descRu: ruDescWork ? { src: desc, force: ruDescCopy } : null,
     titleEn: { src: title, force: false },
-    descEn: hasDesc ? { src: desc, force: false } : null,
+    descEn: enWork && hasDesc ? { src: desc, force: false } : null,
+    enWork,
     sourceLang,
   };
 }
 
 async function main() {
+  if (!db) {
+    console.error('Нужны переменные: SUPABASE_URL, SUPABASE_SERVICE_ROLE (VITE_SUPABASE_ANON_KEY опционален)');
+    process.exit(1);
+  }
   // PostgREST отдаёт максимум 1000 строк за запрос — читаем страницами,
   // иначе часть карточек с греческим текстом остаётся незамеченной.
   const rows = await selectAll(
@@ -347,7 +435,7 @@ async function main() {
     // иначе одобренное событие попадает на сайт (и в следующий деплой) без
     // EN-версии до следующего запуска сбора. Архив — по STATUSES=archived,
     // и только карточки с греческим (см. фильтр ниже).
-    { filter: (q) => q.in('status', STATUSES) },
+    { filter: (q) => (ONLY_IDS.size ? q.in('id', [...ONLY_IDS]) : q.in('status', STATUSES)) },
   );
 
   const planned = [];
@@ -359,24 +447,29 @@ async function main() {
     // страницах прошедших событий. Прочая работа по архиву (дозаполнение
     // title_en у англоязычных карточек) создаёт новые /en/-страницы и меняет
     // sitemap — это отдельное решение владельца, не побочный эффект починки.
-    if (ev.status === 'archived' && !plan.greek) continue;
+    // При IDS=... правила архива не действуют: id назвал человек.
+    if (!ONLY_IDS.size && ev.status === 'archived' && !plan.greek) continue;
     planned.push({ ev, plan });
   }
   const greekCount = planned.filter((p) => p.plan.greek).length;
+  const ruCount = planned.filter((p) => p.plan.titleRu || p.plan.descRu).length;
+  const enCount = planned.filter((p) => p.plan.enWork).length;
   const batch = planned.slice(0, LIMIT);
   console.log(
-    `Событий к переводу: ${planned.length} (из них с греческим текстом ${greekCount}); `
-    + `обрабатываем ${batch.length} (LIMIT=${LIMIT})`,
+    `Событий к переводу: ${planned.length} (RU-версия — ${ruCount}, EN-версия — ${enCount}, `
+    + `из них с греческим ${greekCount}); обрабатываем ${batch.length} (LIMIT=${LIMIT})`,
   );
   if (!batch.length) {
-    console.log('Готово: переведено 0, ошибок 0. Осталось без EN: 0');
+    console.log('Готово: переведено 0, ошибок 0. Осталось в плане: 0');
     return;
   }
   if (DRY_RUN) {
     for (const { ev, plan } of batch) {
-      console.log(`  [dry] ${plan.greek ? 'греч.' : 'ru'} ${str(ev.title).slice(0, 60)} → ${plan.sourceLang}`);
+      const dir = [plan.titleRu || plan.descRu ? 'RU' : '', plan.enWork ? 'EN' : '']
+        .filter(Boolean).join('+');
+      console.log(`  [dry] ${dir} ${str(ev.title).slice(0, 60)} → ${plan.sourceLang}`);
     }
-    console.log(`Готово (DRY_RUN): план на ${batch.length} карточек, записей 0`);
+    console.log(`Готово (DRY_RUN): план на ${batch.length} карточек из ${planned.length}, записей 0`);
     return;
   }
 
@@ -390,6 +483,7 @@ async function main() {
       if (i >= batch.length) return;
       const { ev, plan } = batch[i];
       const srcTitle = str(ev.title).trim();
+      const srcDesc = str(ev.description).trim();
       try {
         const [titleRu, descRu, titleEn, descEn] = await Promise.all([
           plan.titleRu ? resolveField(plan.titleRu.src, ev.title_ru, 'ru', plan.titleRu.force) : Promise.resolve(ev.title_ru ?? null),
@@ -419,6 +513,15 @@ async function main() {
           ok += 1;
           console.log(`  + ${srcTitle.slice(0, 55)} [${plan.sourceLang}]`);
         }
+        // Отметка «переводить нечего»: источник латиницей, и ответ тоже без
+        // единой кириллической буквы — значит переводить было нечего (имя или
+        // бренд). Без отметки карточка снова придёт в план на следующем
+        // прогоне и снова уйдёт в LLM.
+        const nothingToTranslate =
+          (Boolean(plan.titleRu) && detectLang(srcTitle) === 'en' && latinWithoutCyrillic(titleRu))
+          || (Boolean(plan.descRu) && detectLang(srcDesc) === 'en' && latinWithoutCyrillic(descRu));
+        if (nothingToTranslate) i18nDone.set(ev.id, sourceFingerprint(ev));
+        else i18nDone.delete(ev.id);
       } catch (err) {
         fail += 1;
         console.error(`  ! ${srcTitle.slice(0, 45)}: ${err?.message || err}`);
@@ -430,10 +533,22 @@ async function main() {
   await Promise.all(
     Array.from({ length: Math.max(1, Math.min(CONCURRENCY, batch.length)) }, worker),
   );
-  console.log(`Готово: переведено ${ok}, ошибок ${fail}. Осталось без EN: ${planned.length - ok}`);
+  // Реестр сохраняем всегда (даже при ошибках): отметки уже пройденных
+  // карточек не должны теряться. Отметки карточек, ушедших из выборки, чистим —
+  // но при точечном прогоне (IDS=...) выборка не полная, чистить нельзя.
+  saveI18nDone(ONLY_IDS.size ? null : new Set(rows.map((r) => r.id)));
+  console.log(
+    `Готово: обработано ${ok}, ошибок ${fail}. Осталось в плане: ${Math.max(0, planned.length - ok)}; `
+    + `реестр «переводить нечего»: ${i18nDone.size} карточек`,
+  );
 }
 
-main().catch((e) => {
-  console.error('Критическая ошибка:', e.message);
-  process.exit(1);
-});
+const isMain = process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+if (isMain) {
+  main().catch((e) => {
+    console.error('Критическая ошибка:', e.message);
+    process.exit(1);
+  });
+}
+
+export { translationPlan, detectLang, fieldDirty, isCopyOfSource, sourceFingerprint };

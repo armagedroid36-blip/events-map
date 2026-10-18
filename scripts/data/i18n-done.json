@@ -1,0 +1,17 @@
+{
+  "note": "Карточки, у которых перевод совпал с оригиналом (имена и бренды без переводимых слов). Ключ — отпечаток title+description; файл ведёт scripts/backfill-translations.mjs.",
+  "updated": "2026-10-18",
+  "marks": {
+    "16b906f2-1fb4-4314-8104-a95ae9b6dd13": "4f68e85f3acac4e1",
+    "2a660665-5c64-4e5d-a3c1-9350e235e706": "5988e5fd72d31db0",
+    "3845e750-172b-4949-a9b1-2f51d3c9fada": "4d4f4360a6fd33ce",
+    "4116c490-a226-46ad-aa49-506b759ede54": "12cf7f6aaede8a9a",
+    "61e02c82-d35f-4e19-b15c-31d9f45a8800": "b4352027a3d87cdc",
+    "75eab967-c1ac-43ee-a923-42352a1018f7": "31380cc8b12c6bfa",
+    "b725e327-3d58-4360-aa70-d8c99ff7eb91": "362bbadbd87e8148",
+    "e37a0231-fd9c-4fa1-a46c-8c80b48ec2af": "47904e99b3589ea6",
+    "e8f73e38-aac2-4a0c-bca7-620e073aab13": "4fce7f7d6b5f525d",
+    "eb163ace-02d1-41a7-bdaa-cc27320fc243": "c9a7192689067f9f",
+    "ef7adfcd-09fa-4389-b9bd-0f3898ad0380": "8249dc96d1cc83e1"
+  }
+}
