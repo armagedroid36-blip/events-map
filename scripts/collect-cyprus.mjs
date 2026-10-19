@@ -409,7 +409,7 @@ async function existingKeys() {
 // ===== Запись события =====
 const stats = { visitcyprus: 0, cyprusnow: 0, cyprusbz: 0, cyprusbzCities: 0, skipped: 0, bzDup: 0, coverDup: 0, errors: 0 };
 
-async function save(row, seen) {
+async function save(row, seen, opts = {}) {
   const key = normKey(row.title, row.start_date);
   if (!row.title || !row.start_date) return false;
   if (seen.has(key)) {
@@ -421,8 +421,9 @@ async function save(row, seen) {
     return false;
   }
   // Многодневная карточка того же события уже накрывает эту дату — это копия
-  // записи ленты (Leptos/Lefkara), а не новое событие.
-  if (coveredByInterval(intervalIndex, row)) {
+  // записи ленты (Leptos/Lefkara), а не новое событие. Серии (series_count > 1)
+  // не сворачиваем: это разные издания/заезды одного турнира.
+  if (coveredByInterval(intervalIndex, row, opts)) {
     stats.skipped++;
     stats.coverDup++;
     return false;
@@ -726,7 +727,7 @@ async function collectCyprusNow(seen, budget, websites = new Set(), venueCities 
         category: 'festival',
         catHint: `Источник: агрегатор Cyprus Now, город ${citySlug}. Тип: ${ev.category || ev.type || 'не указан'}`,
       });
-      if (await save(row, seen)) {
+      if (await save(row, seen, { seriesCount: Number(ev.series_count) || 0 })) {
         added++;
         cityAdded++;
       }

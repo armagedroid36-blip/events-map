@@ -91,8 +91,15 @@ export function buildIntervalIndex(rows) {
  * Кандидат накрыт интервалом уже живущей карточки?
  * @param {Array} index результат buildIntervalIndex
  * @param {{title?:string, city?:string, start_date?:string}} cand
+ * @param {{seriesCount?:number}} [opts] seriesCount — поле ленты `series_count`
  */
-export function coveredByInterval(index, cand) {
+export function coveredByInterval(index, cand, opts = {}) {
+  // ЗАЩИТА ОТ ЛОЖНЫХ (запуск 332): `series_count > 1` — запись ленты является ОДНОЙ
+  // ИЗ СЕРИИ изданий/заездов, а не копией. Пример: Official Nicosia Christmas Market
+  // (3 издания: 28-29.11, 12-13.12, 27.12) — карточка 28.11..21.12 накрывала 12.12 по
+  // календарю, но 12.12 — ДРУГОЙ уикенд ярмарки; Regatta of Champions (series_count 2:
+  // 09.11 и 11.11) — разные дни гонки. Без этой проверки правило съедало бы их.
+  if (Number(opts && opts.seriesCount) > 1) return false;
   const key = titleKey(cand && cand.title);
   const core = coreTitle(cand && cand.title);
   const city = cityKey(cand && cand.city);

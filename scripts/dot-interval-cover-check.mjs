@@ -80,7 +80,20 @@ check('интервал > 30 дней', coveredByInterval(long, {
   title: 'Christmas Villages', city: 'Никосия, Кипр', start_date: '2026-12-20',
 }), false);
 
-// 10. нормализация: регистр, пунктуация и суффикс страны не мешают
+// 10. серия изданий/заездов внутри интервала — НЕ копия (запуск 332):
+//     Official Nicosia Christmas Market (series_count 3) и Regatta of Champions (2)
+const xmas = buildIntervalIndex([{
+  title: 'Official Nicosia Christmas Market 2026', city: 'Никосия, Кипр',
+  start_date: '2026-11-28', end_date: '2026-12-21', status: 'active',
+}]);
+check('серия: издание внутри интервала не копия', coveredByInterval(xmas, {
+  title: 'Official Nicosia Christmas Market 2026', city: 'Никосия, Кипр', start_date: '2026-12-12',
+}, { seriesCount: 3 }), false);
+check('серия: series_count 1 — правило работает', coveredByInterval(xmas, {
+  title: 'Official Nicosia Christmas Market 2026', city: 'Никосия, Кипр', start_date: '2026-12-12',
+}, { seriesCount: 1 }), true);
+
+// 11. нормализация: регистр, пунктуация и суффикс страны не мешают
 check('нормализация названия', titleKey('LEPTOS  Cyprus International, 4 Day!'), 'leptos cyprus international 4 day');
 check('нормализация города', cityKey('Пафос, Кипр'), 'пафос');
 
