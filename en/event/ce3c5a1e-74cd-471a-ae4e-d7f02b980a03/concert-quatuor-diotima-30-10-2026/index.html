@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CONCERT QUATUOR DIOTIMA… — October 30, 2026 · Nicosia</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-xdbdTzTK.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-5Gu2k9hs.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DZZfR5ty.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Ds-yjfvD.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Nicosia, Cyprus, October 30, 2026. Five years after its Cyprus debut, Quatuor Diotima returns to Nicosia on the occasion of its 30th anniversary! One of…" />
+    <link rel="canonical" href="https://mypins.site/en/event/ce3c5a1e-74cd-471a-ae4e-d7f02b980a03/concert-quatuor-diotima-30-10-2026/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="CONCERT QUATUOR DIOTIMA… — October 30, 2026 · Nicosia" />
+    <meta property="og:description" content="Nicosia, Cyprus, October 30, 2026. Five years after its Cyprus debut, Quatuor Diotima returns to Nicosia on the occasion of its 30th anniversary! One of…" />
+    <meta property="og:url" content="https://mypins.site/en/event/ce3c5a1e-74cd-471a-ae4e-d7f02b980a03/concert-quatuor-diotima-30-10-2026/" />
+    <meta property="og:image" content="https://www.visitcyprus.com/wp-content/uploads/2026/10/QUATUOR-DIOTIMA.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/ce3c5a1e-74cd-471a-ae4e-d7f02b980a03/concert-quatuor-diotima-30-10-2026/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/ce3c5a1e-74cd-471a-ae4e-d7f02b980a03/kontsert-quatuor-diotima-30-10-2026/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"CONCERT QUATUOR DIOTIMA – 30.10.2026","url":"https://mypins.site/en/event/ce3c5a1e-74cd-471a-ae4e-d7f02b980a03/concert-quatuor-diotima-30-10-2026/","startDate":"2026-10-30T20:30:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"The Shoe Factory, 304 Ermou, Nicosia, 01","address":{"@type":"PostalAddress","addressLocality":"Nicosia","streetAddress":"The Shoe Factory, 304 Ermou, Nicosia, 01","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.175824,"longitude":33.3689662}},"description":"Five years after its Cyprus debut, Quatuor Diotima returns to Nicosia on the occasion of its 30th anniversary! One of France’s most renowned string quartets and one of the most sought-after chamber ensembles on the international stage today, Diotima has occupied a distinctive place at the highest level of European chamber music, boasting a repertoire that ranges from the great masterpieces of the 19th century to the some of the most important music being written today. Quatuor Diotima is a regular presence at many of the world’s foremost venues, including Wigmore Hall, Pierre Boulez Saal, Elbphilharmonie Hamburg, Philharmonie de Paris, and its extensive and highly acclaimed discography has received major critical distinctions, including multiple Diapason d’Or awards, a German Record Critics’ Award, and the European Cultural Heritage Award from the French Ministry of Culture. For their concert in Cyprus, on Friday 30 October 2026 at The Shoe Factory, Nicosia, Quatuor Diotima will present an intense, searching and deeply expressive programme, pairing masterpieces by Beethoven and Brahms with Georges Aperghis’s strikingly original String Quartet No.2, which was commissioned by Radio France and given its world premiere by Diotima at the Théâtre des Champs-Élysées a few months ago. Moving between urgency, intimacy, tension and moments of remarkable freedom, this is a concert that will unquestionably unfold through constantly shifting emotional landscapes, gathering momentum towards a powerful dramatic climax. PROGRAMME: Johannes Brahms (1833-1897) String Quartet No.1 in C minor, Op.51 No.1 Georges Aperghis (b.1945) String Quartet No.2 Interval Ludwig van Beethoven (1770-1827) String Quartet No.16 in F major, Op.135 QUATUOR DIOTIMA Yun-Peng Zhao (violin) Léo Marillier (violin) Franck Chevalier (viola) Alexis Descharmes (cello) One of France’s most renowned string quartets and one of the most sought-after chamber ensembles on the international stage today, Quatuor Diotima was formed in 1996 by graduates of the Conservatoire National Supérieur de Musique et de Danse de Paris. The Quartet’s name evokes a double musical significance: Diotima is at once an allegory of German Romanticism – Friederich Hölderlin gives the name to the love of his life in his novel Hyperion – and a rallying cry for the music of our time, brandished by Luigi Nono in his composition Fragmente-Stille, an Diotima. Quatuor Diotima has collaborated closely with several of the greatest composers of the late 20th century, notably Pierre Boulez (who revised his Livre pour Quatuor for them) and Helmut Lachenmann. Shedding new light on romantic or more contemporary masterworks, particularly in Beethoven, Schubert, Janáček, Debussy, Ravel and Bartók, as well as the Second Viennese School, the Quartet also regularly commissions new works from the most brilliant composers of our time, including Tristan Murail, Rebecca Saunders, Toshio Hosokawa, Gérard Pesson. Quatuor","endDate":"2026-10-30T22:00:00","image":"https://www.visitcyprus.com/wp-content/uploads/2026/10/QUATUOR-DIOTIMA.jpg","organizer":{"@type":"Organization","name":"pharosartsfoundation.org","url":"https://pharosartsfoundation.org/event/quatuor-diotima/"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"CONCERT QUATUOR DIOTIMA – 30.10.2026","item":"https://mypins.site/en/event/ce3c5a1e-74cd-471a-ae4e-d7f02b980a03/concert-quatuor-diotima-30-10-2026/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>CONCERT QUATUOR DIOTIMA – 30.10.2026</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-10-30">October 30, 2026</time></p>
+  <p><time datetime="2026-10-30T20:30:00">October 30, 2026, 8:30 PM</time></p>
+  <address>The Shoe Factory, 304 Ermou, Nicosia, 01, Cyprus</address>
+  <p>20 EUR</p>
+  <p>Five years after its Cyprus debut, Quatuor Diotima returns to Nicosia on the occasion of its 30th anniversary! One of France’s most renowned string quartets and one of the most sought-after chamber ensembles on the international stage today, Diotima has occupied a distinctive place at the highest level of European chamber music, boasting a repertoire that ranges from the great masterpieces of the 19th century to the some of the most important music being written today. Quatuor Diotima is a regular presence at many of the world’s foremost venues, including Wigmore Hall, Pierre Boulez Saal, Elbphilharmonie Hamburg, Philharmonie de Paris, and its extensive and highly acclaimed discography has received major critical distinctions, including multiple Diapason d’Or awards, a German Record Critics’ Award, and the European Cultural Heritage Award from the French Ministry of Culture. 
+
+For their concert in Cyprus, on Friday 30 October 2026 at The Shoe Factory, Nicosia, Quatuor Diotima will present an intense, searching and deeply expressive programme, pairing masterpieces by Beethoven and Brahms with Georges Aperghis’s strikingly original String Quartet No.2, which was commissioned by Radio France and given its world premiere by Diotima at the Théâtre des Champs-Élysées a few months ago. Moving between urgency, intimacy, tension and moments of remarkable freedom, this is a concert that will unquestionably unfold through constantly shifting emotional landscapes, gathering momentum towards a powerful dramatic climax.
+
+PROGRAMME:
+
+Johannes Brahms (1833-1897)
+
+String Quartet No.1 in C minor, Op.51 No.1
+
+Georges Aperghis (b.1945)
+
+String Quartet No.2
+
+Interval 
+
+Ludwig van Beethoven (1770-1827)
+
+String Quartet No.16 in F major, Op.135
+
+QUATUOR DIOTIMA
+
+
+
+Yun-Peng Zhao (violin) 
+
+Léo Marillier (violin)
+
+Franck Chevalier (viola)
+
+Alexis Descharmes (cello) 
+
+One of France’s most renowned string quartets and one of the most sought-after chamber ensembles on the international stage today, Quatuor Diotima was formed in 1996 by graduates of the Conservatoire National Supérieur de Musique et de Danse de Paris. 
+
+The Quartet’s name evokes a double musical significance: Diotima is at once an allegory of German Romanticism – Friederich Hölderlin gives the name to the love of his life in his novel Hyperion – and a rallying cry for the music of our time, brandished by Luigi Nono in his composition Fragmente-Stille, an Diotima.
+
+Quatuor Diotima has collaborated closely with several of the greatest composers of the late 20th century, notably Pierre Boulez (who revised his Livre pour Quatuor for them) and Helmut Lachenmann. Shedding new light on romantic or more contemporary masterworks, particularly in Beethoven, Schubert, Janáček, Debussy, Ravel and Bartók, as well as the Second Viennese School, the Quartet also regularly commissions new works from the most brilliant composers of our time, including Tristan Murail, Rebecca Saunders, Toshio Hosokawa, Gérard Pesson.
+
+Quatuor</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>CONCERT QUATUOR DIOTIMA – 30.10.2026</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/concert/">🎤 Concerts</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/081ba0df-33b4-407a-9177-bb3d1a033457/keladismata/">KELADISMATA <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/27f08dfe-f055-43c7-95b2-213249f13900/again-tribute-to-giorgos-mazonakis-in-nicosia/">Again: Tribute to Giorgos Mazonakis in Nicosia <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/358a850a-f813-488e-b255-db679946f7f4/vanilla-groove-at-kesh/">Vanilla Groove at Kesh <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/415930fd-cf93-4461-9ec4-afb24b23b6bc/kosta-kritikos-at-dusty-munky/">Kosta Kritikos at Dusty Munky <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/512b7609-122a-4483-9a3f-3e3ff0dc5e82/ontour/">OnTour <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/6ad57237-d828-4487-a2b7-5de4d33b75a9/tou-topou-kai-tis-agapis-oi-fones/">Tou Topou kai tis Agapis oi fones <time datetime="2026-10-30">October 30, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/5f36f0a0-a56b-4099-bb51-6e534dd532e9/the-pattihio-municipal-theater-of-limassol-presents-voices-of-my-land-and-of-love/">The Pattihio Municipal Theater of Limassol presents &quot;VOICES OF MY LAND AND OF LOVE&quot;</a> <time datetime="2026-10-30">October 30, 2026</time></li>
+    <li>Next: <a href="/en/event/eac0003f-e8a3-428b-956a-df7506107832/seismos-halloween-edition/">Seismos Halloween Edition</a> <time datetime="2026-10-30">October 30, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>
