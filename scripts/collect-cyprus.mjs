@@ -21,6 +21,11 @@ import { cleanCardText } from './text-safe.mjs';
 import { cleanEndTime } from './end-time-guard.mjs';
 import { cnDuplicateOf } from './cy-duplicate-pages.mjs';
 import { normWebsite } from './site-url.mjs';
+import { buildIntervalIndex, coveredByInterval } from './interval-cover.mjs';
+// Индекс интервалов живущих карточек: «многодневная карточка накрывает дату
+// кандидата» ⇒ кандидат — копия (класс Leptos/Lefkara, запуск 331).
+let intervalIndex = [];
+
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -379,7 +384,7 @@ async function existingKeys() {
     // поэтому одиночный select оставлял без ключей все события за первой
     // тысячей — они вставлялись заново на каждом прогоне, а счётчик
     // «добавлено» показывал их как новые (их потом сносил dedupe-events.mjs).
-    data = await selectAll(db, 'events', 'title, start_date, website, city, address, lat, lng', {
+    data = await selectAll(db, 'events', 'title, start_date, end_date, status, website, city, address, lat, lng', {
       log: (msg) => console.log(`  ключи дублей — ${msg}`),
     });
   } catch (e) {
@@ -390,6 +395,7 @@ async function existingKeys() {
   }
   const rows = data || [];
   const keys = new Set(rows.map((e) => normKey(e.title, e.start_date)));
+  intervalIndex = buildIntervalIndex(rows);
   // Ссылки на уже обработанные страницы источников: Cyprus.BZ отдаёт страницы
   // по 30+ секунд, поэтому повторно их не скачиваем — каждый запуск продвигается
   // глубже по карте сайта, а не топчется на первых страницах.
@@ -401,7 +407,7 @@ async function existingKeys() {
 }
 
 // ===== Запись события =====
-const stats = { visitcyprus: 0, cyprusnow: 0, cyprusbz: 0, cyprusbzCities: 0, skipped: 0, bzDup: 0, errors: 0 };
+const stats = { visitcyprus: 0, cyprusnow: 0, cyprusbz: 0, cyprusbzCities: 0, skipped: 0, bzDup: 0, coverDup: 0, errors: 0 };
 
 async function save(row, seen) {
   const key = normKey(row.title, row.start_date);
@@ -412,6 +418,13 @@ async function save(row, seen) {
   }
   if (row.start_date < todayStr() || row.start_date > horizonStr()) {
     stats.skipped++;
+    return false;
+  }
+  // Многодневная карточка того же события уже накрывает эту дату — это копия
+  // записи ленты (Leptos/Lefkara), а не новое событие.
+  if (coveredByInterval(intervalIndex, row)) {
+    stats.skipped++;
+    stats.coverDup++;
     return false;
   }
   const { error } = DRY_RUN || !db ? { error: null } : await db.from('events').insert(row);
@@ -972,7 +985,7 @@ async function main() {
     `Готово: добавлено ${stats.visitcyprus + stats.cyprusnow + stats.cyprusbz + stats.cyprusbzCities} `
     + `(VisitCyprus ${stats.visitcyprus}, Cyprus Now ${stats.cyprusnow}, `
     + `Cyprus.BZ города Востока ${stats.cyprusbzCities}, Cyprus.BZ sitemap ${stats.cyprusbz}), `
-    + `пропущено ${stats.skipped} (из них копий страниц Cyprus.BZ ${stats.bzDup}), ошибок ${stats.errors}, ${mins} мин.`,
+    + `пропущено ${stats.skipped} (из них копий страниц Cyprus.BZ ${stats.bzDup}, копий внутри интервала ${stats.coverDup}), ошибок ${stats.errors}, ${mins} мин.`,
   );
 }
 
