@@ -9,6 +9,7 @@ import { createClient } from '@supabase/supabase-js';
 import { selectAll } from './db-rows.mjs';
 import { execFileSync } from 'node:child_process';
 import { cnDuplicateOf } from './cy-duplicate-pages.mjs';
+import { isWindowSeries } from './cn-window-series.mjs';
 
 const PROXY = process.env.PROXY === '0' ? null : 'http://127.0.0.1:10809';
 function curl(url) {
@@ -81,8 +82,9 @@ for (const [pt, list] of groups) {
   for (const [k, tl] of byTitle) {
     if (tl.length < 2 || !k) continue;
     const cross = tl.some((a, i) => tl.some((b, j) => j > i && overlaps(a, b)));
-    (cross ? dupList : seriesList).push({ pt, k, tl });
-    if (cross) dupPairs++; else seriesPairs++;
+    // Пересечение может быть не дублем, а ОКНОМ тура, накрывающим отдельные вечера (336)
+    if (cross && isWindowSeries(tl)) { seriesList.push({ pt, k, tl, win: true }); seriesPairs++; }
+    else { (cross ? dupList : seriesList).push({ pt, k, tl }); if (cross) dupPairs++; else seriesPairs++; }
   }
   // Кейс-эталон 215 имеет РАЗНЫЕ названия записей («Limassol Christmas Show: Festive Magic
   // at St. George Havouzas» ↔ «Limassol Christmas Show 2026»), поэтому точного совпадения темы
@@ -115,7 +117,7 @@ console.log(`\nзаписей ленты с площадкой: ${recs.length} |
 console.log(`\n=== ДУБЛЬ ЗАПИСИ: та же площадка + та же тема + пересечение дат — ${dupPairs} ===`);
 for (const g of dupList) show(g);
 console.log(`\n=== СЕРИЯ (та же тема, даты не пересекаются, сворачивать нельзя) — ${seriesPairs} ===`);
-for (const g of seriesList.slice(0, 40)) { console.log(`серия | ${g.pt} | ${g.k.slice(0, 55)} | записей ${g.tl.length} | дней: ${g.tl.map((r) => r.start.slice(0, 10)).join(', ')}`); }
+for (const g of seriesList.slice(0, 40)) { console.log(`${g.win ? 'серия-окно' : 'серия'} | ${g.pt} | ${g.k.slice(0, 55)} | записей ${g.tl.length} | дней: ${g.tl.map((r) => r.start.slice(0, 10)).join(', ')}`); }
 console.log(`\n=== ПАРЫ ПО ЗНАЧИМЫМ СЛОВАМ (разные названия, общая площадка, пересечение дат) — ${nearDup.size} ===`);
 for (const g of nearDup.values()) {
   const st = (r) => (liveByPage.has(r.url) ? 'карточка' : (cnDuplicateOf(r.url) || cnDuplicateOf(r.slug) ? 'страховка' : 'НЕТ в базе'));
