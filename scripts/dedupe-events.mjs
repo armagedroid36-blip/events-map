@@ -386,7 +386,7 @@ async function pruneArchivedCopies() {
 /** Поля, которые переносим из дубля в оставленную карточку, если у неё они пустые */
 const ENRICH_FIELDS = [
   'start_time', 'end_time', 'address', 'photos', 'price', 'currency', 'contact',
-  'title_en', 'description_en', 'category_id',
+  'title_en', 'description_en', 'description', 'category_id',
 ];
 
 const isBlank = (v) =>
