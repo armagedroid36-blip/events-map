@@ -475,12 +475,14 @@ async function existingKeys() {
     );
   } catch (e) {
     console.error('Ошибка чтения дублей:', e.message);
-    return { seen: new Set(), liveByTitle: new Map() };
+    return { seen: new Set(), sites: new Set(), liveByTitle: new Map() };
   }
   const seen = new Set();
+  const sites = new Set();
   const liveByTitle = new Map();
   for (const e of data || []) {
     seen.add(normKey(e.title, e.start_date));
+    if (e.website) sites.add(String(e.website).trim());
     if (e.status === 'active' || e.status === 'moderation') {
       const k = sameTitleKey(e.title, e.city);
       if (!liveByTitle.has(k)) liveByTitle.set(k, []);
@@ -501,7 +503,7 @@ async function fetchChannel(username, before) {
 }
 
 async function main() {
-  const { seen, liveByTitle } = await existingKeys();
+  const { seen, sites, liveByTitle } = await existingKeys();
   let inserted = 0;
 
   for (const ch of CHANNELS) {
@@ -732,12 +734,19 @@ async function main() {
           source_type: 'collector',
         };
 
+        // Пост уже собран под другим названием (канал отредактировал текст) — карточка
+        // уйдёт в архив дедупом и будет удалена prune: сигнал для разбора, не блок.
+        if (row.website && sites.has(String(row.website).trim())) {
+          console.warn(`  [пост уже собран] ${title.slice(0, 40)} — ${row.website}`);
+        }
+
         const { error } = DRY_RUN ? { error: null } : await db.from('events').insert(row);
         if (error) {
           console.error(`  Ошибка вставки «${title.slice(0, 40)}»: ${error.message}`);
         } else {
           inserted++;
           seen.add(key);
+          if (row.website) sites.add(String(row.website).trim());
           const lk = sameTitleKey(title, ch.city);
           if (!liveByTitle.has(lk)) liveByTitle.set(lk, []);
           liveByTitle.get(lk).push({
