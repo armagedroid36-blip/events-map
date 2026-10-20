@@ -20,7 +20,7 @@ import { cleanDescription } from './desc-junk.mjs';
 import { cleanCardText } from './text-safe.mjs';
 import { cleanEndTime } from './end-time-guard.mjs';
 import { cnDuplicateOf } from './cy-duplicate-pages.mjs';
-import { normWebsite } from './site-url.mjs';
+import { normWebsite, eventWebsite } from './site-url.mjs';
 import { buildIntervalIndex, coveredByInterval } from './interval-cover.mjs';
 // Индекс интервалов живущих карточек: «многодневная карточка накрывает дату
 // кандидата» ⇒ кандидат — копия (класс Leptos/Lefkara, запуск 331).
@@ -577,7 +577,7 @@ async function collectVisitCyprus(seen, budget) {
         cityEn: v.city || '',
         venue: [v.venue, v.address, v.zip].filter(Boolean).join(', '),
         address: [v.venue, v.address, v.city].filter(Boolean).join(', '),
-        website: ev.website || ev.url || null,
+        website: eventWebsite(ev.website, ev.url),
         photos,
         price: cost.price ?? null,
         currency: cost.currency ?? null,
