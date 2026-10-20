@@ -9,7 +9,7 @@ import { createClient } from '@supabase/supabase-js';
 import { selectAll } from './db-rows.mjs';
 import { isRootUrl } from './site-url.mjs';
 
-const WINDOW = process.env.WINDOW || new Date(Date.now() - 12 * 3600e3).toISOString();
+const WINDOW = process.argv[2] || process.env.WINDOW || new Date(Date.now() - 12 * 3600e3).toISOString();
 const db = createClient(process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
 
 const rows = await selectAll(db, 'events',
