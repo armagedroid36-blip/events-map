@@ -12,6 +12,7 @@ import { buildVenueDistrictRegistry, districtForVenue } from './venue-district.m
 import { stripInvisible } from './text-safe.mjs';
 import { cleanEndTime } from './end-time-guard.mjs';
 import { cleanStartTime } from './start-time-stub.mjs';
+import { recurrenceOf } from './bali-recurrence.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -455,6 +456,11 @@ async function main() {
         currency: p?.currency ?? null,
         donation: !!p?.donation,
         is_international: isInternational,
+        // Серия дат в ленте (клубы, курсы, выставки) → правило повтора, иначе карточку
+        // архивирует archive-past.mjs сразу после первой даты (класс потерь 350).
+        recurrence: recurrenceOf(
+          (ev.eventDates || []).map((d) => String(d.startAt || '').slice(0, 10)).filter((d) => d >= startDate),
+        ),
         status: 'moderation',
         source_type: 'collector',
       };
