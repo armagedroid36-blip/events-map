@@ -224,6 +224,11 @@ const SERVICE_LINE = /^(дата|когда|время|начало|где|ме�
  *  название получается огрызком («Открытый урок по», «Театральное занятие для»).
  *  Латинские предлоги тоже: TG-каналы Вьетнама дублируют афишу по-английски. */
 const DANGLING_TAIL = /(^|\s)(по|в|во|на|с|со|к|ко|о|об|обо|от|до|из|за|для|при|про|под|над|без|у|и|а|или|the|of|in|at|on|for|with|and|to)$/iu;
+/** Строка обрывается на двоеточии/тире — автор начал фразу и продолжил на следующей
+ *  строке. Без склейки карточка получает заголовок-огрызок «Групповая встреча:»
+ *  (замер 20.10.2026: карточка d867e413, настоящий смысл — в следующей строке). */
+const CONTINUES = /[:—–]$/u;
+
 
 /** Название: первая содержательная строка без эмодзи и служебных слов.
  *  Пост афиши часто начинается с приветствия («Всем привет!», «Друзья!») —
@@ -244,15 +249,18 @@ export function extractTitle(text) {
     if (cand.length < 8) continue;
     // Фраза автора перенесена на следующую строку: «Открытый урок по» + «йоге для
     // начинающих» — доклеиваем следующую строку, иначе карточка получает огрызок.
-    if (DANGLING_TAIL.test(cand)) {
+    // То же для строки, оборванной двоеточием/тире («Групповая встреча:» → далее суть).
+    const dangling = DANGLING_TAIL.test(cand);
+    if (dangling || CONTINUES.test(cand)) {
       for (let j = i + 1; j < lines.length && j <= i + 2; j++) {
         const next = clean(lines[j]);
         if (!next || SERVICE_LINE.test(next)) break;
         cand = `${cand} ${next}`.trim();
-        if (!DANGLING_TAIL.test(cand)) break;
+        if (!DANGLING_TAIL.test(cand) && !CONTINUES.test(cand)) break;
       }
-      cand = cand.replace(DANGLING_TAIL, '').trim() || cand;
+      cand = cand.replace(DANGLING_TAIL, '').replace(/[:—–]+$/u, '').trim() || cand;
     }
+
     const out = cand.charAt(0).toUpperCase() + cand.slice(1, 120);
     // хвостовая точка осталась от вырезанного эмодзи («… в Нячанге 🧘.»)
     return out.replace(/[\s.,;:]+$/u, '') || out;
