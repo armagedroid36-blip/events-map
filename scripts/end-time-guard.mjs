@@ -17,6 +17,11 @@ export function cleanEndTime({ start_date, start_time, end_date, end_time } = {}
   if (!et) return end_time; // неразобранный формат (пусть решает вызывающий) — не трогаем
   const sameDay = !end_date || end_date === start_date;
   const st = hm(start_time);
+  // «23:59» у лент — заглушка «время не указано» (Балифорум пишет её в startAt/endAt
+  // парами, Cyprus Now — в конце суток). Раньше чистилось только начало, а окончание
+  // уезжало в базу, и карточка печатала «до 23:59» (замер 20.10.2026: 83 живых
+  // карточки Бали с пустым start_time и end_time 23:59). Без начала окончание бессмысленно.
+  if (!st && et === '23:59') return null;
   if (sameDay && st && et <= st) return null;
   return end_time;
 }

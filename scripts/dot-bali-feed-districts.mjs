@@ -32,10 +32,15 @@ const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const db = createClient(url, process.env.SUPABASE_SERVICE_ROLE, { auth: { persistSession: false } });
 const rows = await selectAll(db, 'events', 'id,status,website,title,start_date', {});
 const byWeb = new Set(rows.map(r => String(r.website || '').replace(/\/$/, '')));
-let absent = 0; const absentUnk = [];
+let absent = 0; const absentUnk = []; let twins = 0;
 for (const e of uniq.values()) {
   const w = `https://baliforum.ru/events/${e.slug}`;
-  if (!byWeb.has(w)) { absent++; const d = String((e.place||{}).districtName || '?'); absentUnk.push(`${d} | ${w} | ${String(e.title).slice(0,40)}`); }
+  if (byWeb.has(w)) continue;
+  // Двойник записи: лента держит по две записи одного события (слаг и слаг-1).
+  // Если слаг без числового суффикса уже есть в базе — это не пропуск сборщика.
+  const base = String(e.slug).replace(/-\d+$/, '');
+  if (base !== e.slug && byWeb.has(`https://baliforum.ru/events/${base}`)) { twins++; continue; }
+  absent++; const d = String((e.place||{}).districtName || '?'); absentUnk.push(`${d} | ${w} | ${String(e.title).slice(0,40)}`);
 }
-console.log(`\nБаза: строк ${rows.length}; из ленты нет в базе: ${absent}`);
+console.log(`\nБаза: строк ${rows.length}; двойников записи (слаг без -N в базе): ${twins}; из ленты нет в базе: ${absent}`);
 absentUnk.slice(0, 25).forEach(l => console.log('   ', l));
