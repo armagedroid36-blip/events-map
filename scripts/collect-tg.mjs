@@ -220,6 +220,10 @@ const GREETING_PREFIX = /^(всем\s+привет|привет|здравств
 const INVITE_PREFIX = /^(приглашаю|приглашаем)\s+(вас\s+)?(на|в)\s+/iu;
 /** Служебная строка-ярлык («дата:», «где:», «стоимость:») — не название */
 const SERVICE_LINE = /^(дата|когда|время|начало|где|место|адрес|стоимость|цена|вход|билеты|контакты|запись|телефон|канал|подпис)\s*[:：]/iu;
+/** Строка обрывается на предлоге/союзе — автор афиши перенёс фразу по словам,
+ *  название получается огрызком («Открытый урок по», «Театральное занятие для»).
+ *  Латинские предлоги тоже: TG-каналы Вьетнама дублируют афишу по-английски. */
+const DANGLING_TAIL = /(^|\s)(по|в|во|на|с|со|к|ко|о|об|обо|от|до|из|за|для|при|про|под|над|без|у|и|а|или|the|of|in|at|on|for|with|and|to)$/iu;
 
 /** Название: первая содержательная строка без эмодзи и служебных слов.
  *  Пост афиши часто начинается с приветствия («Всем привет!», «Друзья!») —
@@ -230,12 +234,23 @@ export function extractTitle(text) {
     .replace(/\s+/g, ' ')
     .trim();
   const lines = decodeEntities(text).split(/\n/).map((l) => l.trim()).filter(Boolean);
-  for (const line of lines) {
+  for (const [i, line] of lines.entries()) {
     let cand = clean(line);
     const bare = cand.replace(/[\s!,.…:)\-–—]+$/u, '');
     if (!cand || GREETING_ONLY.test(bare) || SERVICE_LINE.test(cand)) continue;
     cand = cand.replace(GREETING_PREFIX, '').replace(INVITE_PREFIX, '').trim();
     if (cand.length < 8) continue;
+    // Фраза автора перенесена на следующую строку: «Открытый урок по» + «йоге для
+    // начинающих» — доклеиваем следующую строку, иначе карточка получает огрызок.
+    if (DANGLING_TAIL.test(cand)) {
+      for (let j = i + 1; j < lines.length && j <= i + 2; j++) {
+        const next = clean(lines[j]);
+        if (!next || SERVICE_LINE.test(next)) break;
+        cand = `${cand} ${next}`.trim();
+        if (!DANGLING_TAIL.test(cand)) break;
+      }
+      cand = cand.replace(DANGLING_TAIL, '').trim() || cand;
+    }
     return cand.charAt(0).toUpperCase() + cand.slice(1, 120);
   }
   const fallback = lines.map(clean).find((l) => {
