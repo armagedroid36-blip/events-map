@@ -654,7 +654,15 @@ async function collectCyprusNow(seen, budget, websites = new Set(), venueCities 
       // одна и та же страница, заголовок источника изменён, адреса разные — штатный
       // дедуп её не видит). Поэтому уже разобранную страницу повторно не берём.
       const pageUrl = ev.url || (ev.slug ? `https://cyprusnow.app/event/${ev.slug}` : null);
-      if (pageUrl && websites.has(String(pageUrl).trim())) {
+      // Запись ленты без слага и без url даёт карточку БЕЗ ссылки источника: проверять
+      // её потом нечем (страница не находится, запись из ленты уходит — так появилась
+      // ca50fa0e «The One MOM Show», чья страница сейчас 404). Такую запись не берём.
+      if (!pageUrl) {
+        console.log(`  [без ссылки источника] пропускаю: ${title.slice(0, 60)}`);
+        stats.skipped++;
+        continue;
+      }
+      if (websites.has(String(pageUrl).trim())) {
         stats.skipped++;
         continue;
       }
