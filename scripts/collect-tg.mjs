@@ -216,7 +216,7 @@ function decodeEntities(s) {
 
 /** Строка-приветствие/служебный зачин — не название события */
 const GREETING_ONLY = /^(всем\s+привет|привет|здравствуй(те)?|добрый\s+(день|вечер)|доброе\s+утро|друзья|дорогие\s+\S+|уважаемые\s+\S+|внимание|анонс|афиша|напомина(ем|ю)|hello(\s+guys)?|hi(\s+guys)?|good\s+(morning|evening))$/iu;
-const GREETING_PREFIX = /^(всем\s+привет|привет|здравствуйте|здравствуй|добрый\s+(день|вечер)|доброе\s+утро|друзья|дорогие\s+\S+|уважаемые\s+\S+|внимание|анонс|афиша|hello(\s+guys)?|hi(\s+guys)?)[\s!,.…:)\-–—]+/iu;
+const GREETING_PREFIX = /^(всем\s+привет|привет|здравствуйте|здравствуй|добрый\s+(день|вечер)|доброе\s+утро|друзья|дорогие\s+\S+|уважаемые\s+\S+|внимание|анонс|афиша|всем(?=[\s!,.…:)\-–—]|$)|hello(\s+guys)?|hi(\s+guys)?)[\s!,.…:)\-–—]+/iu;
 const INVITE_PREFIX = /^(приглашаю|приглашаем)\s+(вас\s+)?(на|в)\s+/iu;
 /** Служебная строка-ярлык («дата:», «где:», «стоимость:») — не название */
 const SERVICE_LINE = /^(дата|когда|время|начало|где|место|адрес|стоимость|цена|вход|билеты|контакты|запись|телефон|канал|подпис)\s*[:：]/iu;
@@ -231,6 +231,8 @@ const DANGLING_TAIL = /(^|\s)(по|в|во|на|с|со|к|ко|о|об|обо|�
 export function extractTitle(text) {
   const clean = (s) => s
     .replace(/[^\p{L}\p{N}\s.,!?«»"':()\-]/gu, ' ')
+    // эмодзи вырезаны в пробел: «Всем 🙏. Практика … 🧘.» → «Всем . Практика … .»
+    .replace(/\s+([.,!?;:])/gu, '$1')
     .replace(/\s+/g, ' ')
     .trim();
   const lines = decodeEntities(text).split(/\n/).map((l) => l.trim()).filter(Boolean);
@@ -251,7 +253,9 @@ export function extractTitle(text) {
       }
       cand = cand.replace(DANGLING_TAIL, '').trim() || cand;
     }
-    return cand.charAt(0).toUpperCase() + cand.slice(1, 120);
+    const out = cand.charAt(0).toUpperCase() + cand.slice(1, 120);
+    // хвостовая точка осталась от вырезанного эмодзи («… в Нячанге 🧘.»)
+    return out.replace(/[\s.,;:]+$/u, '') || out;
   }
   const fallback = lines.map(clean).find((l) => {
     const bare = l.replace(/[\s!,.…:)\-–—]+$/u, '');
