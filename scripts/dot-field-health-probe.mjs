@@ -41,6 +41,8 @@ add('нет website (источник не указан)', live.filter((r) => !r
 add('нет source_type', live.filter((r) => !r.source_type));
 add('start_time не HH:MM', live.filter((r) => r.start_time && !/^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/.test(r.start_time)));
 add('end_time не HH:MM', live.filter((r) => r.end_time && !/^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/.test(r.end_time)));
+// заглушка 23:59 без времени начала (класс 367: baliforum отдаёт 23:59:59 = «время не указано»)
+add('end_time 23:59 при пустом start_time', live.filter((r) => !r.start_time && String(r.end_time || '').startsWith('23:59')));
 add('recurrence без freq', live.filter((r) => r.recurrence && typeof r.recurrence === 'object' && Object.keys(r.recurrence).length > 0 && !r.recurrence.freq));
 add('прошлое без повтора и без будущего end_date', live.filter((r) => r.start_date && r.start_date < today && !(r.end_date && r.end_date >= today) && !(r.recurrence && Object.keys(r.recurrence).length)));
 
