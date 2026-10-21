@@ -4965,6 +4965,10 @@ async function main() {
   let pageCategories = 0;
   let pageCategoriesEn = 0;
   let restoredPages = 0;
+  // EN-адреса RU-only ячеек: у ячейки есть RU-страница, а EN не публикуется
+  // (EN-событий меньше MIN_CATEGORY_EVENTS). Такой адрес не попадает ни в
+  // sitemap, ни в источники алиасов — ему пишется страница-алиас автоматически.
+  const autoEnCellAliases = [];
   const cellList = [...cells.values()].sort((a, b) =>
     `${a.path}/${a.cat.id}`.localeCompare(`${b.path}/${b.cat.id}`),
   );
@@ -5051,7 +5055,13 @@ async function main() {
       );
     }
 
-    if (!hasEnPage) continue;
+    if (!hasEnPage) {
+      // EN-страницы нет: адрес /en/<city>/<cat>/ всё равно может быть в индексе
+      // Google (так 2 из 8 адресов держатся в PASS). После цикла ячеек ему
+      // пишется страница-алиас с canonical на RU-версию этой же ячейки.
+      autoEnCellAliases.push({ cityPath: cell.path, catId: cell.cat.id });
+      continue;
+    }
     const cellEn = { path: cell.path, cat: cell.cat, items: itemsEn };
     const enTitle = categoryTitle(cell.cat, cell.path, 'en');
     const enDescription = categoryDescription(cell.cat, cell.path, 'en', catCellFacts(itemsEn, 'en'));
@@ -5323,6 +5333,7 @@ async function main() {
   );
   let aliasPages = 0;
   let aliasCategoryPages = 0;
+  let aliasAutoCategory = 0;   // EN-алиасы RU-only ячеек (пишутся автоматически)
   const aliasSeen = new Set();
   // URL, которые НОВАЯ сборка уже опубликовала (страницы + sitemap): если
   // категорийный URL в наборе — страница живая, алиас ей не нужен. Границы
@@ -5363,6 +5374,82 @@ async function main() {
     else if (n === 21) console.log(`  реестр алиасов: …остальные отказы «${reason}» не печатаю`);
   };
 
+  // Запись посадочной-алиаса «город × категория» (§ единая для двух путей:
+  // URL из источников алиасов и EN-адреса RU-only ячеек). Возвращает true,
+  // если страница написана.
+  const writeCategoryAlias = (cityAliasPath, catId, en, src = 'auto') => {
+    const cat = catById.get(catId);
+    if (!cat) return false;
+    const aliasPath = `${en ? 'en/' : ''}${cityAliasPath}/${catId}`;
+    if (aliasSeen.has(aliasPath)) return false;
+    if (locsSet.has(`${SITE_URL}/${aliasPath}/`)) return false;
+    const cellPageUrl = `${SITE_URL}/${cityAliasPath}/${catId}/`;
+    const cityPageUrl = `${SITE_URL}/${cityAliasPath}/`;
+    // canonical: RU-версия той же ячейки (только если реально опубликована)
+    // либо городская страница — «сосед», который точно отдаёт 200.
+    const canonical = en && locsSet.has(cellPageUrl) ? cellPageUrl : cityPageUrl;
+    const cell = cells.get(cellKey(cityAliasPath, catId));
+    const items = cell
+      ? en
+        ? cell.items.filter(({ ev }) => eventHasEn(ev))
+        : cell.items
+      : [];
+    const lang = en ? 'en' : 'ru';
+    const pageCell = { path: cityAliasPath, cat, items };
+    const title = categoryTitle(cat, cityAliasPath, lang);
+    const description = categoryDescription(
+      cat,
+      cityAliasPath,
+      lang,
+      catCellFacts(items, lang),
+    );
+    // Структурированные данные — как у алиасов событий: описывают ЖИВОГО
+    // «соседа» (canonical), а не сам алиас, иначе CollectionPage.url и крошка
+    // противоречили бы canonical.
+    const aliasJsonLd = categoryJsonLd(pageCell, lang);
+    const cpNode = aliasJsonLd['@graph'].find((n) => n['@type'] === 'CollectionPage');
+    if (cpNode) cpNode.url = canonical;
+    const bcNode = aliasJsonLd['@graph'].find((n) => n['@type'] === 'BreadcrumbList');
+    if (bcNode?.itemListElement?.length) {
+      bcNode.itemListElement[bcNode.itemListElement.length - 1].item = canonical;
+    }
+    // Мета — как у посадочной страницы ячейки (title/description), но
+    // canonical и og:url указывают на живого «соседа», hreflang не выводится.
+    // #seo-category-block в HTML обязателен: по нему SPA (wasCategoryPublished)
+    // рисует страницу, а не 404; карта #seo-alias-map не даёт гидратации
+    // перетереть canonical на self (src/lib/seo.ts, applyCategoryMeta).
+    pastPagesBuffer.push({
+      path: aliasPath,
+      html: renderPage(baseHtml, {
+        lang,
+        title,
+        description,
+        canonical,
+        ogTitle: title,
+        ogDescription: description,
+        ogUrl: canonical,
+        ogImage: LOGO_URL,
+        jsonLd: aliasJsonLd,
+        aliasMap: { aliasFrom: `/${aliasPath}/`, aliasTo: canonical },
+        bodySeo: categorySeoHtml(pageCell, lang, cells),
+      }),
+    });
+    aliasSeen.add(aliasPath);
+    aliasCategoryPages += 1;
+    if (src === 'registry') aliasRegistryCategory += 1;
+    if (src === 'auto') aliasAutoCategory += 1;
+    return true;
+  };
+
+  // EN-адреса RU-only ячеек: EN-страница не публикуется (EN-событий меньше
+  // гейта), но адрес /en/<city>/<cat>/ может быть в индексе Google и не
+  // приходит ни из sitemap прошлой сборки (EN-адреса в sitemap не было), ни из
+  // реестра. Пишем алиас автоматически — правка в источнике (гейт ячейки), а не
+  // ручной список адресов. canonical — RU-страница той же ячейки.
+  for (const { cityPath, catId } of autoEnCellAliases) {
+    writeCategoryAlias(cityPath, catId, true, 'auto');
+  }
+
   for (const { url: raw, src: aliasSrc } of aliasSources) {
     const rel = raw.startsWith(SITE_URL) ? raw.slice(SITE_URL.length) : raw;
     const m = /^\/(en\/)?event\/([0-9a-fA-F-]{36})\/([^/]+)\/$/.exec(rel);
@@ -5393,68 +5480,13 @@ async function main() {
         continue;
       }
       const aliasPath = `${en ? 'en/' : ''}${cityAliasPath}/${catId}`;
-      const selfUrl = `${SITE_URL}/${aliasPath}/`;
       // Страница ячейки в новой сборке есть — URL живой, алиас не нужен
       // (и запись реестра снимается: адрес снова стал обычной страницей).
-      if (aliasSeen.has(aliasPath)) continue;
-      if (locsSet.has(selfUrl)) {
+      if (!aliasSeen.has(aliasPath) && locsSet.has(`${SITE_URL}/${aliasPath}/`)) {
         aliasReject(aliasSrc, raw, 'адрес снова стал обычной страницей (вошёл в sitemap)');
         continue;
       }
-      const cellPageUrl = `${SITE_URL}/${cityAliasPath}/${catId}/`;
-      const cityPageUrl = `${SITE_URL}/${cityAliasPath}/`;
-      // canonical: RU-версия той же ячейки (только если реально опубликована)
-      // либо городская страница — «сосед», который точно отдаёт 200.
-      const canonical = en && locsSet.has(cellPageUrl) ? cellPageUrl : cityPageUrl;
-      const cell = cells.get(cellKey(cityAliasPath, catId));
-      const items = cell
-        ? en
-          ? cell.items.filter(({ ev }) => eventHasEn(ev))
-          : cell.items
-        : [];
-      const lang = en ? 'en' : 'ru';
-      const pageCell = { path: cityAliasPath, cat, items };
-      const title = categoryTitle(cat, cityAliasPath, lang);
-      const description = categoryDescription(
-        cat,
-        cityAliasPath,
-        lang,
-        catCellFacts(items, lang),
-      );
-      // Структурированные данные — как у алиасов событий: описывают ЖИВОГО
-      // «соседа» (canonical), а не сам алиас, иначе CollectionPage.url и крошка
-      // противоречили бы canonical.
-      const aliasJsonLd = categoryJsonLd(pageCell, lang);
-      const cpNode = aliasJsonLd['@graph'].find((n) => n['@type'] === 'CollectionPage');
-      if (cpNode) cpNode.url = canonical;
-      const bcNode = aliasJsonLd['@graph'].find((n) => n['@type'] === 'BreadcrumbList');
-      if (bcNode?.itemListElement?.length) {
-        bcNode.itemListElement[bcNode.itemListElement.length - 1].item = canonical;
-      }
-      // Мета — как у посадочной страницы ячейки (title/description), но
-      // canonical и og:url указывают на живого «соседа», hreflang не выводится.
-      // #seo-category-block в HTML обязателен: по нему SPA (wasCategoryPublished)
-      // рисует страницу, а не 404; карта #seo-alias-map не даёт гидратации
-      // перетереть canonical на self (src/lib/seo.ts, applyCategoryMeta).
-      pastPagesBuffer.push({
-        path: aliasPath,
-        html: renderPage(baseHtml, {
-          lang,
-          title,
-          description,
-          canonical,
-          ogTitle: title,
-          ogDescription: description,
-          ogUrl: canonical,
-          ogImage: LOGO_URL,
-          jsonLd: aliasJsonLd,
-          aliasMap: { aliasFrom: `/${aliasPath}/`, aliasTo: canonical },
-          bodySeo: categorySeoHtml(pageCell, lang, cells),
-        }),
-      });
-      aliasSeen.add(aliasPath);
-      aliasCategoryPages += 1;
-      if (aliasSrc === 'registry') aliasRegistryCategory += 1;
+      writeCategoryAlias(cityAliasPath, catId, en, aliasSrc);
       continue;
     }
     const en = Boolean(m[1]);
@@ -5526,7 +5558,8 @@ async function main() {
     `  страниц-алиасов исторических URL: ${aliasPages} (GSC ${aliasBySrc.gsc}, legacy-слаг ${aliasBySrc.legacy}, sitemap прошлой сборки ${aliasBySrc.prev}, реестр ${aliasBySrc.registry})`,
   );
   console.log(
-    `  страниц-алиасов «город × категория» (URL из sitemap прошлой сборки, гейт не пройден): ${aliasCategoryPages} (реестр ${aliasRegistryCategory})`,
+    `  страниц-алиасов «город × категория» (гейт не пройден): ${aliasCategoryPages} `
+    + `(EN-адреса RU-only ячеек ${aliasAutoCategory}, реестр ${aliasRegistryCategory})`,
   );
   if (aliasRejects.size) {
     const total = [...aliasRejects.values()].reduce((a, b) => a + b, 0);

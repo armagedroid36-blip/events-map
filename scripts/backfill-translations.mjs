@@ -23,10 +23,11 @@
 // scripts/data/i18n-done.json (ключ — отпечаток оригинального текста, поэтому
 // правка события в БД снимает отметку сама).
 //
-// Что НЕ трогаем: rejected и архив по умолчанию. Архивные страницы при этом
-// ПУБЛИКУЮТСЯ (beta 0.67) и стоят в sitemap, поэтому греческий мусор в архиве
-// виден и посетителю, и Google: разовая починка — STATUSES=archived (из архива
-// берутся только карточки с греческим).
+// Что НЕ трогаем: rejected. Архивные страницы при этом ПУБЛИКУЮТСЯ (beta 0.67)
+// и стоят в sitemap: при STATUSES=archived у архивной карточки чинятся ТОЛЬКО
+// RU-поля (title_ru/description_ru), EN-поля и source_lang/language не
+// пишутся вовсе — иначе дозаполнение title_en создало бы новые /en/-страницы,
+// а смена source_lang сдвинула бы хвост RU-URL (src/lib/slug.ts eventSlug).
 //
 // Перевод: DeepSeek напрямую (DEEPSEEK_API_KEY, промпт — копия Edge Function
 // translate) либо, если ключа нет, через Edge Function translate (anon-ключ —
@@ -442,22 +443,28 @@ async function main() {
   for (const ev of rows) {
     const plan = translationPlan(ev);
     if (!plan) continue;
-    // Архив: берём ТОЛЬКО грязный греческий (греческий оригинал без перевода
-    // или греческий, застрявший в полях перевода) — это мусор на видимых
-    // страницах прошедших событий. Прочая работа по архиву (дозаполнение
-    // title_en у англоязычных карточек) создаёт новые /en/-страницы и меняет
-    // sitemap — это отдельное решение владельца, не побочный эффект починки.
+    // Архив: обрабатываем ТОЛЬКО RU-поля (title_ru/description_ru). Архивные
+    // страницы стоят в sitemap, и 437 из них показывали английское описание на
+    // русской странице. EN-поля архива не трогаем вообще: дозаполнение title_en
+    // создаёт НОВУЮ /en/-страницу (новый URL в sitemap), а source_lang меняет
+    // хвост RU-URL (eventSlug строит его из title_ru). Поэтому карточка идёт в
+    // план только при реальной работе по RU и помечается ruOnly.
     // При IDS=... правила архива не действуют: id назвал человек.
-    if (!ONLY_IDS.size && ev.status === 'archived' && !plan.greek) continue;
+    if (!ONLY_IDS.size && ev.status === 'archived') {
+      if (!plan.titleRu && !plan.descRu) continue;
+      plan.ruOnly = true;
+    }
     planned.push({ ev, plan });
   }
   const greekCount = planned.filter((p) => p.plan.greek).length;
   const ruCount = planned.filter((p) => p.plan.titleRu || p.plan.descRu).length;
   const enCount = planned.filter((p) => p.plan.enWork).length;
+  const archivedCount = planned.filter((p) => p.plan.ruOnly).length;
   const batch = planned.slice(0, LIMIT);
   console.log(
     `Событий к переводу: ${planned.length} (RU-версия — ${ruCount}, EN-версия — ${enCount}, `
-    + `из них с греческим ${greekCount}); обрабатываем ${batch.length} (LIMIT=${LIMIT})`,
+    + `из них с греческим ${greekCount}, архивных RU-only — ${archivedCount}); `
+    + `обрабатываем ${batch.length} (LIMIT=${LIMIT})`,
   );
   if (!batch.length) {
     console.log('Готово: переведено 0, ошибок 0. Осталось в плане: 0');
@@ -485,12 +492,24 @@ async function main() {
       const srcTitle = str(ev.title).trim();
       const srcDesc = str(ev.description).trim();
       try {
-        const [titleRu, descRu, titleEn, descEn] = await Promise.all([
-          plan.titleRu ? resolveField(plan.titleRu.src, ev.title_ru, 'ru', plan.titleRu.force) : Promise.resolve(ev.title_ru ?? null),
-          plan.descRu ? resolveField(plan.descRu.src, ev.description_ru, 'ru', plan.descRu.force) : Promise.resolve(ev.description_ru ?? null),
-          resolveField(plan.titleEn.src, ev.title_en, 'en', plan.titleEn.force),
-          plan.descEn ? resolveField(plan.descEn.src, ev.description_en, 'en', plan.descEn.force) : Promise.resolve(ev.description_en ?? null),
-        ]);
+        // RU-only (архив): собираем значения ТОЛЬКО для RU-полей, для EN
+        // resolveField не вызывается вовсе — экономия запросов к LLM и
+        // гарантия, что EN-поля/язык оригинала не меняются.
+        const [titleRu, descRu, titleEn, descEn] = await Promise.all(
+          plan.ruOnly
+            ? [
+                plan.titleRu ? resolveField(plan.titleRu.src, ev.title_ru, 'ru', plan.titleRu.force) : Promise.resolve(ev.title_ru ?? null),
+                plan.descRu ? resolveField(plan.descRu.src, ev.description_ru, 'ru', plan.descRu.force) : Promise.resolve(ev.description_ru ?? null),
+                Promise.resolve(ev.title_en ?? null),
+                Promise.resolve(ev.description_en ?? null),
+              ]
+            : [
+                plan.titleRu ? resolveField(plan.titleRu.src, ev.title_ru, 'ru', plan.titleRu.force) : Promise.resolve(ev.title_ru ?? null),
+                plan.descRu ? resolveField(plan.descRu.src, ev.description_ru, 'ru', plan.descRu.force) : Promise.resolve(ev.description_ru ?? null),
+                resolveField(plan.titleEn.src, ev.title_en, 'en', plan.titleEn.force),
+                plan.descEn ? resolveField(plan.descEn.src, ev.description_en, 'en', plan.descEn.force) : Promise.resolve(ev.description_en ?? null),
+              ],
+        );
         // Пишем только реальные изменения — повторный прогон ничего не обновляет.
         const norm = (v) => {
           const s = str(v).trim();
@@ -499,10 +518,12 @@ async function main() {
         const upd = {};
         if (norm(titleRu) !== norm(ev.title_ru)) upd.title_ru = norm(titleRu);
         if (norm(descRu) !== norm(ev.description_ru)) upd.description_ru = norm(descRu);
-        if (norm(titleEn) !== norm(ev.title_en)) upd.title_en = norm(titleEn);
-        if (norm(descEn) !== norm(ev.description_en)) upd.description_en = norm(descEn);
-        if (norm(ev.source_lang) !== plan.sourceLang) upd.source_lang = plan.sourceLang;
-        if (norm(ev.language) !== plan.sourceLang) upd.language = plan.sourceLang;
+        if (!plan.ruOnly) {
+          if (norm(titleEn) !== norm(ev.title_en)) upd.title_en = norm(titleEn);
+          if (norm(descEn) !== norm(ev.description_en)) upd.description_en = norm(descEn);
+          if (norm(ev.source_lang) !== plan.sourceLang) upd.source_lang = plan.sourceLang;
+          if (norm(ev.language) !== plan.sourceLang) upd.language = plan.sourceLang;
+        }
 
         if (!Object.keys(upd).length) {
           ok += 1;
