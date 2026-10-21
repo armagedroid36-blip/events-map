@@ -374,11 +374,15 @@ async function main() {
       const startDate = when.raw.startAt.slice(0, 10);
       // Двойник записи ленты: платформа держит ОДНО событие двумя слагами (`slug` и `slug-1`)
       // с одинаковыми названием и датами (кейс курса йоги WYTT в Нуану, 21.10.2026: id 9629/9873,
-      // 11 дат 1:1, две живые карточки на карте). Сравниваем ссылки без хвостового «-N».
+      // 11 дат 1:1, две живые карточки на карте). Сравниваем ссылки без хвостового «-N»,
+      // но допуск по дате — не более 1 дня: иначе под правило попадут РАЗНЫЕ вечера серии
+      // (`last-light-v-savaya-bali-2` … `-14` идут по неделям).
       const normSite = (u) => String(u || '').replace(/-\d+$/, '');
       const twinSite = liveWebsites.find(
         (w) =>
-          (w.website === website || normSite(w.website) === normSite(website)) &&
+          (w.website === website ||
+            (normSite(w.website) === normSite(website) &&
+              Math.abs((new Date(startDate) - new Date(w.start_date)) / 86400000) <= 1)) &&
           Math.abs((new Date(startDate) - new Date(w.start_date)) / 86400000) <= 60,
       );
       if (twinSite) {
