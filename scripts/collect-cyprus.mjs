@@ -714,14 +714,20 @@ async function collectCyprusNow(seen, budget, websites = new Set(), venueCities 
         console.log(`  [city по точке вместо округа] «${cityFinal}» -> «${citySnapped}»: ${title.slice(0, 50)}`);
         cityOut = citySnapped;
       }
+      const cyStart = cyHM(ev.start_at);
+      const cyEnd = cyHM(ev.end_at);
+      const cyEndDate = ev.end_at ? cyDate(ev.end_at) : null;
+      // Окончание раньше начала В ТОТ ЖЕ ДЕНЬ — противоречивые данные ленты (end_at из другой
+      // сессии/дня): такое окончание не пишем, иначе карточка печатает «20:30–19:00».
+      const badEnd = Boolean(cyStart && cyEnd && (!cyEndDate || cyEndDate === start) && cyEnd < cyStart);
       const row = await buildRow({
         title,
         description: stripHtml(ev.description || ev.excerpt || ''),
         lang: 'en',
         start_date: start,
-        end_date: ev.end_at ? cyDate(ev.end_at) : null,
-        start_time: cyHM(ev.start_at),
-        end_time: cyHM(ev.end_at),
+        end_date: cyEndDate,
+        start_time: cyStart,
+        end_time: badEnd ? null : cyEnd,
         city: cityOut,
         cityEn: ev.city || citySlug,
         venue: venueName,
