@@ -28,6 +28,9 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/bali/exhibition/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/bali/exhibition/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/bali/exhibition/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/bali/festival/</loc><lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/bali/festival/" />
@@ -251,6 +254,11 @@
   <url><loc>https://mypins.site/en/bali/conference/</loc><lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/bali/conference/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/bali/conference/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/en/bali/exhibition/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/bali/exhibition/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/bali/exhibition/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/en/bali/festival/</loc><lastmod>2026-10-21</lastmod>
@@ -953,6 +961,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/05b01d52-da88-495d-ab34-2cb4b4a128b6/10th-anniversary-of-samasta-bali-experience-the-extraordinary/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/en/event/05b5a6b1-29d9-40ca-8e93-57f5925c371d/volleyball-in-ubud-classic/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/05b5a6b1-29d9-40ca-8e93-57f5925c371d/voleybol-v-ubude-klassika/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/05b5a6b1-29d9-40ca-8e93-57f5925c371d/volleyball-in-ubud-classic/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/en/event/05c07b5e-ce85-4964-aa65-b919e759ee0f/grinchmas-a-festive-performance-for-children-and-adults-in-limassol/</loc><lastmod>2026-10-05</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/05c07b5e-ce85-4964-aa65-b919e759ee0f/grinchmas-prazdnichnyy-spektakl-dlya-detey-i-vzroslykh-v-limassole/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/05c07b5e-ce85-4964-aa65-b919e759ee0f/grinchmas-a-festive-performance-for-children-and-adults-in-limassol/" />
@@ -1278,6 +1291,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/09dfccb8-346e-4c8d-8e8a-a8ea3f6af330/the-belly/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/en/event/09e13b64-fdaf-4e9d-8506-15db2edc9cd4/solo-latina-open-class/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/09e13b64-fdaf-4e9d-8506-15db2edc9cd4/solo-latina-otkrytyy-klass/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/09e13b64-fdaf-4e9d-8506-15db2edc9cd4/solo-latina-open-class/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/en/event/09eb88b8-63b6-442c-87e9-d49b4219c272/antimafia-game-meetup/</loc><lastmod>2026-10-13</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/09eb88b8-63b6-442c-87e9-d49b4219c272/igrovaya-vstrecha-antimafiya/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/09eb88b8-63b6-442c-87e9-d49b4219c272/antimafia-game-meetup/" />
@@ -1506,6 +1524,11 @@
   <url><loc>https://mypins.site/en/event/0d381d03-633a-4d0f-ae19-13936ef72fe1/halloween-week-at-toy-town/</loc><lastmod>2026-10-16</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/0d381d03-633a-4d0f-ae19-13936ef72fe1/khellouinskaya-nedelya-v-toy-town/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/0d381d03-633a-4d0f-ae19-13936ef72fe1/halloween-week-at-toy-town/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/en/event/0d3c1f1e-e252-423a-a2f5-a29ae881edc6/city-mafia-on-bukita/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/0d3c1f1e-e252-423a-a2f5-a29ae881edc6/gorodskaya-mafiya-na-bukite/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/0d3c1f1e-e252-423a-a2f5-a29ae881edc6/city-mafia-on-bukita/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/en/event/0d473e36-547d-4124-8c31-667a9ea28a6c/yoga-class/</loc><lastmod>2026-09-18</lastmod>
@@ -1983,6 +2006,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/12b316d5-1a71-4022-affe-f01972fbd4a3/quiz-please-in-da-nang/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/en/event/12e122a0-882f-4ea0-b933-17cec185bcfa/little-red-riding-hood/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/12e122a0-882f-4ea0-b933-17cec185bcfa/krasnaya-shapochka/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/12e122a0-882f-4ea0-b933-17cec185bcfa/little-red-riding-hood/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/en/event/12e8795b-66f6-4596-851a-5499737ec96a/smurfs/</loc><lastmod>2026-10-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/12e8795b-66f6-4596-851a-5499737ec96a/smurfiki/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/12e8795b-66f6-4596-851a-5499737ec96a/smurfs/" />
@@ -2071,6 +2099,11 @@
   <url><loc>https://mypins.site/en/event/13fbaf95-54b7-43ba-973d-e6d8d8de9a0e/walk-in-support-of-pasykaf/</loc><lastmod>2026-10-04</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/13fbaf95-54b7-43ba-973d-e6d8d8de9a0e/shestvie-v-podderzhku-pasykaf/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/13fbaf95-54b7-43ba-973d-e6d8d8de9a0e/walk-in-support-of-pasykaf/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/en/event/1402086b-f867-4125-a836-bf351c664c8f/little-red-riding-hood/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/1402086b-f867-4125-a836-bf351c664c8f/krasnaya-shapochka/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/1402086b-f867-4125-a836-bf351c664c8f/little-red-riding-hood/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/en/event/1411e667-9a49-458b-a5eb-b05691581cf1/ashtanga-vinyasa-yoga/</loc><lastmod>2026-10-14</lastmod>
@@ -3338,6 +3371,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/22922a9a-d639-4772-bb49-b924f4464398/nail-bed-therapy/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/en/event/229f1ad0-3dde-4c09-98f9-f72651fd4f1a/little-red-riding-hood/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/229f1ad0-3dde-4c09-98f9-f72651fd4f1a/krasnaya-shapochka/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/229f1ad0-3dde-4c09-98f9-f72651fd4f1a/little-red-riding-hood/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/en/event/22b20543-ab72-42eb-80b7-0832a525ba27/today-already/</loc><lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/22b20543-ab72-42eb-80b7-0832a525ba27/uzhe-segodnya/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/22b20543-ab72-42eb-80b7-0832a525ba27/today-already/" />
@@ -3898,7 +3936,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/28f97f4f-db1a-4445-827b-8d478c48402e/energy-breathing-practice-alchemy-of-breath-september-24-at-19-00/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/en/event/290197bb-6494-476b-be93-c9602423ff03/transformational-game-leela-on-a-large-board/</loc><lastmod>2026-10-18</lastmod>
+  <url><loc>https://mypins.site/en/event/290197bb-6494-476b-be93-c9602423ff03/transformational-game-leela-on-a-large-board/</loc><lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/290197bb-6494-476b-be93-c9602423ff03/transformatsionnaya-igra-lila-na-bolshom-pole/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/290197bb-6494-476b-be93-c9602423ff03/transformational-game-leela-on-a-large-board/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
@@ -4346,6 +4384,11 @@
   <url><loc>https://mypins.site/en/event/2e8975d6-a51f-4b28-8a7d-59430f7ff4cb/speaking-club-open-day/</loc><lastmod>2026-10-04</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/2e8975d6-a51f-4b28-8a7d-59430f7ff4cb/spiking-klab-den-otkrytykh-dverey/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/2e8975d6-a51f-4b28-8a7d-59430f7ff4cb/speaking-club-open-day/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/en/event/2e95bad0-c608-4452-acfe-855cb83e6410/women-s-dinner-painting-with-prosecco/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/2e95bad0-c608-4452-acfe-855cb83e6410/zhenskiy-uzhin-risovanie-pod-prosekko/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/2e95bad0-c608-4452-acfe-855cb83e6410/women-s-dinner-painting-with-prosecco/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/en/event/2e969b7f-7dfc-4eae-a16f-07a2ebaf8dbf/gametalk-english-through-board-games/</loc><lastmod>2026-09-23</lastmod>
@@ -5518,6 +5561,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/3b8f4457-27c1-4231-94db-6e7089d0c22f/film-club-kubo-legend-of-the-samurai/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/en/event/3b9c22bd-fbd3-40d1-846f-ac77a3b5663f/joint-run-in-the-west/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/3b9c22bd-fbd3-40d1-846f-ac77a3b5663f/sovmestnaya-probezhka-na-zapade/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/3b9c22bd-fbd3-40d1-846f-ac77a3b5663f/joint-run-in-the-west/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/en/event/3bab2698-1275-4b5f-af34-9d774412fbb8/lefkara-classic-a-challenge-on-cyprus-s-mountain-roads/</loc><lastmod>2026-11-15</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/3bab2698-1275-4b5f-af34-9d774412fbb8/lefkara-classic-ispytanie-na-gornykh-dorogakh-kipra/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/3bab2698-1275-4b5f-af34-9d774412fbb8/lefkara-classic-a-challenge-on-cyprus-s-mountain-roads/" />
@@ -5616,6 +5664,11 @@
   <url><loc>https://mypins.site/en/event/3d00a0ac-bd5b-4e8c-a8ef-d9866e51a8bc/acting-training-in-nha-trang/</loc><lastmod>2026-10-20</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/3d00a0ac-bd5b-4e8c-a8ef-d9866e51a8bc/akterskiy-trening-v-nyachange/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/3d00a0ac-bd5b-4e8c-a8ef-d9866e51a8bc/acting-training-in-nha-trang/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/en/event/3d1f1827-3551-4c2f-8a41-f08bc2d308d7/mafia-sports/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/3d1f1827-3551-4c2f-8a41-f08bc2d308d7/mafiya-sportivnaya/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/3d1f1827-3551-4c2f-8a41-f08bc2d308d7/mafia-sports/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/en/event/3d312c93-d8c1-4592-8f97-7234bc407f30/the-paradox-pumpkin-workshops-are-back-with-a-twist/</loc><lastmod>2026-10-18</lastmod>
@@ -5898,7 +5951,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/411d2c98-9fef-4e57-a6c2-f220ba97fb6c/the-shrooms-mushroom-dining-disco-night-in-nicosia/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/en/event/4130ad58-c8c1-4357-a180-0f6ec123f08c/friday-avalon-no-alternatives/</loc><lastmod>2026-10-19</lastmod>
+  <url><loc>https://mypins.site/en/event/4130ad58-c8c1-4357-a180-0f6ec123f08c/friday-avalon-no-alternatives/</loc><lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/4130ad58-c8c1-4357-a180-0f6ec123f08c/pyatnitsa-avalon-bez-variantov/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/4130ad58-c8c1-4357-a180-0f6ec123f08c/friday-avalon-no-alternatives/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
@@ -5966,6 +6019,11 @@
   <url><loc>https://mypins.site/en/event/41d8e8bc-b787-4aa7-9288-050381c7a383/stand-up-changu/</loc><lastmod>2026-09-11</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/41d8e8bc-b787-4aa7-9288-050381c7a383/stand-up-changu/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/41d8e8bc-b787-4aa7-9288-050381c7a383/stand-up-changu/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/en/event/41d8e949-816b-4060-ab32-8600263dde21/power-hatha-yoga-at-8-00-sweating-honestly/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/41d8e949-816b-4060-ab32-8600263dde21/silovaya-khatkha-yoga-v-8-00-poteem-chestno/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/41d8e949-816b-4060-ab32-8600263dde21/power-hatha-yoga-at-8-00-sweating-honestly/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/en/event/41e94250-fd39-4bfd-948d-406ff315ce0f/the-nutcracker-ballet/</loc><lastmod>2026-10-18</lastmod>
@@ -7563,7 +7621,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/5593c117-61f2-4db7-af23-32147c0a9cee/big-guitar-sing-along-by-the-campfire-above-the-mountains-scooter-party/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/en/event/559d6bab-5b0e-4c82-86fe-13729a437ef7/breakfast-with-a-psychologist-t-game-house-of-my-soul/</loc><lastmod>2026-10-18</lastmod>
+  <url><loc>https://mypins.site/en/event/559d6bab-5b0e-4c82-86fe-13729a437ef7/breakfast-with-a-psychologist-t-game-house-of-my-soul/</loc><lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/559d6bab-5b0e-4c82-86fe-13729a437ef7/zavtrak-s-psikhologom-t-igra-dom-moey-dushi/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/559d6bab-5b0e-4c82-86fe-13729a437ef7/breakfast-with-a-psychologist-t-game-house-of-my-soul/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
@@ -9078,7 +9136,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/68312cba-2eb4-4767-b2ff-282d3cf33482/high-heels-dance-in-da-nang-liberation/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/en/event/684f7b44-d982-4355-9f48-5db4b870a932/ubud-writers-readers-festival-2026-literary-festival-in-ubud/</loc><lastmod>2026-10-20</lastmod>
+  <url><loc>https://mypins.site/en/event/684f7b44-d982-4355-9f48-5db4b870a932/ubud-writers-readers-festival-2026-literary-festival-in-ubud/</loc><lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/684f7b44-d982-4355-9f48-5db4b870a932/literaturnyy-festival-ubud-writers-readers-festival-2026-v-ubude/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/684f7b44-d982-4355-9f48-5db4b870a932/ubud-writers-readers-festival-2026-literary-festival-in-ubud/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
@@ -9096,6 +9154,11 @@
   <url><loc>https://mypins.site/en/event/6898c057-50b2-4d8e-b5c0-4e56de10a556/tratsik-string-quartet/</loc><lastmod>2026-10-11</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/6898c057-50b2-4d8e-b5c0-4e56de10a556/strunnyy-kvartet-tratsik/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/6898c057-50b2-4d8e-b5c0-4e56de10a556/tratsik-string-quartet/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/en/event/689d920e-6a43-4793-99fa-53874b2b3e69/saturday-mastermind-new-connections-and-fresh-ideas/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/689d920e-6a43-4793-99fa-53874b2b3e69/subbotniy-mastermind-novye-znakomstva-i-svezhie-idei/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/689d920e-6a43-4793-99fa-53874b2b3e69/saturday-mastermind-new-connections-and-fresh-ideas/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/en/event/68a520e4-69af-4544-af90-8620e5bb02d7/the-woman-of-pontus/</loc><lastmod>2026-09-27</lastmod>
@@ -11318,6 +11381,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/8092c490-79cc-45c4-b2cb-473708cde7f1/girls-i-invite-you-to-create-a-talisman-bracelet-from-natural-stones-for-yourself/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/en/event/809a6c6f-3893-4612-952a-9efd3e31e196/dating-and-games-at-neverland/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/809a6c6f-3893-4612-952a-9efd3e31e196/znakomstva-i-igry-v-neverland/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/809a6c6f-3893-4612-952a-9efd3e31e196/dating-and-games-at-neverland/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/en/event/809d3c65-8ef1-4fa4-b44e-8f9bb048450c/official-nicosia-christmas-market-2026/</loc><lastmod>2026-10-16</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/809d3c65-8ef1-4fa4-b44e-8f9bb048450c/ofitsialnaya-rozhdestvenskaya-yarmarka-nikosii-2026/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/809d3c65-8ef1-4fa4-b44e-8f9bb048450c/official-nicosia-christmas-market-2026/" />
@@ -11361,6 +11429,11 @@
   <url><loc>https://mypins.site/en/event/8135f18e-3fe5-440f-84f6-c007cdfaf4ff/psychedelic-halloween/</loc><lastmod>2026-10-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/8135f18e-3fe5-440f-84f6-c007cdfaf4ff/psikhodelicheskiy-khellouin/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/8135f18e-3fe5-440f-84f6-c007cdfaf4ff/psychedelic-halloween/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/en/event/814376d8-96da-4cdc-b539-0dd96d614d3e/clay-textured-painting-masterclass/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/814376d8-96da-4cdc-b539-0dd96d614d3e/master-klass-po-teksturnym-kartinam-iz-gliny/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/814376d8-96da-4cdc-b539-0dd96d614d3e/clay-textured-painting-masterclass/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/en/event/814ea6b4-77d1-482d-8303-9da18e280c8d/full-moon-sound-sanctuary-at-adda-yoga/</loc><lastmod>2026-09-26</lastmod>
@@ -11491,6 +11564,11 @@
   <url><loc>https://mypins.site/en/event/82da5036-5fe9-4159-b3ef-357c99b69538/a-program-of-short-films-from-around-the-world/</loc><lastmod>2026-09-16</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/82da5036-5fe9-4159-b3ef-357c99b69538/programma-korotkometrazhnykh-filmov-so-vsego-mira/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/82da5036-5fe9-4159-b3ef-357c99b69538/a-program-of-short-films-from-around-the-world/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/en/event/82dfa7d4-c2e5-4b7b-acd3-a0ba3148ebf9/little-red-riding-hood/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/82dfa7d4-c2e5-4b7b-acd3-a0ba3148ebf9/krasnaya-shapochka/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/82dfa7d4-c2e5-4b7b-acd3-a0ba3148ebf9/little-red-riding-hood/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/en/event/82e11a88-b5fd-46e8-9c65-8499004f8232/friday-night-rock-and-roll-at-vice/</loc><lastmod>2026-09-18</lastmod>
@@ -12541,6 +12619,11 @@
   <url><loc>https://mypins.site/en/event/8db46e84-ae82-4d23-baec-50805868bd4d/cultural-decentralization/</loc><lastmod>2026-10-09</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/8db46e84-ae82-4d23-baec-50805868bd4d/kulturnaya-detsentralizatsiya/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/8db46e84-ae82-4d23-baec-50805868bd4d/cultural-decentralization/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/en/event/8db86e9f-1fc8-4c9d-8937-c8b2ca4a9a78/free-film-screening/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/8db86e9f-1fc8-4c9d-8937-c8b2ca4a9a78/besplatnyy-pokaz-filma/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/8db86e9f-1fc8-4c9d-8937-c8b2ca4a9a78/free-film-screening/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/en/event/8dbd6de9-eedd-430c-adb7-99007f025ea5/master-class/</loc><lastmod>2026-09-16</lastmod>
@@ -14203,6 +14286,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/9f62b87a-c065-416f-8b38-f3856cceadb6/starttalk-first-words-in-english-out-loud/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/en/event/9f680480-88ac-439a-b3b9-0ac418f9add5/3rd-gala-concert/</loc><lastmod>2026-11-10</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/9f680480-88ac-439a-b3b9-0ac418f9add5/3-y-gala-kontsert/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/9f680480-88ac-439a-b3b9-0ac418f9add5/3rd-gala-concert/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/en/event/9f72bb5f-50b7-46c8-8995-0ba04f7f986a/authentic-anti-business-dating/</loc><lastmod>2026-09-27</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/9f72bb5f-50b7-46c8-8995-0ba04f7f986a/autentichnye-anti-beznes-znakomstva/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/9f72bb5f-50b7-46c8-8995-0ba04f7f986a/authentic-anti-business-dating/" />
@@ -14433,7 +14521,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/a2ba6dca-cc20-476e-ba32-3e35c69da49b/reiki-introduction-meetup/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/en/event/a2cf4041-7860-4aae-925b-09f578989635/gee-bello-in-koili/</loc><lastmod>2026-10-05</lastmod>
+  <url><loc>https://mypins.site/en/event/a2cf4041-7860-4aae-925b-09f578989635/gee-bello-in-koili/</loc><lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/a2cf4041-7860-4aae-925b-09f578989635/gee-bello-v-kitione/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/a2cf4041-7860-4aae-925b-09f578989635/gee-bello-in-koili/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
@@ -14581,6 +14669,11 @@
   <url><loc>https://mypins.site/en/event/a45bc844-d15d-4056-9f24-9f8722475a3f/brainstorming-bali-at-a-corporate-event-yes-it-s-possible/</loc><lastmod>2026-10-20</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/a45bc844-d15d-4056-9f24-9f8722475a3f/mozgoboynya-bali-na-korporative-da-tak-mozhno/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/a45bc844-d15d-4056-9f24-9f8722475a3f/brainstorming-bali-at-a-corporate-event-yes-it-s-possible/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/en/event/a45fea56-d5c6-462c-bd7f-97051de5266e/little-red-riding-hood/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/a45fea56-d5c6-462c-bd7f-97051de5266e/krasnaya-shapochka/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/a45fea56-d5c6-462c-bd7f-97051de5266e/little-red-riding-hood/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/en/event/a4607b3c-e1c3-40a6-a770-eb83cee2d9e4/erotraverse-group-session-for-girls/</loc><lastmod>2026-10-09</lastmod>
@@ -15348,6 +15441,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/ad206e57-2305-413d-a9a9-1e34bf12d982/yoga-teacher-training-course/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/en/event/ad2c109b-77db-43c6-958a-f2933df76191/public-health-2026-public-health-conference-in-sanur/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/ad2c109b-77db-43c6-958a-f2933df76191/public-health-2026-konferentsiya-po-obshchestvennomu-zdorovyu-v-sanure/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/ad2c109b-77db-43c6-958a-f2933df76191/public-health-2026-public-health-conference-in-sanur/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/en/event/ad3b0a8f-d687-43fc-9eeb-76e730271ac5/yoga-for-those-who-need-more-than-just-a-stretch/</loc><lastmod>2026-10-20</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/ad3b0a8f-d687-43fc-9eeb-76e730271ac5/yoga-dlya-tekh-komu-prosto-potyanutsya-nedostatochno/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/ad3b0a8f-d687-43fc-9eeb-76e730271ac5/yoga-for-those-who-need-more-than-just-a-stretch/" />
@@ -15531,6 +15629,11 @@
   <url><loc>https://mypins.site/en/event/af66bfe8-d9f4-46bd-bab2-ff733cef86b7/rudolph-s-magical-christmas-in-nicosia/</loc><lastmod>2026-10-15</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/af66bfe8-d9f4-46bd-bab2-ff733cef86b7/volshebnoe-rozhdestvo-rudolfa-v-nikosii/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/af66bfe8-d9f4-46bd-bab2-ff733cef86b7/rudolph-s-magical-christmas-in-nicosia/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/en/event/af6a77c3-afc9-4c1b-b54c-c3d734b6621d/music-quiz-guess-the-melody-in-nha-trang-this-sunday-a-super-exciting-classic-game-with-hit-tracks-from-the-90s/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/af6a77c3-afc9-4c1b-b54c-c3d734b6621d/muzykalnyy-kviz-ugaday-melodiyu-v-nyachange-v-eto-voskresene-superinteresnaya-klassicheskaya-igra-po-khitovym-trekam-90kh-god/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/af6a77c3-afc9-4c1b-b54c-c3d734b6621d/music-quiz-guess-the-melody-in-nha-trang-this-sunday-a-super-exciting-classic-game-with-hit-tracks-from-the-90s/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/en/event/af77fa99-07fb-4848-8131-b64f2fd50d03/anime-sympho-show-by-38-samurai/</loc><lastmod>2027-01-22</lastmod>
@@ -15836,6 +15939,11 @@
   <url><loc>https://mypins.site/en/event/b30dcbdb-d1b8-49e4-b975-c62c98844a7d/traditional-products-festival/</loc><lastmod>2026-10-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/b30dcbdb-d1b8-49e4-b975-c62c98844a7d/festival-traditsionnykh-produktov/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/b30dcbdb-d1b8-49e4-b975-c62c98844a7d/traditional-products-festival/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/en/event/b3157474-0504-4360-bf16-72a76161fcbe/group-therapy-offline-in-nha-trang/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/b3157474-0504-4360-bf16-72a76161fcbe/gruppovaya-terapiya-oflayn-v-nyachange/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/b3157474-0504-4360-bf16-72a76161fcbe/group-therapy-offline-in-nha-trang/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/en/event/b318d82c-9d40-4208-b3f3-8fe77b37ef1f/fikardou-christmas-village-2026-programme-dates/</loc><lastmod>2027-01-06</lastmod>
@@ -16658,6 +16766,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/bcb92dbb-ab64-4fc9-814d-38f5e3e27c5a/the-paluze-festival/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/en/event/bccba012-a675-4f86-8c10-9d4f3abff922/bali-emergency-care-conference-2026-medical-conference-in-seminyak/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/bccba012-a675-4f86-8c10-9d4f3abff922/meditsinskaya-konferentsiya-bali-emergency-care-conference-2026-v-seminyak/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/bccba012-a675-4f86-8c10-9d4f3abff922/bali-emergency-care-conference-2026-medical-conference-in-seminyak/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/en/event/bcf851b7-09a7-4cd5-bf6a-b44d241aa124/indonesian-wine-tasting-at-potato-head/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/bcf851b7-09a7-4cd5-bf6a-b44d241aa124/degustatsiya-indoneziyskikh-vin-v-potato-head/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/bcf851b7-09a7-4cd5-bf6a-b44d241aa124/indonesian-wine-tasting-at-potato-head/" />
@@ -17333,6 +17446,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/c52a6ac8-a0be-4a51-812f-564142610b57/workshop-meeting-how-to-create-and-successfully-sell-an-info-product-service/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/en/event/c54a906e-e835-4755-bcaf-6564a5441515/katadromeas-konstantinou-sotiris-tou-adamou-hero-of-the-resistance-against-the-coup/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/c54a906e-e835-4755-bcaf-6564a5441515/katadromeas-konstantinu-sotiris-tu-adamu-geroy-soprotivleniya-protiv-putcha/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/c54a906e-e835-4755-bcaf-6564a5441515/katadromeas-konstantinou-sotiris-tou-adamou-hero-of-the-resistance-against-the-coup/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/en/event/c54f1a94-5dce-418d-80e1-f5feaa48cd08/children-s-board-game-playroom/</loc><lastmod>2026-09-19</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/c54f1a94-5dce-418d-80e1-f5feaa48cd08/detskaya-igroteka-nastolnykh-igr/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/c54f1a94-5dce-418d-80e1-f5feaa48cd08/children-s-board-game-playroom/" />
@@ -17451,6 +17569,11 @@
   <url><loc>https://mypins.site/en/event/c6707809-8d41-4fbb-af2d-747847235f80/yoga-in-ubud/</loc><lastmod>2026-09-16</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/c6707809-8d41-4fbb-af2d-747847235f80/yoga-v-ubude/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/c6707809-8d41-4fbb-af2d-747847235f80/yoga-in-ubud/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/en/event/c6826cac-0106-4920-8470-8fc5ae84d5ee/little-red-riding-hood/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/c6826cac-0106-4920-8470-8fc5ae84d5ee/krasnaya-shapochka/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/c6826cac-0106-4920-8470-8fc5ae84d5ee/little-red-riding-hood/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/en/event/c6ab2366-6391-44c0-81f0-6038ac582d9e/bagjan-oktyabr/</loc><lastmod>2026-10-03</lastmod>
@@ -19063,6 +19186,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/d78ac424-ce63-4597-a376-9abc1d818be1/the-afters-party-at-the-shady-pig-berawa/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/en/event/d7b11f1b-c99b-4c65-81db-aa7fb4816261/i-ll-take-you-by-the-hand-and-gently-introduce-you-to-the-world-of-functional-training/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/d7b11f1b-c99b-4c65-81db-aa7fb4816261/vozmu-za-ruku-i-myagko-poznakomlyu-tebya-s-mirom-funktsionalnogo-treninga/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/d7b11f1b-c99b-4c65-81db-aa7fb4816261/i-ll-take-you-by-the-hand-and-gently-introduce-you-to-the-world-of-functional-training/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/en/event/d7d59e51-e514-4ff0-9f49-3431f01d5739/l-orientale-dinner-at-sardine-by-k-club/</loc><lastmod>2026-09-14</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/d7d59e51-e514-4ff0-9f49-3431f01d5739/uzhin-l-orientale-v-sardine-by-k-club/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/d7d59e51-e514-4ff0-9f49-3431f01d5739/l-orientale-dinner-at-sardine-by-k-club/" />
@@ -19603,6 +19731,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/dd2369d5-8810-43de-8bc3-be11800130cc/field-of-action/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/en/event/dd27d73e-d283-478a-8f8e-f40a39674e7c/little-red-riding-hood/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/dd27d73e-d283-478a-8f8e-f40a39674e7c/krasnaya-shapochka/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/dd27d73e-d283-478a-8f8e-f40a39674e7c/little-red-riding-hood/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/en/event/dd4b1f20-5a6c-4cfd-a0de-17474192f651/savaya-thursday-september-10/</loc><lastmod>2026-09-10</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/dd4b1f20-5a6c-4cfd-a0de-17474192f651/savaya-thursday-10-sentyabrya/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/dd4b1f20-5a6c-4cfd-a0de-17474192f651/savaya-thursday-september-10/" />
@@ -19898,7 +20031,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/e086a01c-b827-4ae2-b4e7-a73097ed0491/the-princess-of-agioi-saranta/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/en/event/e09d1054-97c6-46b3-b2e8-0c35c20e7d47/full-body-group-strength-training-thursday/</loc><lastmod>2026-10-18</lastmod>
+  <url><loc>https://mypins.site/en/event/e09d1054-97c6-46b3-b2e8-0c35c20e7d47/full-body-group-strength-training-thursday/</loc><lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/e09d1054-97c6-46b3-b2e8-0c35c20e7d47/silovaya-trenirovka-v-gruppe-na-vse-telo-chetverg/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/e09d1054-97c6-46b3-b2e8-0c35c20e7d47/full-body-group-strength-training-thursday/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
@@ -20393,7 +20526,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/e6b3819f-4db9-4fb5-ac38-88ab3821dc26/halcyon-dayz-2026/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/en/event/e6c50583-1345-4f53-9d65-6391675b4d72/morning-yoga-for-beginners/</loc><lastmod>2026-10-19</lastmod>
+  <url><loc>https://mypins.site/en/event/e6c50583-1345-4f53-9d65-6391675b4d72/morning-yoga-for-beginners/</loc><lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/e6c50583-1345-4f53-9d65-6391675b4d72/utrennyaya-yoga-dlya-nachinayushchikh/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/e6c50583-1345-4f53-9d65-6391675b4d72/morning-yoga-for-beginners/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
@@ -20818,6 +20951,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/ec755da8-b611-4560-b45b-8b431e2662ef/mafia-predictor-friday-october-16/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/en/event/ec834e61-5cfb-4116-b667-e30f092b3a6b/alix-ayme-exhibition-at-the-pasifika-museum/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/ec834e61-5cfb-4116-b667-e30f092b3a6b/vystavka-aliks-eme-v-muzee-pasifika/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/ec834e61-5cfb-4116-b667-e30f092b3a6b/alix-ayme-exhibition-at-the-pasifika-museum/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/en/event/ecc0ba8c-1ba1-4cc4-a563-237f56230d30/women-s-breakfast-and-neurographic-drawing/</loc><lastmod>2026-09-12</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/ecc0ba8c-1ba1-4cc4-a563-237f56230d30/zhenskiy-zavtrak-i-risovanie-neyrografiki/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/ecc0ba8c-1ba1-4cc4-a563-237f56230d30/women-s-breakfast-and-neurographic-drawing/" />
@@ -21088,9 +21226,19 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/eff218c7-5631-4acb-957c-a34f2fc93279/blood-on-the-clock-tower/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/en/event/effed7fc-4b3f-4fd6-8bd3-54aaf710ca25/bach-extended-violin-solo/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/effed7fc-4b3f-4fd6-8bd3-54aaf710ca25/bakh-rasshirennyy-skripka-solo/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/effed7fc-4b3f-4fd6-8bd3-54aaf710ca25/bach-extended-violin-solo/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/en/event/f0091f63-fec0-4423-a19b-1c2396994467/play-with-vice-hip-hop-and-r-b-at-garden-of-mesa/</loc><lastmod>2026-09-30</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/f0091f63-fec0-4423-a19b-1c2396994467/play-with-vice-khip-khop-i-r-b-v-garden-of-mesa/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/f0091f63-fec0-4423-a19b-1c2396994467/play-with-vice-hip-hop-and-r-b-at-garden-of-mesa/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/en/event/f0155f4c-4b70-492f-a8c4-885c089a01b2/latin-tuesday-at-la-favela/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/f0155f4c-4b70-492f-a8c4-885c089a01b2/latino-vtornik-v-la-favela/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/f0155f4c-4b70-492f-a8c4-885c089a01b2/latin-tuesday-at-la-favela/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/en/event/f01c629b-e67e-4b4c-9f21-7d0f74b5563f/the-snow-queen/</loc><lastmod>2026-10-16</lastmod>
@@ -21798,6 +21946,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/f865996f-32dd-4ddb-9f3a-d9ba848d6d47/morning-yoga-fysm-for-all-levels/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/en/event/f888ec79-e0f6-449c-b1cc-ad8e21ca9e5e/little-red-riding-hood/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/f888ec79-e0f6-449c-b1cc-ad8e21ca9e5e/krasnaya-shapochka/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/f888ec79-e0f6-449c-b1cc-ad8e21ca9e5e/little-red-riding-hood/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/en/event/f8b055a9-cbf2-49c7-b523-db5a3fec855b/breathing-class-session-16/</loc><lastmod>2026-09-23</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/f8b055a9-cbf2-49c7-b523-db5a3fec855b/zanyatie-v-dykhatelnom-klasse-16/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/f8b055a9-cbf2-49c7-b523-db5a3fec855b/breathing-class-session-16/" />
@@ -21966,6 +22119,11 @@
   <url><loc>https://mypins.site/en/event/fa7e5acf-0dde-4ba3-b7ea-f4a11283420e/mountain-games-cyprus-2026-sport-culture-healthy-living-in-troodos/</loc><lastmod>2026-09-26</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/fa7e5acf-0dde-4ba3-b7ea-f4a11283420e/gornye-igry-kipra-2026-sport-kultura-i-zdorovyy-obraz-zhizni-v-troodose/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/fa7e5acf-0dde-4ba3-b7ea-f4a11283420e/mountain-games-cyprus-2026-sport-culture-healthy-living-in-troodos/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/en/event/fa813e65-9917-4edf-8d0a-cae6529c7cab/recruiting-newcomers-for-d-d-campaigns-and-one-shots/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/fa813e65-9917-4edf-8d0a-cae6529c7cab/nabirayu-novichkov-na-kampanii-i-vanshoty-po-d-d/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/fa813e65-9917-4edf-8d0a-cae6529c7cab/recruiting-newcomers-for-d-d-campaigns-and-one-shots/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/en/event/fa87a33c-c828-4534-807f-3789a94f0a20/savaya-tuesday-at-savaya-bali/</loc><lastmod>2026-10-20</lastmod>
@@ -22965,6 +23123,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/05b01d52-da88-495d-ab34-2cb4b4a128b6/10th-anniversary-of-samasta-bali-experience-the-extraordinary/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/event/05b5a6b1-29d9-40ca-8e93-57f5925c371d/voleybol-v-ubude-klassika/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/05b5a6b1-29d9-40ca-8e93-57f5925c371d/voleybol-v-ubude-klassika/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/05b5a6b1-29d9-40ca-8e93-57f5925c371d/volleyball-in-ubud-classic/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/event/05bd25a9-c954-4a7d-a74d-5a1b39047f26/vystavka-kedungwuni-104-208-v-masa-masa-bali/</loc><lastmod>2026-08-22</lastmod>
   </url>
   <url><loc>https://mypins.site/event/05c07b5e-ce85-4964-aa65-b919e759ee0f/grinchmas-prazdnichnyy-spektakl-dlya-detey-i-vzroslykh-v-limassole/</loc><lastmod>2026-10-05</lastmod>
@@ -23310,6 +23473,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/09dfccb8-346e-4c8d-8e8a-a8ea3f6af330/the-belly/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/event/09e13b64-fdaf-4e9d-8506-15db2edc9cd4/solo-latina-otkrytyy-klass/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/09e13b64-fdaf-4e9d-8506-15db2edc9cd4/solo-latina-otkrytyy-klass/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/09e13b64-fdaf-4e9d-8506-15db2edc9cd4/solo-latina-open-class/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/event/09eb88b8-63b6-442c-87e9-d49b4219c272/igrovaya-vstrecha-antimafiya/</loc><lastmod>2026-10-13</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/09eb88b8-63b6-442c-87e9-d49b4219c272/igrovaya-vstrecha-antimafiya/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/09eb88b8-63b6-442c-87e9-d49b4219c272/antimafia-game-meetup/" />
@@ -23562,6 +23730,11 @@
   <url><loc>https://mypins.site/event/0d381d03-633a-4d0f-ae19-13936ef72fe1/khellouinskaya-nedelya-v-toy-town/</loc><lastmod>2026-10-16</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/0d381d03-633a-4d0f-ae19-13936ef72fe1/khellouinskaya-nedelya-v-toy-town/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/0d381d03-633a-4d0f-ae19-13936ef72fe1/halloween-week-at-toy-town/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/event/0d3c1f1e-e252-423a-a2f5-a29ae881edc6/gorodskaya-mafiya-na-bukite/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/0d3c1f1e-e252-423a-a2f5-a29ae881edc6/gorodskaya-mafiya-na-bukite/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/0d3c1f1e-e252-423a-a2f5-a29ae881edc6/city-mafia-on-bukita/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/event/0d473e36-547d-4124-8c31-667a9ea28a6c/yoga-klass/</loc><lastmod>2026-09-18</lastmod>
@@ -24063,6 +24236,11 @@
   </url>
   <url><loc>https://mypins.site/event/12db93b0-4a3c-4f80-ab7d-49d1a1bf72f3/mafiya-sportivnaya/</loc><lastmod>2026-09-09</lastmod>
   </url>
+  <url><loc>https://mypins.site/event/12e122a0-882f-4ea0-b933-17cec185bcfa/krasnaya-shapochka/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/12e122a0-882f-4ea0-b933-17cec185bcfa/krasnaya-shapochka/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/12e122a0-882f-4ea0-b933-17cec185bcfa/little-red-riding-hood/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/event/12e8795b-66f6-4596-851a-5499737ec96a/smurfiki/</loc><lastmod>2026-10-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/12e8795b-66f6-4596-851a-5499737ec96a/smurfiki/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/12e8795b-66f6-4596-851a-5499737ec96a/smurfs/" />
@@ -24151,6 +24329,11 @@
   <url><loc>https://mypins.site/event/13fbaf95-54b7-43ba-973d-e6d8d8de9a0e/shestvie-v-podderzhku-pasykaf/</loc><lastmod>2026-10-04</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/13fbaf95-54b7-43ba-973d-e6d8d8de9a0e/shestvie-v-podderzhku-pasykaf/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/13fbaf95-54b7-43ba-973d-e6d8d8de9a0e/walk-in-support-of-pasykaf/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/event/1402086b-f867-4125-a836-bf351c664c8f/krasnaya-shapochka/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/1402086b-f867-4125-a836-bf351c664c8f/krasnaya-shapochka/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/1402086b-f867-4125-a836-bf351c664c8f/little-red-riding-hood/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/event/1411e667-9a49-458b-a5eb-b05691581cf1/ashtanga-vinyasa-yoga/</loc><lastmod>2026-10-14</lastmod>
@@ -25482,6 +25665,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/22922a9a-d639-4772-bb49-b924f4464398/nail-bed-therapy/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/event/229f1ad0-3dde-4c09-98f9-f72651fd4f1a/krasnaya-shapochka/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/229f1ad0-3dde-4c09-98f9-f72651fd4f1a/krasnaya-shapochka/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/229f1ad0-3dde-4c09-98f9-f72651fd4f1a/little-red-riding-hood/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/event/229f405b-f43a-46c1-959a-8a5eb47798eb/klub-razgovornogo-angliyskogo-ubud/</loc><lastmod>2026-08-27</lastmod>
   </url>
   <url><loc>https://mypins.site/event/22b20543-ab72-42eb-80b7-0832a525ba27/uzhe-segodnya/</loc><lastmod>2026-10-21</lastmod>
@@ -26066,7 +26254,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/28f97f4f-db1a-4445-827b-8d478c48402e/energy-breathing-practice-alchemy-of-breath-september-24-at-19-00/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/event/290197bb-6494-476b-be93-c9602423ff03/transformatsionnaya-igra-lila-na-bolshom-pole/</loc><lastmod>2026-10-18</lastmod>
+  <url><loc>https://mypins.site/event/290197bb-6494-476b-be93-c9602423ff03/transformatsionnaya-igra-lila-na-bolshom-pole/</loc><lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/290197bb-6494-476b-be93-c9602423ff03/transformatsionnaya-igra-lila-na-bolshom-pole/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/290197bb-6494-476b-be93-c9602423ff03/transformational-game-leela-on-a-large-board/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
@@ -26528,6 +26716,11 @@
   <url><loc>https://mypins.site/event/2e8975d6-a51f-4b28-8a7d-59430f7ff4cb/spiking-klab-den-otkrytykh-dverey/</loc><lastmod>2026-10-04</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/2e8975d6-a51f-4b28-8a7d-59430f7ff4cb/spiking-klab-den-otkrytykh-dverey/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/2e8975d6-a51f-4b28-8a7d-59430f7ff4cb/speaking-club-open-day/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/event/2e95bad0-c608-4452-acfe-855cb83e6410/zhenskiy-uzhin-risovanie-pod-prosekko/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/2e95bad0-c608-4452-acfe-855cb83e6410/zhenskiy-uzhin-risovanie-pod-prosekko/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/2e95bad0-c608-4452-acfe-855cb83e6410/women-s-dinner-painting-with-prosecco/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/event/2e969b7f-7dfc-4eae-a16f-07a2ebaf8dbf/gametalk-angliyskiy-cherez-nastolki/</loc><lastmod>2026-09-23</lastmod>
@@ -27754,6 +27947,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/3b8f4457-27c1-4231-94db-6e7089d0c22f/film-club-kubo-legend-of-the-samurai/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/event/3b9c22bd-fbd3-40d1-846f-ac77a3b5663f/sovmestnaya-probezhka-na-zapade/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/3b9c22bd-fbd3-40d1-846f-ac77a3b5663f/sovmestnaya-probezhka-na-zapade/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/3b9c22bd-fbd3-40d1-846f-ac77a3b5663f/joint-run-in-the-west/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/event/3bab2698-1275-4b5f-af34-9d774412fbb8/lefkara-classic-ispytanie-na-gornykh-dorogakh-kipra/</loc><lastmod>2026-11-15</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/3bab2698-1275-4b5f-af34-9d774412fbb8/lefkara-classic-ispytanie-na-gornykh-dorogakh-kipra/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/3bab2698-1275-4b5f-af34-9d774412fbb8/lefkara-classic-a-challenge-on-cyprus-s-mountain-roads/" />
@@ -27852,6 +28050,11 @@
   <url><loc>https://mypins.site/event/3d00a0ac-bd5b-4e8c-a8ef-d9866e51a8bc/akterskiy-trening-v-nyachange/</loc><lastmod>2026-10-20</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/3d00a0ac-bd5b-4e8c-a8ef-d9866e51a8bc/akterskiy-trening-v-nyachange/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/3d00a0ac-bd5b-4e8c-a8ef-d9866e51a8bc/acting-training-in-nha-trang/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/event/3d1f1827-3551-4c2f-8a41-f08bc2d308d7/mafiya-sportivnaya/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/3d1f1827-3551-4c2f-8a41-f08bc2d308d7/mafiya-sportivnaya/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/3d1f1827-3551-4c2f-8a41-f08bc2d308d7/mafia-sports/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/event/3d312c93-d8c1-4592-8f97-7234bc407f30/paradoksalnye-tykvennye-master-klassy-vozvrashchayutsya-s-novym-povorotom/</loc><lastmod>2026-10-18</lastmod>
@@ -28168,7 +28371,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/411d2c98-9fef-4e57-a6c2-f220ba97fb6c/the-shrooms-mushroom-dining-disco-night-in-nicosia/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/event/4130ad58-c8c1-4357-a180-0f6ec123f08c/pyatnitsa-avalon-bez-variantov/</loc><lastmod>2026-10-19</lastmod>
+  <url><loc>https://mypins.site/event/4130ad58-c8c1-4357-a180-0f6ec123f08c/pyatnitsa-avalon-bez-variantov/</loc><lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/4130ad58-c8c1-4357-a180-0f6ec123f08c/pyatnitsa-avalon-bez-variantov/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/4130ad58-c8c1-4357-a180-0f6ec123f08c/friday-avalon-no-alternatives/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
@@ -28242,6 +28445,11 @@
   <url><loc>https://mypins.site/event/41d8e8bc-b787-4aa7-9288-050381c7a383/stand-up-changu/</loc><lastmod>2026-09-11</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/41d8e8bc-b787-4aa7-9288-050381c7a383/stand-up-changu/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/41d8e8bc-b787-4aa7-9288-050381c7a383/stand-up-changu/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/event/41d8e949-816b-4060-ab32-8600263dde21/silovaya-khatkha-yoga-v-8-00-poteem-chestno/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/41d8e949-816b-4060-ab32-8600263dde21/silovaya-khatkha-yoga-v-8-00-poteem-chestno/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/41d8e949-816b-4060-ab32-8600263dde21/power-hatha-yoga-at-8-00-sweating-honestly/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/event/41e94250-fd39-4bfd-948d-406ff315ce0f/balet-shchelkunchik/</loc><lastmod>2026-10-18</lastmod>
@@ -29929,7 +30137,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/5593c117-61f2-4db7-af23-32147c0a9cee/big-guitar-sing-along-by-the-campfire-above-the-mountains-scooter-party/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/event/559d6bab-5b0e-4c82-86fe-13729a437ef7/zavtrak-s-psikhologom-t-igra-dom-moey-dushi/</loc><lastmod>2026-10-18</lastmod>
+  <url><loc>https://mypins.site/event/559d6bab-5b0e-4c82-86fe-13729a437ef7/zavtrak-s-psikhologom-t-igra-dom-moey-dushi/</loc><lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/559d6bab-5b0e-4c82-86fe-13729a437ef7/zavtrak-s-psikhologom-t-igra-dom-moey-dushi/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/559d6bab-5b0e-4c82-86fe-13729a437ef7/breakfast-with-a-psychologist-t-game-house-of-my-soul/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
@@ -31526,7 +31734,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/68312cba-2eb4-4767-b2ff-282d3cf33482/high-heels-dance-in-da-nang-liberation/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/event/684f7b44-d982-4355-9f48-5db4b870a932/literaturnyy-festival-ubud-writers-readers-festival-2026-v-ubude/</loc><lastmod>2026-10-20</lastmod>
+  <url><loc>https://mypins.site/event/684f7b44-d982-4355-9f48-5db4b870a932/literaturnyy-festival-ubud-writers-readers-festival-2026-v-ubude/</loc><lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/684f7b44-d982-4355-9f48-5db4b870a932/literaturnyy-festival-ubud-writers-readers-festival-2026-v-ubude/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/684f7b44-d982-4355-9f48-5db4b870a932/ubud-writers-readers-festival-2026-literary-festival-in-ubud/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
@@ -31544,6 +31752,11 @@
   <url><loc>https://mypins.site/event/6898c057-50b2-4d8e-b5c0-4e56de10a556/strunnyy-kvartet-tratsik/</loc><lastmod>2026-10-11</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/6898c057-50b2-4d8e-b5c0-4e56de10a556/strunnyy-kvartet-tratsik/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/6898c057-50b2-4d8e-b5c0-4e56de10a556/tratsik-string-quartet/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/event/689d920e-6a43-4793-99fa-53874b2b3e69/subbotniy-mastermind-novye-znakomstva-i-svezhie-idei/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/689d920e-6a43-4793-99fa-53874b2b3e69/subbotniy-mastermind-novye-znakomstva-i-svezhie-idei/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/689d920e-6a43-4793-99fa-53874b2b3e69/saturday-mastermind-new-connections-and-fresh-ideas/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/event/68a520e4-69af-4544-af90-8620e5bb02d7/zhenshchina-ponta/</loc><lastmod>2026-09-27</lastmod>
@@ -33870,6 +34083,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/8092c490-79cc-45c4-b2cb-473708cde7f1/girls-i-invite-you-to-create-a-talisman-bracelet-from-natural-stones-for-yourself/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/event/809a6c6f-3893-4612-952a-9efd3e31e196/znakomstva-i-igry-v-neverland/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/809a6c6f-3893-4612-952a-9efd3e31e196/znakomstva-i-igry-v-neverland/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/809a6c6f-3893-4612-952a-9efd3e31e196/dating-and-games-at-neverland/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/event/809d3c65-8ef1-4fa4-b44e-8f9bb048450c/ofitsialnaya-rozhdestvenskaya-yarmarka-nikosii-2026/</loc><lastmod>2026-10-16</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/809d3c65-8ef1-4fa4-b44e-8f9bb048450c/ofitsialnaya-rozhdestvenskaya-yarmarka-nikosii-2026/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/809d3c65-8ef1-4fa4-b44e-8f9bb048450c/official-nicosia-christmas-market-2026/" />
@@ -33915,6 +34133,11 @@
   <url><loc>https://mypins.site/event/8135f18e-3fe5-440f-84f6-c007cdfaf4ff/psikhodelicheskiy-khellouin/</loc><lastmod>2026-10-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/8135f18e-3fe5-440f-84f6-c007cdfaf4ff/psikhodelicheskiy-khellouin/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/8135f18e-3fe5-440f-84f6-c007cdfaf4ff/psychedelic-halloween/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/event/814376d8-96da-4cdc-b539-0dd96d614d3e/master-klass-po-teksturnym-kartinam-iz-gliny/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/814376d8-96da-4cdc-b539-0dd96d614d3e/master-klass-po-teksturnym-kartinam-iz-gliny/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/814376d8-96da-4cdc-b539-0dd96d614d3e/clay-textured-painting-masterclass/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/event/814ea6b4-77d1-482d-8303-9da18e280c8d/full-moon-sound-sanctuary-v-adda-yoga/</loc><lastmod>2026-09-26</lastmod>
@@ -34049,6 +34272,11 @@
   <url><loc>https://mypins.site/event/82da5036-5fe9-4159-b3ef-357c99b69538/programma-korotkometrazhnykh-filmov-so-vsego-mira/</loc><lastmod>2026-09-16</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/82da5036-5fe9-4159-b3ef-357c99b69538/programma-korotkometrazhnykh-filmov-so-vsego-mira/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/82da5036-5fe9-4159-b3ef-357c99b69538/a-program-of-short-films-from-around-the-world/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/event/82dfa7d4-c2e5-4b7b-acd3-a0ba3148ebf9/krasnaya-shapochka/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/82dfa7d4-c2e5-4b7b-acd3-a0ba3148ebf9/krasnaya-shapochka/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/82dfa7d4-c2e5-4b7b-acd3-a0ba3148ebf9/little-red-riding-hood/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/event/82e11a88-b5fd-46e8-9c65-8499004f8232/vecher-pyatnitsy-rok-n-roll-v-vice/</loc><lastmod>2026-09-18</lastmod>
@@ -35157,6 +35385,11 @@
   <url><loc>https://mypins.site/event/8db46e84-ae82-4d23-baec-50805868bd4d/kulturnaya-detsentralizatsiya/</loc><lastmod>2026-10-09</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/8db46e84-ae82-4d23-baec-50805868bd4d/kulturnaya-detsentralizatsiya/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/8db46e84-ae82-4d23-baec-50805868bd4d/cultural-decentralization/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/event/8db86e9f-1fc8-4c9d-8937-c8b2ca4a9a78/besplatnyy-pokaz-filma/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/8db86e9f-1fc8-4c9d-8937-c8b2ca4a9a78/besplatnyy-pokaz-filma/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/8db86e9f-1fc8-4c9d-8937-c8b2ca4a9a78/free-film-screening/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/event/8dbd6de9-eedd-430c-adb7-99007f025ea5/master-klass/</loc><lastmod>2026-09-16</lastmod>
@@ -36919,6 +37152,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/9f62b87a-c065-416f-8b38-f3856cceadb6/starttalk-first-words-in-english-out-loud/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/event/9f680480-88ac-439a-b3b9-0ac418f9add5/3-y-gala-kontsert/</loc><lastmod>2026-11-10</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/9f680480-88ac-439a-b3b9-0ac418f9add5/3-y-gala-kontsert/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/9f680480-88ac-439a-b3b9-0ac418f9add5/3rd-gala-concert/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/event/9f72bb5f-50b7-46c8-8995-0ba04f7f986a/autentichnye-anti-beznes-znakomstva/</loc><lastmod>2026-09-27</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/9f72bb5f-50b7-46c8-8995-0ba04f7f986a/autentichnye-anti-beznes-znakomstva/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/9f72bb5f-50b7-46c8-8995-0ba04f7f986a/authentic-anti-business-dating/" />
@@ -37169,7 +37407,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/a2ba6dca-cc20-476e-ba32-3e35c69da49b/reiki-introduction-meetup/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/event/a2cf4041-7860-4aae-925b-09f578989635/gee-bello-v-kitione/</loc><lastmod>2026-10-05</lastmod>
+  <url><loc>https://mypins.site/event/a2cf4041-7860-4aae-925b-09f578989635/gee-bello-v-kitione/</loc><lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/a2cf4041-7860-4aae-925b-09f578989635/gee-bello-v-kitione/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/a2cf4041-7860-4aae-925b-09f578989635/gee-bello-in-koili/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
@@ -37327,6 +37565,11 @@
   <url><loc>https://mypins.site/event/a45bc844-d15d-4056-9f24-9f8722475a3f/mozgoboynya-bali-na-korporative-da-tak-mozhno/</loc><lastmod>2026-10-20</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/a45bc844-d15d-4056-9f24-9f8722475a3f/mozgoboynya-bali-na-korporative-da-tak-mozhno/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/a45bc844-d15d-4056-9f24-9f8722475a3f/brainstorming-bali-at-a-corporate-event-yes-it-s-possible/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/event/a45fea56-d5c6-462c-bd7f-97051de5266e/krasnaya-shapochka/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/a45fea56-d5c6-462c-bd7f-97051de5266e/krasnaya-shapochka/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/a45fea56-d5c6-462c-bd7f-97051de5266e/little-red-riding-hood/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/event/a4607b3c-e1c3-40a6-a770-eb83cee2d9e4/gruppovoe-zanyatie-erotraverse-dlya-devushek/</loc><lastmod>2026-10-09</lastmod>
@@ -38140,6 +38383,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/ad206e57-2305-413d-a9a9-1e34bf12d982/yoga-teacher-training-course/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/event/ad2c109b-77db-43c6-958a-f2933df76191/public-health-2026-konferentsiya-po-obshchestvennomu-zdorovyu-v-sanure/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/ad2c109b-77db-43c6-958a-f2933df76191/public-health-2026-konferentsiya-po-obshchestvennomu-zdorovyu-v-sanure/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/ad2c109b-77db-43c6-958a-f2933df76191/public-health-2026-public-health-conference-in-sanur/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/event/ad3b0a8f-d687-43fc-9eeb-76e730271ac5/yoga-dlya-tekh-komu-prosto-potyanutsya-nedostatochno/</loc><lastmod>2026-10-20</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/ad3b0a8f-d687-43fc-9eeb-76e730271ac5/yoga-dlya-tekh-komu-prosto-potyanutsya-nedostatochno/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/ad3b0a8f-d687-43fc-9eeb-76e730271ac5/yoga-for-those-who-need-more-than-just-a-stretch/" />
@@ -38333,6 +38581,11 @@
   <url><loc>https://mypins.site/event/af66bfe8-d9f4-46bd-bab2-ff733cef86b7/volshebnoe-rozhdestvo-rudolfa-v-nikosii/</loc><lastmod>2026-10-15</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/af66bfe8-d9f4-46bd-bab2-ff733cef86b7/volshebnoe-rozhdestvo-rudolfa-v-nikosii/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/af66bfe8-d9f4-46bd-bab2-ff733cef86b7/rudolph-s-magical-christmas-in-nicosia/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/event/af6a77c3-afc9-4c1b-b54c-c3d734b6621d/muzykalnyy-kviz-ugaday-melodiyu-v-nyachange-v-eto-voskresene-superinteresnaya-klassicheskaya-igra-po-khitovym-trekam-90kh-god/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/af6a77c3-afc9-4c1b-b54c-c3d734b6621d/muzykalnyy-kviz-ugaday-melodiyu-v-nyachange-v-eto-voskresene-superinteresnaya-klassicheskaya-igra-po-khitovym-trekam-90kh-god/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/af6a77c3-afc9-4c1b-b54c-c3d734b6621d/music-quiz-guess-the-melody-in-nha-trang-this-sunday-a-super-exciting-classic-game-with-hit-tracks-from-the-90s/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/event/af77fa99-07fb-4848-8131-b64f2fd50d03/anime-simfo-shou-ot-38-samurai/</loc><lastmod>2027-01-22</lastmod>
@@ -38654,6 +38907,11 @@
   <url><loc>https://mypins.site/event/b30dcbdb-d1b8-49e4-b975-c62c98844a7d/festival-traditsionnykh-produktov/</loc><lastmod>2026-10-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/b30dcbdb-d1b8-49e4-b975-c62c98844a7d/festival-traditsionnykh-produktov/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/b30dcbdb-d1b8-49e4-b975-c62c98844a7d/traditional-products-festival/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/event/b3157474-0504-4360-bf16-72a76161fcbe/gruppovaya-terapiya-oflayn-v-nyachange/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/b3157474-0504-4360-bf16-72a76161fcbe/gruppovaya-terapiya-oflayn-v-nyachange/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/b3157474-0504-4360-bf16-72a76161fcbe/group-therapy-offline-in-nha-trang/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/event/b3165083-6ab9-4e51-a6ca-fc5fcfd7a89b/razgovornyy-klub-english-speaking-club/</loc><lastmod>2026-08-23</lastmod>
@@ -39520,6 +39778,11 @@
   </url>
   <url><loc>https://mypins.site/event/bcc6aa17-12e9-4492-a297-6c7e58283b48/aktivatsiya-kundalini-kundalini-activation/</loc><lastmod>2026-08-25</lastmod>
   </url>
+  <url><loc>https://mypins.site/event/bccba012-a675-4f86-8c10-9d4f3abff922/meditsinskaya-konferentsiya-bali-emergency-care-conference-2026-v-seminyak/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/bccba012-a675-4f86-8c10-9d4f3abff922/meditsinskaya-konferentsiya-bali-emergency-care-conference-2026-v-seminyak/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/bccba012-a675-4f86-8c10-9d4f3abff922/bali-emergency-care-conference-2026-medical-conference-in-seminyak/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/event/bcf851b7-09a7-4cd5-bf6a-b44d241aa124/degustatsiya-indoneziyskikh-vin-v-potato-head/</loc><lastmod>2026-09-18</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/bcf851b7-09a7-4cd5-bf6a-b44d241aa124/degustatsiya-indoneziyskikh-vin-v-potato-head/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/bcf851b7-09a7-4cd5-bf6a-b44d241aa124/indonesian-wine-tasting-at-potato-head/" />
@@ -40233,6 +40496,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/c52a6ac8-a0be-4a51-812f-564142610b57/workshop-meeting-how-to-create-and-successfully-sell-an-info-product-service/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/event/c54a906e-e835-4755-bcaf-6564a5441515/katadromeas-konstantinu-sotiris-tu-adamu-geroy-soprotivleniya-protiv-putcha/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/c54a906e-e835-4755-bcaf-6564a5441515/katadromeas-konstantinu-sotiris-tu-adamu-geroy-soprotivleniya-protiv-putcha/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/c54a906e-e835-4755-bcaf-6564a5441515/katadromeas-konstantinou-sotiris-tou-adamou-hero-of-the-resistance-against-the-coup/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/event/c54f1a94-5dce-418d-80e1-f5feaa48cd08/detskaya-igroteka-nastolnykh-igr/</loc><lastmod>2026-09-19</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/c54f1a94-5dce-418d-80e1-f5feaa48cd08/detskaya-igroteka-nastolnykh-igr/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/c54f1a94-5dce-418d-80e1-f5feaa48cd08/children-s-board-game-playroom/" />
@@ -40357,6 +40625,11 @@
   <url><loc>https://mypins.site/event/c6707809-8d41-4fbb-af2d-747847235f80/yoga-v-ubude/</loc><lastmod>2026-09-16</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/c6707809-8d41-4fbb-af2d-747847235f80/yoga-v-ubude/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/c6707809-8d41-4fbb-af2d-747847235f80/yoga-in-ubud/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/event/c6826cac-0106-4920-8470-8fc5ae84d5ee/krasnaya-shapochka/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/c6826cac-0106-4920-8470-8fc5ae84d5ee/krasnaya-shapochka/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/c6826cac-0106-4920-8470-8fc5ae84d5ee/little-red-riding-hood/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/event/c6ab2366-6391-44c0-81f0-6038ac582d9e/bagdzhan-oktyabr/</loc><lastmod>2026-10-03</lastmod>
@@ -42061,6 +42334,11 @@
   </url>
   <url><loc>https://mypins.site/event/d7ab9f66-82a6-4ed9-9739-3ac97b698927/who-s-your-daddy-bali-v-il-salotto/</loc><lastmod>2026-09-09</lastmod>
   </url>
+  <url><loc>https://mypins.site/event/d7b11f1b-c99b-4c65-81db-aa7fb4816261/vozmu-za-ruku-i-myagko-poznakomlyu-tebya-s-mirom-funktsionalnogo-treninga/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/d7b11f1b-c99b-4c65-81db-aa7fb4816261/vozmu-za-ruku-i-myagko-poznakomlyu-tebya-s-mirom-funktsionalnogo-treninga/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/d7b11f1b-c99b-4c65-81db-aa7fb4816261/i-ll-take-you-by-the-hand-and-gently-introduce-you-to-the-world-of-functional-training/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/event/d7b98c78-4a0e-4712-996e-46ee4ae94e94/kviz-eynshteyn-pati/</loc><lastmod>2026-08-21</lastmod>
   </url>
   <url><loc>https://mypins.site/event/d7d59e51-e514-4ff0-9f49-3431f01d5739/uzhin-l-orientale-v-sardine-by-k-club/</loc><lastmod>2026-09-14</lastmod>
@@ -42629,6 +42907,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/dd2369d5-8810-43de-8bc3-be11800130cc/field-of-action/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/event/dd27d73e-d283-478a-8f8e-f40a39674e7c/krasnaya-shapochka/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/dd27d73e-d283-478a-8f8e-f40a39674e7c/krasnaya-shapochka/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/dd27d73e-d283-478a-8f8e-f40a39674e7c/little-red-riding-hood/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/event/dd2db9a2-8870-4026-a615-c08cd281a77e/gvozdestoyanie/</loc><lastmod>2026-09-03</lastmod>
   </url>
   <url><loc>https://mypins.site/event/dd4b1f20-5a6c-4cfd-a0de-17474192f651/savaya-thursday-10-sentyabrya/</loc><lastmod>2026-09-10</lastmod>
@@ -42942,7 +43225,7 @@
   </url>
   <url><loc>https://mypins.site/event/e08d7039-e28e-4f94-95b0-ed1d87c3fc75/last-light-31-avgusta/</loc><lastmod>2026-08-31</lastmod>
   </url>
-  <url><loc>https://mypins.site/event/e09d1054-97c6-46b3-b2e8-0c35c20e7d47/silovaya-trenirovka-v-gruppe-na-vse-telo-chetverg/</loc><lastmod>2026-10-18</lastmod>
+  <url><loc>https://mypins.site/event/e09d1054-97c6-46b3-b2e8-0c35c20e7d47/silovaya-trenirovka-v-gruppe-na-vse-telo-chetverg/</loc><lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/e09d1054-97c6-46b3-b2e8-0c35c20e7d47/silovaya-trenirovka-v-gruppe-na-vse-telo-chetverg/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/e09d1054-97c6-46b3-b2e8-0c35c20e7d47/full-body-group-strength-training-thursday/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
@@ -43461,7 +43744,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/e6b3819f-4db9-4fb5-ac38-88ab3821dc26/halcyon-dayz-2026/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
-  <url><loc>https://mypins.site/event/e6c50583-1345-4f53-9d65-6391675b4d72/utrennyaya-yoga-dlya-nachinayushchikh/</loc><lastmod>2026-10-19</lastmod>
+  <url><loc>https://mypins.site/event/e6c50583-1345-4f53-9d65-6391675b4d72/utrennyaya-yoga-dlya-nachinayushchikh/</loc><lastmod>2026-10-21</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/e6c50583-1345-4f53-9d65-6391675b4d72/utrennyaya-yoga-dlya-nachinayushchikh/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/e6c50583-1345-4f53-9d65-6391675b4d72/morning-yoga-for-beginners/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
@@ -43902,6 +44185,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/ec755da8-b611-4560-b45b-8b431e2662ef/mafia-predictor-friday-october-16/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/event/ec834e61-5cfb-4116-b667-e30f092b3a6b/vystavka-aliks-eme-v-muzee-pasifika/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/ec834e61-5cfb-4116-b667-e30f092b3a6b/vystavka-aliks-eme-v-muzee-pasifika/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/ec834e61-5cfb-4116-b667-e30f092b3a6b/alix-ayme-exhibition-at-the-pasifika-museum/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/event/ec8dad2c-a5b2-47ab-9bfb-2c8627f91874/interesnaya-yoga-lyuboy-uroven-posle-kotoroy-u-vsekh-est-rezultat/</loc><lastmod>2026-08-28</lastmod>
   </url>
   <url><loc>https://mypins.site/event/ecabd58a-70af-4214-8827-93be5a83c521/literaturnyy-klub-v-nyachange/</loc><lastmod>2026-08-29</lastmod>
@@ -44190,9 +44478,19 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/eff218c7-5631-4acb-957c-a34f2fc93279/blood-on-the-clock-tower/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/event/effed7fc-4b3f-4fd6-8bd3-54aaf710ca25/bakh-rasshirennyy-skripka-solo/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/effed7fc-4b3f-4fd6-8bd3-54aaf710ca25/bakh-rasshirennyy-skripka-solo/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/effed7fc-4b3f-4fd6-8bd3-54aaf710ca25/bach-extended-violin-solo/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/event/f0091f63-fec0-4423-a19b-1c2396994467/play-with-vice-khip-khop-i-r-b-v-garden-of-mesa/</loc><lastmod>2026-09-30</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/f0091f63-fec0-4423-a19b-1c2396994467/play-with-vice-khip-khop-i-r-b-v-garden-of-mesa/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/f0091f63-fec0-4423-a19b-1c2396994467/play-with-vice-hip-hop-and-r-b-at-garden-of-mesa/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/event/f0155f4c-4b70-492f-a8c4-885c089a01b2/latino-vtornik-v-la-favela/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/f0155f4c-4b70-492f-a8c4-885c089a01b2/latino-vtornik-v-la-favela/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/f0155f4c-4b70-492f-a8c4-885c089a01b2/latin-tuesday-at-la-favela/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/event/f01c629b-e67e-4b4c-9f21-7d0f74b5563f/snezhnaya-koroleva/</loc><lastmod>2026-10-16</lastmod>
@@ -44948,6 +45246,11 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/f865996f-32dd-4ddb-9f3a-d9ba848d6d47/morning-yoga-fysm-for-all-levels/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
+  <url><loc>https://mypins.site/event/f888ec79-e0f6-449c-b1cc-ad8e21ca9e5e/krasnaya-shapochka/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/f888ec79-e0f6-449c-b1cc-ad8e21ca9e5e/krasnaya-shapochka/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/f888ec79-e0f6-449c-b1cc-ad8e21ca9e5e/little-red-riding-hood/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
   <url><loc>https://mypins.site/event/f8b055a9-cbf2-49c7-b523-db5a3fec855b/zanyatie-v-dykhatelnom-klasse-16/</loc><lastmod>2026-09-23</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/f8b055a9-cbf2-49c7-b523-db5a3fec855b/zanyatie-v-dykhatelnom-klasse-16/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/f8b055a9-cbf2-49c7-b523-db5a3fec855b/breathing-class-session-16/" />
@@ -45124,6 +45427,11 @@
   <url><loc>https://mypins.site/event/fa7e5acf-0dde-4ba3-b7ea-f4a11283420e/gornye-igry-kipra-2026-sport-kultura-i-zdorovyy-obraz-zhizni-v-troodose/</loc><lastmod>2026-09-26</lastmod>
     <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/fa7e5acf-0dde-4ba3-b7ea-f4a11283420e/gornye-igry-kipra-2026-sport-kultura-i-zdorovyy-obraz-zhizni-v-troodose/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/fa7e5acf-0dde-4ba3-b7ea-f4a11283420e/mountain-games-cyprus-2026-sport-culture-healthy-living-in-troodos/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+  </url>
+  <url><loc>https://mypins.site/event/fa813e65-9917-4edf-8d0a-cae6529c7cab/nabirayu-novichkov-na-kampanii-i-vanshoty-po-d-d/</loc><lastmod>2026-10-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mypins.site/event/fa813e65-9917-4edf-8d0a-cae6529c7cab/nabirayu-novichkov-na-kampanii-i-vanshoty-po-d-d/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mypins.site/en/event/fa813e65-9917-4edf-8d0a-cae6529c7cab/recruiting-newcomers-for-d-d-campaigns-and-one-shots/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
   </url>
   <url><loc>https://mypins.site/event/fa87a33c-c828-4534-807f-3789a94f0a20/savaya-tuesday-v-savaya-bali/</loc><lastmod>2026-10-20</lastmod>
