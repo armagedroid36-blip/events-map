@@ -489,7 +489,7 @@ async function existingKeys() {
       liveByTitle.get(k).push(e);
     }
   }
-  return { seen, liveByTitle };
+  return { seen, sites, liveByTitle };
 }
 
 /** Страница канала: первая, или ?before=<pid> — посты старше указанного */
