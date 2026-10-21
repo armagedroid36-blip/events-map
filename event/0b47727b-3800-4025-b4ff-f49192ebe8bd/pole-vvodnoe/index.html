@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ПОЛЕ ВВОДНОЕ — 4 сентября 2026 · Нячанг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-C8NLXycd.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-DFHUzgk-.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-ClrhGROD.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-C6wzwT_E.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Нячанг, 4 сентября 2026. 💜𝗣𝗢𝗟𝗘 𝗜𝗡𝗧𝗥𝗢💜 Где: Glow Flow Centre Когда: 4 Сентября Пятница Время: 17:00 - 18:15 Стоимость: 100.000VND 💫𝗣𝗢𝗟𝗘…" />
+    <link rel="canonical" href="https://mypins.site/event/0b47727b-3800-4025-b4ff-f49192ebe8bd/pole-vvodnoe/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="ПОЛЕ ВВОДНОЕ — 4 сентября 2026 · Нячанг" />
+    <meta property="og:description" content="Нячанг, 4 сентября 2026. 💜𝗣𝗢𝗟𝗘 𝗜𝗡𝗧𝗥𝗢💜 Где: Glow Flow Centre Когда: 4 Сентября Пятница Время: 17:00 - 18:15 Стоимость: 100.000VND 💫𝗣𝗢𝗟𝗘…" />
+    <meta property="og:url" content="https://mypins.site/event/0b47727b-3800-4025-b4ff-f49192ebe8bd/pole-vvodnoe/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"ПОЛЕ ВВОДНОЕ","item":"https://mypins.site/event/0b47727b-3800-4025-b4ff-f49192ebe8bd/pole-vvodnoe/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>ПОЛЕ ВВОДНОЕ</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-09-04">4 сентября 2026</time></p>
+  <p><time datetime="2026-09-04T17:00:00">4 сентября 2026, 17:00</time></p>
+  <address>GLOW FLOW Pole &amp; Dance Studio - Centre/Центр, 64A Nguyễn Thiện Thuật, Nha Trang, Khánh Hòa 650000, Нячанг</address>
+  <p>100000 VND</p>
+  <p>💜𝗣𝗢𝗟𝗘 𝗜𝗡𝗧𝗥𝗢💜
+
+Где: Glow Flow Centre 
+Когда: 4 Сентября Пятница 
+Время: 17:00 - 18:15
+Стоимость: 100.000VND
+
+ 💫𝗣𝗢𝗟𝗘 𝗜𝗡𝗧𝗥𝗢 — это открытый урок для тех, кто хочет впервые попробовать себя на пилоне и понять, почему в это направление влюбляются.
+
+💫На занятии мы:
+﻿﻿- изучим базовые элементы и красивые вращения
+﻿﻿- разберём правильные хваты и технику
+﻿﻿- научимся чувствовать пилон и своё тело
+
+﻿﻿и главное — получим удовольствие от каждого движения 🙌
+❗️Никакого опыта, подготовки или идеальной физической формы не требуется.
+❗️Ты можешь прийти абсолютно с нуля❗️
+Занятие проходит в комфортном темпе, с вниманием к каждой ученице
+
+Если давно хотелось попробовать — возможно, **это именно тот самый момент начать.**😉
+
+Запись на занятие обязательна @anana_nasya
+
+#дата: 04.09.2026
+Пост от: Анастасия</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/nha-trang/">Нячанг</a> <span aria-hidden="true">›</span> <span>ПОЛЕ ВВОДНОЕ</span></p>
+    <p>Ещё события в Нячанге: <a href="/nha-trang/">афиша</a> · <a href="/nha-trang/workshop/">🎨 Мастер-классы</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/9a6dc8bb-4044-424d-8d82-44092174699b/neyrografika-liniya-zhizni/">НЕЙРОГРАФИКА «ЛИНИЯ ЖИЗНИ» <time datetime="2026-10-21">21 октября 2026</time></a></li>
+    <li><a href="/event/3d00a0ac-bd5b-4e8c-a8ef-d9866e51a8bc/akterskiy-trening-v-nyachange/">Актёрский тренинг в Нячанге <time datetime="2026-10-21">21 октября 2026</time></a></li>
+    <li><a href="/event/cf96f37a-e14b-40ce-b607-cbbe075df998/risovanie-dlya-detey-6-12-let-sever-nyachanga/">РИСОВАНИЕ ДЛЯ ДЕТЕЙ 6 12 ЛЕТ СЕВЕР НЯЧАНГА <time datetime="2026-10-21">21 октября 2026</time></a></li>
+    <li><a href="/event/81eb44e8-cfda-4640-89d4-c54fcb924e2e/khudozhka-dlya-vzroslykh/">ХУДОЖКА ДЛЯ ВЗРОСЛЫХ <time datetime="2026-10-21">21 октября 2026</time></a></li>
+    <li><a href="/event/8d8066bf-28c2-4112-9119-12c34f6f1247/master-klass/">Мастер Класс <time datetime="2026-10-21">21 октября 2026</time></a></li>
+    <li><a href="/event/94bc0c8c-417a-41ad-8a1d-7f332219ad72/risovanie-dlya-podrostkov/">РИСОВАНИЕ ДЛЯ ПОДРОСТКОВ <time datetime="2026-10-21">21 октября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Нячанг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/f1aea9f3-992b-4d19-aaf0-42d6e4dd60ae/tala-ten-v-nyachange/">Тала Тьен в Нячанге!</a> <time datetime="2026-09-03">3 сентября 2026</time></li>
+    <li>Следующее: <a href="/event/153a98f6-3276-4ad7-b703-adb79f79d8f5/yoga-tsentr-u-vsekh-moikh-studentov-est-rezultat/">Йога центр, у ВСЕХ моих студентов есть результат</a> <time datetime="2026-09-04">4 сентября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/nha-trang/">Ближайшие события: Нячанг</a></p>
+</div>
+
+  </body>
+</html>

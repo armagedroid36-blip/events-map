@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Дни зимнего солнцестояния… — 25 сентября 2026 · Фамагуста, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-C8NLXycd.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-DFHUzgk-.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-ClrhGROD.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-C6wzwT_E.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Фамагуста, Кипр, 25 сентября 2026. Halcyon Dayz 2025 был поистине эпическим и превзошёл все наши ожидания — топовая музыка, уникальные площадки и потрясающие…" />
+    <link rel="canonical" href="https://mypins.site/event/cc7e7330-aa1d-4453-9fb4-bc7dfec58da3/dni-zimnego-solntsestoyaniya-2026/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Дни зимнего солнцестояния… — 25 сентября 2026 · Фамагуста, Кипр" />
+    <meta property="og:description" content="Фамагуста, Кипр, 25 сентября 2026. Halcyon Dayz 2025 был поистине эпическим и превзошёл все наши ожидания — топовая музыка, уникальные площадки и потрясающие…" />
+    <meta property="og:url" content="https://mypins.site/event/cc7e7330-aa1d-4453-9fb4-bc7dfec58da3/dni-zimnego-solntsestoyaniya-2026/" />
+    <meta property="og:image" content="https://www.cyprusunderground.com.cy/storage/app/uploads/public/6a8/c82/5e3/6a8c825e375d7975718073.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/cc7e7330-aa1d-4453-9fb4-bc7dfec58da3/dni-zimnego-solntsestoyaniya-2026/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/cc7e7330-aa1d-4453-9fb4-bc7dfec58da3/halcyon-dayz-2026/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Дни зимнего солнцестояния 2026","item":"https://mypins.site/event/cc7e7330-aa1d-4453-9fb4-bc7dfec58da3/dni-zimnego-solntsestoyaniya-2026/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Дни зимнего солнцестояния 2026</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-09-25">25 сентября 2026</time></p>
+  <p><time datetime="2026-09-25T13:00:00">25 сентября 2026, 13:00</time></p>
+  <address>Tulum Beach Bar, Фамагуста, Кипр</address>
+  <p>Halcyon Dayz 2025 был поистине эпическим и превзошёл все наши ожидания — топовая музыка, уникальные площадки и потрясающие люди.
+
+ЛУЧШИЕ времена и абсолютно невероятный опыт!
+
+Мы возвращаемся на остров любви, 24–30 сентября 2026, и в полной мере воспользуемся удивительной кипрской погодой, солнцем, голубым небом и температурой в конце 20-х, начале 30-х градусов.
+
+Вновь Sterns Ravers Events, Voodoo, HW Events, We Are Balearic и Napa FM объединяются, чтобы представить вам третью редакцию Halcyon Dayz.
+
+Ожидайте услышать Old Skool Classics, Funky / Soulful House, Rave House, Upfront House House Balear</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Дни зимнего солнцестояния 2026</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/concert/">🎤 Концерты</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/ffd590cd-f056-4e58-8129-a84cbd062020/zolotye-golosa-gospela/">Золотые голоса госпела <time datetime="2026-10-20">20 октября 2026</time></a></li>
+    <li><a href="/event/8838cd1f-b8e7-43e4-93df-097e7d1efa97/dan-uvazheniya-yorgosu-matsonakisu-noch-luchshikh-khitov-v-treladiko/">Дань уважения Йоргосу Мацонакису: Ночь лучших хитов в Treladiko <time datetime="2026-10-21">21 октября 2026</time></a></li>
+    <li><a href="/event/c850cd3e-f5cf-453c-a622-b8daab0ead31/trio-dzhaza-mariosa-tumbasa-vystupit-vzhivuyu-v-dzhaz-klube-sarah-s/">Трио джаза Мариоса Тумбаса выступит вживую в джаз-клубе Sarah’s <time datetime="2026-10-21">21 октября 2026</time></a></li>
+    <li><a href="/event/cd96cb99-9730-4272-afb0-2146f3cf9ee3/zolotye-golosa-gospela/">Золотые голоса госпела <time datetime="2026-10-21">21 октября 2026</time></a></li>
+    <li><a href="/event/fe088899-4aed-4afa-9e8d-d108dc6131e4/bezumnyy-motsart-unikalnoe-simfonicheskoe-shou/">Безумный Моцарт: уникальное симфоническое шоу <time datetime="2026-10-21">21 октября 2026</time></a></li>
+    <li><a href="/event/a2cf4041-7860-4aae-925b-09f578989635/gee-bello-v-kitione/">Gee Bello в Китионе <time datetime="2026-10-22">22 октября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/c22d11ff-c3ab-4835-8527-ebc92edd6545/kulturnaya-detsentralizatsiya/">Культурная децентрализация</a> <time datetime="2026-09-25">25 сентября 2026</time></li>
+    <li>Следующее: <a href="/event/d8207469-b4b7-4626-a225-1a04eba3d219/mltds-v-malindi-beach-bar/">MLTDS в Malindi Beach Bar</a> <time datetime="2026-09-25">25 сентября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>
