@@ -26,10 +26,21 @@ function head(url) {
   // (проверено 13.10.2026: тот же URL без кодирования → 404, с кодированием → 200).
   const safe = String(url).replace(/[^\x00-\x7F]/g, ch => encodeURIComponent(ch));
   try {
-    const out = execFileSync('curl', ['-sI', '--max-time', '15', '-x', PROXY, safe], {
-      encoding: 'utf8',
-      maxBuffer: 4 * 1024 * 1024,
-    });
+    let out;
+    try {
+      out = execFileSync('curl', ['-sI', '--max-time', '15', '-x', PROXY, safe], {
+        encoding: 'utf8',
+        maxBuffer: 4 * 1024 * 1024,
+      });
+    } catch {
+      // Транзиентный обрыв прокси/таймаут — один повтор перед выводом «прочих».
+      // Без повтора одиночный сбой выглядит как «страница мертва» (21.10.2026: 54633d2f
+      // дал ERR, при повторной проверке тот же URL → 200).
+      out = execFileSync('curl', ['-sI', '--max-time', '20', '-x', PROXY, safe], {
+        encoding: 'utf8',
+        maxBuffer: 4 * 1024 * 1024,
+      });
+    }
     // ВАЖНО: через прокси `curl -I` печатает сначала строку CONNECT
     // («HTTP/1.1 200 Connection established»), и первый матч врёт — берём ПОСЛЕДНЮЮ.
     const codes = [...out.matchAll(/^HTTP\/1\.1 (\d{3})/gm)].map(m => m[1]);
