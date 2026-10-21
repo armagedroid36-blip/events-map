@@ -14,7 +14,7 @@ import { selectAll } from './db-rows.mjs';
 import { STOP as KEY_STOP, FUNC, GENERIC, PLACE_STOP } from './live-dupe-key.mjs';
 
 const db = createClient(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE, { auth: { persistSession: false } });
-const all = await selectAll(db, 'events', 'id,title,title_ru,title_en,city,address,lat,lng,start_date,status,website,source_type');
+const all = await selectAll(db, 'events', 'id,title,title_ru,title_en,city,address,lat,lng,start_date,start_time,status,website,source_type');
 const STATUSES = (process.env.PROBE_STATUS || 'active').split(',');
 const live = all.filter((r) => STATUSES.includes(r.status) && r.lat && r.lng);
 // Слова-ТИПЫ и топонимы-«вода» (STOP/FUNC/GENERIC/PLACE_STOP общего ключа дедупа + свои):
@@ -48,6 +48,15 @@ const dist = (a, b) => {
   const dx = (a.lat - b.lat) * 111320, dy = (a.lng - b.lng) * 111320 * Math.cos((a.lat * Math.PI) / 180);
   return Math.sqrt(dx * dx + dy * dy);
 };
+// Время начала в минутах: у события бывает НЕСКОЛЬКО показов в один день (цирк, детский театр,
+// кино), тогда «одна площадка + одна дата + общая тема» — не дубль, а два разных сеанса.
+// Класс 372: «Смурфики» 31.10 Лимасол, CN 16:00 ↔ bz 11:00 — обе карточки верны (программа
+// показа на странице записи CN: 11:00 и 16:00). Поэтому пары с РАЗНЫМИ заданными временами
+// выносятся в отдельную секцию и по умолчанию дублями НЕ считаются (арбитр — блок Πρόγραμμα).
+const minutes = (t) => {
+  const m = /^(\d{1,2}):(\d{2})/.exec(String(t || ''));
+  return m ? Number(m[1]) * 60 + Number(m[2]) : null;
+};
 const groups = new Map();
 for (const r of live) {
   const k = `${(r.start_date || '').slice(0, 10)}|${norm(r.city)}`;
@@ -69,13 +78,31 @@ for (const [k, g] of groups) {
     const addrSame = norm(a.address) === norm(b.address);
     const d = dist(a, b);
     if (!addrSame && d < 1500) {
-      shown.push({ k, ov, common, d: Math.round(d), a, b });
+      const ta = minutes(a.start_time), tb = minutes(b.start_time);
+      const diff = ta !== null && tb !== null && ta !== tb ? Math.abs(ta - tb) : null;
+      shown.push({ k, ov, common, d: Math.round(d), a, b, diff });
     }
   }
 }
 shown.sort((x, y) => y.ov - x.ov || x.d - y.d);
-console.log(`ACTIVE с гео ${live.length}; кандидатов «разный адрес, пины рядом»: ${shown.length}`);
-for (const s of shown.slice(0, Number(process.env.PROBE_LIMIT || 25))) {
-  console.log(`  ${s.k} | ov ${s.ov} | ${s.d} м | общие: ${s.common.join(', ')}`);
-  for (const r of [s.a, s.b]) console.log(`     ${r.id.slice(0, 8)} [${r.source_type}] ${(r.title_ru || r.title).slice(0, 60)} | ${r.address} | ${r.lat},${r.lng} | ${(r.website || '').slice(0, 70)}`);
+// Дубль-кандидат: время совпадает или хотя бы у одной карточки не задано.
+// «Показы одного дня»: оба времени заданы и различаются — сначала арбитр, потом вывод о дубле.
+const strict = shown.filter((s) => s.diff === null);
+const multi = shown.filter((s) => s.diff !== null);
+console.log(`ACTIVE с гео ${live.length}; кандидатов «разный адрес, пины рядом»: ${shown.length} (дубль-кандидатов ${strict.length}, показов одного дня ${multi.length})`);
+const fmt = (s) => console.log(`     ${s.a.id.slice(0, 8)} [${s.a.source_type}] ${(s.a.title_ru || s.a.title).slice(0, 55)} | ${s.a.start_time || '—'} | ${s.a.address} | ${s.a.lat},${s.a.lng} | ${(s.a.website || '').slice(0, 60)}\n     ${s.b.id.slice(0, 8)} [${s.b.source_type}] ${(s.b.title_ru || s.b.title).slice(0, 55)} | ${s.b.start_time || '—'} | ${s.b.address} | ${s.b.lat},${s.b.lng} | ${(s.b.website || '').slice(0, 60)}`);
+const LIMIT = Number(process.env.PROBE_LIMIT || 25);
+if (strict.length) {
+  console.log('-- ДУБЛЬ-КАНДИДАТЫ (время совпадает или не задано) --');
+  for (const s of strict.slice(0, LIMIT)) {
+    console.log(`  ${s.k} | ov ${s.ov} | ${s.d} м | общие: ${s.common.join(', ')}`);
+    fmt(s);
+  }
+}
+if (multi.length) {
+  console.log('-- ПОКАЗЫ ОДНОГО ДНЯ (время разное => по умолчанию НЕ дубль; арбитр — программа показа на странице записи источника) --');
+  for (const s of multi.slice(0, LIMIT)) {
+    console.log(`  ${s.k} | ov ${s.ov} | ${s.d} м | разница ${s.diff} мин | общие: ${s.common.join(', ')}`);
+    fmt(s);
+  }
 }
