@@ -803,9 +803,17 @@ async function collectCyprusBz(seen, budget, websites = new Set(), bzPages = new
       return !year || year >= thisYear;
     });
   console.log(`  страниц событий в sitemap: ${urls.length}`);
+  // Сдвиг начала обхода: страницы, которые не дали события (прошедшие даты), в
+  // множество `websites` не попадают и скачиваются заново КАЖДЫЙ прогон. Без сдвига
+  // обход всегда упирается в те же первые ~150 страниц (бюджет 10.6 мин) и до хвоста
+  // карты сайта (3864 ссылки) не доходит никогда. Сдвиг по номеру суток = срез меняется.
+  const bzSkip = Number(process.env.BZ_SITEMAP_SKIP || 0)
+    || (Math.floor(Date.now() / 86400000) * 150) % Math.max(urls.length, 1);
+  const queue = bzSkip > 0 ? urls.slice(bzSkip).concat(urls.slice(0, bzSkip)) : urls;
+  if (bzSkip > 0) console.log(`  Cyprus.BZ: обход с позиции ${bzSkip}`);
   let fails = 0;
   let scanned = 0;
-  for (const url of urls) {
+  for (const url of queue) {
     if (added >= budget || Date.now() > deadline || fails >= 8) break;
     if (websites.has(url) || (canonBzPage(url) && bzPages.has(canonBzPage(url)))) {
       stats.skipped++;
