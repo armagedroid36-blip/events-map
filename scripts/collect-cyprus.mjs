@@ -794,23 +794,39 @@ async function collectCyprusBz(seen, budget, websites = new Set(), bzPages = new
   }
   if (!sitemap) return 0;
   const thisYear = new Date().getFullYear();
-  const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)]
-    .map((m) => m[1].trim())
-    .filter((u) => /\/event\//.test(u) && !/[?<]/.test(u))
+  const items = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>(?:\s*<lastmod>([^<]+)<\/lastmod>)?/g)]
+    .map((m) => ({ url: m[1].trim(), lastmod: (m[2] || '').trim() }))
+    .filter(({ url: u }) => /\/event\//.test(u) && !/[?<]/.test(u))
     // в slug последним числом стоит год: события прошлых лет пропускаем
-    .filter((u) => {
+    .filter(({ url: u }) => {
       const year = Number((u.match(/-(20\d{2})$/) || [])[1]);
       return !year || year >= thisYear;
-    });
-  console.log(`  страниц событий в sitemap: ${urls.length}`);
-  // Сдвиг начала обхода: страницы, которые не дали события (прошедшие даты), в
-  // множество `websites` не попадают и скачиваются заново КАЖДЫЙ прогон. Без сдвига
-  // обход всегда упирается в те же первые ~150 страниц (бюджет 10.6 мин) и до хвоста
-  // карты сайта (3864 ссылки) не доходит никогда. Сдвиг по номеру суток = срез меняется.
+    })
+    // Свежие страницы — первыми: lastmod у новой афиши равен дате её появления,
+    // а у прошедших событий он июньский/июльский. Без сортировки срез из 150 страниц
+    // попадал в глухой хвост карты сайта (прошедшие события) и давал +0.
+    .sort((a, b) => (a.lastmod < b.lastmod ? 1 : a.lastmod > b.lastmod ? -1 : 0));
+  // Свежая секция и хвост вращаются отдельно: страницы, которые не дали события
+  // (прошедшие даты), в `websites` не попадают и скачиваются заново каждый прогон,
+  // поэтому обход обязан сначала идти по свежим, а старый хвост — только после них.
+  const freshCut = new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10);
+  const fresh = items.filter((i) => i.lastmod >= freshCut).map((i) => i.url);
+  const rest = items.filter((i) => i.lastmod < freshCut).map((i) => i.url);
+  console.log(`  страниц событий в sitemap: ${items.length} (свежих ${fresh.length})`);
   const bzSkip = Number(process.env.BZ_SITEMAP_SKIP || 0)
-    || (Math.floor(Date.now() / 86400000) * 150) % Math.max(urls.length, 1);
-  const queue = bzSkip > 0 ? urls.slice(bzSkip).concat(urls.slice(0, bzSkip)) : urls;
-  if (bzSkip > 0) console.log(`  Cyprus.BZ: обход с позиции ${bzSkip}`);
+    || Math.floor(Date.now() / 86400000) * 150;
+  const rotate = (arr) => {
+    if (!arr.length) return arr;
+    const k = bzSkip % arr.length;
+    return arr.slice(k).concat(arr.slice(0, k));
+  };
+  // Голова свежей секции (самые новые афиши) идёт ВСЕГДА и без сдвига: собранные
+  // страницы пропускаются бесплатно, а новая афиша попадает на карту в тот же прогон.
+  const HEAD = 90;
+  const queue = fresh.slice(0, HEAD)
+    .concat(rotate(fresh.slice(HEAD)))
+    .concat(rotate(rest));
+  if (bzSkip > 0) console.log(`  Cyprus.BZ: обход с позиции ${bzSkip % Math.max(fresh.length - HEAD, 1)} (хвост свежей секции)`);
   let fails = 0;
   let scanned = 0;
   for (const url of queue) {
