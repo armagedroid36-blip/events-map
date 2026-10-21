@@ -9,7 +9,10 @@ import { execFileSync } from 'node:child_process';
 import { createClient } from '@supabase/supabase-js';
 import { selectAll } from './db-rows.mjs';
 
-const LIMIT = Number(process.argv[2] || 0);
+const LIMIT = Number(process.argv[2] || process.env.LIMIT || 0);
+// Сдвиг выборки: полный прогон по 660+ карточкам ≈ 11 мин (HEAD через прокси ~1 c),
+// поэтому класс проверяется батчами: LIMIT=45 SKIP=90 → следующие 45 карточек.
+const SKIP = Number(process.env.SKIP || 0);
 const PROXY = 'http://127.0.0.1:10809';
 const db = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
 
@@ -17,8 +20,8 @@ const rows = await selectAll(db, 'events', 'id,status,title,start_date,start_tim
 const cards = rows
   .filter(r => r.status === 'active' && /cyprusnow\.app\/event\//.test(r.website || ''))
   .sort((a, b) => (a.start_date < b.start_date ? -1 : 1));
-const sample = LIMIT ? cards.slice(0, LIMIT) : cards;
-console.log(`Живых карточек CN: ${cards.length}; проверяю ${sample.length}\n`);
+const sample = LIMIT ? cards.slice(SKIP, SKIP + LIMIT) : cards.slice(SKIP);
+console.log(`Живых карточек CN: ${cards.length}; проверяю ${sample.length} (сдвиг ${SKIP})\n`);
 
 function head(url) {
   // Ссылки в базе хранятся с РАВЫМИ не-ASCII символами (греческие слаги).
