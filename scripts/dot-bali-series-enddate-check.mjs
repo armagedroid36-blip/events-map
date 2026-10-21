@@ -1,0 +1,51 @@
+import { noEndTime, pickDate, endDateOf } from './collect-bali.mjs';
+
+// Юнит класса «многодневное событие с заглушкой времени свёрнуто в один день».
+// Арбитр на живых данных — запись ленты baliforum.ru/api/v1/events/<slug>:
+// фестиваль Ubud Writers & Readers 21–25.10 отдаёт пять записей по 23:59:59.
+const cases = [
+  ['2 дня подряд, заглушки 23:59:59', [
+    '2026-10-22 23:59:59', '2026-10-23 23:59:59',
+  ], '2026-10-23'],
+  ['3 дня подряд, заглушки', [
+    '2026-10-22 23:59:59', '2026-10-23 23:59:59', '2026-10-24 23:59:59',
+  ], '2026-10-24'],
+  ['5 записей — за предохранителем MAX_RUN_RECORDS (=3), не тянем', [
+    '2026-10-21 23:59:59', '2026-10-22 23:59:59', '2026-10-23 23:59:59',
+    '2026-10-24 23:59:59', '2026-10-25 23:59:59',
+  ], '2026-10-21'],
+  ['сеансы с реальным временем — не тянем', [
+    ['2026-10-22 13:00:00', '2026-10-22 15:00:00'],
+    ['2026-10-23 13:00:00', '2026-10-23 15:00:00'],
+  ], '2026-10-22'],
+  ['старый формат: startAt без endAt — тянем', [
+    ['2026-10-22 09:00:00', null],
+    ['2026-10-23 09:00:00', null],
+  ], '2026-10-23'],
+  ['одиночная заглушка', ['2026-10-24 23:59:59'], '2026-10-24'],
+];
+
+// noEndTime: заглушка = нет времени; настоящий интервал = есть
+const guards = [
+  [noEndTime({ startAt: '2026-10-24 23:59:59', endAt: '2026-10-24 23:59:59' }), true, 'заглушка 23:59:59'],
+  [noEndTime({ startAt: '2026-10-24 13:00:00', endAt: null }), true, 'нет endAt'],
+  [noEndTime({ startAt: '2026-10-24 13:00:00', endAt: '2026-10-24 15:00:00' }), false, 'реальный интервал'],
+  [noEndTime({ startAt: '2026-10-24 21:00:00', endAt: '2026-10-25 02:00:00' }), false, 'ночной интервал'],
+];
+
+let ok = 0, fail = 0;
+for (const [name, dates, expEnd] of cases) {
+  const arr = dates.map((d) => Array.isArray(d) ? { startAt: d[0], endAt: d[1] } : { startAt: d, endAt: d });
+  const when = pickDate(arr);
+  const end = when ? endDateOf(when) : null;
+  const pass = end === expEnd;
+  console.log(`${pass ? 'ok  ' : 'FAIL'} ${name}: end=${end} (ожидалось ${expEnd})`);
+  pass ? ok++ : fail++;
+}
+for (const [got, exp, name] of guards) {
+  const pass = got === exp;
+  console.log(`${pass ? 'ok  ' : 'FAIL'} noEndTime(${name}) = ${got}`);
+  pass ? ok++ : fail++;
+}
+console.log(`\n${ok}/${ok + fail} ok, fail ${fail}`);
+process.exit(fail ? 1 : 0);

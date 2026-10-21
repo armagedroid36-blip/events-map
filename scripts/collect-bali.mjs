@@ -91,7 +91,17 @@ function parseBaliDate(s) {
 const MAX_RUN_DAYS = 3;
 const MAX_RUN_RECORDS = 3;
 
-function pickDate(eventDates) {
+// «Безвременная» запись: endAt отсутствует ИЛИ совпадает с startAt (заглушка 23:59:59
+// = «время не указано», событие нулевой длительности). У таких записей endAt ЕСТЬ,
+// и старая проверка `!raw.endAt` не растягивала ряд многодневного события: фестиваль
+// Ubud Writers & Readers (записи 21–25.10 по 23:59:59) лёг карточкой одного дня.
+export function noEndTime(raw) {
+  if (!raw) return true;
+  if (!raw.endAt) return true;
+  return String(raw.endAt).slice(0, 19) === String(raw.startAt || '').slice(0, 19);
+}
+
+export function pickDate(eventDates) {
   if (!Array.isArray(eventDates) || !eventDates.length) return null;
   const now = todayUtc();
   const horizon = horizonDate();
@@ -105,14 +115,14 @@ function pickDate(eventDates) {
   const limit = future[0].start.getTime() + MAX_RUN_DAYS * 24 * H;
   let end = future[0].end && future[0].end > future[0].start ? future[0].end : future[0].start;
   let lastRaw = future[0].raw;
-  // Диапазон тянем ТОЛЬКО по короткому ряду «безвременных» записей (startAt без endAt):
-  // так источник отдаёт настоящие многодневные события (чемпионат 10–11 октября — две
-  // записи 09:00→null), тогда как у сеансов/занятий/вечеринок у каждой записи есть своё
-  // время (13:00→15:00), а у длинных рядов — свой смысл (выставка на месяц, ежедневная
-  // вечеринка): растягивать их в один диапазон нельзя, это была бы выдуманная дата.
-  if (!future[0].raw.endAt && future.length <= MAX_RUN_RECORDS) {
+  // Диапазон тянем ТОЛЬКО по короткому ряду «безвременных» записей (endAt нет или он равен
+  // startAt — заглушка «время не указано»): так источник отдаёт настоящие многодневные события
+  // (фестиваль 21–25.10 — пять записей 23:59:59), тогда как у сеансов/занятий/вечеринок у каждой
+  // записи есть своё время (13:00→15:00), а у длинных рядов — свой смысл (выставка на месяц,
+  // ежедневная вечеринка): растягивать их в один диапазон нельзя, это была бы выдуманная дата.
+  if (noEndTime(future[0].raw) && future.length <= MAX_RUN_RECORDS) {
     for (let i = 1; i < future.length; i++) {
-      if (future[i].raw.endAt) break;
+      if (!noEndTime(future[i].raw)) break;
       const gap = future[i].start - end;
       if (gap < 0 || gap > 36 * H) break;
       if (future[i].start.getTime() > limit) break;
@@ -131,8 +141,6 @@ export function endDateOf(when) {
   if (endRaw !== when.raw) return endRaw.startAt.slice(0, 10);
   return null;
 }
-
-export { pickDate };
 
 function pickCategory(types) {
   if (!Array.isArray(types)) return DEFAULT_CAT;
