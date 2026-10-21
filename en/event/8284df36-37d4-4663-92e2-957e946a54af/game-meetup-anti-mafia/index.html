@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Game meetup ANTI-MAFIA! — October 20, 2026 · Nha Trang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-C8NLXycd.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-DFHUzgk-.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-ClrhGROD.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-C6wzwT_E.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Nha Trang, October 20, 2026. ANTIMAFIA game meetup! An evening of playing &quot;Secret Hitler&quot; ✨Tuesday 19:00✨ ❤️‍🔥 We invite Mafia lovers. Here we&#39;ll be playing a…" />
+    <link rel="canonical" href="https://mypins.site/en/event/8284df36-37d4-4663-92e2-957e946a54af/game-meetup-anti-mafia/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Game meetup ANTI-MAFIA! — October 20, 2026 · Nha Trang" />
+    <meta property="og:description" content="Nha Trang, October 20, 2026. ANTIMAFIA game meetup! An evening of playing &quot;Secret Hitler&quot; ✨Tuesday 19:00✨ ❤️‍🔥 We invite Mafia lovers. Here we&#39;ll be playing a…" />
+    <meta property="og:url" content="https://mypins.site/en/event/8284df36-37d4-4663-92e2-957e946a54af/game-meetup-anti-mafia/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/8284df36-37d4-4663-92e2-957e946a54af/game-meetup-anti-mafia/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/8284df36-37d4-4663-92e2-957e946a54af/igrovaya-vstrecha-antimafiya/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"Game meetup ANTI-MAFIA!","item":"https://mypins.site/en/event/8284df36-37d4-4663-92e2-957e946a54af/game-meetup-anti-mafia/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Game meetup ANTI-MAFIA!</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-20">October 20, 2026</time></p>
+  <p><time datetime="2026-10-20T19:00:00">October 20, 2026, 7:00 PM</time></p>
+  <address>Nha Trang</address>
+  <p>Free</p>
+  <p>ANTIMAFIA game meetup!
+
+An evening of playing &quot;Secret Hitler&quot;
+
+✨Tuesday 19:00✨
+
+❤️‍🔥 We invite Mafia lovers. Here we&#39;ll be playing a game similar to Mafia, but with more elaborate rules.
+❤️‍🔥 Also non-Mafia-lovers who played it long ago but then outgrew it.
+
+⚠️ The main game of the meetup is &quot;Secret Hitler&quot;
+
+✋👀 Secret Hitler (7-10 people)
+This is probably the best game with hidden roles, bluffing, and negotiation mechanics that we all love so much 😊
+
+The game is simply perfectly designed. It has core actions on which you can base your guesses, there&#39;s room for bluffing (not just with words, but with actions), and there are several victory conditions.
+We&#39;ll explain everything to newcomers, show them, and teach them👍
+
+📆 October 20 (Tuesday) at 19:00
+📍 Venue: NEVERLAND game club (city center)
+👫 number of spots: 10 people ☝️ +10 for the 2nd table.
+
+💰The meetup is free. No &quot;organizer fees.&quot;
+Everyone simply pays for themselves at the club.
+
+⚠️number of spots is limited.
+be sure to sign up via DM
+📩 @mortemanes
+
+#date: 20.10
+Post by: Mortemanes Martines</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>Game meetup ANTI-MAFIA!</span></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a> · <a href="/en/nha-trang/games/">🎲 Games &amp; Quizzes</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/82a5a79f-0cf4-4a02-8d7e-f97f6ec98577/gametalk-english-through-board-games/">GameTalk: English through board games <time datetime="2026-10-21">October 21, 2026</time></a></li>
+    <li><a href="/en/event/8b596b52-1ba3-4598-8251-97d70c87d722/movie-and-music-quiz/">Movie and Music Quiz <time datetime="2026-10-21">October 21, 2026</time></a></li>
+    <li><a href="/en/event/c7723f50-3d92-4004-a593-7341c6695c06/wednesday-playing-blood-on-the-clock-tower/">Wednesday! Playing BLOOD ON THE CLOCK TOWER <time datetime="2026-10-21">October 21, 2026</time></a></li>
+    <li><a href="/en/event/c7b8e171-e637-4177-9bd2-4362227af6f1/enrollment-is-now-open-for-the-children-s-financial-game-finance-and-investments-in-nha-trang/">Enrollment is now open for the children&#39;s financial game &quot;FINANCE AND INVESTMENTS&quot; in Nha Trang! <time datetime="2026-10-21">October 21, 2026</time></a></li>
+    <li><a href="/en/event/cd628fb8-e687-4c4b-afb0-2fb1e2474ad6/detective-evening-in-the-style-of-mafia/">Detective evening in the style of &quot;MAFIA&quot; <time datetime="2026-10-21">October 21, 2026</time></a></li>
+    <li><a href="/en/event/290197bb-6494-476b-be93-c9602423ff03/transformational-game-leela-on-a-large-board/">TRANSFORMATIONAL GAME &quot;LEELA&quot; ON A LARGE BOARD <time datetime="2026-10-22">October 22, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Nha Trang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/7903d664-f3c3-4a41-b7d4-422efcc29566/erotraverse-group-session-for-girls/">EroTraverse group session for girls</a> <time datetime="2026-10-20">October 20, 2026</time></li>
+    <li>Next: <a href="/en/event/91beac85-e57e-4180-af6d-782730b494ad/hatha-yoga-in-nha-trang/">Hatha Yoga in Nha Trang</a> <time datetime="2026-10-20">October 20, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
+</div>
+
+  </body>
+</html>

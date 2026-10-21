@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ЙОГА в стиле FYSM — 6 октября 2026 · Дананг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-C8NLXycd.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-DFHUzgk-.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-ClrhGROD.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-C6wzwT_E.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Дананг, 6 октября 2026. ЙОГА в стиле FYSM 🗓 вторник (6.10) | 10:00 Ровная спина изменяет не только то, как вы выглядите, но и то, как вы себя чувствуете. FYSM…" />
+    <link rel="canonical" href="https://mypins.site/event/9f02067c-53a4-404a-a1a7-8cac4f2eb340/yoga-v-stile-fysm/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="ЙОГА в стиле FYSM — 6 октября 2026 · Дананг" />
+    <meta property="og:description" content="Дананг, 6 октября 2026. ЙОГА в стиле FYSM 🗓 вторник (6.10) | 10:00 Ровная спина изменяет не только то, как вы выглядите, но и то, как вы себя чувствуете. FYSM…" />
+    <meta property="og:url" content="https://mypins.site/event/9f02067c-53a4-404a-a1a7-8cac4f2eb340/yoga-v-stile-fysm/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/danang_afisha/5696-0.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/9f02067c-53a4-404a-a1a7-8cac4f2eb340/yoga-v-stile-fysm/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/9f02067c-53a4-404a-a1a7-8cac4f2eb340/yoga-in-fysm-style/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Дананг","item":"https://mypins.site/da-nang/"},{"@type":"ListItem","position":3,"name":"ЙОГА в стиле FYSM","item":"https://mypins.site/event/9f02067c-53a4-404a-a1a7-8cac4f2eb340/yoga-v-stile-fysm/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>ЙОГА в стиле FYSM</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-20">20 октября 2026</time></p>
+  <p><time datetime="2026-10-06T10:00:00">6 октября 2026, 10:00</time></p>
+  <address>YOGA Club Da Nang, 58 Mai Thúc Lân, Ngũ Hành Sơn, Đà Nẵng 550000, Дананг</address>
+  <p>150000 VND</p>
+  <p>ЙОГА в стиле FYSM
+
+🗓 вторник (6.10) | 10:00
+
+Ровная спина изменяет не только то, как вы выглядите, но и то, как вы себя чувствуете. FYSM помогает включить глубокие мышцы и стабилизаторы, которые держат осанку автоматически
+
+Подойдёт тебе, если ты хочешь не просто тянуться, а нормально привести в порядок тело
+
+📍 Локация: YOGA Club Danang
+
+🤑Стоимость:
+Пробное — 150 000 VND
+
+📩 Группа до 10 человек. Запись обязательна
+Количество мест ограничено
+
+👉 Записаться:
+@Yoga_Club_Da_Nang
+
+#дата: 6.10</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/da-nang/">Дананг</a> <span aria-hidden="true">›</span> <span>ЙОГА в стиле FYSM</span></p>
+    <p>Ещё события в Дананге: <a href="/da-nang/">афиша</a> · <a href="/da-nang/wellness/">🧘 Йога и здоровье</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/acc99408-b028-4423-a581-d296bdefec74/priglashayu-tebya-na-praktiku-khatkha-yogi/">Приглашаю тебя на практику хатха-йоги <time datetime="2026-10-21">21 октября 2026</time></a></li>
+    <li><a href="/event/d6de7109-d2c9-4617-b99e-0d583de75af6/nauchis-otpuskat-kontrol-za-chas-v-igrovoy-forme/">Научись отпускать контроль. За час, в игровой форме <time datetime="2026-10-21">21 октября 2026</time></a></li>
+    <li><a href="/event/e3359d8c-4407-4f08-8016-a5664552e59b/kofe-plyazh-zal-bar-zanovo/">Кофе - пляж - зал - бар - заново? <time datetime="2026-10-21">21 октября 2026</time></a></li>
+    <li><a href="/event/fee3ae05-eab4-455a-a08b-d828d46d2984/tsigun-na-plyazhe/">ЦИГУН на ПЛЯЖЕ <time datetime="2026-10-21">21 октября 2026</time></a></li>
+    <li><a href="/event/238b194b-0e73-4a7d-a0b8-0f7c34a3a857/hatha-yoga-v-stile-fysm-dlya-vsekh-urovney/">HATHA YOGA в стиле FYSM для всех уровней <time datetime="2026-10-21">21 октября 2026</time></a></li>
+    <li><a href="/event/2571e522-861f-4ac1-8124-02bd810e74c6/ot-trevogi-k-ustoychivosti/">ОТ ТРЕВОГИ К УСТОЙЧИВОСТИ <time datetime="2026-10-21">21 октября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Дананг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/847ba8b1-3bb4-4a43-b956-169ca7971f94/transformatsionnaya-igra-mudrost-lily/">ТРАНСФОРМАЦИОННАЯ ИГРА «МУДРОСТЬ ЛИЛЫ»</a> <time datetime="2026-10-20">20 октября 2026</time></li>
+    <li>Следующее: <a href="/event/ba677e42-08a1-448a-a2af-21fce6dc5b62/anti-age-release-svobodnoe-i-molodoe-telo/">ANTI-AGE RELEASE свободное и молодое тело</a> <time datetime="2026-10-20">20 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/da-nang/">Ближайшие события: Дананг</a></p>
+</div>
+
+  </body>
+</html>
