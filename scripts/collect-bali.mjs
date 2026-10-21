@@ -88,8 +88,15 @@ function parseBaliDate(s) {
  * (вечеринки, занятия, выставки) остаются без end_date, иначе диапазон был бы выдуман.
  */
 /** Границы авто-диапазона: ряд из коротких «безвременных» записей (см. pickDate) */
-const MAX_RUN_DAYS = 3;
-const MAX_RUN_RECORDS = 3;
+const MAX_RUN_DAYS = 5;
+const MAX_RUN_RECORDS = 5;
+/** Типы записей, у которых ряд дат — это НЕ одно многодневное событие, а серия вечеров */
+const NO_STRETCH_TYPES = new Set(['Вечеринка']);
+
+function isNightSeries(types) {
+  if (!Array.isArray(types)) return false;
+  return types.some((t) => t && NO_STRETCH_TYPES.has(typeof t === 'string' ? t : t.name));
+}
 
 // «Безвременная» запись: endAt отсутствует ИЛИ совпадает с startAt (заглушка 23:59:59
 // = «время не указано», событие нулевой длительности). У таких записей endAt ЕСТЬ,
@@ -101,7 +108,7 @@ export function noEndTime(raw) {
   return String(raw.endAt).slice(0, 19) === String(raw.startAt || '').slice(0, 19);
 }
 
-export function pickDate(eventDates) {
+export function pickDate(eventDates, types) {
   if (!Array.isArray(eventDates) || !eventDates.length) return null;
   const now = todayUtc();
   const horizon = horizonDate();
@@ -120,7 +127,7 @@ export function pickDate(eventDates) {
   // (фестиваль 21–25.10 — пять записей 23:59:59), тогда как у сеансов/занятий/вечеринок у каждой
   // записи есть своё время (13:00→15:00), а у длинных рядов — свой смысл (выставка на месяц,
   // ежедневная вечеринка): растягивать их в один диапазон нельзя, это была бы выдуманная дата.
-  if (noEndTime(future[0].raw) && future.length <= MAX_RUN_RECORDS) {
+  if (noEndTime(future[0].raw) && future.length <= MAX_RUN_RECORDS && !isNightSeries(types)) {
     for (let i = 1; i < future.length; i++) {
       if (!noEndTime(future[i].raw)) break;
       const gap = future[i].start - end;
@@ -343,7 +350,7 @@ async function main() {
 
     for (const ev of events) {
       if (inserted >= MAX_EVENTS) break outer;
-      const when = pickDate(ev.eventDates);
+      const when = pickDate(ev.eventDates, ev.types);
       if (!when) continue; // нет ближайшей будущей даты
       const place = ev.place;
       const loc = place && place.location;
