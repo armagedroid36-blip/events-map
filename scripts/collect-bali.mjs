@@ -372,9 +372,13 @@ async function main() {
       // Не создаём вторую карточку; 60 дней — запас на «следующий сезон» того же slug.
       const website = `${BASE}/events/${ev.slug}`;
       const startDate = when.raw.startAt.slice(0, 10);
+      // Двойник записи ленты: платформа держит ОДНО событие двумя слагами (`slug` и `slug-1`)
+      // с одинаковыми названием и датами (кейс курса йоги WYTT в Нуану, 21.10.2026: id 9629/9873,
+      // 11 дат 1:1, две живые карточки на карте). Сравниваем ссылки без хвостового «-N».
+      const normSite = (u) => String(u || '').replace(/-\d+$/, '');
       const twinSite = liveWebsites.find(
         (w) =>
-          w.website === website &&
+          (w.website === website || normSite(w.website) === normSite(website)) &&
           Math.abs((new Date(startDate) - new Date(w.start_date)) / 86400000) <= 60,
       );
       if (twinSite) {
