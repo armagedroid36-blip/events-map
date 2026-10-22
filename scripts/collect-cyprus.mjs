@@ -777,6 +777,37 @@ function jsonLdEvents(html) {
   return out;
 }
 
+// Координаты площадки Cyprus.BZ. У страницы события гео часто НЕТ, и пин уезжал
+// на центровую константу города (класс «фолбэк-пин», лечили постфактум 7 запусков).
+// Страница события ссылается на страницу ПЛОЩАДКИ /ru/venue/<слаг>, в её JSON-LD
+// лежат latitude/longitude — берём точку оттуда.
+const BZ_VENUE_GEO = new Map(); // слаг площадки -> {lat,lng} | null
+const CY_BBOX = { latMin: 34.4, latMax: 35.85, lngMin: 32.0, lngMax: 34.75 };
+function cyBboxOk(lat, lng) {
+  return (
+    Number.isFinite(lat) && Number.isFinite(lng)
+    && lat > CY_BBOX.latMin && lat < CY_BBOX.latMax
+    && lng > CY_BBOX.lngMin && lng < CY_BBOX.lngMax
+  );
+}
+async function bzVenueGeo(html) {
+  const m = String(html || '').match(/\/venue\/([a-z0-9_-]+)/i);
+  if (!m) return null;
+  const slug = m[1].toLowerCase();
+  if (BZ_VENUE_GEO.has(slug)) return BZ_VENUE_GEO.get(slug);
+  let out = null;
+  try {
+    const page = await fetchPartial(`https://cyprus.bz/ru/venue/${slug}`, 25000);
+    const lat = Number((page.match(/"latitude"\s*:\s*(-?\d+(?:\.\d+)?)/) || [])[1]);
+    const lng = Number((page.match(/"longitude"\s*:\s*(-?\d+(?:\.\d+)?)/) || [])[1]);
+    if (cyBboxOk(lat, lng)) out = { lat, lng };
+  } catch (e) {
+    console.error(`  Cyprus.BZ площадка ${slug}: ${e.message}`);
+  }
+  BZ_VENUE_GEO.set(slug, out);
+  return out;
+}
+
 async function collectCyprusBz(seen, budget, websites = new Set(), bzPages = new Set()) {
   let added = 0;
   const deadline = Date.now() + BUDGET.cyprusbz;
@@ -829,6 +860,8 @@ async function collectCyprusBz(seen, budget, websites = new Set(), bzPages = new
   if (bzSkip > 0) console.log(`  Cyprus.BZ: обход с позиции ${bzSkip % Math.max(fresh.length - HEAD, 1)} (хвост свежей секции)`);
   let fails = 0;
   let scanned = 0;
+  let venueLookups = 0; // запросов страниц площадок за прогон (каждая ~1-3 с)
+  const MAX_VENUE_LOOKUPS = 30;
   for (const url of queue) {
     if (added >= budget || Date.now() > deadline || fails >= 8) break;
     if (websites.has(url) || (canonBzPage(url) && bzPages.has(canonBzPage(url)))) {
@@ -839,8 +872,9 @@ async function collectCyprusBz(seen, budget, websites = new Set(), bzPages = new
     scanned++;
     let ev;
     let pageUrl = url;
+    let html = null;
     try {
-      const html = await fetchPartial(url, 25000);
+      html = await fetchPartial(url, 25000);
       if (lastFetchUrl && lastFetchUrl !== url) pageUrl = lastFetchUrl;
       ev = jsonLdEvents(html)[0];
     } catch (e) {
@@ -869,6 +903,18 @@ async function collectCyprusBz(seen, budget, websites = new Set(), bzPages = new
     const addrLoc = loc.address?.addressLocality || '';
     const place = loc.name || '';
     const bzCity = cityRu(addrLoc) || cityRu(`${place} ${url}`);
+    // Гео площадки: 1) geo в JSON-LD события, 2) страница площадки /ru/venue/<слаг>.
+    // Без этого пин уезжал на центровую константу города (адрес площадку называет).
+    const geo = loc.geo || {};
+    let placeGeo = null;
+    const geoLat = parseFloat(geo.latitude);
+    const geoLng = parseFloat(geo.longitude);
+    if (cyBboxOk(geoLat, geoLng)) {
+      placeGeo = { lat: geoLat, lng: geoLng };
+    } else if (place && venueLookups < MAX_VENUE_LOOKUPS && Date.now() < deadline) {
+      venueLookups++;
+      placeGeo = await bzVenueGeo(html);
+    }
     const photos = (Array.isArray(ev.image) ? ev.image : [ev.image])
       .map((i) => (typeof i === 'string' ? i : i?.url))
       .filter(Boolean)
@@ -884,6 +930,8 @@ async function collectCyprusBz(seen, budget, websites = new Set(), bzPages = new
       city: bzCity,
       cityEn: addrLoc || '',
       venue: place,
+      lat: placeGeo ? placeGeo.lat : undefined,
+      lng: placeGeo ? placeGeo.lng : undefined,
       address: [place, addrLoc].filter(Boolean).join(', ') || bzCity,
       website: ev.url || pageUrl,
       photos,
