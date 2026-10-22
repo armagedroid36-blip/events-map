@@ -790,8 +790,18 @@ function cyBboxOk(lat, lng) {
     && lng > CY_BBOX.lngMin && lng < CY_BBOX.lngMax
   );
 }
-async function bzVenueGeo(html) {
-  const m = String(html || '').match(/\/venue\/([a-z0-9_-]+)/i);
+async function bzVenueGeo(html, pageUrl = '') {
+  const RE = /\/venue\/([a-z0-9_-]+)/i;
+  let m = String(html || '').match(RE);
+  // Ссылка на площадку в разметке bz лежит НИЖЕ первых 25 КБ (проверено 22.10.2026:
+  // /event/35c7 — байт 34735). head-срез её не видит, поэтому при промахе дочитываем
+  // страницу целиком — иначе пин молча падал на центровую константу города.
+  if (!m && pageUrl) {
+    try {
+      const full = await fetchPartial(pageUrl, 150000);
+      m = String(full || '').match(RE);
+    } catch { /* ниже вернём null */ }
+  }
   if (!m) return null;
   const slug = m[1].toLowerCase();
   if (BZ_VENUE_GEO.has(slug)) return BZ_VENUE_GEO.get(slug);
@@ -913,7 +923,8 @@ async function collectCyprusBz(seen, budget, websites = new Set(), bzPages = new
       placeGeo = { lat: geoLat, lng: geoLng };
     } else if (place && venueLookups < MAX_VENUE_LOOKUPS && Date.now() < deadline) {
       venueLookups++;
-      placeGeo = await bzVenueGeo(html);
+      placeGeo = await bzVenueGeo(html, pageUrl);
+      if (placeGeo) console.log(`  [гео площадки] ${placeGeo.lat},${placeGeo.lng}: ${title.slice(0, 40)}`);
     }
     const photos = (Array.isArray(ev.image) ? ev.image : [ev.image])
       .map((i) => (typeof i === 'string' ? i : i?.url))
