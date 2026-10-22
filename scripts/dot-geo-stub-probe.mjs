@@ -1,59 +1,76 @@
-// Точка «События»: поиск карточек с координатой-заглушкой (центр города), у которых
-// адрес называет другой населённый пункт. Только чтение.
+// Точка «События»: поиск ЖИВЫХ карточек, которые стоят РОВНО на центровой константе
+// (фолбэк-пины сборщика). Только чтение.
+//
+// История: до 399 зонд считал кандидатом лишь карточку, у которой адрес называет ДРУГОЙ
+// населённый пункт, поэтому при 86 живых карточках на центрах печатал «кандидатов 0» —
+// слепое пятно (запуск 397). Настоящий класс: пин на центре города, а адрес называет
+// площадку/улицу, т.е. место известно, а координата не проставлена.
+//
+// Источники центров — единые модули проекта, не рукописные копии:
+//   cy-districts.mjs -> CY_CITY_CENTERS (сверка с CY_CITIES сборщика — dot-centers-coverage-check)
+//   bali-districts.mjs -> BALI_DISTRICT_CENTERS
+//   collect-tg.mjs -> фолбэки Нячанга и Дананга
+//
+// Ручки: PROBE_STATUS=active (по умолчанию) | active,moderation | all
+//        PROBE_LIMIT=N — сколько строк печатать в каждой секции (по умолчанию 60)
 import { createClient } from '@supabase/supabase-js';
 import { selectAll } from './db-rows.mjs';
+import { CY_CITY_CENTERS } from './cy-districts.mjs';
+import { BALI_DISTRICT_CENTERS } from './bali-districts.mjs';
 
-const db = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
+const db = createClient(process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
 const rows = await selectAll(db, 'events', 'id,title,title_ru,city,address,lat,lng,status,start_date,start_time,source_type,website');
 
-// «центровые» точки, которые сборщик ставит, когда у источника нет площадки
-const STUBS = {
-  '34.7071': 'Лимасол',
-  '34.7754': 'Пафос',
-  '35.1856': 'Никосия',
-  '34.9182': 'Ларнака',
-  '35.0375': 'Ая-Напа',
-  '35.1167': 'Фамагуста',
-  '12.2388': 'Нячанг',
-  '16.0544': 'Дананг',
-};
+const TOL = 0.0012; // ~130 м: точка площадки бывает в 300-500 м от центра, фолбэк лежит РОВНО на константе
+const STATUS = (process.env.PROBE_STATUS || 'active').toLowerCase();
+const LIMIT = Number(process.env.PROBE_LIMIT || 60);
 
-const local = [
-  ['Nikitari', 'Никитари'], ['Palaichori', 'Палеохори'], ['Omodos', 'Омодос'], ['Lefkara', 'Лефкара'],
-  ['Polis', 'Полис'], ['Prodromi', 'Продроми'], ['Peyia', 'Пейя'], ['Coral Bay', 'Корал-Бей'],
-  ['Germasogeia', 'Гермасойя'], ['Amathus', 'Аматус'], ['Mouttagiaka', 'Муттагьяка'], ['Pissouri', 'Писсури'],
-  ['Paphos', 'Пафос'], ['Nicosia', 'Никосия'], ['Larnaca', 'Ларнака'], ['Limassol', 'Лимасол'],
-  ['Ayia Napa', 'Ая-Напа'], ['Protaras', 'Протарас'], ['Paralimni', 'Паралимни'], ['Famagusta', 'Фамагуста'],
-  ['Kyrenia', 'Кирения'], ['Kissonerga', 'Киссонерга'], ['Chloraka', 'Хлорака'], ['Perivolia', 'Периволия'],
-  ['Tala', 'Тала'], ['Tsada', 'Цада'], ['Yeroskipou', 'Ероскипу'], ['Nata', 'Ната'], ['Anarita', 'Анарита'],
-  ['Hoi An', 'Хойан'], ['Da Nang', 'Дананг'], ['Nha Trang', 'Нячанг'], ['Cam Ranh', 'Камрань'],
-];
+const CENTERS = [];
+for (const [name, lat, lng] of CY_CITY_CENTERS) CENTERS.push({ group: 'Кипр', name, lat, lng });
+// BALI_DISTRICT_CENTERS: { <латинский ключ>: { lat, lng } } — значения объектами, не массивами
+for (const [name, c] of Object.entries(BALI_DISTRICT_CENTERS)) CENTERS.push({ group: 'Бали', name, lat: c.lat, lng: c.lng });
+CENTERS.push({ group: 'Вьетнам', name: 'Нячанг', lat: 12.2388, lng: 109.1967 });
+CENTERS.push({ group: 'Вьетнам', name: 'Дананг', lat: 16.0544, lng: 108.2022 });
 
-const hits = [];
-for (const r of rows) {
-  if (r.status === 'archived') continue;
-  const key = String(Number(r.lat));
-  const stubCity = STUBS[key];
-  if (!stubCity || !r.address) continue;
-  const addr = r.address;
-  const mentioned = local.filter(([en, ru]) => new RegExp(en, 'i').test(addr) || addr.includes(ru)).map(([en]) => en);
-  if (!mentioned.length) continue;
-  // названная местность не совпадает с городом карточки
-  const cityRu = (r.city || '').split(',')[0].trim();
-  const bad = mentioned.filter((m) => {
-    const pair = local.find(([en]) => en === m);
-    return cityRu && !pair[1].startsWith(cityRu.slice(0, 5)) && cityRu !== pair[1];
-  });
-  if (bad.length) hits.push({ id: r.id.slice(0, 8), status: r.status, city: r.city, lat: r.lat, lng: r.lng, bad: bad.join(','), addr: addr.slice(0, 80), t: (r.title_ru || r.title || '').slice(0, 50) });
+const norm = (s) => String(s || '').toLowerCase().replace(/[ё]/g, 'е').replace(/[^a-zа-я0-9 ]/gi, ' ').replace(/\s+/g, ' ').trim();
+
+// «содержательный» адрес = после вычета города/района и слова «Кипр»/«Бали» остаётся название места
+function addressTail(addr, city, centerName) {
+  let t = norm(addr);
+  for (const w of [city, centerName, 'кипр', 'cyprus', 'бали', 'bali', 'индонезия', 'вьетнам', 'vietnam', 'kec', 'kabupaten', 'kota']) {
+    const n = norm(w);
+    if (n) t = t.split(' ').filter((x) => x !== n).join(' ');
+  }
+  return t.replace(/\s+/g, ' ').trim();
 }
-console.log('кандидатов', hits.length);
-for (const h of hits) console.log(h.status, '|', h.id, '|', h.city, '|', h.lat + ',' + h.lng, '| ≠', h.bad, '|', h.t, '|', h.addr);
 
-// сколько всего карточек на «заглушечных» координатах
-const stubCount = {};
-for (const r of rows) {
-  if (r.status === 'archived') continue;
-  const k = String(Number(r.lat)) + ',' + String(Number(r.lng));
-  if (Object.keys(STUBS).some((s) => k.startsWith(s + ','))) stubCount[k] = (stubCount[k] || 0) + 1;
+const live = rows.filter((r) => (STATUS === 'all' ? true : STATUS.split(',').includes(r.status)));
+const onCenter = [];
+for (const r of live) {
+  if (r.lat == null || r.lng == null) continue;
+  const c = CENTERS.find((x) => Math.abs(x.lat - r.lat) <= TOL && Math.abs(x.lng - r.lng) <= TOL);
+  if (!c) continue;
+  const city = (r.city || '').split(',')[0].trim();
+  const tail = addressTail(r.address, city, c.name);
+  onCenter.push({ r, c, city, tail, hasAddr: !!String(r.address || '').trim() });
 }
-console.log('на центровых координатах:', JSON.stringify(stubCount));
+
+const withTail = onCenter.filter((x) => x.tail.length >= 3);
+const noAddr = onCenter.filter((x) => !x.hasAddr);
+const cityOnly = onCenter.filter((x) => x.hasAddr && x.tail.length < 3);
+
+const byCity = {};
+for (const x of onCenter) byCity[x.c.name] = (byCity[x.c.name] || 0) + 1;
+const withTailByCity = {};
+for (const x of withTail) withTailByCity[x.c.name] = (withTailByCity[x.c.name] || 0) + 1;
+
+const line = (x) => `${x.r.id.slice(0, 8)} | ${x.r.status} | ${x.c.name} | ${x.r.lat},${x.r.lng} | ${(x.r.title_ru || x.r.title || '').slice(0, 46)} | ${String(x.r.address || '—').slice(0, 70)}`;
+
+console.log(`режим статусов: ${STATUS}; живых строк ${live.length}; центров в справочнике ${CENTERS.length}`);
+console.log(`НА ЦЕНТРОВЫХ КОНСТАНТАХ: ${onCenter.length}`, JSON.stringify(byCity));
+console.log(`КАНДИДАТЫ (адрес называет площадку/улицу): ${withTail.length}`, JSON.stringify(withTailByCity));
+for (const x of withTail.slice(0, LIMIT)) console.log('  кандидат |', line(x));
+console.log(`адрес = только город/страна: ${cityOnly.length}`);
+for (const x of cityOnly.slice(0, LIMIT)) console.log('  без улики |', line(x));
+console.log(`адреса нет вовсе: ${noAddr.length}`);
+for (const x of noAddr.slice(0, LIMIT)) console.log('  без адреса |', line(x));
