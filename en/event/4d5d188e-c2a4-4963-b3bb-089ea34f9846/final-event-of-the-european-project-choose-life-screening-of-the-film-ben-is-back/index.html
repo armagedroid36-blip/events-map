@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Final event of the European… — October 21, 2026 · Nicosia</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-C8NLXycd.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-DFHUzgk-.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-ClrhGROD.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-C6wzwT_E.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Nicosia, Cyprus, October 21, 2026. Behind every addiction there is a story. CARDET, with the participation of Agia Skepi and the Cultural Workshop of Agion…" />
+    <link rel="canonical" href="https://mypins.site/en/event/4d5d188e-c2a4-4963-b3bb-089ea34f9846/final-event-of-the-european-project-choose-life-screening-of-the-film-ben-is-back/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Final event of the European… — October 21, 2026 · Nicosia" />
+    <meta property="og:description" content="Nicosia, Cyprus, October 21, 2026. Behind every addiction there is a story. CARDET, with the participation of Agia Skepi and the Cultural Workshop of Agion…" />
+    <meta property="og:url" content="https://mypins.site/en/event/4d5d188e-c2a4-4963-b3bb-089ea34f9846/final-event-of-the-european-project-choose-life-screening-of-the-film-ben-is-back/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/9a1af71a-e1a9-415f-b003-28037cf97c19/1792465252054.png?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/4d5d188e-c2a4-4963-b3bb-089ea34f9846/final-event-of-the-european-project-choose-life-screening-of-the-film-ben-is-back/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/4d5d188e-c2a4-4963-b3bb-089ea34f9846/finalnoe-meropriyatie-evropeyskogo-proekta-choose-life-pokaz-filma-ben-is-back/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Final event of the European project Choose Life: screening of the film \"Ben Is Back\"","item":"https://mypins.site/en/event/4d5d188e-c2a4-4963-b3bb-089ea34f9846/final-event-of-the-european-project-choose-life-screening-of-the-film-ben-is-back/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Final event of the European project Choose Life: screening of the film &quot;Ben Is Back&quot;</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-21">October 21, 2026</time></p>
+  <p><time datetime="2026-10-21T18:00:00">October 21, 2026, 6:00 PM</time></p>
+  <address>Nicosia, Cyprus</address>
+  <p>Behind every addiction there is a story. CARDET, with the participation of Agia Skepi and the Cultural Workshop of Agion Omologiton, invites you to the final event of the European project Choose Life. Through the screening of the film &quot;Ben Is Back,&quot; we begin a conversation about addiction, prevention, and the importance of timely...</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Final event of the European project Choose Life: screening of the film &quot;Ben Is Back&quot;</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/cinema/">🎬 Cinema Club</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/62bd5f35-0363-49f7-bceb-2654279cefb8/bbc-documentary-screening-master-photographers-ansel-adams/">BBC Documentary Screening: Master Photographers: Ansel Adams <time datetime="2026-10-22">October 22, 2026</time></a></li>
+    <li><a href="/en/event/888da8e9-17b9-490a-ba28-6e2f9850b0a9/japanese-cinema-evening-in-limassol/">Japanese Cinema Evening in Limassol <time datetime="2026-10-22">October 22, 2026</time></a></li>
+    <li><a href="/en/event/fa451205-76cf-43ca-ab4b-817acbbc0084/japanese-movie-night-in-limassol/">Japanese Movie Night in Limassol <time datetime="2026-10-22">October 22, 2026</time></a></li>
+    <li><a href="/en/event/2d8c10b6-36b0-4669-ad7d-e00740b8a200/halloween-cinema-night-vol-2/">Halloween Cinema Night Vol.2 <time datetime="2026-10-25">October 25, 2026</time></a></li>
+    <li><a href="/en/event/dc7c7ac7-a285-4e78-b05c-c7ed0de01b55/premiere-of-the-film-minotaur-by-andrei-zvyagintsev/">Premiere of the film &quot;Minotaur&quot; by Andrei Zvyagintsev <time datetime="2026-10-25">October 25, 2026</time></a></li>
+    <li><a href="/en/event/be9d0210-a108-4245-bf8a-58a2249f7758/animafest-children-s-animation-program/">Animafest - Children&#39;s Animation Program <time datetime="2026-10-28">October 28, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/4a027538-7ec0-4c23-ab20-62de77db7ea3/to-gala/">To Gala</a> <time datetime="2026-10-21">October 21, 2026</time></li>
+    <li>Next: <a href="/en/event/5051c219-3d08-4a7d-993b-abe1f062b2a6/cyprus-red-cross-society-charity-fashion-show/">Cyprus Red Cross Society Charity Fashion Show</a> <time datetime="2026-10-21">October 21, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

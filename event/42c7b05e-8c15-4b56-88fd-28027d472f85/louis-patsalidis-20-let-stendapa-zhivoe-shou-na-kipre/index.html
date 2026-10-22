@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Louis Patsalidis: 20 лет… — 23 октября 2026 · Никосия, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-C8NLXycd.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-DFHUzgk-.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-ClrhGROD.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-C6wzwT_E.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Никосия, Кипр, 23 октября 2026. Louis Patsalidis, самый известный стендап-комик Кипра, отмечает 20 лет на сцене тремя юбилейными шоу по всему Кипру в октябре…" />
+    <link rel="canonical" href="https://mypins.site/event/42c7b05e-8c15-4b56-88fd-28027d472f85/louis-patsalidis-20-let-stendapa-zhivoe-shou-na-kipre/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Louis Patsalidis: 20 лет… — 23 октября 2026 · Никосия, Кипр" />
+    <meta property="og:description" content="Никосия, Кипр, 23 октября 2026. Louis Patsalidis, самый известный стендап-комик Кипра, отмечает 20 лет на сцене тремя юбилейными шоу по всему Кипру в октябре…" />
+    <meta property="og:url" content="https://mypins.site/event/42c7b05e-8c15-4b56-88fd-28027d472f85/louis-patsalidis-20-let-stendapa-zhivoe-shou-na-kipre/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/e7e05795-86e1-46de-824a-83e35fcaa342/1792555524975.jpg?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/42c7b05e-8c15-4b56-88fd-28027d472f85/louis-patsalidis-20-let-stendapa-zhivoe-shou-na-kipre/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/42c7b05e-8c15-4b56-88fd-28027d472f85/louis-patsalidis-20-years-of-stand-up-live-show-in-cyprus/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Louis Patsalidis: 20 лет стендапа - живое шоу на Кипре","url":"https://mypins.site/event/42c7b05e-8c15-4b56-88fd-28027d472f85/louis-patsalidis-20-let-stendapa-zhivoe-shou-na-kipre/","startDate":"2026-10-23T21:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Театр «Паллас» в Никосии, Никосия","address":{"@type":"PostalAddress","addressLocality":"Никосия","streetAddress":"Театр «Паллас» в Никосии, Никосия","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1856,"longitude":33.3823}},"description":"Louis Patsalidis, самый известный стендап-комик Кипра, отмечает 20 лет на сцене тремя юбилейными шоу по всему Кипру в октябре 2026 года. Выступления пройдут в знаковых залах Никосии, Пафоса и Лимассола, а это празднование объединит одних из лучших комедийных талантов Греции и Кипра для вечера...","endDate":"2026-10-25","image":"https://cyprus.bz/img/images/events/e7e05795-86e1-46de-824a-83e35fcaa342/1792555524975.jpg?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/3895/louis-patsalidis-20-years-of-stand-up-comedy-live-in-cyprus-2026"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Louis Patsalidis: 20 лет стендапа - живое шоу на Кипре","item":"https://mypins.site/event/42c7b05e-8c15-4b56-88fd-28027d472f85/louis-patsalidis-20-let-stendapa-zhivoe-shou-na-kipre/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Louis Patsalidis: 20 лет стендапа - живое шоу на Кипре</h1>
+  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-10-25">25 октября 2026</time></p>
+  <p><time datetime="2026-10-23T21:00:00">23 октября 2026, 21:00</time></p>
+  <address>Театр «Паллас» в Никосии, Никосия, Никосия, Кипр</address>
+  <p>Louis Patsalidis, самый известный стендап-комик Кипра, отмечает 20 лет на сцене тремя юбилейными шоу по всему Кипру в октябре 2026 года. Выступления пройдут в знаковых залах Никосии, Пафоса и Лимассола, а это празднование объединит одних из лучших комедийных талантов Греции и Кипра для вечера...</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Louis Patsalidis: 20 лет стендапа - живое шоу на Кипре</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/theatre/">🎭 Театры и шоу</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/11039ca8-2cea-4a64-8356-032580b99488/zhivot/">Живот <time datetime="2026-10-23">23 октября 2026</time></a></li>
+    <li><a href="/event/3754bb3d-354e-43d9-aeef-a081c95c748c/luis-patsalidis-20-let-stendap-komedii-zhivoe-vystuplenie-na-kipre/">Луис Пацалидис: 20 лет стендап-комедии — живое выступление на Кипре <time datetime="2026-10-23">23 октября 2026</time></a></li>
+    <li><a href="/event/4eebedab-ee03-408c-85cd-57b7e0733da7/vse-nashe-vremya/">Всё (наше) время <time datetime="2026-10-23">23 октября 2026</time></a></li>
+    <li><a href="/event/5d80f2a2-1622-43ad-8ec3-ecb5454f31a3/evtzies-timasies-klyatvy-antonisa-lazaru/">Евтзиес – Тимасиес – клятвы Антониса Лазару <time datetime="2026-10-23">23 октября 2026</time></a></li>
+    <li><a href="/event/9b33d7ed-ed38-43fc-a150-f8ca93a85acb/era-grandioznoe-kitayskoe-tsirkovoe-shou-v-munitsipalnom-sadovom-teatre-limasol/">ЭРА: Грандиозное китайское цирковое шоу в Муниципальном садовом театре, Лимасол <time datetime="2026-10-23">23 октября 2026</time></a></li>
+    <li><a href="/event/a5c8b709-2651-4d59-b630-ff4232ccede6/detey-prinosit-aist-reppa-papatanasiu-rezhisser-marinos-xenofontos/">Детей приносит аист Реппа-Папатанасиу, режиссер Marinos Xenofontos <time datetime="2026-10-23">23 октября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/42c0c247-3d8d-43c7-89c6-b9c8a0f25a39/12-y-festival-pame-kaimakli/">12-й фестиваль Pame Kaimakli</a> <time datetime="2026-10-25">25 октября 2026</time></li>
+    <li>Следующее: <a href="/event/6484d3a7-7e6a-401e-beef-473db0cfc2d4/morgenshtern-mercury-tour-v-limassole/">Моргенштерн: Mercury Tour в Лимассоле</a> <time datetime="2026-10-25">25 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>

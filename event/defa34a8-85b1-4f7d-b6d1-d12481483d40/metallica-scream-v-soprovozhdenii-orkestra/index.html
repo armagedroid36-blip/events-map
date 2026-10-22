@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Metallica Scream - В… — 22 октября 2026 · Лимасол, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-C8NLXycd.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-DFHUzgk-.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-ClrhGROD.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-C6wzwT_E.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Лимасол, Кипр, 22 октября 2026. ОБЪЯВЛЕНИЕ КОНЦЕРТ ‘METALLICA SCREAM’, ЗАПЛАНИРОВАННЫЙ НА 16/10/26 В MUNICIPAL GARDEN THEATRE “MARIOS TOKAS” В ЛИМАССОЛЕ…" />
+    <link rel="canonical" href="https://mypins.site/event/defa34a8-85b1-4f7d-b6d1-d12481483d40/metallica-scream-v-soprovozhdenii-orkestra/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Metallica Scream - В… — 22 октября 2026 · Лимасол, Кипр" />
+    <meta property="og:description" content="Лимасол, Кипр, 22 октября 2026. ОБЪЯВЛЕНИЕ КОНЦЕРТ ‘METALLICA SCREAM’, ЗАПЛАНИРОВАННЫЙ НА 16/10/26 В MUNICIPAL GARDEN THEATRE “MARIOS TOKAS” В ЛИМАССОЛЕ…" />
+    <meta property="og:url" content="https://mypins.site/event/defa34a8-85b1-4f7d-b6d1-d12481483d40/metallica-scream-v-soprovozhdenii-orkestra/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/f0f1fad9-5723-4b9f-bcbc-12ff0687afbc/1786503771356.webp?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/defa34a8-85b1-4f7d-b6d1-d12481483d40/metallica-scream-v-soprovozhdenii-orkestra/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/defa34a8-85b1-4f7d-b6d1-d12481483d40/metallica-scream-accompanied-by-an-orchestra/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Metallica Scream - В сопровождении оркестра","url":"https://mypins.site/event/defa34a8-85b1-4f7d-b6d1-d12481483d40/metallica-scream-v-soprovozhdenii-orkestra/","startDate":"2026-10-22T20:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Муниципальный садовый театр «Мариос Токас», Лимассол","address":{"@type":"PostalAddress","addressLocality":"Лимасол","streetAddress":"Муниципальный садовый театр «Мариос Токас», Лимассол","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.7071,"longitude":33.0226}},"description":"ОБЪЯВЛЕНИЕ КОНЦЕРТ ‘METALLICA SCREAM’, ЗАПЛАНИРОВАННЫЙ НА 16/10/26 В MUNICIPAL GARDEN THEATRE “MARIOS TOKAS” В ЛИМАССОЛЕ, ПЕРЕНЕСЕН НА 22/10/26 В ТО ЖЕ МЕСТО И НА ТО ЖЕ ВРЕМЯ. БИЛЕТЫ ДЕЙСТВИТЕЛЬНЫ НА НОВУЮ ДАТУ. ВЫ НАЙДЕТЕ ИХ В СВОЕМ АККАУНТЕ В РАЗДЕЛЕ ‘MY TICKETS’. КРАЙНИЙ СРОК ПОДАЧИ ЗАПРОСОВ...","endDate":"2026-10-22T22:30:00","image":"https://cyprus.bz/img/images/events/f0f1fad9-5723-4b9f-bcbc-12ff0687afbc/1786503771356.webp?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/3336/metallica-scream-accompanied-by-an-orchestra-2026"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Metallica Scream - В сопровождении оркестра","item":"https://mypins.site/event/defa34a8-85b1-4f7d-b6d1-d12481483d40/metallica-scream-v-soprovozhdenii-orkestra/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Metallica Scream - В сопровождении оркестра</h1>
+  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-10-22">22 октября 2026</time></p>
+  <p><time datetime="2026-10-22T20:00:00">22 октября 2026, 20:00</time></p>
+  <address>Муниципальный садовый театр «Мариос Токас», Лимассол, Лимасол, Кипр</address>
+  <p>ОБЪЯВЛЕНИЕ КОНЦЕРТ ‘METALLICA SCREAM’, ЗАПЛАНИРОВАННЫЙ НА 16/10/26 В MUNICIPAL GARDEN THEATRE “MARIOS TOKAS” В ЛИМАССОЛЕ, ПЕРЕНЕСЕН НА 22/10/26 В ТО ЖЕ МЕСТО И НА ТО ЖЕ ВРЕМЯ. БИЛЕТЫ ДЕЙСТВИТЕЛЬНЫ НА НОВУЮ ДАТУ. ВЫ НАЙДЕТЕ ИХ В СВОЕМ АККАУНТЕ В РАЗДЕЛЕ ‘MY TICKETS’. КРАЙНИЙ СРОК ПОДАЧИ ЗАПРОСОВ...</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Metallica Scream - В сопровождении оркестра</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/concert/">🎤 Концерты</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/fe088899-4aed-4afa-9e8d-d108dc6131e4/bezumnyy-motsart-unikalnoe-simfonicheskoe-shou/">Безумный Моцарт: уникальное симфоническое шоу <time datetime="2026-10-21">21 октября 2026</time></a></li>
+    <li><a href="/event/0cbc9360-963b-4b06-a107-6493cb9d3eb1/words-of-silence-mezhdunarodnyy-festival-nikosii-2026/">Words of Silence - Международный фестиваль Никосии 2026 <time datetime="2026-10-22">22 октября 2026</time></a></li>
+    <li><a href="/event/0d184053-b48f-420d-98c2-1c158fe4ff3f/the-golden-voices-of-gospel-v-nikosii/">The Golden Voices of Gospel в Никосии <time datetime="2026-10-22">22 октября 2026</time></a></li>
+    <li><a href="/event/920d92e1-faf9-4f02-987d-f1a1d9b35406/slova-tishiny/">Слова тишины <time datetime="2026-10-22">22 октября 2026</time></a></li>
+    <li><a href="/event/a2cf4041-7860-4aae-925b-09f578989635/gee-bello-v-kitione/">Gee Bello в Китионе <time datetime="2026-10-22">22 октября 2026</time></a></li>
+    <li><a href="/event/da6043e9-d287-44a1-8712-74d038711b07/metallica-i-symphony-tribyut-scream-inc-s-orkestrom-v-limasole/">Metallica и Symphony: трибьют Scream Inc. с оркестром в Лимасоле <time datetime="2026-10-22">22 октября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/38431832-85c1-4fe6-a056-122c3b6cb0dc/vishnya-x-rua-mat/">Вишня x Руа Мат</a> <time datetime="2026-10-22">22 октября 2026</time></li>
+    <li>Следующее: <a href="/event/41d957cd-7ed9-460f-9939-f1ae276b4d39/civil-resistance-forum-2026-v-nikosii/">Civil Resistance Forum 2026 в Никосии</a> <time datetime="2026-10-23">23 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yes of Moss: exhibition of… — November 2, 2026 · Limassol</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-C8NLXycd.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-DFHUzgk-.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-ClrhGROD.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-C6wzwT_E.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Limassol, Cyprus, November 2, 2026. From November 2 to 8, 2026, an exhibition by the Yes of Moss studio will take place in Limassol. The studio creates panels…" />
+    <link rel="canonical" href="https://mypins.site/en/event/fc1a85bf-e5d4-4bd9-9c37-aa29f9325053/yes-of-moss-exhibition-of-interior-objects-made-from-moss-and-plants/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Yes of Moss: exhibition of… — November 2, 2026 · Limassol" />
+    <meta property="og:description" content="Limassol, Cyprus, November 2, 2026. From November 2 to 8, 2026, an exhibition by the Yes of Moss studio will take place in Limassol. The studio creates panels…" />
+    <meta property="og:url" content="https://mypins.site/en/event/fc1a85bf-e5d4-4bd9-9c37-aa29f9325053/yes-of-moss-exhibition-of-interior-objects-made-from-moss-and-plants/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/1221f5a2-98cb-43ef-90b7-8ccf222be68c/1791515584518.png?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/fc1a85bf-e5d4-4bd9-9c37-aa29f9325053/yes-of-moss-exhibition-of-interior-objects-made-from-moss-and-plants/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/fc1a85bf-e5d4-4bd9-9c37-aa29f9325053/yes-of-moss-vystavka-interernykh-obektov-iz-mkha-i-rasteniy/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Yes of Moss: exhibition of interior objects made from moss and plants","url":"https://mypins.site/en/event/fc1a85bf-e5d4-4bd9-9c37-aa29f9325053/yes-of-moss-exhibition-of-interior-objects-made-from-moss-and-plants/","startDate":"2026-11-02T16:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Limassol","address":{"@type":"PostalAddress","addressLocality":"Limassol","streetAddress":"Limassol","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.7071,"longitude":33.0226}},"description":"From November 2 to 8, 2026, an exhibition by the Yes of Moss studio will take place in Limassol. The studio creates panels, trees, mirrors, furniture, and other interior objects from stabilized moss, plants, and natural materials. The moss and plants are natural: thanks to special treatment, they retain...","endDate":"2026-11-08","image":"https://cyprus.bz/img/images/events/1221f5a2-98cb-43ef-90b7-8ccf222be68c/1791515584518.png?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/36f9/interior-art-exhibition-moss-plants-in-limassol-2026"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Yes of Moss: exhibition of interior objects made from moss and plants","item":"https://mypins.site/en/event/fc1a85bf-e5d4-4bd9-9c37-aa29f9325053/yes-of-moss-exhibition-of-interior-objects-made-from-moss-and-plants/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Yes of Moss: exhibition of interior objects made from moss and plants</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-11-08">November 8, 2026</time></p>
+  <p><time datetime="2026-11-02T16:00:00">November 2, 2026, 4:00 PM</time></p>
+  <address>Limassol, Cyprus</address>
+  <p>From November 2 to 8, 2026, an exhibition by the Yes of Moss studio will take place in Limassol. The studio creates panels, trees, mirrors, furniture, and other interior objects from stabilized moss, plants, and natural materials. The moss and plants are natural: thanks to special treatment, they retain...</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Yes of Moss: exhibition of interior objects made from moss and plants</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/exhibition/">🖼️ Exhibitions</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/0f10c361-d677-4d83-9058-36dc9719f5cc/bound-traces-part-one-of-mapping-the-cypriot-photobook-landscape/">Bound Traces Part one of Mapping the Cypriot Photobook Landscape <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/6e360245-48ba-4695-9f5f-9aa59ad5c522/honorary-event-for-of-mr-demetris-z-pierides/">Honorary Event for of Mr. Demetris Z. Pierides <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/d64e33ea-bd11-48ff-9853-caf4c9666c22/cmc-select-v2-0-2026-in-nicosia/">CMC Select V2.0 2026 in Nicosia <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/d208fee9-66ab-46ad-bee7-42cd7d721325/objects-in-the-mirror-may-be-closer-than-they-appear/">Objects in the mirror may be closer than they appear <time datetime="2026-11-02">November 2, 2026</time></a></li>
+    <li><a href="/en/event/0feb8e12-a23f-475a-86e6-a79bc18da44b/christina-drakos-brings-the-body-into-focus-at-limassol-solo-show/">Christina Drakos brings the body into focus at Limassol solo show <time datetime="2026-11-05">November 5, 2026</time></a></li>
+    <li><a href="/en/event/23a9e498-205b-4724-833d-f1485267ba6f/agia-napa-biennale-2026/">Agia Napa Biennale 2026 <time datetime="2026-11-07">November 7, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/f51f86dd-d7e5-4aab-8fae-b0520ed5edca/oceanman-ayia-napa-2026-open-water-swim-in-cyprus/">OCEANMAN Ayia Napa 2026: Open Water Swim in Cyprus</a> <time datetime="2026-11-08">November 8, 2026</time></li>
+    <li>Next: <a href="/en/event/de6b73d6-342c-45a8-ac9e-cf32f0e9ca66/leptos-cyprus-international-4-day-challenge/">Leptos Cyprus International 4-day Challenge</a> <time datetime="2026-11-09">November 9, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

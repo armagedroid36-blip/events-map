@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Radisson Blu Marathon in… — November 15, 2026 · Larnaca</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-C8NLXycd.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-DFHUzgk-.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-ClrhGROD.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-C6wzwT_E.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Larnaca, Cyprus, November 15, 2026. The Radisson Blu Larnaca International Marathon is the largest sporting event in Cyprus, taking place on November 15, 2026…" />
+    <link rel="canonical" href="https://mypins.site/en/event/77ac509f-2ebb-417e-b13c-3e27bea34dae/the-radisson-blu-marathon-in-larnaca/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="The Radisson Blu Marathon in… — November 15, 2026 · Larnaca" />
+    <meta property="og:description" content="Larnaca, Cyprus, November 15, 2026. The Radisson Blu Larnaca International Marathon is the largest sporting event in Cyprus, taking place on November 15, 2026…" />
+    <meta property="og:url" content="https://mypins.site/en/event/77ac509f-2ebb-417e-b13c-3e27bea34dae/the-radisson-blu-marathon-in-larnaca/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/96a7a069-c336-4249-84e8-53b17b5e9b27/1791775865478.jpg?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/77ac509f-2ebb-417e-b13c-3e27bea34dae/the-radisson-blu-marathon-in-larnaca/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/77ac509f-2ebb-417e-b13c-3e27bea34dae/marafon-the-radisson-blu-v-larnake/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"The Radisson Blu Marathon in Larnaca","url":"https://mypins.site/en/event/77ac509f-2ebb-417e-b13c-3e27bea34dae/the-radisson-blu-marathon-in-larnaca/","startDate":"2026-11-15T07:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Larnaca","address":{"@type":"PostalAddress","addressLocality":"Larnaca","streetAddress":"Larnaca","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.9182,"longitude":33.6194}},"description":"The Radisson Blu Larnaca International Marathon is the largest sporting event in Cyprus, taking place on November 15, 2026, in the coastal city of Larnaca. The race attracts thousands of athletes from around the world thanks to its flat, fast course and scenic views of the Mediterranean Sea. Start and finish:...","endDate":"2026-11-15T13:00:00","image":"https://cyprus.bz/img/images/events/96a7a069-c336-4249-84e8-53b17b5e9b27/1791775865478.jpg?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/3731/the-radisson-blu-marathon-in-larnaca-2026"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"The Radisson Blu Marathon in Larnaca","item":"https://mypins.site/en/event/77ac509f-2ebb-417e-b13c-3e27bea34dae/the-radisson-blu-marathon-in-larnaca/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>The Radisson Blu Marathon in Larnaca</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-11-15">November 15, 2026</time></p>
+  <p><time datetime="2026-11-15T07:00:00">November 15, 2026, 7:00 AM</time></p>
+  <address>Larnaca, Cyprus</address>
+  <p>The Radisson Blu Larnaca International Marathon is the largest sporting event in Cyprus, taking place on November 15, 2026, in the coastal city of Larnaca. The race attracts thousands of athletes from around the world thanks to its flat, fast course and scenic views of the Mediterranean Sea. Start and finish:...</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>The Radisson Blu Marathon in Larnaca</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/sport/">🏃 Sports</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/550ee10d-38b9-46c9-a786-a7fcbd6b9693/regatta-of-champions-the-r-o-c-optimist/">Regatta of Champions – The R.O.C. Optimist <time datetime="2026-11-09">November 9, 2026</time></a></li>
+    <li><a href="/en/event/84550b4d-42ac-4b31-9d3a-ec6909938769/regatta-of-champions-the-r-o-c-optimist/">Regatta of Champions – The R.O.C. Optimist <time datetime="2026-11-11">November 11, 2026</time></a></li>
+    <li><a href="/en/event/3845e750-172b-4949-a9b1-2f51d3c9fada/lefkara-classic-2026-12-15-11-2026/">Lefkara Classic 2026 – 12-15.11.2026 <time datetime="2026-11-12">November 12, 2026</time></a></li>
+    <li><a href="/en/event/0f733c84-d297-437a-b21c-b19947807162/cyprus-swim-series-pissouri-edition-open-water-swimming-championship-in-limassol/">Cyprus Swim Series Pissouri Edition: Open Water Swimming Championship in Limassol <time datetime="2026-11-13">November 13, 2026</time></a></li>
+    <li><a href="/en/event/72eea8d4-2a28-499e-a7a4-1fdec7bb7cb8/radisson-blu-larnaka-international-marathon-15-11-2026/">Radisson Blu Larnaka International Marathon – 15.11.2026 <time datetime="2026-11-15">November 15, 2026</time></a></li>
+    <li><a href="/en/event/73b42168-61ac-4bdc-b6ea-9031ee8b53ec/larnaca-marathon-volunteer-cleanup/">Larnaca Marathon: Volunteer Cleanup <time datetime="2026-11-15">November 15, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/456b7b3a-b087-42d2-bc05-628a3381b014/radisson-blu-larnaka-international-marathon/">Radisson Blu Larnaka International Marathon</a> <time datetime="2026-11-15">November 15, 2026</time></li>
+    <li>Next: <a href="/en/event/8969bb4b-d37a-4d69-ad8d-5290eb5754ca/the-mr-and-mrs-bubble-show-interactive-bubble-theatre-for-kids-in-nicosia/">The Mr and Mrs Bubble Show: Interactive Bubble Theatre for Kids in Nicosia</a> <time datetime="2026-11-15">November 15, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

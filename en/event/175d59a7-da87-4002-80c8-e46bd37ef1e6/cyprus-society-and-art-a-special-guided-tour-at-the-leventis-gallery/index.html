@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cyprus Society and Art: A Special… — October 21, 2026 · Nicosia</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-C8NLXycd.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-DFHUzgk-.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-ClrhGROD.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/recurrence-aYWeJ6rG.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-C6wzwT_E.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Nicosia, Cyprus, October 21, 2026. This special guided tour at the A. G. Leventis Gallery in Nicosia, Cyprus, invites visitors on a journey through Cypriot art…" />
+    <link rel="canonical" href="https://mypins.site/en/event/175d59a7-da87-4002-80c8-e46bd37ef1e6/cyprus-society-and-art-a-special-guided-tour-at-the-leventis-gallery/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Cyprus Society and Art: A Special… — October 21, 2026 · Nicosia" />
+    <meta property="og:description" content="Nicosia, Cyprus, October 21, 2026. This special guided tour at the A. G. Leventis Gallery in Nicosia, Cyprus, invites visitors on a journey through Cypriot art…" />
+    <meta property="og:url" content="https://mypins.site/en/event/175d59a7-da87-4002-80c8-e46bd37ef1e6/cyprus-society-and-art-a-special-guided-tour-at-the-leventis-gallery/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/92331638-8db2-46a0-b669-eb362fe4a4b5/1792383201727.jpg?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/175d59a7-da87-4002-80c8-e46bd37ef1e6/cyprus-society-and-art-a-special-guided-tour-at-the-leventis-gallery/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/175d59a7-da87-4002-80c8-e46bd37ef1e6/kiprskoe-obshchestvo-i-iskusstvo-spetsialnaya-ekskursiya-s-gidom-v-leventis-gallery/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Cyprus Society and Art: A Special Guided Tour at the Leventis Gallery","item":"https://mypins.site/en/event/175d59a7-da87-4002-80c8-e46bd37ef1e6/cyprus-society-and-art-a-special-guided-tour-at-the-leventis-gallery/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Cyprus Society and Art: A Special Guided Tour at the Leventis Gallery</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-21">October 21, 2026</time></p>
+  <p><time datetime="2026-10-21T18:00:00">October 21, 2026, 6:00 PM</time></p>
+  <address>Nicosia, Cyprus</address>
+  <p>This special guided tour at the A. G. Leventis Gallery in Nicosia, Cyprus, invites visitors on a journey through Cypriot art from the 1930s to the 1970s and explores how society shaped artistic creation on the island. The tour will be conducted in Greek,...</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Cyprus Society and Art: A Special Guided Tour at the Leventis Gallery</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/tour/">🗺️ Tours &amp; Excursions</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/243df6c7-c7c2-4417-a885-34184c7a5889/meet-the-locals-the-free-walking-tour-is-back/">MEET THE LOCALS - the free walking tour is back! <time datetime="2026-10-22">October 22, 2026</time></a></li>
+    <li><a href="/en/event/c7d1d6ea-6398-43f5-8c97-4147f650c299/historic-limassol-walk/">Historic Limassol Walk <time datetime="2026-10-22">October 22, 2026</time></a></li>
+    <li><a href="/en/event/45df13c8-b68d-49de-aeeb-c1b1c11e4405/birdwatching-in-athalassa-park-and-agios-sozomenos/">Birdwatching in Athalassa Park and Agios Sozomenos <time datetime="2026-10-24">October 24, 2026</time></a></li>
+    <li><a href="/en/event/a1c78096-1779-4dd9-bceb-192223311945/exploring-settlement-and-abandonment-in-the-diarizos-valley/">Exploring Settlement and Abandonment in the Diarizos Valley <time datetime="2026-10-24">October 24, 2026</time></a></li>
+    <li><a href="/en/event/c9d11ab7-010c-45ba-b8f3-5d9b486dc2eb/excursion-to-the-ezousa-valley-episkopi-rock-lysos/">Excursion to the Ezousa Valley &amp; Episkopi Rock – Lysos <time datetime="2026-10-24">October 24, 2026</time></a></li>
+    <li><a href="/en/event/3adec82a-2827-44d3-ba15-574f86797784/atalanti-trail-hike-14km-mountain-walk-in-troodos/">Atalanti Trail Hike: 14km Mountain Walk in Troodos <time datetime="2026-10-25">October 25, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/0c44fc76-40b7-4ad2-85e5-dbe10c13f002/all-of-it/">All of It</a> <time datetime="2026-10-21">October 21, 2026</time></li>
+    <li>Next: <a href="/en/event/21842bf9-5799-4523-8e6d-94af2d1eb83f/the-milk-rialto-theatre/">The Milk @ Rialto Theatre</a> <time datetime="2026-10-21">October 21, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>
