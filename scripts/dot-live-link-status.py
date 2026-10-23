@@ -1,4 +1,6 @@
-import os, json, urllib.request, urllib.parse, urllib.error, concurrent.futures, time, collections
+import os, json, urllib.request, urllib.parse, urllib.error, concurrent.futures, time, collections, subprocess, shutil
+
+CURL = shutil.which("curl") or "curl"
 
 ROOT = r"C:\Users\armag\projects\events-map"
 env = {}
@@ -52,6 +54,27 @@ for r in rows:
 
 print("living cards with website:", len(rows), "| unique links:", len(targets), flush=True)
 
+def curl_status(url, proxy, ua=None):
+    """Финальный арбитр статуса: curl повторяет браузерный TLS (python на части хостов даёт
+    SSLError/RemoteDisconnected даже когда страница жива). Возвращает код или None.
+    ПИТФОЛ 23.10.2026: полный Chrome-UA на части WAF (ubudcenter.com) даёт connection reset
+    (curl rc 56, код 000), а короткий «Mozilla/5.0» — 200. Поэтому два прохода по UA."""
+    for agent in ([ua] if ua else []) + [H["User-Agent"], "Mozilla/5.0"]:
+        cmd = [CURL, "-s", "-L", "-o", "NUL", "--max-time", "20",
+               "-A", agent, "-w", "%{http_code}"]
+        if proxy:
+            cmd += ["-x", proxy]
+        cmd.append(url)
+        try:
+            out = subprocess.run(cmd, capture_output=True, text=True, timeout=30).stdout.strip()
+            code = int(out[-3:]) if out[-3:].isdigit() else 0
+            if code:
+                return code
+        except Exception as e:
+            print("CURL-FAIL", type(e).__name__, url, proxy, flush=True)
+    return None
+
+
 def check(item):
     cid, u, st, ti = item
     # PITFALL: fragment must be stripped - servers answer 404 with '#anchor' in path
@@ -79,6 +102,9 @@ def check(item):
                 return (cid, u, st, ti, e.code, "direct")
             except Exception as e:
                 last = last + "/direct:" + type(e).__name__
+        # urllib молча падает на TLS части хостов (SSLError/RemoteDisconnected), хотя страница жива.
+        # Арбитр — curl, но ТОЛЬКО последовательно после пула: 20 параллельных curl-процессов
+        # получают 000 и класс ложно раздувается (проверено 23.10).
     return (cid, u, st, ti, None, last)
 
 t0 = time.time()
@@ -90,6 +116,24 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=20) as ex:
         elif err == "direct":
             direct_only.append((cid, st, ti, u))
 print("checked %d in %.0fs | non-200: %d" % (len(targets), time.time() - t0, len(bad)), flush=True)
+
+# второй проход: ссылки без статуса (TLS-ограничение urllib) добиваем curl-ом ПОСЛЕДОВАТЕЛЬНО
+recovered = []
+for b in list(bad):
+    if b[2] is not None:
+        continue
+    clean = b[5].split("#")[0]
+    code = curl_status(urllib.parse.quote(clean, safe=":/?&=%"), PROXY) or curl_status(
+        urllib.parse.quote(clean, safe=":/?&=%"), None)
+    if code:
+        bad.remove(b)
+        if code == 200:
+            recovered.append((b[0], b[5]))
+        else:
+            bad.append((b[0], b[1], code, "curl", b[4], b[5]))
+print("curl-добор: восстановлено 200 — %d, осталось non-200 — %d" % (len(recovered), len(bad)), flush=True)
+for cid, u in recovered[:10]:
+    print("   OK-BY-CURL", cid, u[:110], flush=True)
 for cid, st, ti, u in direct_only:
     print("DIRECT-ONLY", cid, st, ti, u, flush=True)
 byhost = collections.Counter(urllib.parse.urlparse(b[5]).netloc for b in bad)
