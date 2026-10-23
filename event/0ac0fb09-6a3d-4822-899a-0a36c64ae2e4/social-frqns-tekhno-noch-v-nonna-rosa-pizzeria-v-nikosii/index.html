@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Social FRQNS: техно-ночь в… — 24 октября 2026 · Никосия, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-Bt1hTvJ3.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-B45T32MD.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CFnA0XHs.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-DrXgFYww.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Никосия, Кипр, 24 октября 2026. Social FRQNS устраивает однодневную техно-вечеринку внутри Nonna Rosa Pizzeria в Никосии, на Кипре, в субботу 24 октября 2026…" />
+    <link rel="canonical" href="https://mypins.site/event/0ac0fb09-6a3d-4822-899a-0a36c64ae2e4/social-frqns-tekhno-noch-v-nonna-rosa-pizzeria-v-nikosii/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Social FRQNS: техно-ночь в… — 24 октября 2026 · Никосия, Кипр" />
+    <meta property="og:description" content="Никосия, Кипр, 24 октября 2026. Social FRQNS устраивает однодневную техно-вечеринку внутри Nonna Rosa Pizzeria в Никосии, на Кипре, в субботу 24 октября 2026…" />
+    <meta property="og:url" content="https://mypins.site/event/0ac0fb09-6a3d-4822-899a-0a36c64ae2e4/social-frqns-tekhno-noch-v-nonna-rosa-pizzeria-v-nikosii/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/71765287-0953-483e-be78-b8f3ffd0e1de/1792728085179.jpg?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/0ac0fb09-6a3d-4822-899a-0a36c64ae2e4/social-frqns-tekhno-noch-v-nonna-rosa-pizzeria-v-nikosii/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/0ac0fb09-6a3d-4822-899a-0a36c64ae2e4/social-frqns-techno-night-at-nonna-rosa-pizzeria-in-nicosia/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Social FRQNS: техно-ночь в Nonna Rosa Pizzeria в Никосии","url":"https://mypins.site/event/0ac0fb09-6a3d-4822-899a-0a36c64ae2e4/social-frqns-tekhno-noch-v-nonna-rosa-pizzeria-v-nikosii/","startDate":"2026-10-24T18:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Пиццерия «Нонна Роза», Никосия","address":{"@type":"PostalAddress","addressLocality":"Никосия","streetAddress":"Пиццерия «Нонна Роза», Никосия","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1690437,"longitude":33.3598379}},"description":"Social FRQNS устраивает однодневную техно-вечеринку внутри Nonna Rosa Pizzeria в Никосии, на Кипре, в субботу 24 октября 2026 года. DJs Kzen и Penny K отвечают за музыку, пока вы подкрепляетесь свежей пиццей прямо из печи. Это музыка, еда и отличная атмосфера под одной крышей - по-настоящему...","endDate":"2026-10-24","image":"https://cyprus.bz/img/images/events/71765287-0953-483e-be78-b8f3ffd0e1de/1792728085179.jpg?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/38c5/social-frqns-techno-night-at-nonna-rosa-pizzeria-in-nicosia-2026"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Social FRQNS: техно-ночь в Nonna Rosa Pizzeria в Никосии","item":"https://mypins.site/event/0ac0fb09-6a3d-4822-899a-0a36c64ae2e4/social-frqns-tekhno-noch-v-nonna-rosa-pizzeria-v-nikosii/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Social FRQNS: техно-ночь в Nonna Rosa Pizzeria в Никосии</h1>
+  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-10-24">24 октября 2026</time></p>
+  <p><time datetime="2026-10-24T18:00:00">24 октября 2026, 18:00</time></p>
+  <address>Пиццерия «Нонна Роза», Никосия, Никосия, Кипр</address>
+  <p>Social FRQNS устраивает однодневную техно-вечеринку внутри Nonna Rosa Pizzeria в Никосии, на Кипре, в субботу 24 октября 2026 года. DJs Kzen и Penny K отвечают за музыку, пока вы подкрепляетесь свежей пиццей прямо из печи. Это музыка, еда и отличная атмосфера под одной крышей - по-настоящему...</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Social FRQNS: техно-ночь в Nonna Rosa Pizzeria в Никосии</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/party/">🪩 Вечеринки</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/3b1a34ae-8eb2-495a-91ff-2bbc81b84a88/social-frqns-tot-samyy-v-pitstserii/">Social FRQNS - Тот самый, в пиццерии <time datetime="2026-10-24">24 октября 2026</time></a></li>
+    <li><a href="/event/98f22ee1-ee32-4647-a247-a27c581941ec/sotsialnye-frqns/">СОЦИАЛЬНЫЕ FRQNS <time datetime="2026-10-24">24 октября 2026</time></a></li>
+    <li><a href="/event/9a0ac708-b7d3-4c43-9e17-31e966d3b7c5/khellouin-s-wacko-maniacs-noch-strakha-vecherinka-v-kostyumakh-v-limassole/">Хэллоуин с Wacko Maniacs: Ночь страха — вечеринка в костюмах в Лимассоле <time datetime="2026-10-24">24 октября 2026</time></a></li>
+    <li><a href="/event/a7bee32c-08c6-4582-af6a-9b9d9ca40029/xeplima-v-el-solo-pub-s-dj-gia-za-pultom/">Xeplima в El Solo Pub, с DJ Gia за пультом! <time datetime="2026-10-24">24 октября 2026</time></a></li>
+    <li><a href="/event/da6f6685-9362-46ea-969e-91bdc92f9eb5/klub-castle-po-subbotam/">Клуб Castle по субботам <time datetime="2026-10-24">24 октября 2026</time></a></li>
+    <li><a href="/event/f061adde-6919-4ff9-9067-0d8979a38d9d/khellouin-v-torgovom-tsentre-moll-of-engomi/">Хэллоуин в торговом центре Молл оф Энгоми <time datetime="2026-10-24">24 октября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/e98eb811-24de-4bb4-a2a5-cdce31a0800f/the-one-mom-show-vecher-stendap-komedii-v-nikosii/">The One MOM Show: вечер стендап-комедии в Никосии</a> <time datetime="2026-10-23">23 октября 2026</time></li>
+    <li>Следующее: <a href="/event/15f5cda3-9a96-4379-8d48-1551a88395e3/pokhod-lapy-i-branch-utrennyaya-tropa-dlya-sobak-v-nikosii/">Поход, лапы и бранч: утренняя тропа для собак в Никосии</a> <time datetime="2026-10-24">24 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>
