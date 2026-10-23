@@ -51,6 +51,14 @@ grant usage, select on all sequences in schema public to anon, authenticated, se
 
 -- 2. Будущие объекты --------------------------------------------------------
 -- Гранты для всего, что migrations создадут после этой миграции.
+-- Сначала снимаем унаследованные default privileges (Supabase исторически
+-- выдавал anon/authenticated полный набор на новые таблицы), иначе GRANT ниже
+-- только добавляет права, а anon сохраняет INSERT/UPDATE/DELETE на будущие таблицы.
+
+alter default privileges for role postgres in schema public
+  revoke all on tables from anon;
+alter default privileges for role postgres in schema public
+  revoke all on tables from authenticated;
 
 alter default privileges for role postgres in schema public
   grant select on tables to anon;
