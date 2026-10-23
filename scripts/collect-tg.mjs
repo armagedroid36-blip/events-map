@@ -4,6 +4,7 @@
 // контакты организатора (t.me), цена (если в тексте), ссылка на пост.
 // Запускается в GitHub Actions ежедневно; статус событий — «на модерации».
 import { createClient } from '@supabase/supabase-js';
+import { createHash } from 'node:crypto';
 import { selectAll } from './db-rows.mjs';
 import { extractPrice } from './price-llm.mjs';
 import { extractCategory } from './category-llm.mjs';
@@ -307,6 +308,58 @@ function parsePost(block) {
     .filter((u, i, arr) => arr.indexOf(u) === i)
     .slice(0, 5);
   return { pid, dt, text, links, photos };
+}
+
+// ===== Фото Telegram: своя копия вместо истекающей CDN-ссылки =====
+// cdn*.telesco.pe отдаёт временные ссылки: через недели они 404, и на карточке
+// остаётся битая картинка (23.10.2026 замер: 107 нерабочих URL у живых карточек,
+// все — telesco). Скачиваем файл и кладём в свой публичный bucket photos.
+const TG_PHOTO_BUCKET = 'photos';
+const TG_PHOTO_MAX_BYTES = 5 * 1024 * 1024; // лимит bucket
+const TG_PHOTO_MAX_TRIES = 30;              // загрузок за прогон
+const TG_PHOTO_EXT = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif' };
+const tgPhotoCache = new Map();
+let tgPhotoTries = 0;
+
+async function persistTgPhoto(url) {
+  if (!/telesco\.pe|telegram-cdn/i.test(url)) return url;
+  if (tgPhotoCache.has(url)) return tgPhotoCache.get(url);
+  if (DRY_RUN || tgPhotoTries >= TG_PHOTO_MAX_TRIES) return url;
+  tgPhotoTries++;
+  const ac = new AbortController();
+  const timer = setTimeout(() => ac.abort(), 15000);
+  try {
+    const res = await fetch(url, { headers: { 'user-agent': 'Mozilla/5.0 (compatible; events-map/1.0)' }, signal: ac.signal });
+    if (!res.ok) return url;
+    const buf = Buffer.from(await res.arrayBuffer());
+    if (!buf.length || buf.length > TG_PHOTO_MAX_BYTES) return url;
+    const mime = String(res.headers.get('content-type') || '').split(';')[0].trim();
+    const ext = TG_PHOTO_EXT[mime];
+    if (!ext) return url;
+    const path = `tg/${createHash('md5').update(buf).digest('hex')}.${ext}`;
+    const up = await fetch(`${SUPABASE_URL}/storage/v1/object/${TG_PHOTO_BUCKET}/${path}`, {
+      method: 'POST',
+      headers: { apikey: SERVICE_ROLE, Authorization: `Bearer ${SERVICE_ROLE}`, 'content-type': mime, 'x-upsert': 'true' },
+      body: buf,
+    });
+    if (!up.ok) {
+      console.warn(`  [фото] копия не залилась: ${up.status}`);
+      return url;
+    }
+    const pub = `${SUPABASE_URL}/storage/v1/object/public/${TG_PHOTO_BUCKET}/${path}`;
+    tgPhotoCache.set(url, pub);
+    return pub;
+  } catch {
+    return url;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function persistTgPhotos(list) {
+  const out = [];
+  for (const u of list) out.push(await persistTgPhoto(u));
+  return out.filter(Boolean);
 }
 
 /** Ссылки goo.gl/maps и t.me из поста */
@@ -736,7 +789,7 @@ async function main() {
           contact_phone: textContacts.phone,
           contact_email: textContacts.email,
           contact_instagram: textContacts.instagram,
-          photos: post.photos ? post.photos.slice(0, 3) : [],
+          photos: await persistTgPhotos(post.photos ? post.photos.slice(0, 3) : []),
           // free=true → price=0 («Бесплатно» на карточке); donation — отдельно (price остаётся null)
           price: p?.free ? 0 : (p?.price ?? null),
           currency: p?.currency ?? null,
