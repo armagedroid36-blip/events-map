@@ -626,6 +626,29 @@ function factsJoin(parts: string[]): string {
   return out;
 }
 
+/** Самый маленький бюджет шапки: ниже него название всё равно режем, иначе
+ *  дата/место/цена не попадут в описание (название занимало все 160 знаков). */
+const FACTS_MIN_HEADER = 40;
+/** Сколько максимум отдаём шапке (категория + город + название): остальное —
+ *  фактам. Длинные названия режутся до этого бюджета, дата/место/цена целы. */
+const FACTS_NAME_MAX = 90;
+/** Страна-хвост площадки: EN-адрес приходит как «Limassol, Cyprus», а город в
+ *  шапке — «Limassol»; без снятия хвоста город дублировался в «Venue». */
+const FACTS_COUNTRY_TAIL =
+  /\s*[,\s]\s*(кипр|кипра|кипре|cyprus|греция|greece|турция|turkey|вьетнам|vietnam|таиланд|thailand|индонезия|indonesia|россия|russia)\s*$/i;
+
+/** Ключ площадки для сравнения «адрес == город»: снимаем страну-хвост
+ *  («, Кипр» / «, Cyprus»), предлог и хвостовую пунктуацию. */
+function factsPlaceKey(s: string | null | undefined): string {
+  return String(s ?? '')
+    .toLowerCase()
+    .trim()
+    .replace(FACTS_COUNTRY_TAIL, '')
+    .replace(/^(в|на|in|the)\s+/i, '')
+    .replace(/[\s,.;:!?—–-]+$/g, '')
+    .trim();
+}
+
 /**
  * Фактовое описание события: собирается ТОЛЬКО из фактов записи (название,
  * категория, город, дата/время, площадка, цена) + закрывающая фраза сайта.
@@ -646,22 +669,10 @@ export function eventFactsText(
   const cityPart = en ? placeCityLabel(ev.city, 'en') : cityLocativeRu(ev.city);
   const parts: string[] = [];
 
-  // 1. категория + город + название. Если название уже содержит город
-  // («Би-2 в Лимасоле» / «BI-2 in Limassol»), город в шапке не повторяем.
-  const cityBare = cityPart.replace(/^(в|на)\s+/i, '').toLowerCase();
-  const nameHasCity = Boolean(cityBare) && name.toLowerCase().includes(cityBare);
-  if (name) {
-    if (cat && cityPart && !nameHasCity) {
-      parts.push(`${cat} ${en ? `in ${cityPart}` : cityPart}: ${name}`);
-    } else if (cat) parts.push(`${cat}: ${name}`);
-    else if (cityPart && !nameHasCity) parts.push(`${name} — ${cityPart}`);
-    else parts.push(name);
-  }
   // 2. дата и время (ближайшее вхождение — как в title/JSON-LD страницы)
   const sd = nextOccurrenceDate(ev, todayIso());
   const time = typeof ev.start_time === 'string' ? ev.start_time.trim() : '';
   const dateText = factsDateTime(sd, time, lang);
-  if (dateText) parts.push(dateText);
   // 3. площадка: адрес; пусто — город; совпадает с городом — не дублируем
   const address = typeof ev.address === 'string' ? ev.address.trim() : '';
   const place = factsClean(
@@ -671,9 +682,13 @@ export function eventFactsText(
         : placeCityLabel(ev.city, 'en')
       : address || cityRaw,
   );
-  if (place && place.toLowerCase() !== cityRaw.toLowerCase()) {
-    parts.push(`${t.place}: ${place}`);
-  }
+  // Адрес, который и есть город, не дублируем. RU сравнивал адрес с сырым
+  // ev.city (совпадает), а EN получает «Limassol, Cyprus» против «Limassol» —
+  // сравнение не ловилось, и город повторялся в «Venue». Сравниваем ключи без
+  // страны-хвоста; RU-ветка — прежняя, без изменений.
+  const placeIsCity = en
+    ? !place || factsPlaceKey(place) === factsPlaceKey(cityPart)
+    : place.toLowerCase() === cityRaw.toLowerCase();
   // 4. цена — та же семантика, что в статическом блоке
   const price = ev.price != null ? Number(ev.price) : null;
   const currency = (ev.currency ? ev.currency : 'usd').toUpperCase();
@@ -681,7 +696,42 @@ export function eventFactsText(
   if (price != null && price > 0) priceVal = `${price} ${currency}`;
   else if (ev.donation) priceVal = t.donation;
   else if (price === 0) priceVal = t.free;
-  if (priceVal) parts.push(`${t.price}: ${priceVal}`);
+  // Хвост описания: дата, место, цена. Дата и цена не режутся никогда —
+  // бюджет шапки считается от них.
+  let placePart = place && !placeIsCity ? `${t.place}: ${place}` : '';
+  const pricePart = priceVal ? `${t.price}: ${priceVal}` : '';
+  let tailParts = [dateText, placePart, pricePart].filter(Boolean);
+  let tailBody = factsJoin(tailParts);
+  // Сам хвост не влезает (длинный адрес) — сжимаем адрес, сохраняя дату/цену.
+  if (tailBody.length > FACTS_MAX_LEN - FACTS_MIN_HEADER - 3 && placePart) {
+    placePart = `${t.place}: ${snippet(place, 55)}`;
+    tailParts = [dateText, placePart, pricePart].filter(Boolean);
+    tailBody = factsJoin(tailParts);
+  }
+  // 1. категория + город + название. Если название уже содержит город
+  // («Би-2 в Лимасоле» / «BI-2 in Limassol»), город в шапке не повторяем.
+  const cityBare = cityPart.replace(/^(в|на)\s+/i, '').toLowerCase();
+  const nameHasCity = Boolean(cityBare) && name.toLowerCase().includes(cityBare);
+  let header = '';
+  if (name) {
+    if (cat && cityPart && !nameHasCity) {
+      header = `${cat} ${en ? `in ${cityPart}` : cityPart}: ${name}`;
+    } else if (cat) header = `${cat}: ${name}`;
+    else if (cityPart && !nameHasCity) header = `${name} — ${cityPart}`;
+    else header = name;
+  }
+  // Длинное название не должно вытеснять факты из 160 знаков (было:
+  // «…211 Т.П. ЭЛ.ДИ.К., суббота…» — страницы без даты и места). Режем только
+  // название, до FACTS_NAME_MAX знаков; префикс «категория в городе:»
+  // сохраняется. Закрывающая фраза при длинном названии не добавляется.
+  const headerRoom = FACTS_MAX_LEN - tailBody.length - (tailBody ? 2 : 0);
+  const headerBudget = Math.min(headerRoom, FACTS_NAME_MAX);
+  if (header && header.length > headerBudget) {
+    const keep = Math.max(FACTS_MIN_HEADER, headerBudget - 1);
+    if (header.length > keep) header = snippet(header, keep);
+  }
+  if (header) parts.push(header);
+  for (const p of tailParts) parts.push(p);
 
   const body = factsJoin(parts);
   const sep = body && !/[.!?…]$/.test(body) ? '.' : '';
