@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Берлин встречает берлинские ритмы — 8 января 2027 · Пафос, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-Dj_5lp95.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-BhGnFRZR.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-BHr-VZ26.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CVYFaHJm.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Пафос, Кипр, 8 января 2027. Состав: TommyTommyBerlin, Stavros_Tsia Эксклюзивная серия событий от Techno Island Кипр Berlin Beats в Berlin Meet. Тёмные звуки…" />
+    <link rel="canonical" href="https://mypins.site/event/021230ee-9c2e-4064-bc4a-10fa202bc6a0/berlin-vstrechaet-berlinskie-ritmy/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Берлин встречает берлинские ритмы — 8 января 2027 · Пафос, Кипр" />
+    <meta property="og:description" content="Пафос, Кипр, 8 января 2027. Состав: TommyTommyBerlin, Stavros_Tsia Эксклюзивная серия событий от Techno Island Кипр Berlin Beats в Berlin Meet. Тёмные звуки…" />
+    <meta property="og:url" content="https://mypins.site/event/021230ee-9c2e-4064-bc4a-10fa202bc6a0/berlin-vstrechaet-berlinskie-ritmy/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/6a08162b-17d3-4ca7-bbc9-c3ee0d0f69ed/1792594021808.jpg?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/021230ee-9c2e-4064-bc4a-10fa202bc6a0/berlin-vstrechaet-berlinskie-ritmy/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/021230ee-9c2e-4064-bc4a-10fa202bc6a0/berlin-meets-berlin-beats/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Берлин встречает берлинские ритмы","url":"https://mypins.site/event/021230ee-9c2e-4064-bc4a-10fa202bc6a0/berlin-vstrechaet-berlinskie-ritmy/","startDate":"2027-01-08T17:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Берлин Митс, Пафос","address":{"@type":"PostalAddress","addressLocality":"Пафос","streetAddress":"Берлин Митс, Пафос","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.8525249,"longitude":32.3821135}},"description":"Состав: TommyTommyBerlin, Stavros_Tsia Эксклюзивная серия событий от Techno Island Кипр Berlin Beats в Berlin Meet. Тёмные звуки. Грязные басы. Серьёзная энергия. Серия из 10 дат до 24.04.2026. С 17:00 до полуночи, до конца апреля. Готовьтесь к сокрушительным ударам баса, грязным грувам и...","endDate":"2027-01-08T23:30:00","image":"https://cyprus.bz/img/images/events/6a08162b-17d3-4ca7-bbc9-c3ee0d0f69ed/1792594021808.jpg?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/38a2/berlin-meets-berlin-beats-2027-3"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Берлин встречает берлинские ритмы","item":"https://mypins.site/event/021230ee-9c2e-4064-bc4a-10fa202bc6a0/berlin-vstrechaet-berlinskie-ritmy/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Берлин встречает берлинские ритмы</h1>
+  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2027-01-08">8 января 2027</time></p>
+  <p><time datetime="2027-01-08T17:00:00">8 января 2027, 17:00</time></p>
+  <address>Берлин Митс, Пафос, Пафос, Кипр</address>
+  <p>Состав: TommyTommyBerlin, Stavros_Tsia Эксклюзивная серия событий от Techno Island Кипр Berlin Beats в Berlin Meet. Тёмные звуки. Грязные басы. Серьёзная энергия. Серия из 10 дат до 24.04.2026. С 17:00 до полуночи, до конца апреля. Готовьтесь к сокрушительным ударам баса, грязным грувам и...</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Берлин встречает берлинские ритмы</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/concert/">🎤 Концерты</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/61e02c82-d35f-4e19-b15c-31d9f45a8800/powerhouse-igraet-system-of-a-down/">Powerhouse играет System Of A Down <time datetime="2027-01-05">5 января 2027</time></a></li>
+    <li><a href="/event/fce7ef53-6c1b-40c4-8bdc-52e8aea591ec/trio-dzhaza-mariosa-tumbasa-vystupit-v-dzhaz-klube-sarah-s/">Трио джаза Мариоса Тумбаса выступит в джаз-клубе Sarah’s <time datetime="2027-01-06">6 января 2027</time></a></li>
+    <li><a href="/event/eb163ace-02d1-41a7-bdaa-cc27320fc243/temor-blynd-live/">Temor &amp; Blynd Live <time datetime="2027-01-08">8 января 2027</time></a></li>
+    <li><a href="/event/f7b9877c-42ec-4fbf-998f-46c627288afb/berlinskie-ritmy-na-vstreche-v-berline/">Берлинские ритмы на встрече в Берлине <time datetime="2027-01-08">8 января 2027</time></a></li>
+    <li><a href="/event/14e72b5f-035d-4775-97b8-c4fdf98b2a4e/luka-minnelli-vystupit-na-kipre-s-simfonicheskim-orkestrom/">Лука Миннелли выступит на Кипре с симфоническим оркестром <time datetime="2027-01-10">10 января 2027</time></a></li>
+    <li><a href="/event/e245c2b8-239f-44d2-8d40-912d0f5cb8b1/trio-dzhaza-mariosa-tumbasa-vystupit-v-dzhaz-klube-sarah-s/">Трио джаза Мариоса Тумбаса выступит в джаз-клубе Sarah’s <time datetime="2027-01-13">13 января 2027</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/b318d82c-9d40-4208-b3f3-8fe77b37ef1f/derevnya-rozhdestva-fikardu-2026-programma-i-daty/">Деревня Рождества Фикарду 2026: Программа и даты</a> <time datetime="2027-01-06">6 января 2027</time></li>
+    <li>Следующее: <a href="/event/69ff27ad-911f-44ac-9187-03899026d575/luka-minnelli-italyanskiy-tenor-s-simfonicheskim-ansamblem-na-kipre/">Лука Миннелли: итальянский тенор с симфоническим ансамблем на Кипре</a> <time datetime="2027-01-12">12 января 2027</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>

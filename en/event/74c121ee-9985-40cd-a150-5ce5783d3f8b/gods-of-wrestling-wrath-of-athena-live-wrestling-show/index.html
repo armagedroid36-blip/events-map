@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gods of Wrestling: Wrath of Athena… — November 7, 2026 · Nicosia</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-Dj_5lp95.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-BhGnFRZR.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-BHr-VZ26.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CVYFaHJm.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Nicosia, Cyprus, November 7, 2026. Choose your favorite. Find someone to boo. The ring will decide the rest. Gods of Wrestling: Wrath of Athena combines…" />
+    <link rel="canonical" href="https://mypins.site/en/event/74c121ee-9985-40cd-a150-5ce5783d3f8b/gods-of-wrestling-wrath-of-athena-live-wrestling-show/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Gods of Wrestling: Wrath of Athena… — November 7, 2026 · Nicosia" />
+    <meta property="og:description" content="Nicosia, Cyprus, November 7, 2026. Choose your favorite. Find someone to boo. The ring will decide the rest. Gods of Wrestling: Wrath of Athena combines…" />
+    <meta property="og:url" content="https://mypins.site/en/event/74c121ee-9985-40cd-a150-5ce5783d3f8b/gods-of-wrestling-wrath-of-athena-live-wrestling-show/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/90975c95-039b-4348-9534-ba3c522ae9d5/1792638470957.png?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/74c121ee-9985-40cd-a150-5ce5783d3f8b/gods-of-wrestling-wrath-of-athena-live-wrestling-show/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/74c121ee-9985-40cd-a150-5ce5783d3f8b/gods-of-wrestling-wrath-of-athena-zhivoe-shou-restlinga/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Gods of Wrestling: Wrath of Athena - Live wrestling show","url":"https://mypins.site/en/event/74c121ee-9985-40cd-a150-5ce5783d3f8b/gods-of-wrestling-wrath-of-athena-live-wrestling-show/","startDate":"2026-11-07T17:30:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Nicosia","address":{"@type":"PostalAddress","addressLocality":"Nicosia","streetAddress":"Nicosia","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1357054,"longitude":33.3562274}},"description":"Choose your favorite. Find someone to boo. The ring will decide the rest. Gods of Wrestling: Wrath of Athena combines professional wrestling with its blend of athleticism, theatrical rivalries, and audience participation in an evening where watching quietly is completely optional. On the program...","endDate":"2026-11-07T21:00:00","image":"https://cyprus.bz/img/images/events/90975c95-039b-4348-9534-ba3c522ae9d5/1792638470957.png?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/38ad/gods-of-wrestling-wrath-of-athena-live-wrestling-show-2026"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Gods of Wrestling: Wrath of Athena - Live wrestling show","item":"https://mypins.site/en/event/74c121ee-9985-40cd-a150-5ce5783d3f8b/gods-of-wrestling-wrath-of-athena-live-wrestling-show/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Gods of Wrestling: Wrath of Athena - Live wrestling show</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-11-07">November 7, 2026</time></p>
+  <p><time datetime="2026-11-07T17:30:00">November 7, 2026, 5:30 PM</time></p>
+  <address>Nicosia, Cyprus</address>
+  <p>Choose your favorite. Find someone to boo. The ring will decide the rest. Gods of Wrestling: Wrath of Athena combines professional wrestling with its blend of athleticism, theatrical rivalries, and audience participation in an evening where watching quietly is completely optional. On the program...</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Gods of Wrestling: Wrath of Athena - Live wrestling show</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/sport/">🏃 Sports</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/15097394-a37d-49a5-9496-2ed5d924d51d/cyprus-sport-dance-cup-2026-in-nicosia/">Cyprus Sport Dance Cup 2026 in Nicosia <time datetime="2026-11-07">November 7, 2026</time></a></li>
+    <li><a href="/en/event/2f6e4b69-8575-4d20-9866-575feeb12a93/gods-of-wrestling-wrath-of-athena-comes-to-stavrou-gymnasium-in-strovolos-saturday-7-11-26/">Gods of Wrestling: Wrath of Athena comes to Stavrou Gymnasium in Strovolos | Saturday, 7/11/26 <time datetime="2026-11-07">November 7, 2026</time></a></li>
+    <li><a href="/en/event/5a089ba8-dbb9-4815-a0db-9dff284662e3/legion-run-cyprus-2026-mud-obstacle-race-in-cyprus/">Legion Run Cyprus 2026: Mud Obstacle Race in Cyprus <time datetime="2026-11-07">November 7, 2026</time></a></li>
+    <li><a href="/en/event/8c18c033-dbfc-40f6-b2c2-7a4c87a41a57/legion-run/">Legion Run <time datetime="2026-11-07">November 7, 2026</time></a></li>
+    <li><a href="/en/event/99598ed0-0c79-480e-9a05-6f20cbe78cd7/olympusman-triathlon-2026/">OlympusMan Triathlon 2026 <time datetime="2026-11-07">November 7, 2026</time></a></li>
+    <li><a href="/en/event/c3fd6eed-5bc3-44e7-b0ed-981a7a9cee92/legion-run-kids-cyprus-2026-kids-obstacle-course-in-limassol/">Legion Run Kids Cyprus 2026: Kids Obstacle Course in Limassol <time datetime="2026-11-07">November 7, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/6a32e8fc-097c-4fbc-8f50-cfab6afc9f3c/berlin-beats-at-berlin-meet/">Berlin Beats At Berlin Meet</a> <time datetime="2026-11-07">November 7, 2026</time></li>
+    <li>Next: <a href="/en/event/7fa126e6-d368-41fa-908a-9e86cc9b417f/legion-run-kids-children-s-race/">Legion Run Kids Children’s Race</a> <time datetime="2026-11-07">November 7, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>
