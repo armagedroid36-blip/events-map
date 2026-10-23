@@ -703,6 +703,17 @@ async function main() {
         const llmTime = await extractTime(post.text);
         const website = `https://t.me/${post.pid}`;
 
+        const startTime = llmTime?.start_time || when.time || null;
+        const endTime = llmTime?.end_time || null;
+        // Ночное событие (17:00 → 04:00): конец наступает на СЛЕДУЮЩИЙ день. Без end_date
+        // карточка показывает конец раньше начала (кейс 5fbb63f2 Нячанг, 23.10.2026).
+        let endDate = null;
+        if (startTime && endTime && endTime < startTime) {
+          const d = new Date(`${when.date}T00:00:00Z`);
+          d.setUTCDate(d.getUTCDate() + 1);
+          endDate = d.toISOString().slice(0, 10);
+        }
+
         const row = {
           title: cleanCardText(title),
           title_ru: cleanCardText(title),
@@ -711,9 +722,9 @@ async function main() {
           source_lang: 'ru',
           language: 'ru',
           start_date: when.date,
-          end_date: null,
-          start_time: llmTime?.start_time || when.time || null,
-          end_time: llmTime?.end_time || null,
+          end_date: endDate,
+          start_time: startTime,
+          end_time: endTime,
           city: ch.city,
           address,
           lat,
