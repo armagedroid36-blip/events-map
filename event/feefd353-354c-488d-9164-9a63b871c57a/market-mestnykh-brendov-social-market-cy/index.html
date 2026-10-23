@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Маркет местных брендов Social… — 7 ноября 2026 · Никосия, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-Dj_5lp95.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-BhGnFRZR.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-BHr-VZ26.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CVYFaHJm.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Никосия, Кипр, 7 ноября 2026. Social Market CY — это рынок местных брендов, который пройдет в Никосии, Кипр, в субботу, 7 ноября 2026 года, в Культурном центре…" />
+    <link rel="canonical" href="https://mypins.site/event/feefd353-354c-488d-9164-9a63b871c57a/market-mestnykh-brendov-social-market-cy/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Маркет местных брендов Social… — 7 ноября 2026 · Никосия, Кипр" />
+    <meta property="og:description" content="Никосия, Кипр, 7 ноября 2026. Social Market CY — это рынок местных брендов, который пройдет в Никосии, Кипр, в субботу, 7 ноября 2026 года, в Культурном центре…" />
+    <meta property="og:url" content="https://mypins.site/event/feefd353-354c-488d-9164-9a63b871c57a/market-mestnykh-brendov-social-market-cy/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/3ebed407-6a38-433a-a49a-3885e7593d06/1790823878183.jpg?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/feefd353-354c-488d-9164-9a63b871c57a/market-mestnykh-brendov-social-market-cy/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/feefd353-354c-488d-9164-9a63b871c57a/social-market-cy-local-brands-market/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Маркет местных брендов Social Market CY","url":"https://mypins.site/event/feefd353-354c-488d-9164-9a63b871c57a/market-mestnykh-brendov-social-market-cy/","startDate":"2026-11-07T10:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Культурный центр Строволоса, Никосия","address":{"@type":"PostalAddress","addressLocality":"Никосия","streetAddress":"Культурный центр Строволоса, Никосия","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1856,"longitude":33.3823}},"description":"Social Market CY — это рынок местных брендов, который пройдет в Никосии, Кипр, в субботу, 7 ноября 2026 года, в Культурном центре Строволос. С 10:00 до 18:00 это праздник малого бизнеса и независимых авторов со всего Кипра. Просматривайте и покупайте товары самых разных категорий от местных...","endDate":"2026-11-07T18:00:00","image":"https://cyprus.bz/img/images/events/3ebed407-6a38-433a-a49a-3885e7593d06/1790823878183.jpg?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/3634/social-market-cy-2026"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Маркет местных брендов Social Market CY","item":"https://mypins.site/event/feefd353-354c-488d-9164-9a63b871c57a/market-mestnykh-brendov-social-market-cy/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Маркет местных брендов Social Market CY</h1>
+  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-11-07">7 ноября 2026</time></p>
+  <p><time datetime="2026-11-07T10:00:00">7 ноября 2026, 10:00</time></p>
+  <address>Культурный центр Строволоса, Никосия, Никосия, Кипр</address>
+  <p>Social Market CY — это рынок местных брендов, который пройдет в Никосии, Кипр, в субботу, 7 ноября 2026 года, в Культурном центре Строволос. С 10:00 до 18:00 это праздник малого бизнеса и независимых авторов со всего Кипра. Просматривайте и покупайте товары самых разных категорий от местных...</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Маркет местных брендов Social Market CY</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/exhibition/">🖼️ Выставки</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/0feb8e12-a23f-475a-86e6-a79bc18da44b/kristina-drakos-vyvodit-telo-v-tsentr-vnimaniya-na-personalnoy-vystavke-v-limasole/">Кристина Дракос выводит тело в центр внимания на персональной выставке в Лимасоле <time datetime="2026-11-05">5 ноября 2026</time></a></li>
+    <li><a href="/event/23a9e498-205b-4724-833d-f1485267ba6f/biennale-ayya-napy-2026-mezhdunarodnaya-vystavka-sovremennogo-iskusstva/">Биеннале Айя-Напы 2026 — международная выставка современного искусства <time datetime="2026-11-07">7 ноября 2026</time></a></li>
+    <li><a href="/event/eb1b4a82-ea9b-4558-a9a9-8b6036d4cd75/sotsialnyy-rynok-cy-marketpleys-mestnykh-brendov-v-nikosii/">Социальный рынок CY: маркетплейс местных брендов в Никосии <time datetime="2026-11-07">7 ноября 2026</time></a></li>
+    <li><a href="/event/0535524b-dac3-46f2-8d16-3bcaa37935ec/mify-kipra/">Мифы Кипра <time datetime="2026-11-08">8 ноября 2026</time></a></li>
+    <li><a href="/event/de849dcc-e649-4d00-a4d7-a777f7309f49/barakholka-market-poderzhannykh-i-vintazhnykh-veshchey-v-new-division-nikosiya/">Барахолка: Маркет подержанных и винтажных вещей в New Division, Никосия <time datetime="2026-11-08">8 ноября 2026</time></a></li>
+    <li><a href="/event/96b52dde-aa74-4d27-8f46-a1d8e4e3a8c0/nedelya-mody-v-limasole-2026/">Неделя моды в Лимасоле 2026 <time datetime="2026-11-11">11 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/f1f256b4-6e92-4832-ac57-a33ecd4f3dab/kniga-dzhungley-semeynye-kontserty/">Книга джунглей - Семейные концерты</a> <time datetime="2026-11-07">7 ноября 2026</time></li>
+    <li>Следующее: <a href="/event/137c58e9-2190-431d-b464-4d5a700354fb/itf-masters-400-2-8-11-2026/">ITF MASTERS 400 – 2–8.11.2026</a> <time datetime="2026-11-08">8 ноября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>
