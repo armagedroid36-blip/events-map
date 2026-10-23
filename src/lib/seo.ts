@@ -28,7 +28,7 @@ import { photoUrl } from './api';
 import { todayIso } from './dates';
 import { eventHasEn, eventSlug } from './slug';
 import { nextOccurrenceDate } from './recurrence';
-import { placeCityLabel, placeCityPrefix } from './address';
+import { placeCityLabel, placeCityPrefix, placeLabel, cityLocativeRu } from './address';
 import type { CityPath } from './address';
 import { categoryDescription, categoryPageHref, categoryTitle } from './categoryPages';
 import type { CellFacts } from './categoryPages';
@@ -528,6 +528,234 @@ function aliasUrlsFor(ev: EventItem): { ru: string; en: string | null } | null {
   return { ru: seoAliasMap.ru, en: seoAliasMap.en };
 }
 
+// --- Фактовое описание события (meta description + видимый абзац) ---
+// ЗЕРКАЛО scripts/seo-prerender.mjs: FACTS_TEXT / eventFactsText /
+// eventDescriptionRu|En. Одна и та же строка идёт в meta description,
+// og:description и в видимый абзац карточки (EventCard, p.event-facts).
+// При правке текстов или формул менять ОБА файла: расхождение ломает
+// приёмку «description в статике == description в SPA».
+const FACTS_MIN_TEXT = 40;
+const FACTS_MIN_LEN = 120;
+const FACTS_MAX_LEN = 160;
+// Итоговое описание короче — тоже повод взять фактовое: 67–69 знаков в выдаче
+// выглядят обрезком (правило приёмки: ни одной страницы события с description
+// < 70 знаков). У этих событий свой текст есть, но он в одну строку.
+const FACTS_MIN_DESC = 70;
+
+const FACTS_TEXT = {
+  ru: {
+    place: 'Место',
+    price: 'Вход',
+    donation: 'Донат',
+    free: 'Бесплатно',
+    close: [
+      'Подробности и афиша — на MyPins.',
+      'Смотрите на карте событий MyPins.',
+      'Дата и место — на MyPins.',
+    ],
+    padLong:
+      'Другие события города — даты, места и цены в афише: фильтры по категориям и датам.',
+    padShort: 'Афиша города — с датами, местами и ценами.',
+  },
+  en: {
+    place: 'Venue',
+    price: 'Entry',
+    donation: 'Donation',
+    free: 'Free',
+    close: [
+      'Details and listings on MyPins.',
+      'See it on the MyPins events map.',
+      'Date and venue are on MyPins.',
+    ],
+    padLong:
+      'More events in the city with dates, venues and prices: filter by category and date.',
+    padShort: 'More events in the city with dates, venues and prices.',
+  },
+} as const;
+
+/** Детерминированный выбор варианта закрывающей фразы по id события (тот же
+ * хеш в seo-prerender.mjs — шаблон не должен совпадать у всех страниц) */
+function factsVariant(id: string | null | undefined, count: number): number {
+  const s = String(id ?? '');
+  let h = 7;
+  for (let i = 0; i < s.length; i += 1) h = (h * 31 + s.charCodeAt(i)) % 100003;
+  return count > 0 ? h % count : 0;
+}
+
+/** Дата+время для фактового описания — зеркало localizedDateTime пре-рендера */
+function factsDateTime(iso: string, time: string, lang: 'ru' | 'en'): string {
+  if (!iso) return '';
+  const date = lang === 'en' ? enDate(iso) : ruDate(iso);
+  if (!time) return date;
+  if (lang !== 'en') {
+    const rh = /^(\d{1,2}):(\d{2})/.exec(time);
+    return `${date}, ${rh ? `${rh[1]}:${rh[2]}` : time}`;
+  }
+  const m = /^(\d{1,2}):(\d{2})/.exec(time);
+  if (!m) return `${date}, ${time}`;
+  let h = Number(m[1]);
+  const min = m[2];
+  const ap = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  return `${date}, ${h}:${min} ${ap}`;
+}
+
+/** Вычистить HTML/переносы и схлопнуть пробелы (как cleanText пре-рендера) */
+function factsClean(text: string | null | undefined): string {
+  return String(text ?? '')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/** Склейка фактовых частей: точка-разделитель ставится, только если предыдущая
+ *  часть не кончается знаком конца предложения (иначе «…цивилизаций?. ») */
+function factsJoin(parts: string[]): string {
+  let out = '';
+  for (const raw of parts) {
+    const p = String(raw ?? '').trim();
+    if (!p) continue;
+    if (!out) {
+      out = p;
+      continue;
+    }
+    out += `${/[.!?…]$/.test(out) ? '' : '.'} ${p}`;
+  }
+  return out;
+}
+
+/**
+ * Фактовое описание события: собирается ТОЛЬКО из фактов записи (название,
+ * категория, город, дата/время, площадка, цена) + закрывающая фраза сайта.
+ * Ничего не выдумываем и ничего не переводим машинно. Длина 120–160 знаков.
+ * category — локализованное имя категории (categories.name_ru/name_en);
+ * не передано — часть «категория» опускается.
+ */
+export function eventFactsText(
+  ev: EventItem,
+  lang: 'ru' | 'en',
+  category = '',
+): string {
+  const en = lang === 'en';
+  const t = en ? FACTS_TEXT.en : FACTS_TEXT.ru;
+  const name = factsClean(en ? ev.title_en || ev.title || '' : ev.title_ru || ev.title || ev.title_en || '');
+  const cat = factsClean(category);
+  const cityRaw = factsClean(ev.city);
+  const cityPart = en ? placeCityLabel(ev.city, 'en') : cityLocativeRu(ev.city);
+  const parts: string[] = [];
+
+  // 1. категория + город + название. Если название уже содержит город
+  // («Би-2 в Лимасоле» / «BI-2 in Limassol»), город в шапке не повторяем.
+  const cityBare = cityPart.replace(/^(в|на)\s+/i, '').toLowerCase();
+  const nameHasCity = Boolean(cityBare) && name.toLowerCase().includes(cityBare);
+  if (name) {
+    if (cat && cityPart && !nameHasCity) {
+      parts.push(`${cat} ${en ? `in ${cityPart}` : cityPart}: ${name}`);
+    } else if (cat) parts.push(`${cat}: ${name}`);
+    else if (cityPart && !nameHasCity) parts.push(`${name} — ${cityPart}`);
+    else parts.push(name);
+  }
+  // 2. дата и время (ближайшее вхождение — как в title/JSON-LD страницы)
+  const sd = nextOccurrenceDate(ev, todayIso());
+  const time = typeof ev.start_time === 'string' ? ev.start_time.trim() : '';
+  const dateText = factsDateTime(sd, time, lang);
+  if (dateText) parts.push(dateText);
+  // 3. площадка: адрес; пусто — город; совпадает с городом — не дублируем
+  const address = typeof ev.address === 'string' ? ev.address.trim() : '';
+  const place = factsClean(
+    en
+      ? address
+        ? placeLabel(address, ev.city, 'en')
+        : placeCityLabel(ev.city, 'en')
+      : address || cityRaw,
+  );
+  if (place && place.toLowerCase() !== cityRaw.toLowerCase()) {
+    parts.push(`${t.place}: ${place}`);
+  }
+  // 4. цена — та же семантика, что в статическом блоке
+  const price = ev.price != null ? Number(ev.price) : null;
+  const currency = (ev.currency ? ev.currency : 'usd').toUpperCase();
+  let priceVal = '';
+  if (price != null && price > 0) priceVal = `${price} ${currency}`;
+  else if (ev.donation) priceVal = t.donation;
+  else if (price === 0) priceVal = t.free;
+  if (priceVal) parts.push(`${t.price}: ${priceVal}`);
+
+  const body = factsJoin(parts);
+  const sep = body && !/[.!?…]$/.test(body) ? '.' : '';
+  const base = body ? `${body}${sep}` : '';
+  // Закрывающая фраза подбирается по остатку места: обрыв вида
+  // «See it on the MyPins…» в выдаче выглядит хуже короткой фразы.
+  const closeFor = (room: number): string => {
+    const fits = t.close.filter((c) => room >= c.length + 1);
+    return fits.length ? fits[factsVariant(ev.id, fits.length)] : '';
+  };
+  // Кандидаты по убыванию качества: с закрывающей фразой, с добором, без них
+  const variants: string[] = [];
+  const firstClose = closeFor(FACTS_MAX_LEN - base.length);
+  if (firstClose) variants.push(`${base} ${firstClose}`);
+  for (const p of [t.padShort, t.padLong]) {
+    const head = `${base} ${p}`;
+    const c = closeFor(FACTS_MAX_LEN - head.length);
+    if (c) variants.push(`${head} ${c}`);
+    variants.push(head);
+  }
+  variants.push(base);
+  let text = variants.find((v) => v.length >= FACTS_MIN_LEN && v.length <= FACTS_MAX_LEN) ?? '';
+  if (!text) {
+    const fitting = variants.filter((v) => v.length <= FACTS_MAX_LEN);
+    text = fitting.length ? fitting.reduce((a, b) => (b.length > a.length ? b : a)) : base;
+  }
+  return text.length > FACTS_MAX_LEN ? snippet(text, FACTS_MAX_LEN - 1) : text;
+}
+
+/**
+ * Прежняя (не фактовая) формула описания события «префикс. текст» — зеркало
+ * eventDescriptionRu/En из seo-prerender.mjs. Нужна только для проверки длины:
+ * короткое итоговое описание тоже заменяется фактовым.
+ */
+function factsPlainDescription(ev: EventItem, lang: 'ru' | 'en'): string {
+  const en = lang === 'en';
+  const text = en
+    ? ev.description_en || ev.description || ev.description_ru || ''
+    : ev.description_ru ||
+      (ev.source_lang === 'ru' ? ev.description : ev.description_en) ||
+      ev.description ||
+      '';
+  const date = en ? enDate(ev.start_date) : ruDate(ev.start_date);
+  const prefix = en
+    ? [...placeCityPrefix(ev.city), date].filter(Boolean).join(', ')
+    : [factsClean(ev.city), date].filter(Boolean).join(', ');
+  return snippet(prefix ? `${prefix}. ${text}` : text, FACTS_MAX_LEN);
+}
+
+/**
+ * Фактовое описание для страницы события или '' — если у события есть свой
+ * текст (после trim 40 знаков и больше) И обычное описание не короче 70
+ * знаков. Правило одно для meta description и для видимого абзаца SPA;
+ * в пре-рендере — eventDescriptionRu|En.
+ */
+export function eventFactsFallback(
+  ev: EventItem,
+  lang: 'ru' | 'en',
+  category = '',
+): string {
+  const text =
+    lang === 'en'
+      ? ev.description_en || ev.description || ev.description_ru || ''
+      : ev.description_ru ||
+        (ev.source_lang === 'ru' ? ev.description : ev.description_en) ||
+        ev.description ||
+        '';
+  if (factsClean(text).length >= FACTS_MIN_TEXT) {
+    const plain = factsPlainDescription(ev, lang);
+    if (plain.length >= FACTS_MIN_DESC) return '';
+  }
+  return eventFactsText(ev, lang, category);
+}
+
 /**
  * Событие (карточка открыта / /event/<id>/<slug>): title/description как в
  * пре-рендере (seo-prerender.mjs), canonical и og со слэшем; og:image — первое
@@ -538,7 +766,7 @@ function aliasUrlsFor(ev: EventItem): { ru: string; en: string | null } | null {
  * URL (как ТЗ 2.4: показать как есть, canonical на RU URL).
  * Страница-алиас (карта #seo-alias-map): canonical/og:url/hreflang берём у
  * ГЛАВНОЙ копии, а не у открытого события-клона. */
-export function applyEventMeta(ev: EventItem): void {
+export function applyEventMeta(ev: EventItem, categories?: Category[]): void {
   const p = window.location.pathname;
   // EN-версия реально существует, только когда открыт /en/event/... У
   // события с переводом. Карточка поверх городской EN-карты URL не меняет —
@@ -589,6 +817,16 @@ export function applyEventMeta(ev: EventItem): void {
     ? [...placeCityPrefix(ev.city), date].filter(Boolean).join(', ')
     : [city, date].filter(Boolean).join(', ');
   const description = snippet(prefix ? `${prefix}. ${text}` : text, 160);
+  // У события нет своего текста (после trim < 40 знаков) — description
+  // собирается из фактов записи: ровно та же строка, что видимый абзац
+  // карточки (EventCard) и абзац статической страницы (seo-prerender.mjs).
+  const catFacts = categories?.find((c) => c.id === ev.category_id);
+  const facts = eventFactsFallback(
+    ev,
+    useEn ? 'en' : 'ru',
+    (useEn ? catFacts?.name_en : catFacts?.name_ru) ?? '',
+  );
+  const eventDescription = facts ? snippet(facts, FACTS_MAX_LEN) : description;
   const canonical = alias ? (useEn && alias.en ? alias.en : alias.ru) : eventUrl(ev, useEn);
   const photo = ev.photos?.[0];
   const absolute = photo
@@ -604,12 +842,12 @@ export function applyEventMeta(ev: EventItem): void {
     !absolute || isDeadImageHost(absolute) ? `${SITE_URL}/logo.png` : absolute;
   apply({
     title,
-    description,
+    description: eventDescription,
     lang: useEn ? 'en' : 'ru',
     canonical,
     og: {
       'og:title': title,
-      'og:description': description,
+      'og:description': eventDescription,
       'og:url': canonical,
       'og:image': image,
     },

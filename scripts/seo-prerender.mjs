@@ -1197,6 +1197,36 @@ function cityCrumbLink(rawCity, lang) {
   return { name, path: crumb.path, href: `${en ? '/en' : ''}/${crumb.path}/` };
 }
 
+/**
+ * RU-локатив для части «в городе» фактового описания (eventFactsText):
+ * «в Лимасоле», «в Дананге», «на Бали». У Кипра в ev.city приходит
+ * «Лимасол, Кипр» — город берём из CYPRUS_TOWNS (cityCrumb даёт только
+ * страну), иначе «на Кипре». Город не распознан → '' (часть опускается).
+ * ЗЕРКАЛО: cityLocativeRu в src/lib/address.ts — менять оба файла.
+ */
+const CYPRUS_TOWN_LOC_RU = {
+  'Никосия': 'в Никосии',
+  'Лимасол': 'в Лимасоле',
+  'Пафос': 'в Пафосе',
+  'Ларнака': 'в Ларнаке',
+  'Ая-Напа': 'в Ая-Напе',
+  'Фамагуста': 'в Фамагусте',
+  'Протарас': 'в Протарасе',
+  'Паралимни': 'в Паралимни',
+  'Полис': 'в Полисе',
+};
+
+/** Предложный падеж города для фактового описания; '' — город не распознан */
+function cityLocativeRu(rawCity) {
+  const crumb = cityCrumb(rawCity);
+  if (!crumb) return '';
+  if (crumb.path === 'cyprus') {
+    const town = cyprusTown(rawCity);
+    return (town && CYPRUS_TOWN_LOC_RU[town.ru]) || CITY_NAME_RU_LOCATIVE.cyprus;
+  }
+  return CITY_NAME_RU_LOCATIVE[crumb.path] || '';
+}
+
 /** Подписи видимой хлебной крошки (как в JSON-LD: Home/Главная) */
 const CRUMB_TEXT = {
   ru: {
@@ -3230,6 +3260,199 @@ function eventBreadcrumbHtml(ev, lang = 'ru', name = '', catLink = null) {
   return lines.join('\n');
 }
 
+// --- Фактовое описание события (meta description + видимый абзац) ---
+// Правило: локализованный текст события после trim короче FACTS_MIN_TEXT
+// знаков (или пуст) → описание собирается ТОЛЬКО из фактов записи (название,
+// категория, город, дата/время, площадка, цена) + закрывающая фраза сайта.
+// Ничего не выдумываем и ничего не переводим машинно: все значения — поля
+// записи и существующие локализаторы (cityLabel/placeLabel/ruDate/enDate/
+// localizedDateTime). Длина 120–160 знаков: короче — добираем шаблонной
+// фразой сайта, длиннее — snippet(..., 160). Одна и та же строка идёт в meta
+// description, og:description, видимый абзац статики (p.event-facts) и абзац
+// карточки SPA (src/lib/seo.ts: eventFactsText — ЗЕРКАЛО, менять оба файла).
+const FACTS_MIN_TEXT = 40;
+const FACTS_MIN_LEN = 120;
+const FACTS_MAX_LEN = 160;
+// Итоговое описание короче — тоже повод взять фактовое: 67–69 знаков в выдаче
+// выглядят обрезком (приёмка: ни одной страницы события с description < 70).
+const FACTS_MIN_DESC = 70;
+
+const FACTS_TEXT = {
+  ru: {
+    place: 'Место',
+    price: 'Вход',
+    donation: 'Донат',
+    free: 'Бесплатно',
+    close: [
+      'Подробности и афиша — на MyPins.',
+      'Смотрите на карте событий MyPins.',
+      'Дата и место — на MyPins.',
+    ],
+    padLong:
+      'Другие события города — даты, места и цены в афише: фильтры по категориям и датам.',
+    padShort: 'Афиша города — с датами, местами и ценами.',
+  },
+  en: {
+    place: 'Venue',
+    price: 'Entry',
+    donation: 'Donation',
+    free: 'Free',
+    close: [
+      'Details and listings on MyPins.',
+      'See it on the MyPins events map.',
+      'Date and venue are on MyPins.',
+    ],
+    padLong:
+      'More events in the city with dates, venues and prices: filter by category and date.',
+    padShort: 'More events in the city with dates, venues and prices.',
+  },
+};
+
+/** Детерминированный выбор варианта закрывающей фразы по id события: шаблон
+ * не должен быть одинаковым у всех страниц. Хеш тот же в SPA (seo.ts). */
+function factsVariant(id, count) {
+  const s = String(id ?? '');
+  let h = 7;
+  for (let i = 0; i < s.length; i += 1) h = (h * 31 + s.charCodeAt(i)) % 100003;
+  return count > 0 ? h % count : 0;
+}
+
+/** Склейка фактовых частей: разделитель-точка добавляется, только если
+ *  предыдущая часть не кончается знаком конца предложения (иначе в названии
+ *  вида «…цивилизаций?» получалось «?. »). */
+function factsJoin(parts) {
+  let out = '';
+  for (const raw of parts) {
+    const p = String(raw ?? '').trim();
+    if (!p) continue;
+    if (!out) {
+      out = p;
+      continue;
+    }
+    out += `${/[.!?…]$/.test(out) ? '' : '.'} ${p}`;
+  }
+  return out;
+}
+
+/**
+ * Фактовое описание события одной строкой (см. FACTS_TEXT выше).
+ * opts.category — локализованное имя категории (categories.name_ru/name_en)
+ * из уже загруженного списка; нет — часть «категория» опускается.
+ * Порядок: «категория в городе: название» → дата/время → «Место: адрес» →
+ * «Вход: цена» → закрывающая фраза. Адрес, совпадающий с городом, не
+ * дублируется (город уже в первой части).
+ */
+function eventFactsText(ev, lang, opts = {}) {
+  const en = lang === 'en';
+  const t = en ? FACTS_TEXT.en : FACTS_TEXT.ru;
+  const name = cleanText(
+    en ? ev.title_en || ev.title || '' : ev.title_ru || ev.title || ev.title_en || '',
+  );
+  const cat = cleanText(opts.category || '');
+  const cityRaw = typeof ev.city === 'string' ? ev.city.trim() : '';
+  const cityRu = en ? '' : cityLocativeRu(cityRaw);
+  const cityEn = en ? cityEnLabel(cityRaw) || '' : '';
+  const cityPart = en ? cityEn : cityRu;
+
+  const parts = [];
+  // 1. категория + город + название. Если название уже содержит город
+  // («Би-2 в Лимасоле»), город в шапку не повторяем — он есть в названии.
+  const cityBare = cityPart.replace(/^(в|на)\s+/i, '').toLowerCase();
+  const nameHasCity = Boolean(cityBare) && name.toLowerCase().includes(cityBare);
+  if (name) {
+    if (cat && cityPart && !nameHasCity) {
+      parts.push(`${cat} ${en ? `in ${cityPart}` : cityPart}: ${name}`);
+    } else if (cat) parts.push(`${cat}: ${name}`);
+    else if (cityPart && !nameHasCity) parts.push(`${name} — ${cityPart}`);
+    else parts.push(name);
+  }
+  // 2. дата и время (ближайшее вхождение — как в title/JSON-LD страницы)
+  const sd = nextOccurrenceDate(ev, TODAY_ISO);
+  const time = typeof ev.start_time === 'string' ? ev.start_time.trim() : '';
+  const dateText = sd
+    ? time
+      ? localizedDateTime(sd, time, lang)
+      : en
+        ? enDate(sd)
+        : ruDate(sd)
+    : '';
+  if (dateText) parts.push(dateText);
+  // 3. площадка: адрес; пусто — город; совпадает с городом — не дублируем
+  const address = typeof ev.address === 'string' ? ev.address.trim() : '';
+  const place = cleanText(
+    en ? (address ? placeLabel(address, ev, 'en') : cityEn) : address || cityRaw,
+  );
+  if (place && place.toLowerCase() !== cityRaw.toLowerCase()) {
+    parts.push(`${t.place}: ${place}`);
+  }
+  // 4. цена — та же семантика, что в eventSeoHtml
+  const price = ev.price != null ? Number(ev.price) : null;
+  const currency = (
+    typeof ev.currency === 'string' && ev.currency ? ev.currency : 'usd'
+  ).toUpperCase();
+  let priceVal = '';
+  if (price != null && price > 0) priceVal = `${price} ${currency}`;
+  else if (Boolean(ev.donation)) priceVal = t.donation;
+  else if (price === 0) priceVal = t.free;
+  if (priceVal) parts.push(`${t.price}: ${priceVal}`);
+
+  const body = factsJoin(parts);
+  const sep = body && !/[.!?…]$/.test(body) ? '.' : '';
+  const base = body ? `${body}${sep}` : '';
+  // Закрывающая фраза подбирается по остатку места: обрыв вида
+  // «See it on the MyPins…» в выдаче выглядит хуже, чем короткая фраза.
+  const closeFor = (room) => {
+    const fits = t.close.filter((c) => room >= c.length + 1);
+    return fits.length ? fits[factsVariant(ev.id, fits.length)] : '';
+  };
+  // Кандидаты по убыванию качества: с закрывающей фразой, с добором, без них.
+  const variants = [];
+  const firstClose = closeFor(FACTS_MAX_LEN - base.length);
+  if (firstClose) variants.push(`${base} ${firstClose}`);
+  for (const p of [t.padShort, t.padLong]) {
+    const head = `${base} ${p}`;
+    const c = closeFor(FACTS_MAX_LEN - head.length);
+    if (c) variants.push(`${head} ${c}`);
+    variants.push(head);
+  }
+  variants.push(base);
+  let text = variants.find((v) => v.length >= FACTS_MIN_LEN && v.length <= FACTS_MAX_LEN);
+  if (!text) {
+    const fitting = variants.filter((v) => v.length <= FACTS_MAX_LEN);
+    text = fitting.length ? fitting.reduce((a, b) => (b.length > a.length ? b : a)) : base;
+  }
+  // Верхняя граница: snippet(cut, 159) + «…» = не больше 160 знаков
+  return text.length > FACTS_MAX_LEN ? snippet(text, FACTS_MAX_LEN - 1) : text;
+}
+
+/** Описание RU-страницы события: текст короче FACTS_MIN_TEXT → фактовое
+ * описание (eventFactsText), иначе — прежняя формула «город, дата. текст».
+ * Возвращает и фактовый текст для видимого абзаца (пусто — fallback не нужен). */
+function eventDescriptionRu(ev, text, category) {
+  const city = typeof ev.city === 'string' ? ev.city.trim() : '';
+  const prefix = [city, ruDate(ev.start_date)].filter(Boolean).join(', ');
+  const plain = snippet(prefix ? `${prefix}. ${text}` : text, 160);
+  if (cleanText(text).length < FACTS_MIN_TEXT || plain.length < FACTS_MIN_DESC) {
+    const facts = eventFactsText(ev, 'ru', { category });
+    return { description: snippet(facts, FACTS_MAX_LEN), facts };
+  }
+  return { description: plain, facts: '' };
+}
+
+/** EN-версия eventDescriptionRu (Кипр — город и страна в префиксе,
+ * см. enCityPrefixParts). Возвращает описание и фактовый текст. */
+function eventDescriptionEn(ev, text, category) {
+  const prefixEn = [...enCityPrefixParts(ev.city), enDate(ev.start_date)]
+    .filter(Boolean)
+    .join(', ');
+  const plain = snippet(prefixEn ? `${prefixEn}. ${text}` : text, 160);
+  if (cleanText(text).length < FACTS_MIN_TEXT || plain.length < FACTS_MIN_DESC) {
+    const facts = eventFactsText(ev, 'en', { category });
+    return { description: snippet(facts, FACTS_MAX_LEN), facts };
+  }
+  return { description: plain, facts: '' };
+}
+
 /**
  * Статический SEO-блок события для вставки в <body> рядом с #root: ровно
  * один h1 = название события (локализованное для RU — title_ru, иначе title,
@@ -3249,7 +3472,7 @@ function eventBreadcrumbHtml(ev, lang = 'ru', name = '', catLink = null) {
  * после серии добавляется блок «Похожие события»/«Similar events» со ссылками
  * на них; пусто — блока нет.
  */
-function eventSeoHtml(ev, url, lang = 'ru', sibs = [], catLink = null, similar = [], past = false, chrono = null) {
+function eventSeoHtml(ev, url, lang = 'ru', sibs = [], catLink = null, similar = [], past = false, chrono = null, facts = '') {
   const en = lang === 'en';
   const name = en
     ? ev.title_en || ev.title || ''
@@ -3332,6 +3555,10 @@ function eventSeoHtml(ev, url, lang = 'ru', sibs = [], catLink = null, similar =
   // Видимая хлебная крошка (Главная > город > событие) — та же иерархия, что
   // BreadcrumbList в JSON-LD этой страницы; вставляется перед блоком серии.
   lines.push(eventBreadcrumbHtml(ev, lang, name, catLink));
+  // Фактовое описание — тот же абзац, что в meta description, только когда
+  // своего текста у события нет (fallback, см. eventFactsText). У событий с
+  // нормальным описанием блок не меняется.
+  if (facts) lines.push(`  <p class="event-facts">${esc(facts)}</p>`);
   const series = seriesDatesHtml(sibs, lang);
   if (series) lines.push(series);
   // Похожие события (тот же город + та же категория) — после блока серии
@@ -3408,8 +3635,7 @@ function eventSeoHtml(ev, url, lang = 'ru', sibs = [], catLink = null, similar =
  */
 function eventPageMetaFor(ev, lang, opts) {
   const en = lang === 'en';
-  const { url, enUrl, hasEn, image, similar, catLink, past, chrono } = opts;
-  const city = typeof ev.city === 'string' ? ev.city.trim() : '';
+  const { url, enUrl, hasEn, image, similar, catLink, past, chrono, category } = opts;
   const sibs = [];
   // JSON-LD архивной страницы: прошедшая дата — узла Event нет, архивная с
   // будущей датой («снято с афиши») — Event без offers (см. eventJsonLd mode).
@@ -3419,11 +3645,14 @@ function eventPageMetaFor(ev, lang, opts) {
     // EN-имя города: Кипр → город (fallback «Cyprus»), прочие — CITY_NAME_EN.
     const cityEn = cityEnLabel(ev.city);
     const enText = ev.description_en || ev.description || ev.description_ru || '';
-    const dateEn = enDate(ev.start_date);
-    // У Кипра в описании город И страна («Nicosia, Cyprus, October 9, 2026.»),
-    // у остальных городов — только имя (см. enCityPrefixParts).
-    const prefixEn = [...enCityPrefixParts(ev.city), dateEn].filter(Boolean).join(', ');
-    const descriptionEn = snippet(prefixEn ? `${prefixEn}. ${enText}` : enText, 160);
+    // Нет своего текста (после trim < 40 знаков) — описание собирается из
+    // фактов записи (eventDescriptionEn → eventFactsText); тот же абзац идёт
+    // в видимый блок страницы (bodySeo).
+    const { description: descriptionEn, facts: factsEn } = eventDescriptionEn(
+      ev,
+      enText,
+      category,
+    );
     const titleEn =
       eventTitle(nameEn, enDate(archiveDateIso(ev)), cityEn, 'en') || 'Event';
     return {
@@ -3441,18 +3670,19 @@ function eventPageMetaFor(ev, lang, opts) {
         { hreflang: 'ru', href: enUrl },
         { hreflang: 'x-default', href: `${SITE_URL}/en/` },
       ],
-      bodySeo: eventSeoHtml(ev, url, 'en', sibs, catLink, similar, Boolean(past), chrono),
+      bodySeo: eventSeoHtml(ev, url, 'en', sibs, catLink, similar, Boolean(past), chrono, factsEn),
     };
   }
   // Заголовок/описание RU-версии — тем же правилом, что localizedText (SPA):
   // перевод, иначе оригинал (если он русский), иначе EN-перевод. Иначе у
   // греческих афиш Кипра в <title> и описании стоял греческий текст.
   const nameRu = ev.title_ru || (ev.source_lang === 'en' ? ev.title : ev.title_en) || ev.title;
-  const title = eventTitle(nameRu, ruDate(archiveDateIso(ev)), city, 'ru') || 'Событие';
+  const cityRu = typeof ev.city === 'string' ? ev.city.trim() : '';
+  const title = eventTitle(nameRu, ruDate(archiveDateIso(ev)), cityRu, 'ru') || 'Событие';
   const ruText =
     ev.description_ru || (ev.source_lang === 'ru' ? ev.description : ev.description_en) || ev.description || '';
-  const prefix = [city, ruDate(ev.start_date)].filter(Boolean).join(', ');
-  const description = snippet(prefix ? `${prefix}. ${ruText}` : ruText, 160);
+  // Нет своего текста — фактовое описание (см. eventDescriptionRu)
+  const { description, facts: factsRu } = eventDescriptionRu(ev, ruText, category);
   return {
     title,
     description,
@@ -3471,7 +3701,7 @@ function eventPageMetaFor(ev, lang, opts) {
           ],
         }
       : {}),
-    bodySeo: eventSeoHtml(ev, url, 'ru', sibs, catLink, similar, Boolean(past), chrono),
+    bodySeo: eventSeoHtml(ev, url, 'ru', sibs, catLink, similar, Boolean(past), chrono, factsRu),
   };
 }
 
@@ -4778,6 +5008,9 @@ async function main() {
   // городских страницах, и для ссылки на категорию со страницы события.
   // Недоступны категории — страниц категорий нет, сборка не падает.
   const categories = await loadCategories(db);
+  // id → категория (name_ru/name_en): нужно и для посадочных, и для ссылки на
+  // категорию со страницы события, и для фактового описания (eventFactsText)
+  const catById = new Map(categories.map((c) => [c.id, c]));
   const cells = buildCategoryCells(events, categories);
   console.log(
     `  категорий: ${categories.length}, ячеек «город × категория» (>=${MIN_CATEGORY_EVENTS}): ${cells.size}`,
@@ -5143,9 +5376,15 @@ async function main() {
     // как localizedText(description, description_ru, …): перевод или оригинал
     const ruText =
       ev.description_ru || (ev.source_lang === 'ru' ? ev.description : ev.description_en) || ev.description || '';
-    const date = ruDate(ev.start_date);
-    const prefix = [city, date].filter(Boolean).join(', ');
-    const description = snippet(prefix ? `${prefix}. ${ruText}` : ruText, 160);
+    // Категория события — из уже загруженного списка (для фактового описания)
+    const catRu = catById.get(ev.category_id);
+    // Своего текста нет (после trim < 40 знаков) → описание из фактов записи;
+    // тот же абзац уходит в видимый блок (bodySeo, p.event-facts)
+    const { description, facts: factsRu } = eventDescriptionRu(
+      ev,
+      ruText,
+      catRu ? catRu.name_ru : '',
+    );
     // og:image и JSON-LD image — ОДИН и тот же ЖИВОЙ URL (resolveEventImages):
     // мёртвое фото (telesco.pe, 404, не image/*) → логотип сайта
     const evImage = eventImage(ev, imageMap);
@@ -5166,7 +5405,7 @@ async function main() {
       ogImage: evImage,
       jsonLd: eventJsonLd(ev, url, 'ru', evImage),
       ...(hasEn ? { hreflang: hreflangRu } : {}),
-      bodySeo: eventSeoHtml(ev, url, 'ru', sibs, eventCategoryLink(ev, 'ru', cells), similarRu),
+      bodySeo: eventSeoHtml(ev, url, 'ru', sibs, eventCategoryLink(ev, 'ru', cells), similarRu, false, null, factsRu),
     };
     writePage(baseHtml, path, metaRu);
     activePathMeta.set(path, metaRu);
@@ -5182,10 +5421,13 @@ async function main() {
       // Дананг→Da Nang, Бали/районы→Bali); не распознан — суффикса города нет
       const cityEn = cityEnLabel(ev.city);
       const enText = ev.description_en || ev.description || ev.description_ru || '';
-      const dateEn = enDate(ev.start_date);
-      // Кипр: «Nicosia, Cyprus, October 9, 2026.»; прочие — «Bali, <дата>.»
-      const prefixEn = [...enCityPrefixParts(ev.city), dateEn].filter(Boolean).join(', ');
-      const descriptionEn = snippet(prefixEn ? `${prefixEn}. ${enText}` : enText, 160);
+      // Своего текста нет (< 40 знаков) → описание из фактов записи (EN)
+      const catEn = catById.get(ev.category_id);
+      const { description: descriptionEn, facts: factsEn } = eventDescriptionEn(
+        ev,
+        enText,
+        catEn ? catEn.name_en : '',
+      );
       // Дата ближайшего вхождения — в EN title/og:title (та же логика, что в RU)
       const occEn = occurrence(ev);
       const titleEn = eventTitle(nameEn, enDate(occEn), cityEn, 'en') || 'Event';
@@ -5206,7 +5448,7 @@ async function main() {
           { hreflang: 'ru', href: url },
           { hreflang: 'x-default', href: enRoot },
         ],
-        bodySeo: eventSeoHtml(ev, enUrl, 'en', sibs, eventCategoryLink(ev, 'en', cells), similarEn),
+        bodySeo: eventSeoHtml(ev, enUrl, 'en', sibs, eventCategoryLink(ev, 'en', cells), similarEn, false, null, factsEn),
       };
       writePage(baseHtml, enPath, metaEn);
       activePathMeta.set(enPath, metaEn);
@@ -5264,6 +5506,7 @@ async function main() {
     ) {
       pastNoChrono += 1;
     }
+    const catPastRu = catById.get(ev.category_id);
     const metaRu = eventPageMetaFor(ev, 'ru', {
       url,
       enUrl,
@@ -5273,6 +5516,7 @@ async function main() {
       catLink: eventCategoryLink(ev, 'ru', cells),
       past: true,
       chrono: chronoOneRu,
+      category: catPastRu ? catPastRu.name_ru : '',
     });
     pastPagesBuffer.push({ path, html: renderPage(pastBaseHtml, metaRu) });
     pastPathMeta.set(path, metaRu);
@@ -5294,6 +5538,7 @@ async function main() {
         catLink: eventCategoryLink(ev, 'en', cells),
         past: true,
         chrono: chronoForEvent(chronoEn, ev, 'en'),
+        category: catPastRu ? catPastRu.name_en : '',
       });
       pastPagesBuffer.push({ path: enPath, html: renderPage(pastBaseHtml, metaEn) });
       pastPathMeta.set(enPath, metaEn);
@@ -5341,7 +5586,7 @@ async function main() {
   // (id категорий), как в buildCategoryCells.
   const locsSet = new Set(locs);
   const aliasCityPaths = new Set(CITY_PAGES.map((c) => c.path));
-  const catById = new Map(categories.map((c) => [c.id, c]));
+  // catById — объявлен выше (после loadCategories)
   // Источники алиасов: gsc — выгрузка Search Console, legacy — прежние слаги
   // после смены формулы (07.10), prev — хвосты из sitemap прошлой сборки,
   // registry — постоянный реестр (затравка scripts/data/alias-urls.json + файл

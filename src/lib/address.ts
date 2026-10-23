@@ -178,6 +178,36 @@ export function placeCityPrefix(
   return name ? [name] : [];
 }
 
+/**
+ * RU-локатив города для части «в городе» фактового описания события
+ * («в Лимасоле», «в Дананге», «на Бали»). У Кипра ev.city приходит как
+ * «Лимасол, Кипр» — город берём из CYPRUS_TOWNS (cityPath знает только
+ * страну), иначе «на Кипре». Город не распознан → '' (часть опускается).
+ * ЗЕРКАЛО: cityLocativeRu в scripts/seo-prerender.mjs — менять оба файла.
+ */
+const CYPRUS_TOWN_LOC_RU: Record<string, string> = {
+  'Никосия': 'в Никосии',
+  'Лимасол': 'в Лимасоле',
+  'Пафос': 'в Пафосе',
+  'Ларнака': 'в Ларнаке',
+  'Ая-Напа': 'в Ая-Напе',
+  'Фамагуста': 'в Фамагусте',
+  'Протарас': 'в Протарасе',
+  'Паралимни': 'в Паралимни',
+  'Полис': 'в Полисе',
+};
+
+/** Предложный падеж города для фактового описания; '' — город не распознан */
+export function cityLocativeRu(rawCity: string | null | undefined): string {
+  const path = cityPath(rawCity);
+  if (!path) return '';
+  if (path === 'cyprus') {
+    const town = cyprusTown(rawCity);
+    return (town && CYPRUS_TOWN_LOC_RU[town.ru]) || CITY_NAME_RU_LOCATIVE.cyprus;
+  }
+  return CITY_NAME_RU_LOCATIVE[path] || '';
+}
+
 /** Локализованное имя города для видимой хлебной крошки (как name в JSON-LD
  * BreadcrumbList). Город не распознан → '' (крошка без звена города). */
 export function cityCrumbLabel(

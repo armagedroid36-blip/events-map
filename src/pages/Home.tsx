@@ -172,6 +172,10 @@ export default function Home({
   // --- Данные ---
   const [events, setEvents] = useState<EventItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  // Категории синхронно для applyEventMeta: мета события собирается в том же
+  // тике, что setCategories (прямая ссылка /event/<id>/), поэтому state ещё
+  // пуст — берём список из ref (нужен для фактового описания: имя категории).
+  const categoriesRef = useRef<Category[]>([]);
   const [loading, setLoading] = useState(true);
   // Прямая ссылка /event/<id>/... на событие, которого нет (удалено/скрыто):
   // вместо карты показываем блок «не найдено»
@@ -402,6 +406,7 @@ export default function Home({
     const api = getApi();
     const [evs, cats] = await Promise.all([api.listEvents(), api.getCategories()]);
     setEvents(evs);
+    categoriesRef.current = cats;
     setCategories(cats);
     setLoading(false);
   }
@@ -697,6 +702,7 @@ export default function Home({
       const [evs, cats] = await Promise.all([api.listEvents(), api.getCategories()]);
       if (!alive) return;
       setEvents(evs);
+      categoriesRef.current = cats;
       setCategories(cats);
       setLoading(false);
       // Прямая ссылка /event/<id>/<slug> (или старая #/?e=<id>, App передаёт
@@ -750,7 +756,7 @@ export default function Home({
           if (archived && archived.status === 'archived') {
             setPastEvent(archived);
             // Мета — как у статической страницы: canonical на сам URL события
-            applyEventMeta(archived);
+            applyEventMeta(archived, categoriesRef.current);
           } else {
             // В базе события нет вовсе. Но это может быть СНИМОК удалённого
             // события (scripts/data/legacy-events.json → /data/legacy-events.json):
@@ -764,7 +770,7 @@ export default function Home({
               // Мета как у статической страницы: canonical на САМ URL (не на
               // соседний), JSON-LD и hreflang статики остаются на месте —
               // applyGenericMeta/404-заглушка здесь не вызываются.
-              applyEventMeta(snapshot);
+              applyEventMeta(snapshot, categoriesRef.current);
             } else {
               // События нет вовсе (удалено/скрыто/не публиковалось) — вместо
               // карты заглушка. Глубокий URL мёртв — мета базовая, canonical/og
@@ -1002,7 +1008,7 @@ export default function Home({
     setSelected(ev);
     // <head>: title «<название> · <город>», description, canonical и og —
     // как у статического пре-рендера (src/lib/seo.ts)
-    applyEventMeta(ev);
+    applyEventMeta(ev, categoriesRef.current);
     // На мобильном карточка поднимается до верха открытого списка
     // (список не сворачиваем — после закрытия карточки он снова виден)
     if (window.innerWidth < 1024) {
@@ -1028,7 +1034,7 @@ export default function Home({
       setFullById((prev) => ({ ...prev, [full.id]: full }));
       // Мета <head> (description/og) собирается из описания события —
       // обновляем после дозагрузки, чтобы совпасть со статикой
-      applyEventMeta(full);
+      applyEventMeta(full, categoriesRef.current);
     } catch {
       // Нет сети/прав — карточка остаётся с лёгкими полями (без описания)
     }

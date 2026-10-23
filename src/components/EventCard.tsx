@@ -19,6 +19,7 @@ import {
   placeCityLabel,
   placeLabel,
 } from '../lib/address';
+import { eventFactsFallback } from '../lib/seo';
 import { nextZ } from '../lib/zindex';
 import { navigate } from '../lib/navigate';
 import { eventHasEn, eventSlug } from '../lib/slug';
@@ -644,6 +645,13 @@ export default function EventCard({
     event.source_lang,
     lang,
   );
+  // Фактовое описание: у события нет своего текста (после trim < 40 знаков) —
+  // показываем ровно тот же абзац, что в meta description (applyEventMeta) и в
+  // статическом блоке страницы (scripts/seo-prerender.mjs, p.event-facts).
+  // Только на странице события: в списках и админке абзац не нужен.
+  const factsText = titleAsH1
+    ? eventFactsFallback(event, lang, (lang === 'en' ? cat?.name_en : cat?.name_ru) ?? '')
+    : '';
 
   const dateLabel = event.recurrence
     ? (recurrenceLabel(event, lang, t) ?? '')
@@ -932,7 +940,15 @@ export default function EventCard({
         </a>
       )}
 
-      <p className="mb-3 whitespace-pre-line text-sm leading-relaxed text-gray-700">{linkifyText(description)}</p>
+      {description ? (
+        <p className="mb-3 whitespace-pre-line text-sm leading-relaxed text-gray-700">{linkifyText(description)}</p>
+      ) : null}
+
+      {/* Фактовое описание (нет своего текста у события): тот же абзац, что в
+          meta description и в статике — p.event-facts */}
+      {factsText ? (
+        <p className="event-facts mb-3 text-sm leading-relaxed text-gray-700">{factsText}</p>
+      ) : null}
 
       {/* Организатор: кружок с аватаркой (клик — публичный профиль)
           + контакты организатора (векторные иконки-ссылки) */}
