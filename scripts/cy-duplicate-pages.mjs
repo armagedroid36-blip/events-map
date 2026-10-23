@@ -49,6 +49,20 @@ export const CN_DUPLICATE_SLUGS = new Map([
         '34.6732015,33.0429902, описание «GO LOCO presents Mochakk in Limassol»)',
     },
   ],
+  [
+    // Тот же класс, зонд редиректов 23.10.2026: страница карточки 247711b7
+    // (`open-sports-festival-2026-corporate-sports-networking-in-limassol-2026-10-17`)
+    // отдаёт 308 на каноническую страницу главного дня 24.10 — событие 17.10 прошло,
+    // карточка ушла в архив, канонический день собран отдельной живой карточкой (4d56fe67).
+    'open-sports-festival-2026-corporate-sports-networking-in-limassol-2026-10-17',
+    {
+      keep: 'https://cyprusnow.app/event/open-sports-festival-2026-24-10-2026-2026-10-24',
+      why:
+        'Open Sports Festival в Heritage Private School (Лимасол): старая страница 17.10 ' +
+        '308-редиректит на страницу 24.10 (та уже собрана карточкой 4d56fe67), ' +
+        'точка школы 34.7379547,32.9886421 та же; карточка 17.10 архивирована',
+    },
+  ],
 ]);
 
 // Принимает ссылку страницы или слаг, возвращает запись о дубле либо null.
