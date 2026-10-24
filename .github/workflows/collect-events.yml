@@ -91,6 +91,17 @@ jobs:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           MODERATION_MAX_LLM: '300'
           MODERATION_MAX_MINUTES: '30'
+      - name: Заморозка слагов событий
+        # Хвост URL фиксируется при первой публикации (slug_ru/slug_en) и больше
+        # не зависит от title_ru/title_en: правка названия не меняет адрес
+        # страницы в sitemap, canonical и ссылках SPA. Шаг идёт ПОСЛЕ автопубликации,
+        # чтобы событие, опубликованное этим прогоном, получило слаг сразу.
+        # Идемпотентен: заполненные значения не перезаписываются.
+        if: always()
+        run: node scripts/freeze-event-slugs.mjs
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
       - name: Уведомление о новых событиях
         if: always()
         run: node scripts/notify-moderation.mjs

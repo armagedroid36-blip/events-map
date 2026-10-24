@@ -33,6 +33,11 @@ export interface EventSlugSource {
   title_ru?: string | null;
   title_en?: string | null;
   source_lang?: string | null;
+  /** Замороженный хвост URL (events.slug_ru): заполняется при первой
+   *  публикации scripts/freeze-event-slugs.mjs и дальше не меняется. */
+  slug_ru?: string | null;
+  /** То же для EN-адреса (events.slug_en). */
+  slug_en?: string | null;
 }
 
 /** Язык публичной страницы — он же язык хвоста URL */
@@ -87,16 +92,27 @@ export function eventHasEn(ev: EventSlugSource | null | undefined): boolean {
   return Boolean(ev?.title_en) || ev?.source_lang === 'en';
 }
 
-/** Хвост URL события на языке страницы: RU — слаг русского названия
- *  (title_ru), EN — английского (title_en). Фолбэк `event-<первые 8 символов
- *  id>`, если адреса из названия не выходит: пусто после транслита (греческий
- *  оригинал без перевода) ИЛИ в слаге нет ни одной латинской буквы — «2026»
- *  у трёх разных архивных кипрских событий (перевод не заполнен, в title_ru
- *  лежит греческое название) не адрес, а мусор, и в sitemap ему не место. */
+/** Хвост URL события на языке страницы.
+ *
+ *  Сначала — ЗАМОРОЖЕННЫЙ слаг (events.slug_ru / slug_en): он фиксируется при
+ *  первой публикации (scripts/freeze-event-slugs.mjs), и правка названия больше
+ *  не меняет адрес страницы. Пока колонка пуста (событие ещё не прошло
+ *  заморозку), считаем из названия — ровно так же, как раньше, поэтому скачка
+ *  адреса в момент заморозки нет.
+ *
+ *  Расчёт: RU — слаг русского названия (title_ru), EN — английского (title_en).
+ *  Фолбэк `event-<первые 8 символов id>`, если адреса из названия не выходит:
+ *  пусто после транслита (греческий оригинал без перевода) ИЛИ в слаге нет ни
+ *  одной латинской буквы — «2026» у трёх разных архивных кипрских событий
+ *  (перевод не заполнен, в title_ru лежит греческое название) не адрес, а мусор,
+ *  и в sitemap ему не место. */
 export function eventSlug(
   ev: EventSlugSource | null | undefined,
   lang: PageLang,
 ): string {
+  const frozen = lang === 'en' ? ev?.slug_en : ev?.slug_ru;
+  const pinned = typeof frozen === 'string' ? frozen.trim() : '';
+  if (pinned) return pinned;
   const title = lang === 'en' ? eventTitleEn(ev) : eventTitleRu(ev);
   const s = slugifyRaw(title);
   return slugHasLatin(title) ? s : `event-${String(ev?.id ?? '').slice(0, 8)}`;

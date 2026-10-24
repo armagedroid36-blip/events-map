@@ -35,6 +35,11 @@ export interface EventItem {
   title_ru?: string;
   /** Перевод названия на английский (если оригинал не на английском) */
   title_en?: string;
+  /** Замороженный хвост RU-URL (events.slug_ru, RPC): фиксируется при первой
+   *  публикации, правка названия адрес не меняет. Пусто — считается из title. */
+  slug_ru?: string | null;
+  /** Замороженный хвост EN-URL (events.slug_en) */
+  slug_en?: string | null;
   /** Оригинальное описание */
   description: string;
   description_ru?: string;
