@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Встреча English Speaking Club — 25 октября 2026 · Нячанг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-CKiP2qhC.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-BifI0Tvl.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-PJz-Xiw7.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-DJE_NwyQ.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Нячанг, 25 октября 2026. Встреча English Speaking Club Когда: 25.10 (вс) в 19:00 Где: Le’sofi Сколько: 150к · Ведущий - профессиональный преподаватель…" />
+    <link rel="canonical" href="https://mypins.site/event/688948f2-2383-4b4d-9dc9-494c8f68866e/vstrecha-english-speaking-club/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Встреча English Speaking Club — 25 октября 2026 · Нячанг" />
+    <meta property="og:description" content="Нячанг, 25 октября 2026. Встреча English Speaking Club Когда: 25.10 (вс) в 19:00 Где: Le’sofi Сколько: 150к · Ведущий - профессиональный преподаватель…" />
+    <meta property="og:url" content="https://mypins.site/event/688948f2-2383-4b4d-9dc9-494c8f68866e/vstrecha-english-speaking-club/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/41b4e2ce2f11b655724edc92c4fea569.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/688948f2-2383-4b4d-9dc9-494c8f68866e/vstrecha-english-speaking-club/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/688948f2-2383-4b4d-9dc9-494c8f68866e/english-speaking-club-meetup/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Встреча English Speaking Club","url":"https://mypins.site/event/688948f2-2383-4b4d-9dc9-494c8f68866e/vstrecha-english-speaking-club/","startDate":"2026-10-25T19:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Le’Sofi Restaurant (Ресторан Караван), 67-69 Nguyễn Thiện Thuật, Nha Trang, Khánh Hòa 650000","address":{"@type":"PostalAddress","addressLocality":"Нячанг","streetAddress":"Le’Sofi Restaurant (Ресторан Караван), 67-69 Nguyễn Thiện Thuật, Nha Trang, Khánh Hòa 650000"},"geo":{"@type":"GeoCoordinates","latitude":12.2954088,"longitude":109.2338291}},"description":"Встреча English Speaking Club Когда: 25.10 (вс) в 19:00 Где: Le’sofi Сколько: 150к · Ведущий - профессиональный преподаватель английского, C2 · Каждый участник предлагает тему для обсуждения · Тема встречи выбирается голосованием · Ведущий поддерживает диалог и дает высказаться каждому · Afterparty Лёгкое общение и практика английского. Это не урок - мы не разбираем грамматику и не учим английскому с нуля Запись: @Iilpeach #дата: 25.10","endDate":"2026-10-25","image":"https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/41b4e2ce2f11b655724edc92c4fea569.jpg","organizer":{"@type":"Organization","name":"Telegram @nyachang_ru","url":"https://t.me/nyachang_ru/25036"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"Встреча English Speaking Club","item":"https://mypins.site/event/688948f2-2383-4b4d-9dc9-494c8f68866e/vstrecha-english-speaking-club/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Встреча English Speaking Club</h1>
+  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-10-25">25 октября 2026</time></p>
+  <p><time datetime="2026-10-25T19:00:00">25 октября 2026, 19:00</time></p>
+  <address>Le’Sofi Restaurant (Ресторан Караван), 67-69 Nguyễn Thiện Thuật, Nha Trang, Khánh Hòa 650000, Нячанг</address>
+  <p>150000 VND</p>
+  <p>Встреча English Speaking Club
+
+Когда: 25.10 (вс) в 19:00
+Где: Le’sofi
+Сколько: 150к
+
+· Ведущий - профессиональный преподаватель английского, C2
+· Каждый участник предлагает тему для обсуждения
+· Тема встречи выбирается голосованием
+· Ведущий поддерживает диалог и дает высказаться каждому
+· Afterparty
+
+Лёгкое общение и практика английского. Это не урок - мы не разбираем грамматику и не учим английскому с нуля
+
+Запись: @Iilpeach
+#дата: 25.10</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/nha-trang/">Нячанг</a> <span aria-hidden="true">›</span> <span>Встреча English Speaking Club</span></p>
+    <p>Ещё события в Нячанге: <a href="/nha-trang/">афиша</a> · <a href="/nha-trang/speaking/">💬 Разговорный клуб</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/8135f05e-e006-4488-beae-5de4956e6336/weekendtalk-angliyskiy-dlya-tekh-kto-umeet-govorit/">WeekendTalk: английский для тех, кто умеет говорить <time datetime="2026-10-24">24 октября 2026</time></a></li>
+    <li><a href="/event/3760f0e0-583f-4735-89bb-00efabc52909/weekendtalk-subbotniy-speaking-club-a2/">WeekendTalk: субботний speaking club A2 <time datetime="2026-10-24">24 октября 2026</time></a></li>
+    <li><a href="/event/81ff56a5-661c-48bf-9633-25d6ed78f52f/klub-angliyskogo-yazyka-nyachanga/">Клуб английского языка Нячанга <time datetime="2026-10-24">24 октября 2026</time></a></li>
+    <li><a href="/event/ca444fdf-12e3-4b04-985f-da066f6e917f/vstrecha-razgovornogo-klub-angliyskogo-dlya-podrostkov-time-to-talk/">Встреча Разговорного клуб английского для подростков TIME TO TALK <time datetime="2026-10-25">25 октября 2026</time></a></li>
+    <li><a href="/event/ed21e027-3bc8-4a32-8fb4-043ad0cecbc1/parnyy-speaking-club-angliyskiy-v-nyachange/">Парный speaking club: английский в Нячанге <time datetime="2026-10-25">25 октября 2026</time></a></li>
+    <li><a href="/event/2a5f4ed6-7495-4285-a8a6-01c69796acd6/time-to-talk-vstrecha-razgovornogo-kluba-angliyskogo-v-nyachange/">TIME TO TALK встреча разговорного клуба английского в Нячанге! <time datetime="2026-10-25">25 октября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Нячанг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/2a5f4ed6-7495-4285-a8a6-01c69796acd6/time-to-talk-vstrecha-razgovornogo-kluba-angliyskogo-v-nyachange/">TIME TO TALK встреча разговорного клуба английского в Нячанге!</a> <time datetime="2026-10-25">25 октября 2026</time></li>
+    <li>Следующее: <a href="/event/ed21e027-3bc8-4a32-8fb4-043ad0cecbc1/parnyy-speaking-club-angliyskiy-v-nyachange/">Парный speaking club: английский в Нячанге</a> <time datetime="2026-10-25">25 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/nha-trang/">Ближайшие события: Нячанг</a></p>
+</div>
+
+  </body>
+</html>
