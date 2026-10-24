@@ -109,7 +109,7 @@ function dateFromWeekday(wdNum, now) {
 }
 
 /** Парсинг даты из текста поста. Возвращает {date: 'YYYY-MM-DD', time: 'HH:MM'} | null */
-function parseDate(text) {
+export function parseDate(text) {
   const now = todayLocal();
   let date = null;
 
@@ -124,7 +124,14 @@ function parseDate(text) {
     let year = m0[3] ? +m0[3] : now.getFullYear();
     if (m0[3] && m0[3].length === 2) year += 2000;
     const cand = new Date(year, month - 1, day);
-    if (month >= 1 && month <= 12 && day >= 1 && day <= 31 && cand >= now) date = cand;
+    if (month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+      // Явный ярлык «#дата:» главнее дня недели: если он в ПРОШЛОМ, пост устарел.
+      // Иначе парсер падал в ветку 3 (день недели) и «ПЯТНИЦА 23.10» превращалась
+      // в следующую пятницу: карточка 8167746c (пост 23.10, прогон 24.10) уехала
+      // на 30.10, и прошедшее событие публиковалось как предстоящее.
+      if (cand < now) return null;
+      date = cand;
+    }
   }
 
   // 1) «21 августа» / «21 авг.» — число + месяц словом
