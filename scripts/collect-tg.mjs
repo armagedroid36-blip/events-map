@@ -151,16 +151,31 @@ export function parseDate(text) {
   }
 
   // 2) «22.08» / «22/08» / «22.08.26»
+  //    Раньше бралась только ПЕРВАЯ пара чисел и только если она в будущем; прошедшая
+  //    пара молча проваливалась в ветку 3 (день недели), и «ПЯТНИЦА | 23.10» уезжала
+  //    на следующую пятницу (+7 дней) — тот же корень, что починен для ярлыка «#дата:»
+  //    в ветке 0 (карточка 8167746c). Теперь: перебираем ВСЕ пары, берём первую в
+  //    будущем (серии «05.10, 12.10, 19.10» перестают цепляться за прошедшую),
+  //    и если будущей нет — явная прошедшая дата означает устаревший пост → null.
+  //    Единицы измерения (км, кг, %, ч, мин) парами дат не считаются.
   if (!date) {
-    const m2 = text.match(/(\d{1,2})[./](\d{1,2})(?:[./](\d{2,4}))?/);
-    if (m2) {
+    const re = /(\d{1,2})[./](\d{1,2})(?:[./](\d{2,4}))?(?!\s*(?:км|km|кг|kg|%|ч\b|мин|м\b))/giu;
+    let explicitPast = false;
+    let farPast = null;
+    for (const m2 of text.matchAll(re)) {
       const day = +m2[1];
       const month = +m2[2];
+      if (!(month >= 1 && month <= 12 && day >= 1 && day <= 31)) continue;
       let year = m2[3] ? +m2[3] : now.getFullYear();
       if (m2[3] && m2[3].length === 2) year += 2000;
       const cand = new Date(year, month - 1, day);
-      if (month >= 1 && month <= 12 && day >= 1 && day <= 31 && cand >= now) date = cand;
+      if (cand >= now) { date = cand; break; }
+      explicitPast = true;
+      // «25.12» в январе без года — анонс на следующий год (как в ветке 1)
+      if (!m2[3] && (now - cand) / 86400000 > 90) farPast = { day, month };
     }
+    if (!date && farPast) date = new Date(now.getFullYear() + 1, farPast.month - 1, farPast.day);
+    if (!date && explicitPast) return null; // явная дата в прошлом = пост устарел
   }
 
   // 3) День недели: «суббота 22.08» / «пятница 18:00»
