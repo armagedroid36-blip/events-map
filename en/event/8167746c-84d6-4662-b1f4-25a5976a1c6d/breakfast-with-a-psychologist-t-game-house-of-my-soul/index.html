@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BREAKFAST WITH A PSYCHOLOGIST… — October 30, 2026 · Nha Trang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-CKiP2qhC.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-BifI0Tvl.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-PJz-Xiw7.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-DJE_NwyQ.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Nha Trang, October 30, 2026. ☕ BREAKFAST WITH A PSYCHOLOGIST: + T-GAME &quot;THE HOUSE OF MY SOUL&quot; Sometimes what we need isn&#39;t another piece of advice on how to…" />
+    <link rel="canonical" href="https://mypins.site/en/event/8167746c-84d6-4662-b1f4-25a5976a1c6d/breakfast-with-a-psychologist-t-game-house-of-my-soul/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="BREAKFAST WITH A PSYCHOLOGIST… — October 30, 2026 · Nha Trang" />
+    <meta property="og:description" content="Nha Trang, October 30, 2026. ☕ BREAKFAST WITH A PSYCHOLOGIST: + T-GAME &quot;THE HOUSE OF MY SOUL&quot; Sometimes what we need isn&#39;t another piece of advice on how to…" />
+    <meta property="og:url" content="https://mypins.site/en/event/8167746c-84d6-4662-b1f4-25a5976a1c6d/breakfast-with-a-psychologist-t-game-house-of-my-soul/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/68ca12d5f8a9599bdc6d350b7c59a2ef.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/8167746c-84d6-4662-b1f4-25a5976a1c6d/breakfast-with-a-psychologist-t-game-house-of-my-soul/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/8167746c-84d6-4662-b1f4-25a5976a1c6d/zavtrak-s-psikhologom-t-igra-dom-moey-dushi/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"BREAKFAST WITH A PSYCHOLOGIST: T-GAME \"HOUSE OF MY SOUL\"","url":"https://mypins.site/en/event/8167746c-84d6-4662-b1f4-25a5976a1c6d/breakfast-with-a-psychologist-t-game-house-of-my-soul/","startDate":"2026-10-30T11:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Nha Trang","address":{"@type":"PostalAddress","addressLocality":"Nha Trang"},"geo":{"@type":"GeoCoordinates","latitude":12.2407732,"longitude":109.1894251}},"description":"☕ BREAKFAST WITH A PSYCHOLOGIST: + T-GAME \"THE HOUSE OF MY SOUL\" Sometimes what we need isn't another piece of advice on how to live right, but a cup of tea, a slice of pie, and a conversation where we can simply be ourselves. ❤️ 📆 FRIDAY | 23.10 | 11:00 📍 Center. 💸 200 VND (rubles accepted) We'll have breakfast, get acquainted, and talk about life without masks and the need to control everything. And then we'll set off to explore our inner home through the transformational game \"The House of My Soul.\" Which rooms in it are filled with life? Where are forgotten desires hiding? And isn't it time to finally free up space for something new? 😉 Come. It will be warm. 📩 Registration @ellysheva #date: 23.10.2026 Post by: Elly Sheva","endDate":"2026-10-30","image":"https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/68ca12d5f8a9599bdc6d350b7c59a2ef.jpg","organizer":{"@type":"Organization","name":"Telegram @nyachang_ru","url":"https://t.me/nyachang_ru/24919"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"BREAKFAST WITH A PSYCHOLOGIST: T-GAME \"HOUSE OF MY SOUL\"","item":"https://mypins.site/en/event/8167746c-84d6-4662-b1f4-25a5976a1c6d/breakfast-with-a-psychologist-t-game-house-of-my-soul/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>BREAKFAST WITH A PSYCHOLOGIST: T-GAME &quot;HOUSE OF MY SOUL&quot;</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-10-30">October 30, 2026</time></p>
+  <p><time datetime="2026-10-30T11:00:00">October 30, 2026, 11:00 AM</time></p>
+  <address>Nha Trang</address>
+  <p>200 VND</p>
+  <p>☕ BREAKFAST WITH A PSYCHOLOGIST: + T-GAME &quot;THE HOUSE OF MY SOUL&quot;
+
+Sometimes what we need isn&#39;t another piece of advice on how to live right, but a cup of tea, a slice of pie, and a conversation where we can simply be ourselves. ❤️
+
+📆 FRIDAY | 23.10 | 11:00
+📍 Center.
+💸 200 VND (rubles accepted)
+
+We&#39;ll have breakfast, get acquainted, and talk about life without masks and the need to control everything. And then we&#39;ll set off to explore our inner home through the transformational game &quot;The House of My Soul.&quot;
+
+Which rooms in it are filled with life? Where are forgotten desires hiding? And isn&#39;t it time to finally free up space for something new? 😉
+
+Come. It will be warm.
+
+📩 Registration @ellysheva
+
+#date: 23.10.2026
+Post by: Elly Sheva</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>BREAKFAST WITH A PSYCHOLOGIST: T-GAME &quot;HOUSE OF MY SOUL&quot;</span></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a> · <a href="/en/nha-trang/workshop/">🎨 Workshops</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/0a74926e-fc88-4a78-b7e3-90be6e1a84dc/game-workshop-my-strength-is-my-weakness/">Game workshop &quot;My strength is my weakness&quot; <time datetime="2026-10-26">October 26, 2026</time></a></li>
+    <li><a href="/en/event/727cd91f-c333-40f1-83b6-274b6361907e/culinary-master-class/">Culinary master class <time datetime="2026-10-26">October 26, 2026</time></a></li>
+    <li><a href="/en/event/4fdd19d7-163b-4b2c-b3fe-679f3179864b/sketching-master-class/">Sketching master class <time datetime="2026-10-27">October 27, 2026</time></a></li>
+    <li><a href="/en/event/710f3103-f9d3-4311-bb11-4b2494cabf62/vikichtenie-book-club/">Vikichtenie Book Club <time datetime="2026-10-27">October 27, 2026</time></a></li>
+    <li><a href="/en/event/81eb44e8-cfda-4640-89d4-c54fcb924e2e/art-classes-for-adults/">ART CLASSES FOR ADULTS <time datetime="2026-10-28">October 28, 2026</time></a></li>
+    <li><a href="/en/event/ff3a6829-2e1c-48fc-a2f7-a9516832125a/a-creative-meeting-on-collage-making/">A creative meeting on collage making <time datetime="2026-11-01">November 1, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Nha Trang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/7d9ea6cb-d2d0-4cd4-b50a-c13ebc3120a5/friday-avalon-no-options/">FRIDAY AVALON. No options</a> <time datetime="2026-10-30">October 30, 2026</time></li>
+    <li>Next: <a href="/en/event/a7afd3d6-31fe-41e1-843c-c00a86efe162/stretching-class/">Stretching class</a> <time datetime="2026-10-30">October 30, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
+</div>
+
+  </body>
+</html>

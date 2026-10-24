@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Открываем бизнес во Вьетнаме в белую! — 24 октября 2026 · Дананг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-CKiP2qhC.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-BifI0Tvl.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-PJz-Xiw7.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-DJE_NwyQ.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-En8uBX4s.css" />
+      <meta name="description" content="Дананг, 24 октября 2026. 🚀Открываем бизнес во Вьетнаме в белую! 💰 Встреча в формате: &quot;Консультация Вопрос - Ответ&quot; После встречи у вас будет четкое понимание…" />
+    <link rel="canonical" href="https://mypins.site/event/5a2663c7-b532-4731-a969-af14d520df09/otkryvaem-biznes-vo-vetname-v-beluyu/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Открываем бизнес во Вьетнаме в белую! — 24 октября 2026 · Дананг" />
+    <meta property="og:description" content="Дананг, 24 октября 2026. 🚀Открываем бизнес во Вьетнаме в белую! 💰 Встреча в формате: &quot;Консультация Вопрос - Ответ&quot; После встречи у вас будет четкое понимание…" />
+    <meta property="og:url" content="https://mypins.site/event/5a2663c7-b532-4731-a969-af14d520df09/otkryvaem-biznes-vo-vetname-v-beluyu/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/5a58665b2d99a19205e2d26f276e17f0.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/5a2663c7-b532-4731-a969-af14d520df09/otkryvaem-biznes-vo-vetname-v-beluyu/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/5a2663c7-b532-4731-a969-af14d520df09/opening-a-business-in-vietnam-legally/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Открываем бизнес во Вьетнаме в белую!","url":"https://mypins.site/event/5a2663c7-b532-4731-a969-af14d520df09/otkryvaem-biznes-vo-vetname-v-beluyu/","startDate":"2026-10-24T13:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"House of Luck Coffee & Brunch, Sun Cosmo Residence, Toà Panoma 1, Ngũ Hành Sơn, Đà Nẵng 550000, Вьетнам","address":{"@type":"PostalAddress","addressLocality":"Дананг","streetAddress":"House of Luck Coffee & Brunch, Sun Cosmo Residence, Toà Panoma 1, Ngũ Hành Sơn, Đà Nẵng 550000, Вьетнам"},"geo":{"@type":"GeoCoordinates","latitude":16.010798,"longitude":108.253178}},"description":"🚀Открываем бизнес во Вьетнаме в белую! 💰 Встреча в формате: \"Консультация Вопрос - Ответ\" После встречи у вас будет четкое понимание по открытию компании во Вьетнаме. Встреча для тех кто действительно планирует вести бизнес во Вьетнаме. 🔠Модератор встречи: Бажина Рената О чем поговорим: 1. Сколько времени и нервов реально занимает открытие компании со 100% собственным владением. 2. Как выбрать коды деятельности и не загнать себя в жесткие рамки перед проверками. 3. Что нужно для открытия счетов в банке и как заводить уставный капитал из-за рубежа. 4. Бухгалтерия, налоги на старте, токены и визовые перспективы для учредителей. 5. Получение рабочего разрешения и TRC на 2 года ⚠️Подготовьте свои вопросы, которые вам интересны по открытию компании. Осталось - 2⃣ места на встречу 🗓 Дата: Суббота, 24 октября ⏰ Сбор гостей: в 13:00 📍 Место: House of Luck Coffee & Brunch 🎟 Вход: Участие 500.000VND ✈️ Регистрация: @Alexander_ButterB #дата: 24.10","endDate":"2026-10-24","image":"https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/5a58665b2d99a19205e2d26f276e17f0.jpg","organizer":{"@type":"Organization","name":"Telegram @danang_afisha","url":"https://t.me/danang_afisha/5962"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Дананг","item":"https://mypins.site/da-nang/"},{"@type":"ListItem","position":3,"name":"Открываем бизнес во Вьетнаме в белую!","item":"https://mypins.site/event/5a2663c7-b532-4731-a969-af14d520df09/otkryvaem-biznes-vo-vetname-v-beluyu/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Открываем бизнес во Вьетнаме в белую!</h1>
+  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-10-24">24 октября 2026</time></p>
+  <p><time datetime="2026-10-24T13:00:00">24 октября 2026, 13:00</time></p>
+  <address>House of Luck Coffee &amp; Brunch, Sun Cosmo Residence, Toà Panoma 1, Ngũ Hành Sơn, Đà Nẵng 550000, Вьетнам, Дананг</address>
+  <p>500000 VND</p>
+  <p>🚀Открываем бизнес во Вьетнаме в белую!
+
+💰 Встреча в формате:
+&quot;Консультация Вопрос - Ответ&quot;
+После встречи у вас будет четкое понимание по открытию компании во Вьетнаме.
+
+Встреча для тех кто действительно планирует вести бизнес во Вьетнаме.
+🔠Модератор встречи: Бажина Рената
+
+О чем поговорим:
+1. Сколько времени и нервов реально занимает открытие компании со 100% собственным владением.
+2. Как выбрать коды деятельности и не загнать себя в жесткие рамки перед проверками.
+3. Что нужно для открытия счетов в банке и как заводить уставный капитал из-за рубежа.
+4. Бухгалтерия, налоги на старте, токены и визовые перспективы для учредителей.
+5. Получение рабочего разрешения и TRC на 2 года
+
+⚠️Подготовьте свои вопросы, которые вам интересны по открытию компании.
+
+Осталось - 2⃣ места на встречу
+🗓 Дата: Суббота, 24 октября
+⏰ Сбор гостей: в 13:00
+📍 Место: House of Luck Coffee &amp; Brunch
+🎟 Вход: Участие 500.000VND
+✈️ Регистрация: @Alexander_ButterB
+#дата: 24.10</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/da-nang/">Дананг</a> <span aria-hidden="true">›</span> <span>Открываем бизнес во Вьетнаме в белую!</span></p>
+    <p>Ещё события в Дананге: <a href="/da-nang/">афиша</a> · <a href="/da-nang/meetup/">🤝 Встречи и нетворкинг</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/15bdf1f5-da71-421d-9564-69103467c06f/kamernye-znakomstva-slow-dating/">КАМЕРНЫЕ ЗНАКОМСТВА. SLOW-DATING <time datetime="2026-10-24">24 октября 2026</time></a></li>
+    <li><a href="/event/443af6cc-f225-419d-ac7f-810191a13039/autentichnye-anti-biznes-znakomstva/">АУТЕНТИЧНЫЕ (анти-бизнес) ЗНАКОМСТВА <time datetime="2026-10-24">24 октября 2026</time></a></li>
+    <li><a href="/event/40b780eb-a065-4173-a567-c71fdce4253b/pochemu-ya-pytayus-zasluzhit-lyubov/">«ПОЧЕМУ Я ПЫТАЮСЬ ЗАСЛУЖИТЬ ЛЮБОВЬ?» <time datetime="2026-10-24">24 октября 2026</time></a></li>
+    <li><a href="/event/5175d38f-5f01-4d76-824f-222728df49b9/otkrytyy-mastermaynd-v-danange/">ОТКРЫТЫЙ МАСТЕРМАЙНД В ДАНАНГЕ! <time datetime="2026-10-24">24 октября 2026</time></a></li>
+    <li><a href="/event/5bf401c9-6344-424e-bb3d-636cef23b447/detskiy-swap-v-subbotu/">Детский SWAP в субботу <time datetime="2026-10-24">24 октября 2026</time></a></li>
+    <li><a href="/event/aa9069f8-bd09-4c4e-a516-38dfc5ef6181/vstrecha-v-danange-na-temu-otkryvaem-biznes-vo-vetname-v-beluyu/">Встреча в Дананге на Тему: Открываем бизнес во Вьетнаме в белую! <time datetime="2026-10-24">24 октября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Дананг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/d7b11f1b-c99b-4c65-81db-aa7fb4816261/vozmu-za-ruku-i-myagko-poznakomlyu-tebya-s-mirom-funktsionalnogo-treninga/">Возьму за руку и мягко познакомлю тебя с миром функционального тренинга</a> <time datetime="2026-10-23">23 октября 2026</time></li>
+    <li>Следующее: <a href="/event/9ccda0d5-3c07-48e9-a1c7-58fc5356cf7a/khatkha-yoga-s-vilmoy/">ХАТХА ЙОГА с Вильмой</a> <time datetime="2026-10-24">24 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/da-nang/">Ближайшие события: Дананг</a></p>
+</div>
+
+  </body>
+</html>
