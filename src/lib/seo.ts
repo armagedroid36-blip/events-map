@@ -921,6 +921,43 @@ export function applyEventMeta(ev: EventItem, categories?: Category[]): void {
  * попадают никогда — даже при contacts_public=true (их показывает только
  * живая страница).
  */
+/**
+ * Meta description организатора — ЗЕРКАЛО orgSeoDescription из
+ * scripts/seo-prerender.mjs (держать синхронно): bio ≥70 знаков — как раньше,
+ * иначе шаблон + добивка до 110 и потолок 160 знаков.
+ */
+const ORG_DESC_MIN = 110;
+const ORG_DESC_MAX = 160;
+const ORG_DESC_TAIL = {
+  ru: ' Все события организатора — на интерактивной карте MyPins.',
+  en: ' All organizer events are on the MyPins interactive map.',
+};
+
+function orgSeoDescription(name: string, bio: string, lang: 'ru' | 'en'): string {
+  const en = lang === 'en';
+  const cleanName = name.trim() || (en ? 'Organizer' : 'Организатор');
+  const cleanBio = bio.trim();
+  if (cleanBio.length >= 70) {
+    let t = snippet(cleanBio, 155);
+    if (t.length < ORG_DESC_MIN) t += ORG_DESC_TAIL[en ? 'en' : 'ru'];
+    return t.length > ORG_DESC_MAX ? t.slice(0, ORG_DESC_MAX) : t;
+  }
+  let text = en
+    ? `${cleanName} — event organizer on MyPins.${
+        cleanBio ? ` ${cleanBio}.` : ''
+      } Event listings on the map: dates, venues and prices.`
+    : `${cleanName} — организатор событий на MyPins.${
+        cleanBio ? ` ${cleanBio}.` : ''
+      } Афиша событий на карте: даты, места и цены.`;
+  if (text.length < ORG_DESC_MIN) text += ORG_DESC_TAIL[en ? 'en' : 'ru'];
+  if (text.length > ORG_DESC_MAX) {
+    // snippet() может вернуть max+1 из-за «…» — держим жёсткий потолок 160
+    const cut = snippet(text, ORG_DESC_MAX - 1);
+    text = cut.length > ORG_DESC_MAX ? cut.slice(0, ORG_DESC_MAX) : cut;
+  }
+  return text;
+}
+
 export function applyOrgMeta(profile: OrgProfile): void {
   const name = (profile.display_name ?? '').trim();
   // Профиль-пустышка без названия: как 404 — базовые title/description без
@@ -936,11 +973,7 @@ export function applyOrgMeta(profile: OrgProfile): void {
   const title = en
     ? `${snippet(name, 40)}: events and listings | MyPins`
     : `${snippet(name, 40)}: события и афиша | MyPins`;
-  const description = bio
-    ? snippet(bio, 155)
-    : en
-      ? `${name} — event organizer. Live event listings on the MyPins map: dates, venues and prices.`
-      : `${name} — организатор событий. Актуальная афиша на карте MyPins: даты, места и цены.`;
+  const description = orgSeoDescription(name, bio, en ? 'en' : 'ru');
   const ruUrl = `${SITE_URL}/org/${encodeURIComponent(profile.id)}/`;
   const enUrl = `${SITE_URL}/en/org/${encodeURIComponent(profile.id)}/`;
   const canonical = en ? enUrl : ruUrl;

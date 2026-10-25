@@ -1030,6 +1030,58 @@ function snippet(text, max) {
   return `${head}…`;
 }
 
+/** «…» в конце ≤ max: snippet() может вернуть max+1 знак (обрезка по слову
+ *  плюс многоточие), а meta description обязан укладываться в 160. */
+function trimToMax(text, max) {
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max - 1);
+  const space = cut.lastIndexOf(' ');
+  const head = (space > max * 0.6 ? cut.slice(0, space) : cut)
+    .replace(/[\s,.;:—–-]+$/, '')
+    .trim();
+  return `${head}…`;
+}
+
+/** Границы осмысленного description страницы организатора (критерий SEO:
+ *  ни 24-знаковых заглушек, ни простыней). */
+const ORG_DESC_MIN = 110;
+const ORG_DESC_MAX = 160;
+
+/** Добивка шаблона, если имя организатора короткое и текст не дотянул до 110 */
+const ORG_DESC_TAIL = {
+  ru: ' Все события организатора — на интерактивной карте MyPins.',
+  en: ' All organizer events are on the MyPins interactive map.',
+};
+
+/**
+ * Meta description страницы /org/<id>/ (RU) и /en/org/<id>/ (EN).
+ * Правило: содержательный bio (≥70 знаков) — как раньше, обрезка до 155;
+ * иначе шаблон «имя — организатор событий на MyPins» + bio (если есть) +
+ * «Афиша событий на карте: даты, места и цены», с добивкой до 110 знаков и
+ * жёстким потолком 160. ЗЕРКАЛО: orgSeoDescription в src/lib/seo.ts.
+ */
+function orgSeoDescription(name, bio, lang = 'ru') {
+  const en = lang === 'en';
+  const cleanName = cleanText(name) || (en ? 'Organizer' : 'Организатор');
+  const cleanBio = cleanText(bio);
+  if (cleanBio.length >= 70) {
+    // Содержательный bio — как раньше, но не короче нижней границы (bio
+    // 70–109 знаков иначе дал бы description < 110)
+    let t = snippet(cleanBio, 155);
+    if (t.length < ORG_DESC_MIN) t += ORG_DESC_TAIL[en ? 'en' : 'ru'];
+    return trimToMax(t, ORG_DESC_MAX);
+  }
+  let text = en
+    ? `${cleanName} — event organizer on MyPins.${
+        cleanBio ? ` ${cleanBio}.` : ''
+      } Event listings on the map: dates, venues and prices.`
+    : `${cleanName} — организатор событий на MyPins.${
+        cleanBio ? ` ${cleanBio}.` : ''
+      } Афиша событий на карте: даты, места и цены.`;
+  if (text.length < ORG_DESC_MIN) text += ORG_DESC_TAIL[en ? 'en' : 'ru'];
+  return trimToMax(text, ORG_DESC_MAX);
+}
+
 /** Заголовок событийной страницы: дата и город присутствуют ВСЕГДА, обрезается
  * только название. snippet() режет строку с конца, поэтому собрать
  * «название — дата · город» и отдать в snippet(…, 65) нельзя: длинное название
@@ -3001,6 +3053,10 @@ function eventPageLink(ev, lang) {
 // (RPC возвращает пустую выборку), поэтому отдельной проверки роли нет.
 const PUBLISHED_ORG_IDS = new Set();
 
+/** id → display_name профиля (для строки «Организатор» на страницах событий:
+ *  в таблице events поля org_display_name нет, имя берём из профиля). */
+const ORG_DISPLAY_NAMES = new Map();
+
 /** Есть ли у владельца страница профиля — единственный источник истины */
 function orgProfilePublished(ownerId) {
   return typeof ownerId === 'string' && ownerId.length > 0 && PUBLISHED_ORG_IDS.has(ownerId);
@@ -3053,6 +3109,51 @@ function orgEventsBlockHtml(lang, activeItems, pastItems) {
   }
   lines.push('  </ul>');
   return lines.join('\n');
+}
+
+/** Города событий организатора — до 3 уникальных: «Все события: Бали, Нячанг».
+ *  Ссылки своего языка (!en → /bali/, en → /en/bali/), город не распознан —
+ *  пропускаем (городской страницы у него нет). Пусто — строки нет. */
+function orgCitiesLineHtml(lang, items) {
+  const en = lang === 'en';
+  const seen = new Set();
+  const links = [];
+  for (const { ev } of [...items.active, ...items.past]) {
+    const link = cityCrumbLink(ev.city, lang);
+    if (!link || seen.has(link.path)) continue;
+    seen.add(link.path);
+    links.push(link);
+    if (links.length === 3) break;
+  }
+  if (!links.length) return '';
+  const anchors = links
+    .map((l) => `<a href="${esc(l.href)}">${esc(l.name)}</a>`)
+    .join(', ');
+  return `  <p>${en ? 'All events:' : 'Все события:'} ${anchors}</p>`;
+}
+
+/** Города сайта для блока «Афиша городов» (страницы организатора без событий) */
+const ORG_CITY_LINKS = ['bali', 'da-nang', 'nha-trang', 'cyprus'];
+
+/**
+ * Блок «Афиша городов» на странице организатора, у которого нет событий:
+ * 4 городские страницы своего языка + вход для организатора на /for-organizers/.
+ * Единственный источник внутренних ссылок у таких страниц (до правки они были
+ * сиротами: 0 входящих, 0 исходящих).
+ */
+function orgCitiesBlockHtml(lang) {
+  const en = lang === 'en';
+  const anchors = ORG_CITY_LINKS.map((p) => {
+    const name = en ? CITY_NAME_EN[p] : CAT_CITY_CRUMB_RU[p];
+    return `<a href="${en ? `/en/${p}` : `/${p}`}/">${esc(name)}</a>`;
+  }).join(', ');
+  return [
+    `  <h2>${esc(en ? 'City listings' : 'Афиша городов')}</h2>`,
+    `  <p>${anchors}</p>`,
+    `  <p><a href="${en ? '/en/for-organizers/' : '/for-organizers/'}">${esc(
+      en ? 'List your event on MyPins' : 'Разместить событие на MyPins',
+    )}</a></p>`,
+  ].join('\n');
 }
 
 /** Данные блока хронологии для конкретного события (null — соседей нет) */
@@ -3589,19 +3690,18 @@ function eventSeoHtml(ev, url, lang = 'ru', sibs = [], catLink = null, similar =
   }
   if (priceText) lines.push(`  <p>${esc(priceText)}</p>`);
   if (text) lines.push(`  <p>${esc(text)}</p>`);
-  if (orgName && ownerId) {
-    // Ссылка — ТОЛЬКО если страница профиля действительно записана сборкой
-    // (orgProfilePublished — то же условие, что у блока /org/<id>/). Иначе имя
-    // выводится текстом: до 21.09.2026 ссылка вела в 404 (5 архивных страниц
-    // событий владельца без публичного профиля — единственная битая цель сайта).
-    const label = en ? 'Organizer:' : 'Организатор:';
-    lines.push(
-      orgProfilePublished(ownerId)
-        ? `  <p>${label} <a href="${esc(
-            `${SITE_URL}/org/${encodeURIComponent(ownerId)}/`,
-          )}">${esc(orgName)}</a></p>`
-        : `  <p>${label} ${esc(orgName)}</p>`,
-    );
+  if (ownerId && orgProfilePublished(ownerId)) {
+    // Ссылка «событие → организатор» — только на собранную страницу профиля
+    // (orgProfilePublished = то же условие, что у публикации /org/<id>/; набор
+    // считается ДО страниц событий). Профиль не опубликован — строку не
+    // печатаем совсем, ссылок на 404 нет. Имя: org_display_name события, иначе
+    // display_name профиля (в таблице events поля org_display_name нет).
+    const resolved = orgName || ORG_DISPLAY_NAMES.get(ownerId) || '';
+    if (resolved) {
+      const label = en ? 'Organizer:' : 'Организатор:';
+      const href = `${en ? '/en' : ''}/org/${encodeURIComponent(ownerId)}/`;
+      lines.push(`  <p>${label} <a href="${esc(href)}">${esc(resolved)}</a></p>`);
+    }
   }
   // Видимая хлебная крошка (Главная > город > событие) — та же иерархия, что
   // BreadcrumbList в JSON-LD этой страницы; вставляется перед блоком серии.
@@ -5020,6 +5120,8 @@ async function main() {
     }
     PUBLISHED_ORG_IDS.add(id);
     orgProfiles.set(id, profile);
+    const dn = typeof profile?.display_name === 'string' ? profile.display_name.trim() : '';
+    if (dn) ORG_DISPLAY_NAMES.set(id, dn);
   }
   console.log(
     `  профили организаторов: кандидатов ${orgOwnerIds.length}, публикуется ${PUBLISHED_ORG_IDS.size}`,
@@ -5938,12 +6040,8 @@ async function main() {
     const enUrl = `${SITE_URL}/en/org/${encodeURIComponent(id)}/`;
     const title = `${snippet(name, 40)}: события и афиша | MyPins`;
     const titleEn = `${snippet(name, 40)}: events and listings | MyPins`;
-    const description = bio
-      ? snippet(bio, 155)
-      : `${name} — организатор событий. Актуальная афиша на карте MyPins: даты, места и цены.`;
-    const descriptionEn = bio
-      ? snippet(bio, 155)
-      : `${name} — event organizer. Live event listings on the MyPins map: dates, venues and prices.`;
+    const description = orgSeoDescription(name, bio, 'ru');
+    const descriptionEn = orgSeoDescription(name, bio, 'en');
     const avatar =
       typeof profile.avatar_url === 'string' && profile.avatar_url.trim()
         ? profile.avatar_url.trim()
@@ -5955,12 +6053,21 @@ async function main() {
     const orgBlockHtml = (lang) => {
       const en = lang === 'en';
       const head = `  <h1>${esc(name)}</h1>${bio ? `\n  <p>${esc(bio)}</p>` : ''}`;
-      const list = orgEventsBlockHtml(
-        lang,
-        en ? items.active.filter(({ ev }) => eventHasEn(ev)) : items.active,
-        en ? items.past.filter(({ ev }) => eventHasEn(ev)) : items.past,
-      );
-      return `<div id="seo-org-block">\n${head}\n${list}\n</div>`;
+      // Набор событий для языка: EN-версия показывает только события с EN-страницей
+      const view = {
+        active: en ? items.active.filter(({ ev }) => eventHasEn(ev)) : items.active,
+        past: en ? items.past.filter(({ ev }) => eventHasEn(ev)) : items.past,
+      };
+      const list = orgEventsBlockHtml(lang, view.active, view.past);
+      // Перелинковка: есть события — строка городов «Все события: …» (ссылки на
+      // городские страницы уже печатает блок событий); событий нет — блок
+      // «Афиша городов» + вход на /for-organizers/. Без этого страница профиля
+      // без событий оставалась сиротой (0 исходящих и 0 входящих ссылок).
+      const hasEvents = view.active.length > 0 || view.past.length > 0;
+      const extra = hasEvents
+        ? orgCitiesLineHtml(lang, view)
+        : orgCitiesBlockHtml(lang);
+      return `<div id="seo-org-block">\n${head}\n${list}\n${extra}\n</div>`;
     };
     const orgJsonLd = (urlLang, lang) => ({
       '@context': 'https://schema.org',

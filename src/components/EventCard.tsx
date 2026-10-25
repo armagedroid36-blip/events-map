@@ -597,6 +597,29 @@ export default function EventCard({
   // Есть ли у владельца собранная страница профиля (/org/<id>/): переход
   // показываем только тогда, когда страница существует (манифест сборки)
   const orgPublished = useOrgProfilePublished(event.owner_id);
+  // Имя организатора: в ответе API у события поля org_display_name нет (в
+  // таблице events такой колонки не существует) — берём display_name из
+  // публичного профиля. Запрос только когда профиль опубликован (иначе ссылки
+  // всё равно нет и имя нигде не показывается).
+  const [orgName, setOrgName] = useState('');
+  useEffect(() => {
+    let alive = true;
+    if (!event.owner_id || !orgPublished) {
+      setOrgName('');
+      return () => {
+        alive = false;
+      };
+    }
+    getApi()
+      .getOrgProfile(event.owner_id)
+      .then((p) => {
+        if (alive) setOrgName((p?.display_name ?? '').trim());
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [event.owner_id, orgPublished]);
   const cat = categories.find((c) => c.id === event.category_id);
 
   const title = localizedText(event.title, event.title_ru, event.title_en, event.source_lang, lang);
@@ -965,9 +988,12 @@ export default function EventCard({
               onClick={() => {
                 if (!orgPublished) return;
                 onClose();
-                // Чистый URL профиля организатора (/org/<id>); Home/App сами
+                // Чистый URL профиля организатора своего языка:
+                // /org/<id>/ (RU) или /en/org/<id>/ (EN); Home/App сами
                 // разберут маршрут
-                navigate(`/org/${encodeURIComponent(event.owner_id ?? '')}`);
+                navigate(
+                  `${lang === 'en' ? '/en' : ''}/org/${encodeURIComponent(event.owner_id ?? '')}/`,
+                );
               }}
               title={orgPublished ? t('card.organizer') : undefined}
               aria-label={orgPublished ? t('card.organizer') : undefined}
@@ -999,8 +1025,10 @@ export default function EventCard({
                   </svg>
                 </span>
               )}
-              {event.org_display_name && (
-                <span className="text-sm font-medium text-gray-900">{event.org_display_name}</span>
+              {(event.org_display_name || orgName) && (
+                <span className="text-sm font-medium text-gray-900">
+                  {event.org_display_name || orgName}
+                </span>
               )}
             </button>
           )}
