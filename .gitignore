@@ -41,6 +41,15 @@ logo3d/
 # рабочие артефакты сессий (не часть проекта)
 .hermes/
 .work-gsc/
+.work-archive-ru/
+
+# тестовые сборки vite (dist-smoke, dist.stale-<ts>) — не в репозиторий
+dist-smoke/
+dist.stale-*/
+
+# разовые рабочие скрипты и кеш Python (не часть проекта)
+scripts/_tmp-*
+__pycache__/
 
 .env.build
 
