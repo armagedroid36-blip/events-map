@@ -102,3 +102,33 @@ export function findCityZone(city, text) {
   }
   return null;
 }
+
+// Текст поста тоже называет часть города («📍 Нячанг, центр», «Локация: север»),
+// но зону ищем ТОЛЬКО в строках про место: иначе «центр» ловится в любом тексте.
+const LOC_WORDS = ['📍', 'где', 'локаци', 'мест', 'адрес'];
+
+/** Строки поста, которые говорят о месте события. */
+export function locationText(desc) {
+  if (!desc) return '';
+  return String(desc)
+    .split(String.fromCharCode(10))
+    .filter((line) => {
+      const low = line.toLowerCase();
+      return LOC_WORDS.some((w) => low.includes(w));
+    })
+    .join(' ');
+}
+
+/**
+ * Зона события: сначала адрес/название, затем текст поста. Зона center по тексту
+ * НЕ применяется — её якорь это конкретное здание (Neverland), а не центр города.
+ * @returns {{ zone: string, label: string, lat: number, lng: number } | null}
+ */
+export function findEventZone(city, ev) {
+  if (!ev) return null;
+  const byAddr = findCityZone(city, `${ev.address || ''} ${ev.title || ''}`);
+  if (byAddr && byAddr.zone !== 'center') return byAddr;
+  const byText = findCityZone(city, locationText(ev.description));
+  if (byText && byText.zone !== 'center') return byText;
+  return null;
+}
