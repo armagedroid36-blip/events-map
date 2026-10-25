@@ -10,6 +10,7 @@ import { formatDate } from '../lib/dates';
 import { localizedText } from '../lib/translate';
 import { config } from '../config';
 import { applyGenericMeta, applyOrgMeta } from '../lib/seo';
+import { cityCrumbLabel, cityPageHref } from '../lib/address';
 import { pushSupported, getBrowserSubscription, subscriptionData, urlBase64ToUint8Array } from '../lib/push';
 import { navigate } from '../lib/navigate';
 import type { OrgProfile, EventItem, Category, GalleryPhoto } from '../lib/types';
@@ -52,6 +53,14 @@ export function PersonIcon({ size = 20 }: { size?: number }) {
     </svg>
   );
 }
+
+/** Городские страницы сайта для блока «Афиша городов» (порядок как в статике) */
+const ORG_CITY_NAMES: [string, string][] = [
+  ['Бали', 'bali'],
+  ['Дананг', 'da-nang'],
+  ['Нячанг', 'nha-trang'],
+  ['Кипр', 'cyprus'],
+];
 
 interface Props {
   orgId: string;
@@ -198,6 +207,19 @@ export default function OrgProfilePage({ orgId }: Props) {
   const avatar = avatarSrc(profile.avatar_url);
   const name = profile.display_name || t('org.title');
   const orgEvents = events.filter((e) => e.owner_id === orgId);
+  // Уникальные города событий организатора (до 3) — строка «Все события: …»
+  const orgCities: { href: string; name: string }[] = [];
+  {
+    const seen = new Set<string>();
+    for (const ev of orgEvents) {
+      const href = cityPageHref(ev.city, lang);
+      const name = cityCrumbLabel(ev.city, lang);
+      if (!href || !name || seen.has(href)) continue;
+      seen.add(href);
+      orgCities.push({ href, name });
+      if (orgCities.length === 3) break;
+    }
+  }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -337,6 +359,49 @@ export default function OrgProfilePage({ orgId }: Props) {
             </ul>
           )}
         </div>
+
+        {/* Перелинковка — паритет со статикой (#seo-org-block): у организатора с
+            событиями показываем города, у профиля без событий — афишу городов и
+            вход на /for-organizers/. Без этого SPA-страница оставалась сиротой
+            (в статике ссылки были, после гидрации исчезали). */}
+        {orgCities.length > 0 ? (
+          <p className="mt-3 text-sm text-gray-600">
+            {t('org.allEvents')}{' '}
+            {orgCities.map((c, i) => (
+              <span key={c.href}>
+                {i > 0 ? ', ' : ''}
+                <a href={c.href} className="text-[#E66343] hover:underline">
+                  {c.name}
+                </a>
+              </span>
+            ))}
+          </p>
+        ) : (
+          <div className="mt-4 rounded-lg border border-gray-200 bg-white p-4">
+            <h2 className="mb-2 text-sm font-semibold text-gray-900">{t('org.cityListings')}</h2>
+            <p className="text-sm">
+              {ORG_CITY_NAMES.map(([ruName, path], i) => (
+                <span key={path}>
+                  {i > 0 ? ', ' : ''}
+                  <a
+                    href={lang === 'en' ? `/en/${path}/` : `/${path}/`}
+                    className="text-[#E66343] hover:underline"
+                  >
+                    {cityCrumbLabel(ruName, lang)}
+                  </a>
+                </span>
+              ))}
+            </p>
+            <p className="mt-2 text-sm">
+              <a
+                href={lang === 'en' ? '/en/for-organizers/' : '/for-organizers/'}
+                className="text-[#E66343] hover:underline"
+              >
+                {t('org.listYourEvent')}
+              </a>
+            </p>
+          </div>
+        )}
 
         {/* Подписка на новые события */}
         <form onSubmit={subscribe} className="mt-4 space-y-3 rounded-lg border border-gray-200 bg-white p-4 text-sm">
