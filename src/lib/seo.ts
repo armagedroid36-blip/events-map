@@ -933,10 +933,44 @@ const ORG_DESC_TAIL = {
   en: ' All organizer events are on the MyPins interactive map.',
 };
 
+/** Признак кириллицы: в meta EN-страницы её быть не должно */
+const ORG_CYRILLIC_RE = /[\u0400-\u04FF]/;
+
+/** Кириллица → латиница для EN-меты организатора (display_name в профиле
+ *  русский, а имя в мете EN-страницы обязано быть латиницей). */
+const ORG_TRANSLIT: Record<string, string> = {
+  а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'yo', ж: 'zh', з: 'z',
+  и: 'i', й: 'y', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r',
+  с: 's', т: 't', у: 'u', ф: 'f', х: 'kh', ц: 'ts', ч: 'ch', ш: 'sh',
+  щ: 'shch', ъ: '', ы: 'y', ь: '', э: 'e', ю: 'yu', я: 'ya',
+  і: 'i', ї: 'yi', є: 'ye', ґ: 'g',
+};
+
+function latinizeOrgName(text: string): string {
+  let out = '';
+  for (const ch of text) {
+    const lower = ch.toLowerCase();
+    const tr = ORG_TRANSLIT[lower];
+    if (tr === undefined) {
+      out += ch;
+      continue;
+    }
+    out += ch !== lower && tr ? tr[0].toUpperCase() + tr.slice(1) : tr;
+  }
+  return out.trim();
+}
+
 function orgSeoDescription(name: string, bio: string, lang: 'ru' | 'en'): string {
   const en = lang === 'en';
-  const cleanName = name.trim() || (en ? 'Organizer' : 'Организатор');
-  const cleanBio = bio.trim();
+  let cleanName = name.trim() || (en ? 'Organizer' : 'Организатор');
+  // EN-мета: кириллицы быть не должно — русское имя транслитерируем
+  if (en && ORG_CYRILLIC_RE.test(cleanName)) {
+    cleanName = latinizeOrgName(cleanName);
+    if (!cleanName || ORG_CYRILLIC_RE.test(cleanName)) cleanName = 'Organizer';
+  }
+  let cleanBio = bio.trim();
+  // EN: bio берём только если он латиницей; русский bio пропускаем целиком
+  if (en && ORG_CYRILLIC_RE.test(cleanBio)) cleanBio = '';
   if (cleanBio.length >= 70) {
     // Точка перед добивкой обязательна: иначе хвост приклеивается к последнему
     // слову bio («…все материалы включены Все события организатора…»).
@@ -970,8 +1004,14 @@ export function applyOrgMeta(profile: OrgProfile): void {
   // EN-мета. Версии парные: обе пишет пре-рендер.
   const en = isEnPath(window.location.pathname);
   const bio = (profile.bio ?? '').trim();
+  // EN-заголовок: кириллицы быть не должно — русское имя транслитерируем
+  let seoName = name;
+  if (en && ORG_CYRILLIC_RE.test(seoName)) {
+    seoName = latinizeOrgName(seoName);
+    if (!seoName) seoName = 'Organizer';
+  }
   const title = en
-    ? `${snippet(name, 40)}: events and listings | MyPins`
+    ? `${snippet(seoName, 40)}: events and listings | MyPins`
     : `${snippet(name, 40)}: события и афиша | MyPins`;
   const description = orgSeoDescription(name, bio, en ? 'en' : 'ru');
   const ruUrl = `${SITE_URL}/org/${encodeURIComponent(profile.id)}/`;

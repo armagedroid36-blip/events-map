@@ -1053,6 +1053,33 @@ const ORG_DESC_TAIL = {
   en: ' All organizer events are on the MyPins interactive map.',
 };
 
+/** Признак кириллицы: в meta EN-страницы её быть не должно */
+const ORG_CYRILLIC_RE = /[\u0400-\u04FF]/;
+
+/** Кириллица → латиница для EN-меты организатора (display_name в профиле
+ *  русский, а имя в мете EN-страницы обязано быть латиницей). */
+const ORG_TRANSLIT = {
+  а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'yo', ж: 'zh', з: 'z',
+  и: 'i', й: 'y', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r',
+  с: 's', т: 't', у: 'u', ф: 'f', х: 'kh', ц: 'ts', ч: 'ch', ш: 'sh',
+  щ: 'shch', ъ: '', ы: 'y', ь: '', э: 'e', ю: 'yu', я: 'ya',
+  і: 'i', ї: 'yi', є: 'ye', ґ: 'g',
+};
+
+function latinizeOrgName(text) {
+  let out = '';
+  for (const ch of String(text ?? '')) {
+    const lower = ch.toLowerCase();
+    const tr = ORG_TRANSLIT[lower];
+    if (tr === undefined) {
+      out += ch;
+      continue;
+    }
+    out += ch !== lower && tr ? tr[0].toUpperCase() + tr.slice(1) : tr;
+  }
+  return cleanText(out);
+}
+
 /**
  * Meta description страницы /org/<id>/ (RU) и /en/org/<id>/ (EN).
  * Правило: содержательный bio (≥70 знаков) — как раньше, обрезка до 155;
@@ -1062,8 +1089,15 @@ const ORG_DESC_TAIL = {
  */
 function orgSeoDescription(name, bio, lang = 'ru') {
   const en = lang === 'en';
-  const cleanName = cleanText(name) || (en ? 'Organizer' : 'Организатор');
-  const cleanBio = cleanText(bio);
+  let cleanName = cleanText(name) || (en ? 'Organizer' : 'Организатор');
+  // EN-мета: кириллицы быть не должно — русское имя транслитерируем
+  if (en && ORG_CYRILLIC_RE.test(cleanName)) {
+    cleanName = latinizeOrgName(cleanName);
+    if (!cleanName || ORG_CYRILLIC_RE.test(cleanName)) cleanName = 'Organizer';
+  }
+  let cleanBio = cleanText(bio);
+  // EN: bio берём только если он латиницей; русский bio пропускаем целиком
+  if (en && ORG_CYRILLIC_RE.test(cleanBio)) cleanBio = '';
   if (cleanBio.length >= 70) {
     // Содержательный bio — как раньше, но не короче нижней границы (bio
     // 70–109 знаков иначе дал бы description < 110). Точка перед добивкой
@@ -6040,7 +6074,13 @@ async function main() {
     const url = `${SITE_URL}/org/${encodeURIComponent(id)}/`;
     const enUrl = `${SITE_URL}/en/org/${encodeURIComponent(id)}/`;
     const title = `${snippet(name, 40)}: события и афиша | MyPins`;
-    const titleEn = `${snippet(name, 40)}: events and listings | MyPins`;
+    // EN-заголовок: никакой кириллицы — русское имя транслитерируем
+    let seoNameEn = name;
+    if (ORG_CYRILLIC_RE.test(seoNameEn)) {
+      seoNameEn = latinizeOrgName(seoNameEn);
+      if (!seoNameEn) seoNameEn = 'Organizer';
+    }
+    const titleEn = `${snippet(seoNameEn, 40)}: events and listings | MyPins`;
     const description = orgSeoDescription(name, bio, 'ru');
     const descriptionEn = orgSeoDescription(name, bio, 'en');
     const avatar =
