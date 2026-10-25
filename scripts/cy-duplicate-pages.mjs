@@ -63,6 +63,24 @@ export const CN_DUPLICATE_SLUGS = new Map([
         'точка школы 34.7379547,32.9886421 та же; карточка 17.10 архивирована',
     },
   ],
+  [
+    // Класс «две записи ленты на один вечер, разные слаги» (25.10.2026): карточка
+    // 19cb512b уже стоит на карте по канонической записи `...-in-nicosia-...`
+    // (зал Eleftheria Indoor Arena, 35.14748,33.3119735, 19:30–21:30). Запись
+    // `...-at-eleftheria-arena-...` — второй слаг того же вечера: JSON-LD самой
+    // страницы даёт startDate 2026-11-10T19:30:00+02:00 и venue «Eleftheria Square»
+    // (центровой фолбэк вместо зала), поэтому собранная по ней карточка 6f07b75c
+    // печатала 17:30 и площадь — архивирована.
+    'john-cleese-last-time-to-see-me-before-i-die-at-eleftheria-arena-2026-11-10',
+    {
+      keep: 'https://cyprusnow.app/event/john-cleese-last-time-to-see-me-before-i-die-in-nicosia-2026-11-10',
+      why:
+        'один вечер John Cleese 10.11.2026: запись ленты `...-in-nicosia-...` ' +
+        'start_at 17:30Z = 19:30 местного, venue Tassos Papadopoulos – Eleftheria Indoor Arena ' +
+        '(Engomi, 35.14748,33.3119735) — карточка 19cb512b active; у второго слага ' +
+        'JSON-LD той же даты 19:30+02:00, но venue «Eleftheria Square» (фолбэк)',
+    },
+  ],
 ]);
 
 // Принимает ссылку страницы или слаг, возвращает запись о дубле либо null.
