@@ -108,6 +108,39 @@ function dateFromWeekday(wdNum, now) {
   return d;
 }
 
+/**
+ * Пост несёт ЯВНУЮ дату, и она в прошлом → пост устарел, LLM-фолбэк звать нельзя.
+ * Иначе «#дата: 24.10» (прошлое) ронял parseDate в null, LLM читал «в эту субботу»
+ * и ставил СЛЕДУЮЩУЮ субботу (+7): карточка c55c6f77 (пост 24.10, прогон 25.10)
+ * попала на 31.10 и прошедшее событие публиковалось как предстоящее.
+ */
+export function staleExplicitDate(text) {
+  const now = todayLocal();
+  const m0 = text.match(/(?:^|\n)\s*#?\s*дата\s*[:：]\s*(\d{1,2})[./](\d{1,2})(?:[./](\d{2,4}))?/iu);
+  if (m0) {
+    const day = +m0[1];
+    const month = +m0[2];
+    let year = m0[3] ? +m0[3] : now.getFullYear();
+    if (m0[3] && m0[3].length === 2) year += 2000;
+    if (month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+      return new Date(year, month - 1, day) < now;
+    }
+  }
+  const re = /(\d{1,2})[./](\d{1,2})(?:[./](\d{2,4}))?(?!\s*(?:км|km|кг|kg|%|ч\b|мин|м\b))/giu;
+  let past = false;
+  for (const m2 of text.matchAll(re)) {
+    const day = +m2[1];
+    const month = +m2[2];
+    if (!(month >= 1 && month <= 12 && day >= 1 && day <= 31)) continue;
+    let year = m2[3] ? +m2[3] : now.getFullYear();
+    if (m2[3] && m2[3].length === 2) year += 2000;
+    const cand = new Date(year, month - 1, day);
+    if (cand >= now) return false; // есть будущая явная дата — пост не устарел
+    past = true;
+  }
+  return past;
+}
+
 /** Парсинг даты из текста поста. Возвращает {date: 'YYYY-MM-DD', time: 'HH:MM'} | null */
 export function parseDate(text) {
   const now = todayLocal();
@@ -615,6 +648,10 @@ async function main() {
         // формулировки («в следующую пятницу», «29 сентября в 19:00»).
         // LLM зовём ТОЛЬКО для постов без regex-даты (экономия токенов).
         let when = parseDate(post.text);
+        if (!when && staleExplicitDate(post.text)) {
+          console.log(`  - ${post.pid}: явная дата поста в прошлом — пропуск (LLM не зовём)`);
+          continue;
+        }
         if (!when && post.text.length >= 80) {
           const llmDate = await extractDateLLM(post.text, ch.tzMin);
           if (llmDate?.start_date) {
