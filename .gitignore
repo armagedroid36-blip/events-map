@@ -59,3 +59,7 @@ public/data/events.json
 # реестр страниц-алиасов — генерируется сборкой (scripts/build-alias-registry.mjs),
 # источник истины в репозитории — scripts/data/alias-urls.json
 public/data/alias-urls.json
+
+# снапшот удалённых событий — генерируется сборкой (scripts/build-legacy-snapshot.mjs),
+# источник истины в репозитории — scripts/data/legacy-events.json
+public/data/legacy-events.json
