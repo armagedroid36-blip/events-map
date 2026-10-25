@@ -978,28 +978,24 @@ export default function EventCard({
       {(event.owner_id || event.contact_telegram || event.contact_whatsapp || event.contact_email || event.contact_phone || event.contact_instagram) && (
         <div className="mb-3 border-t border-gray-200 pt-2">
           <p className="mb-1.5 text-xs font-medium text-gray-500">{t('card.organizer')}</p>
-          {event.owner_id && (
-            <button
-              type="button"
-              // Переход на профиль есть только при собранной странице профиля:
-              // иначе клик уводил на заглушку «не найдено» (страницы /org/<id>/
-              // сборка пишет не всем владельцам)
-              disabled={!orgPublished}
-              onClick={() => {
-                if (!orgPublished) return;
+          {event.owner_id && orgPublished && (
+            <a
+              // Видимая внутренняя ссылка «событие → организатор» своего языка:
+              // /org/<id>/ (RU) или /en/org/<id>/ (EN). Профиль не опубликован
+              // (нет страницы) — ссылки и строки нет вовсе.
+              href={`${lang === 'en' ? '/en' : ''}/org/${encodeURIComponent(event.owner_id ?? '')}/`}
+              onClick={(e) => {
+                // Внутри SPA — переход без перезагрузки; href остаётся для
+                // краулера, средней кнопки мыши и «копировать адрес»
+                e.preventDefault();
                 onClose();
-                // Чистый URL профиля организатора своего языка:
-                // /org/<id>/ (RU) или /en/org/<id>/ (EN); Home/App сами
-                // разберут маршрут
                 navigate(
                   `${lang === 'en' ? '/en' : ''}/org/${encodeURIComponent(event.owner_id ?? '')}/`,
                 );
               }}
-              title={orgPublished ? t('card.organizer') : undefined}
-              aria-label={orgPublished ? t('card.organizer') : undefined}
-              className={`mb-2 flex items-center gap-2 rounded-full ${
-                orgPublished ? 'hover:bg-gray-50' : 'cursor-default'
-              }`}
+              title={t('card.organizer')}
+              aria-label={t('card.organizer')}
+              className="mb-2 flex items-center gap-2 rounded-full hover:bg-gray-50"
             >
               {event.org_avatar_url && !brokenOrgAvatar ? (
                 <img
@@ -1030,7 +1026,7 @@ export default function EventCard({
                   {event.org_display_name || orgName}
                 </span>
               )}
-            </button>
+            </a>
           )}
           {(event.contact_telegram || event.contact_whatsapp || event.contact_email || event.contact_phone || event.contact_instagram) && (
           <div className="flex flex-wrap gap-2">
