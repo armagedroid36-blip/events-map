@@ -118,6 +118,10 @@ export default function App() {
       const pub = stripLangPrefix(path);
       const isHomeRoute =
         pub.startsWith('/event/') ||
+        // /org/<id> — мету ставит OrgProfilePage (applyOrgMeta); generic её не
+        // должен перебивать (до правки живой title/description профиля
+        // затирались описанием главной — статика при этом была верной)
+        pub.startsWith('/org/') ||
         CITY_ROUTES.has(pub) ||
         categoryRoute(pub) !== null ||
         pub === '/blog' ||

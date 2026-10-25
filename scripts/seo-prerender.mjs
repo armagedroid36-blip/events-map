@@ -1066,18 +1066,19 @@ function orgSeoDescription(name, bio, lang = 'ru') {
   const cleanBio = cleanText(bio);
   if (cleanBio.length >= 70) {
     // Содержательный bio — как раньше, но не короче нижней границы (bio
-    // 70–109 знаков иначе дал бы description < 110)
-    let t = snippet(cleanBio, 155);
+    // 70–109 знаков иначе дал бы description < 110). Точка перед добивкой
+    // обязательна: иначе хвост приклеивается к последнему слову bio
+    // («…все материалы включены Все события организатора…»).
+    const body = /[.!?…]$/.test(cleanBio) ? cleanBio : `${cleanBio}.`;
+    let t = snippet(body, 155);
     if (t.length < ORG_DESC_MIN) t += ORG_DESC_TAIL[en ? 'en' : 'ru'];
     return trimToMax(t, ORG_DESC_MAX);
   }
+  // bio в шаблон — с точкой на конце, но без двойной, если она уже есть
+  const bioPart = cleanBio ? ` ${/[.!?…]$/.test(cleanBio) ? cleanBio : `${cleanBio}.`}` : '';
   let text = en
-    ? `${cleanName} — event organizer on MyPins.${
-        cleanBio ? ` ${cleanBio}.` : ''
-      } Event listings on the map: dates, venues and prices.`
-    : `${cleanName} — организатор событий на MyPins.${
-        cleanBio ? ` ${cleanBio}.` : ''
-      } Афиша событий на карте: даты, места и цены.`;
+    ? `${cleanName} — event organizer on MyPins.${bioPart} Event listings on the map: dates, venues and prices.`
+    : `${cleanName} — организатор событий на MyPins.${bioPart} Афиша событий на карте: даты, места и цены.`;
   if (text.length < ORG_DESC_MIN) text += ORG_DESC_TAIL[en ? 'en' : 'ru'];
   return trimToMax(text, ORG_DESC_MAX);
 }
