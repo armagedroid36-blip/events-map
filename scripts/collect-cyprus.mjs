@@ -55,7 +55,7 @@ const CY_DATE = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Nicosia', yea
 // такие обложкой не ставим: у карточки лучше пустая витрина, чем чужая картинка.
 const CN_COVER_BASE = 'https://ygyeyprogpawmjzjyrew.supabase.co/storage/v1/object/public/forecast-events/events/';
 const CN_COVER_MIN_BYTES = 8000; // настоящие карточки CN бывают 12.4 КБ (kosta-kritikos) — 15000 отсекало реальные
-const CN_COVER_STUBS = new Set(['7272cdc5db952c7e2f00e17a156f6622']);
+const CN_COVER_STUBS = new Set(['7272cdc5db952c7e2f00e17a156f6622', '7120a9bb717fa2e52a1bb030305ffeba']);
 const cnCoverHashes = new Set();
 let cnCoverTries = 0;
 const CN_COVER_MAX_TRIES = 60;
@@ -80,11 +80,46 @@ async function cnCoverBySlug(pageUrl) {
   }
 }
 
+// Проверка «годится ли URL ленты как фото»: чужие CDN (eventor, allaboutlimassol и т.п. —
+// настоящие фото источника) принимаются без запроса; их же Storage проверяется по размеру
+// и хэшу. Результат кэшируется по URL — один и тот же файл у разных событий не качается дважды.
+const cnImageCache = new Map();
+const CN_OWN_HOST = 'ygyeyprogpawmjzjyrew.supabase.co';
+async function cnImageUsable(url) {
+  try {
+    if (!String(url).includes(CN_OWN_HOST)) return true;
+    if (cnImageCache.has(url)) return cnImageCache.get(url);
+    let usable = true;
+    const res = await fetch(url, { headers: { 'user-agent': 'Mozilla/5.0 (compatible; events-map/1.0)' } });
+    if (!res.ok) usable = false;
+    else {
+      const buf = Buffer.from(await res.arrayBuffer());
+      const md5 = createHash('md5').update(buf).digest('hex');
+      if (buf.length < CN_COVER_MIN_BYTES || CN_COVER_STUBS.has(md5) || cnCoverHashes.has(md5)) usable = false;
+      else cnCoverHashes.add(md5);
+    }
+    cnImageCache.set(url, usable);
+    return usable;
+  } catch {
+    return false;
+  }
+}
+
+
 // Фото карточки CN: сначала поля ленты (в т.ч. local_image_url — их Storage), и только
 // если лента молчит — обложка по слагу страницы (cnCoverBySlug с фильтром уникальности).
 async function cnPhotosFor(ev, pageUrl) {
   const direct = [ev.local_image_url, ev.image_url, ev.image, ev.cover_image].filter(Boolean);
-  if (direct.length) return direct;
+  if (direct.length) {
+    // Поля ленты тоже могут нести ЗАГЛУШКУ их Storage (7120a9bb…, 3.9 КБ на разных
+    // событиях): проверяются те же правила, что и обложка по слагу, иначе чужая
+    // картинка попадает на витрину мимо фильтра.
+    const ok = [];
+    for (const u of direct) {
+      if (await cnImageUsable(u)) ok.push(u);
+    }
+    if (ok.length) return ok;
+  }
   const cover = await cnCoverBySlug(pageUrl);
   return cover ? [cover] : [];
 }
