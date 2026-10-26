@@ -6158,35 +6158,46 @@ async function main() {
         : orgCitiesBlockHtml(lang);
       return `<div id="seo-org-block">\n${head}\n${list}\n${extra}\n</div>`;
     };
-    const orgJsonLd = (urlLang, lang) => ({
-      '@context': 'https://schema.org',
-      '@graph': [
-        {
-          '@type': 'ProfilePage',
-          url: urlLang,
-          inLanguage: lang,
-          mainEntity: {
-            '@type': 'Organization',
-            name,
+    const orgJsonLd = (urlLang, lang) => {
+      const en = lang === 'en';
+      // EN-версия: кириллицы в JSON-LD быть не должно — имя транслитерируем,
+      // русский bio не переводим (поле description опускаем целиком).
+      let ldName = name;
+      if (en && ORG_CYRILLIC_RE.test(ldName)) {
+        ldName = latinizeOrgName(ldName);
+        if (!ldName || ORG_CYRILLIC_RE.test(ldName)) ldName = 'Organizer';
+      }
+      const ldBio = en && ORG_CYRILLIC_RE.test(bio) ? '' : bio;
+      return {
+        '@context': 'https://schema.org',
+        '@graph': [
+          {
+            '@type': 'ProfilePage',
             url: urlLang,
-            logo: image,
-            ...(bio ? { description: bio } : {}),
-          },
-        },
-        {
-          '@type': 'BreadcrumbList',
-          itemListElement: [
-            {
-              '@type': 'ListItem',
-              position: 1,
-              name: lang === 'en' ? 'Home' : 'Главная',
-              item: `${SITE_URL}${lang === 'en' ? '/en' : ''}/`,
+            inLanguage: lang,
+            mainEntity: {
+              '@type': 'Organization',
+              name: ldName,
+              url: urlLang,
+              logo: image,
+              ...(ldBio ? { description: ldBio } : {}),
             },
-            { '@type': 'ListItem', position: 2, name, item: urlLang },
-          ],
-        },
-      ],
-    });
+          },
+          {
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: lang === 'en' ? 'Home' : 'Главная',
+                item: `${SITE_URL}${lang === 'en' ? '/en' : ''}/`,
+              },
+              { '@type': 'ListItem', position: 2, name: ldName, item: urlLang },
+            ],
+          },
+        ],
+      };
+    };
     writePage(baseHtml, `org/${encodeURIComponent(id)}`, {
       title,
       description,
