@@ -322,12 +322,21 @@ function hreflangPairsFor(ruUrl: string, enUrl: string): { hreflang: string; hre
 export function applyHomeMeta(): void {
   const en = isEnPath(window.location.pathname);
   const url = `${SITE_URL}${en ? '/en' : ''}/`;
+  const title = en ? BASE_TITLE_EN : BASE_TITLE;
+  const description = en ? BASE_DESCRIPTION_EN : BASE_DESCRIPTION;
   apply({
-    title: en ? BASE_TITLE_EN : BASE_TITLE,
-    description: en ? BASE_DESCRIPTION_EN : BASE_DESCRIPTION,
+    title,
+    description,
     lang: en ? 'en' : 'ru',
     canonical: url,
-    og: null,
+    // og — как в статике (og:description обязан совпадать с description):
+    // og:null стирал теги пре-рендера при гидратации главной.
+    og: {
+      'og:title': title,
+      'og:description': description,
+      'og:url': url,
+      'og:image': `${SITE_URL}/logo.png`,
+    },
     hreflang: hreflangPairsFor(`${SITE_URL}/`, `${SITE_URL}/en/`),
   });
 }
