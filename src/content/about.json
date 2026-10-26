@@ -1,7 +1,7 @@
 {
   "title": "О проекте MyPins: карта событий для туристов и экспатов | MyPins",
   "h1": "О проекте MyPins",
-  "description": "MyPins — карта событий для туристов и экспатов на Бали, в Дананге, Нячанге и на Кипре. Кто публикует события, как они проходят модерацию и как связаться с редакцией.",
+  "description": "MyPins — карта событий для туристов и экспатов на Бали, в Дананге, Нячанге и на Кипре. Кто публикует события, как идёт модерация и как связаться с редакцией.",
   "email": "armagedroid36@gmail.com",
   "sections": [
     {
@@ -47,7 +47,7 @@
   ],
   "title_en": "About MyPins: events map for travellers and expats | MyPins",
   "h1_en": "About MyPins",
-  "description_en": "MyPins is an events map for travellers and expats in Bali, Da Nang, Nha Trang and Cyprus. Who publishes the events, how moderation works and how to contact the editorial team.",
+  "description_en": "MyPins is an events map for travellers and expats in Bali, Da Nang, Nha Trang and Cyprus: who publishes events, how moderation works and how to reach us.",
   "sections_en": [
     {
       "type": "h2",

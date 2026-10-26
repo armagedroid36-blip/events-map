@@ -6224,11 +6224,11 @@ async function main() {
   console.log('  /blog/index.html');
   writePage(baseHtml, 'en/blog', {
     lang: 'en',
-    title: 'MyPins Blog: event guides for Bali, Da Nang, Nha Trang and Cyprus | MyPins',
+    title: 'MyPins Blog: Bali, Vietnam and Cyprus event guides | MyPins',
     description:
       'Guides to the event scenes of Nha Trang, Bali, Da Nang and Cyprus: where to go, what to see and how much events cost. Round-ups by the MyPins team.',
     canonical: enBlogUrl,
-    ogTitle: 'MyPins Blog: event guides for Bali, Da Nang, Nha Trang and Cyprus | MyPins',
+    ogTitle: 'MyPins Blog: Bali, Vietnam and Cyprus event guides | MyPins',
     ogDescription:
       'Guides to the event scenes of Nha Trang, Bali, Da Nang and Cyprus: where to go, what to see and how much events cost. Round-ups by the MyPins team.',
     ogUrl: enBlogUrl,
@@ -6475,7 +6475,7 @@ async function main() {
   // (на себя — x-default /en/ — как у всех EN-страниц), EN-блок #seo-home-block.
   const homeTitleEn = 'Events on the Map: Bali, Da Nang, Nha Trang, Cyprus | MyPins';
   const homeDescriptionEn =
-    'MyPins is an events map for travellers and expats in Southeast Asia and Cyprus: concerts, parties, yoga, markets and speaking clubs in Bali, Da Nang, Nha Trang and Cyprus with dates, venues and prices.';
+    'MyPins is an events map for travellers and expats: concerts, parties, yoga and markets in Bali, Da Nang, Nha Trang and Cyprus with dates, venues and prices.';
   writeFileSync(
     join(DIST, 'en/index.html'),
     renderPage(baseHtml, {

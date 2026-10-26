@@ -69,7 +69,7 @@ const BASE_DESCRIPTION =
 // EN-версия главной /en/ — синхронно с пре-рендером (homeTitleEn в main()).
 const BASE_TITLE_EN = 'Events on the Map: Bali, Da Nang, Nha Trang, Cyprus | MyPins';
 const BASE_DESCRIPTION_EN =
-  'MyPins is an events map for travellers and expats in Southeast Asia and Cyprus: concerts, parties, yoga, markets and speaking clubs in Bali, Da Nang, Nha Trang and Cyprus with dates, venues and prices.';
+  'MyPins is an events map for travellers and expats: concerts, parties, yoga and markets in Bali, Da Nang, Nha Trang and Cyprus with dates, venues and prices.';
 
 // Города — ровно те, что в CITY_PAGES (scripts/seo-prerender.mjs:76-95);
 // путь = slugify(labelEn) из config.quickLocations. EN-версии — CITY_PAGES_EN.
@@ -1051,7 +1051,7 @@ const BLOG_META = {
 
 // EN-версия /en/blog/ — синхронно с пре-рендером (main()).
 const BLOG_META_EN = {
-  title: 'MyPins Blog: event guides for Bali, Da Nang, Nha Trang and Cyprus | MyPins',
+  title: 'MyPins Blog: Bali, Vietnam and Cyprus event guides | MyPins',
   description:
     'Guides to the event scenes of Nha Trang, Bali, Da Nang and Cyprus: where to go, what to see and how much events cost. Round-ups by the MyPins team.',
 };
