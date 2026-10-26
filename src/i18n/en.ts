@@ -293,6 +293,7 @@ export default {
     gallery: 'Gallery',
     // Browser push notifications (block next to the email subscription)
     pushSubscribeTitle: 'Browser notifications',
+    hubTitle: 'Organizers on MyPins',
     pushSubscribeButton: 'Subscribe to browser notifications about new events',
     pushUnsubscribeButton: 'Unsubscribe from notifications',
     pushSubscribed: "You are subscribed to this organizer's notifications.",

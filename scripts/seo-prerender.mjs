@@ -539,6 +539,9 @@ function forOrganizersSeoHtml(c, lang = 'ru', ctx = {}) {
   lines.push(`  <h2>${esc(finalH2)}</h2>`);
   lines.push(`  <p>${mdLinksToHtml(finalP, ctx)}</p>`);
   lines.push(`  <p><a href="${en ? SITE_URL + '/en/' : '/'}">${cta}</a></p>`);
+  // Хаб организаторов: входящие ссылки на /org/<id>/ (пусто — блок не печатается)
+  const orgHub = orgHubHtml(lang);
+  if (orgHub) lines.push(orgHub);
   lines.push('</div>', '');
   return lines.join('\n');
 }
@@ -576,6 +579,38 @@ function forOrganizersJsonLd(c, url, lang = 'ru') {
       },
     ],
   };
+}
+
+/** Хаб организаторов на /for-organizers/: входящие ссылки на опубликованные
+ *  профили своего языка. Нужен, пока у профилей нет активных событий — иначе
+ *  /org/<id>/ достижим только через sitemap (страницы-сироты).
+ *  ЗЕРКАЛО: блок в src/pages/ForOrganizers.tsx (манифест published-orgs.json). */
+const ORG_HUB_LIMIT = 20;
+
+function orgHubHtml(lang = 'ru') {
+  const en = lang === 'en';
+  const items = [...PUBLISHED_ORG_IDS]
+    .map((id) => {
+      const name = ORG_DISPLAY_NAMES.get(id) ?? '';
+      // EN-подпись — транслит: поля name_en у профиля нет
+      return { id, label: en ? latinizeOrgName(name) : name };
+    })
+    .filter((x) => x.label)
+    .sort((a, b) => a.label.localeCompare(b.label, en ? 'en' : 'ru'))
+    .slice(0, ORG_HUB_LIMIT);
+  if (!items.length) return '';
+  const links = items
+    .map(
+      ({ id, label }) =>
+        `    <li><a href="${en ? '/en' : ''}/org/${encodeURIComponent(id)}/">${esc(label)}</a></li>`,
+    )
+    .join('\n');
+  return [
+    `  <h2>${en ? 'Organizers on MyPins' : 'Организаторы на MyPins'}</h2>`,
+    '  <ul>',
+    links,
+    '  </ul>',
+  ].join('\n');
 }
 
 /**
@@ -5165,9 +5200,22 @@ async function main() {
   // /org/<id>/ ТОЛЬКО для id из этого списка. Решение одно и то же у статики и у
   // клиента (раньше клик в карточке вёл на 404 — в статике ссылку уже поправили,
   // теперь выровнен и клиент). Файл лежит в dist и уезжает на gh-pages.
+  // Имена — в том же манифесте: хаб /for-organizers/ печатает подписи из него
+  // (статика и SPA показывают ровно одно и то же, без N+1 RPC на клиенте).
+  const orgManifest = [...PUBLISHED_ORG_IDS]
+    .map((id) => {
+      const name = ORG_DISPLAY_NAMES.get(id) ?? '';
+      return name ? { id, name, nameEn: latinizeOrgName(name) } : null;
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.name.localeCompare(b.name, 'ru'));
   writeFileSync(
     join(DIST, 'published-orgs.json'),
-    `${JSON.stringify({ generatedAt: TODAY_ISO, ids: [...PUBLISHED_ORG_IDS].sort() })}\n`,
+    `${JSON.stringify({
+      generatedAt: TODAY_ISO,
+      ids: [...PUBLISHED_ORG_IDS].sort(),
+      orgs: orgManifest,
+    })}\n`,
   );
   console.log(`  dist/published-orgs.json: ${PUBLISHED_ORG_IDS.size} профилей`);
 

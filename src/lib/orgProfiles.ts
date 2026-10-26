@@ -29,6 +29,41 @@ export function loadPublishedOrgIds(): Promise<Set<string>> {
   return cache;
 }
 
+/** Опубликованный профиль с подписями для хаба /for-organizers/ */
+export type PublishedOrg = { id: string; name: string; nameEn: string };
+
+let orgsCache: Promise<PublishedOrg[]> | null = null;
+
+/**
+ * Публичные профили с именами (хаб «Организаторы на MyPins»).
+ * Источник — тот же манифест dist/published-orgs.json, что пишет сборка:
+ * подписи и состав совпадают со статикой, без запросов к БД на клиенте.
+ * Нет файла/поля orgs (старый деплой) → пустой список, блок не рисуется.
+ */
+export function loadPublishedOrgs(): Promise<PublishedOrg[]> {
+  if (!orgsCache) {
+    orgsCache = fetch('/published-orgs.json', { cache: 'no-cache' })
+      .then((r) => (r.ok ? (r.json() as Promise<unknown>) : null))
+      .then((data) => {
+        const raw = (data as { orgs?: unknown } | null)?.orgs;
+        if (!Array.isArray(raw)) return [] as PublishedOrg[];
+        return raw
+          .map((x) => x as Partial<PublishedOrg> | null)
+          .filter(
+            (x): x is Partial<PublishedOrg> & { id: string; name: string } =>
+              !!x && typeof x.id === 'string' && typeof x.name === 'string' && x.name.length > 0,
+          )
+          .map((x) => ({
+            id: x.id,
+            name: x.name,
+            nameEn: typeof x.nameEn === 'string' && x.nameEn ? x.nameEn : x.name,
+          }));
+      })
+      .catch(() => [] as PublishedOrg[]);
+  }
+  return orgsCache;
+}
+
 /** Опубликована ли страница профиля у этого владельца (false, пока не узнали) */
 export function useOrgProfilePublished(ownerId?: string | null): boolean {
   const [published, setPublished] = useState(false);

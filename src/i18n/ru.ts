@@ -295,6 +295,7 @@ export default {
     gallery: 'Галерея',
     // Браузерные push-уведомления (блок рядом с email-подпиской)
     pushSubscribeTitle: 'Уведомления в браузере',
+    hubTitle: 'Организаторы на MyPins',
     pushSubscribeButton: 'Подписаться на уведомления браузера о новых событиях',
     pushUnsubscribeButton: 'Отписаться от уведомлений',
     pushSubscribed: 'Вы подписаны на уведомления этого организатора.',

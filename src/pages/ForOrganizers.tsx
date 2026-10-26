@@ -5,13 +5,15 @@
 // переходе App-эффект не перебивает — маршрут исключён из applyGenericMeta.
 // Секции — как в статьях (p/h2/ul с md-ссылками), FAQ — <details><summary>
 // как в городских страницах (Home.tsx, citySeo).
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
 import MapCta from '../components/MapCta';
 import { navigate } from '../lib/navigate';
 import { applyForOrganizersMeta, applyGenericMeta } from '../lib/seo';
+import { loadPublishedOrgs } from '../lib/orgProfiles';
+import type { PublishedOrg } from '../lib/orgProfiles';
 import type { ArticleSection, ForOrganizersContent } from '../lib/types';
 // Каст через unknown: resolveJsonModule выводит точный литеральный тип,
 // прямой as ForOrganizersContent несовместим (readonly-поля).
@@ -84,8 +86,28 @@ function Sections({ sections }: { sections: ArticleSection[] }) {
  * EN-версия /en/for-organizers: контент из *_en полей (title_en/h1_en/
  * intro_en/sections_en/faq_en/final_en), CTA «Create event» ведёт на /en/. */
 export default function ForOrganizers() {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const en = i18n.language.startsWith('en');
+  // Хаб организаторов: подписи из манифеста сборки (published-orgs.json) —
+  // тот же состав и порядок, что в статике.
+  const [orgs, setOrgs] = useState<PublishedOrg[]>([]);
+  useEffect(() => {
+    let alive = true;
+    loadPublishedOrgs().then((list) => {
+      if (alive) setOrgs(list);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+  const hubItems = useMemo(() => {
+    const label = (o: PublishedOrg) => (en ? o.nameEn || o.name : o.name);
+    return orgs
+      .map((o) => ({ id: o.id, label: label(o) }))
+      .filter((o) => o.label)
+      .sort((a, b) => a.label.localeCompare(b.label, en ? 'en' : 'ru'))
+      .slice(0, 20);
+  }, [orgs, en]);
   // Контент языка (как localizedText): *_en поля, иначе RU
   const c = en
     ? {
@@ -144,6 +166,26 @@ export default function ForOrganizers() {
             {en ? 'Create event' : 'Создать событие'}
           </a>
         </div>
+
+        {/* Хаб организаторов — входящие ссылки на опубликованные профили
+            (тот же блок печатает пре-рендер). Профилей нет — блока нет. */}
+        {hubItems.length > 0 && (
+          <div className="mt-6 border-t border-gray-100 pt-4">
+            <h2 className="text-base font-semibold text-gray-900">{t('org.hubTitle')}</h2>
+            <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-gray-700">
+              {hubItems.map((o) => (
+                <li key={o.id}>
+                  <a
+                    href={`${en ? '/en' : ''}/org/${o.id}/`}
+                    className="font-medium text-[#E66343] underline decoration-[#E66343]/40 underline-offset-2 hover:decoration-[#E66343]"
+                  >
+                    {o.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </main>
     </div>
   );
