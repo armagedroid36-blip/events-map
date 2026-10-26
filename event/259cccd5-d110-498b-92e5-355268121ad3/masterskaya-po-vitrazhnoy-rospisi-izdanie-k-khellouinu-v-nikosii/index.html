@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
+         до бандлов приложения и блокировал main thread, поднимая FCP.
+         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
+         Сознательно НЕ используем:
+           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
+             модули) — то есть до первой отрисовки;
+           - событие load: в холодном профиле load может пройти раньше первой отрисовки
+             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
+           - первую paint-запись (first-paint): она выходит раньше FCP.
+         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
+         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  loadGtag();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+        setTimeout(loadGtag, 5000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Мастерская по витражной… — 28 октября 2026 · Никосия, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-uFYqyBKU.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-B_EkHmqo.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-DJVEMu5p.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-DOWyFgRt.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-CteeYMwr.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DJ_XkHE4.css" />
+      <meta name="description" content="Никосия, Кипр, 28 октября 2026. Проявите творчество в этот Хэллоуин на мастер-классе по росписи стекла в Никосии, Кипр, в среду, 28 октября 2026 года, с 10:30…" />
+    <link rel="canonical" href="https://mypins.site/event/259cccd5-d110-498b-92e5-355268121ad3/masterskaya-po-vitrazhnoy-rospisi-izdanie-k-khellouinu-v-nikosii/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Мастерская по витражной… — 28 октября 2026 · Никосия, Кипр" />
+    <meta property="og:description" content="Никосия, Кипр, 28 октября 2026. Проявите творчество в этот Хэллоуин на мастер-классе по росписи стекла в Никосии, Кипр, в среду, 28 октября 2026 года, с 10:30…" />
+    <meta property="og:url" content="https://mypins.site/event/259cccd5-d110-498b-92e5-355268121ad3/masterskaya-po-vitrazhnoy-rospisi-izdanie-k-khellouinu-v-nikosii/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/b5e99bb1-5f18-4f2a-9d85-f052fa958f7f/1792990900288.jpg?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/259cccd5-d110-498b-92e5-355268121ad3/masterskaya-po-vitrazhnoy-rospisi-izdanie-k-khellouinu-v-nikosii/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/259cccd5-d110-498b-92e5-355268121ad3/stained-glass-painting-workshop-halloween-edition-in-nicosia/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Мастерская по витражной росписи: издание к Хэллоуину в Никосии","url":"https://mypins.site/event/259cccd5-d110-498b-92e5-355268121ad3/masterskaya-po-vitrazhnoy-rospisi-izdanie-k-khellouinu-v-nikosii/","startDate":"2026-10-28T10:30:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Workshoplab.cy, Никосия","address":{"@type":"PostalAddress","addressLocality":"Никосия","streetAddress":"Workshoplab.cy, Никосия","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1856,"longitude":33.3823}},"description":"Проявите творчество в этот Хэллоуин на мастер-классе по росписи стекла в Никосии, Кипр, в среду, 28 октября 2026 года, с 10:30 до 12:30 в Workshoplab.cy в Строволосе. Опыт не нужен - достаточно любить создавать что-то своими руками! Экспериментируйте с цветами и разными техниками росписи стекла,...","endDate":"2026-10-28","image":"https://cyprus.bz/img/images/events/b5e99bb1-5f18-4f2a-9d85-f052fa958f7f/1792990900288.jpg?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/38ed/glass-painting-workshop-halloween-edition-in-nicosia-2026"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Мастерская по витражной росписи: издание к Хэллоуину в Никосии","item":"https://mypins.site/event/259cccd5-d110-498b-92e5-355268121ad3/masterskaya-po-vitrazhnoy-rospisi-izdanie-k-khellouinu-v-nikosii/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Мастерская по витражной росписи: издание к Хэллоуину в Никосии</h1>
+  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-10-28">28 октября 2026</time></p>
+  <p><time datetime="2026-10-28T10:30:00">28 октября 2026, 10:30</time></p>
+  <address>Workshoplab.cy, Никосия, Никосия, Кипр</address>
+  <p>Проявите творчество в этот Хэллоуин на мастер-классе по росписи стекла в Никосии, Кипр, в среду, 28 октября 2026 года, с 10:30 до 12:30 в Workshoplab.cy в Строволосе. Опыт не нужен - достаточно любить создавать что-то своими руками! Экспериментируйте с цветами и разными техниками росписи стекла,...</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Мастерская по витражной росписи: издание к Хэллоуину в Никосии</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/workshop/">🎨 Мастер-классы</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/2ae2b8b0-f0c3-4501-88d2-289dd6833b28/reznye-kolodzhi/">Резные колоджи <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/329fa8a4-a98c-41cf-b329-3cdbe48286bd/master-klass-po-rospisi-stekla-khellouin-v-nikosii/">Мастер-класс по росписи стекла: Хэллоуин в Никосии <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/32ce3311-212a-4ebe-9d10-c327394ca497/proizvodstvo-paluze-i-sudzhuka/">Производство палузе и суджука <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/53667bee-6c0c-4f39-9374-a135cc8cd6de/produkty-olivy/">Продукты оливы <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/803c19f8-f69a-4783-a245-80b9f1f26b80/prevrashchaem-davlenie-v-tykvy-khellouinskie-podelki-v-nikosii/">Превращаем давление в тыквы: хэллоуинские поделки в Никосии <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/97f93c29-d15b-4309-9674-19daabe407fb/pletenye-tsinovki/">Плетёные циновки <time datetime="2026-10-28">28 октября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/86761ed8-7921-45d3-8782-1d945d2532a8/lefteris-pantazis-zhivoy-kontsert-grecheskoy-muzyki-v-lush-beach-bar/">Lefteris Pantazis: живой концерт греческой музыки в Lush Beach Bar</a> <time datetime="2026-10-27">27 октября 2026</time></li>
+    <li>Следующее: <a href="/event/43676ccf-78d8-4059-b9a6-5bf649f38f78/kontsert-dukhovogo-orkestra-korfu-s-zapada-na-vostok/">Концерт духового оркестра Корфу - с Запада на Восток</a> <time datetime="2026-10-28">28 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>
