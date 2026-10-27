@@ -7,7 +7,6 @@
 // Запуск: node --env-file=.env scripts/dot-cn-redirect-probe.mjs [лимит]
 import { execFileSync } from 'node:child_process';
 import { createClient } from '@supabase/supabase-js';
-import { selectAll } from './db-rows.mjs';
 
 const LIMIT = Number(process.argv[2] || process.env.LIMIT || 0);
 // Сдвиг выборки: полный прогон по 660+ карточкам ≈ 11 мин (HEAD через прокси ~1 c),
@@ -16,10 +15,25 @@ const SKIP = Number(process.env.SKIP || 0);
 const PROXY = 'http://127.0.0.1:10809';
 const db = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
 
-const rows = await selectAll(db, 'events', 'id,status,title,start_date,start_time,city,website');
-const cards = rows
-  .filter(r => r.status === 'active' && /cyprusnow\.app\/event\//.test(r.website || ''))
-  .sort((a, b) => (a.start_date < b.start_date ? -1 : 1));
+// Читаем ТОЛЬКО нужный срез СЕРВЕРНЫМ фильтром (status=active + website ilike).
+// Полная таблица через selectAll — 5800 строк = 97 страниц по 60, т.е. ~2 мин ДО первой
+// проверки ссылки (26.10 карточка-зонд висела 140 с и не напечатала даже заголовок).
+// Серверный фильтр отдаёт 567 строк за ~10 страниц: тот же срез, в 10 раз дешевле.
+// order только по id: сортировка по start_date даёт дубли строк на равных датах.
+const rows = [];
+const PAGE = 200;
+for (let off = 0; ; off += PAGE) {
+  const { data, error } = await db.from('events')
+    .select('id,status,title,start_date,start_time,city,website')
+    .eq('status', 'active')
+    .ilike('website', '%cyprusnow.app/event/%')
+    .order('id', { ascending: true })
+    .range(off, off + PAGE - 1);
+  if (error) throw new Error(`Чтение CN-карточек: ${error.message}`);
+  rows.push(...data);
+  if (data.length < PAGE) break;
+}
+const cards = rows.sort((a, b) => (a.start_date < b.start_date ? -1 : 1));
 const sample = LIMIT ? cards.slice(SKIP, SKIP + LIMIT) : cards.slice(SKIP);
 console.log(`Живых карточек CN: ${cards.length}; проверяю ${sample.length} (сдвиг ${SKIP})\n`);
 
