@@ -16,7 +16,7 @@ import { cleanAddress, isCityAddress } from './address-junk.mjs';
 import { cleanCardText } from './text-safe.mjs';
 import { extractContacts } from './contacts-regex.mjs';
 import { extractDateLLM } from './date-llm.mjs';
-import { findCityZone } from './city-zones.mjs';
+import { findEventZone } from './city-zones.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -537,6 +537,13 @@ const PLACE_COORDS = [
   { key: 'oceanus', lat: 12.273779, lng: 109.202092 },
   { key: 'neverland', lat: 12.2407732, lng: 109.1894251 }, // Neverland Adventure Club, 40 Hồng Bàng (центр)
   { key: 'boton blue', lat: 12.293901, lng: 109.212355 },  // Boton Blue Hotel & Spa, Phạm Văn Đồng (север)
+  // Prime Space, 27 Đ. Số 7, Khu đô thị Hà Quang 2 (Nam Nha Trang). Nominatim этот адрес,
+  // имя и «Кафе PRIME Нячанг» не находит, поэтому пин приходит только из словаря.
+  // Точка подтверждена обратным геокодером: reverse 12.2461874,109.1783145 → «Đường số 7»
+  // (улица из адреса); там же стоят три живые карточки того же адреса.
+  { key: 'prime space', lat: 12.2461874, lng: 109.1783145 },
+  { key: '27 đ. số 7', lat: 12.2461874, lng: 109.1783145 },
+  { key: '27 d. so 7', lat: 12.2461874, lng: 109.1783145 }, // та же улица в латинской раскладке
 ];
 
 /** t.me-ник → удобный формат для нашей базы */
@@ -789,7 +796,11 @@ async function main() {
         // My Gia») — ставим якорные координаты зоны, а не центр города.
         // Текст для анализа: адрес (если есть) + пост.
         if (lat == null || lng == null) {
-          const zone = findCityZone(ch.city, `${address || ''} ${post.text}`);
+          // findEventZone (а не findCityZone): зону `center` он НЕ применяет — её якорь
+          // это конкретное здание (Neverland, 40 Hồng Bàng), а слово «центр» ловится
+          // в любом посте («📍 Нячанг | Кафе PRIME | Центр» → пин у Neverland, 1.2 км
+          // от кафе). Без зоны карточка уходит на центр города — это честнее.
+          const zone = findEventZone(ch.city, { address, title, description: post.text });
           if (zone) {
             lat = zone.lat;
             lng = zone.lng;
