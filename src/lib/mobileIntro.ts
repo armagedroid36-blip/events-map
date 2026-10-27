@@ -11,10 +11,10 @@
 // живом React их удалял — вместе с контентом для краулера.
 //
 // РЕШЕНИЕ. В мобильном интро-режиме #seo-city-block и #seo-home-block НЕ
-// удаляем, а переносим в скрытый контейнер в конце <body>: контент (h1,
-// интро-абзац, «Ближайшие события» со ссылками, FAQ, ссылки на категории)
-// остаётся в DOM для краулера, а вёрстку и LCP не трогает — контейнер
-// display:none, картинки внутри не загружаются. Как только интро закрыто
+// удаляем, а переносим в контейнер #seo-intro-keep в конце <body>; интро-экран
+// забирает его в слот #seo-intro-slot и показывает (beta 1.14: h1 города,
+// вводный текст, «Ближайшие события», FAQ и ссылки категорий видны и
+// пользователю, и Googlebot'у mobile-first). Как только интро закрыто
 // (клик «Открыть карту» на мобильном или окно расширено до десктопа), SPA
 // рисует свои блоки, а перенесённый контейнер удаляется.
 //
@@ -56,6 +56,9 @@ export const MOBILE_INTRO_QUERY = '(max-width: 767px)';
 
 /** id контейнера, в который переезжают блоки, нужные краулеру при интро */
 export const INTRO_KEEP_ID = 'seo-intro-keep';
+
+/** id слота на интро-экране, куда переезжает ВИДИМЫЙ SEO-блок (beta 1.14) */
+export const INTRO_SLOT_ID = 'seo-intro-slot';
 
 /** id видимой панели блока главной на десктопе (Home показывает её, когда
  *  открытых карточек/панелей нет; содержимое — статический #seo-home-block) */
@@ -305,6 +308,35 @@ export function keepSeoBlocksForIntro(): void {
     document.body.appendChild(holder);
   }
   if (homePanelBlock) homePanelBody().appendChild(homePanelBlock);
+}
+
+/**
+ * Показывает перенесённые статические SEO-блоки на интро-экране (beta 1.14):
+ * снимает с контейнера #seo-intro-keep класс hidden и переносит его в слот
+ * #seo-intro-slot (его рисует MobileMapIntro). Без слота или контейнера —
+ * no-op (десктоп, не интро-путь, старый DOM). Повторный вызов безопасен.
+ * Картинки внутри блока грузим лениво и без фиксированных высот (CLS).
+ */
+export function attachIntroSeoBlocks(): void {
+  const holder = document.getElementById(INTRO_KEEP_ID);
+  const slot = document.getElementById(INTRO_SLOT_ID);
+  if (!holder || !slot || slot.contains(holder)) return;
+  holder.classList.remove('hidden');
+  slot.appendChild(holder);
+  holder.querySelectorAll('img').forEach((img) => {
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.removeAttribute('height');
+    img.style.height = '';
+  });
+  // Статика печатает абсолютные ссылки (https://mypins.site/event/…): в SPA
+  // перехватываются только относительные — без нормализации клик по событию
+  // с интро уходил бы в полную перезагрузку страницы.
+  const origin = window.location.origin;
+  holder.querySelectorAll<HTMLAnchorElement>(`a[href^="${origin}/"]`).forEach((a) => {
+    const href = a.getAttribute('href');
+    if (href) a.setAttribute('href', href.slice(origin.length));
+  });
 }
 
 /** Интро закрыто (клик «Открыть карту» или десктопная ширина) — перенесённые
