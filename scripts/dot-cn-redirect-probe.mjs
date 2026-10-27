@@ -15,21 +15,34 @@ const SKIP = Number(process.env.SKIP || 0);
 const PROXY = 'http://127.0.0.1:10809';
 const db = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
 
-// Читаем ТОЛЬКО нужный срез СЕРВЕРНЫМ фильтром (status=active + website ilike).
-// Полная таблица через selectAll — 5800 строк = 97 страниц по 60, т.е. ~2 мин ДО первой
-// проверки ссылки (26.10 карточка-зонд висела 140 с и не напечатала даже заголовок).
-// Серверный фильтр отдаёт 567 строк за ~10 страниц: тот же срез, в 10 раз дешевле.
-// order только по id: сортировка по start_date даёт дубли строк на равных датах.
+// Читаем срез через PostgREST и curl, а НЕ через supabase-js: клиент с этой
+// машины рвётся `TypeError: terminated` на страницах по 200 строк (27.10.2026,
+// зонд падал до первой проверки ссылки). curl тот же запрос отдаёт за 0.6 с.
 const rows = [];
-const PAGE = 200;
+// 60 строк × 6 полей ≈ 12–15 КБ: крупные ответы Supabase REST с этой машины
+// обрываются на ~22–24 КБ (200 строк = 23.7 КБ → curl exit 28 через 25 с,
+// supabase-js при этом падает `TypeError: terminated`).
+const PAGE = 60;
+function readPage(off) {
+  const url = `${process.env.VITE_SUPABASE_URL}/rest/v1/events?select=id,status,title,start_date,start_time,city,website`
+    + `&status=eq.active&website=ilike.*cyprusnow.app/event/*&order=id.asc`;
+  const args = ['-s', '--max-time', '40', '-H', `apikey: ${process.env.SUPABASE_SERVICE_ROLE}`,
+    '-H', `Authorization: Bearer ${process.env.SUPABASE_SERVICE_ROLE}`,
+    '-H', 'Accept-Encoding: identity', '-H', `Range: ${off}-${off + PAGE - 1}`,
+    '-H', 'Range-Unit: items', url];
+  for (let attempt = 1; attempt <= 4; attempt++) {
+    try {
+      const out = execFileSync('curl', args, { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
+      const parsed = JSON.parse(out);
+      if (Array.isArray(parsed)) return parsed;
+    } catch (e) {
+      if (attempt === 4) throw new Error(`Чтение CN-карточек (offset ${off}): ${e.message}`);
+    }
+  }
+  return [];
+}
 for (let off = 0; ; off += PAGE) {
-  const { data, error } = await db.from('events')
-    .select('id,status,title,start_date,start_time,city,website')
-    .eq('status', 'active')
-    .ilike('website', '%cyprusnow.app/event/%')
-    .order('id', { ascending: true })
-    .range(off, off + PAGE - 1);
-  if (error) throw new Error(`Чтение CN-карточек: ${error.message}`);
+  const data = readPage(off);
   rows.push(...data);
   if (data.length < PAGE) break;
 }
