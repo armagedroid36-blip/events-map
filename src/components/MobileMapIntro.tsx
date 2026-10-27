@@ -57,6 +57,13 @@ export default function MobileMapIntro({ previewUrl, leaving, onOpen }: Props) {
         />
       </div>
 
+      {/* Мягкое затухание контента к баннеру: без него строка списка
+          обрывается ровно по границе нижней зоны — выглядит как обрез */}
+      <div
+        className="pointer-events-none absolute inset-x-0 z-[15] h-8 bg-gradient-to-t from-[#faf7f2] to-transparent"
+        style={{ bottom: BANNER_ZONE }}
+      />
+
       {/* Нижняя зона: превью карты + затемнение + баннер (h2, подводка, кнопка).
           Прижата к низу экрана и не участвует в прокрутке. */}
       <div
