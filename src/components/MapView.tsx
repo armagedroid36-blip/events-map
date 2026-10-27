@@ -16,10 +16,13 @@ const CATEGORY_COLORS = [
   '#d97706', '#db2777', '#0891b2', '#65a30d',
 ];
 
-/** Стабильный цвет категории по её id */
-function colorFor(id: string): string {
+/** Стабильный цвет категории по её id. Пустой/отсутствующий id (в базе есть
+ *  события без category_id) не должен ронять рендер карты: раньше `null.length`
+ *  выбрасывал TypeError и на главной оставался пустой #root. */
+function colorFor(id?: string | null): string {
+  const key = id ?? '';
   let h = 0;
-  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) | 0;
+  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) | 0;
   return CATEGORY_COLORS[Math.abs(h) % CATEGORY_COLORS.length];
 }
 
