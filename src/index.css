@@ -465,14 +465,6 @@ body {
   contain-intrinsic-size: auto 800px;
 }
 
-/* Секция .seo-more начинается в первом экране, поэтому сама она «видима» и
-   не пропускается — пропуск даёт построчный уровень: элементы списка ниже
-   вьюпорта не считают layout/paint, пока к ним не подъедут. */
-#seo-intro-slot .seo-more ul > li {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 1.75rem;
-}
-
 /* Слои мобильного интро (beta 1.16): те же значения, что были у утилит в
    MobileMapIntro.tsx, но без генерации уникальных utility-классов в
    критическом CSS всех страниц (#faf7f2-градиент, z-[15], -z-10 и т. п.). */
