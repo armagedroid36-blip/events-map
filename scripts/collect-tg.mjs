@@ -602,21 +602,29 @@ async function existingKeys() {
     );
   } catch (e) {
     console.error('Ошибка чтения дублей:', e.message);
-    return { seen: new Set(), sites: new Set(), liveByTitle: new Map() };
+    return { seen: new Set(), sites: new Set(), siteDates: new Map(), liveByTitle: new Map() };
   }
   const seen = new Set();
   const sites = new Set();
+  // website → набор дат: пост уже собран НА ЭТУ дату (защита от дублей, когда
+  // LLM перевёл название иначе и ключ title|start_date не совпал).
+  const siteDates = new Map();
   const liveByTitle = new Map();
   for (const e of data || []) {
     seen.add(normKey(e.title, e.start_date));
-    if (e.website) sites.add(String(e.website).trim());
+    if (e.website) {
+      const w = String(e.website).trim();
+      sites.add(w);
+      if (!siteDates.has(w)) siteDates.set(w, new Set());
+      siteDates.get(w).add(String(e.start_date));
+    }
     if (e.status === 'active' || e.status === 'moderation') {
       const k = sameTitleKey(e.title, e.city);
       if (!liveByTitle.has(k)) liveByTitle.set(k, []);
       liveByTitle.get(k).push(e);
     }
   }
-  return { seen, sites, liveByTitle };
+  return { seen, sites, siteDates, liveByTitle };
 }
 
 /** Страница канала: первая, или ?before=<pid> — посты старше указанного */
@@ -630,7 +638,7 @@ async function fetchChannel(username, before) {
 }
 
 async function main() {
-  const { seen, sites, liveByTitle } = await existingKeys();
+  const { seen, sites, siteDates, liveByTitle } = await existingKeys();
   let inserted = 0;
 
   for (const ch of CHANNELS) {
@@ -880,10 +888,12 @@ async function main() {
           source_type: 'collector',
         };
 
-        // Пост уже собран под другим названием (канал отредактировал текст) — карточка
-        // уйдёт в архив дедупом и будет удалена prune: сигнал для разбора, не блок.
-        if (row.website && sites.has(String(row.website).trim())) {
-          console.warn(`  [пост уже собран] ${title.slice(0, 40)} — ${row.website}`);
+        // Пост уже собран на эту дату под любым названием (LLM переводит заголовок
+        // по-разному, поэтому ключ title|start_date такие пары не ловит) — пропуск.
+        // Регулярные посты (каждую среду) дают другую дату и проходят.
+        if (row.website && siteDates.get(String(row.website).trim())?.has(String(row.start_date))) {
+          console.log(`  - пост уже собран на ${row.start_date}: ${title.slice(0, 40)} — ${row.website}`);
+          continue;
         }
 
         const { error } = DRY_RUN ? { error: null } : await db.from('events').insert(row);
@@ -892,7 +902,12 @@ async function main() {
         } else {
           inserted++;
           seen.add(key);
-          if (row.website) sites.add(String(row.website).trim());
+          if (row.website) {
+            const w = String(row.website).trim();
+            sites.add(w);
+            if (!siteDates.has(w)) siteDates.set(w, new Set());
+            siteDates.get(w).add(String(row.start_date));
+          }
           const lk = sameTitleKey(title, ch.city);
           if (!liveByTitle.has(lk)) liveByTitle.set(lk, []);
           liveByTitle.get(lk).push({
