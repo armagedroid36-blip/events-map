@@ -3,76 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
-    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки и не конкурирует с LCP:
-         раньше скрипт стартовал по записи first-contentful-paint и через ~450 мс
-         занимал main thread ровно в окне LCP (third-party-summary, 28.10.2026).
-         Триггер — ПЕРВОЕ из событий:
-           (а) первое взаимодействие пользователя: pointerdown / keydown / touchstart (once);
-           (б) requestIdleCallback после FCP + задержка 800 мс — счётчик грузится в простое;
-           (в) аварийный таймаут 4 с — если ни paint-записи, ни простоя не было.
-         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
-         SPA-переходы отдельных page_view не шлют. При saveData не грузим. -->
+    <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
+         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
+         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим. -->
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-BBL2VDP0WK');
-
-      (function () {
-        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
-        var loaded = false;
-        function loadGtag() {
-          if (loaded) return;
-          loaded = true;
-          var s = document.createElement('script');
-          s.async = true;
-          s.src = GA_SRC;
-          document.head.appendChild(s);
-        }
-        if (navigator.connection && navigator.connection.saveData === true) return;
-
-        // (а) первое взаимодействие — раньше этого счётчик не нужен
-        var INTERACT = ['pointerdown', 'keydown', 'touchstart'];
-        for (var i = 0; i < INTERACT.length; i++) {
-          window.addEventListener(INTERACT[i], loadGtag, { once: true, capture: true, passive: true });
-        }
-
-        // (б) после FCP + 800 мс в простое. ВАЖНО (замер 28.10): если грузить
-        // gtag сразу после FCP, его разбор попадает в окно гидратации и LCP —
-        // TBT рос на ~250 мс. Поэтому idle-триггер ждёт ещё и window.load:
-        // к этому моменту первый экран отрисован и main thread свободен.
-        function afterFcp() {
-          var fire = function () { setTimeout(loadGtag, 800); };
-          var whenIdle = function () {
-            if (typeof window.requestIdleCallback === 'function') {
-              window.requestIdleCallback(fire, { timeout: 2000 });
-            } else {
-              fire();
-            }
-          };
-          if (document.readyState === 'complete') whenIdle();
-          else window.addEventListener('load', whenIdle, { once: true });
-        }
-        if (typeof window.PerformanceObserver === 'function') {
-          try {
-            var po = new PerformanceObserver(function (list, obs) {
-              var entries = list.getEntries();
-              for (var j = 0; j < entries.length; j++) {
-                if (entries[j].name === 'first-contentful-paint') {
-                  obs.disconnect();
-                  afterFcp();
-                  return;
-                }
-              }
-            });
-            po.observe({ type: 'paint', buffered: true });
-          } catch (e) {}
-        }
-
-        // (в) аварийный таймаут. 4 с из ТЗ срабатывали раньше window.load и
-        // снова затаскивали gtag в окно LCP/TBT — держим 6 с.
-        setTimeout(loadGtag, 6000);
-      })();
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
+      if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
+      setTimeout(go,6000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
