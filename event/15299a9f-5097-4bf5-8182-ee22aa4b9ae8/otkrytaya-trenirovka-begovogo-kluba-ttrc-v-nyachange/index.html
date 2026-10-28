@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
+         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
+         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
+      if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
+      setTimeout(go,6000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Открытая тренировка бегового клуба… — 29 октября 2026 · Нячанг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
+      <meta name="description" content="Нячанг, 29 октября 2026. Открытая тренировка бегового клуба TTRC в Нячанге Приглашаем всех, кто хочет начать бегать, улучшить физическую форму или…" />
+    <link rel="canonical" href="https://mypins.site/event/15299a9f-5097-4bf5-8182-ee22aa4b9ae8/otkrytaya-trenirovka-begovogo-kluba-ttrc-v-nyachange/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Открытая тренировка бегового клуба… — 29 октября 2026 · Нячанг" />
+    <meta property="og:description" content="Нячанг, 29 октября 2026. Открытая тренировка бегового клуба TTRC в Нячанге Приглашаем всех, кто хочет начать бегать, улучшить физическую форму или…" />
+    <meta property="og:url" content="https://mypins.site/event/15299a9f-5097-4bf5-8182-ee22aa4b9ae8/otkrytaya-trenirovka-begovogo-kluba-ttrc-v-nyachange/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/ba56d557f3ddf9f8f0a16d811d8128bf.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/15299a9f-5097-4bf5-8182-ee22aa4b9ae8/otkrytaya-trenirovka-begovogo-kluba-ttrc-v-nyachange/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/15299a9f-5097-4bf5-8182-ee22aa4b9ae8/open-training-session-of-the-ttrc-running-club-in-nha-trang/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Открытая тренировка бегового клуба TTRC в Нячанге","url":"https://mypins.site/event/15299a9f-5097-4bf5-8182-ee22aa4b9ae8/otkrytaya-trenirovka-begovogo-kluba-ttrc-v-nyachange/","startDate":"2026-10-29T17:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Стадион Нячанга, 10 Yersin, Phường, Nha Trang, Khánh Hòa 650000","address":{"@type":"PostalAddress","addressLocality":"Нячанг","streetAddress":"Стадион Нячанга, 10 Yersin, Phường, Nha Trang, Khánh Hòa 650000"},"geo":{"@type":"GeoCoordinates","latitude":12.2494504,"longitude":109.1866997}},"description":"Открытая тренировка бегового клуба TTRC в Нячанге Приглашаем всех, кто хочет начать бегать, улучшить физическую форму или тренироваться в команде под руководством профессионального тренера. Подойдет как новичкам, так и опытным бегунам. Что вас ждет на тренировке? ✔️Анализ техники бега и рекомендации по её улучшению. ✔️Специальные беговые упражнения (СБУ). ✔️Работа над скоростью, выносливостью и координацией. ✔️Интервальные и темповые задания с учетом вашего уровня подготовки. ✔️Разбор ошибок и рекомендации для самостоятельных тренировок. ✔️Дружеская атмосфера, поддержка команды и мотивация. ✔️ Тренировка в тренажерном зале один раз в неделю. ✔️ Подготовка к пробегам 5, 10, 21, 42 км ✔️Знакомство с экосистемой TOSA_TEAM Run Club. 📅 29.10.2026 🕔 17:00-18:00 📍 Центральный стадион Нячанга 🆓 Первая тренировка бесплатно 📩 Напишите в Direct @tosacoach «Хочу в TOSA_TEAM» #дата: 29.10.2026 Пост от: Никита","endDate":"2026-10-29T18:00:00","image":"https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/ba56d557f3ddf9f8f0a16d811d8128bf.jpg","organizer":{"@type":"Organization","name":"Telegram @nyachang_ru","url":"https://t.me/nyachang_ru/25225"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"Открытая тренировка бегового клуба TTRC в Нячанге","item":"https://mypins.site/event/15299a9f-5097-4bf5-8182-ee22aa4b9ae8/otkrytaya-trenirovka-begovogo-kluba-ttrc-v-nyachange/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Открытая тренировка бегового клуба TTRC в Нячанге</h1>
+  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-10-29">29 октября 2026</time></p>
+  <p><time datetime="2026-10-29T17:00:00">29 октября 2026, 17:00</time></p>
+  <address>Стадион Нячанга, 10 Yersin, Phường, Nha Trang, Khánh Hòa 650000, Нячанг</address>
+  <p>Бесплатно</p>
+  <p>Открытая тренировка бегового клуба TTRC в Нячанге
+
+Приглашаем всех, кто хочет начать бегать, улучшить физическую форму или тренироваться в команде под руководством профессионального тренера.
+
+Подойдет как новичкам, так и опытным бегунам.
+
+Что вас ждет на тренировке?
+
+✔️Анализ техники бега и рекомендации по её улучшению.
+✔️Специальные беговые упражнения (СБУ).
+✔️Работа над скоростью, выносливостью и координацией.
+✔️Интервальные и темповые задания с учетом вашего уровня подготовки.
+✔️Разбор ошибок и
+рекомендации для самостоятельных тренировок.
+✔️Дружеская атмосфера, поддержка команды и мотивация.
+✔️ Тренировка в тренажерном зале один раз в неделю.
+✔️ Подготовка к пробегам
+5, 10, 21, 42 км
+✔️Знакомство с экосистемой TOSA_TEAM Run Club.
+
+📅 29.10.2026
+
+🕔 17:00-18:00
+
+📍 Центральный стадион Нячанга
+
+🆓 Первая тренировка бесплатно
+
+📩 Напишите в Direct @tosacoach
+«Хочу в TOSA_TEAM»
+
+#дата: 29.10.2026
+Пост от: Никита</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/nha-trang/">Нячанг</a> <span aria-hidden="true">›</span> <span>Открытая тренировка бегового клуба TTRC в Нячанге</span></p>
+    <p>Ещё события в Нячанге: <a href="/nha-trang/">афиша</a> · <a href="/nha-trang/sport/">🏃 Спорт</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/72e52281-0f06-40a5-988c-27eff3035398/uchim-igrat-v-piklbol/">Учим играть в ПИКЛБОЛ <time datetime="2026-10-25">25 октября 2026</time></a></li>
+    <li><a href="/event/b486498d-38b7-4052-8082-ea7b17bc3324/stritbol-3-3/">Стритбол 3 3 <time datetime="2026-10-26">26 октября 2026</time></a></li>
+    <li><a href="/event/3a099269-0067-41db-879c-adb63feb2a3c/uchim-igrat-v-piklbol/">Учим играть в ПИКЛБОЛ <time datetime="2026-10-27">27 октября 2026</time></a></li>
+    <li><a href="/event/c3e77800-4aab-4769-a795-0edd6d61ea97/utrenyaya-krugovaya-trenirovka/">Утреняя круговая тренировка <time datetime="2026-10-29">29 октября 2026</time></a></li>
+    <li><a href="/event/3b9c22bd-fbd3-40d1-846f-ac77a3b5663f/sovmestnaya-probezhka-na-zapade/">Совместная пробежка на западе <time datetime="2026-10-29">29 октября 2026</time></a></li>
+    <li><a href="/event/60402c88-e05d-478b-8c56-f95800061a32/basketbol-5-5/">Баскетбол 5 5 <time datetime="2026-10-29">29 октября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Нячанг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/5fbb63f2-cee0-4a93-ac1c-eacdf46a3ca6/sportivnaya-mafiya-v-nyachange/">СПОРТИВНАЯ МАФИЯ В НЯЧАНГЕ</a> <time datetime="2026-10-28">28 октября 2026</time></li>
+    <li>Следующее: <a href="/event/cf585699-bf09-49b0-921a-e3688be3f907/vechernyaya-khatkha-yoga-dlya-nachinayushchikh-v-nyachange/">Вечерняя хатха-йога для начинающих в Нячанге</a> <time datetime="2026-10-29">29 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/nha-trang/">Ближайшие события: Нячанг</a></p>
+</div>
+
+  </body>
+</html>
