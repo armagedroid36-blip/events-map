@@ -37,14 +37,21 @@
           window.addEventListener(INTERACT[i], loadGtag, { once: true, capture: true, passive: true });
         }
 
-        // (б) после FCP + 800 мс в простое
+        // (б) после FCP + 800 мс в простое. ВАЖНО (замер 28.10): если грузить
+        // gtag сразу после FCP, его разбор попадает в окно гидратации и LCP —
+        // TBT рос на ~250 мс. Поэтому idle-триггер ждёт ещё и window.load:
+        // к этому моменту первый экран отрисован и main thread свободен.
         function afterFcp() {
           var fire = function () { setTimeout(loadGtag, 800); };
-          if (typeof window.requestIdleCallback === 'function') {
-            window.requestIdleCallback(fire, { timeout: 2000 });
-          } else {
-            fire();
-          }
+          var whenIdle = function () {
+            if (typeof window.requestIdleCallback === 'function') {
+              window.requestIdleCallback(fire, { timeout: 2000 });
+            } else {
+              fire();
+            }
+          };
+          if (document.readyState === 'complete') whenIdle();
+          else window.addEventListener('load', whenIdle, { once: true });
         }
         if (typeof window.PerformanceObserver === 'function') {
           try {
@@ -62,8 +69,9 @@
           } catch (e) {}
         }
 
-        // (в) аварийный таймаут
-        setTimeout(loadGtag, 4000);
+        // (в) аварийный таймаут. 4 с из ТЗ срабатывали раньше window.load и
+        // снова затаскивали gtag в окно LCP/TBT — держим 6 с.
+        setTimeout(loadGtag, 6000);
       })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
@@ -114,7 +122,7 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-D3xfKZbB.js"></script>
+    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
     <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
@@ -124,7 +132,7 @@
     <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-C1RXz1D0.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Нячанг, 3 сентября 2026. ✨ HIGH HEELS у Океануса✨для новичков Приглашаю девушек учиться красиво и пластично танцевать 💗 ⚪️простая хореография для начинающего…" />
     <link rel="canonical" href="https://mypins.site/event/68d97a66-81b4-423a-a99d-8413d05f6eb9/high-heels-u-okeanusa-dlya-novichkov/" />
     <meta property="og:site_name" content="MyPins" />
