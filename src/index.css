@@ -403,3 +403,109 @@ body {
     height: 100dvh;
   }
 }
+
+/* Слот SEO-контента на мобильном интро (beta 1.16). Раньше оформление жило
+   arbitrary-variant классами в MobileMapIntro.tsx ([&_h1]:…, [&_li_time]:…) —
+   Tailwind клал эти утилиты в критический CSS, встроенный в КАЖДУЮ страницу
+   (+3 КБ × 11 069 страниц). Теперь правила только здесь и применяются лишь
+   к интро-слоту; значения те же, что были в утилитах. */
+.seo-intro-slot {
+  position: relative;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  color: #111827;
+}
+.seo-intro-slot h1 {
+  font-size: 1.25rem;
+  line-height: 1.25;
+  font-weight: 800;
+}
+.seo-intro-slot h2 {
+  margin-top: 1.25rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 700;
+}
+.seo-intro-slot p {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.625;
+}
+.seo-intro-slot a {
+  color: #0f766e;
+  text-decoration: underline;
+}
+.seo-intro-slot ul {
+  margin-top: 0.5rem;
+}
+.seo-intro-slot li {
+  font-size: 0.875rem;
+  line-height: 1.375;
+}
+.seo-intro-slot ul > li + li {
+  margin-top: 0.375rem;
+}
+.seo-intro-slot li time {
+  white-space: nowrap;
+  color: #6b7280;
+}
+.seo-intro-slot nav {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* Offscreen-часть статического SEO-блока не участвует в layout/paint, пока не
+   подъедет к вьюпорту: на /bali/ список «Остальные события» — это ~170 <li>
+   и ~5300 px высоты (styleLayout 1 000+ мс на слабом телефоне). Ни display:none,
+   ни удаления из DOM нет: ссылки остаются в HTML и в DOM для краулера. */
+#seo-intro-slot .seo-more,
+#seo-intro-slot details,
+#seo-intro-slot .seo-category-links {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 800px;
+}
+
+/* Слои мобильного интро (beta 1.16): те же значения, что были у утилит в
+   MobileMapIntro.tsx, но без генерации уникальных utility-классов в
+   критическом CSS всех страниц (#faf7f2-градиент, z-[15], -z-10 и т. п.). */
+.intro-scroll {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.intro-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 15;
+  height: 2rem;
+  pointer-events: none;
+  background: linear-gradient(to top, #faf7f2, rgba(250, 247, 242, 0));
+}
+.intro-banner {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0.75rem 1.25rem 0;
+}
+.intro-banner-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -10;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.intro-banner-shade {
+  position: absolute;
+  inset: 0;
+  z-index: -10;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.1));
+}

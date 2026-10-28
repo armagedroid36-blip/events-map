@@ -1984,6 +1984,9 @@ function citySeoHtml(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs = 
   // Conference в Пафосе).
   if (Array.isArray(restEvs) && restEvs.length) {
     const restWhere = seo.h1.replace(/^(?:Мероприятия и события|События)\s+/, '');
+    // <section class="seo-more"> — якорь для content-visibility в интро-слоте
+    // (offscreen-часть не считает layout): контент и все ссылки остаются в HTML.
+    lines.push('  <section class="seo-more">');
     lines.push(`  <h2>Остальные события ${esc(restWhere)} (${restEvs.length})</h2>`, '  <ul>');
     for (const ev of restEvs) {
       const sd = nextOccurrenceDate(ev, TODAY_ISO);
@@ -1994,7 +1997,7 @@ function citySeoHtml(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs = 
       if (name) parts.push(`<a href="${esc(url)}">${esc(name)}</a>`);
       lines.push(`    <li>${parts.join(' — ')}</li>`);
     }
-    lines.push('  </ul>');
+    lines.push('  </ul>', '  </section>');
   }
   // Перелинковка направлений (хаб↔хаб): с городов ЮВА — одна контекстная
   // ссылка на афишу Кипра, с Кипра — на три города. Ссылки относительные, как
@@ -2260,6 +2263,8 @@ function citySeoHtmlEn(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs 
   // событий редких категорий и тех, что не попали в «Upcoming» (см. citySeoHtml).
   if (Array.isArray(restEvs) && restEvs.length) {
     const restWhere = seo.h1.replace(/^(?:Events and things to do in|Events in)\s+/, '');
+    // <section class="seo-more"> — якорь для content-visibility в интро-слоте
+    lines.push('  <section class="seo-more">');
     lines.push(`  <h2>More events in ${esc(restWhere)} (${restEvs.length})</h2>`, '  <ul>');
     for (const ev of restEvs) {
       const sd = nextOccurrenceDate(ev, TODAY_ISO);
@@ -2270,7 +2275,7 @@ function citySeoHtmlEn(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs 
       if (name) parts.push(`<a href="${esc(url)}">${esc(name)}</a>`);
       lines.push(`    <li>${parts.join(' — ')}</li>`);
     }
-    lines.push('  </ul>');
+    lines.push('  </ul>', '  </section>');
   }
   // Перелинковка направлений (см. citySeoHtml): EN-версии городов ↔ /en/cyprus/.
   const otherCitiesEn =
@@ -3388,7 +3393,9 @@ function cityCategoriesHtml(path, lang, cells) {
     .join(' · ');
   return {
     text: `${title}:`,
-    html: `  <h2>${esc(title)}</h2>\n  <p>${links}</p>`,
+    // <section class="seo-category-links"> — якорь для content-visibility на
+    // интро-экране (мелкий блок, но правило общее с .seo-more).
+    html: `  <section class="seo-category-links">\n  <h2>${esc(title)}</h2>\n  <p>${links}</p>\n  </section>`,
   };
 }
 

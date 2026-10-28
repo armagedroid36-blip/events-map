@@ -2,18 +2,15 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
-         до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
-         Сознательно НЕ используем:
-           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
-             модули) — то есть до первой отрисовки;
-           - событие load: в холодном профиле load может пройти раньше первой отрисовки
-             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
-           - первую paint-запись (first-paint): она выходит раньше FCP.
-         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
-         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
-         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки и не конкурирует с LCP:
+         раньше скрипт стартовал по записи first-contentful-paint и через ~450 мс
+         занимал main thread ровно в окне LCP (third-party-summary, 28.10.2026).
+         Триггер — ПЕРВОЕ из событий:
+           (а) первое взаимодействие пользователя: pointerdown / keydown / touchstart (once);
+           (б) requestIdleCallback после FCP + задержка 800 мс — счётчик грузится в простое;
+           (в) аварийный таймаут 4 с — если ни paint-записи, ни простоя не было.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -32,14 +29,30 @@
           document.head.appendChild(s);
         }
         if (navigator.connection && navigator.connection.saveData === true) return;
+
+        // (а) первое взаимодействие — раньше этого счётчик не нужен
+        var INTERACT = ['pointerdown', 'keydown', 'touchstart'];
+        for (var i = 0; i < INTERACT.length; i++) {
+          window.addEventListener(INTERACT[i], loadGtag, { once: true, capture: true, passive: true });
+        }
+
+        // (б) после FCP + 800 мс в простое
+        function afterFcp() {
+          var fire = function () { setTimeout(loadGtag, 800); };
+          if (typeof window.requestIdleCallback === 'function') {
+            window.requestIdleCallback(fire, { timeout: 2000 });
+          } else {
+            fire();
+          }
+        }
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
               var entries = list.getEntries();
-              for (var i = 0; i < entries.length; i++) {
-                if (entries[i].name === 'first-contentful-paint') {
+              for (var j = 0; j < entries.length; j++) {
+                if (entries[j].name === 'first-contentful-paint') {
                   obs.disconnect();
-                  loadGtag();
+                  afterFcp();
                   return;
                 }
               }
@@ -47,7 +60,9 @@
             po.observe({ type: 'paint', buffered: true });
           } catch (e) {}
         }
-        setTimeout(loadGtag, 5000);
+
+        // (в) аварийный таймаут
+        setTimeout(loadGtag, 4000);
       })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />

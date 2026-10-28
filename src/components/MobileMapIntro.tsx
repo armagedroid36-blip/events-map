@@ -43,11 +43,12 @@ export default function MobileMapIntro({ previewUrl, leaving, onOpen }: Props) {
     >
       {/* Слой с реальным SEO-контентом города/главной. Прокручивается под
           баннером; фон — #faf7f2 (у блока нет своих классов, текст на картинке
-          был бы нечитаем), текстовые размеры/цвета заданы вариантами ниже. */}
-      <div className="absolute inset-0 z-10 overflow-y-auto overscroll-contain">
+          был бы нечитаем). Стили — .intro-scroll / .seo-intro-slot в index.css:
+          arbitrary-variant утилиты раздували критический CSS всех страниц. */}
+      <div className="intro-scroll">
         <div
           id="seo-intro-slot"
-          className="relative px-5 text-gray-900 [&_a]:text-[#0f766e] [&_a]:underline [&_h1]:text-xl [&_h1]:font-extrabold [&_h1]:leading-tight [&_h2]:mt-5 [&_h2]:text-base [&_h2]:font-bold [&_li]:text-sm [&_li]:leading-snug [&_li_time]:whitespace-nowrap [&_li_time]:text-gray-500 [&_nav]:text-xs [&_nav]:text-gray-500 [&_p]:mt-3 [&_p]:text-sm [&_p]:leading-relaxed [&_ul]:mt-2 [&_ul]:space-y-1.5"
+          className="seo-intro-slot"
           style={{
             // 7.5rem — ниже плавающей шапки (её нижняя граница ~106px), иначе
             // хлебные крошки уезжают под стекло
@@ -59,15 +60,12 @@ export default function MobileMapIntro({ previewUrl, leaving, onOpen }: Props) {
 
       {/* Мягкое затухание контента к баннеру: без него строка списка
           обрывается ровно по границе нижней зоны — выглядит как обрез */}
-      <div
-        className="pointer-events-none absolute inset-x-0 z-[15] h-8 bg-gradient-to-t from-[#faf7f2] to-transparent"
-        style={{ bottom: BANNER_ZONE }}
-      />
+      <div className="intro-fade" style={{ bottom: BANNER_ZONE }} />
 
       {/* Нижняя зона: превью карты + затемнение + баннер (h2, подводка, кнопка).
           Прижата к низу экрана и не участвует в прокрутке. */}
       <div
-        className="absolute inset-x-0 bottom-0 z-20 flex flex-col justify-end px-5 pt-3"
+        className="intro-banner"
         style={{
           minHeight: BANNER_ZONE,
           paddingBottom: 'calc(1.25rem + env(safe-area-inset-bottom, 0px))',
@@ -79,9 +77,9 @@ export default function MobileMapIntro({ previewUrl, leaving, onOpen }: Props) {
           src={previewUrl}
           alt={t('mapIntro.imgAlt')}
           fetchPriority="high"
-          className="absolute inset-0 -z-10 h-full w-full object-cover"
+          className="intro-banner-bg"
         />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/45 to-black/10" />
+        <div className="intro-banner-shade" />
         <h2 className="max-w-[19rem] text-[23px] font-extrabold leading-tight tracking-tight text-white drop-shadow-md">
           {t('mapIntro.title')}
         </h2>
