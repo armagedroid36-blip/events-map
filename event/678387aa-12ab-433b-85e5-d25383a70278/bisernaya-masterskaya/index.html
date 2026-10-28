@@ -3,18 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
-    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
-         до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
-         Сознательно НЕ используем:
-           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
-             модули) — то есть до первой отрисовки;
-           - событие load: в холодном профиле load может пройти раньше первой отрисовки
-             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
-           - первую paint-запись (first-paint): она выходит раньше FCP.
-         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
-         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
-         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки и не конкурирует с LCP:
+         раньше скрипт стартовал по записи first-contentful-paint и через ~450 мс
+         занимал main thread ровно в окне LCP (third-party-summary, 28.10.2026).
+         Триггер — ПЕРВОЕ из событий:
+           (а) первое взаимодействие пользователя: pointerdown / keydown / touchstart (once);
+           (б) requestIdleCallback после FCP + задержка 800 мс — счётчик грузится в простое;
+           (в) аварийный таймаут 4 с — если ни paint-записи, ни простоя не было.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -33,14 +30,30 @@
           document.head.appendChild(s);
         }
         if (navigator.connection && navigator.connection.saveData === true) return;
+
+        // (а) первое взаимодействие — раньше этого счётчик не нужен
+        var INTERACT = ['pointerdown', 'keydown', 'touchstart'];
+        for (var i = 0; i < INTERACT.length; i++) {
+          window.addEventListener(INTERACT[i], loadGtag, { once: true, capture: true, passive: true });
+        }
+
+        // (б) после FCP + 800 мс в простое
+        function afterFcp() {
+          var fire = function () { setTimeout(loadGtag, 800); };
+          if (typeof window.requestIdleCallback === 'function') {
+            window.requestIdleCallback(fire, { timeout: 2000 });
+          } else {
+            fire();
+          }
+        }
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
               var entries = list.getEntries();
-              for (var i = 0; i < entries.length; i++) {
-                if (entries[i].name === 'first-contentful-paint') {
+              for (var j = 0; j < entries.length; j++) {
+                if (entries[j].name === 'first-contentful-paint') {
                   obs.disconnect();
-                  loadGtag();
+                  afterFcp();
                   return;
                 }
               }
@@ -48,7 +61,9 @@
             po.observe({ type: 'paint', buffered: true });
           } catch (e) {}
         }
-        setTimeout(loadGtag, 5000);
+
+        // (в) аварийный таймаут
+        setTimeout(loadGtag, 4000);
       })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
@@ -99,17 +114,17 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-7S8OB6w7.js"></script>
+    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-CiditiC5.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B5HEqJPf.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-k5hwfIbo.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-Bf_KlSyI.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Нячанг, 8 октября 2026. 🌸 Бисерная мастерская 🌸 В этот четверг приглашаю вас на мастер-класс по созданию украшений из японского бисера. Это возможность…" />
     <link rel="canonical" href="https://mypins.site/event/678387aa-12ab-433b-85e5-d25383a70278/bisernaya-masterskaya/" />
     <meta property="og:site_name" content="MyPins" />
@@ -166,12 +181,12 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/413b34b2-3b73-4bec-b832-ea0cd30c7466/vashi-dengi-uspekh-i-uverennost-v-sebe-spryatany-v-vashey-teni/">Ваши деньги, успех и уверенность в себе спрятаны в вашей Тени <time datetime="2026-10-27">27 октября 2026</time></a></li>
-    <li><a href="/event/4fdd19d7-163b-4b2c-b3fe-679f3179864b/master-klass-po-sketchingu/">Мастер-класс по скетчингу <time datetime="2026-10-27">27 октября 2026</time></a></li>
-    <li><a href="/event/5d9ba2df-92eb-4622-aba7-f3d5f7c04106/transformatsionnaya-igra-poslanie-roda/">ТРАНСФОРМАЦИОННАЯ ИГРА «ПОСЛАНИЕ РОДА» <time datetime="2026-10-27">27 октября 2026</time></a></li>
-    <li><a href="/event/710f3103-f9d3-4311-bb11-4b2494cabf62/knizhnyy-klub-vikichtenie/">Книжный клуб «Vikiчтение» <time datetime="2026-10-27">27 октября 2026</time></a></li>
-    <li><a href="/event/c5d5775d-394e-483e-a482-ff98c494b694/generator-kontenta-so-svetoy-gruzdovoy/">Генератор контента со Светой Груздовой <time datetime="2026-10-27">27 октября 2026</time></a></li>
     <li><a href="/event/81eb44e8-cfda-4640-89d4-c54fcb924e2e/khudozhka-dlya-vzroslykh/">ХУДОЖКА ДЛЯ ВЗРОСЛЫХ <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/68ca6c24-16f4-4338-8232-8986e566c1e4/art-studiya-galereya-masterzodchiy/">АРТ-Студия-Галерея «МастерЗодчий» <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/9d65bde6-2d32-46a8-b5d6-d25879e6bb39/priglashayu-sobrat-dlya-sebya-braslet-talisman-iz-naturalnykh-kamney/">Приглашаю собрать для себя браслет-талисман из натуральных камней <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/b2000d37-fdbd-4941-94e9-09ec857e6991/28-oktyabrya-nyachang-18-30-20-30-master-klass/">28 ОКТЯБРЯ НЯЧАНГ 18:30 20:30 Мастер Класс <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/d3db1010-cf50-4b83-a07d-5e73df5ba0de/aroma-vstrecha/">Арома-встреча <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/ee5a97a4-3dad-4f7a-b770-8583b3cb2b7f/tantsevalnoe-utro-s-tatu/">ТАНЦЕВАЛЬНОЕ УТРО С ТАТУ <time datetime="2026-10-28">28 октября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Нячанг</h2>

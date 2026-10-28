@@ -3,18 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
-    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
-         до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
-         Сознательно НЕ используем:
-           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
-             модули) — то есть до первой отрисовки;
-           - событие load: в холодном профиле load может пройти раньше первой отрисовки
-             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
-           - первую paint-запись (first-paint): она выходит раньше FCP.
-         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
-         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
-         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки и не конкурирует с LCP:
+         раньше скрипт стартовал по записи first-contentful-paint и через ~450 мс
+         занимал main thread ровно в окне LCP (third-party-summary, 28.10.2026).
+         Триггер — ПЕРВОЕ из событий:
+           (а) первое взаимодействие пользователя: pointerdown / keydown / touchstart (once);
+           (б) requestIdleCallback после FCP + задержка 800 мс — счётчик грузится в простое;
+           (в) аварийный таймаут 4 с — если ни paint-записи, ни простоя не было.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -33,14 +30,30 @@
           document.head.appendChild(s);
         }
         if (navigator.connection && navigator.connection.saveData === true) return;
+
+        // (а) первое взаимодействие — раньше этого счётчик не нужен
+        var INTERACT = ['pointerdown', 'keydown', 'touchstart'];
+        for (var i = 0; i < INTERACT.length; i++) {
+          window.addEventListener(INTERACT[i], loadGtag, { once: true, capture: true, passive: true });
+        }
+
+        // (б) после FCP + 800 мс в простое
+        function afterFcp() {
+          var fire = function () { setTimeout(loadGtag, 800); };
+          if (typeof window.requestIdleCallback === 'function') {
+            window.requestIdleCallback(fire, { timeout: 2000 });
+          } else {
+            fire();
+          }
+        }
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
               var entries = list.getEntries();
-              for (var i = 0; i < entries.length; i++) {
-                if (entries[i].name === 'first-contentful-paint') {
+              for (var j = 0; j < entries.length; j++) {
+                if (entries[j].name === 'first-contentful-paint') {
                   obs.disconnect();
-                  loadGtag();
+                  afterFcp();
                   return;
                 }
               }
@@ -48,7 +61,9 @@
             po.observe({ type: 'paint', buffered: true });
           } catch (e) {}
         }
-        setTimeout(loadGtag, 5000);
+
+        // (в) аварийный таймаут
+        setTimeout(loadGtag, 4000);
       })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
@@ -99,17 +114,17 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-7S8OB6w7.js"></script>
+    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-CiditiC5.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B5HEqJPf.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-k5hwfIbo.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-Bf_KlSyI.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Дананг, 30 сентября 2026. 🎲 СРЕДА — ВЕЧЕР TAC В ДАНАНГЕ! 🧠 Что такое TAC? TAC — современная командная настольная игра, которая проверит вас на: ✔️…" />
     <link rel="canonical" href="https://mypins.site/event/c411ab9b-7947-4ad7-8fe4-44205d9c0324/sreda-vecher-tac-v-danange/" />
     <meta property="og:site_name" content="MyPins" />
@@ -168,12 +183,12 @@ TAC любят за редкое сочетание: глубина мысли, 
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/d232a743-44fe-4ce6-8bd9-56dbf3fee71e/transformatsionnaya-igra-mudrost-lily/">ТРАНСФОРМАЦИОННАЯ ИГРА «МУДРОСТЬ ЛИЛЫ» <time datetime="2026-10-27">27 октября 2026</time></a></li>
-    <li><a href="/event/17fb363b-2a45-4a8a-b882-bd7f2ce41957/segodnya-mafiya-v-restorane-369-v-danange-legko-veselo-vmeste/">Сегодня МАФИЯ в ресторане 369 в Дананге легко, весело, вместе! <time datetime="2026-10-27">27 октября 2026</time></a></li>
+    <li><a href="/event/355e2c45-10ef-46e0-803a-d58492b5b082/mafiya-predictor-v-sredu-novyy-smeshannyy-format/">Мафия PREDICTOR в среду новый смешанный формат <time datetime="2026-09-30">30 сентября 2026</time></a></li>
     <li><a href="/event/52cdce1f-d59d-4700-bdbc-f145722dc9b5/sreda-vecher-tas-v-restorane-369/">СРЕДА ВЕЧЕР ТАС в ресторане 369! <time datetime="2026-10-28">28 октября 2026</time></a></li>
     <li><a href="/event/75da24d5-1691-42ff-b544-a2380969175d/predictor-mix-tri-mafii-za-odin-vecher/">PREDICTOR MIX три Мафии за один вечер <time datetime="2026-10-28">28 октября 2026</time></a></li>
     <li><a href="/event/e176d331-51d4-429e-8221-7ec81333d4e8/kviz-pliz-garri-potter-igra-dlya-tekh-kto-pomnit-vse-frazy-drako-malfoya-otlichaet-gerbologiyu-ot-zelevareniya-i-do-sikh/">Квиз, плиз! Гарри Поттер игра для тех, кто помнит все фразы Драко Малфоя, отличает гербологию от зельеварения, и до сих <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/fa6c441a-99b8-457f-bfd0-622c182450b8/shakhmaty-dlya-vzroslykh-v-danange-po-pyatnitsam-v-ace-hub-vedet-mezhdunarodnyy-grossmeyster-aleksey-kim/">Шахматы для взрослых в Дананге, по пятницам в ACE Hub. Ведёт международный гроссмейстер Алексей Ким <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/9673df19-b84e-481f-93c1-02269bba1920/privet/">Привет! <time datetime="2026-10-31">31 октября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Дананг</h2>

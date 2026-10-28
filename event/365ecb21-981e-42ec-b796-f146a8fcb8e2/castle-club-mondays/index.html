@@ -3,18 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
-    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
-         до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
-         Сознательно НЕ используем:
-           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
-             модули) — то есть до первой отрисовки;
-           - событие load: в холодном профиле load может пройти раньше первой отрисовки
-             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
-           - первую paint-запись (first-paint): она выходит раньше FCP.
-         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
-         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
-         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки и не конкурирует с LCP:
+         раньше скрипт стартовал по записи first-contentful-paint и через ~450 мс
+         занимал main thread ровно в окне LCP (third-party-summary, 28.10.2026).
+         Триггер — ПЕРВОЕ из событий:
+           (а) первое взаимодействие пользователя: pointerdown / keydown / touchstart (once);
+           (б) requestIdleCallback после FCP + задержка 800 мс — счётчик грузится в простое;
+           (в) аварийный таймаут 4 с — если ни paint-записи, ни простоя не было.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -33,14 +30,30 @@
           document.head.appendChild(s);
         }
         if (navigator.connection && navigator.connection.saveData === true) return;
+
+        // (а) первое взаимодействие — раньше этого счётчик не нужен
+        var INTERACT = ['pointerdown', 'keydown', 'touchstart'];
+        for (var i = 0; i < INTERACT.length; i++) {
+          window.addEventListener(INTERACT[i], loadGtag, { once: true, capture: true, passive: true });
+        }
+
+        // (б) после FCP + 800 мс в простое
+        function afterFcp() {
+          var fire = function () { setTimeout(loadGtag, 800); };
+          if (typeof window.requestIdleCallback === 'function') {
+            window.requestIdleCallback(fire, { timeout: 2000 });
+          } else {
+            fire();
+          }
+        }
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
               var entries = list.getEntries();
-              for (var i = 0; i < entries.length; i++) {
-                if (entries[i].name === 'first-contentful-paint') {
+              for (var j = 0; j < entries.length; j++) {
+                if (entries[j].name === 'first-contentful-paint') {
                   obs.disconnect();
-                  loadGtag();
+                  afterFcp();
                   return;
                 }
               }
@@ -48,7 +61,9 @@
             po.observe({ type: 'paint', buffered: true });
           } catch (e) {}
         }
-        setTimeout(loadGtag, 5000);
+
+        // (в) аварийный таймаут
+        setTimeout(loadGtag, 4000);
       })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
@@ -99,17 +114,17 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-7S8OB6w7.js"></script>
+    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-CiditiC5.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B5HEqJPf.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-k5hwfIbo.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-Bf_KlSyI.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Ая-Напа, Кипр, 12 октября 2026. Зал 1 – Party Room – Commercial / House Лайнап Coxy 22:00-02:00 Leno P 02:00-Закрытие Хост: Marshall Зал 2 – Sin Arena – R&amp;B &amp;…" />
     <link rel="canonical" href="https://mypins.site/event/365ecb21-981e-42ec-b796-f146a8fcb8e2/klub-zamok-po-ponedelnikam/" />
     <meta property="og:site_name" content="MyPins" />
@@ -151,11 +166,11 @@ Leno P 02:00-Закрытие
   <h2>Похожие события</h2>
   <ul>
     <li><a href="/event/17e1994d-7c3c-4881-beb3-19fc3db44933/pura-vida-v-por-favor/">Pura Vida в Por Favor <time datetime="2026-10-27">27 октября 2026</time></a></li>
-    <li><a href="/event/721ce680-d1d0-49ec-8ff9-21c56a60b729/snova-na-ulitsakh-nikosii/">Снова на улицах Никосии <time datetime="2026-10-27">27 октября 2026</time></a></li>
     <li><a href="/event/b0851028-2c06-4339-b5d6-45b36c5d6685/pinakoteka-spetsialnaya-vecherinka-na-khellouin-baron-givasso-x-pazzi-i-vaty-lupa-v-mason-bar/">Pinakoteka: специальная вечеринка на Хэллоуин - Baron, Givasso x Pazzi и Vaty Lupa в Mason Bar <time datetime="2026-10-27">27 октября 2026</time></a></li>
-    <li><a href="/event/cd97f709-212b-4fce-88d4-26c63b053781/pikovyy-khellouin-noch-s-dj-mks-i-ntinos-v-nikosii/">Пиковый Хэллоуин: Ночь с DJ MKS и Ntinos в Никосии <time datetime="2026-10-27">27 октября 2026</time></a></li>
-    <li><a href="/event/d1e51eee-989a-4fb9-97a3-e0b150fb4ae9/afro-frik-vtorniki/">Афро Фрик Вторники <time datetime="2026-10-27">27 октября 2026</time></a></li>
-    <li><a href="/event/ff9c789a-a9b8-434f-974f-add7e232a76c/love-generation-khellouin-shou-v-limassole/">Love Generation Хэллоуин шоу в Лимассоле <time datetime="2026-10-27">27 октября 2026</time></a></li>
+    <li><a href="/event/6c46f3b7-767f-49b8-a6ca-2cb9799c5f78/klub-kastl-po-sredam/">Клуб «Кастл» по средам <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/85882765-e584-4231-b582-939f857544f5/zhutko-zakhvatyvayushchiy-khellouin-v-agora/">Жутко захватывающий Хэллоуин в Agora <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/b7fee3e2-0e10-4cfd-acac-11c1880e62a6/pik-khellouin-2026-v-nikosii/">Пик Хэллоуин 2026 в Никосии <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/bff4cdcf-0b60-4458-a2ee-78dc8e468223/vecherinka-prazdnovanie-13-y-godovshchiny-v-to-potopolio/">Вечеринка: Празднование 13-й годовщины в To Potopolio <time datetime="2026-10-28">28 октября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Кипр</h2>

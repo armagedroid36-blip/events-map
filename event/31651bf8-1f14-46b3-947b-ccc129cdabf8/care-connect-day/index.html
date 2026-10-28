@@ -3,18 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
-    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
-         до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
-         Сознательно НЕ используем:
-           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
-             модули) — то есть до первой отрисовки;
-           - событие load: в холодном профиле load может пройти раньше первой отрисовки
-             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
-           - первую paint-запись (first-paint): она выходит раньше FCP.
-         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
-         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
-         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки и не конкурирует с LCP:
+         раньше скрипт стартовал по записи first-contentful-paint и через ~450 мс
+         занимал main thread ровно в окне LCP (third-party-summary, 28.10.2026).
+         Триггер — ПЕРВОЕ из событий:
+           (а) первое взаимодействие пользователя: pointerdown / keydown / touchstart (once);
+           (б) requestIdleCallback после FCP + задержка 800 мс — счётчик грузится в простое;
+           (в) аварийный таймаут 4 с — если ни paint-записи, ни простоя не было.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -33,14 +30,30 @@
           document.head.appendChild(s);
         }
         if (navigator.connection && navigator.connection.saveData === true) return;
+
+        // (а) первое взаимодействие — раньше этого счётчик не нужен
+        var INTERACT = ['pointerdown', 'keydown', 'touchstart'];
+        for (var i = 0; i < INTERACT.length; i++) {
+          window.addEventListener(INTERACT[i], loadGtag, { once: true, capture: true, passive: true });
+        }
+
+        // (б) после FCP + 800 мс в простое
+        function afterFcp() {
+          var fire = function () { setTimeout(loadGtag, 800); };
+          if (typeof window.requestIdleCallback === 'function') {
+            window.requestIdleCallback(fire, { timeout: 2000 });
+          } else {
+            fire();
+          }
+        }
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
               var entries = list.getEntries();
-              for (var i = 0; i < entries.length; i++) {
-                if (entries[i].name === 'first-contentful-paint') {
+              for (var j = 0; j < entries.length; j++) {
+                if (entries[j].name === 'first-contentful-paint') {
                   obs.disconnect();
-                  loadGtag();
+                  afterFcp();
                   return;
                 }
               }
@@ -48,7 +61,9 @@
             po.observe({ type: 'paint', buffered: true });
           } catch (e) {}
         }
-        setTimeout(loadGtag, 5000);
+
+        // (в) аварийный таймаут
+        setTimeout(loadGtag, 4000);
       })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
@@ -99,17 +114,17 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-7S8OB6w7.js"></script>
+    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-CiditiC5.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B5HEqJPf.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-k5hwfIbo.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-Bf_KlSyI.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Никосия, Кипр, 18 октября 2026. День заботы и общения в Gardens of the Future, Nicosia, 18 октября 2026 года, 10:00." />
     <link rel="canonical" href="https://mypins.site/event/31651bf8-1f14-46b3-947b-ccc129cdabf8/den-zaboty-i-obshcheniya/" />
     <meta property="og:site_name" content="MyPins" />
@@ -140,12 +155,12 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/a9d90f67-7978-4e02-b218-9749f92fda1e/zanyatiya-tsigun-i-taytszitsyuan-v-limasole/">Занятия цигун и тайцзицюань в Лимасоле <time datetime="2026-10-27">27 октября 2026</time></a></li>
     <li><a href="/event/673d3dff-768f-4628-938f-db6dcd775b0f/nastolnyy-tennis-dlya-55-v-nikosii/">Настольный теннис для 55+ в Никосии <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/f7580b70-7693-4f34-90ed-c90a5fa34c7a/zanyatiya-tsigun-i-taytszitsyuan-v-limasole/">Занятия цигун и тайцзицюань в Лимасоле <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/5f0613cf-7db7-4605-ade4-81265ef0569e/energeticheskaya-meditsina-ekspo/">Энергетическая медицина Экспо <time datetime="2026-10-31">31 октября 2026</time></a></li>
     <li><a href="/event/99713abe-df1c-4501-b79f-b5d99934c3da/yoga-i-rezba-po-tykve-osennee-utro-v-satya-studio/">Йога и резьба по тыкве: осеннее утро в Satya Studio <time datetime="2026-11-01">1 ноября 2026</time></a></li>
     <li><a href="/event/51eb47bd-cf0a-415e-9639-c64b70f63559/retrit-somaticheskogo-istseleniya-keha-7-dney-vse-vklyucheno-v-pafose/">Ретрит соматического исцеления KEHA: 7 дней всё включено в Пафосе <time datetime="2026-11-02">2 ноября 2026</time></a></li>
+    <li><a href="/event/b3075a79-085d-4436-aaae-772e0133f24b/klub-yunykh-uchenykh/">Клуб юных учёных <time datetime="2026-11-02">2 ноября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Кипр</h2>

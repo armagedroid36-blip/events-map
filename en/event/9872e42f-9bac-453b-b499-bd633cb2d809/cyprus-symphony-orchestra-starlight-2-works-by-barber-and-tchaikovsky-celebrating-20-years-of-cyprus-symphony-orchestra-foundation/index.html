@@ -3,18 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
-    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
-         до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
-         Сознательно НЕ используем:
-           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
-             модули) — то есть до первой отрисовки;
-           - событие load: в холодном профиле load может пройти раньше первой отрисовки
-             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
-           - первую paint-запись (first-paint): она выходит раньше FCP.
-         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
-         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
-         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки и не конкурирует с LCP:
+         раньше скрипт стартовал по записи first-contentful-paint и через ~450 мс
+         занимал main thread ровно в окне LCP (third-party-summary, 28.10.2026).
+         Триггер — ПЕРВОЕ из событий:
+           (а) первое взаимодействие пользователя: pointerdown / keydown / touchstart (once);
+           (б) requestIdleCallback после FCP + задержка 800 мс — счётчик грузится в простое;
+           (в) аварийный таймаут 4 с — если ни paint-записи, ни простоя не было.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -33,14 +30,30 @@
           document.head.appendChild(s);
         }
         if (navigator.connection && navigator.connection.saveData === true) return;
+
+        // (а) первое взаимодействие — раньше этого счётчик не нужен
+        var INTERACT = ['pointerdown', 'keydown', 'touchstart'];
+        for (var i = 0; i < INTERACT.length; i++) {
+          window.addEventListener(INTERACT[i], loadGtag, { once: true, capture: true, passive: true });
+        }
+
+        // (б) после FCP + 800 мс в простое
+        function afterFcp() {
+          var fire = function () { setTimeout(loadGtag, 800); };
+          if (typeof window.requestIdleCallback === 'function') {
+            window.requestIdleCallback(fire, { timeout: 2000 });
+          } else {
+            fire();
+          }
+        }
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
               var entries = list.getEntries();
-              for (var i = 0; i < entries.length; i++) {
-                if (entries[i].name === 'first-contentful-paint') {
+              for (var j = 0; j < entries.length; j++) {
+                if (entries[j].name === 'first-contentful-paint') {
                   obs.disconnect();
-                  loadGtag();
+                  afterFcp();
                   return;
                 }
               }
@@ -48,7 +61,9 @@
             po.observe({ type: 'paint', buffered: true });
           } catch (e) {}
         }
-        setTimeout(loadGtag, 5000);
+
+        // (в) аварийный таймаут
+        setTimeout(loadGtag, 4000);
       })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
@@ -99,17 +114,17 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-7S8OB6w7.js"></script>
+    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-CiditiC5.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B5HEqJPf.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-k5hwfIbo.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-Bf_KlSyI.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Limassol, Cyprus, November 20, 2026. Celebrating 20 years of Cyprus Symphony Orchestra Foundation Lemesos: Friday 20 November 2026 – Pattihio Municipal…" />
     <link rel="canonical" href="https://mypins.site/en/event/9872e42f-9bac-453b-b499-bd633cb2d809/cyprus-symphony-orchestra-starlight-2-works-by-barber-and-tchaikovsky-celebrating-20-years-of-cyprus-symphony-orchestra-foundation/" />
     <meta property="og:site_name" content="MyPins" />
@@ -146,7 +161,7 @@ Praised for her genuinely distinctive, individual voice, radiant tone and expres
   <h2>Similar events</h2>
   <ul>
     <li><a href="/en/event/5ff85c51-b840-4390-aa27-9d10e460cc49/dmitry-spirin-in-limassol-tarakany-35-years/">Dmitry Spirin in Limassol: Tarakany! — 35 years <time datetime="2026-11-19">November 19, 2026</time></a></li>
-    <li><a href="/en/event/3594699b-b05c-47b8-935e-7217dcc3fd24/starlight-2/">Starlight 2 <time datetime="2026-11-20">November 20, 2026</time></a></li>
+    <li><a href="/en/event/717ae9ad-bc7d-46c8-9cd6-e8e26c48b65a/richard-clayderman-for-the-first-time-in-cyprus/">RICHARD CLAYDERMAN - For the first time in Cyprus <time datetime="2026-11-19">November 19, 2026</time></a></li>
     <li><a href="/en/event/856afbf1-fef6-41fa-96ac-098c9743e3af/starlight-2-music-by-barber-and-tchaikovsky/">Starlight 2: Music by Barber and Tchaikovsky <time datetime="2026-11-20">November 20, 2026</time></a></li>
     <li><a href="/en/event/986af766-ec8f-4950-9428-9b108dd91fd3/rick-offen-ander-race-ritmo-futuro-magnifik/">Rick Offen / Ander Race (Ritmo Futuro / Magnifik) <time datetime="2026-11-20">November 20, 2026</time></a></li>
     <li><a href="/en/event/ba7d2854-fd51-4a49-ad3b-78e6f4cb68df/4-in-groop-maria-papageorgiou/">4 in Groop - Maria Papageorgiou <time datetime="2026-11-20">November 20, 2026</time></a></li>

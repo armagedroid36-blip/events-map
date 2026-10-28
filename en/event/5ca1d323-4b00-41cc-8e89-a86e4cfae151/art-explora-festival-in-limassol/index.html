@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки и не конкурирует с LCP:
+         раньше скрипт стартовал по записи first-contentful-paint и через ~450 мс
+         занимал main thread ровно в окне LCP (third-party-summary, 28.10.2026).
+         Триггер — ПЕРВОЕ из событий:
+           (а) первое взаимодействие пользователя: pointerdown / keydown / touchstart (once);
+           (б) requestIdleCallback после FCP + задержка 800 мс — счётчик грузится в простое;
+           (в) аварийный таймаут 4 с — если ни paint-записи, ни простоя не было.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+
+        // (а) первое взаимодействие — раньше этого счётчик не нужен
+        var INTERACT = ['pointerdown', 'keydown', 'touchstart'];
+        for (var i = 0; i < INTERACT.length; i++) {
+          window.addEventListener(INTERACT[i], loadGtag, { once: true, capture: true, passive: true });
+        }
+
+        // (б) после FCP + 800 мс в простое
+        function afterFcp() {
+          var fire = function () { setTimeout(loadGtag, 800); };
+          if (typeof window.requestIdleCallback === 'function') {
+            window.requestIdleCallback(fire, { timeout: 2000 });
+          } else {
+            fire();
+          }
+        }
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var j = 0; j < entries.length; j++) {
+                if (entries[j].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  afterFcp();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+
+        // (в) аварийный таймаут
+        setTimeout(loadGtag, 4000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Art Explora Festival in Limassol — November 2, 2026 · Limassol</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
+      <meta name="description" content="Limassol, Cyprus, November 2, 2026. From November 2 to 4, 2026, Limassol will host the international Art Explora Festival—a large-scale cultural project that…" />
+    <link rel="canonical" href="https://mypins.site/en/event/5ca1d323-4b00-41cc-8e89-a86e4cfae151/art-explora-festival-in-limassol/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Art Explora Festival in Limassol — November 2, 2026 · Limassol" />
+    <meta property="og:description" content="Limassol, Cyprus, November 2, 2026. From November 2 to 4, 2026, Limassol will host the international Art Explora Festival—a large-scale cultural project that…" />
+    <meta property="og:url" content="https://mypins.site/en/event/5ca1d323-4b00-41cc-8e89-a86e4cfae151/art-explora-festival-in-limassol/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/09970f71-eded-46f7-b799-048cc1659525/1789821262116.png?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/5ca1d323-4b00-41cc-8e89-a86e4cfae151/art-explora-festival-in-limassol/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/5ca1d323-4b00-41cc-8e89-a86e4cfae151/festival-art-explora-v-limasole/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Art Explora Festival in Limassol","url":"https://mypins.site/en/event/5ca1d323-4b00-41cc-8e89-a86e4cfae151/art-explora-festival-in-limassol/","startDate":"2026-11-02T08:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Limassol Marina","address":{"@type":"PostalAddress","addressLocality":"Limassol","streetAddress":"Limassol Marina","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.6704692,"longitude":33.0400704}},"description":"From November 2 to 4, 2026, Limassol will host the international Art Explora Festival—a large-scale cultural project that brings together art, music, performances, film, and modern technology. Art Explora travels through cities across the Mediterranean, creating an open cultural space accessible...","endDate":"2026-11-04","image":"https://cyprus.bz/img/images/events/09970f71-eded-46f7-b799-048cc1659525/1789821262116.png?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/event/3501/art-explora-festival-in-limassol-2026"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Art Explora Festival in Limassol","item":"https://mypins.site/en/event/5ca1d323-4b00-41cc-8e89-a86e4cfae151/art-explora-festival-in-limassol/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Art Explora Festival in Limassol</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-11-04">November 4, 2026</time></p>
+  <p><time datetime="2026-11-02T08:00:00">November 2, 2026, 8:00 AM</time></p>
+  <address>Limassol Marina, Cyprus</address>
+  <p>From November 2 to 4, 2026, Limassol will host the international Art Explora Festival—a large-scale cultural project that brings together art, music, performances, film, and modern technology. Art Explora travels through cities across the Mediterranean, creating an open cultural space accessible...</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Art Explora Festival in Limassol</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/festival/">🎉 Festivals</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/007d21be-fe71-4da7-b97f-f04eb29bc720/halloween-in-the-world-of-comics-comic-con-2026/">Halloween in the World of Comics. Comic Con 2026 <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/47417a0a-e434-403b-a7ba-6c6f96bdc46c/statos-agios-fotios-christmas-village/">Statos-Agios Fotios Christmas Village <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/64c08513-ee5e-4b9e-a3ef-4f8ba77c827b/creative-writing-self-discovery-workshop/">Creative Writing &amp; Self-Discovery Workshop <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/bdfe56b2-6c73-4286-88b8-c355693495a8/4th-wine-festival-in-platanistas/">4th Wine Festival in Platanistas <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/ede74000-100a-4bac-9a91-f913c0553f0d/15th-palouze-festival-in-the-village-of-spilia/">15th Palouze Festival in the village of Spilia <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/33457ea2-98fe-4ef9-ae67-8ce3b5508727/interior-art-exhibition-preserved-moss-plants/">Interior Art Exhibition: Preserved Moss &amp; Plants <time datetime="2026-11-02">November 2, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/1bed95c6-a83a-4222-b916-da2e57bafabe/art-explora-festival-at-limassol-marina/">Art Explora Festival at Limassol Marina</a> <time datetime="2026-11-04">November 4, 2026</time></li>
+    <li>Next: <a href="/en/event/5ec9d299-7732-4583-9395-07a137b5804f/festival-the-neighborhood-of-cinema-volos-vol-3/">Festival &quot;The Neighborhood of Cinema&quot; Volos vol. 3</a> <time datetime="2026-11-04">November 4, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

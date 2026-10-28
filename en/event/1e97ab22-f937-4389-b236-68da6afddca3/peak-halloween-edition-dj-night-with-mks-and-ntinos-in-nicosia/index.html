@@ -3,18 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
-    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
-         до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
-         Сознательно НЕ используем:
-           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
-             модули) — то есть до первой отрисовки;
-           - событие load: в холодном профиле load может пройти раньше первой отрисовки
-             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
-           - первую paint-запись (first-paint): она выходит раньше FCP.
-         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
-         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
-         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки и не конкурирует с LCP:
+         раньше скрипт стартовал по записи first-contentful-paint и через ~450 мс
+         занимал main thread ровно в окне LCP (third-party-summary, 28.10.2026).
+         Триггер — ПЕРВОЕ из событий:
+           (а) первое взаимодействие пользователя: pointerdown / keydown / touchstart (once);
+           (б) requestIdleCallback после FCP + задержка 800 мс — счётчик грузится в простое;
+           (в) аварийный таймаут 4 с — если ни paint-записи, ни простоя не было.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -33,14 +30,30 @@
           document.head.appendChild(s);
         }
         if (navigator.connection && navigator.connection.saveData === true) return;
+
+        // (а) первое взаимодействие — раньше этого счётчик не нужен
+        var INTERACT = ['pointerdown', 'keydown', 'touchstart'];
+        for (var i = 0; i < INTERACT.length; i++) {
+          window.addEventListener(INTERACT[i], loadGtag, { once: true, capture: true, passive: true });
+        }
+
+        // (б) после FCP + 800 мс в простое
+        function afterFcp() {
+          var fire = function () { setTimeout(loadGtag, 800); };
+          if (typeof window.requestIdleCallback === 'function') {
+            window.requestIdleCallback(fire, { timeout: 2000 });
+          } else {
+            fire();
+          }
+        }
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
               var entries = list.getEntries();
-              for (var i = 0; i < entries.length; i++) {
-                if (entries[i].name === 'first-contentful-paint') {
+              for (var j = 0; j < entries.length; j++) {
+                if (entries[j].name === 'first-contentful-paint') {
                   obs.disconnect();
-                  loadGtag();
+                  afterFcp();
                   return;
                 }
               }
@@ -48,7 +61,9 @@
             po.observe({ type: 'paint', buffered: true });
           } catch (e) {}
         }
-        setTimeout(loadGtag, 5000);
+
+        // (в) аварийный таймаут
+        setTimeout(loadGtag, 4000);
       })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
@@ -99,17 +114,17 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-7S8OB6w7.js"></script>
+    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-CiditiC5.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B5HEqJPf.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-k5hwfIbo.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-Bf_KlSyI.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Nicosia, Cyprus, October 27, 2026. This Halloween, Nicosia&#39;s boldest night event takes place at Asmation Experience on Tuesday, 27 October 2026, in Cyprus…" />
     <link rel="canonical" href="https://mypins.site/en/event/1e97ab22-f937-4389-b236-68da6afddca3/peak-halloween-edition-dj-night-with-mks-and-ntinos-in-nicosia/" />
     <meta property="og:site_name" content="MyPins" />
@@ -123,13 +138,13 @@
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/1e97ab22-f937-4389-b236-68da6afddca3/peak-halloween-edition-dj-night-with-mks-and-ntinos-in-nicosia/" />
     <link rel="alternate" hreflang="ru" href="https://mypins.site/event/1e97ab22-f937-4389-b236-68da6afddca3/peak-khellouinskaya-versiya-dj-noch-s-mks-i-ntinos-v-nikosii/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Peak Halloween Edition: DJ Night with MKS and Ntinos in Nicosia","url":"https://mypins.site/en/event/1e97ab22-f937-4389-b236-68da6afddca3/peak-halloween-edition-dj-night-with-mks-and-ntinos-in-nicosia/","startDate":"2026-10-27T22:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Nicosia","address":{"@type":"PostalAddress","addressLocality":"Nicosia","streetAddress":"Nicosia","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1856,"longitude":33.3823}},"description":"This Halloween, Nicosia's boldest night event takes place at Asmation Experience on Tuesday, 27 October 2026, in Cyprus. Peak brings together two powerful DJs for a night of dark energy, atmospheric immersion, and non-stop music that begins at 22:00. 🎟️ Ticket prices start from €25 with...","endDate":"2026-10-27","image":"https://cyprus.bz/img/images/events/6b5719d2-ede8-42af-a4fb-0e622fbab20d/1792990885616.jpg?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/38e7/peak-halloween-edition-dj-night-with-mks-ntinos-in-nicosia-2026"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Peak Halloween Edition: DJ Night with MKS and Ntinos in Nicosia","item":"https://mypins.site/en/event/1e97ab22-f937-4389-b236-68da6afddca3/peak-halloween-edition-dj-night-with-mks-and-ntinos-in-nicosia/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Peak Halloween Edition: DJ Night with MKS and Ntinos in Nicosia","item":"https://mypins.site/en/event/1e97ab22-f937-4389-b236-68da6afddca3/peak-halloween-edition-dj-night-with-mks-and-ntinos-in-nicosia/"}]}]}</script>
   </head>
   <body>
     <div id="root"></div>
 <div id="seo-event-block">
   <h1>Peak Halloween Edition: DJ Night with MKS and Ntinos in Nicosia</h1>
-  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-10-27">October 27, 2026</time></p>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-27">October 27, 2026</time></p>
   <p><time datetime="2026-10-27T22:00:00">October 27, 2026, 10:00 PM</time></p>
   <address>Nicosia, Cyprus</address>
   <p>This Halloween, Nicosia&#39;s boldest night event takes place at Asmation Experience on Tuesday, 27 October 2026, in Cyprus. Peak brings together two powerful DJs for a night of dark energy, atmospheric immersion, and non-stop music that begins at 22:00. 🎟️ Ticket prices start from €25 with...</p>
@@ -140,16 +155,16 @@
   <h2>Similar events</h2>
   <ul>
     <li><a href="/en/event/17e1994d-7c3c-4881-beb3-19fc3db44933/pura-vida-at-por-favor/">Pura Vida at Por Favor <time datetime="2026-10-27">October 27, 2026</time></a></li>
-    <li><a href="/en/event/721ce680-d1d0-49ec-8ff9-21c56a60b729/back-to-the-streets-in-nicosia/">Back to the Streets in Nicosia <time datetime="2026-10-27">October 27, 2026</time></a></li>
     <li><a href="/en/event/b0851028-2c06-4339-b5d6-45b36c5d6685/pinakoteka-special-halloween-party-baron-givasso-x-pazzi-and-vaty-lupa-at-mason-bar/">Pinakoteka: special Halloween party - Baron, Givasso x Pazzi and Vaty Lupa at Mason Bar <time datetime="2026-10-27">October 27, 2026</time></a></li>
-    <li><a href="/en/event/cd97f709-212b-4fce-88d4-26c63b053781/peak-halloween-edition-dj-night-with-mks-ntinos-in-nicosia/">Peak Halloween Edition: DJ Night with MKS &amp; Ntinos in Nicosia <time datetime="2026-10-27">October 27, 2026</time></a></li>
-    <li><a href="/en/event/d1e51eee-989a-4fb9-97a3-e0b150fb4ae9/afro-freeq-tuesdays/">Afro Freeq Tuesdays <time datetime="2026-10-27">October 27, 2026</time></a></li>
-    <li><a href="/en/event/ff9c789a-a9b8-434f-974f-add7e232a76c/love-generation-halloween-show-in-limassol/">Love Generation Halloween Show in Limassol <time datetime="2026-10-27">October 27, 2026</time></a></li>
+    <li><a href="/en/event/6c46f3b7-767f-49b8-a6ca-2cb9799c5f78/castle-club-wednesdays/">Castle Club Wednesdays <time datetime="2026-10-28">October 28, 2026</time></a></li>
+    <li><a href="/en/event/85882765-e584-4231-b582-939f857544f5/spooktacular-halloween-at-agora/">Spooktacular Halloween at Agora <time datetime="2026-10-28">October 28, 2026</time></a></li>
+    <li><a href="/en/event/b7fee3e2-0e10-4cfd-acac-11c1880e62a6/the-peak-halloween-2026-in-nicosia/">The Peak Halloween 2026 in Nicosia <time datetime="2026-10-28">October 28, 2026</time></a></li>
+    <li><a href="/en/event/bff4cdcf-0b60-4458-a2ee-78dc8e468223/party-night-13th-anniversary-celebration-at-to-potopolio/">Party Night: 13th Anniversary Celebration at To Potopolio <time datetime="2026-10-28">October 28, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Cyprus</h2>
     <ul>
-    <li>Previous: <a href="/en/event/ea1234aa-9b78-4b99-b39d-2ff07c5f6308/murder-at-unic-an-evening-of-detective-mystery-in-nicosia/">Murder at UNIC: An Evening of Detective Mystery in Nicosia</a> <time datetime="2026-10-26">October 26, 2026</time></li>
+    <li>Previous: <a href="/en/event/1e510877-6905-407c-ae57-6d366192c7b4/stelios-dionysiou-and-elena-anagiotou/">Stelios Dionysiou and Elena Anagiotou</a> <time datetime="2026-10-27">October 27, 2026</time></li>
     <li>Next: <a href="/en/event/2a6c0c5c-a976-41b8-96f2-56812d292b09/love-generation-halloween-show/">Love Generation Halloween Show</a> <time datetime="2026-10-27">October 27, 2026</time></li>
     </ul>
   </nav>

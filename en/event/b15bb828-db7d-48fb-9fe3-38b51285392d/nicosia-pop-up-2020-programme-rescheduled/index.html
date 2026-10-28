@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки и не конкурирует с LCP:
+         раньше скрипт стартовал по записи first-contentful-paint и через ~450 мс
+         занимал main thread ровно в окне LCP (third-party-summary, 28.10.2026).
+         Триггер — ПЕРВОЕ из событий:
+           (а) первое взаимодействие пользователя: pointerdown / keydown / touchstart (once);
+           (б) requestIdleCallback после FCP + задержка 800 мс — счётчик грузится в простое;
+           (в) аварийный таймаут 4 с — если ни paint-записи, ни простоя не было.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы отдельных page_view не шлют. При saveData не грузим. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BBL2VDP0WK');
+
+      (function () {
+        var GA_SRC = 'https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK';
+        var loaded = false;
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = GA_SRC;
+          document.head.appendChild(s);
+        }
+        if (navigator.connection && navigator.connection.saveData === true) return;
+
+        // (а) первое взаимодействие — раньше этого счётчик не нужен
+        var INTERACT = ['pointerdown', 'keydown', 'touchstart'];
+        for (var i = 0; i < INTERACT.length; i++) {
+          window.addEventListener(INTERACT[i], loadGtag, { once: true, capture: true, passive: true });
+        }
+
+        // (б) после FCP + 800 мс в простое
+        function afterFcp() {
+          var fire = function () { setTimeout(loadGtag, 800); };
+          if (typeof window.requestIdleCallback === 'function') {
+            window.requestIdleCallback(fire, { timeout: 2000 });
+          } else {
+            fire();
+          }
+        }
+        if (typeof window.PerformanceObserver === 'function') {
+          try {
+            var po = new PerformanceObserver(function (list, obs) {
+              var entries = list.getEntries();
+              for (var j = 0; j < entries.length; j++) {
+                if (entries[j].name === 'first-contentful-paint') {
+                  obs.disconnect();
+                  afterFcp();
+                  return;
+                }
+              }
+            });
+            po.observe({ type: 'paint', buffered: true });
+          } catch (e) {}
+        }
+
+        // (в) аварийный таймаут
+        setTimeout(loadGtag, 4000);
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nicosia Pop Up 2020 – Programme… — February 25, 2027 · Nicosia</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
+      <meta name="description" content="Nicosia, Cyprus, February 25, 2027. The Municipality of Nicosia in collaboration with NiMAC [Nicosia Municipal Arts Centre, Associated with the Pierides…" />
+    <link rel="canonical" href="https://mypins.site/en/event/b15bb828-db7d-48fb-9fe3-38b51285392d/nicosia-pop-up-2020-programme-rescheduled/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Nicosia Pop Up 2020 – Programme… — February 25, 2027 · Nicosia" />
+    <meta property="og:description" content="Nicosia, Cyprus, February 25, 2027. The Municipality of Nicosia in collaboration with NiMAC [Nicosia Municipal Arts Centre, Associated with the Pierides…" />
+    <meta property="og:url" content="https://mypins.site/en/event/b15bb828-db7d-48fb-9fe3-38b51285392d/nicosia-pop-up-2020-programme-rescheduled/" />
+    <meta property="og:image" content="https://nimac.org.cy/wp-content/uploads/2021/02/POP-UP-ROUND2-1.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/b15bb828-db7d-48fb-9fe3-38b51285392d/nicosia-pop-up-2020-programme-rescheduled/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/b15bb828-db7d-48fb-9fe3-38b51285392d/nicosia-pop-up-2020-programma-pereneseno/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Nicosia Pop Up 2020 – Programme (rescheduled)","url":"https://mypins.site/en/event/b15bb828-db7d-48fb-9fe3-38b51285392d/nicosia-pop-up-2020-programme-rescheduled/","startDate":"2027-02-25T00:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Nicosia","address":{"@type":"PostalAddress","addressLocality":"Nicosia","streetAddress":"Nicosia","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1746503,"longitude":33.3638783}},"description":"The Municipality of Nicosia in collaboration with NiMAC [Nicosia Municipal Arts Centre, Associated with the Pierides Foundation], present the Nicosia Pop Up 2020, which is to be held between 25 February and 14 March 2021 at Theatro Polis OPAP. Taking into account the current epidemiological picture and the relevant protocols, the proposals selected this year concern the Performing and the Visual Arts. Young creators and performers will present their creative ideas to the public of Nicosia and of the rest of the island. All relevant health protocols will be strictly adhered to at the venue to","endDate":"2027-02-25","image":"https://nimac.org.cy/wp-content/uploads/2021/02/POP-UP-ROUND2-1.jpg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/nicosia-pop-up-2020-programme-rescheduled-2027-02-24"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Nicosia Pop Up 2020 – Programme (rescheduled)","item":"https://mypins.site/en/event/b15bb828-db7d-48fb-9fe3-38b51285392d/nicosia-pop-up-2020-programme-rescheduled/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Nicosia Pop Up 2020 – Programme (rescheduled)</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2027-02-25">February 25, 2027</time></p>
+  <p><time datetime="2027-02-25T00:00:00">February 25, 2027, 12:00 AM</time></p>
+  <address>Nicosia, Cyprus</address>
+  <p>The Municipality of Nicosia in collaboration with NiMAC [Nicosia Municipal Arts Centre, Associated with the Pierides Foundation], present the Nicosia Pop Up 2020, which is to be held between 25 February and 14 March 2021 at Theatro Polis OPAP.
+
+Taking into account the current epidemiological picture and the relevant protocols, the proposals selected this year concern the Performing and the Visual Arts. Young creators and performers will present their creative ideas to the public of Nicosia and of the rest of the island.
+
+All relevant health protocols will be strictly adhered to at the venue to</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Nicosia Pop Up 2020 – Programme (rescheduled)</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/theatre/">🎭 Theatres &amp; Shows</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/7ef56cc0-f294-4ea2-8091-4d0939851502/jack-and-the-beanstalk/">Jack and the Beanstalk <time datetime="2027-02-06">February 6, 2027</time></a></li>
+    <li><a href="/en/event/9681be3f-0b5e-42c7-b259-6f25269d88f9/a-night-in-paradise/">A Night in Paradise <time datetime="2027-02-07">February 7, 2027</time></a></li>
+    <li><a href="/en/event/9df476c2-7dcc-4ea6-99a9-c868dcf855c5/jack-and-the-beanstalk/">Jack and the Beanstalk <time datetime="2027-02-07">February 7, 2027</time></a></li>
+    <li><a href="/en/event/35b31167-1149-428b-8062-7f2d17b2af63/a-night-in-paradise/">A Night in Paradise <time datetime="2027-02-08">February 8, 2027</time></a></li>
+    <li><a href="/en/event/12918638-a30d-4eee-a9a2-18000de224d8/rock-opera-1984-in-limassol-aleksandr-krasovitskiy-teona-dolnikova-and-others/">Rock opera 1984 in Limassol: Aleksandr Krasovitskiy, Teona Dolnikova, and others <time datetime="2027-02-09">February 9, 2027</time></a></li>
+    <li><a href="/en/event/33005c4d-c9f3-4558-ba42-020f4dab6574/malevo-forever-gaucho/">MALEVO Forever Gaucho <time datetime="2027-02-20">February 20, 2027</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/d052f2ed-373a-4fb3-bb2c-a9a65c871a43/berlin-meets-berlin-beats/">Berlin Meets Berlin Beats</a> <time datetime="2027-02-19">February 19, 2027</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

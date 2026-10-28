@@ -3,18 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
-    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
-         до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
-         Сознательно НЕ используем:
-           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
-             модули) — то есть до первой отрисовки;
-           - событие load: в холодном профиле load может пройти раньше первой отрисовки
-             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
-           - первую paint-запись (first-paint): она выходит раньше FCP.
-         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
-         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
-         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки и не конкурирует с LCP:
+         раньше скрипт стартовал по записи first-contentful-paint и через ~450 мс
+         занимал main thread ровно в окне LCP (third-party-summary, 28.10.2026).
+         Триггер — ПЕРВОЕ из событий:
+           (а) первое взаимодействие пользователя: pointerdown / keydown / touchstart (once);
+           (б) requestIdleCallback после FCP + задержка 800 мс — счётчик грузится в простое;
+           (в) аварийный таймаут 4 с — если ни paint-записи, ни простоя не было.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -33,14 +30,30 @@
           document.head.appendChild(s);
         }
         if (navigator.connection && navigator.connection.saveData === true) return;
+
+        // (а) первое взаимодействие — раньше этого счётчик не нужен
+        var INTERACT = ['pointerdown', 'keydown', 'touchstart'];
+        for (var i = 0; i < INTERACT.length; i++) {
+          window.addEventListener(INTERACT[i], loadGtag, { once: true, capture: true, passive: true });
+        }
+
+        // (б) после FCP + 800 мс в простое
+        function afterFcp() {
+          var fire = function () { setTimeout(loadGtag, 800); };
+          if (typeof window.requestIdleCallback === 'function') {
+            window.requestIdleCallback(fire, { timeout: 2000 });
+          } else {
+            fire();
+          }
+        }
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
               var entries = list.getEntries();
-              for (var i = 0; i < entries.length; i++) {
-                if (entries[i].name === 'first-contentful-paint') {
+              for (var j = 0; j < entries.length; j++) {
+                if (entries[j].name === 'first-contentful-paint') {
                   obs.disconnect();
-                  loadGtag();
+                  afterFcp();
                   return;
                 }
               }
@@ -48,7 +61,9 @@
             po.observe({ type: 'paint', buffered: true });
           } catch (e) {}
         }
-        setTimeout(loadGtag, 5000);
+
+        // (в) аварийный таймаут
+        setTimeout(loadGtag, 4000);
       })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
@@ -99,17 +114,17 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-7S8OB6w7.js"></script>
+    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-CiditiC5.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B5HEqJPf.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-k5hwfIbo.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-Bf_KlSyI.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Нячанг, 29 августа 2026. 3,14здатый квиз новая серия😉 🔥 СУББОТА, 29.08 · 19:00 · BONG VILLA 🔥 •7️⃣ туров •👥 команды •🍺 бухло •🎉 веселье •💀 трэш и угар…" />
     <link rel="canonical" href="https://mypins.site/event/4fa169ec-87b0-4f31-aa98-406665e25e5f/3-14zdatyy-kviz-novaya-seriya/" />
     <meta property="og:site_name" content="MyPins" />
@@ -161,11 +176,11 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/1784b79d-61b3-443e-8081-31ed91ab5745/igrovaya-vstrecha-antimafiya/">Игровая встреча АНТИМАФИЯ! <time datetime="2026-10-27">27 октября 2026</time></a></li>
-    <li><a href="/event/c1b82f40-88a6-4818-89d7-0dd4f49815fd/transformatsionnaya-igra-lila/">ТРАНСФОРМАЦИОННАЯ ИГРА «ЛИЛА» <time datetime="2026-10-27">27 октября 2026</time></a></li>
+    <li><a href="/event/51b824ad-38ee-435d-bcf4-e8be7de273af/sreda-igraem-v-krov-na-chasovoy-bashne/">Среда! Играем в КРОВЬ НА ЧАСОВОЙ БАШНЕ <time datetime="2026-10-28">28 октября 2026</time></a></li>
     <li><a href="/event/56c39bb9-065d-45f1-8c0e-e16d31553b63/gametalk-nastolnye-igry-na-angliyskom/">GameTalk: настольные игры на английском <time datetime="2026-10-28">28 октября 2026</time></a></li>
     <li><a href="/event/b406b623-41a4-4533-841a-7f5cf861c985/kviz-pro-kino-i-muzyku/">Квиз про кино и музыку <time datetime="2026-10-28">28 октября 2026</time></a></li>
     <li><a href="/event/b5a91bff-11b8-4e16-b895-5b09a3d7b651/detskaya-finansovaya-igra-finansy-i-investitsii-v-nyachange/">ДЕТСКАЯ ФИНАНСОВАЯ ИГРА «ФИНАНСЫ И ИНВЕСТИЦИИ» В НЯЧАНГЕ! <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/dfe750ca-1365-462c-84be-02fa7191767a/avalon-po-sredam/">АВАЛОН ПО СРЕДАМ <time datetime="2026-10-28">28 октября 2026</time></a></li>
     <li><a href="/event/290197bb-6494-476b-be93-c9602423ff03/transformatsionnaya-igra-lila-na-bolshom-pole/">ТРАНСФОРМАЦИОННАЯ ИГРА «ЛИЛА» НА БОЛЬШОМ ПОЛЕ <time datetime="2026-10-29">29 октября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">

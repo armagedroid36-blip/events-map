@@ -3,18 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
-    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
-         до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
-         Сознательно НЕ используем:
-           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
-             модули) — то есть до первой отрисовки;
-           - событие load: в холодном профиле load может пройти раньше первой отрисовки
-             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
-           - первую paint-запись (first-paint): она выходит раньше FCP.
-         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
-         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
-         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки и не конкурирует с LCP:
+         раньше скрипт стартовал по записи first-contentful-paint и через ~450 мс
+         занимал main thread ровно в окне LCP (third-party-summary, 28.10.2026).
+         Триггер — ПЕРВОЕ из событий:
+           (а) первое взаимодействие пользователя: pointerdown / keydown / touchstart (once);
+           (б) requestIdleCallback после FCP + задержка 800 мс — счётчик грузится в простое;
+           (в) аварийный таймаут 4 с — если ни paint-записи, ни простоя не было.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -33,14 +30,30 @@
           document.head.appendChild(s);
         }
         if (navigator.connection && navigator.connection.saveData === true) return;
+
+        // (а) первое взаимодействие — раньше этого счётчик не нужен
+        var INTERACT = ['pointerdown', 'keydown', 'touchstart'];
+        for (var i = 0; i < INTERACT.length; i++) {
+          window.addEventListener(INTERACT[i], loadGtag, { once: true, capture: true, passive: true });
+        }
+
+        // (б) после FCP + 800 мс в простое
+        function afterFcp() {
+          var fire = function () { setTimeout(loadGtag, 800); };
+          if (typeof window.requestIdleCallback === 'function') {
+            window.requestIdleCallback(fire, { timeout: 2000 });
+          } else {
+            fire();
+          }
+        }
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
               var entries = list.getEntries();
-              for (var i = 0; i < entries.length; i++) {
-                if (entries[i].name === 'first-contentful-paint') {
+              for (var j = 0; j < entries.length; j++) {
+                if (entries[j].name === 'first-contentful-paint') {
                   obs.disconnect();
-                  loadGtag();
+                  afterFcp();
                   return;
                 }
               }
@@ -48,7 +61,9 @@
             po.observe({ type: 'paint', buffered: true });
           } catch (e) {}
         }
-        setTimeout(loadGtag, 5000);
+
+        // (в) аварийный таймаут
+        setTimeout(loadGtag, 4000);
       })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
@@ -99,17 +114,17 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-7S8OB6w7.js"></script>
+    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-CiditiC5.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B5HEqJPf.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-k5hwfIbo.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-Bf_KlSyI.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Bali, October 29, 2026. Something sinister is approaching the city… 🎪🩸 October 29, 2026 Remember the date — the gates are opening again. instagram…" />
     <link rel="canonical" href="https://mypins.site/en/event/fc162e25-eb15-41c3-aa43-c4484bc3fae9/halloween-party-at-atlas-super-club/" />
     <meta property="og:site_name" content="MyPins" />
@@ -147,9 +162,9 @@ tel:(0361) 3007222</p>
   </nav>
   <h2>Similar events</h2>
   <ul>
+    <li><a href="/en/event/6a9f364f-55cc-475f-a723-83321671506e/circa-fridays-party-at-luigi-s/">Circa Fridays party at Luigi&#39;s <time datetime="2026-10-28">October 28, 2026</time></a></li>
     <li><a href="/en/event/30902c5a-4e24-41cb-b221-478415c4d9b2/inno-halloween-party-hip-hop-is-dead-vol-4/">INNO Halloween Party: Hip Hop Is Dead Vol. 4 <time datetime="2026-10-28">October 28, 2026</time></a></li>
     <li><a href="/en/event/bba16144-b39a-4e57-b0be-ec94e6b16f34/savaya-wednesday-at-savaya-bali/">SAVAYA WEDNESDAY at Savaya Bali <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/c1d3ce3f-04df-429d-8c1e-154e08487861/j-adore-moi-halloween-party-at-moi-canggu/">J&#39;ADORE MOI — Halloween party at Moi Canggu <time datetime="2026-10-28">October 28, 2026</time></a></li>
     <li><a href="/en/event/0d5939e0-33dc-4133-bd2a-fbed5ae1cc4c/halloween-on-roller-skates-roller-disco-vol-2/">Halloween on Roller Skates: Roller Disco Vol. 2 <time datetime="2026-10-29">October 29, 2026</time></a></li>
     <li><a href="/en/event/6e8766aa-7e45-409c-8ee3-88ed6acb2bcc/backyard-party-at-atlas-beach-club/">Backyard Party at Atlas Beach Club <time datetime="2026-10-29">October 29, 2026</time></a></li>
     <li><a href="/en/event/986c6f2b-2390-419e-9de5-583a6efa025e/savaya-thursday-at-savaya-bali/">SAVAYA THURSDAY at Savaya Bali <time datetime="2026-10-29">October 29, 2026</time></a></li>
@@ -157,7 +172,7 @@ tel:(0361) 3007222</p>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Bali</h2>
     <ul>
-    <li>Previous: <a href="/en/event/f68b68f0-8754-427e-8c14-25b5e45db091/alix-ayme-exhibition-at-the-pasifika-museum/">Alix Ayme Exhibition at the Pasifika Museum</a> <time datetime="2026-10-26">October 26, 2026</time></li>
+    <li>Previous: <a href="/en/event/fbc68537-5870-4606-818a-732246fa6ce5/volleyball-in-ubud-classic/">Volleyball in Ubud (Classic)</a> <time datetime="2026-10-27">October 27, 2026</time></li>
     </ul>
   </nav>
   <p class="event-past-cta"><a href="/en/bali/">Upcoming events in Bali</a></p>

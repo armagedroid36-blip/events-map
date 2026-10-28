@@ -3,18 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
-    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки: раньше скрипт стартовал
-         до бандлов приложения и блокировал main thread, поднимая FCP.
-         Триггер — запись first-contentful-paint из PerformanceObserver('paint').
-         Сознательно НЕ используем:
-           - requestIdleCallback: выстреливает в сетевой паузе (поток свободен, пока ждём
-             модули) — то есть до первой отрисовки;
-           - событие load: в холодном профиле load может пройти раньше первой отрисовки
-             (замер LH: load 390 мс при FCP 2680 мс), и счётчик снова тормозит первую краску;
-           - первую paint-запись (first-paint): она выходит раньше FCP.
-         Аварийный таймаут 5 с — только на случай, если paint-записи не придут.
-         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта.
-         SPA-переходы, как и раньше, отдельных page_view не шлют. При saveData не грузим. -->
+    <!-- GA4 (gtag.js, ~172 КБ) грузится ПОСЛЕ первой отрисовки и не конкурирует с LCP:
+         раньше скрипт стартовал по записи first-contentful-paint и через ~450 мс
+         занимал main thread ровно в окне LCP (third-party-summary, 28.10.2026).
+         Триггер — ПЕРВОЕ из событий:
+           (а) первое взаимодействие пользователя: pointerdown / keydown / touchstart (once);
+           (б) requestIdleCallback после FCP + задержка 800 мс — счётчик грузится в простое;
+           (в) аварийный таймаут 4 с — если ни paint-записи, ни простоя не было.
+         Команды gtag() ниже встают в очередь dataLayer и выполнятся при загрузке скрипта;
+         SPA-переходы отдельных page_view не шлют. При saveData не грузим. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -33,14 +30,30 @@
           document.head.appendChild(s);
         }
         if (navigator.connection && navigator.connection.saveData === true) return;
+
+        // (а) первое взаимодействие — раньше этого счётчик не нужен
+        var INTERACT = ['pointerdown', 'keydown', 'touchstart'];
+        for (var i = 0; i < INTERACT.length; i++) {
+          window.addEventListener(INTERACT[i], loadGtag, { once: true, capture: true, passive: true });
+        }
+
+        // (б) после FCP + 800 мс в простое
+        function afterFcp() {
+          var fire = function () { setTimeout(loadGtag, 800); };
+          if (typeof window.requestIdleCallback === 'function') {
+            window.requestIdleCallback(fire, { timeout: 2000 });
+          } else {
+            fire();
+          }
+        }
         if (typeof window.PerformanceObserver === 'function') {
           try {
             var po = new PerformanceObserver(function (list, obs) {
               var entries = list.getEntries();
-              for (var i = 0; i < entries.length; i++) {
-                if (entries[i].name === 'first-contentful-paint') {
+              for (var j = 0; j < entries.length; j++) {
+                if (entries[j].name === 'first-contentful-paint') {
                   obs.disconnect();
-                  loadGtag();
+                  afterFcp();
                   return;
                 }
               }
@@ -48,7 +61,9 @@
             po.observe({ type: 'paint', buffered: true });
           } catch (e) {}
         }
-        setTimeout(loadGtag, 5000);
+
+        // (в) аварийный таймаут
+        setTimeout(loadGtag, 4000);
       })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
@@ -99,17 +114,17 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-7S8OB6w7.js"></script>
+    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-CiditiC5.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B5HEqJPf.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-k5hwfIbo.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
     <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-Bf_KlSyI.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Никосия, Кипр, 7 октября 2026. Teroxx организует торжественное открытие своей штаб-квартиры в Никосии в среду, 7 октября 2026 года, в 17:00. Мероприятие…" />
     <link rel="canonical" href="https://mypins.site/event/38feebdd-6d7f-4aa8-834c-e4f604a4da47/torzhestvennoe-otkrytie-shtab-kvartiry-teroxx/" />
     <meta property="og:site_name" content="MyPins" />
@@ -143,10 +158,10 @@
   <ul>
     <li><a href="/event/9fff9ae6-ada2-45d3-8a1b-7b2c39404777/davayte-sdelaem-eto-kipr-2026-nedelya-obshchekypskoy-uborki/">Давайте сделаем это! Кипр 2026: Неделя общекypской уборки <time datetime="2026-10-26">26 октября 2026</time></a></li>
     <li><a href="/event/c87787bb-cd61-4fec-99b9-34a7d018f1b8/let-s-do-it-nedelya-ekologicheskikh-aktsiy-na-kipre/">Let’s Do It - неделя экологических акций на Кипре <time datetime="2026-10-26">26 октября 2026</time></a></li>
-    <li><a href="/event/18311d67-510c-4c91-abe6-0c55ba45cec0/poydem-menyat-mir/">Пойдём менять мир <time datetime="2026-10-27">27 октября 2026</time></a></li>
     <li><a href="/event/34ab500a-b3a0-4a19-9eeb-2e0b0d5e2c75/vtorniki-posle-raboty/">Вторники после работы <time datetime="2026-10-27">27 октября 2026</time></a></li>
     <li><a href="/event/8ad21b4a-4f93-402a-b2d3-ba4332707507/knizhnyy-klub-dlya-detey-7-9-let-na-russkom-yazyke/">Книжный клуб для детей 7-9 лет на русском языке <time datetime="2026-10-27">27 октября 2026</time></a></li>
     <li><a href="/event/8a65beb1-70aa-4537-ac05-e5dc3d3d63b2/blagodarstvennyy-moleben-po-sluchayu-natsionalnoy-godovshchiny-28-oktyabrya-1940-goda/">Благодарственный молебен по случаю национальной годовщины 28 октября 1940 года <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/d42741db-b03a-4d5c-998b-1e4229920bff/poydem-menyat-mir/">Пойдём менять мир <time datetime="2026-10-28">28 октября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Кипр</h2>
