@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
+      if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
+      setTimeout(go,12000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Танцевально-музыкальное шоу Los… — 4 ноября 2026 · Никосия, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
+      <meta name="description" content="Театры и шоу: Танцевально-музыкальное шоу Los Vivancos Live в Никосии. 4 ноября 2026, 19:30. Подробности и афиша — на MyPins." />
+    <link rel="canonical" href="https://mypins.site/event/e05d0d66-bc13-4025-8b47-08eadf727fe3/tantsevalno-muzykalnoe-shou-los-vivancos-live-v-nikosii/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Танцевально-музыкальное шоу Los… — 4 ноября 2026 · Никосия, Кипр" />
+    <meta property="og:description" content="Театры и шоу: Танцевально-музыкальное шоу Los Vivancos Live в Никосии. 4 ноября 2026, 19:30. Подробности и афиша — на MyPins." />
+    <meta property="og:url" content="https://mypins.site/event/e05d0d66-bc13-4025-8b47-08eadf727fe3/tantsevalno-muzykalnoe-shou-los-vivancos-live-v-nikosii/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/e05d0d66-bc13-4025-8b47-08eadf727fe3/tantsevalno-muzykalnoe-shou-los-vivancos-live-v-nikosii/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/e05d0d66-bc13-4025-8b47-08eadf727fe3/los-vivancos-live-dance-and-music-show-in-nicosia/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Танцевально-музыкальное шоу Los Vivancos Live в Никосии","url":"https://mypins.site/event/e05d0d66-bc13-4025-8b47-08eadf727fe3/tantsevalno-muzykalnoe-shou-los-vivancos-live-v-nikosii/","startDate":"2026-11-04T19:30:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Никосия","address":{"@type":"PostalAddress","addressLocality":"Никосия","streetAddress":"Никосия","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1746503,"longitude":33.3638783}},"endDate":"2026-11-04","image":"https://mypins.site/logo.png","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%D1%82%D0%B0%D0%BD%D1%86%D0%B5%D0%B2%D0%B0%D0%BB%D1%8C%D0%BD%D0%BE-%D0%BC%D1%83%D0%B7%D1%8B%D0%BA%D0%B0%D0%BB%D1%8C%D0%BD%D0%BE%D0%B5-%D1%88%D0%BE%D1%83-los-vivancos-live-%D0%B2-%D0%BD%D0%B8%D0%BA%D0%BE%D1%81%D0%B8%D0%B8-2026-11-04"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Танцевально-музыкальное шоу Los Vivancos Live в Никосии","item":"https://mypins.site/event/e05d0d66-bc13-4025-8b47-08eadf727fe3/tantsevalno-muzykalnoe-shou-los-vivancos-live-v-nikosii/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Танцевально-музыкальное шоу Los Vivancos Live в Никосии</h1>
+  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-11-04">4 ноября 2026</time></p>
+  <p><time datetime="2026-11-04T19:30:00">4 ноября 2026, 19:30</time></p>
+  <address>Никосия, Кипр</address>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Танцевально-музыкальное шоу Los Vivancos Live в Никосии</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/theatre/">🎭 Театры и шоу</a></p>
+  </nav>
+  <p class="event-facts">Театры и шоу: Танцевально-музыкальное шоу Los Vivancos Live в Никосии. 4 ноября 2026, 19:30. Подробности и афиша — на MyPins.</p>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/3156b6ee-b85d-48fc-9f73-aee2941aab0f/vse-eto/">Всё это <time datetime="2026-11-04">4 ноября 2026</time></a></li>
+    <li><a href="/event/61f9be26-c77a-4e53-90ce-02990509e860/lysaya-pevitsa/">Лысая певица <time datetime="2026-11-04">4 ноября 2026</time></a></li>
+    <li><a href="/event/95e32ac6-bc8b-459a-a99f-dcf5cdcb4642/skoro-zakonchitsya-leto-aist/">Скоро закончится лето, аист <time datetime="2026-11-04">4 ноября 2026</time></a></li>
+    <li><a href="/event/ace49ec5-32dc-4fb2-876a-cd733afb3e5f/navsegda-moy-v-nikosii/">Навсегда мой в Никосии <time datetime="2026-11-04">4 ноября 2026</time></a></li>
+    <li><a href="/event/c91ad7b7-bc4f-452d-9485-e22cc43a54dc/ektos-elegkhu-komediynoe-shou-mat-i-docheri/">Эктос Эле́гху: Комедийное шоу «Мать и дочери» <time datetime="2026-11-04">4 ноября 2026</time></a></li>
+    <li><a href="/event/f582be45-50d1-4d3d-8820-fa898fa92889/los-vivancos-live-shou-ispanskogo-tantsa-i-muzyki-na-kipre/">Los Vivancos Live: шоу испанского танца и музыки на Кипре <time datetime="2026-11-04">4 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/9b1f9cb1-3783-41a1-9fa3-e5036be9134b/tantsevalnoe-predstavlenie-los-vivancos-live-show-4-11-26/">Танцевальное представление LOS VIVANCOS LIVE SHOW, 4/11/26</a> <time datetime="2026-11-04">4 ноября 2026</time></li>
+    <li>Следующее: <a href="/event/1c188777-4583-48de-888c-47c76cd0fcf1/khorvatiya-volshebnaya-noch-zhivoe-magicheskoe-shou-v-nikosii/">Хорватия Волшебная ночь: живое магическое шоу в Никосии</a> <time datetime="2026-11-05">5 ноября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>

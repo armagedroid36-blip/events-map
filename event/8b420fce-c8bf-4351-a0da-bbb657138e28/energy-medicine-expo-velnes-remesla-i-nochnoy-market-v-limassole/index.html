@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
+      if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
+      setTimeout(go,12000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Energy Medicine Expo: Велнес… — 31 октября 2026 · Лимасол, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
+      <meta name="description" content="Лимасол, Кипр, 31 октября 2026. Energy Medicine Expo - двухдневный фестиваль велнеса, образа жизни и ремесел, который пройдет в престижном Columbia Beach…" />
+    <link rel="canonical" href="https://mypins.site/event/8b420fce-c8bf-4351-a0da-bbb657138e28/energy-medicine-expo-velnes-remesla-i-nochnoy-market-v-limassole/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Energy Medicine Expo: Велнес… — 31 октября 2026 · Лимасол, Кипр" />
+    <meta property="og:description" content="Лимасол, Кипр, 31 октября 2026. Energy Medicine Expo - двухдневный фестиваль велнеса, образа жизни и ремесел, который пройдет в престижном Columbia Beach…" />
+    <meta property="og:url" content="https://mypins.site/event/8b420fce-c8bf-4351-a0da-bbb657138e28/energy-medicine-expo-velnes-remesla-i-nochnoy-market-v-limassole/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/3f15571a-f8bb-4598-b4fd-e00e69f20509/1791430070805.jpg?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/8b420fce-c8bf-4351-a0da-bbb657138e28/energy-medicine-expo-velnes-remesla-i-nochnoy-market-v-limassole/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/8b420fce-c8bf-4351-a0da-bbb657138e28/energy-medicine-expo-wellness-crafts-night-market-in-limassol/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Energy Medicine Expo: Велнес, ремесла и ночной маркет в Лимассоле","url":"https://mypins.site/event/8b420fce-c8bf-4351-a0da-bbb657138e28/energy-medicine-expo-velnes-remesla-i-nochnoy-market-v-limassole/","startDate":"2026-10-31T09:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Columbia Beach Resort, Лимассол","address":{"@type":"PostalAddress","addressLocality":"Лимасол","streetAddress":"Columbia Beach Resort, Лимассол","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.6506892,"longitude":32.7199014}},"description":"Energy Medicine Expo - двухдневный фестиваль велнеса, образа жизни и ремесел, который пройдет в престижном Columbia Beach Resort в Писсури Бэй, Лимассол, Кипр, в субботу 31 октября и воскресенье 1 ноября 2026 года. На выставке соберутся продавцы товаров для здоровья, энергомедицины, ручных...","endDate":"2026-11-01","image":"https://cyprus.bz/img/images/events/3f15571a-f8bb-4598-b4fd-e00e69f20509/1791430070805.jpg?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/36ea/energy-medicine-expo-2026"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Energy Medicine Expo: Велнес, ремесла и ночной маркет в Лимассоле","item":"https://mypins.site/event/8b420fce-c8bf-4351-a0da-bbb657138e28/energy-medicine-expo-velnes-remesla-i-nochnoy-market-v-limassole/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Energy Medicine Expo: Велнес, ремесла и ночной маркет в Лимассоле</h1>
+  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-11-01">1 ноября 2026</time></p>
+  <p><time datetime="2026-10-31T09:00:00">31 октября 2026, 09:00</time></p>
+  <address>Columbia Beach Resort, Лимассол, Лимасол, Кипр</address>
+  <p>Energy Medicine Expo - двухдневный фестиваль велнеса, образа жизни и ремесел, который пройдет в престижном Columbia Beach Resort в Писсури Бэй, Лимассол, Кипр, в субботу 31 октября и воскресенье 1 ноября 2026 года. На выставке соберутся продавцы товаров для здоровья, энергомедицины, ручных...</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Energy Medicine Expo: Велнес, ремесла и ночной маркет в Лимассоле</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/wellness/">🧘 Йога и здоровье</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/673d3dff-768f-4628-938f-db6dcd775b0f/nastolnyy-tennis-dlya-55-v-nikosii/">Настольный теннис для 55+ в Никосии <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/f7580b70-7693-4f34-90ed-c90a5fa34c7a/zanyatiya-tsigun-i-taytszitsyuan-v-limasole/">Занятия цигун и тайцзицюань в Лимасоле <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/5f0613cf-7db7-4605-ade4-81265ef0569e/energeticheskaya-meditsina-ekspo/">Энергетическая медицина Экспо <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/99713abe-df1c-4501-b79f-b5d99934c3da/yoga-i-rezba-po-tykve-osennee-utro-v-satya-studio/">Йога и резьба по тыкве: осеннее утро в Satya Studio <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/51eb47bd-cf0a-415e-9639-c64b70f63559/retrit-somaticheskogo-istseleniya-keha-7-dney-vse-vklyucheno-v-pafose/">Ретрит соматического исцеления KEHA: 7 дней всё включено в Пафосе <time datetime="2026-11-02">2 ноября 2026</time></a></li>
+    <li><a href="/event/b3075a79-085d-4436-aaae-772e0133f24b/klub-yunykh-uchenykh/">Клуб юных учёных <time datetime="2026-11-02">2 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/8b105b93-ae3c-465c-8177-5f3afcfdef39/volshebnye-skazki-bratev-grimm-nikosiya-16-00/">Волшебные сказки братьев Гримм (Никосия, 16:00)</a> <time datetime="2026-11-01">1 ноября 2026</time></li>
+    <li>Следующее: <a href="/event/8df6024b-0064-49e4-a61b-bf8e18286545/festival-vina-v-platanistase/">Фестиваль вина в Платанистасе</a> <time datetime="2026-11-01">1 ноября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>
