@@ -2186,9 +2186,11 @@ const MAP_INTRO_TEXT = {
  */
 function mapIntroSeoHtml(previewUrl, lang = 'ru') {
   const t = MAP_INTRO_TEXT[lang === 'en' ? 'en' : 'ru'];
+  // beta 1.17: на 412 px превью 780 px избыточно — srcset 480w/828w, src прежний.
+  const previewSmall = previewUrl.replace(/\.webp$/, '-480.webp');
   return [
     '    <div class="absolute inset-0 z-[1180] overflow-hidden bg-[#faf7f2] transition-opacity duration-500 ease-out md:hidden opacity-100">',
-    `      <img src="${esc(previewUrl)}" alt="${esc(t.imgAlt)}" fetchpriority="high" class="absolute inset-0 h-full w-full object-cover" />`,
+    `      <img src="${esc(previewUrl)}" srcset="${esc(previewSmall)} 480w, ${esc(previewUrl)} 828w" sizes="100vw" alt="${esc(t.imgAlt)}" fetchpriority="high" class="absolute inset-0 h-full w-full object-cover" />`,
     '      <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/10"></div>',
     '      <div class="absolute inset-x-0 bottom-0 px-6" style="padding-bottom: calc(2.25rem + env(safe-area-inset-bottom, 0px))">',
     `        <h2 class="max-w-[19rem] text-[27px] font-extrabold leading-tight tracking-tight text-white drop-shadow-md">${esc(t.title)}</h2>`,

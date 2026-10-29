@@ -27,7 +27,7 @@ import { addDaysIso, nextOccurrenceDate } from '../lib/recurrence';
 import { formatDate, todayIso } from '../lib/dates';
 import { cityCrumbLabel, cityCrumbLabelLocative, cityPageHref, cityPath } from '../lib/address';
 import type { CityPath } from '../lib/address';
-import { MAP_INTRO_KEY, MOBILE_INTRO_QUERY, HOME_PANEL_QUERY, dropIntroSeoBlocks, setHomePanelHidden, wasCategoryPublished } from '../lib/mobileIntro';
+import { MAP_INTRO_KEY, MOBILE_INTRO_QUERY, HOME_PANEL_QUERY, dropIntroSeoBlocks, isMobileIntroActive, setHomePanelHidden, wasCategoryPublished } from '../lib/mobileIntro';
 import {
   MIN_CATEGORY_EVENTS,
   categoriesBlockTitle,
@@ -692,7 +692,7 @@ export default function Home({
   // Первичная загрузка данных
   useEffect(() => {
     let alive = true;
-    (async () => {
+    const load = async () => {
       const api = getApi();
       // Снимки удалённых событий нужны ТОЛЬКО на странице события (deep-link
       // /event/<id>/...): на карте, городских и категорийных страницах файл
@@ -781,9 +781,84 @@ export default function Home({
           }
         }
       }
+    };
+
+    // Фаза 1 CWV (beta 1.17). На мобильном интро-экране хабов (/ , /bali/ …)
+    // снимок событий (/data/events.json, 184 КБ) не должен конкурировать за
+    // канал и главный поток с первым экраном: он стартовал до LCP и растягивал
+    // simulated LCP. Откладываем его до ПЕРВОГО из событий:
+    //   (а) клик «Открыть карту» (pointerdown/keydown внутри интро-слоя);
+    //   (б) простой после первого кадра, но не раньше 2,5 с после него;
+    //   (в) первый клик/скролл внутри интро-слоя.
+    // Клик по кнопке относится и к (а), и к (в) — обработчик один.
+    // Не-интро-пути (/event/, /blog/, /<city>/<cat>/, /org/*) и десктоп грузят
+    // данные сразу, как раньше.
+    const deferHubData = (() => {
+      if (!isMobileIntroActive() || eventId) return false;
+      const raw = window.location.pathname;
+      const clean = raw.length > 1 ? raw.replace(/\/+$/, '') : raw;
+      const path = clean.startsWith('/en') ? clean.replace(/^\/en/, '') || '/' : clean;
+      return introEligiblePath(path);
     })();
+
+    if (!deferHubData) {
+      void load();
+      return () => {
+        alive = false;
+      };
+    }
+
+    let started = false;
+    let frameId = 0;
+    let idleId = 0;
+    let waitId = 0;
+    const stopWaiting = () => {
+      if (frameId) window.cancelAnimationFrame(frameId);
+      if (idleId && typeof window.cancelIdleCallback === 'function') window.cancelIdleCallback(idleId);
+      if (waitId) window.clearTimeout(waitId);
+      frameId = idleId = waitId = 0;
+      document.removeEventListener('pointerdown', onPointer, true);
+      document.removeEventListener('keydown', onPointer, true);
+      document.removeEventListener('scroll', onScroll, true);
+      window.removeEventListener('resize', onResize);
+    };
+    const start = () => {
+      if (started) return;
+      started = true;
+      stopWaiting();
+      void load();
+    };
+    function insideIntro(e: Event): boolean {
+      const target = e.target;
+      return target instanceof Element && target.closest('[data-map-intro]') !== null;
+    }
+    function onPointer(e: Event): void {
+      if (insideIntro(e)) start();
+    }
+    function onScroll(e: Event): void {
+      if (insideIntro(e)) start();
+    }
+    function onResize(): void {
+      if (!isMobileIntroActive()) start();
+    }
+    document.addEventListener('pointerdown', onPointer, true);
+    document.addEventListener('keydown', onPointer, true);
+    document.addEventListener('scroll', onScroll, true);
+    window.addEventListener('resize', onResize);
+    frameId = window.requestAnimationFrame(() => {
+      const firstFrame = performance.now();
+      const idleCb = () => {
+        const wait = 2500 - (performance.now() - firstFrame);
+        if (wait > 0) waitId = window.setTimeout(start, wait);
+        else start();
+      };
+      if (typeof window.requestIdleCallback === 'function') idleId = window.requestIdleCallback(idleCb, { timeout: 3000 });
+      else waitId = window.setTimeout(start, 2500);
+    });
+
     return () => {
       alive = false;
+      stopWaiting();
     };
     // Эффект первичной загрузки: событие ищется только при первом показе
     // страницы (App пересоздаёт Home по key при смене маршрута)

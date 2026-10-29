@@ -30,6 +30,10 @@ const BANNER_ZONE = '15rem';
 
 export default function MobileMapIntro({ previewUrl, leaving, onOpen }: Props) {
   const { t } = useTranslation();
+  // Фаза 3 CWV (beta 1.17): на экране 412 px превью 780 px не нужно. Отдаём
+  // браузеру выбор: 480w (обычный DPR) или исходник как 828w (DPR 2). src —
+  // прежний, fallback для браузеров без srcset.
+  const smallPreview = previewUrl.replace(/\.webp$/, '-480.webp');
   // Показываем перенесённый статический SEO-блок (снимает hidden и кладёт
   // #seo-intro-keep в #seo-intro-slot). Повторный вызов безопасен.
   useEffect(() => {
@@ -37,6 +41,7 @@ export default function MobileMapIntro({ previewUrl, leaving, onOpen }: Props) {
   }, []);
   return (
     <div
+      data-map-intro
       className={`absolute inset-0 z-[1180] overflow-hidden bg-[#faf7f2] transition-opacity duration-500 ease-out md:hidden ${
         leaving ? 'pointer-events-none opacity-0' : 'opacity-100'
       }`}
@@ -75,6 +80,8 @@ export default function MobileMapIntro({ previewUrl, leaving, onOpen }: Props) {
             поэтому alt описывает карту, а не элементы управления) */}
         <img
           src={previewUrl}
+          srcSet={`${smallPreview} 480w, ${previewUrl} 828w`}
+          sizes="100vw"
           alt={t('mapIntro.imgAlt')}
           fetchPriority="high"
           className="intro-banner-bg"
