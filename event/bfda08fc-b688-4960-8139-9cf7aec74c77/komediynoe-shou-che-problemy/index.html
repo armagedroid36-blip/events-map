@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Нячанг, 23 октября 2026. Комедийное шоу «ЧЁ, ПРОБЛЕМЫ?» Комедийно - терапевтическое шоу, где два комика и психолог разбирают реальные проблемы зрителей 👀 Есть…" />
@@ -134,9 +137,9 @@
     <li><a href="/event/1da34146-9b99-4f15-8e48-afd9dd854457/voskresene-18-oktyabrya-nyachang/">Воскресенье (18 октября) Нячанг <time datetime="2026-10-18">18 октября 2026</time></a></li>
     <li><a href="/event/cf34fd77-2390-4da0-b4c6-fdca968fd5fc/stendap-dlya-tekh-kto-vyzhil-v-nyachange/">СТЕНДАП - Для тех, кто выжил в Нячанге <time datetime="2026-10-25">25 октября 2026</time></a></li>
     <li><a href="/event/01c938e5-e952-44a3-90e3-803368594dda/voskresene-25-oktyabrya-nyachang/">Воскресенье (25 октября) Нячанг <time datetime="2026-10-25">25 октября 2026</time></a></li>
-    <li><a href="/event/7ef1341a-3bc0-476d-b393-7b93755d82e0/tata-show-v-vinwonders/">Tata Show в VinWonders <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/d87e2814-7362-4047-8ae6-0566ebe06320/life-puppets-kukolnoe-shou-v-o-theatre/">Life Puppets — кукольное шоу в Đó Theatre <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/4df7da34-c18c-48ef-962d-db2f7f041a07/shou-chama/">Шоу Чама <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/7ef1341a-3bc0-476d-b393-7b93755d82e0/tata-show-v-vinwonders/">Tata Show в VinWonders <time datetime="2026-10-29">29 октября 2026</time></a></li>
+    <li><a href="/event/d87e2814-7362-4047-8ae6-0566ebe06320/life-puppets-kukolnoe-shou-v-o-theatre/">Life Puppets — кукольное шоу в Đó Theatre <time datetime="2026-10-29">29 октября 2026</time></a></li>
+    <li><a href="/event/4df7da34-c18c-48ef-962d-db2f7f041a07/shou-chama/">Шоу Чама <time datetime="2026-10-29">29 октября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Нячанг</h2>

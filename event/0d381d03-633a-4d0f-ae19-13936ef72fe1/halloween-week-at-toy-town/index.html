@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Пафос, Кипр, 28 октября 2026. Костюмы достаются из шкафа, и игра приобретает хэллоуинское настроение! Toy Town готовит пятидневку с творческими занятиями…" />
@@ -109,12 +112,12 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/02b27ece-5a72-42e6-bb19-d4f207507cc0/12-let-golden-donkeys-farm/">12 лет Golden Donkeys Farm <time datetime="2026-10-28">28 октября 2026</time></a></li>
     <li><a href="/event/51861796-19bc-4e0d-875e-3ec4ab13fafa/khellouin-v-toy-town/">Хэллоуин в Toy Town <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/5899d5c1-065c-47e4-8444-b1c88373c1fb/den-okhi-natsionalnyy-prazdnik/">День Охи - национальный праздник <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/7404aca2-5a38-41bb-8ac3-fa4ab6ed0942/den-okhi-natsionalnyy-prazdnik/">День Охи – Национальный праздник <time datetime="2026-10-28">28 октября 2026</time></a></li>
     <li><a href="/event/72098faa-c1e8-4959-95a4-5a43a300fb08/1-y-ekologicheskiy-festival-pedieos-potok-zhizni/">1-й Экологический фестиваль Педиеос… поток жизни <time datetime="2026-10-29">29 октября 2026</time></a></li>
     <li><a href="/event/09cad680-b60b-40aa-a2ef-daf782be9ad5/mezhdunarodnyy-festival-poezii-i-dvizheniya-poetry-moves/">Международный фестиваль поэзии и движения «Poetry MOVES» <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/38f1871c-e9e6-49c1-af7c-fc25e422850c/festival-khellouin/">Фестиваль Хэллоуин <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/4558cb64-7118-4652-98a3-7bb99c681291/khellouin-v-parko-paliatso-besplatnye-semeynye-meropriyatiya-v-nikosii/">Хэллоуин в Parko Paliatso: бесплатные семейные мероприятия в Никосии <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/b8c0228d-8b34-4b14-8d99-4480fbddfd0f/bolshoy-dvukhdnevnyy-halloween-market/">Большой двухдневный Halloween-маркет <time datetime="2026-10-30">30 октября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Кипр</h2>

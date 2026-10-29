@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Limassol, Cyprus, October 24, 2026. OCTOBER WORKSHOPS 🥰 This October, we’re bringing you a series of creative workshops where you can slow down, create…" />
@@ -122,8 +125,8 @@ A cozy autumn workshop dedicated to handmade candles inspired by the season. You
     <li><a href="/en/event/5fbd3879-7f96-4cc0-bdc9-8784d39372f7/trinity-media-camp/">Trinity Media+ Camp <time datetime="2026-10-26">October 26, 2026</time></a></li>
     <li><a href="/en/event/2b19c7ba-1191-49a6-b21e-7ba18baed497/monster-lab-workshops-by-tgi-fridays-halloween-kids-workshop/">Monster Lab Workshops by TGI Fridays: Halloween Kids Workshop <time datetime="2026-10-27">October 27, 2026</time></a></li>
     <li><a href="/en/event/e135059f-510e-4619-9177-76ede31a7562/monster-lab-workshops-by-tgi-fridays-halloween-master-class-for-children/">Monster Lab Workshops by TGI Fridays: Halloween master class for children <time datetime="2026-10-27">October 27, 2026</time></a></li>
-    <li><a href="/en/event/2ae2b8b0-f0c3-4501-88d2-289dd6833b28/carved-kolotzia/">Carved kolotzia <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/329fa8a4-a98c-41cf-b329-3cdbe48286bd/glass-painting-workshop-halloween-edition-in-nicosia/">Glass Painting Workshop: Halloween Edition in Nicosia <time datetime="2026-10-28">October 28, 2026</time></a></li>
+    <li><a href="/en/event/0086113e-71d1-4a00-9ca1-d25a5852f04c/memory-workshop-in-platanistasa/">Memory Workshop in Platanistasa <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/7b4580ce-4b2c-4913-8c29-a09593d71bcc/pop-up-market-by-the-lab-workshop/">Pop Up Market by the Lab workshop <time datetime="2026-10-29">October 29, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Cyprus</h2>

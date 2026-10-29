@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Лимасол, Кипр, 27 января 2027. Дари надежду, делись жизнью. Limassol Marina приглашает всех желающих присоединиться к нам в простом деле, которое может оказать…" />
@@ -114,12 +117,12 @@ Limassol Marina приглашает всех желающих присоеди�
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/6382f3e4-a1bc-4919-b071-c7658dc8792e/eksklyuzivnoe-dnevnoe-kokteylnoe-meropriyatie-island-energies/">Эксклюзивное дневное коктейльное мероприятие Island Energies <time datetime="2026-11-12">12 ноября 2026</time></a></li>
     <li><a href="/event/1ddb145a-fb13-4448-a18c-e1f1e2e3c8b4/dostupnye-goroda-ot-problem-k-resheniyam-otkrytaya-diskussiya/">Доступные города: от проблем к решениям - открытая дискуссия <time datetime="2026-11-19">19 ноября 2026</time></a></li>
     <li><a href="/event/9026b620-283b-4eb6-aa02-4d6d91a1e767/27-y-forum-nextgen-payments-regtech-kipr/">27-й Форум NextGen Payments &amp; RegTech - Кипр <time datetime="2026-11-19">19 ноября 2026</time></a></li>
     <li><a href="/event/5ef76609-7247-48e6-8246-5070f9559530/premiya-island-people-excellence-award-2026-hr-konferentsiya-i-gala-vecher-na-kipre/">Премия Island People Excellence Award 2026: HR-конференция и гала-вечер на Кипре <time datetime="2026-11-27">27 ноября 2026</time></a></li>
     <li><a href="/event/14add4cd-f33e-4e33-8f40-c98a34b6e78d/ecoforward-cyprus-meropriyatie-po-ustoychivomu-razvitiyu-v-limasole/">EcoForward Cyprus: мероприятие по устойчивому развитию в Лимасоле <time datetime="2026-11-29">29 ноября 2026</time></a></li>
     <li><a href="/event/8416eacb-c774-4541-ae99-3e88fb1b36ff/cbg-2026-delovoe-netvorking-meropriyatie-v-limasole/">CBG 2026: Деловое нетворкинг-мероприятие в Лимасоле <time datetime="2026-12-03">3 декабря 2026</time></a></li>
+    <li><a href="/event/6b456b69-22ff-4c36-bfd2-c6cd153df27c/shkolnyy-konkurs-po-tekhnologiyam-i-pravam-cheloveka-v-universitete-frederik/">Школьный конкурс по технологиям и правам человека в Университете Фредерик <time datetime="2027-02-26">26 февраля 2027</time></a></li>
   </ul>
 </div>
 

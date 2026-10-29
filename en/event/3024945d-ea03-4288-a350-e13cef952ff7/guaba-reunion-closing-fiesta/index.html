@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Limassol, Cyprus, October 25, 2026. Lineup: Alfandi, IoN, Anna White, Paula Habchi, KN, Dave Seaman For all the old Guaba people, this event is for you. The…" />
@@ -108,12 +111,12 @@
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/17e1994d-7c3c-4881-beb3-19fc3db44933/pura-vida-at-por-favor/">Pura Vida at Por Favor <time datetime="2026-10-27">October 27, 2026</time></a></li>
-    <li><a href="/en/event/b0851028-2c06-4339-b5d6-45b36c5d6685/pinakoteka-special-halloween-party-baron-givasso-x-pazzi-and-vaty-lupa-at-mason-bar/">Pinakoteka: special Halloween party - Baron, Givasso x Pazzi and Vaty Lupa at Mason Bar <time datetime="2026-10-27">October 27, 2026</time></a></li>
-    <li><a href="/en/event/6c46f3b7-767f-49b8-a6ca-2cb9799c5f78/castle-club-wednesdays/">Castle Club Wednesdays <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/85882765-e584-4231-b582-939f857544f5/spooktacular-halloween-at-agora/">Spooktacular Halloween at Agora <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/b7fee3e2-0e10-4cfd-acac-11c1880e62a6/the-peak-halloween-2026-in-nicosia/">The Peak Halloween 2026 in Nicosia <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/bff4cdcf-0b60-4458-a2ee-78dc8e468223/party-night-13th-anniversary-celebration-at-to-potopolio/">Party Night: 13th Anniversary Celebration at To Potopolio <time datetime="2026-10-28">October 28, 2026</time></a></li>
+    <li><a href="/en/event/6aefbd91-b02f-4b3f-999d-d247585eb048/sing-together-shine-forever-halloween-karaoke-night-in-nicosia/">Sing Together Shine Forever: Halloween Karaoke Night in Nicosia <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/a07be77b-8cbf-4e31-be24-6b6a106fb178/seismos-halloween-edition-night-party-at-opus-venue/">Seismos Halloween Edition: Night Party at Opus Venue <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/b1a2930b-6064-46e5-b138-6cab708b9f10/b2b-sessions-thursdays/">B2B Sessions Thursdays <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/eaafd255-aac3-40a1-b88f-2ead1021a3af/halloween-party-2026-in-nicosia/">Halloween Party 2026 in Nicosia <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/027ede0a-0e74-4eec-bb0c-84edbc200c11/halloween-at-the-amphitheater-in-protaras/">Halloween at the Amphitheater in Protaras <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/130e45c8-de55-4c16-b562-21c46d8d55d8/naughty-halloween-night-at-noc-night-club/">Naughty Halloween Night at NOC Night Club <time datetime="2026-10-30">October 30, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Cyprus</h2>

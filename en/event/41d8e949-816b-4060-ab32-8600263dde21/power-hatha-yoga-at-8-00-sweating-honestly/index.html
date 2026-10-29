@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Nha Trang, October 22, 2026. POWERFUL HATHA YOGA AT 8:00. SWEATING HONESTLY 🔥 A morning that starts with a plank and ends with silence and the feeling of &quot;I&#39;m…" />
@@ -131,12 +134,12 @@ Post by: 🐍Tatiana Lakshmi Giri</p>
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/5e768f67-f4b7-40c1-b297-ab408391151f/sound-healing-in-gamaki/">SOUND HEALING IN GAMAKI <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/2e486932-43a2-472a-97df-dddbb18d2d62/stretching-with-a-focus-on-a-healthy-back/">Stretching with a focus on a healthy back <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/6d0f3638-eabc-447e-80b2-bbdb9d362c19/full-body-group-strength-training-wednesday/">Full-body group strength training WEDNESDAY <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/4e7f6bcd-a566-4f0d-997e-fff41d944dda/flow-yoga/">FLOW YOGA <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/2f6e232f-ccd6-42a2-a21e-32d61a2e050a/morning-practice/">Morning practice <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/983f329a-4925-4d06-9749-07a99a0202f8/group-meeting-with-a-psychologist/">GROUP MEETING WITH A PSYCHOLOGIST <time datetime="2026-10-28">October 28, 2026</time></a></li>
+    <li><a href="/en/event/e09d1054-97c6-46b3-b2e8-0c35c20e7d47/full-body-group-strength-training-thursday/">Full-body group strength training Thursday <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/186ce3ae-ce36-415b-b27e-47e3ce9d1130/power-hatha-yoga-at-8-00/">POWER HATHA YOGA AT 8:00 <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/544c8830-8748-4382-b4b0-45ef778a5a40/yin-yoga-and-singing-bowls/">YIN YOGA AND SINGING BOWLS <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/780f7a96-45b7-4c3e-972e-6fa8f782f607/zumba-training-in-nha-trang-north/">Zumba training in Nha Trang (north) <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/ce7406cc-dee9-4aef-b943-5cc88ee8e43b/nha-trang-free-movement-movement-for-yourself-29-10/">Nha Trang Free Movement - movement for yourself 29.10 <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/d3832648-54b0-4d47-86a1-95637a08b66a/silence-within/">SILENCE WITHIN <time datetime="2026-10-29">October 29, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Nha Trang</h2>

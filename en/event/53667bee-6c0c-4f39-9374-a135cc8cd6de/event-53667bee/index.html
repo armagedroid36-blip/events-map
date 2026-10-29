@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Nicosia, Cyprus, October 28, 2026. &quot;Learn a craft and leave it, and if you go hungry, take it up&quot; says this proverb that carries the wisdom of folk tradition…" />
@@ -92,13 +95,14 @@
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/53667bee-6c0c-4f39-9374-a135cc8cd6de/olive-products/" />
     <link rel="alternate" hreflang="ru" href="https://mypins.site/event/53667bee-6c0c-4f39-9374-a135cc8cd6de/produkty-olivy/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Olive products","url":"https://mypins.site/en/event/53667bee-6c0c-4f39-9374-a135cc8cd6de/olive-products/","startDate":"2026-10-28T10:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Lythrodontas Village Square, Nicosia","address":{"@type":"PostalAddress","addressLocality":"Nicosia","streetAddress":"Lythrodontas Village Square, Nicosia","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.9399975,"longitude":33.2901556}},"offers":{"@type":"Offer","url":"https://mypins.site/en/event/53667bee-6c0c-4f39-9374-a135cc8cd6de/olive-products/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-10-11"},"description":"\"Learn a craft and leave it, and if you go hungry, take it up\" says this proverb that carries the wisdom of folk tradition. It urges us to learn a craft, to develop skills, to acquire a lifeline even if we don't need it immediately. If at some point things don't turn out as we had planned, a craft might give us the solution and get us out of a difficult situation. The inhabitants of the villages along the \"Heartland of Legends\" route were mainly farmers or shepherds, but they also knew a craft. They had to be creative and multi-talented in order to supplement their income","endDate":"2026-10-28","image":"https://www.eventshub.cy/wp-content/uploads/2026/10/proionta-elias.webp","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CF%80%CF%81%CE%BF%CE%B9%CF%8C%CE%BD%CF%84%CE%B1-%CE%B5%CE%BB%CE%B9%CE%AC%CF%82-2026-10-28"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Olive products","item":"https://mypins.site/en/event/53667bee-6c0c-4f39-9374-a135cc8cd6de/olive-products/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Olive products","item":"https://mypins.site/en/event/53667bee-6c0c-4f39-9374-a135cc8cd6de/olive-products/"}]}]}</script>
     <script type="application/json" id="seo-alias-map">{"cloneId":"53667bee-6c0c-4f39-9374-a135cc8cd6de","keptId":"53667bee-6c0c-4f39-9374-a135cc8cd6de","ru":"https://mypins.site/event/53667bee-6c0c-4f39-9374-a135cc8cd6de/produkty-olivy/","en":"https://mypins.site/en/event/53667bee-6c0c-4f39-9374-a135cc8cd6de/olive-products/"}</script>
   </head>
   <body>
     <div id="root"></div>
 <div id="seo-event-block">
   <h1>Olive products</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-28">October 28, 2026</time></p>
   <p><time datetime="2026-10-28T10:00:00">October 28, 2026, 10:00 AM</time></p>
   <address>Lythrodontas Village Square, Nicosia, Cyprus</address>
   <p>&quot;Learn a craft and leave it, and if you go hungry, take it up&quot; says this proverb that carries the wisdom of folk tradition. It urges us to learn a craft, to develop skills, to acquire a lifeline even if we don&#39;t need it immediately. If at some point things don&#39;t turn out as we had planned, a craft might give us the solution and get us out of a difficult situation. The inhabitants of the villages along the &quot;Heartland of Legends&quot; route were mainly farmers or shepherds, but they also knew a craft. They had to be creative and multi-talented in order to supplement their income</p>
@@ -106,23 +110,23 @@
     <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Olive products</span></p>
     <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/workshop/">🎨 Workshops</a></p>
   </nav>
-  <p>Other dates in this series:</p>
-  <ul>
-    <li><a href="/en/event/18c04ece-bb07-42a4-b212-c635ea5d1347/olive-products/"><time datetime="2026-10-31">October 31, 2026</time></a></li>
-    <li><a href="/en/event/9e35a9d4-d45d-4c94-bd0f-f2d757ff795e/olive-products/"><time datetime="2026-11-01">November 1, 2026</time></a></li>
-    <li><a href="/en/event/4e082a51-2809-4a62-898d-e9cb05f4cb28/olive-products/"><time datetime="2026-11-07">November 7, 2026</time></a></li>
-    <li><a href="/en/event/10f770ea-8250-4f5a-ab58-951173421d99/olive-products/"><time datetime="2026-11-08">November 8, 2026</time></a></li>
-    <li><a href="/en/event/f295fb78-c962-44aa-908d-720e7d80c127/olive-products/"><time datetime="2026-11-14">November 14, 2026</time></a></li>
-  </ul>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/2ae2b8b0-f0c3-4501-88d2-289dd6833b28/carved-kolotzia/">Carved kolotzia <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/329fa8a4-a98c-41cf-b329-3cdbe48286bd/glass-painting-workshop-halloween-edition-in-nicosia/">Glass Painting Workshop: Halloween Edition in Nicosia <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/32ce3311-212a-4ebe-9d10-c327394ca497/production-of-palouze-soutzoukos/">Production of palouze &amp; soutzoukos <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/803c19f8-f69a-4783-a245-80b9f1f26b80/turning-pressure-into-pumpkins-halloween-arts-crafts-in-nicosia/">Turning Pressure into Pumpkins: Halloween Arts &amp; Crafts in Nicosia <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/8c86d8a0-f677-48cc-bdce-9541fc4fdc08/botanical-postcard-creative-printmaking-workshop/">Botanical postcard: creative printmaking workshop <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/97f93c29-d15b-4309-9674-19daabe407fb/psatharoudes/">Psatharoudes <time datetime="2026-10-28">October 28, 2026</time></a></li>
+    <li><a href="/en/event/4754371e-bbda-42ec-bcf3-3df269a46108/trinity-camps/">Trinity Camps <time datetime="2026-10-26">October 26, 2026</time></a></li>
+    <li><a href="/en/event/2b19c7ba-1191-49a6-b21e-7ba18baed497/monster-lab-workshops-by-tgi-fridays-halloween-kids-workshop/">Monster Lab Workshops by TGI Fridays: Halloween Kids Workshop <time datetime="2026-10-27">October 27, 2026</time></a></li>
+    <li><a href="/en/event/e135059f-510e-4619-9177-76ede31a7562/monster-lab-workshops-by-tgi-fridays-halloween-master-class-for-children/">Monster Lab Workshops by TGI Fridays: Halloween master class for children <time datetime="2026-10-27">October 27, 2026</time></a></li>
+    <li><a href="/en/event/0086113e-71d1-4a00-9ca1-d25a5852f04c/memory-workshop-in-platanistasa/">Memory Workshop in Platanistasa <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/7b4580ce-4b2c-4913-8c29-a09593d71bcc/pop-up-market-by-the-lab-workshop/">Pop Up Market by the Lab workshop <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/cf3c8536-c117-4d0f-87dd-4f9c65e25202/young-doctor-club/">Young Doctor Club <time datetime="2026-10-29">October 29, 2026</time></a></li>
   </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/43676ccf-78d8-4059-b9a6-5bf649f38f78/concert-of-the-corfu-wind-orchestra-from-west-to-east/">Concert of the Corfu Wind Orchestra - From West to East</a> <time datetime="2026-10-28">October 28, 2026</time></li>
+    <li>Next: <a href="/en/event/5859d501-34cd-4fc8-9d9b-b7ed52421a85/corfu-cyprus-from-west-to-east/">Corfu - Cyprus: From West to East</a> <time datetime="2026-10-28">October 28, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
 </div>
 
   </body>

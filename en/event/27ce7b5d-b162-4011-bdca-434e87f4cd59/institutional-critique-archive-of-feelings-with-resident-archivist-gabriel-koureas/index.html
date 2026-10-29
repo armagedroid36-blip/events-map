@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Nicosia, Cyprus, October 29, 2026. Tuesday 29 October and Wednesday 30 October 2024, 18.30 – 20.00 Institutional Critique: Archive of Feelings with resident…" />
@@ -123,14 +126,14 @@ The discussions will be in English.</p>
     <li><a href="/en/event/b8c2f1f3-499a-4843-a236-49ec56697fa2/start-of-free-digital-skills-programs-for-people-55-at-limassol-municipality/">Start of Free Digital Skills Programs for people 55+ at Limassol Municipality <time datetime="2026-10-26">October 26, 2026</time></a></li>
     <li><a href="/en/event/5eedd42f-7b4f-4a87-97d1-8d58135926a6/mikhail-kazinik-in-limassol-secret-signs-of-culture/">Mikhail Kazinik in Limassol: Secret Signs of Culture <time datetime="2026-10-29">October 29, 2026</time></a></li>
     <li><a href="/en/event/b0bf4d15-e26b-40b1-8032-3174ed2fb32d/keep-your-balance/">Keep your balance <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/b87ec039-d744-4217-a1d4-1f621ba0e8df/young-veterinarian-club/">Young Veterinarian Club <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/de0d4542-fbfd-4827-801d-95849a24547f/online-educational-seminar-greek-language/">Online Educational Seminar - Greek Language <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/a96555e7-2b4d-4bae-a4eb-61085226afbb/music-talks-jacopo-peri-and-the-birth-of-opera/">Music Talks: Jacopo Peri and the Birth of Opera <time datetime="2026-11-03">November 3, 2026</time></a></li>
-    <li><a href="/en/event/bc688799-05f1-4f69-bb35-76ab665f15d0/the-art-of-the-short-story-a-tribute-to-raymond-carver/">The Art of the Short Story: A Tribute to Raymond Carver <time datetime="2026-11-04">November 4, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Cyprus</h2>
     <ul>
-    <li>Previous: <a href="/en/event/f0cee57d-52ea-4188-bead-32fc2c6b7888/turning-pressure-into-pumpkins-halloween-arts-and-crafts-in-nicosia/">Turning Pressure into Pumpkins: Halloween arts and crafts in Nicosia</a> <time datetime="2026-10-28">October 28, 2026</time></li>
+    <li>Previous: <a href="/en/event/f8010300-06b6-4c02-bfe7-a481e6b14a9c/engraving-workshop/">Engraving workshop</a> <time datetime="2026-10-28">October 28, 2026</time></li>
     <li>Next: <a href="/en/event/6af3faa2-4fb3-4a67-becb-82a1a7573223/open-mic-stand-up-in-nicosia/">Open mic stand-up in Nicosia</a> <time datetime="2026-10-29">October 29, 2026</time></li>
     </ul>
   </nav>

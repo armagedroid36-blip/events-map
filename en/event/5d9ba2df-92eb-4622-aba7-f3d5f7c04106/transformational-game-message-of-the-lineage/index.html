@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Nha Trang, October 27, 2026. 🌳 TRANSFORMATIONAL GAME &quot;ANCESTRAL MESSAGE&quot; Sometimes the answers to the most important questions already exist… They live in our…" />
@@ -124,12 +127,12 @@ Post by: Elly Sheva</p>
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/81eb44e8-cfda-4640-89d4-c54fcb924e2e/art-classes-for-adults/">ART CLASSES FOR ADULTS <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/68ca6c24-16f4-4338-8232-8986e566c1e4/art-studio-gallery-masterzodchiy/">ART Studio-Gallery &quot;MasterZodchiy&quot; <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/9d65bde6-2d32-46a8-b5d6-d25879e6bb39/i-invite-you-to-create-your-own-talisman-bracelet-from-natural-stones/">I invite you to create your own talisman bracelet from natural stones <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/b2000d37-fdbd-4941-94e9-09ec857e6991/28-october-nyachang-18-30-20-30-master-class/">28 OCTOBER NYACHANG 18:30 20:30 Master Class <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/d3db1010-cf50-4b83-a07d-5e73df5ba0de/aroma-meeting/">Aroma meeting <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/ee5a97a4-3dad-4f7a-b770-8583b3cb2b7f/dance-morning-with-tatu/">DANCE MORNING WITH TATU <time datetime="2026-10-28">October 28, 2026</time></a></li>
+    <li><a href="/en/event/7e18e18f-b4b1-4ad2-becd-894865d3297f/watercolor-plein-air/">WATERCOLOR PLEIN AIR <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/8ab9eee5-2949-4132-8db1-356ba1a0224f/neurographics-by-candlelight/">NEUROGRAPHICS BY CANDLELIGHT <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/9eed17ba-b390-40bb-a88f-59c23934b5e5/bead-workshop-in-nha-trang/">Bead Workshop in Nha Trang <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/fa7b6161-f4e0-4996-922e-e77c2b241975/master-class/">Master class <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/5e94c4c5-aff7-4e3d-9507-c2aade229678/friday-october-30/">Friday, October 30 <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/ef2a18dd-8b71-42b3-9fe3-7407dd2495b5/jewelry-making-masterclass-by-embrace-yourself/">JEWELRY MAKING MASTERCLASS by Embrace yourself <time datetime="2026-10-30">October 30, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Nha Trang</h2>

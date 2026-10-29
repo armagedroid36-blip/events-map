@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
+      if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
+      setTimeout(go,12000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>10 years of the Yannis… — October 29, 2026 · Nicosia</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
+      <meta name="description" content="Nicosia, Cyprus, October 29, 2026. The Yiannis Christodoulou Foundation (YCF) marks 10 years of service with a major event on Thursday, 29 October 2026, at…" />
+    <link rel="canonical" href="https://mypins.site/en/event/7cef0203-f530-4da6-a7a3-4c13713c3600/10-years-of-the-yannis-christodoulou-foundation/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="10 years of the Yannis… — October 29, 2026 · Nicosia" />
+    <meta property="og:description" content="Nicosia, Cyprus, October 29, 2026. The Yiannis Christodoulou Foundation (YCF) marks 10 years of service with a major event on Thursday, 29 October 2026, at…" />
+    <meta property="og:url" content="https://mypins.site/en/event/7cef0203-f530-4da6-a7a3-4c13713c3600/10-years-of-the-yannis-christodoulou-foundation/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/b72be023-08f5-4370-8b57-fee4fd3acd90/1793246490590.webp?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/7cef0203-f530-4da6-a7a3-4c13713c3600/10-years-of-the-yannis-christodoulou-foundation/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/7cef0203-f530-4da6-a7a3-4c13713c3600/10-let-fondu-yannisa-khristodulu/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"10 years of the Yannis Christodoulou Foundation","url":"https://mypins.site/en/event/7cef0203-f530-4da6-a7a3-4c13713c3600/10-years-of-the-yannis-christodoulou-foundation/","startDate":"2026-10-29T16:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Nicosia","address":{"@type":"PostalAddress","addressLocality":"Nicosia","streetAddress":"Nicosia","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.14748,"longitude":33.3119735}},"description":"The Yiannis Christodoulou Foundation (YCF) marks 10 years of service with a major event on Thursday, 29 October 2026, at Tassos Papadopoulos - Eleftheria Stadium in Nicosia. Ten years after its founding, the Foundation continues its work with the same dedication, grounded in the vision of its founder John...","endDate":"2026-10-29T19:30:00","image":"https://cyprus.bz/img/images/events/b72be023-08f5-4370-8b57-fee4fd3acd90/1793246490590.webp?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/393d/10-chronia-yianis-christodoulou-foundation-2026"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"10 years of the Yannis Christodoulou Foundation","item":"https://mypins.site/en/event/7cef0203-f530-4da6-a7a3-4c13713c3600/10-years-of-the-yannis-christodoulou-foundation/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>10 years of the Yannis Christodoulou Foundation</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-10-29">October 29, 2026</time></p>
+  <p><time datetime="2026-10-29T16:00:00">October 29, 2026, 4:00 PM</time></p>
+  <address>Nicosia, Cyprus</address>
+  <p>The Yiannis Christodoulou Foundation (YCF) marks 10 years of service with a major event on Thursday, 29 October 2026, at Tassos Papadopoulos - Eleftheria Stadium in Nicosia. Ten years after its founding, the Foundation continues its work with the same dedication, grounded in the vision of its founder John...</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>10 years of the Yannis Christodoulou Foundation</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/festival/">🎉 Festivals</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/51861796-19bc-4e0d-875e-3ec4ab13fafa/halloween-at-toy-town/">Halloween at Toy Town <time datetime="2026-10-28">October 28, 2026</time></a></li>
+    <li><a href="/en/event/72098faa-c1e8-4959-95a4-5a43a300fb08/1st-sustainable-pedieos-festival-flow-of-life/">1st Sustainable Pedieos Festival… flow of life <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/09cad680-b60b-40aa-a2ef-daf782be9ad5/poetry-moves-international-festival-international-festival-of-poetry-and-syn-movement/">Poetry MOVES International Festival / International Festival of Poetry and Syn+Movement <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/38f1871c-e9e6-49c1-af7c-fc25e422850c/the-halloween-festival/">The Halloween Festival <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/4558cb64-7118-4652-98a3-7bb99c681291/halloween-at-parko-paliatso-free-family-activities-in-nicosia/">Halloween at Parko Paliatso: Free Family Activities in Nicosia <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/b8c0228d-8b34-4b14-8d99-4480fbddfd0f/big-two-day-halloween-market/">Big two-day Halloween market <time datetime="2026-10-30">October 30, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/6af3faa2-4fb3-4a67-becb-82a1a7573223/open-mic-stand-up-in-nicosia/">Open mic stand-up in Nicosia</a> <time datetime="2026-10-29">October 29, 2026</time></li>
+    <li>Next: <a href="/en/event/8337ae75-c2c9-45f6-9c21-ba88925a06dd/10-years-of-yianis-christodoulou-foundation-konstantinos-argyros/">10 years of Yianis Christodoulou Foundation - Konstantinos Argyros</a> <time datetime="2026-10-29">October 29, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

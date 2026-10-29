@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Nicosia, Cyprus, November 7, 2026. Lineup: Temudo, OUST, CHAPTO_LINES We are opening the celebration of SYNESTHESIA&#39;s 5th anniversary with a large-scale…" />
@@ -109,8 +112,8 @@
   <h2>Similar events</h2>
   <ul>
     <li><a href="/en/event/115c2734-ad60-4e7b-8499-afe884f11ed2/leggo-x-kybba-halloween-dancehall-night-at-the-warehouse/">Leggo x Kybba: Halloween Dancehall Night at The Warehouse <time datetime="2026-10-31">October 31, 2026</time></a></li>
-    <li><a href="/en/event/3758e588-cf20-4d5e-bd5e-e728dc6977f4/haunted-house-halloween-rave/">Haunted House: Halloween Rave <time datetime="2026-10-31">October 31, 2026</time></a></li>
     <li><a href="/en/event/338f3af8-f54f-4bff-bab9-13c05576f3db/dj-grout-is-back-at-old-market-larnaca/">DJ Grout is Back at Old Market Larnaca <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/4ef6283f-c853-485a-b372-3675ce1eec91/the-great-monster-party/">The Great Monster Party <time datetime="2026-11-01">November 1, 2026</time></a></li>
     <li><a href="/en/event/f81b540f-a03a-458c-987d-97539521b2cc/huzouri-15th-anniversary-party-in-limassol/">Huzouri: 15th Anniversary Party in Limassol <time datetime="2026-11-06">November 6, 2026</time></a></li>
     <li><a href="/en/event/2a660665-5c64-4e5d-a3c1-9350e235e706/dj-tennis-b2b-mano-le-tough-echonomist/">DJ Tennis B2B Mano Le Tough + Echonomist <time datetime="2026-11-07">November 7, 2026</time></a></li>
     <li><a href="/en/event/a0d083f1-4b90-472f-ada4-ba005a15996c/sapphic-street-party-reggaeton-night-in-nicosia/">Sapphic Street Party: Reggaeton Night in Nicosia <time datetime="2026-11-07">November 7, 2026</time></a></li>

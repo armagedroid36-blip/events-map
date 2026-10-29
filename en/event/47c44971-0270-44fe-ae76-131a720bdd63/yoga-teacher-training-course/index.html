@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Bali, September 12, 2026. Moana Wellness Hub invites you to the WYTT Multistyle 200HRS Yoga Teacher Training + 20HRS Wellness Training program — an intensive…" />
@@ -124,12 +127,12 @@ tel:+62 8812808888</p>
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/fddc0aec-8f84-4701-80d8-9bf07a5f069f/needle-therapy/">Needle therapy <time datetime="2026-10-28">October 28, 2026</time></a></li>
     <li><a href="/en/event/e464b71a-783b-4212-8c55-b4992d8e6ade/standing-on-nails/">Standing on nails <time datetime="2026-10-29">October 29, 2026</time></a></li>
     <li><a href="/en/event/1275c18a-cbc7-4d20-a8dd-04cb9539173f/meditative-practice-and-sound-bath-at-nuanu/">Meditative practice and sound bath at Nuanu <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/da10d215-335f-4c6f-be35-4b519d1c0ed8/yoga-and-sound-practice-at-kappa-senses-ubud-october-31/">Yoga and Sound Practice at Kappa Senses Ubud October 31 <time datetime="2026-10-31">October 31, 2026</time></a></li>
     <li><a href="/en/event/366cddbd-5827-4ac9-aba9-b72616a56587/tantra-life-practice-the-taste-of-pleasure/">Tantra Life Practice. The Taste of Pleasure <time datetime="2026-11-01">November 1, 2026</time></a></li>
     <li><a href="/en/event/4de61bc7-8a45-4600-9abd-c05c8edc5203/kundalini-activation-kundalini-activation/">Kundalini Activation / Kundalini Activation <time datetime="2026-11-03">November 3, 2026</time></a></li>
+    <li><a href="/en/event/31be750f-4f86-418b-a71a-9d220e1ad84d/yoga-in-ubud/">Yoga in Ubud <time datetime="2026-11-09">November 9, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Bali</h2>

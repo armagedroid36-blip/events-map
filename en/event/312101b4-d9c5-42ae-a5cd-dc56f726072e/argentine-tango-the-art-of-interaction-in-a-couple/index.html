@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Da Nang, September 20, 2026. 💃 Argentine Tango / The Art of Interaction in a Couple🕺 In this class we will learn to: ✨ hear and feel the partner; ✨ trust and…" />
@@ -131,12 +134,12 @@ These skills stay with you beyond the dance floor — they help you understand e
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/713d4479-91b4-41ca-9533-5276f3c861ba/argentine-tango-the-art-of-interaction-in-a-couple/">Argentine tango The art of interaction in a couple <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/b568af89-bcfc-4db3-b4d1-e3be1a09b4f0/anti-sabotage-why-we-don-t-do-what-we-ourselves-want/">Anti-sabotage: why we don&#39;t do what we ourselves want <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/63c68a24-faee-4ef5-9284-f5f80bb7545b/shadows-without-taboo/">SHADOWS WITHOUT TABOO <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/8e047fc3-b5cf-4130-9227-5059f5f54769/halloween-impro-party-actor-improvisation-in-halloween-style/">HALLOWEEN IMPRO PARTY actor improvisation in Halloween style <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/9681021f-203d-49c6-b09c-d895095fb41e/metaprograms-how-our-brain-controls-our-decisions/">METAPROGRAMS: HOW OUR BRAIN CONTROLS OUR DECISIONS <time datetime="2026-10-28">October 28, 2026</time></a></li>
     <li><a href="/en/event/9e72e55a-b5af-47d7-8fc6-f9e23f22f754/cleansing-life-where-energy-drains-and-how-to-reclaim-your-resource-workshop-in-danang/">Cleansing Life: Where Energy Drains and How to Reclaim Your Resource Workshop in Danang <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/d918f213-fab3-4386-8715-a5507c493394/the-rainy-season-has-begun-but-your-social-life-shouldn-t-drown/">The rainy season has begun. But your social life shouldn&#39;t drown! <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/09e13b64-fdaf-4e9d-8506-15db2edc9cd4/solo-latina-open-class/">SOLO LATINA OPEN CLASS <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/32b02f7b-401e-4584-a6f5-b7a527d9ddce/autumn-perfume-making-masterclass/">Autumn perfume-making masterclass <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/b3109511-e5a1-408c-8cae-9d37171cd15c/solo-latina/">Solo Latina <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/6570fe5b-a3bd-4850-8076-f5e68f553f19/this-friday-i-invite-you-to-a-cozy-master-class-on-knitting-an-openwork-kerchief/">This Friday, I invite you to a cozy master class on knitting an openwork kerchief <time datetime="2026-10-30">October 30, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Da Nang</h2>

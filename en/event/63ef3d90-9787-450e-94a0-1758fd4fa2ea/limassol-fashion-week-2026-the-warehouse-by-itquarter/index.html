@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Exhibitions: Limassol Fashion Week 2026 @ The Warehouse by ITQuarter. November 11, 2026, 12:00 AM. Details and listings on MyPins." />
@@ -108,11 +111,11 @@
   <p class="event-facts">Exhibitions: Limassol Fashion Week 2026 @ The Warehouse by ITQuarter. November 11, 2026, 12:00 AM. Details and listings on MyPins.</p>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/0b0e3c17-11e6-4e96-a58a-ccd6e89296c4/cyprus-insula-guided-tours-of-the-exhibition/">Cyprus Insula: guided tours of the exhibition <time datetime="2026-11-07">November 7, 2026</time></a></li>
-    <li><a href="/en/event/23a9e498-205b-4724-833d-f1485267ba6f/agia-napa-biennale-2026/">Agia Napa Biennale 2026 <time datetime="2026-11-07">November 7, 2026</time></a></li>
     <li><a href="/en/event/0535524b-dac3-46f2-8d16-3bcaa37935ec/myths-of-cyprus/">Myths of Cyprus <time datetime="2026-11-08">November 8, 2026</time></a></li>
     <li><a href="/en/event/de849dcc-e649-4d00-a4d7-a777f7309f49/thrift-shop-preloved-vintage-market-at-new-division-nicosia/">Thrift Shop: Preloved &amp; Vintage Market at New Division, Nicosia <time datetime="2026-11-08">November 8, 2026</time></a></li>
     <li><a href="/en/event/96b52dde-aa74-4d27-8f46-a1d8e4e3a8c0/limassol-fashion-week-2026/">Limassol Fashion Week 2026 <time datetime="2026-11-11">November 11, 2026</time></a></li>
+    <li><a href="/en/event/e560959d-db3d-465f-abe6-7fa50c180320/limassol-fashion-week-2026/">Limassol Fashion Week 2026 <time datetime="2026-11-12">November 12, 2026</time></a></li>
+    <li><a href="/en/event/8e957b85-4d94-42fd-9f66-52555c65e4b0/playmobil-and-optical-illusions/">Playmobil and optical illusions <time datetime="2026-11-14">November 14, 2026</time></a></li>
     <li><a href="/en/event/b9f74a84-f037-4311-9652-5dceea5a75e9/boyz-stuff-show-2026-cyprus-automotive-exhibition-in-nicosia/">Boyz Stuff Show 2026: Cyprus Automotive Exhibition in Nicosia <time datetime="2026-11-14">November 14, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">

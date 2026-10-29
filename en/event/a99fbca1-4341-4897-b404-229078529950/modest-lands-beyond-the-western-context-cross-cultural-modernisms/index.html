@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
+      if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
+      setTimeout(go,12000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modest Lands: Beyond the Western… — October 30, 2026 · Limassol</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
+      <meta name="description" content="Limassol, Cyprus, October 30, 2026. International contemporary art exhibition from Cyprus, Bulgaria, and the United Kingdom. Featuring the In Situ group, the…" />
+    <link rel="canonical" href="https://mypins.site/en/event/a99fbca1-4341-4897-b404-229078529950/modest-lands-beyond-the-western-context-cross-cultural-modernisms/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Modest Lands: Beyond the Western… — October 30, 2026 · Limassol" />
+    <meta property="og:description" content="Limassol, Cyprus, October 30, 2026. International contemporary art exhibition from Cyprus, Bulgaria, and the United Kingdom. Featuring the In Situ group, the…" />
+    <meta property="og:url" content="https://mypins.site/en/event/a99fbca1-4341-4897-b404-229078529950/modest-lands-beyond-the-western-context-cross-cultural-modernisms/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/a827bc7a-5d3e-4242-a1f4-a30d73ae07ff/1793160089125.webp?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/a99fbca1-4341-4897-b404-229078529950/modest-lands-beyond-the-western-context-cross-cultural-modernisms/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/a99fbca1-4341-4897-b404-229078529950/skromnye-zemli-za-predelami-zapadnogo-konteksta-mezhkulturnye-modernizmy/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Modest Lands: Beyond the Western Context - Cross-Cultural Modernisms","url":"https://mypins.site/en/event/a99fbca1-4341-4897-b404-229078529950/modest-lands-beyond-the-western-context-cross-cultural-modernisms/","startDate":"2026-10-30T18:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Limassol","address":{"@type":"PostalAddress","addressLocality":"Limassol","streetAddress":"Limassol","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.7071,"longitude":33.0226}},"description":"International contemporary art exhibition from Cyprus, Bulgaria, and the United Kingdom. Featuring the In Situ group, the international exhibition \"Modest Lands: Beyond the Western Context – Intercultural Modernisms\" is held at the Limassol Municipal Art Gallery, bringing together works by contemporary...","endDate":"2026-12-12","image":"https://cyprus.bz/img/images/events/a827bc7a-5d3e-4242-a1f4-a30d73ae07ff/1793160089125.webp?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/392a/humble-lands-beyond-the-western-framework-intercultural-2026"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Modest Lands: Beyond the Western Context - Cross-Cultural Modernisms","item":"https://mypins.site/en/event/a99fbca1-4341-4897-b404-229078529950/modest-lands-beyond-the-western-context-cross-cultural-modernisms/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Modest Lands: Beyond the Western Context - Cross-Cultural Modernisms</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-12-12">December 12, 2026</time></p>
+  <p><time datetime="2026-10-30T18:00:00">October 30, 2026, 6:00 PM</time></p>
+  <address>Limassol, Cyprus</address>
+  <p>International contemporary art exhibition from Cyprus, Bulgaria, and the United Kingdom. Featuring the In Situ group, the international exhibition &quot;Modest Lands: Beyond the Western Context – Intercultural Modernisms&quot; is held at the Limassol Municipal Art Gallery, bringing together works by contemporary...</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Modest Lands: Beyond the Western Context - Cross-Cultural Modernisms</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/exhibition/">🖼️ Exhibitions</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/156266e0-a542-4dab-b178-86b215b853c6/guardian-of-the-grapes-and-other-similar-stories/">Guardian of the Grapes and Other Similar Stories <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/6e360245-48ba-4695-9f5f-9aa59ad5c522/honorary-event-for-of-mr-demetris-z-pierides/">Honorary Event for of Mr. Demetris Z. Pierides <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/fb522d45-c084-4adb-8075-7c6d72abe990/international-exhibition-humble-earths-beyond-the-western-framework-cross-cultural-modernisms/">International Exhibition: Humble Earths: Beyond the Western Framework — Cross-Cultural Modernisms <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/8772dc05-001e-44eb-a048-8fd8f2c6848e/nicosia-flea-market-x-el-khalili-pop-up-market-in-nicosia/">Nicosia Flea Market x El Khalili Pop Up Market in Nicosia <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/d64e33ea-bd11-48ff-9853-caf4c9666c22/cmc-select-v2-0-2026-in-nicosia/">CMC Select V2.0 2026 in Nicosia <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/d208fee9-66ab-46ad-bee7-42cd7d721325/objects-in-the-mirror-may-be-closer-than-they-appear/">Objects in the mirror may be closer than they appear <time datetime="2026-11-02">November 2, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/733a60e0-2f32-49a6-9c85-7f9831668314/new-year-s-adventures/">New Year&#39;S Adventures</a> <time datetime="2026-12-12">December 12, 2026</time></li>
+    <li>Next: <a href="/en/event/c7e33ef8-87bb-4c15-bbe2-db8a65711cbf/imperial-gala-concert-vienna-orchestra/">Imperial Gala Concert. Vienna Orchestra</a> <time datetime="2026-12-12">December 12, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

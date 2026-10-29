@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Da Nang, September 27, 2026. LIVE CONNECTION IN NATURE 📴 🦍Bungee jumping, imitating animal movements, ice bath, jungle hike, expressing suppressed emotions…" />
@@ -125,12 +128,12 @@ Want to join us? DM @kirill_ganadev &quot;detox&quot; - I&#39;ll send you the sc
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/acc99408-b028-4423-a581-d296bdefec74/i-invite-you-to-a-hatha-yoga-practice/">I invite you to a hatha yoga practice <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/e3359d8c-4407-4f08-8016-a5664552e59b/coffee-beach-hall-bar-again/">Coffee - beach - hall - bar - again? <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/fee3ae05-eab4-455a-a08b-d828d46d2984/qigong-on-the-beach/">QIGONG ON THE BEACH <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/238b194b-0e73-4a7d-a0b8-0f7c34a3a857/hatha-yoga-in-fysm-style-for-all-levels/">HATHA YOGA in FYSM style for all levels <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/6fdbcca0-86ff-4ee0-b350-1d710b36cce4/beautiful-legs-strong-arms-and-a-calm-head-yes-it-s-all-about-yoga/">Beautiful legs, strong arms, and a calm head — yes, it&#39;s all about yoga <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/5172d58f-4f41-4a01-8177-464b905db0fd/full-body-group-functional-training-in-da-nang/">Full Body group functional training in Da Nang <time datetime="2026-10-28">October 28, 2026</time></a></li>
+    <li><a href="/en/event/0e578e78-d73c-4d12-8146-3e9ce9268eea/yoga-class-from-scratch/">YOGA CLASS from SCRATCH <time datetime="2026-09-27">September 27, 2026</time></a></li>
+    <li><a href="/en/event/b1a29835-a70c-4ae6-af65-4b322544ffd7/computer-cafe-gym-bar-and-so-every-day-for-free-read/">Computer. Cafe. Gym. Bar. And so every day... For free? Read <time datetime="2026-09-27">September 27, 2026</time></a></li>
+    <li><a href="/en/event/aa55b6aa-34b4-4b59-a920-bd731776b4d1/yoga-in-fysm-style/">YOGA in FYSM style <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/43ce2397-ada2-4131-bab7-4d39b5125167/we-are-once-again-holding-a-psychological-practice-accompanied-by-sound-healing/">We are once again holding a Psychological Practice accompanied by Sound Healing <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/3398a68c-50dc-4f39-8b80-9647e5b1328f/hatha-yoga-in-fysm-style-saturday/">Hatha Yoga in FYSM Style SATURDAY <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/daca76a1-5481-4868-ae9c-91599c9a11bf/sound-practice-for-releasing-inner-tension/">SOUND PRACTICE FOR RELEASING INNER TENSION <time datetime="2026-10-31">October 31, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Da Nang</h2>

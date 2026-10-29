@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Da Nang, September 22, 2026. A modern stage show in Da Nang combining dance, circus, music, and impressive stage effects; inspired by local legends and the…" />
@@ -99,7 +102,7 @@
 <div id="seo-event-block">
   <h1>Tien Sa Show</h1>
   <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-09-22">September 22, 2026</time></p>
-  <p><time datetime="2026-10-28">October 28, 2026</time></p>
+  <p><time datetime="2026-10-29">October 29, 2026</time></p>
   <address>Tiên Sa Show, Da Nang</address>
   <p>A modern stage show in Da Nang combining dance, circus, music, and impressive stage effects; inspired by local legends and the natural beauty of the seaside city, especially the mysterious stories surrounding the Son Tra Peninsula, it recreates a romantic love story between a fairy and a fisherman, blending Vietnamese traditional culture with modern stage technologies.</p>
   <nav aria-label="Breadcrumbs">
@@ -108,12 +111,12 @@
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/513d9371-e071-4d9b-8489-42d2af1e2ee9/ao-dai-show-da-nang/">Ao Dai Show Da Nang <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/fdf56fce-c81d-4a79-bee3-c8664127c1b0/charming-danang-show/">Charming Danang Show <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/89a8599f-c26e-4e99-b407-f69f8ffed2ce/dolphinarium-show/">Dolphinarium Show <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/c941dccf-647c-48eb-94e0-5ce387bda82b/a-o-show/">À Ố Show <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/d6741792-8f37-4b3e-8b7c-77523017e29b/the-soul-of-vietnam-show/">The Soul of Vietnam Show <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/2ccf2a96-d846-45e3-9794-4be937e4a4a1/hoi-an-memories-show/">Hoi An Memories Show <time datetime="2026-10-28">October 28, 2026</time></a></li>
+    <li><a href="/en/event/513d9371-e071-4d9b-8489-42d2af1e2ee9/ao-dai-show-da-nang/">Ao Dai Show Da Nang <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/fdf56fce-c81d-4a79-bee3-c8664127c1b0/charming-danang-show/">Charming Danang Show <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/89a8599f-c26e-4e99-b407-f69f8ffed2ce/dolphinarium-show/">Dolphinarium Show <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/c941dccf-647c-48eb-94e0-5ce387bda82b/a-o-show/">À Ố Show <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/d6741792-8f37-4b3e-8b7c-77523017e29b/the-soul-of-vietnam-show/">The Soul of Vietnam Show <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/2ccf2a96-d846-45e3-9794-4be937e4a4a1/hoi-an-memories-show/">Hoi An Memories Show <time datetime="2026-10-29">October 29, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Da Nang</h2>

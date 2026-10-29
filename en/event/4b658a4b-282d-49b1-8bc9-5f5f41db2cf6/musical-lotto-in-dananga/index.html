@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Da Nang, October 17, 2026. 🎵 MUSIC LOTTO IN DA NANG October 17 at 19:00 we&#39;re gathering at Cross Cafe for the first game by Yarik Events 🔥 What&#39;s in store?…" />
@@ -135,8 +138,8 @@ Gather your friends and come 🎶
   <h2>Similar events</h2>
   <ul>
     <li><a href="/en/event/8abf4a45-0e5d-4d8e-abed-7983fb1e2fc6/already-tomorrow-evening-by-tradition-board-games-at-restaurant-369/">Already tomorrow evening, by tradition, board games at restaurant 369! <time datetime="2026-10-17">October 17, 2026</time></a></li>
-    <li><a href="/en/event/52cdce1f-d59d-4700-bdbc-f145722dc9b5/wednesday-evening-tas-at-restaurant-369/">WEDNESDAY EVENING TAS at restaurant 369! <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/75da24d5-1691-42ff-b544-a2380969175d/predictor-mix-three-mafia-games-in-one-evening/">PREDICTOR MIX three Mafia games in one evening <time datetime="2026-10-28">October 28, 2026</time></a></li>
+    <li><a href="/en/event/1461f59a-2ef9-48da-a434-6d5c5735da73/bunker-in-danang/">BUNKER IN DANANG <time datetime="2026-10-17">October 17, 2026</time></a></li>
+    <li><a href="/en/event/f0ed24b0-34da-4d1f-abb4-b1aa2ec6cfc2/today-mafia-at-restaurant-369-in-da-nang-easy-fun-together/">Today MAFIA at restaurant 369 in Da Nang — easy, fun, together! <time datetime="2026-10-29">October 29, 2026</time></a></li>
     <li><a href="/en/event/e176d331-51d4-429e-8221-7ec81333d4e8/quiz-please-harry-potter-game-for-those-who-remember-all-of-draco-malfoy-s-lines-can-tell-heraldry-from-potion-making-and-still/">Quiz, please! Harry Potter game for those who remember all of Draco Malfoy&#39;s lines, can tell heraldry from potion-making, and still <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/fa6c441a-99b8-457f-bfd0-622c182450b8/adult-chess-in-da-nang-fridays-at-ace-hub-led-by-international-grandmaster-aleksei-kim/">Adult chess in Da Nang, Fridays at ACE Hub. Led by international grandmaster Aleksei Kim <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/9673df19-b84e-481f-93c1-02269bba1920/xin-chao/">Xin chào! <time datetime="2026-10-31">October 31, 2026</time></a></li>

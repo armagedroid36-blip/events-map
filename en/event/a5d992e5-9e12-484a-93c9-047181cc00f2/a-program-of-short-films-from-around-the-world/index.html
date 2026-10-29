@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Bali, September 17, 2026. Mark your calendars — a real dose of short films awaits you! 🎬✨ Minikino Film Week 12 returns to Bali with a packed program of short…" />
@@ -116,9 +119,9 @@ instagram (https://www.instagram.com/mashdenpasar/)</p>
   </nav>
   <h2>Similar events</h2>
   <ul>
+    <li><a href="/en/event/ca1571ec-6aea-4ad7-8e48-c6ccdfa0dd4c/minikino-short-film-week/">Minikino Short Film Week <time datetime="2026-09-16">September 16, 2026</time></a></li>
     <li><a href="/en/event/3b8f4457-27c1-4231-94db-6e7089d0c22f/film-club-kubo-legend-of-the-samurai/">Film Club: &quot;Kubo. Legend of the Samurai&quot; <time datetime="2026-09-16">September 16, 2026</time></a></li>
     <li><a href="/en/event/82da5036-5fe9-4159-b3ef-357c99b69538/a-program-of-short-films-from-around-the-world/">A program of short films from around the world. <time datetime="2026-09-16">September 16, 2026</time></a></li>
-    <li><a href="/en/event/ca1571ec-6aea-4ad7-8e48-c6ccdfa0dd4c/minikino-short-film-week/">Minikino Short Film Week <time datetime="2026-09-16">September 16, 2026</time></a></li>
     <li><a href="/en/event/7d3e7519-f343-4514-92a0-5d286004866c/movie-night-the-mitchells-vs-the-machines-at-yema-bali/">Movie Night: &quot;The Mitchells vs. the Machines&quot; at Yema Bali <time datetime="2026-09-16">September 16, 2026</time></a></li>
     <li><a href="/en/event/4ddfba0d-97e3-4da4-b177-9260acd6b97b/minikino-short-film-week/">Minikino Short Film Week <time datetime="2026-09-17">September 17, 2026</time></a></li>
     <li><a href="/en/event/750b10a2-005a-4018-952c-5f0fff80488b/a-program-of-short-films-from-around-the-world/">A program of short films from around the world. <time datetime="2026-09-18">September 18, 2026</time></a></li>

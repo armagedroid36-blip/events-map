@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Дананг, 3 сентября 2026. 🥰Хатха-йога в стиле FYSM 🧘‍♀Силовая практика для тех, кому в йоге мало просто потянуться и расслабиться. 🧘За час поработаем с…" />
@@ -127,12 +130,12 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/acc99408-b028-4423-a581-d296bdefec74/priglashayu-tebya-na-praktiku-khatkha-yogi/">Приглашаю тебя на практику хатха-йоги <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/e3359d8c-4407-4f08-8016-a5664552e59b/kofe-plyazh-zal-bar-zanovo/">Кофе - пляж - зал - бар - заново? <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/fee3ae05-eab4-455a-a08b-d828d46d2984/tsigun-na-plyazhe/">ЦИГУН на ПЛЯЖЕ <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/238b194b-0e73-4a7d-a0b8-0f7c34a3a857/hatha-yoga-v-stile-fysm-dlya-vsekh-urovney/">HATHA YOGA в стиле FYSM для всех уровней <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/6fdbcca0-86ff-4ee0-b350-1d710b36cce4/krasivye-nogi-silnye-ruki-i-spokoynaya-golova-da-eto-vse-pro-yogu/">Красивые ноги, сильные руки и спокойная голова да, это всё про йогу <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/5172d58f-4f41-4a01-8177-464b905db0fd/gruppovye-funktsionalnye-trenirovki-full-body-v-danange/">Групповые функциональные тренировки FULL BODY в Дананге <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/31e877a6-7e5d-40e3-b3e9-7e3451979d3d/utrennyaya-mindfulness-meditatsiya/">Утренняя Mindfulness-медитация <time datetime="2026-09-03">3 сентября 2026</time></a></li>
+    <li><a href="/event/ea0edd1a-1e98-495d-ac07-a4dcf88d4093/yoga/">ЙОГА <time datetime="2026-09-03">3 сентября 2026</time></a></li>
+    <li><a href="/event/aa55b6aa-34b4-4b59-a920-bd731776b4d1/yoga-v-stile-fysm/">ЙОГА в стиле FYSM <time datetime="2026-10-29">29 октября 2026</time></a></li>
+    <li><a href="/event/43ce2397-ada2-4131-bab7-4d39b5125167/vnov-provodim-psikhologicheskuyu-praktiku-v-soprovozhdenii-sound-healing/">Вновь проводим Психологическую Практику в сопровождении Sound Healing <time datetime="2026-10-29">29 октября 2026</time></a></li>
+    <li><a href="/event/3398a68c-50dc-4f39-8b80-9647e5b1328f/khatkha-yoga-v-stile-fysm-subbota/">Хатха-йога в стиле FYSM СУББОТА <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/daca76a1-5481-4868-ae9c-91599c9a11bf/zvukovaya-praktika-snyatiya-vnutrennego-napryazheniya/">ЗВУКОВАЯ ПРАКТИКА СНЯТИЯ ВНУТРЕННЕГО НАПРЯЖЕНИЯ <time datetime="2026-10-31">31 октября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Дананг</h2>

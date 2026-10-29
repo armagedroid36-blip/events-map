@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Дананг, 20 сентября 2026. Друзья! ✌️ В это воскресенье в Da Nang English Speaking Club — лучшем месте для знакомств и практики английского мы будем говорить о…" />
@@ -130,7 +133,7 @@
     <li><a href="/event/b0345de8-b9cb-481d-ba75-244528a3da6b/american-breakfast-govorim-po-angliyski-s-udovolstviem/">American Breakfast говорим по-английски с удовольствием! <time datetime="2026-09-16">16 сентября 2026</time></a></li>
     <li><a href="/event/babd7d88-8058-43f6-bbbb-269653b32877/american-breakfast-govorim-po-angliyski-s-udovolstviem/">American Breakfast говорим по-английски с удовольствием! <time datetime="2026-09-23">23 сентября 2026</time></a></li>
     <li><a href="/event/45367749-1e7b-475b-937d-12933498c36f/english-speaking-game-club-dlya-podrostkov/">ENGLISH SPEAKING GAME CLUB для подростков <time datetime="2026-09-25">25 сентября 2026</time></a></li>
-    <li><a href="/event/2d85ef33-64e0-453c-8ea2-c39648605a42/american-breakfast-govorim-po-angliyski-s-udovolstviem/">American Breakfast говорим по-английски с удовольствием! <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/fdd027ec-ef09-49f3-bdf2-e92fae208db1/druzya/">Друзья! <time datetime="2026-09-27">27 сентября 2026</time></a></li>
     <li><a href="/event/20cbd077-8c2b-4f47-bdd5-b14e64bf0c54/klub-angliyskogo-yazyka-danang/">КЛУБ АНГЛИЙСКОГО ЯЗЫКА Дананг <time datetime="2026-11-01">1 ноября 2026</time></a></li>
     <li><a href="/event/2ba3018b-b4cb-4908-80c5-8fff7f9494d6/english-brunch-club-kak-vsegda-vyigryvat-v-sporakh-uroven-b1/">English Brunch Club: Как всегда выигрывать в спорах? (уровень B1 ) <time datetime="2026-11-01">1 ноября 2026</time></a></li>
   </ul>

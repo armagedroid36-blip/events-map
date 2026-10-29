@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Da Nang, October 18, 2026. Friends! ✌️ Tomorrow (Sunday) at Da Nang English Speaking Club — the best place for meeting people and practicing English — we&#39;ll be…" />
@@ -123,14 +126,14 @@ Join us! 😉
 #date: 18.10</p>
   <nav aria-label="Breadcrumbs">
     <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/da-nang/">Da Nang</a> <span aria-hidden="true">›</span> <span>Already tomorrow (Sunday) at Da Nang English Speaking Club, the best place for meeting people and practicing English, we will be ho</span></p>
-    <p>More events in Da Nang: <a href="/en/da-nang/">what&#39;s on</a> · <a href="/en/da-nang/speaking/">💬 Speaking Club</a></p>
+    <p>More events in Da Nang: <a href="/en/da-nang/">what&#39;s on</a></p>
   </nav>
   <h2>Similar events</h2>
   <ul>
+    <li><a href="/en/event/7adf0ddb-eb1f-4451-b54f-6d896aa9daec/this-sunday-at-da-nang-english-speaking-club-the-best-place-for-meeting-people-and-practicing-english-we-will-talk-about/">This Sunday at Da Nang English Speaking Club, the best place for meeting people and practicing English, we will talk about <time datetime="2026-10-11">October 11, 2026</time></a></li>
     <li><a href="/en/event/944fa0d7-53d1-4988-bbff-63b6c4a639ef/american-breakfast-speaking-english-with-pleasure/">American Breakfast – speaking English with pleasure! <time datetime="2026-10-14">October 14, 2026</time></a></li>
     <li><a href="/en/event/379a413b-a4d4-4ba1-b41a-9662e7a341cf/american-breakfast-speaking-english-with-pleasure/">American Breakfast – speaking English with pleasure! <time datetime="2026-10-21">October 21, 2026</time></a></li>
     <li><a href="/en/event/7dc22858-befd-434d-bcae-cb2d4d8333d6/svoi-english-club-presents/">SVOI English Club presents! <time datetime="2026-10-24">October 24, 2026</time></a></li>
-    <li><a href="/en/event/2d85ef33-64e0-453c-8ea2-c39648605a42/american-breakfast-speaking-english-with-pleasure/">American Breakfast – speaking English with pleasure! <time datetime="2026-10-28">October 28, 2026</time></a></li>
     <li><a href="/en/event/20cbd077-8c2b-4f47-bdd5-b14e64bf0c54/english-speaking-club-da-nang/">ENGLISH SPEAKING CLUB Da Nang <time datetime="2026-11-01">November 1, 2026</time></a></li>
     <li><a href="/en/event/2ba3018b-b4cb-4908-80c5-8fff7f9494d6/english-brunch-club-how-to-always-win-arguments-level-b1/">English Brunch Club: How to always win arguments? (level B1) <time datetime="2026-11-01">November 1, 2026</time></a></li>
   </ul>

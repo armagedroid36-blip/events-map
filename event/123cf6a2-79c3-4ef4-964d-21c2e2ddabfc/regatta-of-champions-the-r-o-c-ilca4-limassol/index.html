@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -39,7 +42,7 @@
     <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
     <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Регата чемпионов – The R.O.C… — 21 ноября 2026 · Лимасол, Кипр</title>
+    <title>Регата чемпионов – The R.O.C… — 22 ноября 2026 · Лимасол, Кипр</title>
     
     
     
@@ -68,38 +71,38 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
-      <meta name="description" content="Лимасол, Кипр, 21 ноября 2026. После успеха выпуска Optimist, Regatta of Champions – The R.O.C. расширяется в 2026 году, добавив свои первые международные…" />
+      <meta name="description" content="Лимасол, Кипр, 22 ноября 2026. После успеха выпуска Optimist, Regatta of Champions – The R.O.C. расширяется в 2026 году, добавив свои первые международные…" />
     <link rel="canonical" href="https://mypins.site/event/123cf6a2-79c3-4ef4-964d-21c2e2ddabfc/regata-chempionov-the-r-o-c-ilca4-v-limasole/" />
     <meta property="og:site_name" content="MyPins" />
     <meta property="og:locale" content="ru_RU" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Регата чемпионов – The R.O.C… — 21 ноября 2026 · Лимасол, Кипр" />
-    <meta property="og:description" content="Лимасол, Кипр, 21 ноября 2026. После успеха выпуска Optimist, Regatta of Champions – The R.O.C. расширяется в 2026 году, добавив свои первые международные…" />
+    <meta property="og:title" content="Регата чемпионов – The R.O.C… — 22 ноября 2026 · Лимасол, Кипр" />
+    <meta property="og:description" content="Лимасол, Кипр, 22 ноября 2026. После успеха выпуска Optimist, Regatta of Champions – The R.O.C. расширяется в 2026 году, добавив свои первые международные…" />
     <meta property="og:url" content="https://mypins.site/event/123cf6a2-79c3-4ef4-964d-21c2e2ddabfc/regata-chempionov-the-r-o-c-ilca4-v-limasole/" />
     <meta property="og:image" content="https://www.limassoltourism.com/wp-content/uploads/2026/09/REGATTA-1.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="alternate" hreflang="ru" href="https://mypins.site/event/123cf6a2-79c3-4ef4-964d-21c2e2ddabfc/regata-chempionov-the-r-o-c-ilca4-v-limasole/" />
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/123cf6a2-79c3-4ef4-964d-21c2e2ddabfc/regatta-of-champions-the-r-o-c-ilca4-limassol/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Регата чемпионов – The R.O.C. ILCA4 в Лимасоле","url":"https://mypins.site/event/123cf6a2-79c3-4ef4-964d-21c2e2ddabfc/regata-chempionov-the-r-o-c-ilca4-v-limasole/","startDate":"2026-11-21T23:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Axiou, Agia Fylaxis, Лимасол","address":{"@type":"PostalAddress","addressLocality":"Лимасол","streetAddress":"Axiou, Agia Fylaxis, Лимасол","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.689268,"longitude":33.070653}},"offers":{"@type":"Offer","url":"https://mypins.site/event/123cf6a2-79c3-4ef4-964d-21c2e2ddabfc/regata-chempionov-the-r-o-c-ilca4-v-limasole/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-09-30"},"description":"После успеха выпуска Optimist, Regatta of Champions – The R.O.C. расширяется в 2026 году, добавив свои первые международные соревнования в категории ILCA4. Регата пройдёт в Лимассоле и соберёт 40 отобранных яхтсменов ILCA4, следуя тому же формату соревнований, что и The R.O.C. Optimist. Участники будут бороться не только за Кубок чемпионов, но и за академические стипендии и призы, вручаемые лучшим яхтсменам и тренерам. Мероприятие является частью инновационной концепции Regatta of Champions, объединяющей ведущих молодых яхтсменов для международных соревнований и","endDate":"2026-11-22","image":"https://www.limassoltourism.com/wp-content/uploads/2026/09/REGATTA-1.jpg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/regatta-of-champions-the-r-o-c-optimist-ilca4-8-15-11-2026-22-29-11-2026-2026-11-07-2026-11-29"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Регата чемпионов – The R.O.C. ILCA4 в Лимасоле","item":"https://mypins.site/event/123cf6a2-79c3-4ef4-964d-21c2e2ddabfc/regata-chempionov-the-r-o-c-ilca4-v-limasole/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Регата чемпионов – The R.O.C. ILCA4 в Лимасоле","url":"https://mypins.site/event/123cf6a2-79c3-4ef4-964d-21c2e2ddabfc/regata-chempionov-the-r-o-c-ilca4-v-limasole/","startDate":"2026-11-22T00:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Axiou, Agia Fylaxis, Лимасол","address":{"@type":"PostalAddress","addressLocality":"Лимасол","streetAddress":"Axiou, Agia Fylaxis, Лимасол","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.689268,"longitude":33.070653}},"offers":{"@type":"Offer","url":"https://mypins.site/event/123cf6a2-79c3-4ef4-964d-21c2e2ddabfc/regata-chempionov-the-r-o-c-ilca4-v-limasole/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-09-30"},"description":"После успеха выпуска Optimist, Regatta of Champions – The R.O.C. расширяется в 2026 году, добавив свои первые международные соревнования в категории ILCA4. Регата пройдёт в Лимассоле и соберёт 40 отобранных яхтсменов ILCA4, следуя тому же формату соревнований, что и The R.O.C. Optimist. Участники будут бороться не только за Кубок чемпионов, но и за академические стипендии и призы, вручаемые лучшим яхтсменам и тренерам. Мероприятие является частью инновационной концепции Regatta of Champions, объединяющей ведущих молодых яхтсменов для международных соревнований и","endDate":"2026-11-22T22:59:00","image":"https://www.limassoltourism.com/wp-content/uploads/2026/09/REGATTA-1.jpg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/regatta-of-champions-the-r-o-c-optimist-ilca4-8-15-11-2026-22-29-11-2026-2026-11-07-2026-11-29"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Регата чемпионов – The R.O.C. ILCA4 в Лимасоле","item":"https://mypins.site/event/123cf6a2-79c3-4ef4-964d-21c2e2ddabfc/regata-chempionov-the-r-o-c-ilca4-v-limasole/"}]}]}</script>
     <script type="application/json" id="seo-alias-map">{"cloneId":"123cf6a2-79c3-4ef4-964d-21c2e2ddabfc","keptId":"123cf6a2-79c3-4ef4-964d-21c2e2ddabfc","ru":"https://mypins.site/event/123cf6a2-79c3-4ef4-964d-21c2e2ddabfc/regata-chempionov-the-r-o-c-ilca4-v-limasole/","en":"https://mypins.site/en/event/123cf6a2-79c3-4ef4-964d-21c2e2ddabfc/regatta-of-champions-the-r-o-c-ilca4-limassol/"}</script>
   </head>
   <body>
     <div id="root"></div>
 <div id="seo-event-block">
   <h1>Регата чемпионов – The R.O.C. ILCA4 в Лимасоле</h1>
-  <p><time datetime="2026-11-21T23:00:00">21 ноября 2026, 23:00</time></p>
+  <p><time datetime="2026-11-22T00:00:00">22 ноября 2026, 00:00</time></p>
   <address>Axiou, Agia Fylaxis, Лимасол, Кипр</address>
   <p>После успеха выпуска Optimist, Regatta of Champions – The R.O.C. расширяется в 2026 году, добавив свои первые международные соревнования в категории ILCA4.
 Регата пройдёт в Лимассоле и соберёт 40 отобранных яхтсменов ILCA4, следуя тому же формату соревнований, что и The R.O.C. Optimist. Участники будут бороться не только за Кубок чемпионов, но и за академические стипендии и призы, вручаемые лучшим яхтсменам и тренерам.
@@ -110,7 +113,7 @@
   </nav>
   <p>Другие даты серии:</p>
   <ul>
-    <li><a href="/event/ad6c4d40-b8c6-4479-b4e2-3aae7c5bdb84/regata-chempionov-the-r-o-c-ilca4-limassol/"><time datetime="2026-11-23">23 ноября 2026</time></a></li>
+    <li><a href="/event/ad6c4d40-b8c6-4479-b4e2-3aae7c5bdb84/regata-chempionov-the-r-o-c-ilca4-limassol/"><time datetime="2026-11-24">24 ноября 2026</time></a></li>
   </ul>
   <h2>Похожие события</h2>
   <ul>

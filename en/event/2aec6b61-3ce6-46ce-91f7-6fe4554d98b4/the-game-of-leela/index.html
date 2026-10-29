@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Bali, October 24, 2026. I invite you to Leela 🤍 —How to reach a new income level? —Why does the same scenario keep repeating? —What do I need to see for happy…" />
@@ -130,12 +133,12 @@ https://t.me/lizunik482</p>
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/3453be9d-b787-43f1-9c40-4155e321fcc2/game-of-leela/">Game of Leela <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/60b71fda-e875-4be8-82d7-26a9005e8681/mafia-sports/">Mafia (sports) <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/816fc419-7fac-4b45-a6b6-0a4f23d55db2/brainstorming-game-bali-for-halloween/">Brainstorming Game Bali for Halloween <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/8fd87881-a7e3-476e-9930-e7f0ed4b9660/women-s-breakfast/">women&#39;s breakfast <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/99f48ba5-f928-4d4c-81fd-02bd359d658e/quiz-game-mozgoboynya-bali-4-years-together/">Quiz game Mozgoboynya Bali 4 years together <time datetime="2026-10-28">October 28, 2026</time></a></li>
     <li><a href="/en/event/f5ff292b-260d-46ae-ac07-1d024c2d52c9/cashflow-bali/">Cashflow Bali <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/5cac553d-a3cb-4440-abdc-13c5961e5a8b/mafia-in-ubud/">Mafia in Ubud <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/30f5d948-5262-4ce9-883c-4831e51f4993/einstein-party-quiz/">Einstein Party Quiz <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/89409aeb-1a6c-46a3-b6ea-518f2497a240/quiz-please/">Quiz, please! <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/e089439c-c77a-414d-a9d3-48ef5e90ee9d/mafia-on-halloween-in-ubud/">Mafia on Halloween in Ubud <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/20c1abf9-31fd-4399-8af4-b5b18212c2c8/quiz-please/">Quiz, please! <time datetime="2026-11-01">November 1, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Bali</h2>

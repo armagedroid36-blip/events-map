@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Нячанг, 3 октября 2026. 🦄ДЕТСКАЯ ИГРОТЕКА НАСТОЛЬНЫХ ИГР 🔥Суббота 13:00-17:00🔥 Приглашаю на игротеку детей и их родителей. Это отличный способ интересно…" />
@@ -129,12 +132,12 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/51b824ad-38ee-435d-bcf4-e8be7de273af/sreda-igraem-v-krov-na-chasovoy-bashne/">Среда! Играем в КРОВЬ НА ЧАСОВОЙ БАШНЕ <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/56c39bb9-065d-45f1-8c0e-e16d31553b63/gametalk-nastolnye-igry-na-angliyskom/">GameTalk: настольные игры на английском <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/b406b623-41a4-4533-841a-7f5cf861c985/kviz-pro-kino-i-muzyku/">Квиз про кино и музыку <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/b5a91bff-11b8-4e16-b895-5b09a3d7b651/detskaya-finansovaya-igra-finansy-i-investitsii-v-nyachange/">ДЕТСКАЯ ФИНАНСОВАЯ ИГРА «ФИНАНСЫ И ИНВЕСТИЦИИ» В НЯЧАНГЕ! <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/dfe750ca-1365-462c-84be-02fa7191767a/avalon-po-sredam/">АВАЛОН ПО СРЕДАМ <time datetime="2026-10-28">28 октября 2026</time></a></li>
     <li><a href="/event/290197bb-6494-476b-be93-c9602423ff03/transformatsionnaya-igra-lila-na-bolshom-pole/">ТРАНСФОРМАЦИОННАЯ ИГРА «ЛИЛА» НА БОЛЬШОМ ПОЛЕ <time datetime="2026-10-29">29 октября 2026</time></a></li>
+    <li><a href="/event/0f9b2e01-0793-429a-b975-1fc006b1aba2/znakomstva-i-igry-v-neverland/">Знакомства и игры в Neverland <time datetime="2026-10-29">29 октября 2026</time></a></li>
+    <li><a href="/event/284e22f1-5641-4aa8-9a3f-35ecbff6fc4b/uyutnyy-chetverg-v-gamezone/">УЮТНЫЙ ЧЕТВЕРГ В GAMEZONE <time datetime="2026-10-29">29 октября 2026</time></a></li>
+    <li><a href="/event/78cff674-2a45-4666-ab86-342ec5108516/i-melomany-priglashaem-na-intellektualnuyu-igru-kviz-pliz-na-temu-kino-i-muzyka/">И меломаны - приглашаем на интеллектуальную игру Квиз, плиз! на тему «Кино и музыка» <time datetime="2026-10-29">29 октября 2026</time></a></li>
+    <li><a href="/event/bea0fbbb-771c-44c5-8d39-3e0957bd366a/vremya-kviza-predstavlyaet/">ВРЕМЯ КВИЗА ПРЕДСТАВЛЯЕТ <time datetime="2026-10-29">29 октября 2026</time></a></li>
+    <li><a href="/event/35bf5f28-7666-4785-b429-781810264efe/vecher-nastolok-i-posidelok/">Вечер настолок и посиделок! <time datetime="2026-10-31">31 октября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Нячанг</h2>

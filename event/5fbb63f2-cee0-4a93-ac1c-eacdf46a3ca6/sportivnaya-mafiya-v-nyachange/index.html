@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Нячанг, 27 октября 2026. СПОРТИВНАЯ МАФИЯ В НЯЧАНГЕ 🎭 Вторник 20.10 - СЕГОДНЯ❗️ Приглашаем желающих провести время с пользой, найти новых друзей и прокачать…" />
@@ -92,13 +95,13 @@
     <link rel="alternate" hreflang="ru" href="https://mypins.site/event/5fbb63f2-cee0-4a93-ac1c-eacdf46a3ca6/sportivnaya-mafiya-v-nyachange/" />
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/5fbb63f2-cee0-4a93-ac1c-eacdf46a3ca6/sports-mafia-in-nyachang/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"СПОРТИВНАЯ МАФИЯ В НЯЧАНГЕ","url":"https://mypins.site/event/5fbb63f2-cee0-4a93-ac1c-eacdf46a3ca6/sportivnaya-mafiya-v-nyachange/","startDate":"2026-10-27T17:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Нячанг","address":{"@type":"PostalAddress","addressLocality":"Нячанг"},"geo":{"@type":"GeoCoordinates","latitude":12.2388,"longitude":109.1967}},"description":"СПОРТИВНАЯ МАФИЯ В НЯЧАНГЕ 🎭 Вторник 20.10 - СЕГОДНЯ❗️ Приглашаем желающих провести время с пользой, найти новых друзей и прокачать навыки коммуникации! Играем в Спортивную (классическую) мафию по всем стандартам и правилам: (обучаем для турниров/ проводим турниры и мастер-классы по игре) ⭐️Профессиональные ведущие с опытом более 12 лет! - - - 🕰️ С 17:00 до 04:00 🎯 Играем за круглым столом😎 💵Стоимость: ОТ 70 донгов / вечер 📥Для записи на игры и по всем вопросам пишите @Chev_Ch ✨ Наш клуб докажет: Мафия – это просто и нереально увлекательно❗️ 🎉 Почувствуй азарт, логику и драйв своего мозга – и заряди себя эмоциями на всю неделю!😜 #дата: 20.10.2026 Пост от: Chev Chelios","endDate":"2026-10-28","image":"https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/028f95d7300e5ac90cab83b101f3f43d.jpg","organizer":{"@type":"Organization","name":"Telegram @nyachang_ru","url":"https://t.me/nyachang_ru/24861"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"СПОРТИВНАЯ МАФИЯ В НЯЧАНГЕ","item":"https://mypins.site/event/5fbb63f2-cee0-4a93-ac1c-eacdf46a3ca6/sportivnaya-mafiya-v-nyachange/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"СПОРТИВНАЯ МАФИЯ В НЯЧАНГЕ","item":"https://mypins.site/event/5fbb63f2-cee0-4a93-ac1c-eacdf46a3ca6/sportivnaya-mafiya-v-nyachange/"}]}]}</script>
   </head>
   <body>
     <div id="root"></div>
 <div id="seo-event-block">
   <h1>СПОРТИВНАЯ МАФИЯ В НЯЧАНГЕ</h1>
-  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-10-28">28 октября 2026</time></p>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-28">28 октября 2026</time></p>
   <p><time datetime="2026-10-27T17:00:00">27 октября 2026, 17:00</time></p>
   <address>Нячанг</address>
   <p>70000 VND</p>
@@ -132,18 +135,18 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/51b824ad-38ee-435d-bcf4-e8be7de273af/sreda-igraem-v-krov-na-chasovoy-bashne/">Среда! Играем в КРОВЬ НА ЧАСОВОЙ БАШНЕ <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/56c39bb9-065d-45f1-8c0e-e16d31553b63/gametalk-nastolnye-igry-na-angliyskom/">GameTalk: настольные игры на английском <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/b406b623-41a4-4533-841a-7f5cf861c985/kviz-pro-kino-i-muzyku/">Квиз про кино и музыку <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/b5a91bff-11b8-4e16-b895-5b09a3d7b651/detskaya-finansovaya-igra-finansy-i-investitsii-v-nyachange/">ДЕТСКАЯ ФИНАНСОВАЯ ИГРА «ФИНАНСЫ И ИНВЕСТИЦИИ» В НЯЧАНГЕ! <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/dfe750ca-1365-462c-84be-02fa7191767a/avalon-po-sredam/">АВАЛОН ПО СРЕДАМ <time datetime="2026-10-28">28 октября 2026</time></a></li>
     <li><a href="/event/290197bb-6494-476b-be93-c9602423ff03/transformatsionnaya-igra-lila-na-bolshom-pole/">ТРАНСФОРМАЦИОННАЯ ИГРА «ЛИЛА» НА БОЛЬШОМ ПОЛЕ <time datetime="2026-10-29">29 октября 2026</time></a></li>
+    <li><a href="/event/0f9b2e01-0793-429a-b975-1fc006b1aba2/znakomstva-i-igry-v-neverland/">Знакомства и игры в Neverland <time datetime="2026-10-29">29 октября 2026</time></a></li>
+    <li><a href="/event/284e22f1-5641-4aa8-9a3f-35ecbff6fc4b/uyutnyy-chetverg-v-gamezone/">УЮТНЫЙ ЧЕТВЕРГ В GAMEZONE <time datetime="2026-10-29">29 октября 2026</time></a></li>
+    <li><a href="/event/78cff674-2a45-4666-ab86-342ec5108516/i-melomany-priglashaem-na-intellektualnuyu-igru-kviz-pliz-na-temu-kino-i-muzyka/">И меломаны - приглашаем на интеллектуальную игру Квиз, плиз! на тему «Кино и музыка» <time datetime="2026-10-29">29 октября 2026</time></a></li>
+    <li><a href="/event/bea0fbbb-771c-44c5-8d39-3e0957bd366a/vremya-kviza-predstavlyaet/">ВРЕМЯ КВИЗА ПРЕДСТАВЛЯЕТ <time datetime="2026-10-29">29 октября 2026</time></a></li>
+    <li><a href="/event/35bf5f28-7666-4785-b429-781810264efe/vecher-nastolok-i-posidelok/">Вечер настолок и посиделок! <time datetime="2026-10-31">31 октября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Нячанг</h2>
     <ul>
-    <li>Предыдущее: <a href="/event/18abc69f-1362-4827-91c8-44db4957528a/vstrecha-razgovornogo-kluba-ispanskogo-yazyka/">Встреча разговорного клуба испанского языка</a> <time datetime="2026-10-28">28 октября 2026</time></li>
-    <li>Следующее: <a href="/event/7dfe5160-5312-48a2-a2a4-d93130d7aa13/avalon-v-sredu/">АВАЛОН В СРЕДУ</a> <time datetime="2026-10-28">28 октября 2026</time></li>
+    <li>Предыдущее: <a href="/event/5e768f67-f4b7-40c1-b297-ab408391151f/saundkhiling-v-gamakakh/">САУНДХИЛИНГ В ГАМАКАХ</a> <time datetime="2026-10-28">28 октября 2026</time></li>
+    <li>Следующее: <a href="/event/68ca6c24-16f4-4338-8232-8986e566c1e4/art-studiya-galereya-masterzodchiy/">АРТ-Студия-Галерея «МастерЗодчий»</a> <time datetime="2026-10-28">28 октября 2026</time></li>
     </ul>
   </nav>
   <p class="event-past-cta"><a href="/nha-trang/">Ближайшие события: Нячанг</a></p>

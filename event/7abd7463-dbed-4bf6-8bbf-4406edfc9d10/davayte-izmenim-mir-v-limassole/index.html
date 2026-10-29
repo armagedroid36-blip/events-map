@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Лимасол, Кипр, 27 октября 2026. Оригинальный детский мюзикл Йоргоса Циаккаса в постановке Христины Павлиду приезжает в сентябре из Театра Лексі в Муниципальный…" />
@@ -92,13 +95,13 @@
     <link rel="alternate" hreflang="ru" href="https://mypins.site/event/7abd7463-dbed-4bf6-8bbf-4406edfc9d10/davayte-izmenim-mir-v-limassole/" />
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/7abd7463-dbed-4bf6-8bbf-4406edfc9d10/let-s-change-the-world-in-limassol/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Давайте изменим мир в Лимассоле","url":"https://mypins.site/event/7abd7463-dbed-4bf6-8bbf-4406edfc9d10/davayte-izmenim-mir-v-limassole/","startDate":"2026-10-27T18:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Театр Паттихо, Лимассол","address":{"@type":"PostalAddress","addressLocality":"Лимасол","streetAddress":"Театр Паттихо, Лимассол","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.6821452,"longitude":33.0409769}},"description":"Оригинальный детский мюзикл Йоргоса Циаккаса в постановке Христины Павлиду приезжает в сентябре из Театра Лексі в Муниципальный театр Латсии, чтобы перенести больших и маленьких в волшебное приключение, полное музыки, танца, смеха и волнения! Феерическая постановка с 12 талантливыми актерами и...","endDate":"2026-10-28","image":"https://cyprus.bz/img/images/events/d5d6f4e7-20cf-4d6c-a5e0-bd117f928ca8/1793073667284.webp?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/38fc/lets-change-the-world-in-limassol-2026"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Давайте изменим мир в Лимассоле","item":"https://mypins.site/event/7abd7463-dbed-4bf6-8bbf-4406edfc9d10/davayte-izmenim-mir-v-limassole/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Давайте изменим мир в Лимассоле","item":"https://mypins.site/event/7abd7463-dbed-4bf6-8bbf-4406edfc9d10/davayte-izmenim-mir-v-limassole/"}]}]}</script>
   </head>
   <body>
     <div id="root"></div>
 <div id="seo-event-block">
   <h1>Давайте изменим мир в Лимассоле</h1>
-  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-10-28">28 октября 2026</time></p>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-28">28 октября 2026</time></p>
   <p><time datetime="2026-10-27T18:00:00">27 октября 2026, 18:00</time></p>
   <address>Театр Паттихо, Лимассол, Лимасол, Кипр</address>
   <p>Оригинальный детский мюзикл Йоргоса Циаккаса в постановке Христины Павлиду приезжает в сентябре из Театра Лексі в Муниципальный театр Латсии, чтобы перенести больших и маленьких в волшебное приключение, полное музыки, танца, смеха и волнения! Феерическая постановка с 12 талантливыми актерами и...</p>
@@ -108,18 +111,18 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/66678eb0-2e0b-41ce-b0c9-76fdc2010f26/vlagalishchnost-tom-2/">Влагалищность Том 2 <time datetime="2026-10-27">27 октября 2026</time></a></li>
+    <li><a href="/event/d94253d8-ada4-4beb-b3f8-ce0088b4409d/bolshaya-kniga-malenkikh-sushchestv/">Большая книга маленьких существ <time datetime="2026-10-25">25 октября 2026</time></a></li>
     <li><a href="/event/a48fd221-2012-4801-8e15-e415d4aa05d8/temnyy-rytsar/">Тёмный рыцарь <time datetime="2026-10-27">27 октября 2026</time></a></li>
     <li><a href="/event/05232d23-3e61-4340-95dd-8ad3abad5905/brendi-sauer/">Бренди Сауэр <time datetime="2026-10-28">28 октября 2026</time></a></li>
     <li><a href="/event/10c0fa2f-c7bc-47b9-b65e-5ef51762f52f/odin-temnyy-rytsar-myuzikl-o-betmene/">Один тёмный рыцарь: мюзикл о Бэтмене <time datetime="2026-10-28">28 октября 2026</time></a></li>
     <li><a href="/event/48631f50-152a-4e1a-be35-7f237bf91f08/gedda-gabler/">Гедда Габлер <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/8672d2ac-3250-4c50-a924-5b9bf12f2e21/vaginavud-tom-2/">Вагинавуд Том 2 <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/eef41e16-85fb-487a-b29d-5591c40dd2dd/dom-bernardy-alby/">Дом Бернарды Альбы <time datetime="2026-10-28">28 октября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Кипр</h2>
     <ul>
-    <li>Предыдущее: <a href="/event/5859d501-34cd-4fc8-9d9b-b7ed52421a85/korfu-kipr-s-zapada-na-vostok/">Корфу - Кипр: С Запада на Восток</a> <time datetime="2026-10-28">28 октября 2026</time></li>
-    <li>Следующее: <a href="/event/88e8765d-7a7c-4852-aa53-c94b97c9845e/grecophilia-sobranie-etnosa-v-the-old-powerhouse/">Grecophilia: Собрание этноса в The Old Powerhouse</a> <time datetime="2026-10-28">28 октября 2026</time></li>
+    <li>Предыдущее: <a href="/event/7404aca2-5a38-41bb-8ac3-fa4ab6ed0942/den-okhi-natsionalnyy-prazdnik/">День Охи – Национальный праздник</a> <time datetime="2026-10-28">28 октября 2026</time></li>
+    <li>Следующее: <a href="/event/7c05ef30-995a-4e12-b227-8acec77b5afc/khellouinskie-master-klassy-v-pop-up-cafe/">Хэллоуинские мастер-классы в Pop-Up Café</a> <time datetime="2026-10-28">28 октября 2026</time></li>
     </ul>
   </nav>
   <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>

@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Никосия, Кипр, 23 сентября 2026. «На игле» возвращается на большой экран кинотеатра Pantheon в Никосии на юбилейный показ в честь 30-летия — 23 сентября 2026…" />
@@ -117,12 +120,12 @@ Scroll down for English version 👇
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/be9d0210-a108-4245-bf8a-58a2249f7758/animafest-detskaya-programma-animatsionnykh-filmov/">Анимафест - Детская программа анимационных фильмов <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/c4ce5400-5e2c-43c9-8d83-996db57211e8/pokaz-detskogo-animatsionnogo-kino-v-nikosii/">Показ детского анимационного кино в Никосии <time datetime="2026-10-28">28 октября 2026</time></a></li>
     <li><a href="/event/47ef1215-29c6-4e89-8dd3-30c030447c23/kino-pod-zvezdami-khellouinskoe-izdanie-v-the-hill/">Кино под звездами: Хэллоуинское издание в The Hill <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/8a22bdac-8b16-4d21-9819-aeef40d34ec9/cyfi-fest-khellouinskiy-dvoynoy-seans-donnie-darko-i-bloat-v-limassole/">CyFi Fest Хэллоуинский двойной сеанс: Donnie Darko и Bloat в Лимассоле <time datetime="2026-10-31">31 октября 2026</time></a></li>
     <li><a href="/event/fa8cb670-72ce-479c-9621-af0dc6269bd1/elfrida-elinek-kino-i-obsuzhdenie/">Эльфрида Елинек: кино и обсуждение <time datetime="2026-11-03">3 ноября 2026</time></a></li>
     <li><a href="/event/68e68b6d-f894-45ee-9218-dd641e26bde2/pokazy-cifej-grecheskie-korotkometrazhnye-filmy/">Показы CIFEJ – Греческие короткометражные фильмы <time datetime="2026-11-04">4 ноября 2026</time></a></li>
+    <li><a href="/event/7e48d909-9aa4-4b2c-b868-0d4d330cbf0e/tri-nemetskoyazychnye-komedii/">Три немецкоязычные комедии <time datetime="2026-11-04">4 ноября 2026</time></a></li>
+    <li><a href="/event/daf44c9f-85a1-48ce-a879-cc439677ddb0/pokaz-dokumentalnogo-filma-bbc-master-photographers-bill-brandt/">Показ документального фильма BBC Master Photographers: Bill Brandt <time datetime="2026-11-05">5 ноября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Кипр</h2>

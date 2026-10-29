@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Никосия, Кипр, 28 октября 2026. «Выучи ремесло и брось его, а если проголодаешься — подбери его» — говорит эта пословица, несущая мудрость народной традиции…" />
@@ -92,13 +95,14 @@
     <link rel="alternate" hreflang="ru" href="https://mypins.site/event/53667bee-6c0c-4f39-9374-a135cc8cd6de/produkty-olivy/" />
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/53667bee-6c0c-4f39-9374-a135cc8cd6de/olive-products/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Продукты оливы","url":"https://mypins.site/event/53667bee-6c0c-4f39-9374-a135cc8cd6de/produkty-olivy/","startDate":"2026-10-28T10:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Lythrodontas Village Square","address":{"@type":"PostalAddress","addressLocality":"Никосия","streetAddress":"Lythrodontas Village Square","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.9399975,"longitude":33.2901556}},"offers":{"@type":"Offer","url":"https://mypins.site/event/53667bee-6c0c-4f39-9374-a135cc8cd6de/produkty-olivy/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-10-11"},"description":"«Выучи ремесло и брось его, а если проголодаешься — подбери его» — говорит эта пословица, несущая мудрость народной традиции. Она побуждает нас выучить ремесло, развить навыки, приобрести подспорье в жизни, даже если оно нам не нужно прямо сейчас. Если в какой-то момент дела пойдут не так, как мы планировали, ремесло, возможно, даст нам решение и выручит нас из трудного положения. Жители деревень маршрута “Heartland of Legends” были в основном земледельцами или пастухами, но знали и ремесло. Им приходилось быть творческими и многогранно одарёнными, чтобы иметь возможность дополнить доход","endDate":"2026-10-28","image":"https://www.eventshub.cy/wp-content/uploads/2026/10/proionta-elias.webp","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CF%80%CF%81%CE%BF%CE%B9%CF%8C%CE%BD%CF%84%CE%B1-%CE%B5%CE%BB%CE%B9%CE%AC%CF%82-2026-10-28"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Продукты оливы","item":"https://mypins.site/event/53667bee-6c0c-4f39-9374-a135cc8cd6de/produkty-olivy/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Продукты оливы","item":"https://mypins.site/event/53667bee-6c0c-4f39-9374-a135cc8cd6de/produkty-olivy/"}]}]}</script>
     <script type="application/json" id="seo-alias-map">{"cloneId":"53667bee-6c0c-4f39-9374-a135cc8cd6de","keptId":"53667bee-6c0c-4f39-9374-a135cc8cd6de","ru":"https://mypins.site/event/53667bee-6c0c-4f39-9374-a135cc8cd6de/produkty-olivy/","en":"https://mypins.site/en/event/53667bee-6c0c-4f39-9374-a135cc8cd6de/olive-products/"}</script>
   </head>
   <body>
     <div id="root"></div>
 <div id="seo-event-block">
   <h1>Продукты оливы</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-28">28 октября 2026</time></p>
   <p><time datetime="2026-10-28T10:00:00">28 октября 2026, 10:00</time></p>
   <address>Lythrodontas Village Square, Никосия, Кипр</address>
   <p>«Выучи ремесло и брось его, а если проголодаешься — подбери его» — говорит эта пословица, несущая мудрость народной традиции. Она побуждает нас выучить ремесло, развить навыки, приобрести подспорье в жизни, даже если оно нам не нужно прямо сейчас. Если в какой-то момент дела пойдут не так, как мы планировали, ремесло, возможно, даст нам решение и выручит нас из трудного положения. Жители деревень маршрута “Heartland of Legends” были в основном земледельцами или пастухами, но знали и ремесло. Им приходилось быть творческими и многогранно одарёнными, чтобы иметь возможность дополнить доход</p>
@@ -106,23 +110,23 @@
     <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Продукты оливы</span></p>
     <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/workshop/">🎨 Мастер-классы</a></p>
   </nav>
-  <p>Другие даты серии:</p>
-  <ul>
-    <li><a href="/event/18c04ece-bb07-42a4-b212-c635ea5d1347/produkty-iz-olivok/"><time datetime="2026-10-31">31 октября 2026</time></a></li>
-    <li><a href="/event/9e35a9d4-d45d-4c94-bd0f-f2d757ff795e/produkty-olivy/"><time datetime="2026-11-01">1 ноября 2026</time></a></li>
-    <li><a href="/event/4e082a51-2809-4a62-898d-e9cb05f4cb28/produkty-iz-olivok/"><time datetime="2026-11-07">7 ноября 2026</time></a></li>
-    <li><a href="/event/10f770ea-8250-4f5a-ab58-951173421d99/produkty-olivy/"><time datetime="2026-11-08">8 ноября 2026</time></a></li>
-    <li><a href="/event/f295fb78-c962-44aa-908d-720e7d80c127/produkty-iz-olivok/"><time datetime="2026-11-14">14 ноября 2026</time></a></li>
-  </ul>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/2ae2b8b0-f0c3-4501-88d2-289dd6833b28/reznye-kolodzhi/">Резные колоджи <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/329fa8a4-a98c-41cf-b329-3cdbe48286bd/master-klass-po-rospisi-stekla-khellouin-v-nikosii/">Мастер-класс по росписи стекла: Хэллоуин в Никосии <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/32ce3311-212a-4ebe-9d10-c327394ca497/proizvodstvo-paluze-i-sudzhuka/">Производство палузе и суджука <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/803c19f8-f69a-4783-a245-80b9f1f26b80/prevrashchaem-davlenie-v-tykvy-khellouinskie-podelki-v-nikosii/">Превращаем давление в тыквы: хэллоуинские поделки в Никосии <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/8c86d8a0-f677-48cc-bdce-9541fc4fdc08/botanicheskaya-otkrytka-tvorcheskaya-masterskaya-po-pechatnoy-grafike/">Ботаническая открытка: творческая мастерская по печатной графике <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/97f93c29-d15b-4309-9674-19daabe407fb/pletenye-tsinovki/">Плетёные циновки <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/4754371e-bbda-42ec-bcf3-3df269a46108/triniti-kemps/">Тринити Кэмпс <time datetime="2026-10-26">26 октября 2026</time></a></li>
+    <li><a href="/event/2b19c7ba-1191-49a6-b21e-7ba18baed497/master-klassy-laboratoriya-monstrov-ot-tgi-fridays-khellouinskiy-detskiy-master-klass/">Мастер-классы «Лаборатория монстров» от TGI Fridays: Хэллоуинский детский мастер-класс <time datetime="2026-10-27">27 октября 2026</time></a></li>
+    <li><a href="/event/e135059f-510e-4619-9177-76ede31a7562/monster-lab-workshops-by-tgi-fridays-master-klass-na-khellouin-dlya-detey/">Monster Lab Workshops by TGI Fridays: Мастер-класс на Хэллоуин для детей <time datetime="2026-10-27">27 октября 2026</time></a></li>
+    <li><a href="/event/0086113e-71d1-4a00-9ca1-d25a5852f04c/masterskaya-pamyati-v-platanistase/">Мастерская памяти в Платанистасе <time datetime="2026-10-29">29 октября 2026</time></a></li>
+    <li><a href="/event/7b4580ce-4b2c-4913-8c29-a09593d71bcc/pop-up-market-ot-masterskoy-lab/">Pop Up Market от мастерской Lab <time datetime="2026-10-29">29 октября 2026</time></a></li>
+    <li><a href="/event/cf3c8536-c117-4d0f-87dd-4f9c65e25202/molodoy-doktor-klub/">Молодой доктор клуб <time datetime="2026-10-29">29 октября 2026</time></a></li>
   </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/43676ccf-78d8-4059-b9a6-5bf649f38f78/kontsert-dukhovogo-orkestra-korfu-s-zapada-na-vostok/">Концерт духового оркестра Корфу - с Запада на Восток</a> <time datetime="2026-10-28">28 октября 2026</time></li>
+    <li>Следующее: <a href="/event/5859d501-34cd-4fc8-9d9b-b7ed52421a85/korfu-kipr-s-zapada-na-vostok/">Корфу - Кипр: С Запада на Восток</a> <time datetime="2026-10-28">28 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
 </div>
 
   </body>

@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Ларнака, Кипр, 19 декабря 2026. Четвёртая выставка винила Scala Vinyl Fair пройдёт в Ларнаке, на этот раз в особом рождественском формате. Это отличная…" />
@@ -108,12 +111,12 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/8691d65a-5996-48d1-b992-e375a259fd0d/fantaziya-rozhdestvenskaya-yarmarka-remesel-v-kulturnom-tsentre-strovolosa/">Фантазия Рождественская ярмарка ремёсел в Культурном центре Стрóволоса <time datetime="2026-12-05">5 декабря 2026</time></a></li>
     <li><a href="/event/36bd4551-8f39-47d1-8a15-4d2dc2c335a9/poslaniya-na-metalle-vystavka-monet/">Послания на металле: выставка монет <time datetime="2026-12-10">10 декабря 2026</time></a></li>
     <li><a href="/event/08f5164d-a4d7-4289-9fb3-99786235cb70/ofitsialnaya-rozhdestvenskaya-yarmarka-nikosii-2026/">Официальная рождественская ярмарка Никосии 2026 <time datetime="2026-12-12">12 декабря 2026</time></a></li>
     <li><a href="/event/8e02680e-6237-4a5f-b5a2-cec68fd1fce3/podumav-eshche-raz/">Подумав ещё раз <time datetime="2026-12-15">15 декабря 2026</time></a></li>
     <li><a href="/event/0b219087-3ae6-45e9-abfd-fee6edbd1373/materiya-i-soobshchestvo-vystavka-progulki-master-klassy/">Материя и сообщество Выставка, прогулки, мастер-классы <time datetime="2026-12-18">18 декабря 2026</time></a></li>
     <li><a href="/event/809d3c65-8ef1-4fa4-b44e-8f9bb048450c/ofitsialnaya-rozhdestvenskaya-yarmarka-nikosii-2026/">Официальная рождественская ярмарка Никосии 2026 <time datetime="2026-12-27">27 декабря 2026</time></a></li>
+    <li><a href="/event/d1669a09-1103-4cf6-b238-649fdc75bb29/vystavka-risunka-s-natury/">Выставка рисунка с натуры <time datetime="2026-12-27">27 декабря 2026</time></a></li>
   </ul>
 </div>
 

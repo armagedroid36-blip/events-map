@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Nicosia, Cyprus, October 28, 2026. The Band of the Philharmonic Society of Corfu (PALAIA 1840) is coming to Nicosia for a special concert on October 28, 2026…" />
@@ -92,13 +95,14 @@
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/0f7f2c6a-e645-4ef3-88c2-18a1550bdc3a/anniversary-concert-corfu-cyprus-from-west-to-east/" />
     <link rel="alternate" hreflang="ru" href="https://mypins.site/event/0f7f2c6a-e645-4ef3-88c2-18a1550bdc3a/yubileynyy-kontsert-kerkira-kipr-s-zapada-na-vostok/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Anniversary concert CORFU - CYPRUS: From West to East","url":"https://mypins.site/en/event/0f7f2c6a-e645-4ef3-88c2-18a1550bdc3a/anniversary-concert-corfu-cyprus-from-west-to-east/","startDate":"2026-10-28T19:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Eleftheria Square, Nicosia","address":{"@type":"PostalAddress","addressLocality":"Nicosia","streetAddress":"Eleftheria Square, Nicosia","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1699953,"longitude":33.3602499}},"offers":{"@type":"Offer","url":"https://mypins.site/en/event/0f7f2c6a-e645-4ef3-88c2-18a1550bdc3a/anniversary-concert-corfu-cyprus-from-west-to-east/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-10-09"},"description":"The Band of the Philharmonic Society of Corfu (PALAIA 1840) is coming to Nicosia for a special concert on October 28, 2026. Nicosia is preparing to host one of the most important cultural events of the year. On Wednesday, October 28, 2026, the historic Band of the \"Philharmonic Society of Corfu\" (PALAIA 1840) travels to Cyprus for the grand anniversary concert \"CORFU – CYPRUS | From West to East. Two Islands, One Nation, One Music full of Greece.\" The concert will take place at 19:00 in the evening, at Eleftheria Square in Nicosia, with free admission","endDate":"2026-10-28T20:30:00","image":"https://www.nicosia.org.cy/CMSPages/GetFile.aspx?guid=3f1502ab-953d-4fc5-8592-8d20b8dd127b&width=320","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CE%B5%CF%80%CE%B5%CF%84%CE%B5%CE%B9%CE%B1%CE%BA%CE%AE-%CF%83%CF%85%CE%BD%CE%B1%CF%85%CE%BB%CE%AF%CE%B1-%CE%BA%CE%B5%CF%81%CE%BA%CF%85%CF%81%CE%B1-%CE%BA%CF%85%CF%80%CF%81%CE%BF%CF%82-%CE%B1%CF%80%CF%8C-%CF%84%CE%B7-%CE%B4%CF%8D%CF%83%CE%B7-%CF%83%CF%84%CE%B7%CE%BD-%CE%B1%CE%BD%CE%B1%CF%84%CE%BF%CE%BB%CE%AE-2026-10-28"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Anniversary concert CORFU - CYPRUS: From West to East","item":"https://mypins.site/en/event/0f7f2c6a-e645-4ef3-88c2-18a1550bdc3a/anniversary-concert-corfu-cyprus-from-west-to-east/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Anniversary concert CORFU - CYPRUS: From West to East","item":"https://mypins.site/en/event/0f7f2c6a-e645-4ef3-88c2-18a1550bdc3a/anniversary-concert-corfu-cyprus-from-west-to-east/"}]}]}</script>
     <script type="application/json" id="seo-alias-map">{"cloneId":"0f7f2c6a-e645-4ef3-88c2-18a1550bdc3a","keptId":"0f7f2c6a-e645-4ef3-88c2-18a1550bdc3a","ru":"https://mypins.site/event/0f7f2c6a-e645-4ef3-88c2-18a1550bdc3a/yubileynyy-kontsert-kerkira-kipr-s-zapada-na-vostok/","en":"https://mypins.site/en/event/0f7f2c6a-e645-4ef3-88c2-18a1550bdc3a/anniversary-concert-corfu-cyprus-from-west-to-east/"}</script>
   </head>
   <body>
     <div id="root"></div>
 <div id="seo-event-block">
   <h1>Anniversary concert CORFU - CYPRUS: From West to East</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-28">October 28, 2026</time></p>
   <p><time datetime="2026-10-28T19:00:00">October 28, 2026, 7:00 PM</time></p>
   <address>Eleftheria Square, Nicosia, Cyprus</address>
   <p>The Band of the Philharmonic Society of Corfu (PALAIA 1840) is coming to Nicosia for a special concert on October 28, 2026.
@@ -114,13 +118,21 @@ The concert will take place at 19:00 in the evening, at Eleftheria Square in Nic
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/13330f4f-72a4-4cf8-9537-1487122a077d/the-marios-toumbas-jazz-trio-live-at-sarah-s-jazz-club/">The Marios Toumbas Jazz Trio Live at Sarah’s jazz club <time datetime="2026-10-28">October 28, 2026</time></a></li>
     <li><a href="/en/event/3274ec90-c3a0-4611-bb36-f93a8deb9bda/maria-konnikou-at-deloubak/">Maria Konnikou at Deloubak <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/66738278-a12e-4cf6-9bd1-6b406c986ee1/grecophilia-the-gathering-of-ethnos-at-the-old-powerhouse/">Grecophilia: The Gathering of Ethnos at The Old Powerhouse <time datetime="2026-10-28">October 28, 2026</time></a></li>
     <li><a href="/en/event/1957fdd9-8eff-4541-adb4-097039f0b16a/inspiring-generations/">Inspiring generations <time datetime="2026-10-29">October 29, 2026</time></a></li>
     <li><a href="/en/event/37d95c4d-019e-4601-85f5-2a087cfa060c/konstantinos-argiros-10-years-ycf-anniversary-concert-in-nicosia/">Konstantinos Argiros: 10 Years YCF Anniversary Concert in Nicosia <time datetime="2026-10-29">October 29, 2026</time></a></li>
     <li><a href="/en/event/c3cbb1d9-3b22-4675-87cb-36f2fbf5b75c/10-years-yianis-christodoulou-foundation/">10 Years Yianis Christodoulou Foundation <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/081ba0df-33b4-407a-9177-bb3d1a033457/keladismata/">KELADISMATA <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/27f08dfe-f055-43c7-95b2-213249f13900/again-tribute-to-giorgos-mazonakis-in-nicosia/">Again: Tribute to Giorgos Mazonakis in Nicosia <time datetime="2026-10-30">October 30, 2026</time></a></li>
   </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/0d034122-c3ed-48ae-a759-f406e92b9ef1/production-of-palouze-and-soutzoukos/">Production of palouze and soutzoukos</a> <time datetime="2026-10-28">October 28, 2026</time></li>
+    <li>Next: <a href="/en/event/13330f4f-72a4-4cf8-9537-1487122a077d/the-marios-toumbas-jazz-trio-live-at-sarah-s-jazz-club/">The Marios Toumbas Jazz Trio Live at Sarah’s jazz club</a> <time datetime="2026-10-28">October 28, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
 </div>
 
   </body>

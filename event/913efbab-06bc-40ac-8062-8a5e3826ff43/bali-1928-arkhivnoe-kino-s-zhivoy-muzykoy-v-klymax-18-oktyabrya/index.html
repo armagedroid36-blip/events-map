@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Семиньяк, Bali, 18 октября 2026. 18 октября с 20:00 до 21:00 в Klymax на территории Desa Potato Head в Семиньяке пройдёт Bali 1928: Live Score Cinema. На…" />
@@ -111,7 +114,7 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/72d4866b-e61e-4492-a115-973ab5f46522/kinopokaz-wild-v-paradiso-ubud-11-oktyabrya/">Кинопоказ Wild в Paradiso Ubud 11 октября <time datetime="2026-10-11">11 октября 2026</time></a></li>
+    <li><a href="/event/859cde70-46ad-40d6-8fe3-6081090f758e/kinopokaz-2001-god-kosmicheskaya-odisseya-v-paradiso-ubud-11-oktyabrya/">Кинопоказ «2001 год: Космическая одиссея» в Paradiso Ubud 11 октября <time datetime="2026-10-11">11 октября 2026</time></a></li>
     <li><a href="/event/c6fcd96b-d7bf-4f65-aa43-35cfd5e23ff8/kinopokaz-otel-grand-budapesht-v-paradiso-ubud-12-oktyabrya/">Кинопоказ «Отель „Гранд Будапешт“» в Paradiso Ubud 12 октября <time datetime="2026-10-12">12 октября 2026</time></a></li>
     <li><a href="/event/23cce479-512e-49ba-88a0-eeb208c0feed/kinopokaz-forever-young-v-paradiso-ubud-12-oktyabrya/">Кинопоказ Forever Young в Paradiso Ubud 12 октября <time datetime="2026-10-12">12 октября 2026</time></a></li>
     <li><a href="/event/7505db03-02a9-40fb-bfe9-8d6031e4c863/kinopokaz-myuzikla-amerikanets-v-parizhe-v-paradiso-ubud-14-oktyabrya/">Кинопоказ мюзикла «Американец в Париже» в Paradiso Ubud 14 октября <time datetime="2026-10-14">14 октября 2026</time></a></li>

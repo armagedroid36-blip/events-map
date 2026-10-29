@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Nicosia, Cyprus, October 25, 2026. Discover what it truly takes for food to travel from soil to table at the Riverland Bio Farm in Kambia on October 25, 2026…" />
@@ -118,12 +121,12 @@ A day in nature, closer to our food and to the people who produce it. On October
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/354f03b3-005d-4d5a-8adb-35df76b62e06/jeffrey-hoffens-at-winecase/">Jeffrey Hoffens at Winecase <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/7c05ef30-995a-4e12-b227-8acec77b5afc/halloween-workshops-at-pop-up-cafe/">Halloween workshops at Pop-Up Café <time datetime="2026-10-28">October 28, 2026</time></a></li>
     <li><a href="/en/event/089a58b2-9da7-43e4-80a9-ac92ba314725/a-taste-of-the-philippines-3-course-dinner-expirience/">A taste of the Philippines: 3 Course Dinner Expirience <time datetime="2026-11-01">November 1, 2026</time></a></li>
     <li><a href="/en/event/5a32f5d6-4560-4f1d-bff7-e09cae4de45f/fizzy-spritzeria-x-jeffrey-hoffens-live-cooking-experience-in-nicosia/">Fizzy Spritzeria x Jeffrey Hoffens: Live Cooking Experience in Nicosia <time datetime="2026-11-01">November 1, 2026</time></a></li>
     <li><a href="/en/event/bcb92dbb-ab64-4fc9-814d-38f5e3e27c5a/the-paluze-festival/">The Paluze Festival <time datetime="2026-11-01">November 1, 2026</time></a></li>
     <li><a href="/en/event/beb04fdd-efd0-45cb-acf3-97b4580f0a56/pizzomparo-at-comfy-in-limassol/">pizzomparo at Comfy in Limassol <time datetime="2026-11-03">November 3, 2026</time></a></li>
+    <li><a href="/en/event/d475b293-e0ea-467b-9173-cde3688013ea/second-hand-clothing-market-in-nicosia/">Second-Hand Clothing Market in Nicosia <time datetime="2026-11-07">November 7, 2026</time></a></li>
+    <li><a href="/en/event/5a9c90d2-178b-4064-9baf-075cedf0d3d9/parisian-brunch-at-paul/">Parisian Brunch at PAUL <time datetime="2026-11-30">November 30, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Cyprus</h2>

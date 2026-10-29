@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Никосия, Кипр, 16 октября 2026. Музыкальный театр ZAZZA даёт первое музыкальное свидание нового сезона в пятницу 16 октября, с Giorgos Giannias на сцене…" />
@@ -109,12 +112,12 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/0f7f2c6a-e645-4ef3-88c2-18a1550bdc3a/yubileynyy-kontsert-kerkira-kipr-s-zapada-na-vostok/">Юбилейный концерт КЕРКИРА - КИПР: С Запада на Восток <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/13330f4f-72a4-4cf8-9537-1487122a077d/trio-dzhaza-mariosa-tumbasa-vystupit-v-dzhaz-klube-sarah-s/">Трио джаза Мариоса Тумбаса выступит в джаз-клубе Sarah’s <time datetime="2026-10-28">28 октября 2026</time></a></li>
     <li><a href="/event/3274ec90-c3a0-4611-bb36-f93a8deb9bda/mariya-konnikou-v-deloubak/">Мария Конникou в Deloubak <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/66738278-a12e-4cf6-9bd1-6b406c986ee1/grekofiliya-sobranie-etnosa-v-staroy-elektrostantsii/">Грекофилия: Собрание этноса в Старой электростанции <time datetime="2026-10-28">28 октября 2026</time></a></li>
     <li><a href="/event/1957fdd9-8eff-4541-adb4-097039f0b16a/vdokhnovlyaya-pokoleniya/">Вдохновляя поколения <time datetime="2026-10-29">29 октября 2026</time></a></li>
     <li><a href="/event/37d95c4d-019e-4601-85f5-2a087cfa060c/kostantinos-argiros-yubileynyy-kontsert-10-let-ycf-v-nikosii/">Костантинос Аргирос: Юбилейный концерт 10 лет YCF в Никосии <time datetime="2026-10-29">29 октября 2026</time></a></li>
+    <li><a href="/event/c3cbb1d9-3b22-4675-87cb-36f2fbf5b75c/10-let-fondu-yianis-christodoulou/">10 лет Фонду Yianis Christodoulou <time datetime="2026-10-29">29 октября 2026</time></a></li>
+    <li><a href="/event/081ba0df-33b4-407a-9177-bb3d1a033457/kelaydismata/">КЕЛАЙДИСМАТА <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/27f08dfe-f055-43c7-95b2-213249f13900/snova-posvyashchenie-yorgosu-mazonakisu-v-nikosii/">Снова: Посвящение Йоргосу Мазонакису в Никосии <time datetime="2026-10-30">30 октября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Кипр</h2>

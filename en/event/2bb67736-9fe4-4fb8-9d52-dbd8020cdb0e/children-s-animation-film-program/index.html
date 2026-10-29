@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 800 мс),
-         (в) аварийный таймаут 6 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим. -->
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -15,10 +18,10 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,800)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,6000);})();
+      setTimeout(go,12000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -68,15 +71,15 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-CwPlNTJz.js"></script>
+    <script type="module" crossorigin src="/assets/index-DQy0MyJP.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-5M7lxISg.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-B9lLQvDZ.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-rb0sXSre.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-pINYrJRt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-B8JDp07m.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-BTOoXyRL.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-CoJ3lBXg.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
     <link rel="stylesheet" crossorigin href="/assets/index-CDEeM_CZ.css" />
       <meta name="description" content="Nicosia, Cyprus, October 28, 2026. The Agion Orologiton Cultural Workshop and Animafest Cyprus invite you to a screening of children&#39;s animated films featuring…" />
@@ -92,13 +95,13 @@
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/2bb67736-9fe4-4fb8-9d52-dbd8020cdb0e/children-s-animation-film-program/" />
     <link rel="alternate" hreflang="ru" href="https://mypins.site/event/2bb67736-9fe4-4fb8-9d52-dbd8020cdb0e/detskaya-programma-animatsionnykh-filmov/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Children's animation film program","url":"https://mypins.site/en/event/2bb67736-9fe4-4fb8-9d52-dbd8020cdb0e/children-s-animation-film-program/","startDate":"2026-10-28T18:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Nicosia","address":{"@type":"PostalAddress","addressLocality":"Nicosia","streetAddress":"Nicosia","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1382125,"longitude":33.3523384}},"description":"The Agion Orologiton Cultural Workshop and Animafest Cyprus invite you to a screening of children's animated films featuring a selection from the FAN Tour programs. FAN - Festivals Animation Network brings together major animation festivals of Southern Europe with the aim of supporting young authors, promoting Southern European...","endDate":"2026-10-28","image":"https://cyprus.bz/img/images/events/7e800d10-7fee-40bb-8b11-9e171aac5ba2/1793073706806.webp?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/3910/childrens-animation-programme-2026"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Children's animation film program","item":"https://mypins.site/en/event/2bb67736-9fe4-4fb8-9d52-dbd8020cdb0e/children-s-animation-film-program/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Children's animation film program","item":"https://mypins.site/en/event/2bb67736-9fe4-4fb8-9d52-dbd8020cdb0e/children-s-animation-film-program/"}]}]}</script>
   </head>
   <body>
     <div id="root"></div>
 <div id="seo-event-block">
   <h1>Children&#39;s animation film program</h1>
-  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-10-28">October 28, 2026</time></p>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-28">October 28, 2026</time></p>
   <p><time datetime="2026-10-28T18:00:00">October 28, 2026, 6:00 PM</time></p>
   <address>Nicosia, Cyprus</address>
   <p>The Agion Orologiton Cultural Workshop and Animafest Cyprus invite you to a screening of children&#39;s animated films featuring a selection from the FAN Tour programs. FAN - Festivals Animation Network brings together major animation festivals of Southern Europe with the aim of supporting young authors, promoting Southern European...</p>
@@ -108,18 +111,18 @@
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/be9d0210-a108-4245-bf8a-58a2249f7758/animafest-children-s-animation-program/">Animafest - Children&#39;s Animation Program <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/c4ce5400-5e2c-43c9-8d83-996db57211e8/children-s-animated-film-screening-in-nicosia/">Children&#39;s animated film screening in Nicosia <time datetime="2026-10-28">October 28, 2026</time></a></li>
     <li><a href="/en/event/47ef1215-29c6-4e89-8dd3-30c030447c23/movie-night-under-the-stars-halloween-edition-at-the-hill/">Movie Night Under the Stars: Halloween Edition at The Hill <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/8a22bdac-8b16-4d21-9819-aeef40d34ec9/cyfi-fest-halloween-double-feature-donnie-darko-bloat-in-limassol/">CyFi Fest Halloween Double Feature: Donnie Darko &amp; Bloat in Limassol <time datetime="2026-10-31">October 31, 2026</time></a></li>
     <li><a href="/en/event/fa8cb670-72ce-479c-9621-af0dc6269bd1/elfriede-jelinek-film-and-discussion/">Elfriede Jelinek: Film and Discussion <time datetime="2026-11-03">November 3, 2026</time></a></li>
     <li><a href="/en/event/68e68b6d-f894-45ee-9218-dd641e26bde2/cifej-screenings-greek-short-films/">CIFEJ Screenings – Greek Short Films <time datetime="2026-11-04">November 4, 2026</time></a></li>
+    <li><a href="/en/event/7e48d909-9aa4-4b2c-b868-0d4d330cbf0e/three-german-language-comedies/">Three German-language comedies <time datetime="2026-11-04">November 4, 2026</time></a></li>
+    <li><a href="/en/event/daf44c9f-85a1-48ce-a879-cc439677ddb0/bbc-documentary-screening-master-photographers-bill-brandt/">BBC Documentary Screening Master Photographers: Bill Brandt <time datetime="2026-11-05">November 5, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Cyprus</h2>
     <ul>
-    <li>Previous: <a href="/en/event/259cccd5-d110-498b-92e5-355268121ad3/stained-glass-painting-workshop-halloween-edition-in-nicosia/">Stained Glass Painting Workshop: Halloween Edition in Nicosia</a> <time datetime="2026-10-28">October 28, 2026</time></li>
-    <li>Next: <a href="/en/event/43676ccf-78d8-4059-b9a6-5bf649f38f78/concert-of-the-corfu-wind-orchestra-from-west-to-east/">Concert of the Corfu Wind Orchestra - From West to East</a> <time datetime="2026-10-28">October 28, 2026</time></li>
+    <li>Previous: <a href="/en/event/2ae2b8b0-f0c3-4501-88d2-289dd6833b28/carved-kolotzia/">Carved kolotzia</a> <time datetime="2026-10-28">October 28, 2026</time></li>
+    <li>Next: <a href="/en/event/329fa8a4-a98c-41cf-b329-3cdbe48286bd/glass-painting-workshop-halloween-edition-in-nicosia/">Glass Painting Workshop: Halloween Edition in Nicosia</a> <time datetime="2026-10-28">October 28, 2026</time></li>
     </ul>
   </nav>
   <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
