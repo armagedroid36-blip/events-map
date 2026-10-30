@@ -962,10 +962,14 @@ export default function Home({
     ? `/images/map-preview-${slugify(city)}.webp`
     : '/images/map-preview-main.webp';
   // Снимок карты для мобильного первого экрана СТРАНИЦЫ СОБЫТИЯ (карта там не
-  // монтируется до нажатия кнопки). Один и тот же файл в состоянии загрузки и
-  // после данных: город события в момент загрузки ещё неизвестен, а смена
-  // src тянула бы вторую картинку. 480w (~47 КБ) — экран 412 px.
+  // монтируется до нажатия кнопки). В кадре загрузки — общий снимок (город
+  // события ещё неизвестен), после данных — снимок города события: 480w
+  // (~40-60 КБ) на экран 412 px.
   const mapPlaceholderPreview = '/images/map-preview-main-480.webp';
+  const eventPreviewCity = cityPath(selected?.city);
+  const eventMapPreview = eventPreviewCity
+    ? `/images/map-preview-${eventPreviewCity}-480.webp`
+    : mapPlaceholderPreview;
 
   // Геолокация: центр на посетителе; при отказе — Юго-Восточная Азия.
   // На чистых маршрутах (/bali, /event/<id>) не трогаем: там центр и zoom
@@ -1337,7 +1341,7 @@ export default function Home({
                 поэтому грузим его с приоритетом (480w, ~35-60 КБ). */}
             {eventMapGate && (
               <img
-                src={mapPlaceholderPreview}
+                src={eventMapPreview}
                 alt={t('mapIntro.imgAlt')}
                 fetchPriority="high"
                 decoding="async"
