@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
+      if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
+      setTimeout(go,12000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Parties in style: fashion show at… — October 29, 2026 · Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-CdKOijA8.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-B7hZcaby.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-DrF9EClx.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+      <meta name="description" content="Bali, October 29, 2026. Join us for the presentation of new partywear collections! 📅 October 29, 2026, Thursday 🕔 17:00 📍 TStore, Seminyak Discover the new…" />
+    <link rel="canonical" href="https://mypins.site/en/event/47ec8ee4-f801-49a9-be61-83a72a93bcc2/parties-in-style-fashion-show-at-tstore-bali/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Parties in style: fashion show at… — October 29, 2026 · Bali" />
+    <meta property="og:description" content="Bali, October 29, 2026. Join us for the presentation of new partywear collections! 📅 October 29, 2026, Thursday 🕔 17:00 📍 TStore, Seminyak Discover the new…" />
+    <meta property="og:url" content="https://mypins.site/en/event/47ec8ee4-f801-49a9-be61-83a72a93bcc2/parties-in-style-fashion-show-at-tstore-bali/" />
+    <meta property="og:image" content="https://static.baliforum.ru/uploads/704461/conversions/97762924-68626702-preview.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/47ec8ee4-f801-49a9-be61-83a72a93bcc2/parties-in-style-fashion-show-at-tstore-bali/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/47ec8ee4-f801-49a9-be61-83a72a93bcc2/vecherinki-v-stile-modnyy-pokaz-v-tstore-bali/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Bali","item":"https://mypins.site/en/bali/"},{"@type":"ListItem","position":3,"name":"Parties in style: fashion show at TStore Bali","item":"https://mypins.site/en/event/47ec8ee4-f801-49a9-be61-83a72a93bcc2/parties-in-style-fashion-show-at-tstore-bali/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Parties in style: fashion show at TStore Bali</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-29">October 29, 2026</time></p>
+  <p><time datetime="2026-10-29T17:00:00">October 29, 2026, 5:00 PM</time></p>
+  <address>Jl. Nakula No.18, Legian, Kec. Kuta, Bali, 80361, Indonesia</address>
+  <p>Join us for the presentation of new partywear collections!
+
+📅 October 29, 2026, Thursday
+🕔 17:00
+📍 TStore, Seminyak
+
+Discover the new collections and get a 15% discount.
+
+TStore is the largest designer clothing store in Seminyak, Bali.
+
+instagram (https://www.instagram.com/tstoretssuites/)</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/bali/">Bali</a> <span aria-hidden="true">›</span> <span>Parties in style: fashion show at TStore Bali</span></p>
+    <p>More events in Bali: <a href="/en/bali/">what&#39;s on</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/1ca1e13d-cb23-4710-bc82-17909ebe8285/what-the-body-remembers-exhibition-at-nuanu-until-november-29/">What The Body Remembers: exhibition at Nuanu until November 29 <time datetime="2026-10-10">October 10, 2026</time></a></li>
+    <li><a href="/en/event/acda7c02-f058-427c-a701-810710536e35/design-exhibition-at-uma-seminyak/">Design Exhibition at Uma Seminyak <time datetime="2026-10-28">October 28, 2026</time></a></li>
+    <li><a href="/en/event/71e111ed-b0a6-4ff9-abe4-79da027a921e/design-exhibition-at-uma-seminyak/">Design Exhibition at Uma Seminyak <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/7df6ef20-a427-4769-b95c-cc2ca346a574/halloween-at-nusantara-secrets-of-the-ancient-archipelago/">Halloween at Nusantara: Secrets of the Ancient Archipelago <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/09e4c9bc-a6e4-415d-ad40-4fc38530602d/alix-ayme-exhibition-at-the-pasifika-museum/">Alix Aymé Exhibition at the Pasifika Museum <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/33078c12-e86f-4d6d-b3fb-b1d3b5a679a5/exhibition-trace-of-light-at-cushcush-gallery/">Exhibition &quot;Trace of Light&quot; at CushCush Gallery <time datetime="2026-10-30">October 30, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Bali</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/325240d3-18a2-4c67-82af-5550bc4ec80e/beer-festival-at-atlas-beach-club/">Beer Festival at Atlas Beach Club</a> <time datetime="2026-10-29">October 29, 2026</time></li>
+    <li>Next: <a href="/en/event/48213df5-b62f-4f89-911c-22fa5b54b5c0/mafia-sports/">Mafia (sports)</a> <time datetime="2026-10-29">October 29, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/bali/">Upcoming events in Bali</a></p>
+</div>
+
+  </body>
+</html>

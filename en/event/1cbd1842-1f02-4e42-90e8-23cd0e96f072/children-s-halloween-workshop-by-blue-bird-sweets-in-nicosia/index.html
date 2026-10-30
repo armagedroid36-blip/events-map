@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
+      if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
+      setTimeout(go,12000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Children&#39;s Halloween Workshop by… — October 31, 2026 · Nicosia</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-CdKOijA8.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-B7hZcaby.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-DrF9EClx.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+      <meta name="description" content="Nicosia, Cyprus, October 31, 2026. Blue Bird Sweets is hosting a children&#39;s Halloween workshop in Nicosia, Cyprus, on Saturday, 31 October 2026 — a sweet and…" />
+    <link rel="canonical" href="https://mypins.site/en/event/1cbd1842-1f02-4e42-90e8-23cd0e96f072/children-s-halloween-workshop-by-blue-bird-sweets-in-nicosia/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Children&#39;s Halloween Workshop by… — October 31, 2026 · Nicosia" />
+    <meta property="og:description" content="Nicosia, Cyprus, October 31, 2026. Blue Bird Sweets is hosting a children&#39;s Halloween workshop in Nicosia, Cyprus, on Saturday, 31 October 2026 — a sweet and…" />
+    <meta property="og:url" content="https://mypins.site/en/event/1cbd1842-1f02-4e42-90e8-23cd0e96f072/children-s-halloween-workshop-by-blue-bird-sweets-in-nicosia/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/6aa83191-00bb-4185-8fb9-1e672cd0a4eb/1793308141180.jpg?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/1cbd1842-1f02-4e42-90e8-23cd0e96f072/children-s-halloween-workshop-by-blue-bird-sweets-in-nicosia/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/1cbd1842-1f02-4e42-90e8-23cd0e96f072/detskaya-masterskaya-na-khellouin-ot-blue-bird-sweets-v-nikosii/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Children's Halloween Workshop by Blue Bird Sweets in Nicosia","url":"https://mypins.site/en/event/1cbd1842-1f02-4e42-90e8-23cd0e96f072/children-s-halloween-workshop-by-blue-bird-sweets-in-nicosia/","startDate":"2026-10-31T11:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Eminentia Trading Limited, Nicosia","address":{"@type":"PostalAddress","addressLocality":"Nicosia","streetAddress":"Eminentia Trading Limited, Nicosia","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1856,"longitude":33.3823}},"description":"Blue Bird Sweets is hosting a children's Halloween workshop in Nicosia, Cyprus, on Saturday, 31 October 2026 — a sweet and magical event for young creators and their parents. Children will decorate Halloween cookies, work with fondant, and take their treats home in a special Blue... box.","endDate":"2026-10-31","image":"https://cyprus.bz/img/images/events/6aa83191-00bb-4185-8fb9-1e672cd0a4eb/1793308141180.jpg?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/3980/halloween-kids-workshop-by-blue-bird-sweets-in-nicosia-2026"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Children's Halloween Workshop by Blue Bird Sweets in Nicosia","item":"https://mypins.site/en/event/1cbd1842-1f02-4e42-90e8-23cd0e96f072/children-s-halloween-workshop-by-blue-bird-sweets-in-nicosia/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Children&#39;s Halloween Workshop by Blue Bird Sweets in Nicosia</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-10-31">October 31, 2026</time></p>
+  <p><time datetime="2026-10-31T11:00:00">October 31, 2026, 11:00 AM</time></p>
+  <address>Eminentia Trading Limited, Nicosia, Cyprus</address>
+  <p>Blue Bird Sweets is hosting a children&#39;s Halloween workshop in Nicosia, Cyprus, on Saturday, 31 October 2026 — a sweet and magical event for young creators and their parents. Children will decorate Halloween cookies, work with fondant, and take their treats home in a special Blue... box.</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Children&#39;s Halloween Workshop by Blue Bird Sweets in Nicosia</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/workshop/">🎨 Workshops</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/10f8aeac-ab8a-4a22-8d74-161c330cbc16/halloween-art-and-drums-day/">Halloween Art and Drums Day <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/18c04ece-bb07-42a4-b212-c635ea5d1347/olive-products/">Olive products <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/1f367fea-f4f0-493e-a97d-470b1ce099b9/kids-halloween-sleepover-magic-science-fun/">Kids&#39; Halloween Sleepover: Magic, Science &amp; Fun <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/2842703c-0b95-4752-a553-bc0b320598d1/boo-messy-halloween/">Boo! Messy Halloween <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/3cec1aea-65a6-43e1-8162-b0371c8f27c6/traditional-weaving-loom-voufa/">Traditional Weaving Loom-Voufa <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/4388a95e-d499-43a2-a130-d3083f6921a1/making-sweet-jam-from-small-eggplants/">Making sweet jam from small eggplants <time datetime="2026-10-31">October 31, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/1c18630f-d63c-48ba-9a89-49ee1ad4cbc5/halloween-party-kids-family-event-at-ithaki-amusement-park/">Halloween Party: Kids &amp; Family Event at Ithaki Amusement Park</a> <time datetime="2026-10-31">October 31, 2026</time></li>
+    <li>Next: <a href="/en/event/3312ee32-26e9-49f1-a613-f6cf73bad21c/necrocomiccon-2026-halloween-at-mall-of-engomi/">NecroComicCon 2026: Halloween at Mall of Engomi</a> <time datetime="2026-10-31">October 31, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>
