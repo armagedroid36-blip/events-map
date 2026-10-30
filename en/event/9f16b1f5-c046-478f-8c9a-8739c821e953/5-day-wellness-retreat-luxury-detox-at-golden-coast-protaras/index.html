@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
+      if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
+      setTimeout(go,12000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>5-day wellness retreat: Luxury… — November 13, 2026 · Famagusta</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+      <meta name="description" content="Famagusta, Cyprus, November 13, 2026. A five-day holistic wellness retreat will take place at the Golden Coast Beach Hotel in Protaras, Cyprus, from November…" />
+    <link rel="canonical" href="https://mypins.site/en/event/9f16b1f5-c046-478f-8c9a-8739c821e953/5-day-wellness-retreat-luxury-detox-at-golden-coast-protaras/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="5-day wellness retreat: Luxury… — November 13, 2026 · Famagusta" />
+    <meta property="og:description" content="Famagusta, Cyprus, November 13, 2026. A five-day holistic wellness retreat will take place at the Golden Coast Beach Hotel in Protaras, Cyprus, from November…" />
+    <meta property="og:url" content="https://mypins.site/en/event/9f16b1f5-c046-478f-8c9a-8739c821e953/5-day-wellness-retreat-luxury-detox-at-golden-coast-protaras/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/39ea4c08-487e-49b3-9726-379a9539f013/1793345453914.jpg?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/9f16b1f5-c046-478f-8c9a-8739c821e953/5-day-wellness-retreat-luxury-detox-at-golden-coast-protaras/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/9f16b1f5-c046-478f-8c9a-8739c821e953/5-dnevnyy-ozdorovitelnyy-retrit-luxury-detox-v-golden-coast-protaras/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"5-day wellness retreat: Luxury Detox at Golden Coast Protaras","url":"https://mypins.site/en/event/9f16b1f5-c046-478f-8c9a-8739c821e953/5-day-wellness-retreat-luxury-detox-at-golden-coast-protaras/","startDate":"2026-11-13T17:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Famagusta","address":{"@type":"PostalAddress","addressLocality":"Famagusta","streetAddress":"Famagusta","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.037456,"longitude":34.037347}},"description":"A five-day holistic wellness retreat will take place at the Golden Coast Beach Hotel in Protaras, Cyprus, from November 13 to 18, 2026. Designed by naturopath Loukas Souttos and organized by the Eductor Holistic Health Center, this detox retreat offers a transformative path to...","endDate":"2026-11-13","image":"https://cyprus.bz/img/images/events/39ea4c08-487e-49b3-9726-379a9539f013/1793345453914.jpg?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/39df/5-days-wellness-retreat-luxury-detox-at-golden-coast-2026"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"5-day wellness retreat: Luxury Detox at Golden Coast Protaras","item":"https://mypins.site/en/event/9f16b1f5-c046-478f-8c9a-8739c821e953/5-day-wellness-retreat-luxury-detox-at-golden-coast-protaras/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>5-day wellness retreat: Luxury Detox at Golden Coast Protaras</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-11-13">November 13, 2026</time></p>
+  <p><time datetime="2026-11-13T17:00:00">November 13, 2026, 5:00 PM</time></p>
+  <address>Famagusta, Cyprus</address>
+  <p>A five-day holistic wellness retreat will take place at the Golden Coast Beach Hotel in Protaras, Cyprus, from November 13 to 18, 2026. Designed by naturopath Loukas Souttos and organized by the Eductor Holistic Health Center, this detox retreat offers a transformative path to...</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>5-day wellness retreat: Luxury Detox at Golden Coast Protaras</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/wellness/">🧘 Yoga &amp; Wellness</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/c9156a08-d7e0-449f-8607-1b3063bffb19/qigong-taijiquan-classes-in-limassol/">Qigong &amp; Taijiquan Classes in Limassol <time datetime="2026-11-10">November 10, 2026</time></a></li>
+    <li><a href="/en/event/0d2af4b6-ae72-4317-9bdb-02fadb36afe6/5-days-wellness-retreat-luxury-detox-at-golden-coast-protaras/">5 Days Wellness Retreat: Luxury Detox at Golden Coast Protaras <time datetime="2026-11-13">November 13, 2026</time></a></li>
+    <li><a href="/en/event/1279fbd6-f3c2-4009-b170-867391c50e38/mind-body-spirit-wellbeing-festival/">Mind, Body &amp; Spirit Wellbeing Festival <time datetime="2026-11-13">November 13, 2026</time></a></li>
+    <li><a href="/en/event/17be0cd2-02ec-466b-be53-7288ea9c42e3/qigong-taijiquan-classes-in-limassol/">Qigong &amp; Taijiquan Classes in Limassol <time datetime="2026-11-13">November 13, 2026</time></a></li>
+    <li><a href="/en/event/9246b252-51a8-4fe9-9b8b-afe235ffdc40/the-mind-body-spirit-wellbeing-festival/">The Mind, Body &amp; Spirit Wellbeing Festival <time datetime="2026-11-14">November 14, 2026</time></a></li>
+    <li><a href="/en/event/e63d9a56-acbb-4ec5-8bed-3ef36f185dbe/qigong-taijiquan-classes-in-limassol/">Qigong &amp; Taijiquan Classes in Limassol <time datetime="2026-11-17">November 17, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/22baf109-bdc9-4bf7-93eb-34b07773069a/sum-it-up-2026/">Sum It Up 2026</a> <time datetime="2026-11-13">November 13, 2026</time></li>
+    <li>Next: <a href="/en/event/e5d27e7f-5656-4185-b9aa-6a16407aafe2/awareness-2026-reheritage-in-strovolos/">Awareness 2026: ReHeritAge in Strovolos</a> <time datetime="2026-11-13">November 13, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

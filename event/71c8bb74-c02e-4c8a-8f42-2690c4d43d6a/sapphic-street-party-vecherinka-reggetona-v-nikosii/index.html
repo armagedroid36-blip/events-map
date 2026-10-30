@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
+      if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
+      setTimeout(go,12000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sapphic Street Party: вечеринка… — 7 ноября 2026 · Никосия, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+      <meta name="description" content="Никосия, Кипр, 7 ноября 2026. Sapphic Street Party - квир-вечеринка в стиле реггетона и латиноамериканского экспериментального звука в Kafenio Haratsi в…" />
+    <link rel="canonical" href="https://mypins.site/event/71c8bb74-c02e-4c8a-8f42-2690c4d43d6a/sapphic-street-party-vecherinka-reggetona-v-nikosii/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Sapphic Street Party: вечеринка… — 7 ноября 2026 · Никосия, Кипр" />
+    <meta property="og:description" content="Никосия, Кипр, 7 ноября 2026. Sapphic Street Party - квир-вечеринка в стиле реггетона и латиноамериканского экспериментального звука в Kafenio Haratsi в…" />
+    <meta property="og:url" content="https://mypins.site/event/71c8bb74-c02e-4c8a-8f42-2690c4d43d6a/sapphic-street-party-vecherinka-reggetona-v-nikosii/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/1d8367b8-30ef-461c-a16f-4d8b8bfe1814/1793345785057.jpg?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/71c8bb74-c02e-4c8a-8f42-2690c4d43d6a/sapphic-street-party-vecherinka-reggetona-v-nikosii/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/71c8bb74-c02e-4c8a-8f42-2690c4d43d6a/sapphic-street-party-reggaeton-party-in-nicosia/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Sapphic Street Party: вечеринка реггетона в Никосии","url":"https://mypins.site/event/71c8bb74-c02e-4c8a-8f42-2690c4d43d6a/sapphic-street-party-vecherinka-reggetona-v-nikosii/","startDate":"2026-11-07T21:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Haratsi, Никосия","address":{"@type":"PostalAddress","addressLocality":"Никосия","streetAddress":"Haratsi, Никосия","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1746744,"longitude":33.3656495}},"description":"Sapphic Street Party - квир-вечеринка в стиле реггетона и латиноамериканского экспериментального звука в Kafenio Haratsi в Никосии, Кипр, 7 ноября 2026 года. Ждите смелой музыки, атмосферы сообщества и действительно вкусных тако в дружелюбной и яркой обстановке. 🎧 За пультом DJ Shiromary и DJ...","endDate":"2026-11-08","image":"https://cyprus.bz/img/images/events/1d8367b8-30ef-461c-a16f-4d8b8bfe1814/1793345785057.jpg?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/3a0e/sapphic-street-party-reggaeton-night-in-nicosia-2026"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Sapphic Street Party: вечеринка реггетона в Никосии","item":"https://mypins.site/event/71c8bb74-c02e-4c8a-8f42-2690c4d43d6a/sapphic-street-party-vecherinka-reggetona-v-nikosii/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Sapphic Street Party: вечеринка реггетона в Никосии</h1>
+  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-11-08">8 ноября 2026</time></p>
+  <p><time datetime="2026-11-07T21:00:00">7 ноября 2026, 21:00</time></p>
+  <address>Haratsi, Никосия, Никосия, Кипр</address>
+  <p>Sapphic Street Party - квир-вечеринка в стиле реггетона и латиноамериканского экспериментального звука в Kafenio Haratsi в Никосии, Кипр, 7 ноября 2026 года. Ждите смелой музыки, атмосферы сообщества и действительно вкусных тако в дружелюбной и яркой обстановке. 🎧 За пультом DJ Shiromary и DJ...</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Sapphic Street Party: вечеринка реггетона в Никосии</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/party/">🪩 Вечеринки</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/338f3af8-f54f-4bff-bab9-13c05576f3db/dj-grout-snova-v-old-market-larnaca/">DJ Grout снова в Old Market Larnaca <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/4ef6283f-c853-485a-b372-3675ce1eec91/bolshaya-vecherinka-monstrov/">Большая вечеринка монстров <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/f81b540f-a03a-458c-987d-97539521b2cc/khuzuri-vecherinka-v-chest-15-letiya-v-limasole/">Хузури: Вечеринка в честь 15-летия в Лимасоле <time datetime="2026-11-06">6 ноября 2026</time></a></li>
+    <li><a href="/event/2a660665-5c64-4e5d-a3c1-9350e235e706/dj-tennis-b2b-mano-le-tough-echonomist/">Диджей Теннис B2B Мано Ле Таф + Экономист <time datetime="2026-11-07">7 ноября 2026</time></a></li>
+    <li><a href="/event/a0d083f1-4b90-472f-ada4-ba005a15996c/sapfik-strit-pati-noch-reggetona-v-nikosii/">Сапфик-стрит-пати: Ночь реггетона в Никосии <time datetime="2026-11-07">7 ноября 2026</time></a></li>
+    <li><a href="/event/be52168f-471a-4594-af75-ee0025d78543/versus-reunion-series-v-nikosii/">Versus: Reunion Series в Никосии <time datetime="2026-11-07">7 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/69dc7e07-9664-48a7-afd1-fc7f6228759a/pokhod-v-vavla-legkiy-sredniy-koltsevoy-marshrut-v-larnake/">Поход в Вавла: лёгкий-средний кольцевой маршрут в Ларнаке</a> <time datetime="2026-11-08">8 ноября 2026</time></li>
+    <li>Следующее: <a href="/event/908aa849-c3de-4c7b-91cc-69b6b4a8e896/keha-7-dnevnyy-somaticheskiy-retrit-istseleniya-vse-vklyucheno-v-pafose/">KEHA: 7-дневный соматический ретрит исцеления «всё включено» в Пафосе</a> <time datetime="2026-11-08">8 ноября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>

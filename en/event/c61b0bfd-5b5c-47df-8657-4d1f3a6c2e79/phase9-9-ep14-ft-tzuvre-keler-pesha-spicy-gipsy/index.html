@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP). -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
+      if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
+      setTimeout(go,12000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PHASE9Ø9 Ep14 Ft / Tzuvre /… — November 21, 2026 · Limassol</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+      <meta name="description" content="Limassol, Cyprus, November 21, 2026. PHASE9Ø9 returns with EP14, featuring four artists each bringing their own distinctive sound and energy to the booth…" />
+    <link rel="canonical" href="https://mypins.site/en/event/c61b0bfd-5b5c-47df-8657-4d1f3a6c2e79/phase9-9-ep14-ft-tzuvre-keler-pesha-spicy-gipsy/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="PHASE9Ø9 Ep14 Ft / Tzuvre /… — November 21, 2026 · Limassol" />
+    <meta property="og:description" content="Limassol, Cyprus, November 21, 2026. PHASE9Ø9 returns with EP14, featuring four artists each bringing their own distinctive sound and energy to the booth…" />
+    <meta property="og:url" content="https://mypins.site/en/event/c61b0bfd-5b5c-47df-8657-4d1f3a6c2e79/phase9-9-ep14-ft-tzuvre-keler-pesha-spicy-gipsy/" />
+    <meta property="og:image" content="https://ygyeyprogpawmjzjyrew.supabase.co/storage/v1/object/public/forecast-events/events/phase9-9-ep14-ft-tzuvre-keler-pesha-spicy-gipsy-2026-11-21-kalufi/cover-800.webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/c61b0bfd-5b5c-47df-8657-4d1f3a6c2e79/phase9-9-ep14-ft-tzuvre-keler-pesha-spicy-gipsy/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/c61b0bfd-5b5c-47df-8657-4d1f3a6c2e79/phase9-9-ep14-s-uchastiem-tzuvre-keler-pesha-spicy-gipsy/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"PHASE9Ø9 Ep14 Ft / Tzuvre / KELER / pesha / Spicy Gipsy","url":"https://mypins.site/en/event/c61b0bfd-5b5c-47df-8657-4d1f3a6c2e79/phase9-9-ep14-ft-tzuvre-keler-pesha-spicy-gipsy/","startDate":"2026-11-21T20:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Dusty Munky, Limassol","address":{"@type":"PostalAddress","addressLocality":"Limassol","streetAddress":"Dusty Munky, Limassol","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.6796979,"longitude":33.0461632}},"description":"PHASE9Ø9 returns with EP14, featuring four artists each bringing their own distinctive sound and energy to the booth. Expect a night of driving rhythms and raw, hypnotic grooves that push the boundaries of techno. Tickets available now.","endDate":"2026-11-21","image":"https://ygyeyprogpawmjzjyrew.supabase.co/storage/v1/object/public/forecast-events/events/phase9-9-ep14-ft-tzuvre-keler-pesha-spicy-gipsy-2026-11-21-kalufi/cover-800.webp","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/phase9%C3%B89-ep14-ft-tzuvre-keler-pesha-spicy-gipsy-2026-11-21"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"PHASE9Ø9 Ep14 Ft / Tzuvre / KELER / pesha / Spicy Gipsy","item":"https://mypins.site/en/event/c61b0bfd-5b5c-47df-8657-4d1f3a6c2e79/phase9-9-ep14-ft-tzuvre-keler-pesha-spicy-gipsy/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>PHASE9Ø9 Ep14 Ft / Tzuvre / KELER / pesha / Spicy Gipsy</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-11-21">November 21, 2026</time></p>
+  <p><time datetime="2026-11-21T20:00:00">November 21, 2026, 8:00 PM</time></p>
+  <address>Dusty Munky, Limassol, Cyprus</address>
+  <p>PHASE9Ø9 returns with EP14, featuring four artists each bringing their own distinctive sound and energy to the booth. Expect a night of driving rhythms and raw, hypnotic grooves that push the boundaries of techno. Tickets available now.</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>PHASE9Ø9 Ep14 Ft / Tzuvre / KELER / pesha / Spicy Gipsy</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/concert/">🎤 Concerts</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/657a4b72-a7b1-4951-b5e0-111a509d5e89/windcraft-back-balkan-music-workshop-with-federico-pascucci/">WINDCRAFT BACK: Balkan music workshop with Federico Pascucci <time datetime="2026-11-21">November 21, 2026</time></a></li>
+    <li><a href="/en/event/7422f140-0528-4810-b24b-6139cbfb9ae3/5th-charity-christmas-concert/">5th Charity Christmas Concert <time datetime="2026-11-21">November 21, 2026</time></a></li>
+    <li><a href="/en/event/997dc619-6087-45dc-ba3a-d3b3b33d9a37/kevin-de-vries/">Kevin De Vries <time datetime="2026-11-21">November 21, 2026</time></a></li>
+    <li><a href="/en/event/a5107c6b-2e3d-46f3-a451-3f79538e1c8f/camet-at-mason/">CAMET at Mason <time datetime="2026-11-21">November 21, 2026</time></a></li>
+    <li><a href="/en/event/b80afec6-ed39-4e79-a002-4534312fc055/viennese-waltzes-vienna-schoenbrunn-palace-orchestra/">Viennese Waltzes - Vienna Schoenbrunn Palace Orchestra <time datetime="2026-11-21">November 21, 2026</time></a></li>
+    <li><a href="/en/event/bf0658a2-7b83-4842-9b12-71bdaa6fdb10/sbpc-band-in-limassol/">SBPC band in Limassol <time datetime="2026-11-21">November 21, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/c4a495ba-2dab-4b39-97a2-808e07df2780/viennese-waltzes/">Viennese Waltzes</a> <time datetime="2026-11-21">November 21, 2026</time></li>
+    <li>Next: <a href="/en/event/f24f33c2-0ea5-47e3-94f9-c09ffc52b2c3/play-italian-passions-with-a-cypriot-twist/">Play: Italian Passions with a Cypriot Twist</a> <time datetime="2026-11-21">November 21, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>
