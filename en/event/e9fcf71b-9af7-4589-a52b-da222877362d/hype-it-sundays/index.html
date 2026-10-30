@@ -2,6 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
          (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
@@ -71,7 +75,7 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-5-02bcxq.js"></script>
+    <script type="module" crossorigin src="/assets/index-B8_OXVQK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
     <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
@@ -91,7 +95,7 @@
     <meta property="og:title" content="Hype-It Sundays — October 4, 2026 · Ayia Napa" />
     <meta property="og:description" content="Ayia Napa, Cyprus, October 4, 2026. Room 1 – Party Room – Commercial / House Lineup Andy Davies 22:00 – 02:00 Hypetekk 02:00 – Close Host: Mani Liqweed Room 2…" />
     <meta property="og:url" content="https://mypins.site/en/event/e9fcf71b-9af7-4589-a52b-da222877362d/hype-it-sundays/" />
-    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta property="og:image" content="https://thecastleclub.com/wp-content/uploads/2026/05/Hype-It-Sundays.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/e9fcf71b-9af7-4589-a52b-da222877362d/hype-it-sundays/" />
     <link rel="alternate" hreflang="ru" href="https://mypins.site/event/e9fcf71b-9af7-4589-a52b-da222877362d/khayp-it-voskresenya/" />

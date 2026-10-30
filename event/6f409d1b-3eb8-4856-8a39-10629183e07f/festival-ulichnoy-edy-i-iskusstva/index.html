@@ -2,6 +2,10 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
          (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
@@ -71,7 +75,7 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-5-02bcxq.js"></script>
+    <script type="module" crossorigin src="/assets/index-B8_OXVQK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
     <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
@@ -91,7 +95,7 @@
     <meta property="og:title" content="Фестиваль уличной еды и… — 10 октября 2026 · Никосия, Кипр" />
     <meta property="og:description" content="Никосия, Кипр, 10 октября 2026. Узнайте секреты кипрской кухни, усладите нёбо уникальными традиционными вкусами, познакомьтесь с увлечёнными ремесленниками и…" />
     <meta property="og:url" content="https://mypins.site/event/6f409d1b-3eb8-4856-8a39-10629183e07f/festival-ulichnoy-edy-i-iskusstva/" />
-    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta property="og:image" content="https://heartlandoflegends.com/wp-content/uploads/2022/07/488W0043ed.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="alternate" hreflang="ru" href="https://mypins.site/event/6f409d1b-3eb8-4856-8a39-10629183e07f/festival-ulichnoy-edy-i-iskusstva/" />
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/6f409d1b-3eb8-4856-8a39-10629183e07f/street-food-art-festival/" />

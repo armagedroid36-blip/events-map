@@ -2,6 +2,10 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
     <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
     <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
          (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
@@ -71,7 +75,7 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-5-02bcxq.js"></script>
+    <script type="module" crossorigin src="/assets/index-B8_OXVQK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
     <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
@@ -91,7 +95,7 @@
     <meta property="og:title" content="Вечеринка на лодке Castle… — 25 сентября 2026 · Ая-Напа, Кипр" />
     <meta property="og:description" content="Ая-Напа, Кипр, 25 сентября 2026. Лучшие диджеи Айя-Напы объединились с самой большой лодкой в гавани, чтобы представить вам вечеринку на лодке The Castle Club…" />
     <meta property="og:url" content="https://mypins.site/event/40dbe358-4738-4b12-9892-6f7f9623fd5b/vecherinka-na-lodke-castle-club/" />
-    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta property="og:image" content="https://thecastleclub.com/wp-content/uploads/2026/02/Boat-Party-Friday.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="alternate" hreflang="ru" href="https://mypins.site/event/40dbe358-4738-4b12-9892-6f7f9623fd5b/vecherinka-na-lodke-castle-club/" />
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/40dbe358-4738-4b12-9892-6f7f9623fd5b/castle-club-boat-party/" />
