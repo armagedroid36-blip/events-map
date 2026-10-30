@@ -699,22 +699,13 @@ export default function Home({
       // не запрашивается. Стартует параллельно основному набору — первый
       // рендер его не ждёт (см. lib/legacyEvents.ts).
       const legacyPromise = eventId ? loadLegacyEvents() : null;
-      // Категории нужны карточке события только для подписи в фактах и <head>,
-      // но это ВТОРОЙ запрос к Supabase (~1 с на мобильной сети): пока его
-      // ждали через Promise.all, карточка (и LCP) рисовалась на 0,7-1 с позже
-      // — замер Lighthouse mobile на beta 1.18: observed LCP 2,27 с.
-      // На странице события карточку рисуем сразу по снимку событий, категории
-      // доезжают следом. Хабы и прочие страницы — как раньше (Promise.all).
-      const catsPromise = api.getCategories().catch(() => [] as Category[]);
-      const evs = await api.listEvents();
+      // Категории стартуют из main.tsx (вместе с полным объектом события) и
+      // здесь только дожидаются — к этому моменту запрос уже в пути.
+      const [evs, cats] = await Promise.all([api.listEvents(), api.getCategories()]);
       if (!alive) return;
       setEvents(evs);
-      if (!eventId) {
-        const cats = await catsPromise;
-        if (!alive) return;
-        categoriesRef.current = cats;
-        setCategories(cats);
-      }
+      categoriesRef.current = cats;
+      setCategories(cats);
       setLoading(false);
       // Прямая ссылка /event/<id>/<slug> (или старая #/?e=<id>, App передаёт
       // eventId): открыть карточку события независимо от фильтров и заменить
@@ -791,18 +782,6 @@ export default function Home({
             }
           }
         }
-      }
-      // Категории для страницы события: карточка уже на экране, подписи в
-      // фактах и <head> дозаполняются, когда ответит Supabase.
-      if (eventId) {
-        const cats = await catsPromise;
-        if (!alive) return;
-        categoriesRef.current = cats;
-        setCategories(cats);
-        // <head> события собирается с названием категории — обновляем, чтобы
-        // совпасть со статикой (первый applyEventMeta прошёл без категорий).
-        const evForMeta = evs.find((x) => x.id === eventId);
-        if (evForMeta) applyEventMeta(evForMeta, cats);
       }
     };
 
