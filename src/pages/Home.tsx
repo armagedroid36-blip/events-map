@@ -905,6 +905,25 @@ export default function Home({
     !formOpen;
   const introShown = isMobile && !introGone && introPathEligible;
   const introActive = introShown && !introDismissed;
+
+  // СТРАНИЦА СОБЫТИЯ (/event/…, /en/event/…), beta 1.18.
+  // introActive на этих путях всегда false (introEligiblePath их исключает),
+  // поэтому MapView монтировался сразу при любой ширине и на мобильном тянул
+  // maplibre + тайлы до первого экрана (Perf 30, TBT 9,2 с на beta 1.17).
+  // Теперь на мобильном карта НЕ монтируется, пока посетитель сам не нажмёт
+  // «Показать карту»: первый экран — фон + карточка события + кнопка.
+  // Десктоп (>=768px) грузит карту как раньше.
+  const isEventPage = /^\/(?:en\/)?event\//.test(introRawPath);
+  const [eventMapOpen, setEventMapOpen] = useState(false);
+  // Переход SPA-навигацией на другую страницу события — снова первый экран без
+  // карты (решение «открыть карту» относится к текущей странице, не к сессии).
+  useEffect(() => {
+    setEventMapOpen(false);
+  }, [introRawPath]);
+  const eventMapGate = isEventPage && isMobile && !eventMapOpen;
+  // Карта скрыта: либо мобильный интро-экран хаба, либо статический первый
+  // экран страницы события до нажатия кнопки.
+  const mapDeferred = introActive || eventMapGate;
   // Пока интро активно, в DOM живут перенесённые main.tsx статические
   // SEO-блоки главной/города (h1 + городской текст + внутренние ссылки — их
   // видит краулер; см. lib/mobileIntro.ts). Как только интро закрыто (клик
@@ -940,6 +959,12 @@ export default function Home({
   const introPreview = city
     ? `/images/map-preview-${slugify(city)}.webp`
     : '/images/map-preview-main.webp';
+  // Снимок карты для мобильного первого экрана СТРАНИЦЫ СОБЫТИЯ (карта там не
+  // монтируется до нажатия кнопки): город события, иначе общий снимок.
+  const eventPreviewCity = cityPath(selected?.city);
+  const mapPlaceholderPreview = eventPreviewCity
+    ? `/images/map-preview-${eventPreviewCity}-480.webp`
+    : '/images/map-preview-main-480.webp';
 
   // Геолокация: центр на посетителе; при отказе — Юго-Восточная Азия.
   // На чистых маршрутах (/bali, /event/<id>) не трогаем: там центр и zoom
@@ -1011,6 +1036,26 @@ export default function Home({
     events,
     filters,
   ]);
+
+  // Маркеры карты на СТРАНИЦЕ СОБЫТИЯ (beta 1.18): раньше MapView получал весь
+  // снимок (181 КБ, 1 069 маркеров) — на телефоне это десятки тысяч DOM-узлов
+  // и long tasks. Теперь: само событие + события того же города (cityPath из
+  // lib/address.ts, как у городских страниц), не больше 300 штук.
+  // Порядок важен: событие страницы — первым, чтобы оно попало в лимит и было
+  // заметно на карте при открытии.
+  const MAP_MARKER_LIMIT = 300;
+  const mapEvents = useMemo(() => {
+    if (!isEventPage) return visible;
+    const focus = selected ?? pastEvent;
+    if (!focus) return visible.slice(0, MAP_MARKER_LIMIT);
+    const city = cityPath(focus.city);
+    const sameCity = visible.filter(
+      (ev) =>
+        ev.id !== focus.id &&
+        (city ? cityPath(ev.city) === city : !!focus.city && ev.city === focus.city),
+    );
+    return [focus, ...sameCity].slice(0, MAP_MARKER_LIMIT);
+  }, [isEventPage, visible, selected, pastEvent]);
 
   // Другие даты серии для открытой карточки (то же название + то же место,
   // другая дата): считаем по уже загруженному списку, без запросов —
@@ -1153,6 +1198,28 @@ export default function Home({
         </div>
       );
     }
+    // Страница события: первый кадр — ТА ЖЕ оболочка, что и после загрузки
+    // (белый фон + плавающая .glass-шапка на top-2). Раньше здесь рисовалась
+    // обычная шапка в потоке, а после данных она переезжала в плавающую
+    // обёртку — CLS 0,107 (сдвиг шапки). Структура совпадает с основным
+    // return ниже, поэтому React переиспользует узлы и шапка не двигается.
+    if (isEventPage) {
+      return (
+        <div className="map-screen relative w-full overflow-hidden bg-white">
+          <div className="absolute inset-0 bg-white" />
+          <div
+            ref={headerRef}
+            className="glass absolute inset-x-3 top-2 z-[1200] rounded-2xl shadow-lg"
+            style={{ background: 'rgba(255, 255, 255, 0.32)' }}
+          >
+            <Header onOpenForm={() => setFormOpen(true)} />
+          </div>
+          <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 text-center text-sm text-gray-500">
+            {t('common.loading')}
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="flex min-h-screen flex-col">
         <Header onOpenForm={() => setFormOpen(true)} />
@@ -1246,17 +1313,33 @@ export default function Home({
   return (
     <div className="map-screen relative w-full overflow-hidden bg-white">
       {/* КАРТА НА ВЕСЬ ЭКРАН — фон сайта.
-          Пока активен мобильный интро-экран, MapView (maplibre) НЕ монтируем:
-          чанк карты и тайлы не запрашиваются до клика по кнопке (мобильный
-          CWV). На десктопе (>=768px) интро не показывается — карта грузится
-          как раньше. */}
+          Пока карта отложена (мобильный интро-экран хабов ИЛИ мобильный первый
+          экран страницы события до нажатия «Показать карту»), MapView
+          (maplibre) НЕ монтируем: чанк карты и тайлы не запрашиваются.
+          На десктопе (>=768px) карта грузится как раньше. Контейнер карты
+          absolute inset-0 — его размер не зависит от загрузки чанка (CLS). */}
       <div className="absolute inset-0">
-        {introActive ? (
-          <div className="absolute inset-0 bg-white" />
+        {mapDeferred ? (
+          <div className="absolute inset-0 bg-white">
+            {/* Мобильная страница события до открытия карты: статичный снимок
+                карты города — первый экран выглядит как карта, но maplibre и
+                тайлы не загружаются. Это же изображение — кандидат в LCP,
+                поэтому грузим его с приоритетом (480w, ~35-60 КБ). */}
+            {eventMapGate && (
+              <img
+                src={mapPlaceholderPreview}
+                alt=""
+                aria-hidden="true"
+                fetchPriority="high"
+                decoding="async"
+                className="h-full w-full object-cover"
+              />
+            )}
+          </div>
         ) : (
           <Suspense fallback={<div className="absolute inset-0 bg-white" />}>
             <MapView
-              events={visible}
+              events={mapEvents}
               categories={categories}
               onSelect={selectEvent}
               center={center}
@@ -1299,6 +1382,21 @@ export default function Home({
       >
         {t('filters.title')}
       </button>
+
+      {/* Мобильная страница события ДО открытия карты (beta 1.18): живая карта
+          не смонтирована — вместо неё кнопка «Показать карту». Стиль и логика
+          как у «Открыть карту» на интро-экране хабов; после нажатия монтируется
+          MapView и грузятся его чанк/тайлы. */}
+      {eventMapGate && (
+        <button
+          type="button"
+          onPointerDown={() => setEventMapOpen(true)}
+          onClick={() => setEventMapOpen(true)}
+          className="absolute left-1/2 top-[calc(var(--header-bottom,7rem)+3.25rem)] z-[1160] -translate-x-1/2 rounded-full bg-[#E66343] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(230,99,67,0.45)] transition hover:bg-[#d4553a] active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        >
+          {t('mapIntro.showMap')}
+        </button>
+      )}
 
       {/* Плавающая кнопка «Создать событие» для организатора:
           на всех ширинах под шапкой справа (на десктопе пункт шапки убран) */}

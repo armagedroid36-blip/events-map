@@ -807,7 +807,11 @@ export default function EventCard({
           <span className="text-sm text-gray-500">{t('card.noPhoto')}</span>
         </div>
       ) : (
-        <div className="mb-3 flex gap-1.5 overflow-x-auto pb-1">
+        // Высота фото-полосы фиксирована (h-32) во ВСЕХ трёх состояниях:
+        // скелет / «нет фото» / превью. Раньше полоса превью была 84 px против
+        // 128 px скелета — при догрузке полного объекта события контент ниже
+        // прыгал вверх на 44 px (CLS 0,055 на странице события).
+        <div className="mb-3 flex h-32 items-center gap-1.5 overflow-x-auto pb-1">
           {okPhotos.map((src, i) => (
             <img
               key={i}

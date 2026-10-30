@@ -10,6 +10,9 @@ export default {
     title: 'Events for travelers and expats',
     subtitle: 'Concerts, parties, yoga, markets and meetups — Bali, Da Nang, Nha Trang, Cyprus',
     open: 'Open the map',
+    // Mobile first screen of an event page (beta 1.18): the live map is not
+    // mounted until this button is tapped.
+    showMap: 'Show the map',
     imgAlt: 'Event map — Bali, Da Nang, Nha Trang, Cyprus',
   },
   menu: {
