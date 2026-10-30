@@ -699,11 +699,22 @@ export default function Home({
       // не запрашивается. Стартует параллельно основному набору — первый
       // рендер его не ждёт (см. lib/legacyEvents.ts).
       const legacyPromise = eventId ? loadLegacyEvents() : null;
-      const [evs, cats] = await Promise.all([api.listEvents(), api.getCategories()]);
+      // Категории нужны карточке события только для подписи в фактах и <head>,
+      // но это ВТОРОЙ запрос к Supabase (~1 с на мобильной сети): пока его
+      // ждали через Promise.all, карточка (и LCP) рисовалась на 0,7-1 с позже
+      // — замер Lighthouse mobile на beta 1.18: observed LCP 2,27 с.
+      // На странице события карточку рисуем сразу по снимку событий, категории
+      // доезжают следом. Хабы и прочие страницы — как раньше (Promise.all).
+      const catsPromise = api.getCategories().catch(() => [] as Category[]);
+      const evs = await api.listEvents();
       if (!alive) return;
       setEvents(evs);
-      categoriesRef.current = cats;
-      setCategories(cats);
+      if (!eventId) {
+        const cats = await catsPromise;
+        if (!alive) return;
+        categoriesRef.current = cats;
+        setCategories(cats);
+      }
       setLoading(false);
       // Прямая ссылка /event/<id>/<slug> (или старая #/?e=<id>, App передаёт
       // eventId): открыть карточку события независимо от фильтров и заменить
@@ -780,6 +791,18 @@ export default function Home({
             }
           }
         }
+      }
+      // Категории для страницы события: карточка уже на экране, подписи в
+      // фактах и <head> дозаполняются, когда ответит Supabase.
+      if (eventId) {
+        const cats = await catsPromise;
+        if (!alive) return;
+        categoriesRef.current = cats;
+        setCategories(cats);
+        // <head> события собирается с названием категории — обновляем, чтобы
+        // совпасть со статикой (первый applyEventMeta прошёл без категорий).
+        const evForMeta = evs.find((x) => x.id === eventId);
+        if (evForMeta) applyEventMeta(evForMeta, cats);
       }
     };
 
@@ -960,11 +983,10 @@ export default function Home({
     ? `/images/map-preview-${slugify(city)}.webp`
     : '/images/map-preview-main.webp';
   // Снимок карты для мобильного первого экрана СТРАНИЦЫ СОБЫТИЯ (карта там не
-  // монтируется до нажатия кнопки): город события, иначе общий снимок.
-  const eventPreviewCity = cityPath(selected?.city);
-  const mapPlaceholderPreview = eventPreviewCity
-    ? `/images/map-preview-${eventPreviewCity}-480.webp`
-    : '/images/map-preview-main-480.webp';
+  // монтируется до нажатия кнопки). Один и тот же файл в состоянии загрузки и
+  // после данных: город события в момент загрузки ещё неизвестен, а смена
+  // src тянула бы вторую картинку. 480w (~47 КБ) — экран 412 px.
+  const mapPlaceholderPreview = '/images/map-preview-main-480.webp';
 
   // Геолокация: центр на посетителе; при отказе — Юго-Восточная Азия.
   // На чистых маршрутах (/bali, /event/<id>) не трогаем: там центр и zoom
@@ -1206,16 +1228,25 @@ export default function Home({
     if (isEventPage) {
       return (
         <div className="map-screen relative w-full overflow-hidden bg-white">
-          <div className="absolute inset-0 bg-white" />
+          <div className="absolute inset-0 bg-white">
+            {/* Тот же снимок карты, что и после загрузки: первый экран не
+                пустой, картинка грузится сразу (fetchPriority=high) и служит
+                LCP-кандидатом — alt настоящий, иначе браузер не считает её
+                контентом и LCP уезжает на текст карточки. */}
+            <img
+              src={mapPlaceholderPreview}
+              alt={t('mapIntro.imgAlt')}
+              fetchPriority="high"
+              decoding="async"
+              className="h-full w-full object-cover"
+            />
+          </div>
           <div
             ref={headerRef}
             className="glass absolute inset-x-3 top-2 z-[1200] rounded-2xl shadow-lg"
             style={{ background: 'rgba(255, 255, 255, 0.32)' }}
           >
             <Header onOpenForm={() => setFormOpen(true)} />
-          </div>
-          <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 text-center text-sm text-gray-500">
-            {t('common.loading')}
           </div>
         </div>
       );
@@ -1328,8 +1359,7 @@ export default function Home({
             {eventMapGate && (
               <img
                 src={mapPlaceholderPreview}
-                alt=""
-                aria-hidden="true"
+                alt={t('mapIntro.imgAlt')}
                 fetchPriority="high"
                 decoding="async"
                 className="h-full w-full object-cover"
