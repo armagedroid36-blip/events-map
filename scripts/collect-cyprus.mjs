@@ -371,6 +371,42 @@ async function fetchPartial(url, budgetMs = 90000, accept = 'application/xml,tex
 const geoCache = new Map();
 let lastGeo = 0;
 
+function haversineKm(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(a));
+}
+
+/**
+ * Части запроса к геокодеру из полей источника.
+ *
+ * У cyprus.bz адрес приходит мусорным: ровно «Cyprus, Cyprus» — страна вместо
+ * улицы. Запрос «<площадка>, Cyprus, Cyprus, Nicosia, Cyprus» Nominatim сводил
+ * к произвольной точке страны (30.10.2026: семь карточек получили точку поля
+ * 35.129393,33.229783 в 10–15 км от Никосии). Страну и повторы из запроса
+ * выбрасываем; `streetHint` говорит, есть ли в адресе улика улицы (номер дома
+ * или тип улицы) — без неё точка геокодера далеко от города считается «страной».
+ */
+function geoQueryParts(src, countryWords = ['cyprus', 'кипр', 'κύπρος', 'κυπρος', 'kypros']) {
+  const countryOnly = (s) => countryWords.includes(String(s || '').trim().toLowerCase());
+  const parts = [];
+  for (const raw of [src.venue, src.address, src.cityEn || src.city]) {
+    for (const piece of String(raw || '').split(',')) {
+      const p = piece.trim();
+      if (!p || countryOnly(p)) continue;
+      if (parts.some((x) => x.toLowerCase() === p.toLowerCase())) continue;
+      parts.push(p);
+    }
+  }
+  const streetHint =
+    parts.some((p) => /\d/.test(p)) || parts.some((p) => /(str\.?|street|avenue|ave\.?|road|οδός|λεωφ|улиц)/i.test(p));
+  return { parts, streetHint };
+}
+
 async function geocode(query) {
   const key = String(query || '').trim().toLowerCase();
   if (!key) return null;
@@ -486,13 +522,14 @@ async function buildRow(src) {
     '';
   let lat = src.lat;
   let lng = src.lng;
-  if ((lat == null || lng == null) && (src.venue || src.address)) {
-    const geo = await geocode([src.venue, src.address, src.cityEn || src.city || '', 'Cyprus'].filter(Boolean).join(', '));
+  const { parts: geoParts, streetHint } = geoQueryParts(src);
+  if ((lat == null || lng == null) && geoParts.length) {
+    const geo = await geocode([...geoParts, 'Cyprus'].join(', '));
     if (geo) {
       lat = geo.lat;
       lng = geo.lng;
     } else {
-      const second = await geocode([src.venue, src.cityEn || src.city || '', 'Cyprus'].filter(Boolean).join(', '));
+      const second = await geocode([...(geoParts.slice(0, 1)), src.cityEn || src.city || '', 'Cyprus'].filter(Boolean).join(', '));
       if (second) {
         lat = second.lat;
         lng = second.lng;
@@ -502,6 +539,14 @@ async function buildRow(src) {
   // Город не определён, но координаты есть — берём ближайший крупный город Кипра
   if (!city) city = lat != null && lng != null ? nearestCity(lat, lng) : 'Лимасол';
   const center = CY_CITIES[city] || CY_CITIES[nearestCity(lat ?? 34.7, lng ?? 33.03)];
+  // Точка-«страна»: адрес без улики улицы (у cyprus.bz встречается адрес ровно
+  // «Cyprus, Cyprus»), а геокодер отдал место в десятках км от города — это не
+  // площадка, пин ставим в центр объявленного города.
+  if (lat != null && lng != null && !streetHint && haversineKm(lat, lng, center.lat, center.lng) > 8) {
+    console.log(`  [гео-страна] ${lat.toFixed(6)},${lng.toFixed(6)} -> центр «${city}»: ${String(src.title || '').slice(0, 40)}`);
+    lat = center.lat;
+    lng = center.lng;
+  }
   lat = lat ?? center.lat;
   lng = lng ?? center.lng;
 
@@ -1122,7 +1167,7 @@ async function main() {
   );
 }
 
-export { jsonLdEvents, canonBzPage, cnCoverBySlug, cnPhotosFor };
+export { jsonLdEvents, canonBzPage, cnCoverBySlug, cnPhotosFor, geoQueryParts, haversineKm };
 
 // Модуль можно импортировать (скрипты проверки) — тогда сбор не запускается.
 const isDirectRun = /collect-cyprus\.mjs$/.test((process.argv[1] || '').replace(/\\/g, '/'));
