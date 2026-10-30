@@ -33,11 +33,19 @@ for (const c of cases) {
   }
 }
 
-// правило «точка-страна»: без улики и >8 км от города — центр города
+// правило «точка-страна»: адрес-ЗАГЛУШКА (только страна) и >8 км от города — центр города
 const d = haversineKm(FIELD.lat, FIELD.lng, NICOSIA.lat, NICOSIA.lng);
-const wouldFallback = !geoQueryParts({ venue: 'Cyprus', address: 'Cyprus, Cyprus', city: 'Nicosia' }).streetHint && d > 8;
+const junk = geoQueryParts({ venue: 'Cyprus', address: 'Cyprus, Cyprus', city: 'Nicosia' });
+const wouldFallback = junk.junkAddress && d > 8;
 console.log(`${wouldFallback ? 'ok  ' : 'FAIL'} поле под Никосией ${d.toFixed(1)} км -> фолбэк на центр`);
 if (!wouldFallback) fail++;
 
-console.log(fail ? `ПРОВАЛ: ${fail}` : `ВСЁ ОК: ${cases.length + 1}/${cases.length + 1}`);
+// и обратное: событие ДЕРЕВНИ без улики улицы (Argaka под Пафосом, 45 км) НЕ должно
+// уезжать в центр объявленного города — иначе теряется верная точка источника
+const village = geoQueryParts({ venue: '', address: 'Argaka', city: 'Paphos' });
+const villageFallback = village.junkAddress;
+console.log(`${!villageFallback ? 'ok  ' : 'FAIL'} деревня «Argaka» (адрес без страны) -> фолбэка нет`);
+if (villageFallback) fail++;
+
+console.log(fail ? `ПРОВАЛ: ${fail}` : `ВСЁ ОК: ${cases.length + 2}/${cases.length + 2}`);
 process.exit(fail ? 1 : 0);

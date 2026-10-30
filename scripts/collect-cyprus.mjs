@@ -404,7 +404,15 @@ function geoQueryParts(src, countryWords = ['cyprus', 'кипр', 'κύπρος'
   }
   const streetHint =
     parts.some((p) => /\d/.test(p)) || parts.some((p) => /(str\.?|street|avenue|ave\.?|road|οδός|λεωφ|улиц)/i.test(p));
-  return { parts, streetHint };
+  // Адрес-заглушка = адрес есть, но целиком состоит из названия страны/повторов
+  // (у cyprus.bz встречается ровно «Cyprus, Cyprus»). Только такой адрес нельзя
+  // геокодить всерьёз; пустой/короткий адрес деревни («Argaka») — законный.
+  const addrPieces = String(src.address || '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const junkAddress = addrPieces.length > 0 && addrPieces.every((p) => countryOnly(p));
+  return { parts, streetHint, junkAddress };
 }
 
 async function geocode(query) {
@@ -522,7 +530,7 @@ async function buildRow(src) {
     '';
   let lat = src.lat;
   let lng = src.lng;
-  const { parts: geoParts, streetHint } = geoQueryParts(src);
+  const { parts: geoParts, streetHint, junkAddress } = geoQueryParts(src);
   if ((lat == null || lng == null) && geoParts.length) {
     const geo = await geocode([...geoParts, 'Cyprus'].join(', '));
     if (geo) {
@@ -539,10 +547,13 @@ async function buildRow(src) {
   // Город не определён, но координаты есть — берём ближайший крупный город Кипра
   if (!city) city = lat != null && lng != null ? nearestCity(lat, lng) : 'Лимасол';
   const center = CY_CITIES[city] || CY_CITIES[nearestCity(lat ?? 34.7, lng ?? 33.03)];
-  // Точка-«страна»: адрес без улики улицы (у cyprus.bz встречается адрес ровно
+  // Точка-«страна»: адрес-заглушка (у cyprus.bz встречается адрес ровно
   // «Cyprus, Cyprus»), а геокодер отдал место в десятках км от города — это не
   // площадка, пин ставим в центр объявленного города.
-  if (lat != null && lng != null && !streetHint && haversineKm(lat, lng, center.lat, center.lng) > 8) {
+  // Важно: условие именно `junkAddress`, а не «нет улики улицы» — иначе события
+  // деревень (Argaka, Askas, Klirou, Ливадия) теряли свою верную точку и ехали
+  // в центр объявленного города (28 ложных срабатываний в прогоне 41092024829).
+  if (lat != null && lng != null && junkAddress && haversineKm(lat, lng, center.lat, center.lng) > 8) {
     console.log(`  [гео-страна] ${lat.toFixed(6)},${lng.toFixed(6)} -> центр «${city}»: ${String(src.title || '').slice(0, 40)}`);
     lat = center.lat;
     lng = center.lng;
