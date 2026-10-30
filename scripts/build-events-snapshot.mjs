@@ -71,7 +71,37 @@ async function fetchPage(from) {
   return rows;
 }
 
+/** Категории для карточки события (подпись в фактах, строки «Ещё события …
+ *  · категория», фильтры). Раньше SPA тянула их отдельным запросом к Supabase
+ *  ПОСЛЕ снимка: на мобильной сети это ~0,9 с, и первый рендер карточки ждал
+ *  его (Lighthouse: observed LCP 1,94 с, симулированный 5,0 с). Теперь они
+ *  лежат в том же файле, что и карточки, — отдельного запроса нет.
+ *  Ошибка здесь не валит снапшот: без массива категорий SPA сходит в живой
+ *  REST, как раньше. */
+async function fetchCategories() {
+  const res = await fetch(`${url}/rest/v1/categories?select=id,name_ru,name_en,emoji&order=id.asc`, {
+    headers: { apikey: key, Authorization: `Bearer ${key}` },
+    signal: AbortSignal.timeout(20_000),
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  const rows = await res.json();
+  if (!Array.isArray(rows)) throw new Error('ожидался массив категорий');
+  return rows
+    .filter((c) => c && typeof c.id === 'string')
+    .map((c) => ({
+      id: c.id,
+      name_ru: c.name_ru ?? '',
+      name_en: c.name_en ?? '',
+      emoji: c.emoji ?? '',
+    }));
+}
+
 async function main() {
+  // Категории тянем параллельно с карточками: ошибка по ним снапшот не валит.
+  const catsPromise = fetchCategories().catch((err) => {
+    console.warn(`[snapshot] категории не получены (${err.message}) — SPA прочитает живой REST`);
+    return [];
+  });
   const cards = [];
   const seen = new Set();
   let pages = 0;
@@ -90,17 +120,22 @@ async function main() {
     if (rows.length < PAGE || fresh === 0 || pages > 50) break;
   }
 
+  const categories = await catsPromise;
   const payload = {
     generated_at: new Date().toISOString(),
     source: 'list_active_event_cards',
     count: cards.length,
+    // Категории — в том же файле: карточке события они нужны для подписи в
+    // фактах и строки «Ещё события … · категория», и отдельный запрос к
+    // Supabase задерживал первый рендер на ~1 с (LCP).
+    categories,
     cards,
   };
   fs.mkdirSync(OUT_DIR, { recursive: true });
   fs.writeFileSync(OUT_FILE, JSON.stringify(payload));
   const bytes = fs.statSync(OUT_FILE).size;
   console.log(
-    `[snapshot] ${cards.length} карточек, ${(bytes / 1024).toFixed(0)} КБ → ${path.relative(process.cwd(), OUT_FILE)}`,
+    `[snapshot] ${cards.length} карточек, ${categories.length} категорий, ${(bytes / 1024).toFixed(0)} КБ → ${path.relative(process.cwd(), OUT_FILE)}`,
   );
 }
 

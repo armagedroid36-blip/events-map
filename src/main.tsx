@@ -54,6 +54,10 @@ if (eventWarmMatch) {
   void import('./lib/api')
     .then(({ getApi }) => {
       const api = getApi();
+      // Порядок важен: listEvents() стартует снимок (/data/events.json), в
+      // котором теперь лежат и категории, — getCategories() ждёт именно его,
+      // а не отдельного запроса к Supabase.
+      void api.listEvents().catch(() => {});
       void api.getCategories().catch(() => {});
       void api.getPublicEvent(eventId).catch(() => {});
     })

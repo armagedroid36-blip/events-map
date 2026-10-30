@@ -306,6 +306,12 @@ class SupabaseApi implements DataApi {
    *  начинался только после снимка событий и отодвигал карточку/LCP на 2+ с. */
   private categoriesCache: { at: number; data: Category[] } | null = null;
   private categoriesPromise: Promise<Category[]> | null = null;
+  /** Категории из статического снимка (/data/events.json, beta 1.18) — тот же
+   *  файл, что и карточки: отдельный запрос к Supabase не нужен. */
+  private categoriesFromSnapshot: Category[] | null = null;
+  /** Текущая загрузка снимка: getCategories ждёт её, чтобы не уходить в
+   *  живой REST, если снимок уже в пути (страница события грузит его сразу). */
+  private snapshotPromise: Promise<EventItem[] | null> | null = null;
   /** Незавершённые запросы события по id: префетч из main.tsx и selectEvent
    *  в Home ждут ОДИН сетевой запрос, а не два подряд. */
   private eventPromises = new Map<string, Promise<EventItem | null>>();
@@ -324,7 +330,7 @@ class SupabaseApi implements DataApi {
     // Основной путь — статический снапшот рядом с сайтом (data/events.json):
     // его собирает CI перед сборкой статики, отдаёт GitHub Pages, и он не
     // тратит egress Supabase (краулерский трафик съедал бесплатные 5 ГБ).
-    const snapshot = await this.fetchSnapshot();
+    const snapshot = await this.loadSnapshot();
     if (snapshot) {
       this.eventsCache = { at: Date.now(), data: snapshot };
       return snapshot;
@@ -348,6 +354,19 @@ class SupabaseApi implements DataApi {
     return events;
   }
 
+  /** Обёртка над fetchSnapshot: одна загрузка на всех, кто её ждёт
+   *  (listEvents и getCategories на странице события стартуют одновременно). */
+  private loadSnapshot(): Promise<EventItem[] | null> {
+    if (this.snapshotPromise) return this.snapshotPromise;
+    const pending = this.fetchSnapshot();
+    this.snapshotPromise = pending;
+    const clear = () => {
+      if (this.snapshotPromise === pending) this.snapshotPromise = null;
+    };
+    pending.then(clear, clear);
+    return pending;
+  }
+
   /** Статический снапшот списка, опубликованный вместе с сайтом.
    *  Путь относительный (BASE_URL) — работает и на mypins.site, и в preview.
    *  cache: 'no-cache' — ревалидация по ETag: неизменённый файл даёт 304 без
@@ -357,9 +376,19 @@ class SupabaseApi implements DataApi {
     try {
       const res = await fetch(`${import.meta.env.BASE_URL}data/events.json`, { cache: 'no-cache' });
       if (!res.ok) return null;
-      const body = (await res.json()) as { generated_at?: string; cards?: Partial<EventItem>[] };
+      const body = (await res.json()) as {
+        generated_at?: string;
+        cards?: Partial<EventItem>[];
+        categories?: Category[];
+      };
       const at = Date.parse(body?.generated_at ?? '');
       if (!Number.isFinite(at) || Date.now() - at > SupabaseApi.SNAPSHOT_MAX_AGE_MS) return null;
+      // Категории приходят тем же файлом (beta 1.18): раньше это был отдельный
+      // запрос к Supabase, и первый рендер карточки события ждал его ~1 с.
+      const cats = Array.isArray(body?.categories)
+        ? body.categories.filter((c) => c && typeof c.id === 'string')
+        : [];
+      if (cats.length > 0) this.categoriesFromSnapshot = cats;
       const cards = Array.isArray(body?.cards) ? body.cards : [];
       const out = cards
         .filter((c) => c && typeof c.id === 'string')
@@ -496,6 +525,16 @@ class SupabaseApi implements DataApi {
     }
     if (this.categoriesPromise) return this.categoriesPromise;
     const promise = (async () => {
+      // Снимок уже в пути (страница события грузит его первым делом) — ждём
+      // его: категории лежат в том же файле и не стоят отдельного запроса к
+      // Supabase (~0,9 с на мобильной сети, из-за него уезжал LCP).
+      if (!this.categoriesFromSnapshot && this.snapshotPromise) {
+        await this.snapshotPromise.catch(() => null);
+      }
+      if (this.categoriesFromSnapshot) {
+        this.categoriesCache = { at: Date.now(), data: this.categoriesFromSnapshot };
+        return this.categoriesFromSnapshot;
+      }
       const { data, error } = await this.db.from('categories').select('*').order('id');
       if (error) throw error;
       const cats = (data ?? []) as Category[];
