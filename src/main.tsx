@@ -40,6 +40,26 @@ noteSeoAliasMap();
 noteStaticBlocks();
 keepSeoBlocksForIntro();
 
+// СТРАНИЦА СОБЫТИЯ (/event/<id>/…, /en/event/<id>/…): карточка рисуется первым
+// же рендером, и ей нужны и список категорий (подпись категории в фактах), и
+// полный объект события (описание/фото/серия — в снимке их нет). Оба запроса
+// стартуют ЗДЕСЬ, до загрузки чанка Home: иначе они начинаются только после
+// снимка событий (t≈1,7 с), категории отвечают ~2,5 с и карточка/LCP уезжают
+// за 6 с (замер Lighthouse mobile на beta 1.18). Home ждёт ТЕ ЖЕ промисы —
+// кэш в lib/api.ts (категории) и карта незавершённых запросов события, поэтому
+// двойных сетевых вызовов нет.
+const eventWarmMatch = /^\/(?:en\/)?event\/([^/?#]+)/.exec(window.location.pathname);
+if (eventWarmMatch) {
+  const eventId = decodeURIComponent(eventWarmMatch[1]);
+  void import('./lib/api')
+    .then(({ getApi }) => {
+      const api = getApi();
+      void api.getCategories().catch(() => {});
+      void api.getPublicEvent(eventId).catch(() => {});
+    })
+    .catch(() => {});
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>

@@ -300,6 +300,15 @@ class SupabaseApi implements DataApi {
    *  перекрывает ночной прогон и даёт страховку от сбоя пайплайна. */
   private static SNAPSHOT_MAX_AGE_MS = 36 * 60 * 60 * 1000;
   private eventsCache: { at: number; data: EventItem[] } | null = null;
+  /** Кэш категорий (страница события/хабы): 30 с свежести + дедупликация
+   *  одновременных запросов. Категории нужны карточке события в ПЕРВОМ рендере,
+   *  а сам запрос стартует из main.tsx (см. warmEventPageData) — иначе он
+   *  начинался только после снимка событий и отодвигал карточку/LCP на 2+ с. */
+  private categoriesCache: { at: number; data: Category[] } | null = null;
+  private categoriesPromise: Promise<Category[]> | null = null;
+  /** Незавершённые запросы события по id: префетч из main.tsx и selectEvent
+   *  в Home ждут ОДИН сетевой запрос, а не два подряд. */
+  private eventPromises = new Map<string, Promise<EventItem | null>>();
 
   constructor() {
     this.db = createClient(config.supabaseUrl, config.supabaseAnonKey);
@@ -411,10 +420,24 @@ class SupabaseApi implements DataApi {
    *  страницы прошедших событий: в listEvents (только active) их нет, и без
    *  этого вызова SPA показывала «событие не найдено» вместо карточки. */
   async getPublicEvent(id: string): Promise<EventItem | null> {
-    const { data, error } = await this.db.rpc('get_public_event', { p_id: id });
-    if (error) throw error;
-    const rows = (data ?? []) as EventItem[];
-    return rows.length > 0 ? rows[0] : null;
+    const pending = this.eventPromises.get(id);
+    if (pending) return pending;
+    const promise = (async () => {
+      const { data, error } = await this.db.rpc('get_public_event', { p_id: id });
+      if (error) throw error;
+      const rows = (data ?? []) as EventItem[];
+      return rows.length > 0 ? rows[0] : null;
+    })();
+    this.eventPromises.set(id, promise);
+    // Держим результат минуту: префетч из main.tsx и selectEvent в Home могут
+    // разойтись во времени — второй вызов должен взять тот же ответ, а не
+    // сходить в базу ещё раз.
+    promise
+      .then(() => {
+        window.setTimeout(() => this.eventPromises.delete(id), 60_000);
+      })
+      .catch(() => this.eventPromises.delete(id));
+    return promise;
   }
 
   /** Прошедшие события ячейки «город × категория» (RPC list_past_cell_events,
@@ -467,9 +490,24 @@ class SupabaseApi implements DataApi {
   }
 
   async getCategories(): Promise<Category[]> {
-    const { data, error } = await this.db.from('categories').select('*').order('id');
-    if (error) throw error;
-    return (data ?? []) as Category[];
+    const now = Date.now();
+    if (this.categoriesCache && now - this.categoriesCache.at < SupabaseApi.EVENTS_TTL_MS) {
+      return this.categoriesCache.data;
+    }
+    if (this.categoriesPromise) return this.categoriesPromise;
+    const promise = (async () => {
+      const { data, error } = await this.db.from('categories').select('*').order('id');
+      if (error) throw error;
+      const cats = (data ?? []) as Category[];
+      this.categoriesCache = { at: Date.now(), data: cats };
+      return cats;
+    })();
+    this.categoriesPromise = promise;
+    try {
+      return await promise;
+    } finally {
+      this.categoriesPromise = null;
+    }
   }
 
   async submitApplication(draft: ApplicationDraft): Promise<void> {
