@@ -824,6 +824,13 @@ export default function EventCard({
               key={i}
               src={fullUrl(src)}
               alt=""
+              // Превью события с внешних хостов (cyprus.bz и подобные) бывают
+              // ватными и тянутся десятками секунд: грузим их ПОСЛЕ первого
+              // экрана (lazy + low), иначе они держат сеть и портят Speed Index
+              // страницы события (замер: запрос висел 40 с).
+              loading="lazy"
+              decoding="async"
+              fetchPriority="low"
               className="h-20 w-28 shrink-0 cursor-pointer rounded-md object-cover hover:opacity-90"
               onClick={() => setLightbox(i)}
               onError={() =>
