@@ -24,6 +24,7 @@ import type {
   GalleryPhoto,
 } from './types';
 import { config } from '../config';
+import type { CityPath } from './address';
 import { DemoApi } from './demo';
 import { RESTORED_ARCHIVE_LIMIT } from './categoryPages';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
@@ -76,7 +77,7 @@ function isMissingFunction(err: unknown): boolean {
 /** Единый интерфейс доступа к данным */
 export interface DataApi {
   // --- Публичная часть ---
-  listEvents(): Promise<EventItem[]>;
+  listEvents(city?: CityPath | null): Promise<EventItem[]>;
   /** Полный список (включая прошедшие/скрытые) — только для админки */
   listAllEvents(): Promise<EventItem[]>;
   /** Публичное событие по id (активное ИЛИ прошедшее) — для прямых ссылок на
@@ -299,7 +300,9 @@ class SupabaseApi implements DataApi {
    *  CI пересобирает data/events.json дважды в сутки, запас в 36 часов
    *  перекрывает ночной прогон и даёт страховку от сбоя пайплайна. */
   private static SNAPSHOT_MAX_AGE_MS = 36 * 60 * 60 * 1000;
-  private eventsCache: { at: number; data: EventItem[] } | null = null;
+  /** Кэш наборов событий по городу ('' — общий список). Страница события
+   *  берёт снимок своего города (~50 КБ gzip вместо 187 КБ общего). */
+  private eventsCache = new Map<string, { at: number; data: EventItem[] }>();
   /** Кэш категорий (страница события/хабы): 30 с свежести + дедупликация
    *  одновременных запросов. Категории нужны карточке события в ПЕРВОМ рендере,
    *  а сам запрос стартует из main.tsx (см. warmEventPageData) — иначе он
@@ -310,8 +313,9 @@ class SupabaseApi implements DataApi {
    *  файл, что и карточки: отдельный запрос к Supabase не нужен. */
   private categoriesFromSnapshot: Category[] | null = null;
   /** Текущая загрузка снимка: getCategories ждёт её, чтобы не уходить в
-   *  живой REST, если снимок уже в пути (страница события грузит его сразу). */
-  private snapshotPromise: Promise<EventItem[] | null> | null = null;
+   *  живой REST, если снимок уже в пути (страница события грузит его сразу).
+   *  Ключ — путь города ('' — общий снимок). */
+  private snapshotPromises = new Map<string, Promise<EventItem[] | null>>();
   /** Незавершённые запросы события по id: префетч из main.tsx и selectEvent
    *  в Home ждут ОДИН сетевой запрос, а не два подряд. */
   private eventPromises = new Map<string, Promise<EventItem | null>>();
@@ -322,17 +326,20 @@ class SupabaseApi implements DataApi {
 
   // --- Публичная часть ---
 
-  async listEvents(): Promise<EventItem[]> {
+  async listEvents(city?: CityPath | null): Promise<EventItem[]> {
+    const cacheKey = city ?? '';
     const now = Date.now();
-    if (this.eventsCache && now - this.eventsCache.at < SupabaseApi.EVENTS_TTL_MS) {
-      return this.eventsCache.data;
+    const hit = this.eventsCache.get(cacheKey);
+    if (hit && now - hit.at < SupabaseApi.EVENTS_TTL_MS) {
+      return hit.data;
     }
-    // Основной путь — статический снапшот рядом с сайтом (data/events.json):
-    // его собирает CI перед сборкой статики, отдаёт GitHub Pages, и он не
-    // тратит egress Supabase (краулерский трафик съедал бесплатные 5 ГБ).
-    const snapshot = await this.loadSnapshot();
+    // Основной путь — статический снапшот рядом с сайтом (data/events.json или
+    // data/events-<город>.json): его собирает CI перед сборкой статики, отдаёт
+    // GitHub Pages, и он не тратит egress Supabase (краулерский трафик съедал
+    // бесплатные 5 ГБ). Странице события хватает своего города.
+    const snapshot = await this.loadSnapshot(city);
     if (snapshot) {
-      this.eventsCache = { at: Date.now(), data: snapshot };
+      this.eventsCache.set(cacheKey, { at: Date.now(), data: snapshot });
       return snapshot;
     }
     // Публичный список — через security definer RPC: события заблокированных
@@ -350,18 +357,20 @@ class SupabaseApi implements DataApi {
       if (!isMissingFunction(err)) throw err;
       events = await this.fetchActiveEvents('list_active_events');
     }
-    this.eventsCache = { at: Date.now(), data: events };
+    this.eventsCache.set(cacheKey, { at: Date.now(), data: events });
     return events;
   }
 
   /** Обёртка над fetchSnapshot: одна загрузка на всех, кто её ждёт
    *  (listEvents и getCategories на странице события стартуют одновременно). */
-  private loadSnapshot(): Promise<EventItem[] | null> {
-    if (this.snapshotPromise) return this.snapshotPromise;
-    const pending = this.fetchSnapshot();
-    this.snapshotPromise = pending;
+  private loadSnapshot(city?: CityPath | null): Promise<EventItem[] | null> {
+    const key = city ?? '';
+    const pendingNow = this.snapshotPromises.get(key);
+    if (pendingNow) return pendingNow;
+    const pending = this.fetchSnapshot(city);
+    this.snapshotPromises.set(key, pending);
     const clear = () => {
-      if (this.snapshotPromise === pending) this.snapshotPromise = null;
+      if (this.snapshotPromises.get(key) === pending) this.snapshotPromises.delete(key);
     };
     pending.then(clear, clear);
     return pending;
@@ -371,10 +380,21 @@ class SupabaseApi implements DataApi {
    *  Путь относительный (BASE_URL) — работает и на mypins.site, и в preview.
    *  cache: 'no-cache' — ревалидация по ETag: неизменённый файл даёт 304 без
    *  повторной загрузки тела. Любая проблема (нет файла, битый JSON, старше
-   *  36 часов) — null, и вызывающий идёт в живой RPC, как раньше. */
-  private async fetchSnapshot(): Promise<EventItem[] | null> {
+   *  36 часов) — null, и вызывающий идёт в живой RPC, как раньше.
+   *  Для города сначала пробуем data/events-<city>.json (~50 КБ gzip), при
+   *  любой проблеме — общий data/events.json (поведение как до beta 1.19). */
+  private async fetchSnapshot(city?: CityPath | null): Promise<EventItem[] | null> {
+    if (city) {
+      const cityEvents = await this.fetchSnapshotFile(`data/events-${city}.json`);
+      if (cityEvents) return cityEvents;
+    }
+    return this.fetchSnapshotFile('data/events.json');
+  }
+
+  /** Чтение и разбор одного файла снимка (общий или городской) */
+  private async fetchSnapshotFile(relative: string): Promise<EventItem[] | null> {
     try {
-      const res = await fetch(`${import.meta.env.BASE_URL}data/events.json`, { cache: 'no-cache' });
+      const res = await fetch(`${import.meta.env.BASE_URL}${relative}`, { cache: 'no-cache' });
       if (!res.ok) return null;
       const body = (await res.json()) as {
         generated_at?: string;
@@ -528,8 +548,8 @@ class SupabaseApi implements DataApi {
       // Снимок уже в пути (страница события грузит его первым делом) — ждём
       // его: категории лежат в том же файле и не стоят отдельного запроса к
       // Supabase (~0,9 с на мобильной сети, из-за него уезжал LCP).
-      if (!this.categoriesFromSnapshot && this.snapshotPromise) {
-        await this.snapshotPromise.catch(() => null);
+      if (!this.categoriesFromSnapshot && this.snapshotPromises.size > 0) {
+        await Promise.all([...this.snapshotPromises.values()]).catch(() => null);
       }
       if (this.categoriesFromSnapshot) {
         this.categoriesCache = { at: Date.now(), data: this.categoriesFromSnapshot };

@@ -389,6 +389,108 @@ body {
   }
 }
 
+/* ============ Первый экран страницы события (beta 1.19) ============
+   Статический #seo-event-block (h1 + дата + адрес + описание + крошки +
+   «Похожие события») показывается ПЕРВЫМ кадром — до React и до ответа базы.
+   Отсюда LCP и Speed Index: LCP-элемент — статический заголовок, а не текст
+   карточки, который появлялся через 1,5-4 с. Геометрия контейнера повторяет
+   карточку EventCard (мобильный лист снизу от 45 % экрана, панель 380 px
+   справа на десктопе), поэтому снятие слоя (lib/mobileIntro.removeEventFirstScreen)
+   не двигает вёрстку: слой position:fixed и ничего не толкает.
+   Разметка внутри — сырая статика пре-рендера (без классов), оформление
+   только здесь. */
+.seo-event-first {
+  position: fixed;
+  z-index: 1170;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  color: #111827;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.88));
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 -6px 16px rgba(0, 0, 0, 0.12);
+}
+/* Мобильный лист: та же полоса, что у карточки (top: 45% ставит Home в
+   selectEvent на ширине < 1024), плюс отступ под safe-area. */
+@media (max-width: 1023px) {
+  .seo-event-first {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 45%;
+    padding: 1rem 1rem calc(1.75rem + env(safe-area-inset-bottom, 0px));
+    border-radius: 1rem 1rem 0 0;
+  }
+}
+/* Десктоп: та же панель, что lg-классы карточки (380 px справа под шапкой) */
+@media (min-width: 1024px) {
+  .seo-event-first {
+    top: var(--header-bottom, 82px);
+    right: 0.75rem;
+    bottom: 0.75rem;
+    width: 380px;
+    max-width: calc(100vw - 1.5rem);
+    padding: 1.5rem 1rem 1rem;
+    border-radius: 1rem;
+  }
+}
+.seo-event-first h1 {
+  font-size: 1rem;
+  line-height: 1.4;
+  font-weight: 600;
+  color: #111827;
+}
+.seo-event-first h2 {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  font-weight: 600;
+  color: #111827;
+}
+.seo-event-first p {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #4b5563;
+}
+.seo-event-first address {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  font-style: normal;
+  color: #4b5563;
+}
+.seo-event-first nav p {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: #6b7280;
+}
+.seo-event-first ul {
+  margin-top: 0.25rem;
+  padding-left: 0;
+  list-style: none;
+}
+.seo-event-first li {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #374151;
+}
+.seo-event-first li time {
+  color: #6b7280;
+  white-space: nowrap;
+}
+.seo-event-first a {
+  color: #0f766e;
+}
+.seo-event-first a:hover {
+  text-decoration: underline;
+}
+
 /* Высота экрана для страниц с картой и приветственного экрана.
    В мобильных браузерах 100vh включает область ПОД адресной строкой, из-за чего
    нижняя часть (кнопка «Открыть карту») уезжала за край и требовала прокрутки.

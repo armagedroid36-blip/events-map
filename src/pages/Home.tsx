@@ -27,7 +27,7 @@ import { addDaysIso, nextOccurrenceDate } from '../lib/recurrence';
 import { formatDate, todayIso } from '../lib/dates';
 import { cityCrumbLabel, cityCrumbLabelLocative, cityPageHref, cityPath } from '../lib/address';
 import type { CityPath } from '../lib/address';
-import { MAP_INTRO_KEY, MOBILE_INTRO_QUERY, HOME_PANEL_QUERY, dropIntroSeoBlocks, isMobileIntroActive, setHomePanelHidden, wasCategoryPublished } from '../lib/mobileIntro';
+import { MAP_INTRO_KEY, MOBILE_INTRO_QUERY, HOME_PANEL_QUERY, dropIntroSeoBlocks, hasEventFirstScreen, isMobileIntroActive, removeEventFirstScreen, setHomePanelHidden, wasCategoryPublished } from '../lib/mobileIntro';
 import {
   MIN_CATEGORY_EVENTS,
   categoriesBlockTitle,
@@ -699,9 +699,13 @@ export default function Home({
       // не запрашивается. Стартует параллельно основному набору — первый
       // рендер его не ждёт (см. lib/legacyEvents.ts).
       const legacyPromise = eventId ? loadLegacyEvents() : null;
-      // Категории стартуют из main.tsx (вместе с полным объектом события) и
-      // здесь только дожидаются — к этому моменту запрос уже в пути.
-      const [evs, cats] = await Promise.all([api.listEvents(), api.getCategories()]);
+      // Страница события: сначала полный объект (его уже запросил main.tsx) —
+      // из него узнаём город и качаем компактный снимок СВОЕГО города
+      // (~50 КБ gzip вместо 187 КБ общего). Не удалось — общий файл, как раньше.
+      const prefetched = eventId ? await api.getPublicEvent(eventId).catch(() => null) : null;
+      if (!alive) return;
+      const citySnap = eventId ? cityPath(prefetched?.city) : null;
+      const [evs, cats] = await Promise.all([api.listEvents(citySnap), api.getCategories()]);
       if (!alive) return;
       setEvents(evs);
       categoriesRef.current = cats;
@@ -714,9 +718,15 @@ export default function Home({
       // события есть перевод; событие без EN-перевода по /en/event/... —
       // показываем как есть, canonical на RU URL ставит applyEventMeta)
       if (eventId) {
-        const ev = evs.find((x) => x.id === eventId);
+        // Событие ищем в снимке города; городской файл ограничен 300 карточками,
+        // поэтому событие вне лимита берём из уже загруженного полного объекта.
+        // Полный объект (префетч get_public_event) отдаём в карточку СРАЗУ:
+        // иначе она рисуется по облегчённому снимку, а после догрузки меняется
+        // состав «Других дат серии»/фото и содержимое прыгает (CLS 0,10).
+        const fullEv = prefetched && prefetched.status !== 'archived' ? prefetched : null;
+        let ev: EventItem | undefined = evs.find((x) => x.id === eventId) ?? fullEv ?? undefined;
         if (ev) {
-          selectEvent(ev);
+          selectEvent(fullEv ?? ev);
           // Deep link: летим к координатам события, чтобы маркер был виден
           // рядом с карточкой (событие может быть в другом городе/стране).
           // Без координат — карточка открывается как раньше, карту не двигаем.
@@ -917,6 +927,26 @@ export default function Home({
   // Десктоп (>=768px) грузит карту как раньше.
   const isEventPage = /^\/(?:en\/)?event\//.test(introRawPath);
   const [eventMapOpen, setEventMapOpen] = useState(false);
+  // ПЕРВЫЙ ЭКРАН СТРАНИЦЫ СОБЫТИЯ — СТАТИЧЕСКИЙ (beta 1.19). Пока React-карточка
+  // не отрисована, виден слой #seo-event-first с #seo-event-block из пре-рендера
+  // (h1, дата, адрес, описание, крошки, «Похожие события»). Так первый кадр не
+  // ждёт ни React, ни RPC: LCP-элемент — статический заголовок. Как только
+  // карточка готова, слой убирается одним удалением (без сдвига вёрстки), а
+  // карточка печатает свой h1 — на странице всегда ровно один h1.
+  const [staticFirstScreen, setStaticFirstScreen] = useState<boolean>(() =>
+    isEventPage && hasEventFirstScreen(),
+  );
+  // Карточка события отрисована (или события нет) — статический первый экран
+  // больше не нужен.
+  useEffect(() => {
+    if (!staticFirstScreen) return;
+    if (selected || pastEvent || eventNotFound) setStaticFirstScreen(false);
+  }, [staticFirstScreen, selected, pastEvent, eventNotFound]);
+  // Снятие слоя — в том же коммите, что переключает заголовок карточки на h1
+  // (layout-эффект идёт до отрисовки кадра): двух h1 на странице не бывает.
+  useLayoutEffect(() => {
+    if (!staticFirstScreen) removeEventFirstScreen();
+  }, [staticFirstScreen]);
   // Переход SPA-навигацией на другую страницу события — снова первый экран без
   // карты (решение «открыть карту» относится к текущей странице, не к сессии).
   useEffect(() => {
@@ -1047,8 +1077,9 @@ export default function Home({
   // и long tasks. Теперь: само событие + события того же города (cityPath из
   // lib/address.ts, как у городских страниц), не больше 300 штук.
   // Порядок важен: событие страницы — первым, чтобы оно попало в лимит и было
-  // заметно на карте при открытии.
-  const MAP_MARKER_LIMIT = 300;
+  // заметно на карте при открытии. На мобильном потолок ниже (200): меньше
+  // DOM-узлов — быстрее первый маркер после тапа.
+  const MAP_MARKER_LIMIT = isMobile ? 200 : 300;
   const mapEvents = useMemo(() => {
     if (!isEventPage) return visible;
     const focus = selected ?? pastEvent;
@@ -1060,7 +1091,7 @@ export default function Home({
         (city ? cityPath(ev.city) === city : !!focus.city && ev.city === focus.city),
     );
     return [focus, ...sameCity].slice(0, MAP_MARKER_LIMIT);
-  }, [isEventPage, visible, selected, pastEvent]);
+  }, [isEventPage, visible, selected, pastEvent, isMobile]);
 
   // Другие даты серии для открытой карточки (то же название + то же место,
   // другая дата): считаем по уже загруженному списку, без запросов —
@@ -1717,6 +1748,14 @@ export default function Home({
               // городской SEO-блок на этом маршруте не выводятся,
               // см. Header.isBrandH1)
               titleAsH1={
+                !staticFirstScreen &&
+                (window.location.pathname.startsWith('/event/') ||
+                  window.location.pathname.startsWith('/en/event/'))
+              }
+              // Состав карточки (крошки, «Ещё события …», «Похожие события»)
+              // полный с первого рендера — меняется только тег заголовка,
+              // когда снимается статический первый экран (без сдвига вёрстки).
+              detailMode={
                 window.location.pathname.startsWith('/event/') ||
                 window.location.pathname.startsWith('/en/event/')
               }

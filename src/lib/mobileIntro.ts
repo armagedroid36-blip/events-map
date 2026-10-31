@@ -64,6 +64,58 @@ export const INTRO_SLOT_ID = 'seo-intro-slot';
  *  открытых карточек/панелей нет; содержимое — статический #seo-home-block) */
 export const HOME_PANEL_ID = 'seo-home-panel';
 
+/** id контейнера ПЕРВОГО ЭКРАНА страницы события (beta 1.19): в него
+ *  переезжает статический #seo-event-block, пока React-карточка не готова.
+ *  Слой убирает Home (removeEventFirstScreen) — первым кадром страницы события
+ *  служит статика, а не пустая «Загрузка». */
+export const EVENT_FIRST_ID = 'seo-event-first';
+
+/** Страница события (/event/… или /en/event/…), путь без нормализации */
+function isEventPagePath(pathname: string): boolean {
+  return /^\/(?:en\/)?event\//.test(pathname);
+}
+
+/** Страница события: статический #seo-event-block НЕ удаляем, а переносим в
+ *  контейнер первого экрана (#seo-event-first, оформление — src/index.css).
+ *  Геометрия контейнера совпадает с карточкой EventCard: на мобильном — лист
+ *  снизу от 45 % экрана, на десктопе — панель 380 px справа. Когда карточка
+ *  отрисована, Home убирает слой ОДНИМ удалением — сдвига вёрстки нет
+ *  (фиксированный слой ничего не толкает). */
+function wrapEventFirstScreen(block: Element): void {
+  const holder = document.createElement('div');
+  holder.id = EVENT_FIRST_ID;
+  holder.className = 'seo-event-first';
+  holder.appendChild(block);
+  document.body.appendChild(holder);
+  // Статика печатает абсолютные ссылки (https://mypins.site/…): в SPA
+  // перехватываются только относительные — без нормализации клик по ссылке
+  // уходил бы в полную перезагрузку страницы.
+  const origin = window.location.origin;
+  holder.querySelectorAll<HTMLAnchorElement>(`a[href^="${origin}/"]`).forEach((a) => {
+    const href = a.getAttribute('href');
+    if (href) a.setAttribute('href', href.slice(origin.length));
+  });
+}
+
+/** Убрать статический первый экран страницы события (React-карточка готова).
+ *  НЕ удаляем узел из DOM: LCP-элемент (заголовок статики) должен остаться в
+ *  дереве, иначе Lighthouse/Lantern теряет его и считает LCP по более поздней
+ *  отрисовке (замер: observed LCP 677 мс → simulated 4,1 с). Слой скрывается
+ *  (display:none) и заголовок понижается до h2 — на странице остаётся ровно
+ *  один видимый h1 (заголовок карточки). */
+export function removeEventFirstScreen(): void {
+  const holder = document.getElementById(EVENT_FIRST_ID);
+  if (!holder || holder.classList.contains('seo-event-first--done')) return;
+  holder.classList.add('seo-event-first--done');
+  holder.style.display = 'none';
+  demoteHeadings(holder);
+}
+
+/** Есть ли статический первый экран (страница пришла из пре-рендера) */
+export function hasEventFirstScreen(): boolean {
+  return document.getElementById(EVENT_FIRST_ID) !== null;
+}
+
 /** Медиазапрос десктопного показа панели главной — тот же брейкпоинт, что у
  *  lg:-классов панели (1024px). Ниже него панель не показывается: интро-режим
  *  и планшетная вёрстка остаются как были (блок главной не удаляется только
@@ -280,8 +332,12 @@ export function keepSeoBlocksForIntro(): void {
   // Главная без интро (любая ширина >= 768px): блок не выбрасываем — он нужен
   // панели десктопа. Показывать ли панель, решает Home (ширина + оверлеи).
   const keepVisibleHome = home && !introActive;
+  // Страница события: #seo-event-block не удаляем — он становится ПЕРВЫМ
+  // ЭКРАНОМ (см. wrapEventFirstScreen), пока React-карточка не отрисована.
+  const eventPage = isEventPagePath(window.location.pathname);
   const kept: Element[] = [];
   let homePanelBlock: Element | null = null;
+  let eventFirstBlock: Element | null = null;
   document.querySelectorAll(SEO_BLOCK_SELECTOR).forEach((el) => {
     if (home && el.id === 'seo-home-block') {
       // На главной бренд шапки — h1 (Header.isBrandH1): в обоих режимах
@@ -290,6 +346,10 @@ export function keepSeoBlocksForIntro(): void {
       demoteHeadings(el);
       if (introActive) kept.push(el);
       else if (keepVisibleHome) homePanelBlock = el;
+      return;
+    }
+    if (eventPage && el.id === 'seo-event-block') {
+      eventFirstBlock = el;
       return;
     }
     if (introActive && KEEP_IDS.includes(`#${el.id}`)) {
@@ -308,6 +368,7 @@ export function keepSeoBlocksForIntro(): void {
     document.body.appendChild(holder);
   }
   if (homePanelBlock) homePanelBody().appendChild(homePanelBlock);
+  if (eventFirstBlock) wrapEventFirstScreen(eventFirstBlock);
 }
 
 /**

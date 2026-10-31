@@ -96,8 +96,10 @@ export default function MapView({
     mapRef.current = map;
     attachTilesFallback(map);
 
-    // Источник событий + слои кластеров создаются при загрузке стиля
-    map.on('load', () => {
+    // Источник событий + слои кластеров создаются, как только разобран стиль
+    // (style.load), а НЕ после первой отрисовки (load): load ждёт тайлы, из-за
+    // этого первый маркер появлялся через 1,5-2 с после нажатия «Показать карту».
+    map.on('style.load', () => {
       if (map.getSource('events')) return;
       map.addSource('events', {
         type: 'geojson',
@@ -412,8 +414,18 @@ export default function MapView({
       updateVisibility();
     };
 
-    if (map.isStyleLoaded() && map.getSource('events')) apply();
-    else map.once('load', apply);
+    // Маркеры рисуем, как только есть источник (style.load), не дожидаясь
+    // первой отрисовки с тайлами: на мобильном первый маркер должен появиться
+    // не позже 1,5 с после нажатия «Показать карту».
+    const applyWhenReady = () => {
+      if (map.getSource('events')) apply();
+    };
+    if (map.getSource('events')) apply();
+    else {
+      map.once('style.load', applyWhenReady);
+      // Страховка: источники могли появиться и позже (повторная установка стиля)
+      map.once('load', applyWhenReady);
+    }
 
     // Обновление spiderfy-позиций на новый зум БЕЗ пересоздания DOM
     // (пересоздание на каждом zoomend вызывало вспышку: свежие маркеры

@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();

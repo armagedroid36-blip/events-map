@@ -54,11 +54,9 @@ if (eventWarmMatch) {
   void import('./lib/api')
     .then(({ getApi }) => {
       const api = getApi();
-      // Порядок важен: listEvents() стартует снимок (/data/events.json), в
-      // котором теперь лежат и категории, — getCategories() ждёт именно его,
-      // а не отдельного запроса к Supabase.
-      void api.listEvents().catch(() => {});
-      void api.getCategories().catch(() => {});
+      // Полный объект события нужен первым: из него Home узнаёт город и качает
+      // компактный снимок СВОЕГО города (data/events-<city>.json, ~50 КБ gzip)
+      // вместо общего файла на 187 КБ. Категории приезжают тем же снимком.
       void api.getPublicEvent(eventId).catch(() => {});
     })
     .catch(() => {});

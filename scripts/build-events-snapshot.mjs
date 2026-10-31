@@ -96,6 +96,74 @@ async function fetchCategories() {
     }));
 }
 
+/** Зеркало cityPath() из src/lib/address.ts — менять синхронно. По этому пути
+ *  страница события выбирает компактный снимок своего города (~50 КБ вместо
+ *  187 КБ общего). */
+function cityPathOf(rawCity) {
+  const city = String(rawCity ?? '').toLowerCase();
+  if (!city) return null;
+  if (city.includes('нячанг') || city.includes('nha trang')) return 'nha-trang';
+  if (city.includes('дананг') || city.includes('da nang') || city.includes('danang')) {
+    return 'da-nang';
+  }
+  const baliKeys = [
+    'бали', 'bali', 'ubud', 'убуд', 'canggu', 'чангу',
+    'seminyak', 'семиньяк', 'kuta', 'кута', 'denpasar', 'gianyar',
+  ];
+  if (baliKeys.some((k) => city.includes(k))) return 'bali';
+  const cyprusKeys = [
+    'кипр', 'cyprus',
+    'лимасол', 'limassol', 'lemesos', 'lemessos',
+    'никосия', 'nicosia', 'lefkosia', 'lefkosa', 'strovolos', 'latsia',
+    'ларнака', 'larnaca', 'larnaka',
+    'пафос', 'paphos', 'pafos', 'peyia', 'pegeia', 'kouklia',
+    'фамагуста', 'famagusta', 'ammochostos',
+    'ая-напа', 'ая напа', 'ayia napa', 'agia napa', 'ayanapa',
+    'паралимни', 'paralimni', 'протарас', 'protaras', 'дериния', 'deryneia',
+    'полис', 'polis', 'latchi', 'sotira', 'geroskipou',
+  ];
+  if (cyprusKeys.some((k) => city.includes(k))) return 'cyprus';
+  return null;
+}
+
+/** Потолок событий в городском снимке = потолок маркеров карты события */
+const CITY_SNAPSHOT_LIMIT = 300;
+
+/** Снимки по городам: /data/events-<cityPath>.json. Нужны странице события —
+ *  ей хватает своего города (маркеры, «Похожие события», даты серии), а общий
+ *  файл в 187 КБ на мобильной сети грузился 0,6-1,5 с и держал карточку. */
+function writeCitySnapshots(cards, categories, generatedAt) {
+  const groups = new Map();
+  for (const card of cards) {
+    const key = cityPathOf(card.city);
+    if (!key) continue;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(card);
+  }
+  for (const [city, list] of groups) {
+    const ordered = list
+      .slice()
+      .sort(
+        (a, b) =>
+          String(a.start_date ?? '').localeCompare(String(b.start_date ?? '')) ||
+          String(a.id).localeCompare(String(b.id)),
+      )
+      .slice(0, CITY_SNAPSHOT_LIMIT);
+    const payload = {
+      generated_at: generatedAt,
+      source: 'list_active_event_cards',
+      city,
+      count: ordered.length,
+      categories,
+      cards: ordered,
+    };
+    const file = path.join(OUT_DIR, `events-${city}.json`);
+    fs.writeFileSync(file, JSON.stringify(payload));
+    const kb = (fs.statSync(file).size / 1024).toFixed(0);
+    console.log(`[snapshot] ${city}: ${ordered.length} карточек, ${kb} КБ → ${path.relative(process.cwd(), file)}`);
+  }
+}
+
 async function main() {
   // Категории тянем параллельно с карточками: ошибка по ним снапшот не валит.
   const catsPromise = fetchCategories().catch((err) => {
@@ -137,6 +205,8 @@ async function main() {
   console.log(
     `[snapshot] ${cards.length} карточек, ${categories.length} категорий, ${(bytes / 1024).toFixed(0)} КБ → ${path.relative(process.cwd(), OUT_FILE)}`,
   );
+  // Компактные снимки по городам для страниц событий (см. writeCitySnapshots).
+  writeCitySnapshots(cards, categories, payload.generated_at);
 }
 
 main().catch((err) => {

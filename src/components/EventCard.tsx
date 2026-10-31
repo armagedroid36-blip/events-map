@@ -154,6 +154,12 @@ interface Props {
   /** Заголовок как h1 вместо h3 — на странице события /event/<id>/<slug>,
    *  где это единственный h1 (бренд и городской SEO-блок там скрыты). */
   titleAsH1?: boolean;
+  /** Детальный вид страницы события (крошки, «Ещё события <город>», фактовое
+   *  описание, «Похожие события»). Отделён от titleAsH1 (beta 1.19): пока
+   *  виден статический первый экран пре-рендера, карточка печатает заголовок
+   *  как h3 (иначе на странице два h1), но весь остальной состав уже полный —
+   *  при снятии слоя меняется только тег заголовка, контент не прыгает (CLS). */
+  detailMode?: boolean;
   /** Другие даты той же серии (то же название + то же место, другая дата) —
    *  список уже отсортирован по дате (lib/series.seriesSiblings). Не передан
    *  или пуст — блока «Другие даты серии» нет. */
@@ -575,6 +581,7 @@ export default function EventCard({
   favoriteIds = null,
   onToggleFavorite,
   titleAsH1,
+  detailMode = titleAsH1,
   seriesEvents,
   categoryLink,
   similarEvents,
@@ -672,7 +679,7 @@ export default function EventCard({
   // показываем ровно тот же абзац, что в meta description (applyEventMeta) и в
   // статическом блоке страницы (scripts/seo-prerender.mjs, p.event-facts).
   // Только на странице события: в списках и админке абзац не нужен.
-  const factsText = titleAsH1
+  const factsText = detailMode
     ? eventFactsFallback(event, lang, (lang === 'en' ? cat?.name_en : cat?.name_ru) ?? '')
     : '';
 
@@ -724,7 +731,7 @@ export default function EventCard({
           {/* Хлебная крошка страницы события (только на /event/ и /en/event/):
               Главная › Город › Название. Иерархия и город те же, что в JSON-LD
               BreadcrumbList; ссылка ведёт на афишу города своего языка */}
-          {titleAsH1 && cityHref && (
+          {detailMode && cityHref && (
             <nav
               aria-label={t('card.breadcrumbs')}
               className="mb-1 flex flex-wrap items-center gap-1 text-xs text-gray-500"
@@ -867,7 +874,7 @@ export default function EventCard({
           афиша» — как в статике (eventBreadcrumbHtml). Рядом — ссылка на
           посадочную категории ЭТОГО события (Фаза 4): приходит только при
           существующей странице пары (город, категория) — битых ссылок нет. */}
-      {titleAsH1 && cityHref && (
+      {detailMode && cityHref && (
         <p className="mb-2 text-xs text-gray-500">
           {t('card.moreInCity', { city: lang === 'ru' ? cityCrumbRu : cityCrumb })}{' '}
           <a href={cityHref} className="text-[#0F766E] hover:underline">
@@ -906,7 +913,7 @@ export default function EventCard({
           Home — lib/similar, запросов нет). Только на странице события
           (titleAsH1) — как в статике (scripts/seo-prerender.mjs,
           similarEventsHtml): h2 + список со ссылкой и <time datetime>. */}
-      {titleAsH1 && similarEvents?.length ? (
+      {detailMode && similarEvents?.length ? (
         <div className="mb-2">
           <h2 className="text-sm font-medium text-gray-600">{t('card.similarEvents')}</h2>
           <ul className="mt-1 space-y-0.5">
