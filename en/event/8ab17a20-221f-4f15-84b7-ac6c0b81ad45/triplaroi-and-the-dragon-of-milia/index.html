@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
+      function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
+      if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
+      setTimeout(go,12000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Triplaroi and the Dragon of Milia — November 1, 2026 · Nicosia</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DdEdokAF.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
+      <meta name="description" content="Nicosia, Cyprus, November 1, 2026. Triplaroi and the Dragon of Milia - a children&#39;s theatre performance in Nicosia, Cyprus, presented by Theatre Antilogos…" />
+    <link rel="canonical" href="https://mypins.site/en/event/8ab17a20-221f-4f15-84b7-ac6c0b81ad45/triplaroi-and-the-dragon-of-milia/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Triplaroi and the Dragon of Milia — November 1, 2026 · Nicosia" />
+    <meta property="og:description" content="Nicosia, Cyprus, November 1, 2026. Triplaroi and the Dragon of Milia - a children&#39;s theatre performance in Nicosia, Cyprus, presented by Theatre Antilogos…" />
+    <meta property="og:url" content="https://mypins.site/en/event/8ab17a20-221f-4f15-84b7-ac6c0b81ad45/triplaroi-and-the-dragon-of-milia/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/a9523fac-ad93-48e0-b7fe-d6de3ced4075/1793423237556.jpg?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/8ab17a20-221f-4f15-84b7-ac6c0b81ad45/triplaroi-and-the-dragon-of-milia/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/8ab17a20-221f-4f15-84b7-ac6c0b81ad45/triplaroi-i-drakon-milii/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Triplaroi and the Dragon of Milia","url":"https://mypins.site/en/event/8ab17a20-221f-4f15-84b7-ac6c0b81ad45/triplaroi-and-the-dragon-of-milia/","startDate":"2026-11-01T11:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Nicosia","address":{"@type":"PostalAddress","addressLocality":"Nicosia","streetAddress":"Nicosia","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1749253,"longitude":33.3711334}},"description":"Triplaroi and the Dragon of Milia - a children's theatre performance in Nicosia, Cyprus, presented by Theatre Antilogos every Sunday at 11:00 at Theatre Ena throughout November 2026. Based on a centuries-old Cypriot folk tale, the performance celebrates the 10th anniversary of the theatre company and...","endDate":"2026-11-22","image":"https://cyprus.bz/img/images/events/a9523fac-ad93-48e0-b7fe-d6de3ced4075/1793423237556.jpg?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/3a57/the-triplaroi-and-the-dragon-of-milia-2026"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Triplaroi and the Dragon of Milia","item":"https://mypins.site/en/event/8ab17a20-221f-4f15-84b7-ac6c0b81ad45/triplaroi-and-the-dragon-of-milia/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Triplaroi and the Dragon of Milia</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-11-22">November 22, 2026</time></p>
+  <p><time datetime="2026-11-01T11:00:00">November 1, 2026, 11:00 AM</time></p>
+  <address>Nicosia, Cyprus</address>
+  <p>Triplaroi and the Dragon of Milia - a children&#39;s theatre performance in Nicosia, Cyprus, presented by Theatre Antilogos every Sunday at 11:00 at Theatre Ena throughout November 2026. Based on a centuries-old Cypriot folk tale, the performance celebrates the 10th anniversary of the theatre company and...</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Triplaroi and the Dragon of Milia</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/theatre/">🎭 Theatres &amp; Shows</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/197573f5-011f-4e7c-8491-8c8acfc65054/seven-little-goats-and-the-wolf-in-paphos/">Seven Little Goats and the Wolf in Paphos <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/1df23f19-0a54-411f-8dd0-c972a048c2bf/the-smurfs-the-green-mission/">The Smurfs - The Green Mission <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/2d90e89a-cd7c-4ed4-bb5d-4db45042fe5e/strymfiki-green-mission-in-nicosia/">Strymfiki - Green Mission in Nicosia <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/454e5616-76ce-428c-adab-877d85e8a435/the-snow-queen/">The Snow Queen <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/6d3adecb-5993-40be-82f8-99f8922a3b44/the-effect/">The Effect <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/94519780-d774-40f3-82d1-bcbbd60e8cd6/the-snail-and-the-whale/">The Snail and the Whale <time datetime="2026-11-01">November 1, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/84ed84e4-b5fd-4665-a762-e90d61d1d853/lakeside-market-2026-in-voroklini/">Lakeside Market 2026 in Voroklini</a> <time datetime="2026-11-22">November 22, 2026</time></li>
+    <li>Next: <a href="/en/event/8ad12875-cdf2-448b-9f39-0c70d3061ab3/no-returns-accepted-solo-show-in-larnaca/">No Returns Accepted: solo show in Larnaca</a> <time datetime="2026-11-22">November 22, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

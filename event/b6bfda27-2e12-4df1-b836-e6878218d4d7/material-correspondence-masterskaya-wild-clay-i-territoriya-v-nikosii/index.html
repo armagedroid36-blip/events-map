@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
+      function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
+      if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
+      setTimeout(go,12000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Material Correspondence… — 14 ноября 2026 · Никосия, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DdEdokAF.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
+      <meta name="description" content="Никосия, Кипр, 14 ноября 2026. Material Correspondence - это полевой мастер-класс по керамике в Капедесе, Кипр, который пройдет в течение двух выходных в…" />
+    <link rel="canonical" href="https://mypins.site/event/b6bfda27-2e12-4df1-b836-e6878218d4d7/material-correspondence-masterskaya-wild-clay-i-territoriya-v-nikosii/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Material Correspondence… — 14 ноября 2026 · Никосия, Кипр" />
+    <meta property="og:description" content="Никосия, Кипр, 14 ноября 2026. Material Correspondence - это полевой мастер-класс по керамике в Капедесе, Кипр, который пройдет в течение двух выходных в…" />
+    <meta property="og:url" content="https://mypins.site/event/b6bfda27-2e12-4df1-b836-e6878218d4d7/material-correspondence-masterskaya-wild-clay-i-territoriya-v-nikosii/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/e668d7be-1fe2-49d9-9386-567216c05024/1793345783780.jpg?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/b6bfda27-2e12-4df1-b836-e6878218d4d7/material-correspondence-masterskaya-wild-clay-i-territoriya-v-nikosii/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/b6bfda27-2e12-4df1-b836-e6878218d4d7/material-correspondence-wild-clay-workshop-and-a-venue-in-nicosia/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Material Correspondence: мастерская Wild Clay и территория в Никосии","url":"https://mypins.site/event/b6bfda27-2e12-4df1-b836-e6878218d4d7/material-correspondence-masterskaya-wild-clay-i-territoriya-v-nikosii/","startDate":"2026-11-14T10:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Outdoor Field Studio, Никосия","address":{"@type":"PostalAddress","addressLocality":"Никосия","streetAddress":"Outdoor Field Studio, Никосия","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1856,"longitude":33.3823}},"description":"Material Correspondence - это полевой мастер-класс по керамике в Капедесе, Кипр, который пройдет в течение двух выходных в ноябре 2026 года. Участники собирают дикую глину прямо в ландшафте и проходят путь от земли до огня простыми практическими методами. Предварительный опыт работы с керамикой...","endDate":"2026-11-22","image":"https://cyprus.bz/img/images/events/e668d7be-1fe2-49d9-9386-567216c05024/1793345783780.jpg?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/3a0d/material-correspondence-wild-clay-territory-workshop-in-2026"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Material Correspondence: мастерская Wild Clay и территория в Никосии","item":"https://mypins.site/event/b6bfda27-2e12-4df1-b836-e6878218d4d7/material-correspondence-masterskaya-wild-clay-i-territoriya-v-nikosii/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Material Correspondence: мастерская Wild Clay и территория в Никосии</h1>
+  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-11-22">22 ноября 2026</time></p>
+  <p><time datetime="2026-11-14T10:00:00">14 ноября 2026, 10:00</time></p>
+  <address>Outdoor Field Studio, Никосия, Никосия, Кипр</address>
+  <p>Material Correspondence - это полевой мастер-класс по керамике в Капедесе, Кипр, который пройдет в течение двух выходных в ноябре 2026 года. Участники собирают дикую глину прямо в ландшафте и проходят путь от земли до огня простыми практическими методами. Предварительный опыт работы с керамикой...</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Material Correspondence: мастерская Wild Clay и территория в Никосии</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/workshop/">🎨 Мастер-классы</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/06cc8bae-2ceb-4007-8da6-86b085051ab3/izgotovlenie-kiprskogo-avlosa/">Изготовление кипрского авлоса <time datetime="2026-11-14">14 ноября 2026</time></a></li>
+    <li><a href="/event/15cbd33e-3810-48b4-98d1-f1aaa94aa331/distillyatsiya-zivanii/">Дистилляция зивании <time datetime="2026-11-14">14 ноября 2026</time></a></li>
+    <li><a href="/event/721969ce-5720-4654-ac39-eeebf9113290/izgotovlenie-taburetov-iz-plavnika/">Изготовление табуретов из плавника <time datetime="2026-11-14">14 ноября 2026</time></a></li>
+    <li><a href="/event/87353d4c-496b-47d4-9b13-5015f84c37ba/materialnaya-perepiska-vorkshop-dikaya-glina-i-territoriya-v-nikosii/">Материальная переписка: воркшоп «Дикая глина и территория» в Никосии <time datetime="2026-11-14">14 ноября 2026</time></a></li>
+    <li><a href="/event/8a42856d-a99d-4670-852f-37b8de2ff51d/nabor-iz-2-kruzhek-ruchnaya-lepka-i-rospis-unikalnyy-opyt-noyabr/">Набор из 2 кружек: ручная лепка и роспись – уникальный опыт, ноябрь <time datetime="2026-11-14">14 ноября 2026</time></a></li>
+    <li><a href="/event/91f7e4e9-b40c-41b0-9ce3-a71613947c60/playmobil-ozhivaet-detskiy-master-klass-v-limassole/">Playmobil оживает: детский мастер-класс в Лимассоле <time datetime="2026-11-14">14 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/9fcfa914-4589-49e8-88ea-caae3801378e/tresh-metal-v-monte-kaputo/">Трэш-метал в Монте-Капуто</a> <time datetime="2026-11-22">22 ноября 2026</time></li>
+    <li>Следующее: <a href="/event/cdfbc52c-a77c-4808-a6e8-544c5c3b6893/kevin-de-vris-v-etko/">Кевин Де Врис в Etko</a> <time datetime="2026-11-22">22 ноября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>

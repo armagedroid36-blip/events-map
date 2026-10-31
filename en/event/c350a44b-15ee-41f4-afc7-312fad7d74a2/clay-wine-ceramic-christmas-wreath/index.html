@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
+      function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
+      if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
+      setTimeout(go,12000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clay &amp; Wine: ceramic Christmas… — November 6, 2026 · Limassol</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DdEdokAF.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
+      <meta name="description" content="Limassol, Cyprus, November 6, 2026. Clay &amp; Wine gets festive! Our &quot;Festive Fridays&quot; are almost here - a special Christmas edition of Clay &amp; Wine, where every…" />
+    <link rel="canonical" href="https://mypins.site/en/event/c350a44b-15ee-41f4-afc7-312fad7d74a2/clay-wine-ceramic-christmas-wreath/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Clay &amp; Wine: ceramic Christmas… — November 6, 2026 · Limassol" />
+    <meta property="og:description" content="Limassol, Cyprus, November 6, 2026. Clay &amp; Wine gets festive! Our &quot;Festive Fridays&quot; are almost here - a special Christmas edition of Clay &amp; Wine, where every…" />
+    <meta property="og:url" content="https://mypins.site/en/event/c350a44b-15ee-41f4-afc7-312fad7d74a2/clay-wine-ceramic-christmas-wreath/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/ebbccfd4-b4dd-431d-bea2-d35a4a0c0c5f/1793333098443.webp?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/c350a44b-15ee-41f4-afc7-312fad7d74a2/clay-wine-ceramic-christmas-wreath/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/c350a44b-15ee-41f4-afc7-312fad7d74a2/clay-wine-keramicheskiy-rozhdestvenskiy-venok/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Clay & Wine: ceramic Christmas wreath","url":"https://mypins.site/en/event/c350a44b-15ee-41f4-afc7-312fad7d74a2/clay-wine-ceramic-christmas-wreath/","startDate":"2026-11-06T18:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Limassol","address":{"@type":"PostalAddress","addressLocality":"Limassol","streetAddress":"Limassol","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.7071,"longitude":33.0226}},"description":"Clay & Wine gets festive! Our \"Festive Fridays\" are almost here - a special Christmas edition of Clay & Wine, where every Friday we'll be turning clay into something made for the holiday season (with a glass of wine in hand, of course). Think handmade things: festive...","endDate":"2026-11-06","image":"https://cyprus.bz/img/images/events/ebbccfd4-b4dd-431d-bea2-d35a4a0c0c5f/1793333098443.webp?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/39bb/clay-wine-ceramic-christmas-wreath-2026"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Clay & Wine: ceramic Christmas wreath","item":"https://mypins.site/en/event/c350a44b-15ee-41f4-afc7-312fad7d74a2/clay-wine-ceramic-christmas-wreath/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Clay &amp; Wine: ceramic Christmas wreath</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-11-06">November 6, 2026</time></p>
+  <p><time datetime="2026-11-06T18:00:00">November 6, 2026, 6:00 PM</time></p>
+  <address>Limassol, Cyprus</address>
+  <p>Clay &amp; Wine gets festive! Our &quot;Festive Fridays&quot; are almost here - a special Christmas edition of Clay &amp; Wine, where every Friday we&#39;ll be turning clay into something made for the holiday season (with a glass of wine in hand, of course). Think handmade things: festive...</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Clay &amp; Wine: ceramic Christmas wreath</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/workshop/">🎨 Workshops</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/61f93bbd-9b71-4be0-812d-c0316f3ea61e/memory-workshop-in-platanistasa/">Memory Workshop in Platanistasa <time datetime="2026-11-05">November 5, 2026</time></a></li>
+    <li><a href="/en/event/293aea60-5223-44bb-88ef-bf205347e78d/ceramic-christmas-wreath/">Ceramic Christmas Wreath <time datetime="2026-11-06">November 6, 2026</time></a></li>
+    <li><a href="/en/event/1f4da95f-c651-4d20-87fe-4bf001947266/pazaraki-in-spilia-in-lefkosia/">Pazaraki in Spilia in Lefkosia <time datetime="2026-11-07">November 7, 2026</time></a></li>
+    <li><a href="/en/event/3416541a-f8bf-437d-8927-28f0c33596ce/fruit-bowl-hand-building-and-paint-one-off-experience/">Fruit Bowl Hand-Building and Paint – One Off Experience <time datetime="2026-11-07">November 7, 2026</time></a></li>
+    <li><a href="/en/event/35fc81d0-cffe-4355-a162-af0e538a298e/crochet-crochet/">Crochet (crochet) <time datetime="2026-11-07">November 7, 2026</time></a></li>
+    <li><a href="/en/event/411d15a2-9079-4e46-96ad-693d1dcb5789/pottery-workshop-for-adults-mug/">Pottery workshop for adults - Mug <time datetime="2026-11-07">November 7, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/b02f57ef-9020-4622-8a61-2dea503dda2f/xouzouri-15th-birthday-party-in-limassol/">Xouzouri: 15th Birthday Party in Limassol</a> <time datetime="2026-11-06">November 6, 2026</time></li>
+    <li>Next: <a href="/en/event/da856108-5809-4302-b569-ca89597cf59d/madam-marianna-by-andreas-aristotelis/">Madam Marianna by Andreas Aristotelis</a> <time datetime="2026-11-06">November 6, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

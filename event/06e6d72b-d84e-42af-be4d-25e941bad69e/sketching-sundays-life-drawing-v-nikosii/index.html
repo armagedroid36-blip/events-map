@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
+      function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
+      if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
+      setTimeout(go,12000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sketching Sundays: Life… — 22 ноября 2026 · Никосия, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DdEdokAF.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
+      <meta name="description" content="Никосия, Кипр, 22 ноября 2026. Sketching Sundays — это сеанс рисования с живой натурой в Никосии, Кипр, организованный артUS Cyprus Artistic Community в…" />
+    <link rel="canonical" href="https://mypins.site/event/06e6d72b-d84e-42af-be4d-25e941bad69e/sketching-sundays-life-drawing-v-nikosii/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Sketching Sundays: Life… — 22 ноября 2026 · Никосия, Кипр" />
+    <meta property="og:description" content="Никосия, Кипр, 22 ноября 2026. Sketching Sundays — это сеанс рисования с живой натурой в Никосии, Кипр, организованный артUS Cyprus Artistic Community в…" />
+    <meta property="og:url" content="https://mypins.site/event/06e6d72b-d84e-42af-be4d-25e941bad69e/sketching-sundays-life-drawing-v-nikosii/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/b886d4b8-4b9d-477d-a105-4d92f2525161/1793423096341.jpg?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/06e6d72b-d84e-42af-be4d-25e941bad69e/sketching-sundays-life-drawing-v-nikosii/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/06e6d72b-d84e-42af-be4d-25e941bad69e/sketching-sundays-life-drawing-in-nicosia/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Sketching Sundays: Life Drawing в Никосии","url":"https://mypins.site/event/06e6d72b-d84e-42af-be4d-25e941bad69e/sketching-sundays-life-drawing-v-nikosii/","startDate":"2026-11-22T18:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Ктирион 53, Никосия","address":{"@type":"PostalAddress","addressLocality":"Никосия","streetAddress":"Ктирион 53, Никосия","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1856,"longitude":33.3823}},"description":"Sketching Sundays — это сеанс рисования с живой натурой в Никосии, Кипр, организованный артUS Cyprus Artistic Community в Ktirion 53 в воскресенье, 22 ноября 2026 года, с 18:00 до 20:30. Вечером позирует живая натурщица при драматичном освещении, на фоне звучат блюз и свинг — расслабленная, но...","endDate":"2026-11-22","image":"https://cyprus.bz/img/images/events/b886d4b8-4b9d-477d-a105-4d92f2525161/1793423096341.jpg?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/3a46/sketching-sundays-life-drawing-in-nicosia-2026"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Sketching Sundays: Life Drawing в Никосии","item":"https://mypins.site/event/06e6d72b-d84e-42af-be4d-25e941bad69e/sketching-sundays-life-drawing-v-nikosii/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Sketching Sundays: Life Drawing в Никосии</h1>
+  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-11-22">22 ноября 2026</time></p>
+  <p><time datetime="2026-11-22T18:00:00">22 ноября 2026, 18:00</time></p>
+  <address>Ктирион 53, Никосия, Никосия, Кипр</address>
+  <p>Sketching Sundays — это сеанс рисования с живой натурой в Никосии, Кипр, организованный артUS Cyprus Artistic Community в Ktirion 53 в воскресенье, 22 ноября 2026 года, с 18:00 до 20:30. Вечером позирует живая натурщица при драматичном освещении, на фоне звучат блюз и свинг — расслабленная, но...</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Sketching Sundays: Life Drawing в Никосии</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/workshop/">🎨 Мастер-классы</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/f77dc78a-02e3-4382-abb8-bd10358239e3/master-klass-po-sozdaniyu-ceramic-christmas-tree/">Мастер-класс по созданию Ceramic Christmas Tree <time datetime="2026-11-20">20 ноября 2026</time></a></li>
+    <li><a href="/event/4f45b51b-4698-4056-96b1-a0c3d8ae6b7c/master-klass-po-makiyazhu-dlya-nachinayushchikh/">Мастер-класс по макияжу для начинающих <time datetime="2026-11-21">21 ноября 2026</time></a></li>
+    <li><a href="/event/82543221-4a03-4f54-b8f7-a5da9caa54eb/kommercheskiy-tantsevalnyy-vorkshop-s-angeliki-ziaka-na-kipre/">Коммерческий танцевальный воркшоп с Angeliki Ziaka на Кипре <time datetime="2026-11-21">21 ноября 2026</time></a></li>
+    <li><a href="/event/a8f2e711-0144-43b3-b57f-3c2f5e33aaa6/produkty-iz-olivok/">Продукты из оливок <time datetime="2026-11-21">21 ноября 2026</time></a></li>
+    <li><a href="/event/ad5fbb39-57e9-43df-9728-ceca4e7e7c3d/chto-ty-mozhesh-sdelat-s-problemoy/">Что ты можешь сделать с проблемой? <time datetime="2026-11-22">22 ноября 2026</time></a></li>
+    <li><a href="/event/ce65b620-41ad-44e1-a0d9-4d1f6bce978e/vecher-risunka-s-natury/">Вечер рисунка с натуры <time datetime="2026-11-22">22 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/f24f33c2-0ea5-47e3-94f9-c09ffc52b2c3/spektakl-italyanskie-strasti-s-kiprskim-koloritom/">Спектакль: Итальянские страсти с кипрским колоритом</a> <time datetime="2026-11-21">21 ноября 2026</time></li>
+    <li>Следующее: <a href="/event/2660e945-6c71-4b7a-bf81-513c1c708022/kreator-v-soobshchestve-pirgos-limassola/">Kreator в сообществе Пиргос Лимассола</a> <time datetime="2026-11-22">22 ноября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
+      function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
+      if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
+      setTimeout(go,12000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>33rd Shore Angling World… — December 7, 2026 · Limassol</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DdEdokAF.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
+      <meta name="description" content="Limassol, Cyprus, December 7, 2026. The Cyprus Sport Fishing Federation is organising the 33rd Shore Angling World Championship for Clubs, which will take…" />
+    <link rel="canonical" href="https://mypins.site/en/event/e20263e3-94dc-4cbd-90db-517d5239d4e9/33rd-shore-angling-world-championship-for-clubs/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="33rd Shore Angling World… — December 7, 2026 · Limassol" />
+    <meta property="og:description" content="Limassol, Cyprus, December 7, 2026. The Cyprus Sport Fishing Federation is organising the 33rd Shore Angling World Championship for Clubs, which will take…" />
+    <meta property="og:url" content="https://mypins.site/en/event/e20263e3-94dc-4cbd-90db-517d5239d4e9/33rd-shore-angling-world-championship-for-clubs/" />
+    <meta property="og:image" content="https://ygyeyprogpawmjzjyrew.supabase.co/storage/v1/object/public/forecast-events/events/33rd-shore-angling-world-championship-for-clubs-7-11-12-2026-2026-12-07/cover-800.webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/e20263e3-94dc-4cbd-90db-517d5239d4e9/33rd-shore-angling-world-championship-for-clubs/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/e20263e3-94dc-4cbd-90db-517d5239d4e9/33-y-chempionat-mira-po-lovle-ryby-s-berega-sredi-klubov/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"33rd Shore Angling World Championship for Clubs","url":"https://mypins.site/en/event/e20263e3-94dc-4cbd-90db-517d5239d4e9/33rd-shore-angling-world-championship-for-clubs/","startDate":"2026-12-07T10:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Lady’s Mile, Limassol","address":{"@type":"PostalAddress","addressLocality":"Limassol","streetAddress":"Lady’s Mile, Limassol","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.6459961,"longitude":33.002243}},"description":"The Cyprus Sport Fishing Federation is organising the 33rd Shore Angling World Championship for Clubs, which will take place in Cyprus from 5 to 12 December 2026, welcoming athletes and teams from various countries around the world. This major international sporting event will promote Cyprus and highlight the sport of shore angling. For the programme click here","endDate":"2026-12-11","image":"https://ygyeyprogpawmjzjyrew.supabase.co/storage/v1/object/public/forecast-events/events/33rd-shore-angling-world-championship-for-clubs-7-11-12-2026-2026-12-07/cover-800.webp","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/33rd-shore-angling-world-championship-for-clubs-7-11-12-2026-2026-12-07"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"33rd Shore Angling World Championship for Clubs","item":"https://mypins.site/en/event/e20263e3-94dc-4cbd-90db-517d5239d4e9/33rd-shore-angling-world-championship-for-clubs/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>33rd Shore Angling World Championship for Clubs</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-12-11">December 11, 2026</time></p>
+  <p><time datetime="2026-12-07T10:00:00">December 7, 2026, 10:00 AM</time></p>
+  <address>Lady’s Mile, Limassol, Cyprus</address>
+  <p>The Cyprus Sport Fishing Federation is organising the 33rd Shore Angling World Championship for Clubs, which will take place in Cyprus from 5 to 12 December 2026, welcoming athletes and teams from various countries around the world.
+
+This major international sporting event will promote Cyprus and highlight the sport of shore angling.
+
+For the programme click here</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>33rd Shore Angling World Championship for Clubs</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/sport/">🏃 Sports</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/39b709ef-ba46-4bcb-b0be-c0f3265bd84c/cyprus-grand-road-prix-paphos-2026/">Cyprus Grand Road Prix - Paphos 2026 <time datetime="2026-12-06">December 6, 2026</time></a></li>
+    <li><a href="/en/event/60958c6d-3dde-4842-ba31-2c64fff647e8/i-run-for-kyrenia/">I run for Kyrenia <time datetime="2026-12-06">December 6, 2026</time></a></li>
+    <li><a href="/en/event/89d6e890-1fb8-4c82-b1ce-d3c39d84527a/33rd-shore-angling-world-championship-for-clubs-7-11-12-2026/">33rd Shore Angling World Championship for Clubs – 7-11.12.2026 <time datetime="2026-12-07">December 7, 2026</time></a></li>
+    <li><a href="/en/event/198c0b95-4f97-4979-a57a-fb9aa2082fb1/cyprus-stage-dance-cup-2026-in-larnaca/">Cyprus Stage Dance Cup 2026 in Larnaca <time datetime="2026-12-13">December 13, 2026</time></a></li>
+    <li><a href="/en/event/c0291d23-caba-4250-862b-6e01a059285e/cfc-xi-mma-combat-night-in-limassol/">CFC XI: MMA Combat Night in Limassol <time datetime="2026-12-13">December 13, 2026</time></a></li>
+    <li><a href="/en/event/2cff9ba5-694a-4be2-a7ad-73e9999d7be3/25km-swimming-for-a-good-cause/">25km swimming for a good cause <time datetime="2026-12-14">December 14, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/93dd9591-d7ef-4ce1-bd10-03a311d6a56a/vienna-mozart-orchestra-in-limassol-imperial-gala-concert/">Vienna Mozart Orchestra in Limassol: Imperial Gala Concert</a> <time datetime="2026-12-11">December 11, 2026</time></li>
+    <li>Next: <a href="/en/event/33c186a7-2c35-41d4-8f2d-6f2f8ecdd7b1/irina-khakamada-in-limassol-masterclass-the-man-of-the-future/">Irina Khakamada in Limassol: Masterclass &quot;The Man of the Future&quot;</a> <time datetime="2026-12-12">December 12, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

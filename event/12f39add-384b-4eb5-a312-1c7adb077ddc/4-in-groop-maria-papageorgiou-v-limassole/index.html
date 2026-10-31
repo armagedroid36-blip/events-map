@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
+      function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
+      if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
+      setTimeout(go,12000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>4 in Groop - Maria Papageorgiou… — 20 ноября 2026 · Лимасол, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DdEdokAF.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
+      <meta name="description" content="Лимасол, Кипр, 20 ноября 2026. Maria Papageorgiou впервые выступает на сцене Rialto Theatre в Лимассоле, Кипр, 20 ноября 2026 года, представляя своё известное…" />
+    <link rel="canonical" href="https://mypins.site/event/12f39add-384b-4eb5-a312-1c7adb077ddc/4-in-groop-maria-papageorgiou-v-limassole/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="4 in Groop - Maria Papageorgiou… — 20 ноября 2026 · Лимасол, Кипр" />
+    <meta property="og:description" content="Лимасол, Кипр, 20 ноября 2026. Maria Papageorgiou впервые выступает на сцене Rialto Theatre в Лимассоле, Кипр, 20 ноября 2026 года, представляя своё известное…" />
+    <meta property="og:url" content="https://mypins.site/event/12f39add-384b-4eb5-a312-1c7adb077ddc/4-in-groop-maria-papageorgiou-v-limassole/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/ccea3877-3296-4920-8819-077114345bf2/1793345575280.jpg?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/12f39add-384b-4eb5-a312-1c7adb077ddc/4-in-groop-maria-papageorgiou-v-limassole/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/12f39add-384b-4eb5-a312-1c7adb077ddc/4-in-groop-maria-papageorgiou-in-limassol/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"4 in Groop - Maria Papageorgiou в Лимассоле","url":"https://mypins.site/event/12f39add-384b-4eb5-a312-1c7adb077ddc/4-in-groop-maria-papageorgiou-v-limassole/","startDate":"2026-11-20T20:30:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Театр Риальто, Лимассол","address":{"@type":"PostalAddress","addressLocality":"Лимасол","streetAddress":"Театр Риальто, Лимассол","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.6795516,"longitude":33.0457876}},"description":"Maria Papageorgiou впервые выступает на сцене Rialto Theatre в Лимассоле, Кипр, 20 ноября 2026 года, представляя своё известное живое шоу «4 in Groop» - глубоко личное музыкальное выступление, в котором переплетаются ключевые главы её творческого пути и новая работа. Певица, автор песен,...","endDate":"2026-11-20","image":"https://cyprus.bz/img/images/events/ccea3877-3296-4920-8819-077114345bf2/1793345575280.jpg?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/39ee/4-in-groop-maria-papageorgiou-in-limassol-2026"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"4 in Groop - Maria Papageorgiou в Лимассоле","item":"https://mypins.site/event/12f39add-384b-4eb5-a312-1c7adb077ddc/4-in-groop-maria-papageorgiou-v-limassole/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>4 in Groop - Maria Papageorgiou в Лимассоле</h1>
+  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-11-20">20 ноября 2026</time></p>
+  <p><time datetime="2026-11-20T20:30:00">20 ноября 2026, 20:30</time></p>
+  <address>Театр Риальто, Лимассол, Лимасол, Кипр</address>
+  <p>Maria Papageorgiou впервые выступает на сцене Rialto Theatre в Лимассоле, Кипр, 20 ноября 2026 года, представляя своё известное живое шоу «4 in Groop» - глубоко личное музыкальное выступление, в котором переплетаются ключевые главы её творческого пути и новая работа. Певица, автор песен,...</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>4 in Groop - Maria Papageorgiou в Лимассоле</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/concert/">🎤 Концерты</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/5f5371ea-3e8a-4bf4-801d-e16ba5afe05d/muzykalnyy-teatr-cracks-ot-pythia-trio-6-ruk-na-odnom-fortepiano/">Музыкальный театр CRACKS от Pythia Trio — 6 рук на одном фортепиано <time datetime="2026-11-19">19 ноября 2026</time></a></li>
+    <li><a href="/event/5ff85c51-b840-4390-aa27-9d10e460cc49/dmitriy-spirin-v-limasole-tarakany-35-let/">Дмитрий Спирин в Лимасоле: Тараканы! — 35 лет <time datetime="2026-11-19">19 ноября 2026</time></a></li>
+    <li><a href="/event/856afbf1-fef6-41fa-96ac-098c9743e3af/starlight-2-muzyka-barbera-i-chaykovskogo/">Starlight 2: музыка Барбера и Чайковского <time datetime="2026-11-20">20 ноября 2026</time></a></li>
+    <li><a href="/event/986af766-ec8f-4950-9428-9b108dd91fd3/rik-offen-ander-reys-ritmo-futuro-magnifik/">Рик Оффен / Андер Рейс (Ritmo Futuro / Magnifik) <time datetime="2026-11-20">20 ноября 2026</time></a></li>
+    <li><a href="/event/ba7d2854-fd51-4a49-ad3b-78e6f4cb68df/4-in-groop-mariya-papageorgiu/">4 in Groop - Мария Папагеоргиу <time datetime="2026-11-20">20 ноября 2026</time></a></li>
+    <li><a href="/event/d6bb27df-535e-4332-ac7e-f2b3db87a944/mohamad-iskandar-live-in-cyprus-mokhamad-iskandar-v-limassole-kipr/">Mohamad Iskandar Live In Cyprus / Мохамад Искандар в Лимассоле, Кипр <time datetime="2026-11-20">20 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/fe2b574e-b337-42c3-bdf0-62c6bc01c19f/richard-klayderman-zhivoy-fortepiannyy-kontsert-v-limasole/">Ричард Клайдерман: Живой фортепианный концерт в Лимасоле</a> <time datetime="2026-11-19">19 ноября 2026</time></li>
+    <li>Следующее: <a href="/event/3594699b-b05c-47b8-935e-7217dcc3fd24/zvezdnyy-svet-2/">Звёздный свет 2</a> <time datetime="2026-11-20">20 ноября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>

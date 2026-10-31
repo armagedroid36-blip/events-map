@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
+      function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
+      if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
+      setTimeout(go,12000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exhibit-A: современный… — 28 ноября 2026 · Пафос, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DdEdokAF.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
+      <meta name="description" content="Пафос, Кипр, 28 ноября 2026. Exhibit-A - современный танцевальный спектакль в Пафосе, на Кипре, который погружает зрителей в непосредственную близость к…" />
+    <link rel="canonical" href="https://mypins.site/event/c49ab2c9-f3ab-45c8-b036-5e9b2f023cf6/exhibit-a-sovremennyy-tantsevalnyy-spektakl-v-pafose/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Exhibit-A: современный… — 28 ноября 2026 · Пафос, Кипр" />
+    <meta property="og:description" content="Пафос, Кипр, 28 ноября 2026. Exhibit-A - современный танцевальный спектакль в Пафосе, на Кипре, который погружает зрителей в непосредственную близость к…" />
+    <meta property="og:url" content="https://mypins.site/event/c49ab2c9-f3ab-45c8-b036-5e9b2f023cf6/exhibit-a-sovremennyy-tantsevalnyy-spektakl-v-pafose/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/66565060-3f92-44bb-8eff-bd9a728e2fbd/1793423171092.jpg?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/c49ab2c9-f3ab-45c8-b036-5e9b2f023cf6/exhibit-a-sovremennyy-tantsevalnyy-spektakl-v-pafose/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/c49ab2c9-f3ab-45c8-b036-5e9b2f023cf6/exhibit-a-a-contemporary-dance-performance-in-paphos/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Exhibit-A: современный танцевальный спектакль в Пафосе","url":"https://mypins.site/event/c49ab2c9-f3ab-45c8-b036-5e9b2f023cf6/exhibit-a-sovremennyy-tantsevalnyy-spektakl-v-pafose/","startDate":"2026-11-28T17:30:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Attikon Multicultural Space, Пафос","address":{"@type":"PostalAddress","addressLocality":"Пафос","streetAddress":"Attikon Multicultural Space, Пафос","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.7754,"longitude":32.4245}},"description":"Exhibit-A - современный танцевальный спектакль в Пафосе, на Кипре, который погружает зрителей в непосредственную близость к продолжающемуся эксперименту - к поиску условий, через которые общество формирует свое представление об «идеальном» человеке. Спектакль пройдет в Attikon Multicultural...","endDate":"2026-11-28","image":"https://cyprus.bz/img/images/events/66565060-3f92-44bb-8eff-bd9a728e2fbd/1793423171092.jpg?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/3a53/exhibit-a-contemporary-dance-performance-in-paphos-2026"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Exhibit-A: современный танцевальный спектакль в Пафосе","item":"https://mypins.site/event/c49ab2c9-f3ab-45c8-b036-5e9b2f023cf6/exhibit-a-sovremennyy-tantsevalnyy-spektakl-v-pafose/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Exhibit-A: современный танцевальный спектакль в Пафосе</h1>
+  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-11-28">28 ноября 2026</time></p>
+  <p><time datetime="2026-11-28T17:30:00">28 ноября 2026, 17:30</time></p>
+  <address>Attikon Multicultural Space, Пафос, Пафос, Кипр</address>
+  <p>Exhibit-A - современный танцевальный спектакль в Пафосе, на Кипре, который погружает зрителей в непосредственную близость к продолжающемуся эксперименту - к поиску условий, через которые общество формирует свое представление об «идеальном» человеке. Спектакль пройдет в Attikon Multicultural...</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Exhibit-A: современный танцевальный спектакль в Пафосе</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/theatre/">🎭 Театры и шоу</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/41e94250-fd39-4bfd-948d-406ff315ce0f/balet-shchelkunchik/">Балет «Щелкунчик» <time datetime="2026-11-28">28 ноября 2026</time></a></li>
+    <li><a href="/event/533926bd-9373-485a-8725-56139ce4921e/shchelkunchik-bolshoy-mezhdunarodnyy-klassicheskiy-balet-v-limassole-nikosii-i-pafose/">Щелкунчик: Большой международный классический балет в Лимассоле, Никосии и Пафосе <time datetime="2026-11-28">28 ноября 2026</time></a></li>
+    <li><a href="/event/97ecca6b-8b55-4b14-ad4e-5479b20b1ab2/rozhdestvenskoe-puteshestvie-olafa-2026/">Рождественское путешествие Олафа 2026 <time datetime="2026-11-28">28 ноября 2026</time></a></li>
+    <li><a href="/event/9bc97e30-ef11-4aca-ab68-8861072f842b/broken-statues-dvizhenie-eto-reshenie-eto-vybor-eto-osvobozhdenie/">«Broken Statues» Движение - это решение! Это выбор! Это освобождение! <time datetime="2026-11-28">28 ноября 2026</time></a></li>
+    <li><a href="/event/a1afd70f-9e2f-40f7-8b71-b25780df5fa3/eksponat-a/">Экспонат - A <time datetime="2026-11-28">28 ноября 2026</time></a></li>
+    <li><a href="/event/aebf0546-08af-4771-8ef9-8d4ecae5c955/exhibit-a-sovremennyy-tantsevalnyy-performans-v-pafose/">Exhibit-A: Современный танцевальный перформанс в Пафосе <time datetime="2026-11-28">28 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/a6a30cf1-80cd-43db-a0cd-79a84e3ad68b/sotsialnye-zhivotnye-igrovaya-ploshchadka-v-larnake/">Социальные животные: Игровая площадка в Ларнаке</a> <time datetime="2026-11-28">28 ноября 2026</time></li>
+    <li>Следующее: <a href="/event/cf04e050-9b31-4437-97ac-f41147a82c48/mother-of-millions-zhivaya-prezentatsiya-novogo-alboma-t-v-larnake/">Mother of Millions: живая презентация нового альбома &quot;T&quot; в Ларнаке</a> <time datetime="2026-11-28">28 ноября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>

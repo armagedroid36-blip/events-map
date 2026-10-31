@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
+      function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
+      if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
+      setTimeout(go,12000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Позаботьтесь о себе… — 11 ноября 2026 · Лимасол, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DdEdokAF.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
+      <meta name="description" content="Лимасол, Кипр, 11 ноября 2026. 🗓️ ПАСИКАФ (Паникипрская ассоциация пациентов с раком и их друзей) приглашает вас на особый оздоровительный полдень в…" />
+    <link rel="canonical" href="https://mypins.site/event/da49f5fa-a6e8-4d9f-bc83-08c25a8b13f1/pozabottes-o-sebe-psikhologicheskaya-ustoychivost-i-samozabota-v-limassole/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Позаботьтесь о себе… — 11 ноября 2026 · Лимасол, Кипр" />
+    <meta property="og:description" content="Лимасол, Кипр, 11 ноября 2026. 🗓️ ПАСИКАФ (Паникипрская ассоциация пациентов с раком и их друзей) приглашает вас на особый оздоровительный полдень в…" />
+    <meta property="og:url" content="https://mypins.site/event/da49f5fa-a6e8-4d9f-bc83-08c25a8b13f1/pozabottes-o-sebe-psikhologicheskaya-ustoychivost-i-samozabota-v-limassole/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/61667731-ad09-4381-b893-0a689c8ca092/1793423082305.jpg?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/da49f5fa-a6e8-4d9f-bc83-08c25a8b13f1/pozabottes-o-sebe-psikhologicheskaya-ustoychivost-i-samozabota-v-limassole/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/da49f5fa-a6e8-4d9f-bc83-08c25a8b13f1/take-care-of-yourself-psychological-resilience-and-self-care-in-limassol/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Позаботьтесь о себе: психологическая устойчивость и самозабота в Лимассоле","url":"https://mypins.site/event/da49f5fa-a6e8-4d9f-bc83-08c25a8b13f1/pozabottes-o-sebe-psikhologicheskaya-ustoychivost-i-samozabota-v-limassole/","startDate":"2026-11-11T16:30:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Amathus Beach Hotel, Лимассол","address":{"@type":"PostalAddress","addressLocality":"Лимасол","streetAddress":"Amathus Beach Hotel, Лимассол","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.7094644,"longitude":33.1331516}},"description":"🗓️ ПАСИКАФ (Паникипрская ассоциация пациентов с раком и их друзей) приглашает вас на особый оздоровительный полдень в Лимассоле, Кипр, в среду, 11 ноября 2026 года. Событие посвящено заботе о себе и психологической устойчивости и предлагает желанную паузу в повседневной жизни. Программа включает...","endDate":"2026-11-11","image":"https://cyprus.bz/img/images/events/61667731-ad09-4381-b893-0a689c8ca092/1793423082305.jpg?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/3a43/take-care-of-yourself-mental-resilience-self-care-in-2026"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Позаботьтесь о себе: психологическая устойчивость и самозабота в Лимассоле","item":"https://mypins.site/event/da49f5fa-a6e8-4d9f-bc83-08c25a8b13f1/pozabottes-o-sebe-psikhologicheskaya-ustoychivost-i-samozabota-v-limassole/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Позаботьтесь о себе: психологическая устойчивость и самозабота в Лимассоле</h1>
+  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-11-11">11 ноября 2026</time></p>
+  <p><time datetime="2026-11-11T16:30:00">11 ноября 2026, 16:30</time></p>
+  <address>Amathus Beach Hotel, Лимассол, Лимасол, Кипр</address>
+  <p>🗓️ ПАСИКАФ (Паникипрская ассоциация пациентов с раком и их друзей) приглашает вас на особый оздоровительный полдень в Лимассоле, Кипр, в среду, 11 ноября 2026 года. Событие посвящено заботе о себе и психологической устойчивости и предлагает желанную паузу в повседневной жизни. Программа включает...</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Позаботьтесь о себе: психологическая устойчивость и самозабота в Лимассоле</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/wellness/">🧘 Йога и здоровье</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/15fc4241-0989-426e-b733-7d341a543fa5/pokhod-po-prirodnoy-trope-ayya-marina-ksilyatu/">Поход по природной тропе Айя-Марина Ксильяту <time datetime="2026-11-08">8 ноября 2026</time></a></li>
+    <li><a href="/event/c9156a08-d7e0-449f-8607-1b3063bffb19/zanyatiya-tsigun-i-taytszitsyuan-v-limasole/">Занятия цигун и тайцзицюань в Лимасоле <time datetime="2026-11-10">10 ноября 2026</time></a></li>
+    <li><a href="/event/e4d076ab-dfcf-4d14-9a64-8fe70b45b612/zabochus-o-sebe-psikhicheskaya-ustoychivost-i-samozabota-v-limasole/">Забочусь о себе: Психическая устойчивость и самозабота в Лимасоле <time datetime="2026-11-11">11 ноября 2026</time></a></li>
+    <li><a href="/event/0d2af4b6-ae72-4317-9bdb-02fadb36afe6/5-dnevnyy-ozdorovitelnyy-retrit-roskoshnyy-detoks-na-golden-coast-protaras/">5-дневный оздоровительный ретрит: роскошный детокс на Golden Coast Protaras <time datetime="2026-11-13">13 ноября 2026</time></a></li>
+    <li><a href="/event/1279fbd6-f3c2-4009-b170-867391c50e38/festival-blagopoluchiya-mind-body-spirit/">Фестиваль благополучия Mind, Body &amp; Spirit <time datetime="2026-11-13">13 ноября 2026</time></a></li>
+    <li><a href="/event/17be0cd2-02ec-466b-be53-7288ea9c42e3/zanyatiya-tsigun-i-taytszitsyuan-v-limasole/">Занятия цигун и тайцзицюань в Лимасоле <time datetime="2026-11-13">13 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/63ef3d90-9787-450e-94a0-1758fd4fa2ea/nedelya-mody-v-limasole-2026-the-warehouse-by-itquarter/">Неделя моды в Лимасоле 2026 @ The Warehouse by ITQuarter</a> <time datetime="2026-11-11">11 ноября 2026</time></li>
+    <li>Следующее: <a href="/event/dca2b8b1-86bd-4ac0-946b-69bfb0129014/nedelya-mody-v-limasole-2026/">Неделя моды в Лимасоле 2026</a> <time datetime="2026-11-11">11 ноября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>
