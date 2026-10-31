@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Limassol, Cyprus, October 5, 2026. European tennis tournament for athletes under 14 years old. It is expected to have approximately 100 athletes, coaches and…" />
     <link rel="canonical" href="https://mypins.site/en/event/04f06b6e-1bbd-4f63-9781-9db4f2d2e9b8/teu14-tennis-europe-u14/" />
     <meta property="og:site_name" content="MyPins" />
@@ -118,12 +120,12 @@ It is a large-scale event that will offer significant exposure and visibility fo
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/53484baf-9062-48c0-b587-0a7c1d83ebf3/trinity-sport-camp/">Trinity Sport Camp <time datetime="2026-10-26">October 26, 2026</time></a></li>
-    <li><a href="/en/event/03223cea-f135-4a99-9fb0-14f27a888754/halloween-sports-party-at-slim-smart/">Halloween Sports Party at SLIM SMART <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/26912b68-ef98-46d4-b0cf-4aa68f3cc29e/larnaca-crossgames-international-crossfit-competition-in-larnaca/">Larnaca CrossGames: International CrossFit Competition in Larnaca <time datetime="2026-10-31">October 31, 2026</time></a></li>
     <li><a href="/en/event/3ae6fc80-63e9-4671-9575-d3efbe9a77ad/halloween-charity-dog-run/">Halloween Charity Dog Run <time datetime="2026-10-31">October 31, 2026</time></a></li>
     <li><a href="/en/event/550f3c50-e9df-4d1b-a147-91f0736c2d75/environmental-hike-forest-archery-and-brunch-in-nicosia/">Environmental Hike, Forest Archery and Brunch in Nicosia <time datetime="2026-10-31">October 31, 2026</time></a></li>
     <li><a href="/en/event/1944adb2-e7a8-473c-aed4-335d3d7a7f7c/41st-xylotymvou-run/">41st Xylotymvou Run <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/240d0c40-8eda-4a40-b6ba-8eaf550da021/cyprus-runners-summit-2026-in-strovolos/">Cyprus Runners&#39; Summit 2026 in Strovolos <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/82ca4f87-c7f2-4c7f-bfab-1b15e8d22d7a/hiking-on-the-kannoures-trail-in-kakopetria/">Hiking on the Kannoures Trail in Kakopetria <time datetime="2026-11-01">November 1, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Cyprus</h2>

@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Nicosia, Cyprus, October 17, 2026. &quot;Learn a craft and leave it, and if you go hungry, grab it&quot; says this proverb that carries the wisdom of folk tradition. It…" />
     <link rel="canonical" href="https://mypins.site/en/event/08093d7b-604d-4dc4-ac16-a71925d10158/crochet-crochet/" />
     <meta property="og:site_name" content="MyPins" />
@@ -117,12 +119,12 @@
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/2c7a6d58-08b6-44cd-9f8a-84bdcd7dc339/pumpkin-carving-at-cyherbia/">Pumpkin carving at CyHerbia <time datetime="2026-10-10">October 10, 2026</time></a></li>
     <li><a href="/en/event/3e3f7921-2dba-4573-9a44-611664e2e9d2/interior-decorating-short-course-by-pedro-ferro-in-nicosia/">Interior Decorating Short Course by Pedro Ferro in Nicosia <time datetime="2026-10-17">October 17, 2026</time></a></li>
-    <li><a href="/en/event/4754371e-bbda-42ec-bcf3-3df269a46108/trinity-camps/">Trinity Camps <time datetime="2026-10-26">October 26, 2026</time></a></li>
-    <li><a href="/en/event/5fbd3879-7f96-4cc0-bdc9-8784d39372f7/trinity-media-camp/">Trinity Media+ Camp <time datetime="2026-10-26">October 26, 2026</time></a></li>
     <li><a href="/en/event/2b19c7ba-1191-49a6-b21e-7ba18baed497/monster-lab-workshops-by-tgi-fridays-halloween-kids-workshop/">Monster Lab Workshops by TGI Fridays: Halloween Kids Workshop <time datetime="2026-10-27">October 27, 2026</time></a></li>
     <li><a href="/en/event/e135059f-510e-4619-9177-76ede31a7562/monster-lab-workshops-by-tgi-fridays-halloween-master-class-for-children/">Monster Lab Workshops by TGI Fridays: Halloween master class for children <time datetime="2026-10-27">October 27, 2026</time></a></li>
+    <li><a href="/en/event/10f8aeac-ab8a-4a22-8d74-161c330cbc16/halloween-art-and-drums-day/">Halloween Art and Drums Day <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/18c04ece-bb07-42a4-b212-c635ea5d1347/olive-products/">Olive products <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/1f367fea-f4f0-493e-a97d-470b1ce099b9/kids-halloween-sleepover-magic-science-fun/">Kids&#39; Halloween Sleepover: Magic, Science &amp; Fun <time datetime="2026-10-31">October 31, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Cyprus</h2>

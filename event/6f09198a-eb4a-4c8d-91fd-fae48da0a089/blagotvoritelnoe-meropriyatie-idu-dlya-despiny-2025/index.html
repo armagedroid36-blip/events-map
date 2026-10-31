@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Ларнака, Кипр, 18 октября 2026. Благотворительное мероприятие «Peppato gia th Despoiva 2025» – Larnaka Municipality Церемония открытия на Прибрежной эстраде и…" />
     <link rel="canonical" href="https://mypins.site/event/6f09198a-eb4a-4c8d-91fd-fae48da0a089/blagotvoritelnoe-meropriyatie-idu-dlya-despiny-2025/" />
     <meta property="og:site_name" content="MyPins" />
@@ -136,12 +138,12 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/673d3dff-768f-4628-938f-db6dcd775b0f/nastolnyy-tennis-dlya-55-v-nikosii/">Настольный теннис для 55+ в Никосии <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/f7580b70-7693-4f34-90ed-c90a5fa34c7a/zanyatiya-tsigun-i-taytszitsyuan-v-limasole/">Занятия цигун и тайцзицюань в Лимасоле <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/5f0613cf-7db7-4605-ade4-81265ef0569e/energeticheskaya-meditsina-ekspo/">Энергетическая медицина Экспо <time datetime="2026-10-31">31 октября 2026</time></a></li>
     <li><a href="/event/821eaebc-0841-4bac-8a0b-892b61b808e1/all-about-beauty-vash-byuti-uikend-v-mall-of-cyprus/">All About Beauty: ваш бьюти-уикенд в Mall of Cyprus! <time datetime="2026-10-31">31 октября 2026</time></a></li>
     <li><a href="/event/99713abe-df1c-4501-b79f-b5d99934c3da/yoga-i-rezba-po-tykve-osennee-utro-v-satya-studio/">Йога и резьба по тыкве: осеннее утро в Satya Studio <time datetime="2026-11-01">1 ноября 2026</time></a></li>
     <li><a href="/event/51eb47bd-cf0a-415e-9639-c64b70f63559/retrit-somaticheskogo-istseleniya-keha-7-dney-vse-vklyucheno-v-pafose/">Ретрит соматического исцеления KEHA: 7 дней всё включено в Пафосе <time datetime="2026-11-02">2 ноября 2026</time></a></li>
+    <li><a href="/event/b3075a79-085d-4436-aaae-772e0133f24b/klub-yunykh-uchenykh/">Клуб юных учёных <time datetime="2026-11-02">2 ноября 2026</time></a></li>
+    <li><a href="/event/da6dc2e1-6dc6-4b95-9f6f-d4e6fe3ed7bc/zanyatiya-tsigun-i-taytszitsyuan-v-limasole/">Занятия цигун и тайцзицюань в Лимасоле <time datetime="2026-11-03">3 ноября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Кипр</h2>

@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Nha Trang, October 13, 2026. 🏸BADMINTON FOR EVERYONE🏸 In Nha Trang we&#39;re recruiting badminton players — with or without experience, no fear and no need to…" />
     <link rel="canonical" href="https://mypins.site/en/event/3e559b1a-2585-4951-b997-368bcd51afb0/badminton-for-everyone/" />
     <meta property="og:site_name" content="MyPins" />
@@ -143,8 +145,8 @@ To sign up: @Ponka725
     <li><a href="/en/event/a4607b3c-e1c3-40a6-a770-eb83cee2d9e4/erotraverse-group-session-for-girls/">EroTraverse group session for girls <time datetime="2026-10-09">October 9, 2026</time></a></li>
     <li><a href="/en/event/98859e2b-87ec-4ae5-94de-e42fea87a11c/arrows-cover-teams-archery-tag-in-nha-trang/">Arrows, cover, teams: Archery Tag in Nha Trang <time datetime="2026-10-10">October 10, 2026</time></a></li>
     <li><a href="/en/event/ee01a275-0198-44de-bffa-dc27a527c61d/joint-run-in-the-city-center/">Joint run in the city center <time datetime="2026-10-13">October 13, 2026</time></a></li>
-    <li><a href="/en/event/fb32388f-b052-44ef-b469-186cc6f36eec/open-training-session-of-the-ttrc-running-club-in-nha-trang/">Open training session of the TTRC running club in Nha Trang <time datetime="2026-10-15">October 15, 2026</time></a></li>
     <li><a href="/en/event/4e37b4aa-97f6-44ef-8551-d151ef240521/3x3-basketball/">3x3 Basketball <time datetime="2026-10-15">October 15, 2026</time></a></li>
+    <li><a href="/en/event/fb32388f-b052-44ef-b469-186cc6f36eec/open-training-session-of-the-ttrc-running-club-in-nha-trang/">Open training session of the TTRC running club in Nha Trang <time datetime="2026-10-15">October 15, 2026</time></a></li>
     <li><a href="/en/event/9f5849b0-552b-4a01-9511-09124cdf7a17/archery-tag-in-nha-trang-archery-tag/">Archery Tag in Nha Trang: Archery Tag <time datetime="2026-10-31">October 31, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">

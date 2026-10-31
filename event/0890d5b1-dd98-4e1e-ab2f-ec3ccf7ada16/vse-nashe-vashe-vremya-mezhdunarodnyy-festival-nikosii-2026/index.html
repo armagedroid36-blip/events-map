@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Никосия, Кипр, 30 октября 2026. От памяти традиции и рукотворности до политического измерения тела и художественного акта — два хореографа нового поколения…" />
     <link rel="canonical" href="https://mypins.site/event/0890d5b1-dd98-4e1e-ab2f-ec3ccf7ada16/vse-nashe-vashe-vremya-mezhdunarodnyy-festival-nikosii-2026/" />
     <meta property="og:site_name" content="MyPins" />
@@ -100,13 +102,13 @@
     <link rel="alternate" hreflang="ru" href="https://mypins.site/event/0890d5b1-dd98-4e1e-ab2f-ec3ccf7ada16/vse-nashe-vashe-vremya-mezhdunarodnyy-festival-nikosii-2026/" />
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/0890d5b1-dd98-4e1e-ab2f-ec3ccf7ada16/all-of-y-our-time-nicosia-international-festival-2026/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Всё (наше) ваше время – Международный фестиваль Никосии 2026","url":"https://mypins.site/event/0890d5b1-dd98-4e1e-ab2f-ec3ccf7ada16/vse-nashe-vashe-vremya-mezhdunarodnyy-festival-nikosii-2026/","startDate":"2026-10-30T19:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Nicosia Municipal Theatre","address":{"@type":"PostalAddress","addressLocality":"Никосия","streetAddress":"Nicosia Municipal Theatre","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.17277,"longitude":33.3547068}},"description":"От памяти традиции и рукотворности до политического измерения тела и художественного акта — два хореографа нового поколения представляют два разных подхода к современному танцу.","endDate":"2026-10-30T21:00:00","image":"https://www.eventshub.cy/wp-content/uploads/2026/09/all-of-your-time-oct-26.jpg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/all-of-y-our-time-%CE%B4%CE%B9%CE%B5%CE%B8%CE%BD%CE%AD%CF%82-%CF%86%CE%B5%CF%83%CF%84%CE%B9%CE%B2%CE%AC%CE%BB-%CE%BB%CE%B5%CF%85%CE%BA%CF%89%CF%83%CE%AF%CE%B1%CF%82-2026-2026-10-30"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Всё (наше) ваше время – Международный фестиваль Никосии 2026","item":"https://mypins.site/event/0890d5b1-dd98-4e1e-ab2f-ec3ccf7ada16/vse-nashe-vashe-vremya-mezhdunarodnyy-festival-nikosii-2026/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Всё (наше) ваше время – Международный фестиваль Никосии 2026","item":"https://mypins.site/event/0890d5b1-dd98-4e1e-ab2f-ec3ccf7ada16/vse-nashe-vashe-vremya-mezhdunarodnyy-festival-nikosii-2026/"}]}]}</script>
   </head>
   <body>
     <div id="root"></div>
 <div id="seo-event-block">
   <h1>Всё (наше) ваше время – Международный фестиваль Никосии 2026</h1>
-  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-10-30">30 октября 2026</time></p>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-30">30 октября 2026</time></p>
   <p><time datetime="2026-10-30T19:00:00">30 октября 2026, 19:00</time></p>
   <address>Nicosia Municipal Theatre, Никосия, Кипр</address>
   <p>От памяти традиции и рукотворности до политического измерения тела и художественного акта — два хореографа нового поколения представляют два разных подхода к современному танцу.</p>
@@ -116,18 +118,18 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/16eff2a0-316f-44c2-96fa-847f2fb2b80b/son-smeshnogo-cheloveka/">Сон смешного человека <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/1c3025b8-9503-41d7-9b54-c4ca41cfaad0/residue-mezhdunarodnyy-festival-nikosii-2026/">Residue - Международный фестиваль Никосии 2026 <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/368c9c38-197a-47a5-b679-4426bc6e8cba/all-of-y-our-time-sovremennyy-tantsevalnyy-spektakl-o-tsennosti-vremeni-tela-i-iskusstva/">All of (Y)our Time. Современный танцевальный спектакль о ценности времени, тела и искусства <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/38bdd6f3-8daa-48b9-8ca2-207b9a77a442/lysaya-pevitsa/">Лысая певица <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/54633d2f-cec5-4c97-b72f-b220d713d651/brendi-sauer-v-lefkosii/">Бренди Сауэр в Лефкосии <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/70621c0b-391d-40ed-8928-b9f96d9243a0/residue-mezhdunarodnyy-festival-nikosii-2026/">Residue – Международный фестиваль Никосии 2026 <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/ab66c8fe-52cb-411b-b858-172ba3e594ec/yenta-gabler-hedda-gabler/">Йента Габлер | Hedda Gabler <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/12e8795b-66f6-4596-851a-5499737ec96a/smurfiki/">Смурфики <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/46a3997a-9235-4aea-ad4d-ceac320563e1/acw-bitva-za-kipr-2026-v-nikosii/">ACW: Битва за Кипр 2026 в Никосии <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/4b67b1de-850a-4fb1-bf6a-58793321a407/burbulomagissa-i-alisa-v-strane-futbola/">БурбулоМАГИССА и Алиса в Стране футбола <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/5526ea83-9f95-4624-929e-3d01ccb3ed95/noch-opuskaetsya-na-palermo/">Ночь опускается на Палермо <time datetime="2026-10-31">31 октября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Кипр</h2>
     <ul>
-    <li>Предыдущее: <a href="/event/f3081988-6885-4c71-ad41-2956cffa1507/stendap-open-mic/">Стендап Open Mic</a> <time datetime="2026-10-29">29 октября 2026</time></li>
-    <li>Следующее: <a href="/event/0d723e62-15ba-4d26-a566-e91d429dea1d/khellouinskaya-vecherinka-v-limassol-agora/">Хэллоуинская вечеринка в Limassol Agora</a> <time datetime="2026-10-30">30 октября 2026</time></li>
+    <li>Предыдущее: <a href="/event/081ba0df-33b4-407a-9177-bb3d1a033457/kelaydismata/">КЕЛАЙДИСМАТА</a> <time datetime="2026-10-30">30 октября 2026</time></li>
+    <li>Следующее: <a href="/event/09cad680-b60b-40aa-a2ef-daf782be9ad5/mezhdunarodnyy-festival-poezii-i-dvizheniya-poetry-moves/">Международный фестиваль поэзии и движения «Poetry MOVES»</a> <time datetime="2026-10-30">30 октября 2026</time></li>
     </ul>
   </nav>
   <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>

@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Nha Trang, October 5, 2026. 🔥Let&#39;s start the week light and easy! Tomorrow evening we&#39;re playing an acoustic set at VICE. We&#39;ll throw in some blues, funk, and…" />
     <link rel="canonical" href="https://mypins.site/en/event/e49f1ae7-a734-426c-99a9-7b99606d61ed/let-s-start-the-week-light-and-easy/" />
     <meta property="og:site_name" content="MyPins" />
@@ -127,15 +129,15 @@ Come chill and listen to good music!
 Post by: Misha | MISH.REC</p>
   <nav aria-label="Breadcrumbs">
     <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>Let&#39;s start the week light and easy!</span></p>
-    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a> · <a href="/en/nha-trang/concert/">🎤 Concerts</a></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a></p>
   </nav>
   <h2>Similar events</h2>
   <ul>
     <li><a href="/en/event/5539734d-b369-4e20-a2ed-cef0e9a8a32a/guitar-night-at-neverland/">Guitar Night at NEVERLAND <time datetime="2026-10-02">October 2, 2026</time></a></li>
+    <li><a href="/en/event/9d6bf2f1-42e0-499d-84fe-170889e5c273/tomorrow-october-2-we-re-bringing-the-heat-at-kilo-bar-with-the-guys-from-tom-waltz-and-the-surfers/">Tomorrow, October 2, we&#39;re bringing the heat at Kilo Bar with the guys from Tom Waltz and The Surfers! <time datetime="2026-10-02">October 2, 2026</time></a></li>
     <li><a href="/en/event/c9b80ee0-659f-443d-97a1-0dea84c1c27c/tomorrow-at-vice-there-s-a-live-music-night/">Tomorrow at VICE there&#39;s a live music night! <time datetime="2026-10-03">October 3, 2026</time></a></li>
     <li><a href="/en/event/54997895-31e9-4095-b869-e8ad788b957d/live-looping-trip-hop-retro-wave-on-sunday-evening/">Live Looping, Trip-Hop Retro Wave on Sunday evening! <time datetime="2026-10-04">October 4, 2026</time></a></li>
-    <li><a href="/en/event/3b39c194-e772-4c99-aa10-c69cbb0db661/friday-night-of-rock-and-roll-at-kilo-bar-with-tom-waltz-and-the-surfers/">Friday night of rock and roll at Kilo Bar with Tom Waltz and The Surfers! <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/ed9c50b5-7b36-46a2-80a5-67a38f2416c0/guitar-night-at-neverland/">Guitar Night at NEVERLAND <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/24fe865a-4e10-4f93-83d3-681bfc3f3526/jam-session-at-kilo-bar/">Jam session at Kilo bar! <time datetime="2026-10-09">October 9, 2026</time></a></li>
     <li><a href="/en/event/b4c9edd7-862f-43d5-b6ca-65ab0ede2464/tomorrow-at-kilo-bar-a-drums-and-keys-duo-in-full-improvisation-of-experimental-music-in-a-jazz-manner/">Tomorrow at Kilo bar, a drums and keys duo in full improvisation of experimental music in a jazz manner <time datetime="2026-10-31">October 31, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">

@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Nicosia, Cyprus, October 17, 2026. EL. The Cyprus Archaeologists Association (CAA) invites you to a treasure hunt on the occasion of International Archaeology…" />
     <link rel="canonical" href="https://mypins.site/en/event/1b262fff-d5eb-4ac8-bc99-684f3a54bc14/treasure-hunt-treasure-hunt/" />
     <meta property="og:site_name" content="MyPins" />
@@ -132,10 +134,10 @@ The game will take place in teams of 6 people</p>
   </nav>
   <h2>Similar events</h2>
   <ul>
+    <li><a href="/en/event/6cf265cc-f566-4896-a35f-e0d0a8c68cf5/nostalgia-quiz-night-7-english-trivia-evening-in-nicosia/">Nostalgia Quiz Night #7: English Trivia Evening in Nicosia <time datetime="2026-10-16">October 16, 2026</time></a></li>
+    <li><a href="/en/event/476e02fc-e6cb-45e4-b2d9-7c7fee3ff874/archaeology-treasure-hunt/">Archaeology Treasure Hunt <time datetime="2026-10-17">October 17, 2026</time></a></li>
     <li><a href="/en/event/525b10ec-8838-4edd-ae63-8debe14e3446/autumn-adventure-camp-at-science-house/">Autumn Adventure Camp at Science House <time datetime="2026-10-21">October 21, 2026</time></a></li>
     <li><a href="/en/event/9f042693-5698-4cdd-9c4b-8530cedbd66d/friendly-bridge-game-meetups/">Friendly bridge game meetups <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/9f3ba0dd-fbb6-4c6d-81b5-dbb32b1a7cfc/opening-of-the-mafia-club-in-english/">Opening of the &quot;Mafia&quot; club in English <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/a0af21d9-12f4-4853-80d3-0888c0f2bbee/spooky-commander-night-halloween-mtg-event-in-nicosia/">Spooky Commander Night: Halloween MTG Event in Nicosia <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/2dac91e4-a831-40bf-a669-777bca44cc2d/game-quest-ghost-hunters-silver-show/">Game Quest: Ghost Hunters + Silver Show <time datetime="2026-10-31">October 31, 2026</time></a></li>
     <li><a href="/en/event/45cf85ca-930b-4212-b4e5-5bcee353627f/nicosia-street-quest-explore-the-old-town/">Nicosia Street Quest: Explore the Old Town <time datetime="2026-11-06">November 6, 2026</time></a></li>
   </ul>

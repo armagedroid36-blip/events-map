@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Limassol, Cyprus, October 2, 2026. The 2026 Limassol Wine Festival will open on Saturday with mayor Yiannis Armeftis saying the municipality is ready to…" />
     <link rel="canonical" href="https://mypins.site/en/event/e183b70a-940e-435d-a11b-d9f7a3b084fd/limassol-ready-to-welcome-visitors-to-annual-wine-festival/" />
     <meta property="og:site_name" content="MyPins" />
@@ -120,8 +122,8 @@
     <li><a href="/en/event/69edaa68-9666-44bf-ab9a-9c7faa9a52c7/machalart-26-neighbourhood-arts-festival/">Machalárt 26: Neighbourhood Arts Festival <time datetime="2026-10-08">October 8, 2026</time></a></li>
     <li><a href="/en/event/963fdbe5-4e9e-41f8-96ec-c89b1a82c4bd/art-explora-festival-in-limassol/">Art Explora Festival in Limassol <time datetime="2026-10-25">October 25, 2026</time></a></li>
     <li><a href="/en/event/51861796-19bc-4e0d-875e-3ec4ab13fafa/halloween-at-toy-town/">Halloween at Toy Town <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/09cad680-b60b-40aa-a2ef-daf782be9ad5/poetry-moves-international-festival-international-festival-of-poetry-and-syn-movement/">Poetry MOVES International Festival / International Festival of Poetry and Syn+Movement <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/38f1871c-e9e6-49c1-af7c-fc25e422850c/the-halloween-festival/">The Halloween Festival <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/b8c0228d-8b34-4b14-8d99-4480fbddfd0f/big-two-day-halloween-market/">Big two-day Halloween market <time datetime="2026-10-30">October 30, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Cyprus</h2>

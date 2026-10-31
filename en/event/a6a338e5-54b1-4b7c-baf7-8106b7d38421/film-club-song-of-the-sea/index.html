@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Bali, September 30, 2026. A story inspired by Celtic mythology and the legends of the &quot;selkie&quot; — seal people who can live between sea and land. A tale of…" />
     <link rel="canonical" href="https://mypins.site/en/event/a6a338e5-54b1-4b7c-baf7-8106b7d38421/film-club-song-of-the-sea/" />
     <meta property="og:site_name" content="MyPins" />
@@ -165,8 +167,8 @@ Film club &quot;Atalanta&quot;</p>
     <li><a href="/en/event/a8bb03bb-63e1-4585-8072-1bf0d780b63f/bali-international-ai-film-festival-2026/">Bali International AI Film Festival 2026 <time datetime="2026-09-30">September 30, 2026</time></a></li>
     <li><a href="/en/event/d23bf7be-db53-4d10-8477-e82d47c8d3fa/screening-of-the-film-donnie-darko-at-paradiso-ubud/">Screening of the film &quot;Donnie Darko&quot; at Paradiso Ubud <time datetime="2026-10-03">October 3, 2026</time></a></li>
     <li><a href="/en/event/8fa0c2fa-a5f5-4e5d-9a38-a26d2e1c30a1/film-club-mirrormask/">Film Club: &quot;MirrorMask&quot; <time datetime="2026-10-07">October 7, 2026</time></a></li>
+    <li><a href="/en/event/033286f6-3814-4a9e-ad9d-66b98c04cfc6/screening-of-sense-and-sensibility-at-paradiso-ubud-on-october-9/">Screening of Sense and Sensibility at Paradiso Ubud on October 9 <time datetime="2026-10-09">October 9, 2026</time></a></li>
     <li><a href="/en/event/2d91e91d-63bd-464e-85fd-4b0e864a7fc3/burlesque-screening-at-paradiso-ubud-on-october-9/">Burlesque screening at Paradiso Ubud on October 9 <time datetime="2026-10-09">October 9, 2026</time></a></li>
-    <li><a href="/en/event/8ac9dc5b-bb7a-4ea6-a4ab-04dfb8735d46/screening-of-gran-torino-at-paradiso-ubud-on-october-9/">Screening of Gran Torino at Paradiso Ubud on October 9 <time datetime="2026-10-09">October 9, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Bali</h2>

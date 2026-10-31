@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Limassol, Cyprus, October 30, 2026. The Cyprus Limassol Spiritual Club invites you to a special musical evening at the Pattichio Municipal Theatre of Limassol…" />
     <link rel="canonical" href="https://mypins.site/en/event/5f36f0a0-a56b-4099-bb51-6e534dd532e9/the-pattihio-municipal-theater-of-limassol-presents-voices-of-my-land-and-of-love/" />
     <meta property="og:site_name" content="MyPins" />
@@ -100,13 +102,13 @@
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/5f36f0a0-a56b-4099-bb51-6e534dd532e9/the-pattihio-municipal-theater-of-limassol-presents-voices-of-my-land-and-of-love/" />
     <link rel="alternate" hreflang="ru" href="https://mypins.site/event/5f36f0a0-a56b-4099-bb51-6e534dd532e9/munitsipalnyy-teatr-pattikhio-limassola-predstavlyaet-golosa-moego-kraya-i-lyubvi/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"The Pattihio Municipal Theater of Limassol presents \"VOICES OF MY LAND AND OF LOVE\"","url":"https://mypins.site/en/event/5f36f0a0-a56b-4099-bb51-6e534dd532e9/the-pattihio-municipal-theater-of-limassol-presents-voices-of-my-land-and-of-love/","startDate":"2026-10-30T20:30:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Limassol","address":{"@type":"PostalAddress","addressLocality":"Limassol","streetAddress":"Limassol","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.6813906,"longitude":33.0440049}},"description":"The Cyprus Limassol Spiritual Club invites you to a special musical evening at the Pattichio Municipal Theatre of Limassol, with a programme dedicated to place, love and the power of music. The musical performance is conducted by Mariliza Papadouri-Papangeli and Vangelis Vettas, with the participation of a 5-member orchestra, the vocal ensemble \"Melodia\" and the Kozani District Choir. 📅 Friday, 30 October 2026 🕣 Time: 20:30 📍 Pattichio Municipal Theatre of Limassol 🎟️ Admission: €15 🎟️ Reduced ticket: €8 📞 For information: 25 377277 📧 Email: box@patithio.com.cy An evening full of melodi","endDate":"2026-10-30T23:30:00","image":"https://www.limassol.org.cy/uploads/Events/md/432e392741.jpg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CF%84%CE%BF-%CF%80%CE%B1%CF%84%CF%84%CE%AF%CF%87%CE%B5%CE%B9%CE%BF-%CE%B4%CE%B7%CE%BC%CE%BF%CF%84%CE%B9%CE%BA%CF%8C-%CE%B8%CE%AD%CE%B1%CF%84%CF%81%CE%BF-%CE%BB%CE%B5%CE%BC%CE%B5%CF%83%CE%BF%CF%8D-%CF%80%CE%B1%CF%81%CE%BF%CF%85%CF%83%CE%B9%CE%AC%CE%B6%CE%B5%CE%B9-%CF%84%CE%BF%CF%85-%CF%84%CE%BF%CF%80%CE%BF%CF%85-%CE%BC%CE%BF%CF%85-%CE%BA%CE%B1%CE%B9-%CF%84%CE%B7%CF%82-%CE%B1%CE%B3%CE%B1%CF%80%CE%B7%CF%82-%CE%BF%CE%B9-%CF%86%CF%89%CE%BD%CE%B5%CF%82-2026-10-30"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"The Pattihio Municipal Theater of Limassol presents \"VOICES OF MY LAND AND OF LOVE\"","item":"https://mypins.site/en/event/5f36f0a0-a56b-4099-bb51-6e534dd532e9/the-pattihio-municipal-theater-of-limassol-presents-voices-of-my-land-and-of-love/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"The Pattihio Municipal Theater of Limassol presents \"VOICES OF MY LAND AND OF LOVE\"","item":"https://mypins.site/en/event/5f36f0a0-a56b-4099-bb51-6e534dd532e9/the-pattihio-municipal-theater-of-limassol-presents-voices-of-my-land-and-of-love/"}]}]}</script>
   </head>
   <body>
     <div id="root"></div>
 <div id="seo-event-block">
   <h1>The Pattihio Municipal Theater of Limassol presents &quot;VOICES OF MY LAND AND OF LOVE&quot;</h1>
-  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-10-30">October 30, 2026</time></p>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-30">October 30, 2026</time></p>
   <p><time datetime="2026-10-30T20:30:00">October 30, 2026, 8:30 PM</time></p>
   <address>Limassol, Cyprus</address>
   <p>The Cyprus Limassol Spiritual Club invites you to a special musical evening at the Pattichio Municipal Theatre of Limassol, with a programme dedicated to place, love and the power of music.
@@ -126,18 +128,18 @@ An evening full of melodi</p>
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/081ba0df-33b4-407a-9177-bb3d1a033457/keladismata/">KELADISMATA <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/27f08dfe-f055-43c7-95b2-213249f13900/again-tribute-to-giorgos-mazonakis-in-nicosia/">Again: Tribute to Giorgos Mazonakis in Nicosia <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/358a850a-f813-488e-b255-db679946f7f4/vanilla-groove-at-kesh/">Vanilla Groove at Kesh <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/415930fd-cf93-4461-9ec4-afb24b23b6bc/kosta-kritikos-at-dusty-munky/">Kosta Kritikos at Dusty Munky <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/512b7609-122a-4483-9a3f-3e3ff0dc5e82/ontour/">OnTour <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/60a1cf86-bdac-4cb9-8dc7-98c46032c215/evridiki-live-at-vinylio-wine-etc/">Evridiki live at Vinylio Wine Etc <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/e1ba1ea3-2c40-4b32-bbe4-837f7e404b7e/luna-city-express-at-mason/">Luna City Express at Mason <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/01628702-0956-49ae-afb4-6207093e2295/maria-vardaki-live-concert-with-guest-nefeli-kaprou-in-nicosia/">Maria Vardaki: Live Concert with Guest Nefeli Kaprou in Nicosia <time datetime="2026-10-31">October 31, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Cyprus</h2>
     <ul>
-    <li>Previous: <a href="/en/event/517879c0-5cf4-4cd0-bd4b-039dad6d16e9/halloween-edition-at-7seas-rnb-hip-hop-party-in-limassol/">Halloween Edition at 7seas: RnB &amp; Hip-Hop Party in Limassol</a> <time datetime="2026-10-30">October 30, 2026</time></li>
-    <li>Next: <a href="/en/event/6ad57237-d828-4487-a2b7-5de4d33b75a9/tou-topou-kai-tis-agapis-oi-fones/">Tou Topou kai tis Agapis oi fones</a> <time datetime="2026-10-30">October 30, 2026</time></li>
+    <li>Previous: <a href="/en/event/54633d2f-cec5-4c97-b72f-b220d713d651/brandy-sour-in-lefkosia/">Brandy Sour in Lefkosia</a> <time datetime="2026-10-30">October 30, 2026</time></li>
+    <li>Next: <a href="/en/event/5fbd3879-7f96-4cc0-bdc9-8784d39372f7/trinity-media-camp/">Trinity Media+ Camp</a> <time datetime="2026-10-30">October 30, 2026</time></li>
     </ul>
   </nav>
   <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>

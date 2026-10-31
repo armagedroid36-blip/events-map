@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Nha Trang, September 15, 2026. Lecture &quot;Michelangelo: Great, Gloomy, Discontented&quot; Let&#39;s discuss his work and the myths surrounding him: - Is it true that…" />
     <link rel="canonical" href="https://mypins.site/en/event/6a6759d5-3c4b-4f87-a844-7d7242c19e49/lecture-michelangelo-great-gloomy-discontented/" />
     <meta property="og:site_name" content="MyPins" />
@@ -136,9 +138,9 @@ Post by: Irina</p>
     <li><a href="/en/event/6d0ff3cc-ee94-498e-af84-1d5d045f911e/lecture-raphael-the-artist-who-almost-ruined-art/">Lecture &quot;Raphael. The Artist Who Almost Ruined Art&quot; <time datetime="2026-09-08">September 8, 2026</time></a></li>
     <li><a href="/en/event/b9f15c17-b99d-4652-a9a1-ca3bb0196fe2/first-vietnamese-lesson-learning-to-read/">FIRST VIETNAMESE LESSON learning to read! <time datetime="2026-09-09">September 9, 2026</time></a></li>
     <li><a href="/en/event/e48cd65a-ab58-49fd-b52c-240ba669427a/lithotherapy-seminar-exploring-the-properties-of-natural-stones/">Lithotherapy seminar: exploring the properties of natural stones. <time datetime="2026-09-11">September 11, 2026</time></a></li>
-    <li><a href="/en/event/d82f6a6e-f4ab-439a-b485-18fa22745680/we-re-starting-a-course-on-contemporary-art-and-beginning-with-impressionism/">We&#39;re starting a course on contemporary art and beginning with Impressionism! <time datetime="2026-09-18">September 18, 2026</time></a></li>
     <li><a href="/en/event/4dc684f8-38bf-45f0-9c3a-4e558df062a2/lecture-on-contemporary-art-and-we-re-starting-with-impressionism/">Lecture on contemporary art, and we&#39;re starting with Impressionism! <time datetime="2026-09-18">September 18, 2026</time></a></li>
-    <li><a href="/en/event/9d6de9bd-ece5-4107-a6d7-5deb35e056ab/lecture-dali-and-surrealism/">Lecture &quot;Dali and Surrealism&quot; <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/d82f6a6e-f4ab-439a-b485-18fa22745680/we-re-starting-a-course-on-contemporary-art-and-beginning-with-impressionism/">We&#39;re starting a course on contemporary art and beginning with Impressionism! <time datetime="2026-09-18">September 18, 2026</time></a></li>
+    <li><a href="/en/event/14356790-b388-4d2c-9914-3e95f1f3ed18/lecture-mannerism-when-the-renaissance-became-too-ideal/">Lecture &quot;Mannerism: When the Renaissance Became Too Ideal&quot; <time datetime="2026-09-22">September 22, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Nha Trang</h2>

@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Nicosia, Cyprus, October 30, 2026. She has just returned from her honeymoon and, seemingly, has everything needed for a happy life. For Hedda Gabler, however…" />
     <link rel="canonical" href="https://mypins.site/en/event/ab66c8fe-52cb-411b-b858-172ba3e594ec/enta-gambler-hedda-gabler/" />
     <meta property="og:site_name" content="MyPins" />
@@ -124,12 +126,12 @@
   </ul>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/16eff2a0-316f-44c2-96fa-847f2fb2b80b/the-dream-of-a-ridiculous-man/">The Dream of a Ridiculous Man <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/1c3025b8-9503-41d7-9b54-c4ca41cfaad0/residue-nicosia-international-festival-2026/">Residue - Nicosia International Festival 2026 <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/368c9c38-197a-47a5-b679-4426bc6e8cba/all-of-y-our-time-a-contemporary-dance-performance-about-the-value-of-time-body-and-art/">All of (Y)our Time. A contemporary dance performance about the value of time, body and art <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/38bdd6f3-8daa-48b9-8ca2-207b9a77a442/bald-singer/">Bald Singer <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/54633d2f-cec5-4c97-b72f-b220d713d651/brandy-sour-in-lefkosia/">Brandy Sour in Lefkosia <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/70621c0b-391d-40ed-8928-b9f96d9243a0/residue-nicosia-international-festival-2026/">Residue – Nicosia International Festival 2026 <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/12e8795b-66f6-4596-851a-5499737ec96a/smurfs/">Smurfs <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/46a3997a-9235-4aea-ad4d-ceac320563e1/acw-battle-for-cyprus-2026-in-nicosia/">ACW: Battle for Cyprus 2026 in Nicosia <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/4b67b1de-850a-4fb1-bf6a-58793321a407/burbulomagissa-and-alice-in-footballland/">BurbuloMAGISSA and Alice in Footballland <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/5526ea83-9f95-4624-929e-3d01ccb3ed95/night-falls-on-palermo/">Night Falls on Palermo <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/74321e3c-3972-4ebd-964d-d7080bef4015/the-smurfs-the-green-mission-live-theatre-show-in-limassol-nicosia/">The Smurfs: The Green Mission - Live Theatre Show in Limassol &amp; Nicosia <time datetime="2026-10-31">October 31, 2026</time></a></li>
   </ul>
 </div>
 

@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Чангу, Bali, 16 сентября 2026. Из Чанши на Бали приезжает Ethan Bartender, основатель CMYK China, чтобы на одну ночь взять бар под свой контроль в рамках Bali…" />
     <link rel="canonical" href="https://mypins.site/event/90f5f8b3-b574-46a6-8064-1fe0e0716bb8/vecher-avtorskikh-kokteyley-v-the-shady-pig-berawa/" />
     <meta property="og:site_name" content="MyPins" />
@@ -124,8 +126,8 @@ tel:0819 9163 1405</p>
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/89c296a3-67a0-4d65-a9ce-5e70073268f1/den-margarity-v-one-eyed-jack/">День Маргариты в One Eyed Jack <time datetime="2026-09-14">14 сентября 2026</time></a></li>
     <li><a href="/event/d7d59e51-e514-4ff0-9f49-3431f01d5739/uzhin-l-orientale-v-sardine-by-k-club/">Ужин L’Orientale в Sardine by K Club <time datetime="2026-09-14">14 сентября 2026</time></a></li>
+    <li><a href="/event/89c296a3-67a0-4d65-a9ce-5e70073268f1/den-margarity-v-one-eyed-jack/">День Маргариты в One Eyed Jack <time datetime="2026-09-14">14 сентября 2026</time></a></li>
     <li><a href="/event/c5f9b6ed-2463-40e1-afa7-c5dfb093f959/uzhin-v-bourke-s/">Ужин в Bourke’s <time datetime="2026-09-15">15 сентября 2026</time></a></li>
     <li><a href="/event/c0400dca-4886-4926-ab8d-030116e64cb4/diskussiya-o-ede-i-kulture-v-dragon-tea-temple/">Дискуссия о еде и культуре в Dragon Tea Temple <time datetime="2026-09-16">16 сентября 2026</time></a></li>
     <li><a href="/event/bcf851b7-09a7-4cd5-bf6a-b44d241aa124/degustatsiya-indoneziyskikh-vin-v-potato-head/">Дегустация индонезийских вин в Potato Head <time datetime="2026-09-18">18 сентября 2026</time></a></li>

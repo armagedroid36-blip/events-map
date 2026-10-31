@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Nha Trang, October 9, 2026. DANCE MASTERCLASS FOR ADULTS. WHEN - 09.10 Friday 19:30 Nha Trang, welcome a new dance style - JAZZ FUSION! If you love the…" />
     <link rel="canonical" href="https://mypins.site/en/event/f02a5869-8dcc-4185-9cac-839bb756d77c/dance-master-class-for-adults/" />
     <meta property="og:site_name" content="MyPins" />
@@ -145,12 +147,12 @@ Post by: Viacheslav Osipov</p>
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/6e2b8061-6d11-4da8-b9b3-907d19f969cc/bachata-sensual-party-friday-october-30/">BACHATA SENSUAL PARTY FRIDAY, OCTOBER 30! <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/f6a71c7c-b585-4932-b5e7-5d235ac5ef4c/october-30-the-first-day-of-the-onemore-anniversary-celebration/">OCTOBER 30 - THE FIRST DAY OF THE ONEMORE ANNIVERSARY CELEBRATION! <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/97d2813a-72b3-44f4-818e-2f3301918da6/only-women-dance-party-2/">ONLY WOMEN DANCE PARTY 2 <time datetime="2026-10-09">October 9, 2026</time></a></li>
     <li><a href="/en/event/13987af4-9aba-4a20-a447-e39170d4c365/31-october-halloween-night-at-onemore/">31 OCTOBER HALLOWEEN NIGHT AT ONEMORE! <time datetime="2026-10-31">October 31, 2026</time></a></li>
     <li><a href="/en/event/715da64f-8216-4c80-b803-77336853403b/halloween-on-the-beach-31-10/">HALLOWEEN ON THE BEACH 31.10 <time datetime="2026-10-31">October 31, 2026</time></a></li>
     <li><a href="/en/event/a5cb6b3f-f7d2-420d-9e52-0b9e938cabea/open-karaoke-battle/">Open Karaoke Battle! <time datetime="2026-10-31">October 31, 2026</time></a></li>
     <li><a href="/en/event/d8cb3a5f-d3eb-4097-9417-0d27272de8ee/rompe-halloween-latin-party/">ROMPE HALLOWEEN LATIN PARTY <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/b41b6b44-4e33-46ba-be7f-4327de838ed9/all-styles-jam-prostranstvo/">ALL STYLES JAM PROSTRANSTVO <time datetime="2026-11-01">November 1, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Nha Trang</h2>

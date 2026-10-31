@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Da Nang, October 29, 2026. 🕯️ Halloween Movie Night: &quot;Corpse Bride&quot; Victor accidentally finds himself engaged to a mysterious bride from the world of the dead…" />
     <link rel="canonical" href="https://mypins.site/en/event/3aec4f1c-f07b-46a4-9065-dd3507422d2f/halloween-movie-night-corpse-bride/" />
     <meta property="og:site_name" content="MyPins" />
@@ -123,14 +125,14 @@ Come for the cozy atmosphere and a slightly spooky fairy tale!
 #date: 29.10</p>
   <nav aria-label="Breadcrumbs">
     <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/da-nang/">Da Nang</a> <span aria-hidden="true">›</span> <span>Halloween Movie Night: &quot;Corpse Bride&quot;</span></p>
-    <p>More events in Da Nang: <a href="/en/da-nang/">what&#39;s on</a> · <a href="/en/da-nang/cinema/">🎬 Cinema Club</a></p>
+    <p>More events in Da Nang: <a href="/en/da-nang/">what&#39;s on</a></p>
   </nav>
   <h2>Similar events</h2>
   <ul>
+    <li><a href="/en/event/273ca435-9cff-49c7-8bb2-65381a3e93ad/today-at-18-00/">TODAY AT 18:00 <time datetime="2026-10-24">October 24, 2026</time></a></li>
     <li><a href="/en/event/f379794a-8052-481a-8d93-d26c0aed8b32/on-monday-at-show-n-tell-cinema-club-zhenya-is-showing-the-shining-1980/">On Monday at Show n Tell Cinema Club, Zhenya is showing &quot;The Shining&quot; (1980)! <time datetime="2026-10-26">October 26, 2026</time></a></li>
-    <li><a href="/en/event/22b20543-ab72-42eb-80b7-0832a525ba27/today-already/">TODAY ALREADY <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/0d3e7523-322a-4a46-a00a-10a9a866e054/halloween-movie-night-coco/">Halloween movie night: &quot;Coco&quot; <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/8b74ba70-1f3d-4dd9-9be6-f17445536a4a/38th-meaningful-movie-night/">38th MEANINGFUL MOVIE NIGHT <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/0d3e7523-322a-4a46-a00a-10a9a866e054/halloween-movie-night-coco/">Halloween movie night: &quot;Coco&quot; <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/04e4218f-0bea-4682-aabc-725a439fb38c/halloween-movie-night-hotel-transylvania/">Halloween movie night: &quot;Hotel Transylvania&quot; <time datetime="2026-10-31">October 31, 2026</time></a></li>
     <li><a href="/en/event/7d501871-50f8-4e76-82d6-543b24f98f1e/halloween-movie-night-ghost-patrol/">Halloween Movie Night: &quot;Ghost Patrol&quot; <time datetime="2026-10-31">October 31, 2026</time></a></li>
   </ul>

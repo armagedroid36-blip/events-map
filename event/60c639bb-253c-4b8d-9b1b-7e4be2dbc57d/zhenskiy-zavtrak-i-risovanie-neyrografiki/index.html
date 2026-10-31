@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Чангу, Bali, 16 сентября 2026. Девушки, встречаемся на женский завтрак,рисовать нейрографику❣️ 🗓️Чангу Это наше время для творчества, проявления себя, новых…" />
     <link rel="canonical" href="https://mypins.site/event/60c639bb-253c-4b8d-9b1b-7e4be2dbc57d/zhenskiy-zavtrak-i-risovanie-neyrografiki/" />
     <meta property="og:site_name" content="MyPins" />
@@ -132,14 +134,14 @@
 https://t.me/lizunik482</p>
   <nav aria-label="Хлебные крошки">
     <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/bali/">Бали</a> <span aria-hidden="true">›</span> <span>Женский завтрак и рисование нейрографики</span></p>
-    <p>Ещё события на Бали: <a href="/bali/">афиша</a> · <a href="/bali/workshop/">🎨 Мастер-классы</a></p>
+    <p>Ещё события на Бали: <a href="/bali/">афиша</a></p>
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/1601e7f8-588b-4d00-a8c8-d37c2fad5f34/master-klass-tim-i-cmyk/">Мастер-класс Tim и CMYK <time datetime="2026-09-16">16 сентября 2026</time></a></li>
     <li><a href="/event/8b97073e-feb4-4e9e-95f4-fbec21ac316c/master-klass-vijay-i-native/">Мастер-класс Vijay и Native <time datetime="2026-09-16">16 сентября 2026</time></a></li>
+    <li><a href="/event/1601e7f8-588b-4d00-a8c8-d37c2fad5f34/master-klass-tim-i-cmyk/">Мастер-класс Tim и CMYK <time datetime="2026-09-16">16 сентября 2026</time></a></li>
     <li><a href="/event/34ec0daa-5f9d-4d70-888d-b3c2cf1e3fd7/uvlekatelnoe-zanyatie-po-robototekhnike/">Увлекательное занятие по Робототехнике🤖🌈 <time datetime="2026-09-16">16 сентября 2026</time></a></li>
-    <li><a href="/event/b3c863d0-9d68-4f50-ae27-fe6e399ae956/akademiya-volshebstva-v-unicorns/">Академия Волшебства в Unicorns <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/9dc4bf30-f049-474d-9774-8179b34c8092/zanyatie-po-risovaniyu-v-unicorns/">Занятие по рисованию в Unicorns🎨 <time datetime="2026-09-16">16 сентября 2026</time></a></li>
     <li><a href="/event/08cfbbcb-f48c-41a0-9cc0-3a62bd64f0fb/master-klass-po-robototekhnike-dlya-detey-s-4kh-det/">Мастер класс по робототехнике для детей с 4х дет <time datetime="2026-10-31">31 октября 2026</time></a></li>
     <li><a href="/event/ba420c05-aeaf-4568-a4f2-460e45395c20/obuchenie-na-vegan-povara-s-lizoy-v-sayuri-ubud/">Обучение на веган-повара с Лизой в Sayuri Ubud <time datetime="2026-12-31">31 декабря 2026</time></a></li>
   </ul>

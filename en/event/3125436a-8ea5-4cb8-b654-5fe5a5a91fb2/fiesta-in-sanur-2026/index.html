@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Bali, September 12, 2026. Three days of music, entertainment and festive atmosphere in Sanur! 🎉🌴 Many are asking: is entry to Sanur Fiesta free or paid? The…" />
     <link rel="canonical" href="https://mypins.site/en/event/3125436a-8ea5-4cb8-b654-5fe5a5a91fb2/fiesta-in-sanur-2026/" />
     <meta property="og:site_name" content="MyPins" />
@@ -135,9 +137,9 @@ instagram (https://www.instagram.com/sanurfiesta/)</p>
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/8c3d7bca-4a3f-4564-bf92-e5c10f0ab0b7/sanur-fiesta-2026-festival-in-sanur/">Sanur Fiesta 2026 Festival in Sanur <time datetime="2026-09-12">September 12, 2026</time></a></li>
     <li><a href="/en/event/3d385fa3-09d2-42f1-8918-25cd074a6e77/discover-art-bali-2026-festival/">Discover Art &amp; Bali 2026 Festival <time datetime="2026-09-12">September 12, 2026</time></a></li>
-    <li><a href="/en/event/59e92da9-c071-40be-ab75-741ab1c071ab/beer-festival-at-atlas-beach-club/">Beer Festival at Atlas Beach Club <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/8c3d7bca-4a3f-4564-bf92-e5c10f0ab0b7/sanur-fiesta-2026-festival-in-sanur/">Sanur Fiesta 2026 Festival in Sanur <time datetime="2026-09-12">September 12, 2026</time></a></li>
+    <li><a href="/en/event/738f3b5c-2cf4-4fae-b194-6ba1ef39f818/secret-temple-2026-season-finale/">Secret Temple 2026 Season Finale <time datetime="2026-09-12">September 12, 2026</time></a></li>
     <li><a href="/en/event/4c8be6e1-f8e3-406d-87aa-eb35fcc4e058/jungle-of-the-damned-at-luna-beach-club-on-october-31/">Jungle of the Damned at Luna Beach Club on October 31 <time datetime="2026-10-31">October 31, 2026</time></a></li>
     <li><a href="/en/event/bc9cae7c-fe41-45ba-87a8-b341d485cdfd/healix-the-fest-2026-music-festival/">Healix The Fest 2026 — music festival <time datetime="2026-11-28">November 28, 2026</time></a></li>
     <li><a href="/en/event/d89f1926-db30-407e-bbba-896a76edea72/connections-bali-2026-urbankiz-festival/">Connections Bali 2026: UrbanKiz Festival <time datetime="2026-12-04">December 4, 2026</time></a></li>

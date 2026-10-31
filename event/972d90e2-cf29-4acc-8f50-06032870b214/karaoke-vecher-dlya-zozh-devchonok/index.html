@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Нячанг, 2 октября 2026. 🦋🎤&quot;КАРАОКЕ-ВЕЧЕР ДЛЯ ЗОЖ ДЕВЧОНОК&quot;🎤🦋 В любой стране и в любом городе, в караоке стираются границы, когда поете вместе😅 Веселимся и…" />
     <link rel="canonical" href="https://mypins.site/event/972d90e2-cf29-4acc-8f50-06032870b214/karaoke-vecher-dlya-zozh-devchonok/" />
     <meta property="og:site_name" content="MyPins" />
@@ -133,12 +135,12 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/6e2b8061-6d11-4da8-b9b3-907d19f969cc/bachata-sensual-party-pyatnitsa-30-oktyabrya/">BACHATA SENSUAL PARTY ПЯТНИЦА, 30 ОКТЯБРЯ! <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/f6a71c7c-b585-4932-b5e7-5d235ac5ef4c/30-oktyabrya-pervyy-den-prazdnovaniya-godovshchiny-onemore/">30 ОКТЯБРЯ - ПЕРВЫЙ ДЕНЬ ПРАЗДНОВАНИЯ ГОДОВЩИНЫ ONEMORE! <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/aae25fd7-7888-4644-9db7-cfc1689bd761/bachata-sensual-party-pyatnitsa-02-oktyabrya/">BACHATA SENSUAL PARTY ПЯТНИЦА, 02 ОКТЯБРЯ! <time datetime="2026-10-02">2 октября 2026</time></a></li>
     <li><a href="/event/13987af4-9aba-4a20-a447-e39170d4c365/31-oktyabrya-halloween-night-v-onemore/">31 ОКТЯБРЯ HALLOWEEN NIGHT В ONEMORE! <time datetime="2026-10-31">31 октября 2026</time></a></li>
     <li><a href="/event/715da64f-8216-4c80-b803-77336853403b/khellouin-na-plyazhe-31-10/">ХЭЛЛОУИН НА ПЛЯЖЕ 31.10 <time datetime="2026-10-31">31 октября 2026</time></a></li>
     <li><a href="/event/a5cb6b3f-f7d2-420d-9e52-0b9e938cabea/otkrytyy-karaoke-batl/">Открытый караоке батл! <time datetime="2026-10-31">31 октября 2026</time></a></li>
     <li><a href="/event/d8cb3a5f-d3eb-4097-9417-0d27272de8ee/latinskaya-vecherinka-rompe-halloween/">ЛАТИНСКАЯ ВЕЧЕРИНКА ROMPE HALLOWEEN <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/b41b6b44-4e33-46ba-be7f-4327de838ed9/dzhem-vsekh-stiley-prostranstvo/">ДЖЕМ ВСЕХ СТИЛЕЙ ПРОСТРАНСТВО <time datetime="2026-11-01">1 ноября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Нячанг</h2>

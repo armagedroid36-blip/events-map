@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Чангу, Bali, 15 октября 2026. ГВОЗДЕТЕРАПИЯ🧘‍♀️ Всем привет! Я приглашаю вас на гвоздетерапию со мной! 💫Чангу Занятие в мини-группе Тебе ко мне на…" />
     <link rel="canonical" href="https://mypins.site/event/36046312-7eba-485e-93f5-cb806c8f97c7/gvozdeterapiya/" />
     <meta property="og:site_name" content="MyPins" />
@@ -146,12 +148,12 @@ https://t.me/lizunik482</p>
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/1275c18a-cbc7-4d20-a8dd-04cb9539173f/meditativnaya-praktika-i-saund-bat-v-nuanu/">Медитативная практика и саунд-бат в Nuanu <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/e82759cb-4859-438c-a91e-87a6ee753676/gvozdeterapiya/">Гвоздетерапия <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/da10d215-335f-4c6f-be35-4b519d1c0ed8/yoga-i-zvukovaya-praktika-v-kappa-senses-ubud-31-oktyabrya/">Йога и звуковая практика в Kappa Senses Ubud 31 октября <time datetime="2026-10-31">31 октября 2026</time></a></li>
     <li><a href="/event/366cddbd-5827-4ac9-aba9-b72616a56587/praktika-tantra-zhizni-vkus-naslazhdeniya/">Практика тантра жизни. Вкус наслаждения <time datetime="2026-11-01">1 ноября 2026</time></a></li>
     <li><a href="/event/8f5be29a-fb8a-4e77-8d95-a52d8428a155/gvozdestoyanie/">Гвоздестояние <time datetime="2026-11-01">1 ноября 2026</time></a></li>
     <li><a href="/event/4de61bc7-8a45-4600-9abd-c05c8edc5203/aktivatsiya-kundalini-kundalini-activation/">Активация Кундалини / Kundalini Activation <time datetime="2026-11-03">3 ноября 2026</time></a></li>
+    <li><a href="/event/013e01ab-7975-4a54-87d0-79816e590481/progulka-bosikom-varash-fun-grounding-v-kerobokane/">Прогулка босиком Varash Fun Grounding в Керобокане <time datetime="2026-11-08">8 ноября 2026</time></a></li>
+    <li><a href="/event/31be750f-4f86-418b-a71a-9d220e1ad84d/yoga-v-ubude/">Йога в Убуде <time datetime="2026-11-09">9 ноября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Бали</h2>

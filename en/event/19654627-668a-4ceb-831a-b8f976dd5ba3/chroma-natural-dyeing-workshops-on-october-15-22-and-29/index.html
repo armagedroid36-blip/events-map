@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Bali, October 29, 2026. On October 15, 22, and 29 from 14:00 to 16:00, Chroma natural dyeing workshops are held at Good Times General Store in the Desa Potato…" />
     <link rel="canonical" href="https://mypins.site/en/event/19654627-668a-4ceb-831a-b8f976dd5ba3/chroma-natural-dyeing-workshops-on-october-15-22-and-29/" />
     <meta property="og:site_name" content="MyPins" />
@@ -115,14 +117,14 @@
 A ticket costs 1,000,000 IDR per session. Fabric blanks and dyeing materials are included. To participate, select the desired date and purchase a ticket: https://megatix.co.id/events/chroma-natural-dye-workshop</p>
   <nav aria-label="Breadcrumbs">
     <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/bali/">Bali</a> <span aria-hidden="true">›</span> <span>Chroma: natural dyeing workshops on October 15, 22 and 29</span></p>
-    <p>More events in Bali: <a href="/en/bali/">what&#39;s on</a> · <a href="/en/bali/workshop/">🎨 Workshops</a></p>
+    <p>More events in Bali: <a href="/en/bali/">what&#39;s on</a></p>
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/039fb77f-134c-4f4c-9f30-6e88f57ee233/robotics-class-at-unicorns/">Robotics class at Unicorns <time datetime="2026-10-28">October 28, 2026</time></a></li>
+    <li><a href="/en/event/f641d225-71bc-4456-8879-52e72b19f9f3/women-s-dinner-painting-with-prosecco/">Women&#39;s Dinner: Painting with Prosecco <time datetime="2026-10-28">October 28, 2026</time></a></li>
+    <li><a href="/en/event/8d4467b1-5e21-45e5-978d-b0cb4fc5dacb/drawing-class-at-unicorns/">Drawing class at Unicorns <time datetime="2026-10-28">October 28, 2026</time></a></li>
     <li><a href="/en/event/e28075eb-4769-4fac-9e9a-b6dfc1e0d4af/english-language-class-at-unicorns/">English language class at Unicorns <time datetime="2026-10-29">October 29, 2026</time></a></li>
     <li><a href="/en/event/6eaad321-7cf3-4a86-b90e-9bc3a61cee5d/robotics-master-class-for-children-from-4-years-old/">Robotics master class for children from 4 years old <time datetime="2026-10-29">October 29, 2026</time></a></li>
-    <li><a href="/en/event/b3c863d0-9d68-4f50-ae27-fe6e399ae956/academy-of-magic-at-unicorns/">Academy of Magic at Unicorns <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/08cfbbcb-f48c-41a0-9cc0-3a62bd64f0fb/robotics-master-class-for-children-from-4-years-old/">Robotics master class for children from 4 years old <time datetime="2026-10-31">October 31, 2026</time></a></li>
     <li><a href="/en/event/ba420c05-aeaf-4568-a4f2-460e45395c20/vegan-chef-training-with-liza-at-sayuri-ubud/">Vegan Chef Training with Liza at Sayuri Ubud <time datetime="2026-12-31">December 31, 2026</time></a></li>
   </ul>

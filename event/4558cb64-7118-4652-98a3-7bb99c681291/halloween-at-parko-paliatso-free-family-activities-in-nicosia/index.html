@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Ая-Напа, Кипр, 30 октября 2026. Бесплатное мероприятие на Хэллоуин для детей и семей в Parko Paliatso Luna Park в Никосии 30 октября 2026 года — бесплатный…" />
     <link rel="canonical" href="https://mypins.site/event/4558cb64-7118-4652-98a3-7bb99c681291/khellouin-v-parko-paliatso-besplatnye-semeynye-meropriyatiya-v-nikosii/" />
     <meta property="og:site_name" content="MyPins" />
@@ -100,13 +102,14 @@
     <link rel="alternate" hreflang="ru" href="https://mypins.site/event/4558cb64-7118-4652-98a3-7bb99c681291/khellouin-v-parko-paliatso-besplatnye-semeynye-meropriyatiya-v-nikosii/" />
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/4558cb64-7118-4652-98a3-7bb99c681291/halloween-at-parko-paliatso-free-family-activities-in-nicosia/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Хэллоуин в Parko Paliatso: бесплатные семейные мероприятия в Никосии","url":"https://mypins.site/event/4558cb64-7118-4652-98a3-7bb99c681291/khellouin-v-parko-paliatso-besplatnye-semeynye-meropriyatiya-v-nikosii/","startDate":"2026-10-30T19:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Parko Paliatso Luna Park","address":{"@type":"PostalAddress","addressLocality":"Ая-Напа","streetAddress":"Parko Paliatso Luna Park","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.9855152,"longitude":33.9976966}},"offers":{"@type":"Offer","url":"https://mypins.site/event/4558cb64-7118-4652-98a3-7bb99c681291/khellouin-v-parko-paliatso-besplatnye-semeynye-meropriyatiya-v-nikosii/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-10-10"},"description":"Бесплатное мероприятие на Хэллоуин для детей и семей в Parko Paliatso Luna Park в Никосии 30 октября 2026 года — бесплатный вход. --- Scroll down for English version 👇 --- Parko Paliatso Luna Park снова приглашает на самую жуткую ночь года с бесплатными активностями и представлениями для детей и взрослых! В пятницу 30 октября 2026 года с 19:00 до 21:00 парк превратится в фантасмагорическую хэллоуинскую площадку, полную веселья. 🎟️ Бесплатный вход. Посетители смогут насладиться множеством активностей совершенно бесплатно: 🗓️ Программа Пятница, 30","endDate":"2026-10-30T21:00:00","image":"https://eventor-images-s3.s3.eu-west-2.amazonaws.com/high-res/6d23c452-0c8c-4cea-ad8b-27fe09743ffe.jpg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/halloween-at-parko-paliatso-free-family-activities-in-nicosia-2026-10-30"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Хэллоуин в Parko Paliatso: бесплатные семейные мероприятия в Никосии","item":"https://mypins.site/event/4558cb64-7118-4652-98a3-7bb99c681291/khellouin-v-parko-paliatso-besplatnye-semeynye-meropriyatiya-v-nikosii/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Хэллоуин в Parko Paliatso: бесплатные семейные мероприятия в Никосии","item":"https://mypins.site/event/4558cb64-7118-4652-98a3-7bb99c681291/khellouin-v-parko-paliatso-besplatnye-semeynye-meropriyatiya-v-nikosii/"}]}]}</script>
     <script type="application/json" id="seo-alias-map">{"cloneId":"4558cb64-7118-4652-98a3-7bb99c681291","keptId":"4558cb64-7118-4652-98a3-7bb99c681291","ru":"https://mypins.site/event/4558cb64-7118-4652-98a3-7bb99c681291/khellouin-v-parko-paliatso-besplatnye-semeynye-meropriyatiya-v-nikosii/","en":"https://mypins.site/en/event/4558cb64-7118-4652-98a3-7bb99c681291/halloween-at-parko-paliatso-free-family-activities-in-nicosia/"}</script>
   </head>
   <body>
     <div id="root"></div>
 <div id="seo-event-block">
   <h1>Хэллоуин в Parko Paliatso: бесплатные семейные мероприятия в Никосии</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-30">30 октября 2026</time></p>
   <p><time datetime="2026-10-30T19:00:00">30 октября 2026, 19:00</time></p>
   <address>Parko Paliatso Luna Park, Ая-Напа, Кипр</address>
   <p>Бесплатное мероприятие на Хэллоуин для детей и семей в Parko Paliatso Luna Park в Никосии 30 октября 2026 года — бесплатный вход.
@@ -131,13 +134,21 @@ Parko Paliatso Luna Park снова приглашает на самую жут�
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/09cad680-b60b-40aa-a2ef-daf782be9ad5/mezhdunarodnyy-festival-poezii-i-dvizheniya-poetry-moves/">Международный фестиваль поэзии и движения «Poetry MOVES» <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/38f1871c-e9e6-49c1-af7c-fc25e422850c/festival-khellouin/">Фестиваль Хэллоуин <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/b8c0228d-8b34-4b14-8d99-4480fbddfd0f/bolshoy-dvukhdnevnyy-halloween-market/">Большой двухдневный Halloween-маркет <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/bbadd369-d8f0-4321-a567-41281a1f03d9/larnaka-nochyu/">Ларнака ночью <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/007d21be-fe71-4da7-b97f-f04eb29bc720/khellouin-v-mire-komiksov-comic-con-2026/">Хэллоуин в мире комиксов. Comic Con 2026 <time datetime="2026-10-31">31 октября 2026</time></a></li>
     <li><a href="/event/2613160e-8bee-4444-ace1-2d8f1bf87c42/3-y-osenniy-festival-khellouina/">3-й осенний фестиваль Хэллоуина <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/27755ed9-24b0-4f42-8956-2fb7b78b91ea/zhutkiy-bilet-issledovatelya-v-nikosii/">Жуткий билет исследователя в Никосии <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/3a4a9076-860d-41ea-9998-fef116247a19/semeynye-vykhodnye-kosmos-nauka-i-khellouinskoe-vesele/">Семейные выходные: космос, наука и хэллоуинское веселье <time datetime="2026-10-31">31 октября 2026</time></a></li>
   </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/38a9e431-fe73-4959-a5b0-e6c7e66b2c3a/khellouin-vypusk-kapsouremata-v-larnake/">Хэллоуин-выпуск Kapsouremata в Ларнаке</a> <time datetime="2026-10-30">30 октября 2026</time></li>
+    <li>Следующее: <a href="/event/4636130c-5bc3-4f92-aeb1-7f50b5d12ead/the-rave-run-khellouinskiy-bar-kroul-v-limasole/">The Rave Run: Хэллоуинский бар-кроул в Лимасоле</a> <time datetime="2026-10-30">30 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
 </div>
 
   </body>

@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Нячанг, 14 сентября 2026. 🌱 StartTalk: если всё время откладывал английский Боишься сказать не так? Тут все проходят через это в первый раз, и уже через…" />
     <link rel="canonical" href="https://mypins.site/event/716374ac-9735-4a50-ba80-26ad17e951f8/starttalk-esli-vse-vremya-otkladyval-angliyskiy/" />
     <meta property="og:site_name" content="MyPins" />
@@ -130,11 +132,11 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
+    <li><a href="/event/50820c03-804f-4959-a00c-e9cca676d4b0/smalltalk-speed-friending-po-angliyski/">SmallTalk: speed friending по-английски <time datetime="2026-09-13">13 сентября 2026</time></a></li>
     <li><a href="/event/7aad4228-badf-47ea-9d97-777545a1a873/english-speaking-club-igraem-v-nastolki-na-angliyskom-19-00-ponedelnik/">ENGLISH SPEAKING CLUB! Играем в настолки на английском! 19-00, понедельник <time datetime="2026-09-14">14 сентября 2026</time></a></li>
-    <li><a href="/event/bb388a18-3a79-4baf-b758-c6bd23829463/vstrechu-kluba-razgovornogo-vetnamskogo-yazyka-s-nulya/">Встречу «Клуба разговорного вьетнамского языка с нуля» <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/e6894c66-657e-46fb-a396-c7495fb41a7a/morning-talk-razgovornyy-klub-po-pyatnitsam/">Morning Talk: разговорный клуб по пятницам <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/dcb42dc4-3f51-4fb5-a76c-3a3242457163/klub-angliyskogo-yazyka-nyachanga/">Клуб английского языка Нячанга <time datetime="2026-10-31">31 октября 2026</time></a></li>
     <li><a href="/event/01dfd621-6bc8-4964-8537-72190eef8f5f/time-to-talk-vstrecha-razgovornogo-kluba-angliyskogo-v-nyachange/">TIME TO TALK встреча разговорного клуба английского в Нячанге! <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/8b69b38a-3fba-45c2-9f2e-f01ca0dbf4a4/ispanskiy-yazyk-v-nyachange-dlya-vzroslykh/">ИСПАНСКИЙ ЯЗЫК В НЯЧАНГЕ ДЛЯ ВЗРОСЛЫХ! <time datetime="2026-11-04">4 ноября 2026</time></a></li>
     <li><a href="/event/f92c447a-adae-477f-900e-3d8fa8963fc2/zanyatie-angliyskogo-razgovornogo-kluba-v-nyachange/">ЗАНЯТИЕ АНГЛИЙСКОГО РАЗГОВОРНОГО КЛУБА В НЯЧАНГЕ! <time datetime="2026-11-04">4 ноября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">

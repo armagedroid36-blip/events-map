@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Дананг, 23 августа 2026. AMP Social Jam — вечеринка без каверов Воскресенье, 23 августа | Kong 72 Импровизация и авторские песни в неожиданном звучании ждут…" />
     <link rel="canonical" href="https://mypins.site/event/ddbbced9-c0a2-4217-9cce-5aa495f57234/amp-social-jam-vecherinka-bez-kaverov/" />
     <meta property="og:site_name" content="MyPins" />
@@ -130,8 +132,8 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/53fdda6d-ba37-4bf5-afcc-2830d93ff9ec/danang-22-avgusta-gta-vice-city-plyazhnaya-sng-tusa-v-klube/">ДАНАНГ 22 АВГУСТА GTA VICE CITY ПЛЯЖНАЯ СНГ ТУСА В КЛУБЕ <time datetime="2026-08-22">22 августа 2026</time></a></li>
     <li><a href="/event/8ef59be7-6d17-418f-a84d-f2f581575981/kaddl-vecherinka-v-khoyane/">Каддл-вечеринка в Хойане <time datetime="2026-08-22">22 августа 2026</time></a></li>
+    <li><a href="/event/53fdda6d-ba37-4bf5-afcc-2830d93ff9ec/danang-22-avgusta-gta-vice-city-plyazhnaya-sng-tusa-v-klube/">ДАНАНГ 22 АВГУСТА GTA VICE CITY ПЛЯЖНАЯ СНГ ТУСА В КЛУБЕ <time datetime="2026-08-22">22 августа 2026</time></a></li>
     <li><a href="/event/2477a4c0-1f9a-4c56-8c1f-de6708c0c1f0/priblizhaetsya-disko-khellouin/">ПРИБЛИЖАЕТСЯ ДИСКО-ХЭЛЛОУИН! <time datetime="2026-10-31">31 октября 2026</time></a></li>
     <li><a href="/event/3505d5a0-cf69-458d-94d4-5b547053d0d0/my-ustroim-uyutnuyu-vecherinku-na-khellouin/">Мы устроим уютную вечеринку на ХЭЛЛОУИН <time datetime="2026-10-31">31 октября 2026</time></a></li>
     <li><a href="/event/d0b00887-96fb-4420-897d-15a1455ab333/esli-sezon-dozhdey-uzhe-vselilsya-v-tvoy-divan-v-etu-subbotu-my-provodim-latinskiy-seans-ekzortsizma/">ЕСЛИ СЕЗОН ДОЖДЕЙ УЖЕ ВСЕЛИЛСЯ В ТВОЙ ДИВАН, В ЭТУ СУББОТУ МЫ ПРОВОДИМ ЛАТИНСКИЙ СЕАНС ЭКЗОРЦИЗМА! <time datetime="2026-10-31">31 октября 2026</time></a></li>

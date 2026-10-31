@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Bali, October 5, 2026. Girls, let&#39;s meet for a women&#39;s breakfast and draw neurographics❣️ 🗓️Canggu This is our time for creativity, self-expression, new…" />
     <link rel="canonical" href="https://mypins.site/en/event/8e770a3b-9e7d-4592-9eb8-7077c226d0a3/women-s-breakfast-and-neurographic-drawing/" />
     <meta property="og:site_name" content="MyPins" />
@@ -95,7 +97,7 @@
     <meta property="og:title" content="Women&#39;s breakfast and neurographic… — October 5, 2026 · Bali" />
     <meta property="og:description" content="Bali, October 5, 2026. Girls, let&#39;s meet for a women&#39;s breakfast and draw neurographics❣️ 🗓️Canggu This is our time for creativity, self-expression, new…" />
     <meta property="og:url" content="https://mypins.site/en/event/8e770a3b-9e7d-4592-9eb8-7077c226d0a3/women-s-breakfast-and-neurographic-drawing/" />
-    <meta property="og:image" content="https://static.baliforum.ru/uploads/589439/conversions/IMG_3616-preview.jpg" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/8e770a3b-9e7d-4592-9eb8-7077c226d0a3/women-s-breakfast-and-neurographic-drawing/" />
     <link rel="alternate" hreflang="ru" href="https://mypins.site/event/8e770a3b-9e7d-4592-9eb8-7077c226d0a3/zhenskiy-zavtrak-i-risovanie-neyrografiki/" />
@@ -132,14 +134,14 @@ Message us to sign up❤️
 https://t.me/lizunik482</p>
   <nav aria-label="Breadcrumbs">
     <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/bali/">Bali</a> <span aria-hidden="true">›</span> <span>Women&#39;s breakfast and neurographic drawing</span></p>
-    <p>More events in Bali: <a href="/en/bali/">what&#39;s on</a> · <a href="/en/bali/workshop/">🎨 Workshops</a></p>
+    <p>More events in Bali: <a href="/en/bali/">what&#39;s on</a></p>
   </nav>
   <h2>Similar events</h2>
   <ul>
     <li><a href="/en/event/ca4602e0-de9f-44b0-9cd6-326f51454f54/drumming-immersion-djembe-masterclass-in-ubud/">Drumming Immersion: Djembe Masterclass in Ubud <time datetime="2026-10-04">October 4, 2026</time></a></li>
+    <li><a href="/en/event/c4d924e7-47c1-4093-87d6-c8fa964934af/family-sunday-at-bangun-tidur-farm/">Family Sunday at Bangun Tidur Farm <time datetime="2026-10-04">October 4, 2026</time></a></li>
     <li><a href="/en/event/abcc0365-bccd-4d5b-8caf-17dab912af04/robotics-master-class-for-children-from-4-years-old/">Robotics master class for children from 4 years old <time datetime="2026-10-04">October 4, 2026</time></a></li>
     <li><a href="/en/event/7f0a5d08-0810-493f-a620-46bd93eec9ef/drumming-immersion-djembe-masterclass-in-ubud/">Drumming Immersion: Djembe Masterclass in Ubud <time datetime="2026-10-05">October 5, 2026</time></a></li>
-    <li><a href="/en/event/b3c863d0-9d68-4f50-ae27-fe6e399ae956/academy-of-magic-at-unicorns/">Academy of Magic at Unicorns <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/08cfbbcb-f48c-41a0-9cc0-3a62bd64f0fb/robotics-master-class-for-children-from-4-years-old/">Robotics master class for children from 4 years old <time datetime="2026-10-31">October 31, 2026</time></a></li>
     <li><a href="/en/event/ba420c05-aeaf-4568-a4f2-460e45395c20/vegan-chef-training-with-liza-at-sayuri-ubud/">Vegan Chef Training with Liza at Sayuri Ubud <time datetime="2026-12-31">December 31, 2026</time></a></li>
   </ul>

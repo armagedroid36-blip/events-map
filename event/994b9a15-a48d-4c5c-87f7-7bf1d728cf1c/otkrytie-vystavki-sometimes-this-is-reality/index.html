@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Переренан, Bali, 23 августа 2026. Le Bajo Bali приглашает на открытие выставки современного светового искусства Sometimes, This is Reality — проекта…" />
     <link rel="canonical" href="https://mypins.site/event/994b9a15-a48d-4c5c-87f7-7bf1d728cf1c/otkrytie-vystavki-sometimes-this-is-reality/" />
     <meta property="og:site_name" content="MyPins" />
@@ -125,12 +127,12 @@ tel:0811 3830 8989</p>
   </nav>
   <h2>Похожие события</h2>
   <ul>
+    <li><a href="/event/05bd25a9-c954-4a7d-a74d-5a1b39047f26/vystavka-kedungwuni-104-208-v-masa-masa-bali/">Выставка KEDUNGWUNI 104/208 в Masa Masa Bali <time datetime="2026-08-22">22 августа 2026</time></a></li>
+    <li><a href="/event/75258dd8-9bb9-4d3a-a4df-4b79660e9c46/vystavka-lucid-dreams-repetisi-memori/">Выставка Lucid Dreams &amp; Repetisi Memori <time datetime="2026-08-22">22 августа 2026</time></a></li>
+    <li><a href="/event/0c2e301f-21f0-4fb5-af52-e7f723504092/otkrytie-vystavki-sometimes-this-is-reality/">Открытие выставки Sometimes, This is Reality <time datetime="2026-08-22">22 августа 2026</time></a></li>
     <li><a href="/event/b7a37739-8a99-4c68-b343-49e62a061cbe/vystavka-lucid-dreams-repetisi-memori/">Выставка Lucid Dreams &amp; Repetisi Memori <time datetime="2026-08-23">23 августа 2026</time></a></li>
     <li><a href="/event/3fcf51fa-3ca4-4acc-b783-c9cce49ef1cd/vystavka-kedungwuni-104-208-v-masa-masa-bali/">Выставка KEDUNGWUNI 104/208 в Masa Masa Bali <time datetime="2026-08-23">23 августа 2026</time></a></li>
     <li><a href="/event/1ca1e13d-cb23-4710-bc82-17909ebe8285/what-the-body-remembers-vystavka-v-nuanu-do-29-noyabrya/">What The Body Remembers: выставка в Nuanu до 29 ноября <time datetime="2026-10-10">10 октября 2026</time></a></li>
-    <li><a href="/event/33078c12-e86f-4d6d-b3fb-b1d3b5a679a5/vystavka-sled-sveta-v-cushcush-gallery/">Выставка «След света» в CushCush Gallery <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/d6327bdd-16f8-4d02-b3db-9af1b1cffc58/vystavka-dizayna-v-uma-seminyak/">Выставка дизайна в Uma Seminyak <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/efdec033-173e-426e-9854-c6452ab52abf/vystavka-aliks-eme-v-muzee-pasifika/">Выставка Аликс Эме в Музее Pasifika <time datetime="2026-10-30">30 октября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Бали</h2>

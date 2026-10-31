@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Da Nang, October 24, 2026. HATHA YOGA with Vilma at YOGA Club Danag 🗓 Saturday (17.10) 🕰 at 11:00 Vilma has a strong knowledge of body biomechanics, which…" />
     <link rel="canonical" href="https://mypins.site/en/event/9ccda0d5-3c07-48e9-a1c7-58fc5356cf7a/hatha-yoga-with-vilma/" />
     <meta property="og:site_name" content="MyPins" />
@@ -144,9 +146,9 @@ Limited number of spots.
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/b9d8667b-0c93-4b87-bac1-6baeda29633e/full-body-group-functional-training-in-da-nang/">Full Body group functional training in Da Nang <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/eaa83c41-cdc7-4237-940f-754ff890b248/yoga-in-da-nang/">YOGA in Da Nang <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/17cd02d0-5404-400b-9eab-0d7c310ac98d/hatha-yoga/">HATHA YOGA <time datetime="2026-10-24">October 24, 2026</time></a></li>
     <li><a href="/en/event/3398a68c-50dc-4f39-8b80-9647e5b1328f/hatha-yoga-in-fysm-style-saturday/">Hatha Yoga in FYSM Style SATURDAY <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/eaa83c41-cdc7-4237-940f-754ff890b248/yoga-in-da-nang/">YOGA in Da Nang <time datetime="2026-10-31">October 31, 2026</time></a></li>
     <li><a href="/en/event/0373e61d-c2b8-422e-8fcf-dcb330735c78/tomorrow-yoga-in-fysm-style-for-all-levels/">TOMORROW YOGA in FYSM style for all levels <time datetime="2026-10-31">October 31, 2026</time></a></li>
     <li><a href="/en/event/763468e9-1843-48da-876f-fa0b14f02d5c/group-meditation-reboot-in-da-nang-vietnam/">Group meditation &quot;Reboot&quot; in Da Nang (Vietnam) <time datetime="2026-10-31">October 31, 2026</time></a></li>
     <li><a href="/en/event/daca76a1-5481-4868-ae9c-91599c9a11bf/sound-practice-for-releasing-inner-tension/">SOUND PRACTICE FOR RELEASING INNER TENSION <time datetime="2026-10-31">October 31, 2026</time></a></li>

@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Никосия, Кипр, 30 октября 2026. Клуб Magic: The Gathering при UNIC проводит Spooky Commander Night — бесплатную встречу MTG в стиле Хэллоуина в Никосии, Кипр…" />
     <link rel="canonical" href="https://mypins.site/event/1c3033b0-3d87-4578-b4db-b9642898b2ff/spooky-commander-night-khellouinskaya-vstrecha-mtg-v-nikosii/" />
     <meta property="og:site_name" content="MyPins" />
@@ -100,13 +102,13 @@
     <link rel="alternate" hreflang="ru" href="https://mypins.site/event/1c3033b0-3d87-4578-b4db-b9642898b2ff/spooky-commander-night-khellouinskaya-vstrecha-mtg-v-nikosii/" />
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/1c3033b0-3d87-4578-b4db-b9642898b2ff/spooky-commander-night-halloween-mtg-meetup-in-nicosia/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Spooky Commander Night: хэллоуинская встреча MTG в Никосии","url":"https://mypins.site/event/1c3033b0-3d87-4578-b4db-b9642898b2ff/spooky-commander-night-khellouinskaya-vstrecha-mtg-v-nikosii/","startDate":"2026-10-30T16:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"A213, Никосия","address":{"@type":"PostalAddress","addressLocality":"Никосия","streetAddress":"A213, Никосия","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1746503,"longitude":33.3638783}},"description":"Клуб Magic: The Gathering при UNIC проводит Spooky Commander Night — бесплатную встречу MTG в стиле Хэллоуина в Никосии, Кипр, 30 октября 2026 года. Встреча открыта для игроков любого уровня и подойдёт всем, кто любит карточные игры и хэллоуинские развлечения. Помещение украсят к Хэллоуину,...","endDate":"2026-10-30","image":"https://cyprus.bz/img/images/events/e2430b94-f8d3-41eb-850d-6fb1b885ff7c/1793163691581.jpg?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/392f/spooky-commander-night-halloween-mtg-event-in-nicosia-2026"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Spooky Commander Night: хэллоуинская встреча MTG в Никосии","item":"https://mypins.site/event/1c3033b0-3d87-4578-b4db-b9642898b2ff/spooky-commander-night-khellouinskaya-vstrecha-mtg-v-nikosii/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Spooky Commander Night: хэллоуинская встреча MTG в Никосии","item":"https://mypins.site/event/1c3033b0-3d87-4578-b4db-b9642898b2ff/spooky-commander-night-khellouinskaya-vstrecha-mtg-v-nikosii/"}]}]}</script>
   </head>
   <body>
     <div id="root"></div>
 <div id="seo-event-block">
   <h1>Spooky Commander Night: хэллоуинская встреча MTG в Никосии</h1>
-  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-10-30">30 октября 2026</time></p>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-30">30 октября 2026</time></p>
   <p><time datetime="2026-10-30T16:00:00">30 октября 2026, 16:00</time></p>
   <address>A213, Никосия, Никосия, Кипр</address>
   <p>Клуб Magic: The Gathering при UNIC проводит Spooky Commander Night — бесплатную встречу MTG в стиле Хэллоуина в Никосии, Кипр, 30 октября 2026 года. Встреча открыта для игроков любого уровня и подойдёт всем, кто любит карточные игры и хэллоуинские развлечения. Помещение украсят к Хэллоуину,...</p>
@@ -118,16 +120,16 @@
   <ul>
     <li><a href="/event/525b10ec-8838-4edd-ae63-8debe14e3446/osenniy-priklyuchencheskiy-lager-v-science-house/">Осенний приключенческий лагерь в Science House <time datetime="2026-10-21">21 октября 2026</time></a></li>
     <li><a href="/event/9f042693-5698-4cdd-9c4b-8530cedbd66d/druzheskie-vstrechi-za-igroy-v-bridzh/">Дружеские встречи за игрой в бридж <time datetime="2026-10-28">28 октября 2026</time></a></li>
-    <li><a href="/event/9f3ba0dd-fbb6-4c6d-81b5-dbb32b1a7cfc/otkrytie-kluba-mafiya-na-angliyskom-yazyke/">Открытие клуба «Мафия» на английском языке <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/a0af21d9-12f4-4853-80d3-0888c0f2bbee/zhutkaya-noch-komandira-khellouinskoe-sobytie-mtg-v-nikosii/">Жуткая ночь командира: хеллоуинское событие MTG в Никосии <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/9f3ba0dd-fbb6-4c6d-81b5-dbb32b1a7cfc/otkrytie-kluba-mafiya-na-angliyskom-yazyke/">Открытие клуба «Мафия» на английском языке <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/2dac91e4-a831-40bf-a669-777bca44cc2d/game-quest-okhotniki-za-privideniyami-serebryanoe-shou/">Game Quest: Охотники за привидениями + Серебряное шоу <time datetime="2026-10-31">31 октября 2026</time></a></li>
     <li><a href="/event/45cf85ca-930b-4212-b4e5-5bcee353627f/nikosiya-kvest-po-ulitsam-starogo-goroda/">Никосия: квест по улицам старого города <time datetime="2026-11-06">6 ноября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Кипр</h2>
     <ul>
-    <li>Предыдущее: <a href="/event/17f3378b-b523-48a3-bcd6-a8c00f964877/tipsy-khellouin-izdanie-v-limassole/">Tipsy: Хэллоуин-издание в Лимассоле</a> <time datetime="2026-10-30">30 октября 2026</time></li>
-    <li>Следующее: <a href="/event/517879c0-5cf4-4cd0-bd4b-039dad6d16e9/khellouin-v-7seas-vecherinka-rnb-hip-hop-v-limassole/">Хэллоуин в 7seas: вечеринка RnB &amp; Hip-Hop в Лимассоле</a> <time datetime="2026-10-30">30 октября 2026</time></li>
+    <li>Предыдущее: <a href="/event/1c3025b8-9503-41d7-9b54-c4ca41cfaad0/residue-mezhdunarodnyy-festival-nikosii-2026/">Residue - Международный фестиваль Никосии 2026</a> <time datetime="2026-10-30">30 октября 2026</time></li>
+    <li>Следующее: <a href="/event/1c5a27ba-139f-4b0b-87ea-9c74b58e86a8/khellouin-ekstravagantsa-drag-shou-i-dj-vecherinka-v-limasole/">Хэллоуин-экстраваганца: драг-шоу и DJ-вечеринка в Лимасоле</a> <time datetime="2026-10-30">30 октября 2026</time></li>
     </ul>
   </nav>
   <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>

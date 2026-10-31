@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Bali, October 14, 2026. &quot;Ernest &amp; Celestine: The Adventures of a Mouse and a Bear.&quot; Celestine the mouse dreams of drawing, but in the mouse city she is…" />
     <link rel="canonical" href="https://mypins.site/en/event/4d21e3e6-e100-4cb8-8e0a-a52894607b1a/film-club-ernest-celestine/" />
     <meta property="og:site_name" content="MyPins" />
@@ -161,9 +163,9 @@ Film club &quot;Atalanta&quot;</p>
   </nav>
   <h2>Similar events</h2>
   <ul>
+    <li><a href="/en/event/e480c0d4-62ad-4521-bbf9-f03b6f01afcd/e-t-the-extra-terrestrial-screening-at-paradiso-ubud-on-october-11/">E.T. the Extra-Terrestrial screening at Paradiso Ubud on October 11 <time datetime="2026-10-11">October 11, 2026</time></a></li>
     <li><a href="/en/event/69bf2748-f30d-4a64-9017-d0b923e7ed13/brave-screening-at-paradiso-ubud-on-october-11/">Brave screening at Paradiso Ubud on October 11 <time datetime="2026-10-11">October 11, 2026</time></a></li>
     <li><a href="/en/event/9b2da612-75c7-405a-abc4-85c4b38ce970/screening-of-a-real-bug-s-life-at-paradiso-ubud-on-october-11/">Screening of A Real Bug’s Life at Paradiso Ubud on October 11 <time datetime="2026-10-11">October 11, 2026</time></a></li>
-    <li><a href="/en/event/72d4866b-e61e-4492-a115-973ab5f46522/wild-film-screening-at-paradiso-ubud-on-october-11/">Wild film screening at Paradiso Ubud on October 11 <time datetime="2026-10-11">October 11, 2026</time></a></li>
     <li><a href="/en/event/23cce479-512e-49ba-88a0-eeb208c0feed/forever-young-film-screening-at-paradiso-ubud-on-october-12/">Forever Young film screening at Paradiso Ubud on October 12 <time datetime="2026-10-12">October 12, 2026</time></a></li>
     <li><a href="/en/event/c6fcd96b-d7bf-4f65-aa43-35cfd5e23ff8/screening-of-the-grand-budapest-hotel-at-paradiso-ubud-on-october-12/">Screening of &quot;The Grand Budapest Hotel&quot; at Paradiso Ubud on October 12 <time datetime="2026-10-12">October 12, 2026</time></a></li>
     <li><a href="/en/event/7505db03-02a9-40fb-bfe9-8d6031e4c863/screening-of-the-musical-an-american-in-paris-at-paradiso-ubud-on-october-14/">Screening of the musical &quot;An American in Paris&quot; at Paradiso Ubud on October 14 <time datetime="2026-10-14">October 14, 2026</time></a></li>

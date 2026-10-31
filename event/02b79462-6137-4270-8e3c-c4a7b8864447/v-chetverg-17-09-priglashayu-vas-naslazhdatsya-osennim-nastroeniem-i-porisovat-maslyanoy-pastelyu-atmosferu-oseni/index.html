@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Дананг, 17 сентября 2026. ☕️ В четверг 17.09 приглашаю вас наслаждаться осенним настроением и порисовать масляной пастелью атмосферу осени🔋☕️ В дождливую…" />
     <link rel="canonical" href="https://mypins.site/event/02b79462-6137-4270-8e3c-c4a7b8864447/v-chetverg-17-09-priglashayu-vas-naslazhdatsya-osennim-nastroeniem-i-porisovat-maslyanoy-pastelyu-atmosferu-oseni/" />
     <meta property="og:site_name" content="MyPins" />
@@ -139,8 +141,8 @@
   <h2>Похожие события</h2>
   <ul>
     <li><a href="/event/18c5c2a5-fcda-4c23-b85a-13797686e7c8/tot-samyy-dancehall-kotoryy-ty-smozhesh-tantsevat-na-vecherinkakh/">Тот самый Dancehall, который ты сможешь танцевать на вечеринках <time datetime="2026-09-15">15 сентября 2026</time></a></li>
+    <li><a href="/event/00911ca0-6ae0-4eaa-a297-926df17206d4/priglashaem-devushek-na-latinoamerikanskie-tantsy/">Приглашаем девушек на латиноамериканские танцы! <time datetime="2026-09-15">15 сентября 2026</time></a></li>
     <li><a href="/event/bfa9276a-3b31-4c55-af09-e348ceda31ca/master-klass-po-sozdaniyu-ukrasheniya/">Мастер-класс по созданию украшения <time datetime="2026-09-17">17 сентября 2026</time></a></li>
-    <li><a href="/event/6570fe5b-a3bd-4850-8076-f5e68f553f19/v-etu-pyatnitsu-priglashayu-vas-na-uyutnyy-master-klass-po-vyazaniyu-azhurnoy-kosynki/">В эту пятницу приглашаю вас на уютный мастер-класс по вязанию ажурной косынки <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/4d244a54-7d55-4970-828a-7194c80cbba6/argentinskoe-tango-iskusstvo-vzaimodeystviya-v-pare/">Аргентинское танго Искусство взаимодействия в паре <time datetime="2026-10-31">31 октября 2026</time></a></li>
     <li><a href="/event/2ddf7461-3309-4753-8ed8-ae2cad0b7864/master-klass-po-improvizatsii/">Мастер-класс по импровизации <time datetime="2026-11-04">4 ноября 2026</time></a></li>
     <li><a href="/event/f45f3e8d-1990-46b4-aef2-5cc626244f8e/znakomstvo-s-gipnozom/">ЗНАКОМСТВО С ГИПНОЗОМ <time datetime="2026-11-04">4 ноября 2026</time></a></li>

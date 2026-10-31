@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Nha Trang, October 30, 2026. Avalon ⚔️ 🎭 FRIDAY = AVALON. No other options😏 It&#39;s Mafia, but in armor and with intrigue like in &quot;Game of Thrones.&quot; You get a…" />
     <link rel="canonical" href="https://mypins.site/en/event/7d9ea6cb-d2d0-4cd4-b50a-c13ebc3120a5/friday-avalon-no-options/" />
     <meta property="og:site_name" content="MyPins" />
@@ -100,13 +102,13 @@
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/7d9ea6cb-d2d0-4cd4-b50a-c13ebc3120a5/friday-avalon-no-options/" />
     <link rel="alternate" hreflang="ru" href="https://mypins.site/event/7d9ea6cb-d2d0-4cd4-b50a-c13ebc3120a5/pyatnitsa-avalon-bez-variantov/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"FRIDAY AVALON. No options","url":"https://mypins.site/en/event/7d9ea6cb-d2d0-4cd4-b50a-c13ebc3120a5/friday-avalon-no-options/","startDate":"2026-10-30T19:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Bóng Râm Cocktails & Coffee, 62a Nguyễn Thị Minh Khai, Nha Trang, Khánh Hòa 650000","address":{"@type":"PostalAddress","addressLocality":"Nha Trang","streetAddress":"Bóng Râm Cocktails & Coffee, 62a Nguyễn Thị Minh Khai, Nha Trang, Khánh Hòa 650000"},"geo":{"@type":"GeoCoordinates","latitude":12.2362989,"longitude":109.1868842}},"description":"Avalon ⚔️ 🎭 FRIDAY = AVALON. No other options😏 It's Mafia, but in armor and with intrigue like in \"Game of Thrones.\" You get a secret role: you're either a loyal Knight of Arthur or a planted spy of Mordred. Then you'll lie with a stone-cold face, squint suspiciously, or form alliances that fall apart in 10 minutes🗡 🧙‍♂️ Merlin knows everything but stays silent 🕵️ The villains know each other and smile sweetly 🫵 And you only know yourself, and even that's not certain😜 Playing for the first time? That's even better. I'll explain in 5 minutes, and by the third round you'll be bluffing like a pro 😎 \"The host of the evening is Volk 🐺 Come into the lair, we'll expose all the traitors and have a great evening!\" See you at the table🗡️✨ 📅 When: today, 23.10 🕖 Time: 19:00-23:00 📍 Where: https://maps.app.goo.gl/o86WhZHLv3LHKg3k6?g_st=ic 💸 How much: 100,000 VND per evening (4–5 games) 🔥 Limited spots: first come, first served — Excalibur goes to the first one. 👉 Hurry and message to sign up @lifealpha #date: 23.10 Post by: Alexander","endDate":"2026-10-30T23:00:00","image":"https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/7e8c94ad63e3933faa3c459e2aaa88a0.jpg","organizer":{"@type":"Organization","name":"Telegram @nyachang_ru","url":"https://t.me/nyachang_ru/24987"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"FRIDAY AVALON. No options","item":"https://mypins.site/en/event/7d9ea6cb-d2d0-4cd4-b50a-c13ebc3120a5/friday-avalon-no-options/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"FRIDAY AVALON. No options","item":"https://mypins.site/en/event/7d9ea6cb-d2d0-4cd4-b50a-c13ebc3120a5/friday-avalon-no-options/"}]}]}</script>
   </head>
   <body>
     <div id="root"></div>
 <div id="seo-event-block">
   <h1>FRIDAY AVALON. No options</h1>
-  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-10-30">October 30, 2026</time></p>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-30">October 30, 2026</time></p>
   <p><time datetime="2026-10-30T19:00:00">October 30, 2026, 7:00 PM</time></p>
   <address>Bóng Râm Cocktails &amp; Coffee, 62a Nguyễn Thị Minh Khai, Nha Trang, Khánh Hòa 650000</address>
   <p>100000 VND</p>
@@ -139,17 +141,17 @@ Post by: Alexander</p>
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/68a7546a-be03-4983-b0b4-cd350a7a7e85/avalon-on-friday/">AVALON ON FRIDAY <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/35bf5f28-7666-4785-b429-781810264efe/board-game-evening-and-hangout/">Board game evening and hangout! <time datetime="2026-10-31">October 31, 2026</time></a></li>
     <li><a href="/en/event/53206d5d-c3f4-478c-b2f5-4873ece16478/a-quest-with-riddles-ciphers-and-unexpected-challenges-in-nha-trang/">A quest with riddles, ciphers, and unexpected challenges in Nha Trang! <time datetime="2026-10-31">October 31, 2026</time></a></li>
     <li><a href="/en/event/2922621b-4ee1-4521-bc47-f464329533a8/playing-bunker-at-vyshe-gor/">Playing &quot;Bunker&quot; at &quot;Vyshe Gor&quot; <time datetime="2026-11-01">November 1, 2026</time></a></li>
     <li><a href="/en/event/819eef30-86ed-416a-90fd-31f46c19c9a8/the-spookiest-one-of-the-year-a-halloween-themed-quiz-please-game-on-all-saints-day-we-ll-recall-the-top-horror-movies/">The spookiest one of the year - a Halloween-themed Quiz, Please! game. On All Saints&#39; Day we&#39;ll recall the top horror movies <time datetime="2026-11-01">November 1, 2026</time></a></li>
     <li><a href="/en/event/3a8ee991-6b81-40ab-9cb4-dabc9ddc2241/launching-a-new-project-to-train-game-masters-both-beginners-and-experienced-for-tabletop-role-playing-games-the-essence-of-the-project-is/">Launching a new project to train game masters, both beginners and experienced, for tabletop role-playing games. The essence of the project is <time datetime="2026-11-02">November 2, 2026</time></a></li>
+    <li><a href="/en/event/ece2a045-6097-479d-8b25-cc77ff857abe/musical-lotto-best-hits-of-all-eras/">MUSICAL LOTTO best hits of all eras! <time datetime="2026-11-05">November 5, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Nha Trang</h2>
     <ul>
-    <li>Previous: <a href="/en/event/37b399fa-0fd8-41a5-8697-79211b7b7819/shalyapin-theater-studio/">SHALYAPIN THEATER-STUDIO</a> <time datetime="2026-10-30">October 30, 2026</time></li>
+    <li>Previous: <a href="/en/event/6e2b8061-6d11-4da8-b9b3-907d19f969cc/bachata-sensual-party-friday-october-30/">BACHATA SENSUAL PARTY FRIDAY, OCTOBER 30!</a> <time datetime="2026-10-30">October 30, 2026</time></li>
     <li>Next: <a href="/en/event/8167746c-84d6-4662-b1f4-25a5976a1c6d/breakfast-with-a-psychologist-t-game-house-of-my-soul/">BREAKFAST WITH A PSYCHOLOGIST: T-GAME &quot;HOUSE OF MY SOUL&quot;</a> <time datetime="2026-10-30">October 30, 2026</time></li>
     </ul>
   </nav>

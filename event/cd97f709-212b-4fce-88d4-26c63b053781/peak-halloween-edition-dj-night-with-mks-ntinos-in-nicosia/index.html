@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Никосия, Кипр, 27 октября 2026. Самая большая хэллоуинская ночь Никосии приходит в Asmation Experience 27 октября 2026 — билеты доступны на fomo.com.cy…" />
     <link rel="canonical" href="https://mypins.site/event/cd97f709-212b-4fce-88d4-26c63b053781/pikovyy-khellouin-noch-s-dj-mks-i-ntinos-v-nikosii/" />
     <meta property="og:site_name" content="MyPins" />
@@ -129,12 +131,12 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/a07be77b-8cbf-4e31-be24-6b6a106fb178/seysmos-khellouin-nochnaya-vecherinka-v-opus-venue/">Сейсмос Хэллоуин: Ночная вечеринка в Opus Venue <time datetime="2026-10-29">29 октября 2026</time></a></li>
-    <li><a href="/event/eaafd255-aac3-40a1-b88f-2ead1021a3af/khellouin-vecherinka-2026-v-nikosii/">Хэллоуин-вечеринка 2026 в Никосии <time datetime="2026-10-29">29 октября 2026</time></a></li>
-    <li><a href="/event/027ede0a-0e74-4eec-bb0c-84edbc200c11/khellouin-v-amfiteatre-v-protarase/">Хэллоуин в амфитеатре в Протарасе <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/130e45c8-de55-4c16-b562-21c46d8d55d8/razvratnaya-khellouinskaya-noch-v-noc-night-club/">Развратная хэллоуинская ночь в NOC Night Club <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/1c5a27ba-139f-4b0b-87ea-9c74b58e86a8/khellouin-ekstravagantsa-drag-shou-i-dj-vecherinka-v-limasole/">Хэллоуин-экстраваганца: драг-шоу и DJ-вечеринка в Лимасоле <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/1e1872c9-dc01-405a-a829-d9d364322fb0/shoutaym-po-pyatnitsam/">Шоутайм по пятницам <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/7d88cf47-3694-40e0-9258-c6d806d5d75d/utopiya-zhutkie-sireny-v-ventuno/">Утопия: Жуткие Сирены в Ventuno <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/899ba819-5bc2-40aa-a766-1a9ec4fd76b0/ocharovanie/">Очарование <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/e9dbb4dd-5d48-4143-8b39-869ce959ea6e/shrek-reyv/">Шрек Рейв <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/115c2734-ad60-4e7b-8499-afe884f11ed2/leggo-x-kybba-khellouinskaya-denskholl-vecherinka-v-the-warehouse/">Leggo x Kybba: Хэллоуинская дэнсхолл-вечеринка в The Warehouse <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/1d5d0d22-add6-4f22-9248-6b62339ac977/dan-priglashaet-sina-xx-v-sllip/">DANÆ приглашает: Sina XX в Sllip <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/2b053a65-392b-437e-aded-226e6112d4a5/detskiy-prazdnik-halloween/">Детский праздник Halloween <time datetime="2026-10-31">31 октября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Кипр</h2>

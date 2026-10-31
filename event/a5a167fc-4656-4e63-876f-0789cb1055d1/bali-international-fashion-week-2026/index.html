@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Беноа (Нуса Дуа), Bali, 26 сентября 2026. Bali International Fashion Week (BIFW) 2026 продлится 3 дня с 24 по 26 сентября. На нее приехали более 100 моделей и…" />
     <link rel="canonical" href="https://mypins.site/event/a5a167fc-4656-4e63-876f-0789cb1055d1/nedelya-mody-bali-international-fashion-week-2026/" />
     <meta property="og:site_name" content="MyPins" />
@@ -124,12 +126,12 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
+    <li><a href="/event/92b1ea9d-782a-4703-8234-73e486ca3201/nedelya-mody-bali-international-fashion-week-2026/">Неделя моды Bali International Fashion Week 2026 <time datetime="2026-09-24">24 сентября 2026</time></a></li>
     <li><a href="/event/12a52ff9-ee8f-4795-b892-0a08a0b86af4/nedelya-mody-bali-international-fashion-week-2026/">Неделя моды Bali International Fashion Week 2026 <time datetime="2026-09-25">25 сентября 2026</time></a></li>
+    <li><a href="/event/35ca56d6-9408-4133-a1f0-91ba30f8c1dd/vystavka-sazha-na-krayu-ognya-v-galeri-zen1/">Выставка «Сажа на краю огня» в Galeri Zen1 <time datetime="2026-09-25">25 сентября 2026</time></a></li>
     <li><a href="/event/dc9f39ab-931f-4f47-9b16-127579425447/vystavka-sazha-na-krayu-ognya-v-galeri-zen1/">Выставка «Сажа на краю огня» в Galeri Zen1 <time datetime="2026-09-26">26 сентября 2026</time></a></li>
+    <li><a href="/event/7e806558-72da-40a4-9d64-785447d07baa/vystavka-sazha-na-krayu-ognya-v-galeri-zen1/">Выставка «Сажа на краю огня» в Galeri Zen1 <time datetime="2026-09-27">27 сентября 2026</time></a></li>
     <li><a href="/event/1ca1e13d-cb23-4710-bc82-17909ebe8285/what-the-body-remembers-vystavka-v-nuanu-do-29-noyabrya/">What The Body Remembers: выставка в Nuanu до 29 ноября <time datetime="2026-10-10">10 октября 2026</time></a></li>
-    <li><a href="/event/33078c12-e86f-4d6d-b3fb-b1d3b5a679a5/vystavka-sled-sveta-v-cushcush-gallery/">Выставка «След света» в CushCush Gallery <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/d6327bdd-16f8-4d02-b3db-9af1b1cffc58/vystavka-dizayna-v-uma-seminyak/">Выставка дизайна в Uma Seminyak <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/efdec033-173e-426e-9854-c6452ab52abf/vystavka-aliks-eme-v-muzee-pasifika/">Выставка Аликс Эме в Музее Pasifika <time datetime="2026-10-30">30 октября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Бали</h2>

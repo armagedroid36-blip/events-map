@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Limassol, Cyprus, October 16, 2026. Opening: 16 October 2026, 18:00-22:00, welcome/greeting 19:00 Duration: 16 October – 15 November 2026 Venue: Limassol…" />
     <link rel="canonical" href="https://mypins.site/en/event/10fb7e8b-403b-495a-8b97-a8ca9e33663a/3rd-cyprus-poster-triennial-2026-international-poster-exhibition/" />
     <meta property="og:site_name" content="MyPins" />
@@ -126,7 +128,7 @@ The 3rd Cyprus International Poster Triennial (Cyprus Poster Triennial-CPT) cont
     <li><a href="/en/event/fead5de7-be84-4bf5-981b-64d74e89f5eb/land-written-in-verse-contemporary-landscapes/">Land Written in Verse: Contemporary Landscapes <time datetime="2026-10-22">October 22, 2026</time></a></li>
     <li><a href="/en/event/3f1eed09-a99d-49fd-b547-e35e6531f456/sanctuary-of-small-things-georgia-michaelidis-saad-at-rouan-gallery/">Sanctuary of Small Things: Georgia Michaelidis Saad at Rouan Gallery <time datetime="2026-10-23">October 23, 2026</time></a></li>
     <li><a href="/en/event/31ec05bb-dae7-4c2c-a3db-5c98c1bf935b/harmoni-exhibition-by-chiaki-kamikawa/">Harmoni: Exhibition by Chiaki Kamikawa <time datetime="2026-10-24">October 24, 2026</time></a></li>
-    <li><a href="/en/event/156266e0-a542-4dab-b178-86b215b853c6/guardian-of-the-grapes-and-other-similar-stories/">Guardian of the Grapes and Other Similar Stories <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/753bface-9158-4a6b-85b9-41e2eb4992ca/belonging/">Belonging <time datetime="2026-10-30">October 30, 2026</time></a></li>
   </ul>
 </div>
 

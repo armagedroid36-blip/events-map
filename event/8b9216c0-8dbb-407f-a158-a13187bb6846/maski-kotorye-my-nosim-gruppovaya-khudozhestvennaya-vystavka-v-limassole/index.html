@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Лимасол, Кипр, 24 октября 2026. «The Masks We Wear» — групповая художественная выставка ART.CY в Aphrodite Amathusia Cultural Centre в Лимасоле, Кипр, 24–25…" />
     <link rel="canonical" href="https://mypins.site/event/8b9216c0-8dbb-407f-a158-a13187bb6846/maski-kotorye-my-nosim-gruppovaya-khudozhestvennaya-vystavka-v-limassole/" />
     <meta property="og:site_name" content="MyPins" />
@@ -131,8 +133,8 @@ ART.CY представляет «The Masks We Wear» — групповую в�
     <li><a href="/event/fead5de7-be84-4bf5-981b-64d74e89f5eb/zemlya-napisannaya-stikhami-sovremennye-landshafty/">Земля, написанная стихами: современные ландшафты <time datetime="2026-10-22">22 октября 2026</time></a></li>
     <li><a href="/event/3f1eed09-a99d-49fd-b547-e35e6531f456/svyatilishche-malenkikh-veshchey-dzhordzhiya-mikhaelidis-saad-v-galeree-rouan/">Святилище маленьких вещей: Джорджия Михаэлидис Саад в галерее Rouan <time datetime="2026-10-23">23 октября 2026</time></a></li>
     <li><a href="/event/31ec05bb-dae7-4c2c-a3db-5c98c1bf935b/harmoni-vystavka-tiaki-kamikavy/">Harmoni: выставка Тиаки Камикавы <time datetime="2026-10-24">24 октября 2026</time></a></li>
-    <li><a href="/event/156266e0-a542-4dab-b178-86b215b853c6/strazh-vinograda-i-drugie-pokhozhie-istorii/">Страж винограда и другие похожие истории <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/6e360245-48ba-4695-9f5f-9aa59ad5c522/pochetnoe-meropriyatie-v-chest-g-na-demetrisa-z-pieridisa/">Почётное мероприятие в честь г-на Деметриса З. Пиеридиса <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/753bface-9158-4a6b-85b9-41e2eb4992ca/prinadlezhnost/">Принадлежность <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/fb522d45-c084-4adb-8075-7c6d72abe990/mezhdunarodnaya-vystavka-skromnye-zemli-za-predelami-zapadnogo-konteksta-mezhkulturnye-modernizmy/">Международная выставка: Скромные земли: За пределами западного контекста — межкультурные модернизмы <time datetime="2026-10-30">30 октября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Кипр</h2>

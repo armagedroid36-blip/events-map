@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Nicosia, Cyprus, October 30, 2026. A musical tribute to Giorgos Mazonakis in Nicosia on October 30, 2026 — an evening by Antipeina Live and Vioma Events…" />
     <link rel="canonical" href="https://mypins.site/en/event/27f08dfe-f055-43c7-95b2-213249f13900/again-tribute-to-giorgos-mazonakis-in-nicosia/" />
     <meta property="og:site_name" content="MyPins" />
@@ -100,13 +102,14 @@
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/27f08dfe-f055-43c7-95b2-213249f13900/again-tribute-to-giorgos-mazonakis-in-nicosia/" />
     <link rel="alternate" hreflang="ru" href="https://mypins.site/event/27f08dfe-f055-43c7-95b2-213249f13900/snova-posvyashchenie-yorgosu-mazonakisu-v-nikosii/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Again: Tribute to Giorgos Mazonakis in Nicosia","url":"https://mypins.site/en/event/27f08dfe-f055-43c7-95b2-213249f13900/again-tribute-to-giorgos-mazonakis-in-nicosia/","startDate":"2026-10-30T21:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Νέας Έγκωμης 26, Nicosia","address":{"@type":"PostalAddress","addressLocality":"Nicosia","streetAddress":"Νέας Έγκωμης 26, Nicosia","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1653831,"longitude":33.3241468}},"offers":{"@type":"Offer","url":"https://mypins.site/en/event/27f08dfe-f055-43c7-95b2-213249f13900/again-tribute-to-giorgos-mazonakis-in-nicosia/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-10-18"},"description":"A musical tribute to Giorgos Mazonakis in Nicosia on October 30, 2026 — an evening by Antipeina Live and Vioma Events. --- Scroll down for English version 👇 --- The tribute to Giorgos Mazonakis returns after a sold-out night! Following the huge response on October 27, Antipeina Live and Vioma Events have announced a second date on Friday, October 30, 2026, in Nicosia. A musical journey filled with Giorgos Mazonakis's beloved melodies awaits you. 📍 26 Neas Engomis, Nicosia Reservations: 99 157 577 ❓ Frequently Asked Questions Q: Where can I","endDate":"2026-10-30","image":"https://eventor-images-s3.s3.eu-west-2.amazonaws.com/high-res/09c3fc73-15b6-4321-8b1c-8971f1634737.jpg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CE%BE%CE%B1%CE%BD%CE%AC-%CE%B1%CF%86%CE%B9%CE%AD%CF%81%CF%89%CE%BC%CE%B1-%CF%83%CF%84%CE%BF%CE%BD-%CE%B3%CE%B9%CF%8E%CF%81%CE%B3%CE%BF-%CE%BC%CE%B1%CE%B6%CF%89%CE%BD%CE%AC%CE%BA%CE%B7-%CF%83%CF%84%CE%B7-%CE%BB%CE%B5%CF%85%CE%BA%CF%89%CF%83%CE%AF%CE%B1-2026-10-30"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Again: Tribute to Giorgos Mazonakis in Nicosia","item":"https://mypins.site/en/event/27f08dfe-f055-43c7-95b2-213249f13900/again-tribute-to-giorgos-mazonakis-in-nicosia/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Again: Tribute to Giorgos Mazonakis in Nicosia","item":"https://mypins.site/en/event/27f08dfe-f055-43c7-95b2-213249f13900/again-tribute-to-giorgos-mazonakis-in-nicosia/"}]}]}</script>
     <script type="application/json" id="seo-alias-map">{"cloneId":"27f08dfe-f055-43c7-95b2-213249f13900","keptId":"27f08dfe-f055-43c7-95b2-213249f13900","ru":"https://mypins.site/event/27f08dfe-f055-43c7-95b2-213249f13900/snova-posvyashchenie-yorgosu-mazonakisu-v-nikosii/","en":"https://mypins.site/en/event/27f08dfe-f055-43c7-95b2-213249f13900/again-tribute-to-giorgos-mazonakis-in-nicosia/"}</script>
   </head>
   <body>
     <div id="root"></div>
 <div id="seo-event-block">
   <h1>Again: Tribute to Giorgos Mazonakis in Nicosia</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-30">October 30, 2026</time></p>
   <p><time datetime="2026-10-30T21:00:00">October 30, 2026, 9:00 PM</time></p>
   <address>Νέας Έγκωμης 26, Nicosia, Cyprus</address>
   <p>A musical tribute to Giorgos Mazonakis in Nicosia on October 30, 2026 — an evening by Antipeina Live and Vioma Events.
@@ -132,13 +135,21 @@ Q: Where can I</p>
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/081ba0df-33b4-407a-9177-bb3d1a033457/keladismata/">KELADISMATA <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/358a850a-f813-488e-b255-db679946f7f4/vanilla-groove-at-kesh/">Vanilla Groove at Kesh <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/415930fd-cf93-4461-9ec4-afb24b23b6bc/kosta-kritikos-at-dusty-munky/">Kosta Kritikos at Dusty Munky <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/512b7609-122a-4483-9a3f-3e3ff0dc5e82/ontour/">OnTour <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/60a1cf86-bdac-4cb9-8dc7-98c46032c215/evridiki-live-at-vinylio-wine-etc/">Evridiki live at Vinylio Wine Etc <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/b41ea2f2-e9bf-4426-9670-592a152f2fae/quatuor-diotima/">Quatuor Diotima <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/e1ba1ea3-2c40-4b32-bbe4-837f7e404b7e/luna-city-express-at-mason/">Luna City Express at Mason <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/01628702-0956-49ae-afb4-6207093e2295/maria-vardaki-live-concert-with-guest-nefeli-kaprou-in-nicosia/">Maria Vardaki: Live Concert with Guest Nefeli Kaprou in Nicosia <time datetime="2026-10-31">October 31, 2026</time></a></li>
   </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/1e1872c9-dc01-405a-a829-d9d364322fb0/showtime-fridays/">Showtime Fridays</a> <time datetime="2026-10-30">October 30, 2026</time></li>
+    <li>Next: <a href="/en/event/27fdf60d-30b5-4302-9f96-6e4c994b269d/walking-tour-with-bus-transfer/">Walking tour with bus transfer</a> <time datetime="2026-10-30">October 30, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
 </div>
 
   </body>

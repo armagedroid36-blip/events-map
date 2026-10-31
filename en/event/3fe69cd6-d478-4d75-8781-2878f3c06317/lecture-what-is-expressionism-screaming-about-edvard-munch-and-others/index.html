@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Nha Trang, October 16, 2026. Lecture &quot;What is Expressionism screaming about? Edvard Munch and others&quot; We&#39;ll explore how art found itself on the verge of a…" />
     <link rel="canonical" href="https://mypins.site/en/event/3fe69cd6-d478-4d75-8781-2878f3c06317/lecture-what-is-expressionism-screaming-about-edvard-munch-and-others/" />
     <meta property="og:site_name" content="MyPins" />
@@ -134,10 +136,10 @@ Post by: Irina</p>
   <ul>
     <li><a href="/en/event/157b225b-b1ba-48cc-882d-e4eebed71002/fractal-human-design/">Fractal Human Design. <time datetime="2026-10-09">October 9, 2026</time></a></li>
     <li><a href="/en/event/c9ed44a9-a251-4743-b976-24fbccb8bfac/lecture-baroque-in-italy-fantasy-at-its-peak/">Lecture &quot;Baroque in Italy. Fantasy at its Peak&quot; <time datetime="2026-10-13">October 13, 2026</time></a></li>
-    <li><a href="/en/event/b0f0e34c-b672-48fa-8f2d-2de77cb9fbe7/why-do-we-create-certain-relationship-scenarios/">Why do we create certain relationship scenarios? <time datetime="2026-10-16">October 16, 2026</time></a></li>
     <li><a href="/en/event/64a20bd1-df97-4d02-af7a-4002c58f846b/fractal-human-design/">Fractal Human Design. <time datetime="2026-10-16">October 16, 2026</time></a></li>
+    <li><a href="/en/event/b0f0e34c-b672-48fa-8f2d-2de77cb9fbe7/why-do-we-create-certain-relationship-scenarios/">Why do we create certain relationship scenarios? <time datetime="2026-10-16">October 16, 2026</time></a></li>
     <li><a href="/en/event/df82778c-51ac-4c4b-80f5-18dfdf1a978e/lecture-caravaggio-the-first-modern-artist/">Lecture &quot;Caravaggio. The First Modern Artist&quot; <time datetime="2026-10-20">October 20, 2026</time></a></li>
-    <li><a href="/en/event/9d6de9bd-ece5-4107-a6d7-5deb35e056ab/lecture-dali-and-surrealism/">Lecture &quot;Dali and Surrealism&quot; <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/d95057c3-ad8a-477b-831c-2bcd4bd8c2ed/lecture-kandinsky-and-early-abstraction/">Lecture &quot;Kandinsky and Early Abstraction&quot; <time datetime="2026-10-23">October 23, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Nha Trang</h2>

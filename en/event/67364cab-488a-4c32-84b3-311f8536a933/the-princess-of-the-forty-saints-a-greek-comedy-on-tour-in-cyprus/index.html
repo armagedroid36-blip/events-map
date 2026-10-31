@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
+         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
+         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
+         выполнятся при загрузке скрипта; при saveData не грузим.
+         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
+         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
+      function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
+      if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
+      setTimeout(go,12000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Princess of the Forty Saints… — November 6, 2026 · Limassol</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
+      <meta name="description" content="Limassol, Cyprus, November 6, 2026. One of the most beloved names in Greek theater, Haris Romas, returns with a brand-new, delightful comedy coming to Cyprus…" />
+    <link rel="canonical" href="https://mypins.site/en/event/67364cab-488a-4c32-84b3-311f8536a933/the-princess-of-the-forty-saints-a-greek-comedy-on-tour-in-cyprus/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="The Princess of the Forty Saints… — November 6, 2026 · Limassol" />
+    <meta property="og:description" content="Limassol, Cyprus, November 6, 2026. One of the most beloved names in Greek theater, Haris Romas, returns with a brand-new, delightful comedy coming to Cyprus…" />
+    <meta property="og:url" content="https://mypins.site/en/event/67364cab-488a-4c32-84b3-311f8536a933/the-princess-of-the-forty-saints-a-greek-comedy-on-tour-in-cyprus/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/70f15eac-beb9-49a0-b9c3-dc18c5cc9342/1793419246345.png?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/67364cab-488a-4c32-84b3-311f8536a933/the-princess-of-the-forty-saints-a-greek-comedy-on-tour-in-cyprus/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/67364cab-488a-4c32-84b3-311f8536a933/printsessa-soroka-svyatykh-grecheskaya-komediya-v-turne-po-kipru/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"The Princess of the Forty Saints: A Greek Comedy on Tour in Cyprus","url":"https://mypins.site/en/event/67364cab-488a-4c32-84b3-311f8536a933/the-princess-of-the-forty-saints-a-greek-comedy-on-tour-in-cyprus/","startDate":"2026-11-06T13:13:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Cyprus, Limassol","address":{"@type":"PostalAddress","addressLocality":"Limassol","streetAddress":"Cyprus, Limassol","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.7071,"longitude":33.0226}},"description":"One of the most beloved names in Greek theater, Haris Romas, returns with a brand-new, delightful comedy coming to Cyprus this autumn for a limited number of performances. The play \"The Princess of the Forty Saints!\" is a story full of laughter, unexpected twists,...","endDate":"2026-11-07","image":"https://cyprus.bz/img/images/events/70f15eac-beb9-49a0-b9c3-dc18c5cc9342/1793419246345.png?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/3a25/the-princess-of-the-forty-saints-greek-comedy-tour-in-cyprus-2026"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"The Princess of the Forty Saints: A Greek Comedy on Tour in Cyprus","item":"https://mypins.site/en/event/67364cab-488a-4c32-84b3-311f8536a933/the-princess-of-the-forty-saints-a-greek-comedy-on-tour-in-cyprus/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>The Princess of the Forty Saints: A Greek Comedy on Tour in Cyprus</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-11-07">November 7, 2026</time></p>
+  <p><time datetime="2026-11-06T13:13:00">November 6, 2026, 1:13 PM</time></p>
+  <address>Cyprus, Limassol</address>
+  <p>One of the most beloved names in Greek theater, Haris Romas, returns with a brand-new, delightful comedy coming to Cyprus this autumn for a limited number of performances. The play &quot;The Princess of the Forty Saints!&quot; is a story full of laughter, unexpected twists,...</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>The Princess of the Forty Saints: A Greek Comedy on Tour in Cyprus</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/theatre/">🎭 Theatres &amp; Shows</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/1a2ac7ae-cf1f-401a-9245-365200982792/the-fifth-step-nt-live-in-limassol/">The Fifth Step | NT Live in Limassol <time datetime="2026-11-06">November 6, 2026</time></a></li>
+    <li><a href="/en/event/4a66a7a1-9c74-4a78-9f4a-a1c0431b622a/madame-marianna-greek-detective-comedy-tour-in-nicosia/">Madame Marianna: Greek Detective Comedy Tour in Nicosia <time datetime="2026-11-06">November 6, 2026</time></a></li>
+    <li><a href="/en/event/54ff0f6b-0e9e-4565-948c-b1490341ac5a/i-kilia/">I Kiliá <time datetime="2026-11-06">November 6, 2026</time></a></li>
+    <li><a href="/en/event/57648962-b55f-483f-baa2-5bcaae4a4936/champis-breaking-the-ice-stand-up-comedy-in-nicosia/">Champis: Breaking the Ice Stand-Up Comedy in Nicosia <time datetime="2026-11-06">November 6, 2026</time></a></li>
+    <li><a href="/en/event/71ab7f21-ad44-49bb-8bf8-32280b4ccb78/enta-gambler-hedda-gabler/">Enta Gambler | Hedda Gabler <time datetime="2026-11-06">November 6, 2026</time></a></li>
+    <li><a href="/en/event/b0c0537d-57b9-4a01-b50e-2a4bdf9164ed/nada/">Nada <time datetime="2026-11-06">November 6, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/4c1f8627-7575-4940-867e-a63625bc8569/mustafa-algiyadi-stand-up-comedy-night-in-nicosia/">Mustafa Algiyadi: Stand-Up Comedy Night in Nicosia</a> <time datetime="2026-11-07">November 7, 2026</time></li>
+    <li>Next: <a href="/en/event/6a32e8fc-097c-4fbc-8f50-cfab6afc9f3c/berlin-beats-at-berlin-meet/">Berlin Beats At Berlin Meet</a> <time datetime="2026-11-07">November 7, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

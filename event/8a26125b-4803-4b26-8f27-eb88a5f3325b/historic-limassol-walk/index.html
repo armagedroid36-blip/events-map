@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Лимасол, Кипр, 11 ноября 2026. Откройте для себя историю и характер Лимассола на экскурсии с гидом по историческому центру города. Экскурсия начинается в…" />
     <link rel="canonical" href="https://mypins.site/event/8a26125b-4803-4b26-8f27-eb88a5f3325b/istoricheskaya-progulka-po-limassolu/" />
     <meta property="og:site_name" content="MyPins" />
@@ -129,11 +131,11 @@
   </ul>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/12c9d466-6672-4cdf-a547-f426159cff2a/semeynyy-pokhod-v-nikosii/">Семейный поход в Никосии <time datetime="2026-11-01">1 ноября 2026</time></a></li>
     <li><a href="/event/2d62f94e-bcca-44ec-87ad-17f5bda8bc7b/progulka-s-arkhitektorom-po-istoricheskomu-promyshlennomu-rayonu/">Прогулка с архитектором по историческому промышленному району <time datetime="2026-11-07">7 ноября 2026</time></a></li>
     <li><a href="/event/8019465c-c849-4b43-a913-ed5b8e6026b8/tur-po-muzeyam-i-remeslam-akamasa/">Тур по музеям и ремёслам Акамаса <time datetime="2026-11-07">7 ноября 2026</time></a></li>
     <li><a href="/event/0a1cabd7-5fc3-47c2-9c0b-3f0e020be6dc/pokhod-v-makheru/">Поход в Махеру <time datetime="2026-11-08">8 ноября 2026</time></a></li>
     <li><a href="/event/43d5331f-4705-429c-887a-d534cfe66839/peshiy-pokhod-v-vavle/">Пеший поход в Вавле <time datetime="2026-11-08">8 ноября 2026</time></a></li>
+    <li><a href="/event/1473e1e6-a8ed-47c7-9764-cc61a21aaeb3/istoriya-i-sladosti-progulka/">История и сладости: прогулка <time datetime="2026-11-10">10 ноября 2026</time></a></li>
     <li><a href="/event/53d18a18-4662-4288-9521-167ddb7975f8/nablyudenie-za-ptitsami-v-mandrii-i-u-vodokhranilishcha-asprokremmos/">Наблюдение за птицами в Мандрии и у водохранилища Аспрокреммос <time datetime="2026-11-14">14 ноября 2026</time></a></li>
   </ul>
 </div>

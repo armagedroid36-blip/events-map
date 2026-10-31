@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Табанан, Bali, 29 октября 2026. Погрузитесь в мир древних тайн и искусства в этот Хэллоуин в Nusantara. Искусство, культура и загадочная атмосфера объединятся…" />
     <link rel="canonical" href="https://mypins.site/event/7df6ef20-a427-4769-b95c-cc2ca346a574/khellouin-v-nusantara-tayny-drevnego-arkhipelaga/" />
     <meta property="og:site_name" content="MyPins" />
@@ -130,11 +132,11 @@ instagram (https://www.instagram.com/nusantara_nuanu/)</p>
   <h2>Похожие события</h2>
   <ul>
     <li><a href="/event/1ca1e13d-cb23-4710-bc82-17909ebe8285/what-the-body-remembers-vystavka-v-nuanu-do-29-noyabrya/">What The Body Remembers: выставка в Nuanu до 29 ноября <time datetime="2026-10-10">10 октября 2026</time></a></li>
+    <li><a href="/event/acda7c02-f058-427c-a701-810710536e35/vystavka-dizayna-v-uma-seminyak/">Выставка дизайна в Uma Seminyak <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/be41bf5c-2b01-4161-a928-4c2f9e95dd7a/vystavka-aliks-eme-v-muzee-pasifika/">Выставка Аликс Эме в Музее Pasifika <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/47ec8ee4-f801-49a9-be61-83a72a93bcc2/vecherinki-v-stile-modnyy-pokaz-v-tstore-bali/">Вечеринки в стиле: модный показ в TStore Bali <time datetime="2026-10-29">29 октября 2026</time></a></li>
     <li><a href="/event/71e111ed-b0a6-4ff9-abe4-79da027a921e/vystavka-dizayna-v-uma-seminyak/">Выставка дизайна в Uma Seminyak <time datetime="2026-10-29">29 октября 2026</time></a></li>
     <li><a href="/event/09e4c9bc-a6e4-415d-ad40-4fc38530602d/vystavka-aliks-eme-v-muzee-pasifika/">Выставка Аликс Эме в Музее Pasifika <time datetime="2026-10-29">29 октября 2026</time></a></li>
-    <li><a href="/event/33078c12-e86f-4d6d-b3fb-b1d3b5a679a5/vystavka-sled-sveta-v-cushcush-gallery/">Выставка «След света» в CushCush Gallery <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/d6327bdd-16f8-4d02-b3db-9af1b1cffc58/vystavka-dizayna-v-uma-seminyak/">Выставка дизайна в Uma Seminyak <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/efdec033-173e-426e-9854-c6452ab52abf/vystavka-aliks-eme-v-muzee-pasifika/">Выставка Аликс Эме в Музее Pasifika <time datetime="2026-10-30">30 октября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Бали</h2>

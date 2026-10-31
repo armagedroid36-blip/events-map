@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Лимасол, Кипр, 20 октября 2026. Департамент психологии и социальных наук и Департамент сестринского дела Frederick University в сотрудничестве с Кипрской…" />
     <link rel="canonical" href="https://mypins.site/event/29b375ff-6175-42f1-b956-4eef4c8de7fe/universitet-frederika-provedet-seminar-po-bolezni-altsgeymera-ot-diagnostiki-do-ukhoda/" />
     <meta property="og:site_name" content="MyPins" />
@@ -121,11 +123,11 @@
   <h2>Похожие события</h2>
   <ul>
     <li><a href="/event/b8c2f1f3-499a-4843-a236-49ec56697fa2/nachalo-programm-free-digital-skills-programs-dlya-lyudey-55-v-limassol-municipality/">Начало программ Free Digital Skills Programs для людей 55+ в Limassol Municipality <time datetime="2026-10-26">26 октября 2026</time></a></li>
-    <li><a href="/event/b87ec039-d744-4217-a1d4-1f621ba0e8df/klub-molodogo-veterinara/">Клуб молодого ветеринара <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/de0d4542-fbfd-4827-801d-95849a24547f/online-educational-seminar-grecheskiy-yazyk/">Online Educational Seminar - Греческий язык <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/b89c53d1-9587-4530-b0be-739386201291/podtverzhdayushchaya-psikhoterapevticheskaya-praktika-s-lgbtki-lyudmi-ot-teorii-k-klinicheskoy-praktike/">Подтверждающая психотерапевтическая практика с ЛГБТКИ+ людьми: от теории к клинической практике <time datetime="2026-10-31">31 октября 2026</time></a></li>
     <li><a href="/event/366a267f-4546-4d29-8fe1-6bd9c1efabe0/steklyannye-krylya/">«Стеклянные крылья» <time datetime="2026-11-01">1 ноября 2026</time></a></li>
     <li><a href="/event/a96555e7-2b4d-4bae-a4eb-61085226afbb/muzykalnye-besedy-yakopo-peri-i-rozhdenie-opery/">Музыкальные беседы: Якопо Пери и рождение оперы <time datetime="2026-11-03">3 ноября 2026</time></a></li>
+    <li><a href="/event/bc688799-05f1-4f69-bb35-76ab665f15d0/iskusstvo-rasskaza-posvyashchenie-raymondu-karveru/">Искусство рассказа: Посвящение Раймонду Карверу <time datetime="2026-11-04">4 ноября 2026</time></a></li>
+    <li><a href="/event/92d822e8-46e4-4bd7-9e90-f4beaf8fcb9c/golosa-i-vospominaniya-maloy-azii-i-kipra-v-nikosii/">Голоса и воспоминания Малой Азии и Кипра в Никосии <time datetime="2026-11-05">5 ноября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Кипр</h2>

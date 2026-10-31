@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Нячанг, 8 октября 2026. 🎭 АКТЁРСТВО КАК СПОСОБ ПОЗНАТЬ СЕБЯ - ВСТРЕЧА Актёрство — это не только сцена, роли и умение изображать эмоции. Это ещё и способ лучше…" />
     <link rel="canonical" href="https://mypins.site/event/b68387b3-ca91-40c6-ae2b-9b806d75ed21/akterstvo-kak-sposob-poznat-sebya-vstrecha/" />
     <meta property="og:site_name" content="MyPins" />
@@ -145,12 +147,12 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/2a824de1-4078-4a69-8747-8fef0c5e48ac/gde-vashi-skrytye-talanty-i-prednaznachenie-v-vashem-goroskope/">Где ваши скрытые таланты и предназначение в вашем гороскопе? <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/3df37517-3deb-4322-a439-46f03eca560c/zavtrak-s-psikhologom-tema-tsvetoterapiya/">ЗАВТРАК С ПСИХОЛОГОМ: ТЕМА «ЦВЕТОТЕРАПИЯ» <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/62d23fab-28b7-4184-b3d9-01611b8bf87d/taro-zavtrak/">ТАРО- ЗАВТРАК <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/b99bdec7-a824-42a5-a567-ef088fa71660/zhenskiy-zavtrak/">Женский завтрак <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/1ead7b90-43dc-4dcd-bce5-8f7ffa51a650/subbotniy-mastermind-novye-znakomstva-i-svezhie-idei/">Субботний MasterMind - новые знакомства и свежие идеи! <time datetime="2026-10-31">31 октября 2026</time></a></li>
     <li><a href="/event/36324beb-1a8f-44bf-894a-d145af4decf1/skuter-pati-rassvet-na-gore-angelov/">Скутер Пати. Рассвет на горе Ангелов <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/7ddf2eac-743d-417b-a71f-f6a2adb3f46c/zhenskiy-zavtrak-pro-otnosheniya/">ЖЕНСКИЙ ЗАВТРАК PRO ОТНОШЕНИЯ <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/ab01546f-e9cc-441d-8eed-27a3f9c09e07/bystrye-svidaniya-v-nyachange/">Быстрые свидания в Нячанге <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/e0f6527f-4611-4f1a-b362-9b86031c8ef5/literaturnyy-klub-v-nyachange/">Литературный клуб в Нячанге <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/ea62f400-f6f2-4047-ba90-d1b76738775c/tupik-kak-tochka-rosta-kak-astrologicheskaya-karta-vozvrashchaet-yasnost-i-masshtab/">Тупик как точка роста: как астрологическая карта возвращает ясность и масштаб <time datetime="2026-10-31">31 октября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Нячанг</h2>

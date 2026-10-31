@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Nha Trang, September 14, 2026. Tabata in the center Today at 18:00 I&#39;m doing tabata in the center near the beach. Free, for friends, for fun. Whoever&#39;s coming…" />
     <link rel="canonical" href="https://mypins.site/en/event/9edc8feb-d284-46d3-9d95-32654e8bf111/tabata-in-the-center/" />
     <meta property="og:site_name" content="MyPins" />
@@ -125,12 +127,12 @@ Post by: Stan Fire &amp; LED Show</p>
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/4f365183-44ba-4877-850b-f47dd0ab4d44/yoga-breakfast/">YOGA BREAKFAST <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/908daa23-6cb4-4606-bd60-5774e49dc6da/stretching-class-with-a-focus-on-the-middle-splits/">Stretching class with a focus on the middle splits <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/9700d7d3-73a2-46df-8229-90c53d5a2598/free-trial-class-women-s-yoga-for-back-and-pelvic-floor-health/">Free trial class: women&#39;s yoga for back and pelvic floor health <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/b3157474-0504-4360-bf16-72a76161fcbe/group-therapy-offline-in-nha-trang/">Group therapy offline in Nha Trang <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/fb3cf89f-53eb-4893-8a46-35105510c918/hatha-yoga-in-nha-trang/">Hatha Yoga in Nha Trang <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/1ab41869-1139-4ce7-8c4a-5fc2c6d0357c/sinful-come-to-the-torture-room/">Sinful?! Come to the torture room <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/1f25a4f4-1650-4861-a716-c4dc8019b6fb/om-chanting/">OM CHANTING <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/853fe6d7-54f8-429b-b79c-a485547f0713/partner-stretching-in-nha-trang/">Partner stretching in Nha Trang <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/9a1d38a1-8894-4358-a440-e1ee0f5ab020/yoga-in-nha-trang/">Yoga in Nha Trang <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/ea6779cf-3acf-41db-9ebb-6fcec00c3273/arrangement-discover-your-subpersonalities/">ARRANGEMENT &quot;Discover your subpersonalities&quot; <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/9fa904c9-d678-48ef-818a-6b8ddae938bb/art-of-contact/">ART OF CONTACT <time datetime="2026-11-01">November 1, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Nha Trang</h2>

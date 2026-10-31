@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Лимасол, Кипр, 30 октября 2026. Пневматический клуб Лимасола Кипра приглашает вас на особенный музыкальный вечер в Муниципальном театре Паттихио в Лимасоле с…" />
     <link rel="canonical" href="https://mypins.site/event/5f36f0a0-a56b-4099-bb51-6e534dd532e9/munitsipalnyy-teatr-pattikhio-limassola-predstavlyaet-golosa-moego-kraya-i-lyubvi/" />
     <meta property="og:site_name" content="MyPins" />
@@ -100,14 +102,14 @@
     <link rel="alternate" hreflang="ru" href="https://mypins.site/event/5f36f0a0-a56b-4099-bb51-6e534dd532e9/munitsipalnyy-teatr-pattikhio-limassola-predstavlyaet-golosa-moego-kraya-i-lyubvi/" />
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/5f36f0a0-a56b-4099-bb51-6e534dd532e9/the-pattihio-municipal-theater-of-limassol-presents-voices-of-my-land-and-of-love/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Муниципальный театр Паттихио Лимассола представляет \"ГОЛОСА МОЕГО КРАЯ И ЛЮБВИ\"","url":"https://mypins.site/event/5f36f0a0-a56b-4099-bb51-6e534dd532e9/munitsipalnyy-teatr-pattikhio-limassola-predstavlyaet-golosa-moego-kraya-i-lyubvi/","startDate":"2026-10-30T20:30:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Лимасол","address":{"@type":"PostalAddress","addressLocality":"Лимасол","streetAddress":"Лимасол","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.6813906,"longitude":33.0440049}},"description":"Пневматический клуб Лимасола Кипра приглашает вас на особенный музыкальный вечер в Муниципальном театре Паттихио в Лимасоле с программой, посвящённой родине, любви и силе музыки. Музыкальным спектаклем руководят Марилиза Пападури-Папангели и Вангелис Веттас при участии оркестра из 5 человек, вокального ансамбля «Мелодия» и хора нома Козани. 📅 Пятница, 30 октября 2026 г. 🕣 Время: 20:30 📍 Муниципальный театр Паттихио в Лимасоле 🎟️ Вход: €15 🎟️ Льготный билет: €8 📞 Для информации: 25 377277 📧 Email: box@patithio.com.cy Вечер, полный мелод","endDate":"2026-10-30T23:30:00","image":"https://www.limassol.org.cy/uploads/Events/md/432e392741.jpg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CF%84%CE%BF-%CF%80%CE%B1%CF%84%CF%84%CE%AF%CF%87%CE%B5%CE%B9%CE%BF-%CE%B4%CE%B7%CE%BC%CE%BF%CF%84%CE%B9%CE%BA%CF%8C-%CE%B8%CE%AD%CE%B1%CF%84%CF%81%CE%BF-%CE%BB%CE%B5%CE%BC%CE%B5%CF%83%CE%BF%CF%8D-%CF%80%CE%B1%CF%81%CE%BF%CF%85%CF%83%CE%B9%CE%AC%CE%B6%CE%B5%CE%B9-%CF%84%CE%BF%CF%85-%CF%84%CE%BF%CF%80%CE%BF%CF%85-%CE%BC%CE%BF%CF%85-%CE%BA%CE%B1%CE%B9-%CF%84%CE%B7%CF%82-%CE%B1%CE%B3%CE%B1%CF%80%CE%B7%CF%82-%CE%BF%CE%B9-%CF%86%CF%89%CE%BD%CE%B5%CF%82-2026-10-30"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Муниципальный театр Паттихио Лимассола представляет \"ГОЛОСА МОЕГО КРАЯ И ЛЮБВИ\"","item":"https://mypins.site/event/5f36f0a0-a56b-4099-bb51-6e534dd532e9/munitsipalnyy-teatr-pattikhio-limassola-predstavlyaet-golosa-moego-kraya-i-lyubvi/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Муниципальный театр Паттихио Лимассола представляет \"ГОЛОСА МОЕГО КРАЯ И ЛЮБВИ\"","item":"https://mypins.site/event/5f36f0a0-a56b-4099-bb51-6e534dd532e9/munitsipalnyy-teatr-pattikhio-limassola-predstavlyaet-golosa-moego-kraya-i-lyubvi/"}]}]}</script>
     <script type="application/json" id="seo-alias-map">{"cloneId":"5f36f0a0-a56b-4099-bb51-6e534dd532e9","keptId":"5f36f0a0-a56b-4099-bb51-6e534dd532e9","ru":"https://mypins.site/event/5f36f0a0-a56b-4099-bb51-6e534dd532e9/munitsipalnyy-teatr-pattikhio-limassola-predstavlyaet-golosa-moego-kraya-i-lyubvi/","en":"https://mypins.site/en/event/5f36f0a0-a56b-4099-bb51-6e534dd532e9/the-pattihio-municipal-theater-of-limassol-presents-voices-of-my-land-and-of-love/"}</script>
   </head>
   <body>
     <div id="root"></div>
 <div id="seo-event-block">
   <h1>Муниципальный театр Паттихио Лимассола представляет &quot;ГОЛОСА МОЕГО КРАЯ И ЛЮБВИ&quot;</h1>
-  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-10-30">30 октября 2026</time></p>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-30">30 октября 2026</time></p>
   <p><time datetime="2026-10-30T20:30:00">30 октября 2026, 20:30</time></p>
   <address>Лимасол, Кипр</address>
   <p>Пневматический клуб Лимасола Кипра приглашает вас на особенный музыкальный вечер в Муниципальном театре Паттихио в Лимасоле с программой, посвящённой родине, любви и силе музыки.
@@ -127,18 +129,18 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/081ba0df-33b4-407a-9177-bb3d1a033457/kelaydismata/">КЕЛАЙДИСМАТА <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/27f08dfe-f055-43c7-95b2-213249f13900/snova-posvyashchenie-yorgosu-mazonakisu-v-nikosii/">Снова: Посвящение Йоргосу Мазонакису в Никосии <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/358a850a-f813-488e-b255-db679946f7f4/vanilla-groove-v-kesh/">Vanilla Groove в Kesh <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/415930fd-cf93-4461-9ec4-afb24b23b6bc/kosta-kritikos-v-dusty-munky/">Коста Критикос в Dusty Munky <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/512b7609-122a-4483-9a3f-3e3ff0dc5e82/ontur/">Онтур <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/60a1cf86-bdac-4cb9-8dc7-98c46032c215/evridiki-live-v-vinylio-wine-etc/">Евридики live в Vinylio Wine Etc <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/e1ba1ea3-2c40-4b32-bbe4-837f7e404b7e/luna-city-express-v-mason/">Luna City Express в Mason <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/01628702-0956-49ae-afb4-6207093e2295/mariya-vardaki-zhivoy-kontsert-s-gostey-nefeli-kapru-v-nikosii/">Мария Вардаки: Живой концерт с гостьей Нефели Капру в Никосии <time datetime="2026-10-31">31 октября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Кипр</h2>
     <ul>
-    <li>Предыдущее: <a href="/event/517879c0-5cf4-4cd0-bd4b-039dad6d16e9/khellouin-v-7seas-vecherinka-rnb-hip-hop-v-limassole/">Хэллоуин в 7seas: вечеринка RnB &amp; Hip-Hop в Лимассоле</a> <time datetime="2026-10-30">30 октября 2026</time></li>
-    <li>Следующее: <a href="/event/6ad57237-d828-4487-a2b7-5de4d33b75a9/golosa-mesta-i-lyubvi/">Голоса Места и Любви</a> <time datetime="2026-10-30">30 октября 2026</time></li>
+    <li>Предыдущее: <a href="/event/54633d2f-cec5-4c97-b72f-b220d713d651/brendi-sauer-v-lefkosii/">Бренди Сауэр в Лефкосии</a> <time datetime="2026-10-30">30 октября 2026</time></li>
+    <li>Следующее: <a href="/event/5fbd3879-7f96-4cc0-bdc9-8784d39372f7/lager-trinity-media/">Лагерь Trinity Media+</a> <time datetime="2026-10-30">30 октября 2026</time></li>
     </ul>
   </nav>
   <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>

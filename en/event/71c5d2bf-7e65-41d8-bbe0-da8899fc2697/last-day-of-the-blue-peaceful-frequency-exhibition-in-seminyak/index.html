@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Bali, October 4, 2026. October 4 is the final day of the Blue Peaceful Frequency group exhibition at BK Creative Hub. The artists explore shades of blue and…" />
     <link rel="canonical" href="https://mypins.site/en/event/71c5d2bf-7e65-41d8-bbe0-da8899fc2697/last-day-of-the-blue-peaceful-frequency-exhibition-in-seminyak/" />
     <meta property="og:site_name" content="MyPins" />
@@ -114,16 +116,16 @@
 Venue: BK Creative Hub, Seminyak.</p>
   <nav aria-label="Breadcrumbs">
     <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/bali/">Bali</a> <span aria-hidden="true">›</span> <span>Last day of the Blue Peaceful Frequency exhibition in Seminyak</span></p>
-    <p>More events in Bali: <a href="/en/bali/">what&#39;s on</a> · <a href="/en/bali/exhibition/">🖼️ Exhibitions</a></p>
+    <p>More events in Bali: <a href="/en/bali/">what&#39;s on</a></p>
   </nav>
   <h2>Similar events</h2>
   <ul>
+    <li><a href="/en/event/717466e3-04e0-4a5f-a65f-a0763827ab7b/exhibition-soot-on-the-edge-of-fire-at-galeri-zen1/">Exhibition &quot;Soot on the Edge of Fire&quot; at Galeri Zen1 <time datetime="2026-10-02">October 2, 2026</time></a></li>
     <li><a href="/en/event/8a1f8c24-cf3a-4ce9-8f8c-fe3c6b1c3b2b/exhibition-soot-at-the-edge-of-fire-at-galeri-zen1/">Exhibition &quot;Soot at the Edge of Fire&quot; at Galeri Zen1 <time datetime="2026-10-03">October 3, 2026</time></a></li>
     <li><a href="/en/event/325ae775-3411-4b05-ab4c-8107bd7093e0/exhibition-soot-at-the-edge-of-fire-at-galeri-zen1/">Exhibition &quot;Soot at the Edge of Fire&quot; at Galeri Zen1 <time datetime="2026-10-04">October 4, 2026</time></a></li>
+    <li><a href="/en/event/4c32e47c-42e6-4486-b0d1-0644167a5a43/exhibition-soot-on-the-edge-of-fire-at-galeri-zen1/">Exhibition &quot;Soot on the Edge of Fire&quot; at Galeri Zen1 <time datetime="2026-10-05">October 5, 2026</time></a></li>
+    <li><a href="/en/event/c3a50c99-f1e9-420a-a735-a3803bf8116e/what-the-body-remembers-exhibition-at-nuanu-until-november-29/">What The Body Remembers: exhibition at Nuanu until November 29 <time datetime="2026-10-05">October 5, 2026</time></a></li>
     <li><a href="/en/event/1ca1e13d-cb23-4710-bc82-17909ebe8285/what-the-body-remembers-exhibition-at-nuanu-until-november-29/">What The Body Remembers: exhibition at Nuanu until November 29 <time datetime="2026-10-10">October 10, 2026</time></a></li>
-    <li><a href="/en/event/33078c12-e86f-4d6d-b3fb-b1d3b5a679a5/exhibition-trace-of-light-at-cushcush-gallery/">Exhibition &quot;Trace of Light&quot; at CushCush Gallery <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/d6327bdd-16f8-4d02-b3db-9af1b1cffc58/design-exhibition-at-uma-seminyak/">Design Exhibition at Uma Seminyak <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/efdec033-173e-426e-9854-c6452ab52abf/alix-ayme-exhibition-at-the-pasifika-museum/">Alix Aymé Exhibition at the Pasifika Museum <time datetime="2026-10-30">October 30, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Bali</h2>

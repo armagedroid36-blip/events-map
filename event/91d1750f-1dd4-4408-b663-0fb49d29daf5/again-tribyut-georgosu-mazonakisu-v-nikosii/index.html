@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Никосия, Кипр, 30 октября 2026. Этот трибьют-концерт Георгосу Мазонакису в Никосии, Кипр, возвращается со второй датой в пятницу, 30 октября 2026 года, после…" />
     <link rel="canonical" href="https://mypins.site/event/91d1750f-1dd4-4408-b663-0fb49d29daf5/again-tribyut-georgosu-mazonakisu-v-nikosii/" />
     <meta property="og:site_name" content="MyPins" />
@@ -100,13 +102,13 @@
     <link rel="alternate" hreflang="ru" href="https://mypins.site/event/91d1750f-1dd4-4408-b663-0fb49d29daf5/again-tribyut-georgosu-mazonakisu-v-nikosii/" />
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/91d1750f-1dd4-4408-b663-0fb49d29daf5/again-a-tribute-to-georgios-mazonakis-in-nicosia/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Again: трибьют Георгосу Мазонакису в Никосии","url":"https://mypins.site/event/91d1750f-1dd4-4408-b663-0fb49d29daf5/again-tribyut-georgosu-mazonakisu-v-nikosii/","startDate":"2026-10-30T21:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Neas Egkomis 26, Никосия","address":{"@type":"PostalAddress","addressLocality":"Никосия","streetAddress":"Neas Egkomis 26, Никосия","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1654439,"longitude":33.3244068}},"description":"Этот трибьют-концерт Георгосу Мазонакису в Никосии, Кипр, возвращается со второй датой в пятницу, 30 октября 2026 года, после аншлага на первом показе. Организатор: Antipeina Live при участии Vioma Events. Вечер обещает музыкальное путешествие по любимым песням одного из самых известных...","endDate":"2026-10-30","image":"https://cyprus.bz/img/images/events/e901a28e-c325-4882-9aae-630165090fdc/1793163685557.jpg?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/392b/again-a-tribute-to-giorgos-mazonakis-in-nicosia-2026"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Again: трибьют Георгосу Мазонакису в Никосии","item":"https://mypins.site/event/91d1750f-1dd4-4408-b663-0fb49d29daf5/again-tribyut-georgosu-mazonakisu-v-nikosii/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Again: трибьют Георгосу Мазонакису в Никосии","item":"https://mypins.site/event/91d1750f-1dd4-4408-b663-0fb49d29daf5/again-tribyut-georgosu-mazonakisu-v-nikosii/"}]}]}</script>
   </head>
   <body>
     <div id="root"></div>
 <div id="seo-event-block">
   <h1>Again: трибьют Георгосу Мазонакису в Никосии</h1>
-  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-10-30">30 октября 2026</time></p>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-30">30 октября 2026</time></p>
   <p><time datetime="2026-10-30T21:00:00">30 октября 2026, 21:00</time></p>
   <address>Neas Egkomis 26, Никосия, Никосия, Кипр</address>
   <p>Этот трибьют-концерт Георгосу Мазонакису в Никосии, Кипр, возвращается со второй датой в пятницу, 30 октября 2026 года, после аншлага на первом показе. Организатор: Antipeina Live при участии Vioma Events. Вечер обещает музыкальное путешествие по любимым песням одного из самых известных...</p>
@@ -116,18 +118,18 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/081ba0df-33b4-407a-9177-bb3d1a033457/kelaydismata/">КЕЛАЙДИСМАТА <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/27f08dfe-f055-43c7-95b2-213249f13900/snova-posvyashchenie-yorgosu-mazonakisu-v-nikosii/">Снова: Посвящение Йоргосу Мазонакису в Никосии <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/358a850a-f813-488e-b255-db679946f7f4/vanilla-groove-v-kesh/">Vanilla Groove в Kesh <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/415930fd-cf93-4461-9ec4-afb24b23b6bc/kosta-kritikos-v-dusty-munky/">Коста Критикос в Dusty Munky <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/512b7609-122a-4483-9a3f-3e3ff0dc5e82/ontur/">Онтур <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/60a1cf86-bdac-4cb9-8dc7-98c46032c215/evridiki-live-v-vinylio-wine-etc/">Евридики live в Vinylio Wine Etc <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/e1ba1ea3-2c40-4b32-bbe4-837f7e404b7e/luna-city-express-v-mason/">Luna City Express в Mason <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/01628702-0956-49ae-afb4-6207093e2295/mariya-vardaki-zhivoy-kontsert-s-gostey-nefeli-kapru-v-nikosii/">Мария Вардаки: Живой концерт с гостьей Нефели Капру в Никосии <time datetime="2026-10-31">31 октября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Кипр</h2>
     <ul>
     <li>Предыдущее: <a href="/event/7e1a020f-7b65-4928-9452-4cb613871bfd/poetry-moves-international-festival-mezhdunarodnyy-festival-poezii-i-dvizheniya/">Poetry MOVES International Festival / Международный фестиваль поэзии и движения</a> <time datetime="2026-10-30">30 октября 2026</time></li>
-    <li>Следующее: <a href="/event/c200177a-df36-46e4-80e5-d919046aa20f/zvuki/">Звуки</a> <time datetime="2026-10-30">30 октября 2026</time></li>
+    <li>Следующее: <a href="/event/9d73f392-df39-45ba-bcb6-67627e40b408/vaza-glina-i-wine-friday/">Ваза - Глина и Wine Friday</a> <time datetime="2026-10-30">30 октября 2026</time></li>
     </ul>
   </nav>
   <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>

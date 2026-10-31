@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Нячанг, 23 августа 2026. 🎤 СЕГОДНЯ Воскресенье (23 августа) Нячанг 💃🕺 «Августуспеть» Stand Up 🕖 Сбор гостей с 20:30 Начало в 21::00 Заявлено 7 выступающих!…" />
     <link rel="canonical" href="https://mypins.site/event/5d76f0e5-2e49-4881-b9d5-a699a65b08c6/segodnya/" />
     <meta property="og:site_name" content="MyPins" />
@@ -148,8 +150,8 @@ https://maps.app.goo.gl/d7eVv4AvruRTTJuw6?g_st=ic
     <li><a href="/event/927a5600-ee80-49e3-bee1-38653716a4de/zhivaya-akusticheskaya-muzyka-na-severe-nyachanga/">Живая акустическая музыка на севере Нячанга <time datetime="2026-08-23">23 августа 2026</time></a></li>
     <li><a href="/event/db91d55e-5d22-4162-8904-e4a3a8e7dd27/plany-na-pyatnitsu-rok-n-roll-v-vice/">Планы на пятницу: Рок-н-ролл в VICE! <time datetime="2026-08-28">28 августа 2026</time></a></li>
     <li><a href="/event/46a1a0c8-1878-467e-8909-d1202388b336/gitarnik-v-neverland/">Гитарник в NEVERLAND <time datetime="2026-08-28">28 августа 2026</time></a></li>
-    <li><a href="/event/3b39c194-e772-4c99-aa10-c69cbb0db661/vecher-pyatnitsy-po-rok-n-rollu-v-kilo-bar-s-tom-waltz-and-the-surfers/">Вечер пятницы по рок-н-роллу в Kilo Bar с Tom Waltz and The Surfers! <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/ed9c50b5-7b36-46a2-80a5-67a38f2416c0/gitarnik-v-neverland/">Гитарник в NEVERLAND <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/42738ef4-6439-41b2-b630-200c724786d2/vecher-zhivoy-muzyki/">ВЕЧЕР ЖИВОЙ МУЗЫКИ <time datetime="2026-08-29">29 августа 2026</time></a></li>
+    <li><a href="/event/0d22911f-d6dc-4995-8cf2-c408e63e0912/zavershaem-nedelyu-laytovo-i-po-kayfu/">Завершаем неделю лайтово и по кайфу <time datetime="2026-08-30">30 августа 2026</time></a></li>
     <li><a href="/event/b4c9edd7-862f-43d5-b6ca-65ab0ede2464/zavtra-v-kilo-bar-duet-udarnykh-i-klavishnykh-v-polnoy-improvizatsii-eksperimentalnoy-muzyki-v-dzhazovoy-manere/">Завтра в Kilo bar дуэт ударных и клавишных в полной импровизации экспериментальной музыки в джазовой манере <time datetime="2026-10-31">31 октября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">

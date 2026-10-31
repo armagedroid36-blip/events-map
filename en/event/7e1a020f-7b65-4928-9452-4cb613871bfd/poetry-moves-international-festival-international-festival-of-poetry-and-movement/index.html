@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Nicosia, Cyprus, October 21, 2026. The International Festival of Poetry and Movement &quot;Poetry MOVES International Festival&quot; includes exhibitions, music, video…" />
     <link rel="canonical" href="https://mypins.site/en/event/7e1a020f-7b65-4928-9452-4cb613871bfd/poetry-moves-international-festival-international-festival-of-poetry-and-movement/" />
     <meta property="og:site_name" content="MyPins" />
@@ -100,13 +102,13 @@
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/7e1a020f-7b65-4928-9452-4cb613871bfd/poetry-moves-international-festival-international-festival-of-poetry-and-movement/" />
     <link rel="alternate" hreflang="ru" href="https://mypins.site/event/7e1a020f-7b65-4928-9452-4cb613871bfd/poetry-moves-international-festival-mezhdunarodnyy-festival-poezii-i-dvizheniya/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Poetry MOVES International Festival / International Festival of Poetry and Movement","url":"https://mypins.site/en/event/7e1a020f-7b65-4928-9452-4cb613871bfd/poetry-moves-international-festival-international-festival-of-poetry-and-movement/","startDate":"2026-10-21T18:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Nicosia","address":{"@type":"PostalAddress","addressLocality":"Nicosia","streetAddress":"Nicosia","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1856,"longitude":33.3823}},"description":"The International Festival of Poetry and Movement \"Poetry MOVES International Festival\" includes exhibitions, music, video, and performances. For the 4th consecutive year, Poetry MOVES International Festival returns, having already established itself as an international annual event. Poetry MOVES is not a poetry festival in...","endDate":"2026-10-30","image":"https://cyprus.bz/img/images/events/52a88b74-82bd-46b6-85ca-4505706144cb/1791913490384.jpg?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/3753/poetry-moves-international-festival-international-festival-2026"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Poetry MOVES International Festival / International Festival of Poetry and Movement","item":"https://mypins.site/en/event/7e1a020f-7b65-4928-9452-4cb613871bfd/poetry-moves-international-festival-international-festival-of-poetry-and-movement/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Poetry MOVES International Festival / International Festival of Poetry and Movement","item":"https://mypins.site/en/event/7e1a020f-7b65-4928-9452-4cb613871bfd/poetry-moves-international-festival-international-festival-of-poetry-and-movement/"}]}]}</script>
   </head>
   <body>
     <div id="root"></div>
 <div id="seo-event-block">
   <h1>Poetry MOVES International Festival / International Festival of Poetry and Movement</h1>
-  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-10-30">October 30, 2026</time></p>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-30">October 30, 2026</time></p>
   <p><time datetime="2026-10-21T18:00:00">October 21, 2026, 6:00 PM</time></p>
   <address>Nicosia, Cyprus</address>
   <p>The International Festival of Poetry and Movement &quot;Poetry MOVES International Festival&quot; includes exhibitions, music, video, and performances. For the 4th consecutive year, Poetry MOVES International Festival returns, having already established itself as an international annual event. Poetry MOVES is not a poetry festival in...</p>
@@ -118,15 +120,15 @@
   <ul>
     <li><a href="/en/event/963fdbe5-4e9e-41f8-96ec-c89b1a82c4bd/art-explora-festival-in-limassol/">Art Explora Festival in Limassol <time datetime="2026-10-25">October 25, 2026</time></a></li>
     <li><a href="/en/event/51861796-19bc-4e0d-875e-3ec4ab13fafa/halloween-at-toy-town/">Halloween at Toy Town <time datetime="2026-10-28">October 28, 2026</time></a></li>
-    <li><a href="/en/event/09cad680-b60b-40aa-a2ef-daf782be9ad5/poetry-moves-international-festival-international-festival-of-poetry-and-syn-movement/">Poetry MOVES International Festival / International Festival of Poetry and Syn+Movement <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/38f1871c-e9e6-49c1-af7c-fc25e422850c/the-halloween-festival/">The Halloween Festival <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/4558cb64-7118-4652-98a3-7bb99c681291/halloween-at-parko-paliatso-free-family-activities-in-nicosia/">Halloween at Parko Paliatso: Free Family Activities in Nicosia <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/b8c0228d-8b34-4b14-8d99-4480fbddfd0f/big-two-day-halloween-market/">Big two-day Halloween market <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/007d21be-fe71-4da7-b97f-f04eb29bc720/halloween-in-the-world-of-comics-comic-con-2026/">Halloween in the World of Comics. Comic Con 2026 <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/2613160e-8bee-4444-ace1-2d8f1bf87c42/3rd-autumn-halloween-festival/">3rd Autumn Halloween Festival <time datetime="2026-10-31">October 31, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Cyprus</h2>
     <ul>
-    <li>Previous: <a href="/en/event/6ad57237-d828-4487-a2b7-5de4d33b75a9/tou-topou-kai-tis-agapis-oi-fones/">Tou Topou kai tis Agapis oi fones</a> <time datetime="2026-10-30">October 30, 2026</time></li>
+    <li>Previous: <a href="/en/event/7d5d2009-f7b3-4d4f-b6d4-f4f944ad4d99/let-loose-halloween-party/">Let Loose - Halloween Party</a> <time datetime="2026-10-30">October 30, 2026</time></li>
     <li>Next: <a href="/en/event/91d1750f-1dd4-4408-b663-0fb49d29daf5/again-a-tribute-to-georgios-mazonakis-in-nicosia/">Again: a tribute to Georgios Mazonakis in Nicosia</a> <time datetime="2026-10-30">October 30, 2026</time></li>
     </ul>
   </nav>

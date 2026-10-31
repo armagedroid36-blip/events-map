@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Протарас, Кипр, 30 октября 2026. Новая ежегодная традиция стартует в Дериния, Кипр - Хэллоуин в Амфитеатре - семейное мероприятие на Хэллоуин в Amphitheater…" />
     <link rel="canonical" href="https://mypins.site/event/f85e52fe-fbdd-430c-9ce0-40b1f3c087ea/khellouin-v-amfiteatre-v-protarase/" />
     <meta property="og:site_name" content="MyPins" />
@@ -100,13 +102,13 @@
     <link rel="alternate" hreflang="ru" href="https://mypins.site/event/f85e52fe-fbdd-430c-9ce0-40b1f3c087ea/khellouin-v-amfiteatre-v-protarase/" />
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/f85e52fe-fbdd-430c-9ce0-40b1f3c087ea/halloween-at-the-amphitheater-in-protaras/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Хэллоуин в Амфитеатре в Протарасе","url":"https://mypins.site/event/f85e52fe-fbdd-430c-9ce0-40b1f3c087ea/khellouin-v-amfiteatre-v-protarase/","startDate":"2026-10-30T18:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Amphitheater Bar, Дериния","address":{"@type":"PostalAddress","addressLocality":"Протарас","streetAddress":"Amphitheater Bar, Дериния","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.0660949,"longitude":33.9656312}},"description":"Новая ежегодная традиция стартует в Дериния, Кипр - Хэллоуин в Амфитеатре - семейное мероприятие на Хэллоуин в Amphitheater Bar Dherynia в пятницу, 30 октября 2026 года, с 18:00 до 20:00. Это вечер, созданный для детей всех возрастов, родители и малыши входят бесплатно. 🎟️ Цены на билеты...","endDate":"2026-10-30","image":"https://cyprus.bz/img/images/events/75217b12-7306-45a9-9751-f6b1dce7b7e7/1793163691542.jpg?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/ru/event/392e/halloween-at-the-amphitheater-in-protaras-2026"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Хэллоуин в Амфитеатре в Протарасе","item":"https://mypins.site/event/f85e52fe-fbdd-430c-9ce0-40b1f3c087ea/khellouin-v-amfiteatre-v-protarase/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Хэллоуин в Амфитеатре в Протарасе","item":"https://mypins.site/event/f85e52fe-fbdd-430c-9ce0-40b1f3c087ea/khellouin-v-amfiteatre-v-protarase/"}]}]}</script>
   </head>
   <body>
     <div id="root"></div>
 <div id="seo-event-block">
   <h1>Хэллоуин в Амфитеатре в Протарасе</h1>
-  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-10-30">30 октября 2026</time></p>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-30">30 октября 2026</time></p>
   <p><time datetime="2026-10-30T18:00:00">30 октября 2026, 18:00</time></p>
   <address>Amphitheater Bar, Дериния, Протарас, Кипр</address>
   <p>Новая ежегодная традиция стартует в Дериния, Кипр - Хэллоуин в Амфитеатре - семейное мероприятие на Хэллоуин в Amphitheater Bar Dherynia в пятницу, 30 октября 2026 года, с 18:00 до 20:00. Это вечер, созданный для детей всех возрастов, родители и малыши входят бесплатно. 🎟️ Цены на билеты...</p>
@@ -116,17 +118,17 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/027ede0a-0e74-4eec-bb0c-84edbc200c11/khellouin-v-amfiteatre-v-protarase/">Хэллоуин в амфитеатре в Протарасе <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/130e45c8-de55-4c16-b562-21c46d8d55d8/razvratnaya-khellouinskaya-noch-v-noc-night-club/">Развратная хэллоуинская ночь в NOC Night Club <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/1c5a27ba-139f-4b0b-87ea-9c74b58e86a8/khellouin-ekstravagantsa-drag-shou-i-dj-vecherinka-v-limasole/">Хэллоуин-экстраваганца: драг-шоу и DJ-вечеринка в Лимасоле <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/1e1872c9-dc01-405a-a829-d9d364322fb0/shoutaym-po-pyatnitsam/">Шоутайм по пятницам <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/3121a8fb-58c6-49c5-a341-3cf9512ccab9/no-signal-noch-khellouinskogo-vypuska-v-fever-club/">No Signal: Ночь Хэллоуинского выпуска в Fever Club <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/38a9e431-fe73-4959-a5b0-e6c7e66b2c3a/khellouin-vypusk-kapsouremata-v-larnake/">Хэллоуин-выпуск Kapsouremata в Ларнаке <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/7d88cf47-3694-40e0-9258-c6d806d5d75d/utopiya-zhutkie-sireny-v-ventuno/">Утопия: Жуткие Сирены в Ventuno <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/899ba819-5bc2-40aa-a766-1a9ec4fd76b0/ocharovanie/">Очарование <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/e9dbb4dd-5d48-4143-8b39-869ce959ea6e/shrek-reyv/">Шрек Рейв <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/115c2734-ad60-4e7b-8499-afe884f11ed2/leggo-x-kybba-khellouinskaya-denskholl-vecherinka-v-the-warehouse/">Leggo x Kybba: Хэллоуинская дэнсхолл-вечеринка в The Warehouse <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/1d5d0d22-add6-4f22-9248-6b62339ac977/dan-priglashaet-sina-xx-v-sllip/">DANÆ приглашает: Sina XX в Sllip <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/2b053a65-392b-437e-aded-226e6112d4a5/detskiy-prazdnik-halloween/">Детский праздник Halloween <time datetime="2026-10-31">31 октября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Кипр</h2>
     <ul>
-    <li>Предыдущее: <a href="/event/eac0003f-e8a3-428b-956a-df7506107832/seysmos-khellouin-izdanie/">Сейсмос Хэллоуин Издание</a> <time datetime="2026-10-30">30 октября 2026</time></li>
+    <li>Предыдущее: <a href="/event/f83e398e-fee0-422b-ba24-8c2235eb6511/residue-tantsevalnyy-spektakl/">Residue. Танцевальный спектакль</a> <time datetime="2026-10-30">30 октября 2026</time></li>
     <li>Следующее: <a href="/event/110bd468-ff21-4751-99c1-7b9248134505/shrek-reyv-khellouin-speshl-monfik/">Шрек Рейв – Хэллоуин Спешл @ Monfik</a> <time datetime="2026-10-31">31 октября 2026</time></li>
     </ul>
   </nav>

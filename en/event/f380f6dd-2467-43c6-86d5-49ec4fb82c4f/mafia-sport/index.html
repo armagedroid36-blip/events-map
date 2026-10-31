@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Bali, October 16, 2026. Sports Mafia 😎 We invite you to Mafia in Ubud! 😎 We welcome experienced players and beginners 🫂 👉 To sign up for a game, message us…" />
     <link rel="canonical" href="https://mypins.site/en/event/f380f6dd-2467-43c6-86d5-49ec4fb82c4f/mafia-sport/" />
     <meta property="og:site_name" content="MyPins" />
@@ -128,12 +130,12 @@ For experienced participants. 👍👎👌🤲🤙 Sports version of the game. O
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/5cac553d-a3cb-4440-abdc-13c5961e5a8b/mafia-in-ubud/">Mafia in Ubud <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/30f5d948-5262-4ce9-883c-4831e51f4993/einstein-party-quiz/">Einstein Party Quiz <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/5ac6aecd-2f0c-4ae2-bd67-e711820d6c9b/mafia-sports/">Mafia (sports) <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/89409aeb-1a6c-46a3-b6ea-518f2497a240/quiz-please/">Quiz, please! <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/d758a216-5caa-4a4f-a73d-c3a74e773533/the-game-of-leela/">The Game of Leela <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/e089439c-c77a-414d-a9d3-48ef5e90ee9d/mafia-on-halloween-in-ubud/">Mafia on Halloween in Ubud <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/20c1abf9-31fd-4399-8af4-b5b18212c2c8/quiz-please/">Quiz, please! <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/26a731ba-59d4-46d2-a1f6-4500b3b7c9e5/dota-2-tournament-at-cube-jimbaran-november-1/">Dota 2 Tournament at CUBE, Jimbaran - November 1 <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/88277214-598a-442f-bfbb-d6c2eab23fd7/brainstorming-bali-at-a-corporate-event-yes-it-s-possible/">Brainstorming Bali at a corporate event! Yes, it&#39;s possible <time datetime="2026-11-02">November 2, 2026</time></a></li>
+    <li><a href="/en/event/5cac553d-a3cb-4440-abdc-13c5961e5a8b/mafia-in-ubud/">Mafia in Ubud <time datetime="2026-11-03">November 3, 2026</time></a></li>
+    <li><a href="/en/event/c80f97ed-6367-4437-a51a-5b44d8e45929/city-mafia-on-bukita/">City mafia on Bukita <time datetime="2026-11-03">November 3, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Bali</h2>

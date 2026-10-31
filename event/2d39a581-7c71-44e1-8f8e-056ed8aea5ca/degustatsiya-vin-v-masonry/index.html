@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Улувату, Bali, 1 октября 2026. Blind Somm возвращается — и на этот раз мы отправляемся в Улувату. 1 октября нас ждёт дегустация вин разных винтажей вместе с…" />
     <link rel="canonical" href="https://mypins.site/event/2d39a581-7c71-44e1-8f8e-056ed8aea5ca/degustatsiya-vin-v-masonry/" />
     <meta property="og:site_name" content="MyPins" />
@@ -127,8 +129,8 @@ instagram (https://www.instagram.com/masonry.bali/)</p>
     <li><a href="/event/90f5f8b3-b574-46a6-8064-1fe0e0716bb8/vecher-avtorskikh-kokteyley-v-the-shady-pig-berawa/">Вечер авторских коктейлей в The Shady Pig Berawa <time datetime="2026-09-16">16 сентября 2026</time></a></li>
     <li><a href="/event/bcf851b7-09a7-4cd5-bf6a-b44d241aa124/degustatsiya-indoneziyskikh-vin-v-potato-head/">Дегустация индонезийских вин в Potato Head <time datetime="2026-09-18">18 сентября 2026</time></a></li>
     <li><a href="/event/ba611e0c-1687-4006-bc25-fbf26cf8e23a/winemaker-in-conversation-v-dome/">Winemaker in Conversation в Dome <time datetime="2026-09-26">26 сентября 2026</time></a></li>
-    <li><a href="/event/7e20cc52-7126-4b66-83bc-31937aab1450/uzhin-na-zakate-na-bortu-bounty-cruises/">Ужин на закате на борту Bounty Cruises <time datetime="2026-09-30">30 сентября 2026</time></a></li>
     <li><a href="/event/8997d528-9a47-4a72-b4b7-538df2d0736d/zakrytie-full-house-v-pererenan/">Закрытие Full House в Pererenan <time datetime="2026-09-30">30 сентября 2026</time></a></li>
+    <li><a href="/event/7e20cc52-7126-4b66-83bc-31937aab1450/uzhin-na-zakate-na-bortu-bounty-cruises/">Ужин на закате на борту Bounty Cruises <time datetime="2026-09-30">30 сентября 2026</time></a></li>
     <li><a href="/event/524b7d6e-234a-4402-a54b-e43ad127b4c0/rozhdestvenskie-vechera-v-copper-muzyka-i-prazdnichnyy-uzhin/">Рождественские вечера в Copper: музыка и праздничный ужин <time datetime="2026-12-24">24 декабря 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">

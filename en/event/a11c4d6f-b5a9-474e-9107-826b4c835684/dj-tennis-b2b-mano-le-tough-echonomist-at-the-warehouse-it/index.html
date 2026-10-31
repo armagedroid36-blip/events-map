@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Limassol, Cyprus, November 7, 2026. Techno / House / Live &amp; Experimental night at The Warehouse in Limassol with DJ Tennis B2B Mano Le Tough with…" />
     <link rel="canonical" href="https://mypins.site/en/event/a11c4d6f-b5a9-474e-9107-826b4c835684/dj-tennis-b2b-mano-le-tough-echonomist-at-the-warehouse-it/" />
     <meta property="og:site_name" content="MyPins" />
@@ -116,12 +118,12 @@
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/173cb160-46a5-4183-bcf1-7c9948bb36c1/cyprus-symphony-orchestra-the-jungle-book-family-concerts-7-11-2026/">CYPRUS SYMPHONY ORCHESTRA – THE JUNGLE BOOK Family Concerts – 7.11.2026 <time datetime="2026-11-07">November 7, 2026</time></a></li>
     <li><a href="/en/event/33b6d8ad-3ae4-4722-b887-8b176363d099/nox/">Nox <time datetime="2026-11-07">November 7, 2026</time></a></li>
     <li><a href="/en/event/3f9421f9-ecf9-435b-8104-557db7b84bda/balzar-at-kesh/">Balzar at Kesh <time datetime="2026-11-07">November 7, 2026</time></a></li>
     <li><a href="/en/event/57bf537e-a558-4454-8c42-2acaf8904607/onyva-at-the-anama-concept/">ONYVA at The Anama Concept <time datetime="2026-11-07">November 7, 2026</time></a></li>
     <li><a href="/en/event/79a1cab4-a742-4f5e-a40b-b0e4bf28151d/synesthesia-x-mind-the-riot-pres-temudo-at-sllip/">Synesthesia x Mind the Riot pres. Temudo at Sllip <time datetime="2026-11-07">November 7, 2026</time></a></li>
     <li><a href="/en/event/7c55c0dc-0f09-4d9c-ade9-08c0be2c4b8f/kasia-jasmin-blust/">Kasia &amp; Jasmin Blust <time datetime="2026-11-07">November 7, 2026</time></a></li>
+    <li><a href="/en/event/820bcb1b-d097-4a09-a6b0-d6d22fe1f066/stampede-jungle-drum-and-bass-night-in-nicosia/">Stampede: Jungle &amp; Drum and Bass Night in Nicosia <time datetime="2026-11-07">November 7, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Cyprus</h2>

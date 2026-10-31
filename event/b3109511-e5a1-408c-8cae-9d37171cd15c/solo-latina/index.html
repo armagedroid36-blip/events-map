@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Дананг, 29 октября 2026. 💃Соло Латина 💃 ✨ Salsa ✨ Samba ✨ Cha-Cha-Cha ✨ Rumba ✨ Jive На занятиях мы разбираем: 💃 основы каждого стиля с нуля; 🎶 работу с…" />
     <link rel="canonical" href="https://mypins.site/event/b3109511-e5a1-408c-8cae-9d37171cd15c/solo-latina/" />
     <meta property="og:site_name" content="MyPins" />
@@ -137,9 +139,9 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/30e54c96-f780-422e-a21b-0ff77d6d2067/master-klass-po-improvizatsii/">Мастер-класс по импровизации <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/9681021f-203d-49c6-b09c-d895095fb41e/metaprogrammy-kak-nash-mozg-upravlyaet-nashimi-resheniyami/">МЕТАПРОГРАММЫ: КАК НАШ МОЗГ УПРАВЛЯЕТ НАШИМИ РЕШЕНИЯМИ <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/63c68a24-faee-4ef5-9284-f5f80bb7545b/teni-bez-tabu/">«ТЕНИ БЕЗ ТАБУ» <time datetime="2026-10-28">28 октября 2026</time></a></li>
     <li><a href="/event/32b02f7b-401e-4584-a6f5-b7a527d9ddce/osenniy-master-klass-po-sozdaniyu-parfyuma/">Осенний мастер-класс по созданию парфюма <time datetime="2026-10-29">29 октября 2026</time></a></li>
-    <li><a href="/event/6570fe5b-a3bd-4850-8076-f5e68f553f19/v-etu-pyatnitsu-priglashayu-vas-na-uyutnyy-master-klass-po-vyazaniyu-azhurnoy-kosynki/">В эту пятницу приглашаю вас на уютный мастер-класс по вязанию ажурной косынки <time datetime="2026-10-30">30 октября 2026</time></a></li>
     <li><a href="/event/4d244a54-7d55-4970-828a-7194c80cbba6/argentinskoe-tango-iskusstvo-vzaimodeystviya-v-pare/">Аргентинское танго Искусство взаимодействия в паре <time datetime="2026-10-31">31 октября 2026</time></a></li>
     <li><a href="/event/2ddf7461-3309-4753-8ed8-ae2cad0b7864/master-klass-po-improvizatsii/">Мастер-класс по импровизации <time datetime="2026-11-04">4 ноября 2026</time></a></li>
     <li><a href="/event/f45f3e8d-1990-46b4-aef2-5cc626244f8e/znakomstvo-s-gipnozom/">ЗНАКОМСТВО С ГИПНОЗОМ <time datetime="2026-11-04">4 ноября 2026</time></a></li>

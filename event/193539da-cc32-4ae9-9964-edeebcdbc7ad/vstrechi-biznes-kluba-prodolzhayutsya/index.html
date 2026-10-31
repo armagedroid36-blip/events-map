@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Дананг, 15 октября 2026. Друзья, встречи бизнес-клуба продолжаются 🔥 📌 Тема: «Как перестать быть &quot;удобным парнем&quot;, поднять чек в 2 раза и начать выбирать…" />
     <link rel="canonical" href="https://mypins.site/event/193539da-cc32-4ae9-9964-edeebcdbc7ad/vstrechi-biznes-kluba-prodolzhayutsya/" />
     <meta property="og:site_name" content="MyPins" />
@@ -151,12 +153,12 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
-    <li><a href="/event/a80f9bb9-16ac-4e0e-bb7f-8cff41df9f98/dolgozhdannye-vstrechi-dlya-mam-i-pap/">Долгожданные встречи для мам (и пап) <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/c2ad364f-dd88-4909-a486-3b18592392cc/zavtrak-s-rasstanovkami-v-danange/">Завтрак с расстановками в Дананге <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/3ee4f53e-c9fa-402f-9292-5bebd860d05f/klienty-ostalis-v-rossii/">Клиенты остались в России? <time datetime="2026-10-15">15 октября 2026</time></a></li>
     <li><a href="/event/15bdf1f5-da71-421d-9564-69103467c06f/kamernye-znakomstva-slow-dating/">КАМЕРНЫЕ ЗНАКОМСТВА. SLOW-DATING <time datetime="2026-10-31">31 октября 2026</time></a></li>
     <li><a href="/event/6a61dc1d-acb6-403a-9de0-5a05d2db44e5/kak-zakosit-pod-svoego-i-zhit-bez-trevogi-vo-vetname/">Как ЗАКОСИТЬ ПОД СВОЕГО и ЖИТЬ БЕЗ ТРЕВОГИ во Вьетнаме <time datetime="2026-11-01">1 ноября 2026</time></a></li>
     <li><a href="/event/38e2bcab-9f00-4395-a51a-428b5b0cc951/bolshoy-netvorking-v-danange/">БОЛЬШОЙ НЕТВОРКИНГ В ДАНАНГЕ <time datetime="2026-11-05">5 ноября 2026</time></a></li>
     <li><a href="/event/7f036642-89cd-4f00-aa96-ffa97df0c512/skolko-vremeni-ukhodit-na-voprosy-kotorye-reshayutsya-za-15-minut-zhivogo-dialoga/">Сколько времени уходит на вопросы, которые решаются за 15 минут живого диалога? <time datetime="2026-11-05">5 ноября 2026</time></a></li>
+    <li><a href="/event/ebf810b2-b2bf-45d1-854e-66978eafc4ba/100-predprinimateley-dananga-na-odnoy-ploshchadke/">100 предпринимателей Дананга на одной площадке <time datetime="2026-11-05">5 ноября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Хронология прошедших событий: Дананг</h2>

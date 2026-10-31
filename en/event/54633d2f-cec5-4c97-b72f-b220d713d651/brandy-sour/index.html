@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Nicosia, Cyprus, October 30, 2026. The once glamorous but today abandoned Ledra Palace, a building inextricably linked to the modern history of Cyprus, finds…" />
     <link rel="canonical" href="https://mypins.site/en/event/54633d2f-cec5-4c97-b72f-b220d713d651/brandy-sour-in-lefkosia/" />
     <meta property="og:site_name" content="MyPins" />
@@ -100,13 +102,14 @@
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/54633d2f-cec5-4c97-b72f-b220d713d651/brandy-sour-in-lefkosia/" />
     <link rel="alternate" hreflang="ru" href="https://mypins.site/event/54633d2f-cec5-4c97-b72f-b220d713d651/brendi-sauer-v-lefkosii/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Brandy Sour in Lefkosia","url":"https://mypins.site/en/event/54633d2f-cec5-4c97-b72f-b220d713d651/brandy-sour-in-lefkosia/","startDate":"2026-10-30T21:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Goethe-Institut Zypern, Nicosia","address":{"@type":"PostalAddress","addressLocality":"Nicosia","streetAddress":"Goethe-Institut Zypern, Nicosia","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1729874,"longitude":33.3760007}},"offers":{"@type":"Offer","url":"https://mypins.site/en/event/54633d2f-cec5-4c97-b72f-b220d713d651/brandy-sour-in-lefkosia/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-10-12"},"description":"The once glamorous but today abandoned Ledra Palace, a building inextricably linked to the modern history of Cyprus, finds its voice again through the performance \"Brandy Sour\" by Konstantia Sotiriou.","endDate":"2026-10-30","image":"https://www.eventshub.cy/wp-content/uploads/2026/09/brandy-sour-oct-26.jpg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/brandy-sour-%CF%83%CF%84%CE%B7-%CE%BB%CE%B5%CF%85%CE%BA%CF%89%CF%83%CE%AF%CE%B1-2026-10-30"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Brandy Sour in Lefkosia","item":"https://mypins.site/en/event/54633d2f-cec5-4c97-b72f-b220d713d651/brandy-sour-in-lefkosia/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Brandy Sour in Lefkosia","item":"https://mypins.site/en/event/54633d2f-cec5-4c97-b72f-b220d713d651/brandy-sour-in-lefkosia/"}]}]}</script>
     <script type="application/json" id="seo-alias-map">{"cloneId":"54633d2f-cec5-4c97-b72f-b220d713d651","keptId":"54633d2f-cec5-4c97-b72f-b220d713d651","ru":"https://mypins.site/event/54633d2f-cec5-4c97-b72f-b220d713d651/brendi-sauer-v-lefkosii/","en":"https://mypins.site/en/event/54633d2f-cec5-4c97-b72f-b220d713d651/brandy-sour-in-lefkosia/"}</script>
   </head>
   <body>
     <div id="root"></div>
 <div id="seo-event-block">
   <h1>Brandy Sour in Lefkosia</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-30">October 30, 2026</time></p>
   <p><time datetime="2026-10-30T21:00:00">October 30, 2026, 9:00 PM</time></p>
   <address>Goethe-Institut Zypern, Nicosia, Cyprus</address>
   <p>The once glamorous but today abandoned Ledra Palace, a building inextricably linked to the modern history of Cyprus, finds its voice again through the performance &quot;Brandy Sour&quot; by Konstantia Sotiriou.</p>
@@ -116,13 +119,21 @@
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/16eff2a0-316f-44c2-96fa-847f2fb2b80b/the-dream-of-a-ridiculous-man/">The Dream of a Ridiculous Man <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/1c3025b8-9503-41d7-9b54-c4ca41cfaad0/residue-nicosia-international-festival-2026/">Residue - Nicosia International Festival 2026 <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/368c9c38-197a-47a5-b679-4426bc6e8cba/all-of-y-our-time-a-contemporary-dance-performance-about-the-value-of-time-body-and-art/">All of (Y)our Time. A contemporary dance performance about the value of time, body and art <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/38bdd6f3-8daa-48b9-8ca2-207b9a77a442/bald-singer/">Bald Singer <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/70621c0b-391d-40ed-8928-b9f96d9243a0/residue-nicosia-international-festival-2026/">Residue – Nicosia International Festival 2026 <time datetime="2026-10-30">October 30, 2026</time></a></li>
     <li><a href="/en/event/ab66c8fe-52cb-411b-b858-172ba3e594ec/enta-gambler-hedda-gabler/">Enta Gambler | Hedda Gabler <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/12e8795b-66f6-4596-851a-5499737ec96a/smurfs/">Smurfs <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/46a3997a-9235-4aea-ad4d-ceac320563e1/acw-battle-for-cyprus-2026-in-nicosia/">ACW: Battle for Cyprus 2026 in Nicosia <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/4b67b1de-850a-4fb1-bf6a-58793321a407/burbulomagissa-and-alice-in-footballland/">BurbuloMAGISSA and Alice in Footballland <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/5526ea83-9f95-4624-929e-3d01ccb3ed95/night-falls-on-palermo/">Night Falls on Palermo <time datetime="2026-10-31">October 31, 2026</time></a></li>
   </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/53484baf-9062-48c0-b587-0a7c1d83ebf3/trinity-sport-camp/">Trinity Sport Camp</a> <time datetime="2026-10-30">October 30, 2026</time></li>
+    <li>Next: <a href="/en/event/5f36f0a0-a56b-4099-bb51-6e534dd532e9/the-pattihio-municipal-theater-of-limassol-presents-voices-of-my-land-and-of-love/">The Pattihio Municipal Theater of Limassol presents &quot;VOICES OF MY LAND AND OF LOVE&quot;</a> <time datetime="2026-10-30">October 30, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
 </div>
 
   </body>

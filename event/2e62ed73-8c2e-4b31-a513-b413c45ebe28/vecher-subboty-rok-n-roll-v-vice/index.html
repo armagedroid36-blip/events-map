@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Нячанг, 26 сентября 2026. ⚡️ Вечер субботы: Рок-н-ролл в VICE! Уже завтра, Tom Waltz and The Surfers заряжают мощный лайв! Будем раздавать золотую классику…" />
     <link rel="canonical" href="https://mypins.site/event/2e62ed73-8c2e-4b31-a513-b413c45ebe28/vecher-subboty-rok-n-roll-v-vice/" />
     <meta property="og:site_name" content="MyPins" />
@@ -130,11 +132,11 @@
   </nav>
   <h2>Похожие события</h2>
   <ul>
+    <li><a href="/event/c0e134cc-309e-49ec-98fe-fd7c1686f76c/nachinaem-nedelyu-laytovo-i-po-kayfu/">Начинаем неделю лайтово и по кайфу! <time datetime="2026-09-21">21 сентября 2026</time></a></li>
     <li><a href="/event/0f6a2e7f-1cc1-4a06-935d-35667c3615c0/dzhem-seyshn-v-bare-kilo/">Джем-сейшн в баре Kilo! <time datetime="2026-09-25">25 сентября 2026</time></a></li>
     <li><a href="/event/f24a74f3-d473-4607-be74-18b8a077949a/gitarnik-v-neverland/">Гитарник в NEVERLAND <time datetime="2026-09-25">25 сентября 2026</time></a></li>
     <li><a href="/event/b98280f4-818c-4f7b-9fd8-5651abc97abf/priglashaem-vas-na-vecher-zhivogo-instrumentalnogo-zvuchaniya-s-vitaliem-i-v-a/">Приглашаем Вас на Вечер Живого Инструментального Звучания с Виталием I.V.A. <time datetime="2026-09-26">26 сентября 2026</time></a></li>
-    <li><a href="/event/3b39c194-e772-4c99-aa10-c69cbb0db661/vecher-pyatnitsy-po-rok-n-rollu-v-kilo-bar-s-tom-waltz-and-the-surfers/">Вечер пятницы по рок-н-роллу в Kilo Bar с Tom Waltz and The Surfers! <time datetime="2026-10-30">30 октября 2026</time></a></li>
-    <li><a href="/event/ed9c50b5-7b36-46a2-80a5-67a38f2416c0/gitarnik-v-neverland/">Гитарник в NEVERLAND <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/53f472cf-bd78-469f-a771-9690b93dffc5/nachinaem-nedelyu-laytovo-i-po-kayfu/">Начинаем неделю лайтово и по кайфу! <time datetime="2026-09-28">28 сентября 2026</time></a></li>
     <li><a href="/event/b4c9edd7-862f-43d5-b6ca-65ab0ede2464/zavtra-v-kilo-bar-duet-udarnykh-i-klavishnykh-v-polnoy-improvizatsii-eksperimentalnoy-muzyki-v-dzhazovoy-manere/">Завтра в Kilo bar дуэт ударных и клавишных в полной импровизации экспериментальной музыки в джазовой манере <time datetime="2026-10-31">31 октября 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">

@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Da Nang, September 25, 2026. 👻On Friday at 13:00, We will draw and learn how to create our own story with a ghost👻 I know this is a weak spot for many 🤗 but…" />
     <link rel="canonical" href="https://mypins.site/en/event/0628f6b7-cb72-4c91-9d99-61e5e405552e/on-friday-at-13-00/" />
     <meta property="og:site_name" content="MyPins" />
@@ -135,7 +137,7 @@ Booking: @alena_galley
   <ul>
     <li><a href="/en/event/43d5e108-f9e2-4fa0-b2c7-8b58009eb2af/workshop-financial-freedom-and-self-esteem/">WORKSHOP FINANCIAL FREEDOM AND SELF-ESTEEM <time datetime="2026-09-24">September 24, 2026</time></a></li>
     <li><a href="/en/event/2789a6a9-9c95-47eb-8d13-33fb50cacfc1/clients-and-sales-where-you-are-losing-money/">CLIENTS AND SALES: WHERE YOU ARE LOSING MONEY. <time datetime="2026-09-26">September 26, 2026</time></a></li>
-    <li><a href="/en/event/6570fe5b-a3bd-4850-8076-f5e68f553f19/this-friday-i-invite-you-to-a-cozy-master-class-on-knitting-an-openwork-kerchief/">This Friday, I invite you to a cozy master class on knitting an openwork kerchief <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/ad900736-2b2f-4e46-8691-25583b400aa9/for-the-first-time-in-vietnam/">FOR THE FIRST TIME IN VIETNAM <time datetime="2026-09-26">September 26, 2026</time></a></li>
     <li><a href="/en/event/4d244a54-7d55-4970-828a-7194c80cbba6/argentine-tango-the-art-of-interaction-in-a-couple/">Argentine tango The art of interaction in a couple <time datetime="2026-10-31">October 31, 2026</time></a></li>
     <li><a href="/en/event/2ddf7461-3309-4753-8ed8-ae2cad0b7864/improvisation-master-class/">Improvisation master class <time datetime="2026-11-04">November 4, 2026</time></a></li>
     <li><a href="/en/event/f45f3e8d-1990-46b4-aef2-5cc626244f8e/introduction-to-hypnosis/">INTRODUCTION TO HYPNOSIS <time datetime="2026-11-04">November 4, 2026</time></a></li>

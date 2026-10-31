@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Bali, October 22, 2026. SAVAYA THURSDAY will take place on October 22, 2026 at Savaya Bali. This is a separate club program of electronic music at the venue in…" />
     <link rel="canonical" href="https://mypins.site/en/event/c474772a-c2fb-4aab-b569-88eded7ef022/savaya-thursday-at-savaya-bali/" />
     <meta property="og:site_name" content="MyPins" />
@@ -116,12 +118,12 @@
   </nav>
   <h2>Similar events</h2>
   <ul>
-    <li><a href="/en/event/6a9f364f-55cc-475f-a723-83321671506e/circa-fridays-party-at-luigi-s/">Circa Fridays party at Luigi&#39;s <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/0d600c18-0cb2-45df-aede-af587dd73550/paradise-and-hell-halloween-weekend-at-la-favela/">Paradise and Hell: Halloween Weekend at La Favela <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/49aea9b2-0e19-4196-bef9-f07b90bc770e/fantasy-island-halloween-party/">Fantasy Island — Halloween Party <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/5bb7b3a7-1a81-4470-a526-463390ebc8f8/halloween-party-by-the-ocean/">Halloween party by the ocean <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/5f9fae58-1be0-48bf-bc89-75ca455f3658/sinners-soiree-at-desa-kitsune/">Sinners Soirée at Desa Kitsuné <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/91dae89c-7825-4a28-b0f9-7ae640b74e8b/halloween-pre-party-at-nuanu/">Halloween pre-party at Nuanu <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/6a9f364f-55cc-475f-a723-83321671506e/circa-fridays-party-at-luigi-s/">Circa Fridays party at Luigi&#39;s <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/6538a0c8-6de3-4d9b-a4f5-db5960da3e87/fiesta-de-los-muertos-halloween-at-the-nest-hotel/">Fiesta de los Muertos: Halloween at The Nest Hotel <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/f47c6d77-a3c3-4396-9309-4d7b6473b68d/halloween-party-at-la-brisa/">Halloween Party at La Brisa <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/162c30b6-0e30-4e93-9e10-399e124dd82e/halloween-costume-contest-at-savaya-on-november-1/">Halloween costume contest at Savaya on November 1 <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/c3c3b21d-ba79-4c03-b2e0-e7fc7e91214a/special-guest-at-savaya-bali/">SPECIAL GUEST at Savaya Bali <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/a9739ca9-dfae-4e98-a1d5-7c673f64049c/last-light-at-savaya-bali/">LAST LIGHT at Savaya Bali <time datetime="2026-11-02">November 2, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Bali</h2>

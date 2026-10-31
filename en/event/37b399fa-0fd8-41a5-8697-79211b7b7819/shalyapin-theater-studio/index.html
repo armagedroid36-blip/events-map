@@ -13,7 +13,9 @@
          выполнятся при загрузке скрипта; при saveData не грузим.
          beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
          стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP). -->
+         отбирая канал у превью карты (LCP).
+         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
+         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,4000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else f();}
+      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
       function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
       if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
       setTimeout(go,12000);})();
@@ -75,18 +77,18 @@
         ]
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-DXM8vwP0.js"></script>
+    <script type="module" crossorigin src="/assets/index-BiF1C4zK.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
     <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
-    <link rel="modulepreload" crossorigin href="/assets/config-DItFCIDE.js">
-    <link rel="modulepreload" crossorigin href="/assets/api-og0DNuvI.js">
-    <link rel="modulepreload" crossorigin href="/assets/auth-Bit1AtTr.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-CqoVpZbd.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-Dlla8crw.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-C2qaWSMt.js">
     <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
     <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
-    <link rel="modulepreload" crossorigin href="/assets/seo-COTupSrb.js">
-    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-DGtCcm2N.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-zJRCgEZF.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DmPMCcTY.css" />
+    <link rel="stylesheet" crossorigin href="/assets/index-D9uAVvlZ.css" />
       <meta name="description" content="Nha Trang, October 30, 2026. CHALIAPIN THEATRE-STUDIO invites you to a session 🗓️ 23.10, FRIDAY, 11:00 📍North, 3 min from Oceanus ✅ Join us for connection…" />
     <link rel="canonical" href="https://mypins.site/en/event/37b399fa-0fd8-41a5-8697-79211b7b7819/shalyapin-theater-studio/" />
     <meta property="og:site_name" content="MyPins" />
@@ -100,13 +102,13 @@
     <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/37b399fa-0fd8-41a5-8697-79211b7b7819/shalyapin-theater-studio/" />
     <link rel="alternate" hreflang="ru" href="https://mypins.site/event/37b399fa-0fd8-41a5-8697-79211b7b7819/teatr-studiya-shalyapinykh/" />
     <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"SHALYAPIN THEATER-STUDIO","url":"https://mypins.site/en/event/37b399fa-0fd8-41a5-8697-79211b7b7819/shalyapin-theater-studio/","startDate":"2026-10-30T11:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Nha Trang","address":{"@type":"PostalAddress","addressLocality":"Nha Trang","streetAddress":"Nha Trang"},"geo":{"@type":"GeoCoordinates","latitude":12.2744037,"longitude":109.2001796}},"description":"CHALIAPIN THEATRE-STUDIO invites you to a session 🗓️ 23.10, FRIDAY, 11:00 📍North, 3 min from Oceanus ✅ Join us for connection, self-expression, laughter, creative fulfillment and useful skills ✨ A chance to fully switch off from everyday worries for an hour and a half, clear your head, change your surroundings, experience vivid emotions and gain a new interesting experience. 🗣️ You'll unlock your voice and body, learn to sound confident, release physical and emotional tension, and learn to express yourself more freely 🎭 You'll get experience with improvisation, games and acting études, where you'll laugh, be surprised and discover yourself from a new side 📣 For those who want to perform - we're opening a Casting, preparing ironic, witty, interesting stories ⏩ No experience needed ⏩ Duration 1.5~2 hours 💵 Trial session 200 vnd ✍️ Sign up @Svet_Lana_knows No judgment or competition here ❤️ Just play, creativity, support and experience that will be useful both on stage and in life. #date: 23.10.2026 Post by: Svetlana 🎭 Theatre studio","endDate":"2026-10-30","image":"https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/afd89bffb0739e5853db144e19bc0ebf.jpg","organizer":{"@type":"Organization","name":"Telegram @nyachang_ru","url":"https://t.me/nyachang_ru/24944"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"SHALYAPIN THEATER-STUDIO","item":"https://mypins.site/en/event/37b399fa-0fd8-41a5-8697-79211b7b7819/shalyapin-theater-studio/"}]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"SHALYAPIN THEATER-STUDIO","item":"https://mypins.site/en/event/37b399fa-0fd8-41a5-8697-79211b7b7819/shalyapin-theater-studio/"}]}]}</script>
   </head>
   <body>
     <div id="root"></div>
 <div id="seo-event-block">
   <h1>SHALYAPIN THEATER-STUDIO</h1>
-  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-10-30">October 30, 2026</time></p>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-30">October 30, 2026</time></p>
   <p><time datetime="2026-10-30T11:00:00">October 30, 2026, 11:00 AM</time></p>
   <address>Nha Trang</address>
   <p>200 VND</p>
@@ -145,17 +147,17 @@ Post by: Svetlana 🎭 Theatre studio</p>
   <h2>Similar events</h2>
   <ul>
     <li><a href="/en/event/01c938e5-e952-44a3-90e3-803368594dda/sunday-october-25-nha-trang/">Sunday (October 25) Nha Trang <time datetime="2026-10-25">October 25, 2026</time></a></li>
-    <li><a href="/en/event/7ef1341a-3bc0-476d-b393-7b93755d82e0/tata-show-at-vinwonders/">Tata Show at VinWonders <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/d87e2814-7362-4047-8ae6-0566ebe06320/life-puppets-show-at-do-theatre/">Life Puppets show at Do Theatre <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/4df7da34-c18c-48ef-962d-db2f7f041a07/chum-show/">Chum Show <time datetime="2026-10-30">October 30, 2026</time></a></li>
-    <li><a href="/en/event/29206756-1a5f-473f-82f2-b5cce7e48767/once-show-at-vinwonders/">Once Show at VinWonders <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/7ef1341a-3bc0-476d-b393-7b93755d82e0/tata-show-at-vinwonders/">Tata Show at VinWonders <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/d87e2814-7362-4047-8ae6-0566ebe06320/life-puppets-show-at-do-theatre/">Life Puppets show at Do Theatre <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/4df7da34-c18c-48ef-962d-db2f7f041a07/chum-show/">Chum Show <time datetime="2026-10-31">October 31, 2026</time></a></li>
     <li><a href="/en/event/1821f5be-df50-43b2-b79d-25b680348ca7/nyanchang-get-ready/">NYANCHANG, GET READY! <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/29206756-1a5f-473f-82f2-b5cce7e48767/once-show-at-vinwonders/">Once Show at VinWonders <time datetime="2026-10-31">October 31, 2026</time></a></li>
   </ul>
   <nav class="event-past-chrono">
     <h2>Archive chronology: Nha Trang</h2>
     <ul>
-    <li>Previous: <a href="/en/event/fa7b6161-f4e0-4996-922e-e77c2b241975/master-class/">Master class</a> <time datetime="2026-10-29">October 29, 2026</time></li>
-    <li>Next: <a href="/en/event/7d9ea6cb-d2d0-4cd4-b50a-c13ebc3120a5/friday-avalon-no-options/">FRIDAY AVALON. No options</a> <time datetime="2026-10-30">October 30, 2026</time></li>
+    <li>Previous: <a href="/en/event/2a824de1-4078-4a69-8747-8fef0c5e48ac/where-are-your-hidden-talents-and-destiny-in-your-horoscope/">Where are your hidden talents and destiny in your horoscope?</a> <time datetime="2026-10-30">October 30, 2026</time></li>
+    <li>Next: <a href="/en/event/3b39c194-e772-4c99-aa10-c69cbb0db661/friday-night-of-rock-and-roll-at-kilo-bar-with-tom-waltz-and-the-surfers/">Friday night of rock and roll at Kilo Bar with Tom Waltz and The Surfers!</a> <time datetime="2026-10-30">October 30, 2026</time></li>
     </ul>
   </nav>
   <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
