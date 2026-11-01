@@ -31,6 +31,12 @@ on:
 
 permissions:
   contents: write
+  # Публикация через артефакт Actions (beta 1.20): ветка gh-pages перестала
+  # быть источником Pages — репозиторий разросся до 1,2 ГБ (лимит Pages 1 ГБ),
+  # и legacy-сборка из ветки падала с «Page build failed». Артефакт не зависит
+  # от размера истории.
+  pages: write
+  id-token: write
 
 concurrency:
   group: rebuild-pages
@@ -40,6 +46,9 @@ jobs:
   rebuild:
     runs-on: ubuntu-latest
     timeout-minutes: 40
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -154,16 +163,20 @@ jobs:
       # keep_files: false — ветка полностью заменяется содержимым dist
       # (CNAME лежит в public/ и попадает в dist), поэтому снятые с публикации
       # страницы исчезают из ветки и начинают отдавать 404.html с кодом 404.
-      - name: Публикация в gh-pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Настройка Pages
+        uses: actions/configure-pages@v5
+
+      # Публикация из артефакта (beta 1.20): ветка gh-pages больше не нужна.
+      # keep_files-логика peaceiris заменена: артефакт всегда содержит ровно
+      # тот dist, что собрали, поэтому снятые страницы исчезают и отдают 404.
+      - name: Артефакт сайта
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          publish_branch: gh-pages
-          keep_files: false
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
-          commit_message: 'Auto rebuild: prerender + sitemap'
+          path: dist
+
+      - name: Публикация в Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
 
       # GitHub Pages отдаёт свежие файлы не мгновенно (CDN/кэш ~минута): без
       # паузы гейты ниже проверяли бы прежнюю публикацию и падали бы «на
