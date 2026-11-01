@@ -7,15 +7,13 @@
          хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
          Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
     <link rel="preconnect" href="%VITE_SUPABASE_URL%" crossorigin />
-    <!-- GA4: грузим после первого из событий — (а) взаимодействие пользователя,
-         (б) window.load + простой (requestIdleCallback, задержка 4000 мс),
-         (в) аварийный таймаут 12 с. Команды gtag() стоят в очереди dataLayer и
-         выполнятся при загрузке скрипта; при saveData не грузим.
-         beta 1.17: 800/6000 → 4000/12000 — gtag.js (177 КБ) на beta 1.16
-         стартовал на 2,36 с и давал long task 140–179 мс внутри окна TTI,
-         отбирая канал у превью карты (LCP).
-         beta 1.19: 4000/12000 → 8000/12000 — на странице события gtag
-         стартовал на 4,6 с и его eval (305 мс) попадал в окно TBT. -->
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -24,10 +22,7 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      function idle(){var f=function(){setTimeout(go,8000)};if(window.requestIdleCallback)requestIdleCallback(f,{timeout:3000});else f();}
-      function afterFcp(){if(document.readyState==='complete')idle();else window.addEventListener('load',idle,{once:true});}
-      if(window.PerformanceObserver){try{var p=new PerformanceObserver(function(l,o){var e=l.getEntries();for(var j=0;j<e.length;j++)if(e[j].name==='first-contentful-paint'){o.disconnect();afterFcp();return;}});p.observe({type:'paint',buffered:true});}catch(x){}}
-      setTimeout(go,12000);})();
+      setTimeout(go,15000);})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />

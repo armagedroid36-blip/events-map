@@ -1104,11 +1104,39 @@ export default function Home({
   // Похожие события для открытой карточки (тот же город + та же категория):
   // считаем по уже загруженному списку, без запросов (lib/similar — зеркало
   // логики scripts/seo-prerender.mjs, гейт MIN_SIMILAR внутри). Блок
-  // выводится только на странице события (EventCard, titleAsH1).
-  const selectedSimilar = useMemo(
+  // выводится только на странице события (EventCard, detailMode).
+  const selectedSimilarAll = useMemo(
     () => (selected ? similarEvents(selected, events, seoLang) : []),
     [selected, events, seoLang],
   );
+  // Блок «Похожие события» — ПОСЛЕ первого кадра (beta 1.20): LCP-элемент
+  // страницы события — статический заголовок, а список только добавлял работы
+  // в первый рендер карточки (Style & Layout в окне TBT). Отдаём его в
+  // requestIdleCallback (fallback — setTimeout 0), не позже 1500 мс после
+  // first paint: если браузер всё время занят, timeout заставит отрисовать.
+  const [similarReady, setSimilarReady] = useState(false);
+  useEffect(() => {
+    if (!selected) {
+      setSimilarReady(false);
+      return;
+    }
+    setSimilarReady(false);
+    let cancelled = false;
+    const run = () => {
+      if (!cancelled) setSimilarReady(true);
+    };
+    const idle = window.requestIdleCallback as
+      | ((cb: () => void, opts?: { timeout: number }) => number)
+      | undefined;
+    const timeout = window.setTimeout(run, 1500);
+    const idleId = idle ? idle(run, { timeout: 1500 }) : 0;
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeout);
+      if (idleId && window.cancelIdleCallback) window.cancelIdleCallback(idleId);
+    };
+  }, [selected?.id]);
+  const selectedSimilar = similarReady ? selectedSimilarAll : [];
 
   // События на видимом участке карты (bounds) + фильтры.
   // Без лимита: список и счётчик кнопки показывают ВСЕ события области.
