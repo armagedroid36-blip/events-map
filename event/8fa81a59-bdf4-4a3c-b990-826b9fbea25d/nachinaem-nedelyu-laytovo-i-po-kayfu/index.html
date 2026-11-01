@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Начинаем неделю лайтово и по кайфу! — 19 октября 2026 · Нячанг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Нячанг, 19 октября 2026. 🔥Начинаем неделю лайтово и по кайфу! Завтра вечером играем акустический сет в VICE. Накидаем блюза, фанка и кайфовых каверов на Pink…" />
+    <link rel="canonical" href="https://mypins.site/event/8fa81a59-bdf4-4a3c-b990-826b9fbea25d/nachinaem-nedelyu-laytovo-i-po-kayfu/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Начинаем неделю лайтово и по кайфу! — 19 октября 2026 · Нячанг" />
+    <meta property="og:description" content="Нячанг, 19 октября 2026. 🔥Начинаем неделю лайтово и по кайфу! Завтра вечером играем акустический сет в VICE. Накидаем блюза, фанка и кайфовых каверов на Pink…" />
+    <meta property="og:url" content="https://mypins.site/event/8fa81a59-bdf4-4a3c-b990-826b9fbea25d/nachinaem-nedelyu-laytovo-i-po-kayfu/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/nyachang_ru/24784-0.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/8fa81a59-bdf4-4a3c-b990-826b9fbea25d/nachinaem-nedelyu-laytovo-i-po-kayfu/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/8fa81a59-bdf4-4a3c-b990-826b9fbea25d/let-s-start-the-week-light-and-easy/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"Начинаем неделю лайтово и по кайфу!","item":"https://mypins.site/event/8fa81a59-bdf4-4a3c-b990-826b9fbea25d/nachinaem-nedelyu-laytovo-i-po-kayfu/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Начинаем неделю лайтово и по кайфу!</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-19">19 октября 2026</time></p>
+  <p><time datetime="2026-10-19T20:00:00">19 октября 2026, 20:00</time></p>
+  <address>VICE Diner Club, 29 D. Hiến Quyền, Ba Làng, Bắc Nha Trang, Khánh Hòa 650000, Нячанг</address>
+  <p>Бесплатно</p>
+  <p>🔥Начинаем неделю лайтово и по кайфу!
+
+Завтра вечером играем акустический сет в VICE. Накидаем блюза, фанка и кайфовых каверов на Pink Floyd, Dire Straits, Metallica, RHCP, Sting и других легенд.
+
+На баре всё стабильно вкусно: наливки, крафт, бургеры и пицца.
+Завтра скидка на весь бар 30%!
+
+Пригоняйте чиллить и слушать хорошую музыку!
+
+⏰ Понедельник, 19 октября, начало в 20:00
+💸 Вход свободный
+📍VICE
+
+#дата: 19.10.2026
+Пост от: Misha | MISH.REC</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/nha-trang/">Нячанг</a> <span aria-hidden="true">›</span> <span>Начинаем неделю лайтово и по кайфу!</span></p>
+    <p>Ещё события в Нячанге: <a href="/nha-trang/">афиша</a> · <a href="/nha-trang/concert/">🎤 Концерты</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/2fbe62b6-3c30-4d8e-93ad-748d7fb772b7/vsem-salyut/">Всем салют! <time datetime="2026-10-16">16 октября 2026</time></a></li>
+    <li><a href="/event/a8396145-6923-4be7-b36d-26e6b1172702/fotoden-v-nyachange/">Фотодень в Нячанге <time datetime="2026-10-17">17 октября 2026</time></a></li>
+    <li><a href="/event/e42d945f-81c3-47a2-962d-b7b7a10f818d/live-looping-trip-hop-retro-wave-subbotnim-vecherom-v-vice/">Live Looping, Trip-Hop Retro Wave субботним вечером в VICE! <time datetime="2026-10-17">17 октября 2026</time></a></li>
+    <li><a href="/event/5593c117-61f2-4db7-af23-32147c0a9cee/bolshoy-gitarnik-u-kostra-vyshe-gor-scooter-party/">Большой гитарник у костра «Выше Гор» «Scooter Party <time datetime="2026-10-17">17 октября 2026</time></a></li>
+    <li><a href="/event/333df5f0-3d77-4050-8780-29b815d395c1/voskresnyy-vecher-zhivoy-rok-muzyki-na-severe-nyachanga/">Воскресный вечер живой рок-музыки на севере Нячанга! <time datetime="2026-10-18">18 октября 2026</time></a></li>
+    <li><a href="/event/90a3f16d-24da-4a8c-8eb3-588f42f51e5d/voskresene-v-vice-vecher-zhivoy-muzyki/">Воскресенье в VICE вечер живой музыки! <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Нячанг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/79c432be-6699-4231-b999-1fac892afd9b/igrovoy-vorkshop-sila-prityazheniya/">Игровой воркшоп &quot;Сила притяжения&quot;</a> <time datetime="2026-10-19">19 октября 2026</time></li>
+    <li>Следующее: <a href="/event/98cb7c37-11b1-4032-a8aa-3080c869167b/otkrytyy-urok-dlya-detey-po-breyk-dansu-v-nyachange/">Открытый урок для детей по брейк дансу в Нячанге!</a> <time datetime="2026-10-19">19 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/nha-trang/">Ближайшие события: Нячанг</a></p>
+</div>
+
+  </body>
+</html>

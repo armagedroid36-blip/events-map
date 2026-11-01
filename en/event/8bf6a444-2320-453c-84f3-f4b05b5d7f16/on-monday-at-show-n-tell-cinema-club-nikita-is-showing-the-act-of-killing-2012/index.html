@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>On Monday at Show n Tell Cinema… — October 12, 2026 · Da Nang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Da Nang, October 12, 2026. 🎬 On Monday at Show’n’Tell Cinema Club, Nikita is screening “The Act of Killing” (2012)! A very special and heavy film about people…" />
+    <link rel="canonical" href="https://mypins.site/en/event/8bf6a444-2320-453c-84f3-f4b05b5d7f16/on-monday-at-show-n-tell-cinema-club-nikita-is-showing-the-act-of-killing-2012/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="On Monday at Show n Tell Cinema… — October 12, 2026 · Da Nang" />
+    <meta property="og:description" content="Da Nang, October 12, 2026. 🎬 On Monday at Show’n’Tell Cinema Club, Nikita is screening “The Act of Killing” (2012)! A very special and heavy film about people…" />
+    <meta property="og:url" content="https://mypins.site/en/event/8bf6a444-2320-453c-84f3-f4b05b5d7f16/on-monday-at-show-n-tell-cinema-club-nikita-is-showing-the-act-of-killing-2012/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/8bf6a444-2320-453c-84f3-f4b05b5d7f16/on-monday-at-show-n-tell-cinema-club-nikita-is-showing-the-act-of-killing-2012/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/8bf6a444-2320-453c-84f3-f4b05b5d7f16/v-ponedelnik-v-show-n-tell-cinema-club-nikita-pokazyvaet-akt-ubiystva-the-act-of-killing-2012/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Da Nang","item":"https://mypins.site/en/da-nang/"},{"@type":"ListItem","position":3,"name":"On Monday at Show n Tell Cinema Club, Nikita is showing \"The Act of Killing\" (2012)!","item":"https://mypins.site/en/event/8bf6a444-2320-453c-84f3-f4b05b5d7f16/on-monday-at-show-n-tell-cinema-club-nikita-is-showing-the-act-of-killing-2012/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>On Monday at Show n Tell Cinema Club, Nikita is showing &quot;The Act of Killing&quot; (2012)!</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-12">October 12, 2026</time></p>
+  <p><time datetime="2026-10-12T19:00:00">October 12, 2026, 7:00 PM</time></p>
+  <address>The Workshop, 35 Che Lan Vien, Da Nang</address>
+  <p>Donation</p>
+  <p>🎬 On Monday at Show’n’Tell Cinema Club, Nikita is screening “The Act of Killing” (2012)!
+
+A very special and heavy film about people who killed thousands — and years later talk about it with laughter, pride, and even pleasure.
+
+In 1965–1966 in Indonesia, after an attempted coup, mass killings of communists and those suspected of supporting them began. Hundreds of thousands of people were killed, and the perpetrators never faced punishment.
+
+Director Joshua Oppenheimer invites some of them to revisit the past and reenact their own crimes as if they were making a movie. They laugh, brag, and describe in detail how they killed people. But gradually something changes. Behind the bravado, fear, memories, and an awareness of what they actually did begin to surface.
+
+🗣 The film will be shown in its original language with English subtitles, after which we will discuss this very special film together.
+
+⚠️ Warning: the film is psychologically heavy. It contains detailed accounts of mass killings and reenactments of violence that may cause strong emotional distress. Please take this into account when deciding whether to watch.
+
+📽 Participation: donation (recommended amount 50k)
+⏰ Time: October 12, 19.00
+📍 Venue: The Workshop
+📫 Address: 35 Che Lan Vien, Da Nang, Vietnam
+
+Contact information @infraredfade
+#date: 12.10</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/da-nang/">Da Nang</a> <span aria-hidden="true">›</span> <span>On Monday at Show n Tell Cinema Club, Nikita is showing &quot;The Act of Killing&quot; (2012)!</span></p>
+    <p>More events in Da Nang: <a href="/en/da-nang/">what&#39;s on</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/6c37d823-1463-4533-bdcb-19bcaa6f528e/semantic-movie-party/">SEMANTIC MOVIE PARTY <time datetime="2026-10-02">October 2, 2026</time></a></li>
+    <li><a href="/en/event/099cd613-2b6d-4820-88d4-5631d9d3bb57/on-monday-at-show-n-tell-cinema-club-jake-is-showing-possession-1981/">On Monday at Show n Tell Cinema Club, Jake is showing &quot;Possession&quot; (1981)! <time datetime="2026-10-05">October 5, 2026</time></a></li>
+    <li><a href="/en/event/22b20543-ab72-42eb-80b7-0832a525ba27/today-already/">TODAY ALREADY <time datetime="2026-10-16">October 16, 2026</time></a></li>
+    <li><a href="/en/event/49045c1e-1544-4429-8bd8-0ae7aeafd35f/semantic-movie-night-36th/">SEMANTIC MOVIE NIGHT 36th <time datetime="2026-10-16">October 16, 2026</time></a></li>
+    <li><a href="/en/event/794178f0-c8f6-41c2-be65-e2eb40a86ea9/svoi-english-club-presents/">SVOI ENGLISH CLUB presents <time datetime="2026-10-17">October 17, 2026</time></a></li>
+    <li><a href="/en/event/6ff889c5-6b26-41fd-b0e6-4416c9b06f8b/on-monday-at-show-n-tell-cinema-club-anna-is-showing-turbo-kid-2015/">On Monday at Show n Tell Cinema Club, Anna is showing &quot;Turbo Kid&quot; (2015)! <time datetime="2026-10-19">October 19, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Da Nang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/8313c8f4-cf53-41fa-8a01-10b60af98d04/group-functional-training-in-da-nang/">Group functional training in Da Nang</a> <time datetime="2026-10-12">October 12, 2026</time></li>
+    <li>Next: <a href="/en/event/b6fbc581-a00a-4a31-89d8-f647e1b15964/hatha-yoga/">HATHA YOGA</a> <time datetime="2026-10-12">October 12, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/da-nang/">Upcoming events in Da Nang</a></p>
+</div>
+
+  </body>
+</html>

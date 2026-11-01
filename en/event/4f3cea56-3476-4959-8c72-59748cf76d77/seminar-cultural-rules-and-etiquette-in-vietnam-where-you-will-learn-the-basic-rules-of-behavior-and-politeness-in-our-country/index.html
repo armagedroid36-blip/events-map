@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Seminar &quot;Cultural Rules and… — October 24, 2026 · Nha Trang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nha Trang, October 24, 2026. Dear friends! ❤️🌷🌹 I invite you to the seminar &quot;Cultural Rules and Etiquette in Vietnam,&quot; where you will learn the basic rules…" />
+    <link rel="canonical" href="https://mypins.site/en/event/4f3cea56-3476-4959-8c72-59748cf76d77/seminar-cultural-rules-and-etiquette-in-vietnam-where-you-will-learn-the-basic-rules-of-behavior-and-politeness-in-our-country/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Seminar &quot;Cultural Rules and… — October 24, 2026 · Nha Trang" />
+    <meta property="og:description" content="Nha Trang, October 24, 2026. Dear friends! ❤️🌷🌹 I invite you to the seminar &quot;Cultural Rules and Etiquette in Vietnam,&quot; where you will learn the basic rules…" />
+    <meta property="og:url" content="https://mypins.site/en/event/4f3cea56-3476-4959-8c72-59748cf76d77/seminar-cultural-rules-and-etiquette-in-vietnam-where-you-will-learn-the-basic-rules-of-behavior-and-politeness-in-our-country/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/028f95d7300e5ac90cab83b101f3f43d.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/4f3cea56-3476-4959-8c72-59748cf76d77/seminar-cultural-rules-and-etiquette-in-vietnam-where-you-will-learn-the-basic-rules-of-behavior-and-politeness-in-our-country/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/4f3cea56-3476-4959-8c72-59748cf76d77/seminar-kulturnye-pravila-i-etiket-vo-vetname-gde-vy-uznaete-osnovnye-pravila-povedeniya-i-vezhlivosti-v-nashey-strane/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"Seminar \"Cultural Rules and Etiquette in Vietnam\", where you will learn the basic rules of behavior and politeness in our country","item":"https://mypins.site/en/event/4f3cea56-3476-4959-8c72-59748cf76d77/seminar-cultural-rules-and-etiquette-in-vietnam-where-you-will-learn-the-basic-rules-of-behavior-and-politeness-in-our-country/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Seminar &quot;Cultural Rules and Etiquette in Vietnam&quot;, where you will learn the basic rules of behavior and politeness in our country</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-24">October 24, 2026</time></p>
+  <p><time datetime="2026-10-24T19:30:00">October 24, 2026, 7:30 PM</time></p>
+  <address>Nha Trang</address>
+  <p>350 VND</p>
+  <p>Dear friends! ❤️🌷🌹
+
+I invite you to the seminar &quot;Cultural Rules and Etiquette in Vietnam,&quot; where you will learn the basic rules of behavior and politeness in our country, what mistakes, strange and funny things Russian speakers often do due to ignorance of the local culture and language, and practical tips for you.
+
+Speaker: Local Russian-speaking Vietnamese woman Huong, Candidate of Legal Sciences (diploma from the Russian Academy of Sciences), lecturer at the Pacific University, professional interpreter, accompanying high-level diplomatic delegations, founder of the group LOCAL VIETNAM
+
+Time: 19:30 to 21:30
+Saturday: 24.10.2026
+Venue: Okeanus
+Price: 350 dong
+Contact: @thuhuong2107vn
+
+Registration is mandatory, the number of places is limited!
+
+#date: 24.10.2026
+Post by: Thu Hương Dương</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>Seminar &quot;Cultural Rules and Etiquette in Vietnam&quot;, where you will learn the basic rules of behavior and politeness in our country</span></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/64a20bd1-df97-4d02-af7a-4002c58f846b/fractal-human-design/">Fractal Human Design. <time datetime="2026-10-16">October 16, 2026</time></a></li>
+    <li><a href="/en/event/df82778c-51ac-4c4b-80f5-18dfdf1a978e/lecture-caravaggio-the-first-modern-artist/">Lecture &quot;Caravaggio. The First Modern Artist&quot; <time datetime="2026-10-20">October 20, 2026</time></a></li>
+    <li><a href="/en/event/d95057c3-ad8a-477b-831c-2bcd4bd8c2ed/lecture-kandinsky-and-early-abstraction/">Lecture &quot;Kandinsky and Early Abstraction&quot; <time datetime="2026-10-23">October 23, 2026</time></a></li>
+    <li><a href="/en/event/d7b9307a-999b-4bcc-876b-14ec7c72f290/lecture-hieronymus-bosch/">Lecture &quot;Hieronymus Bosch&quot; <time datetime="2026-10-27">October 27, 2026</time></a></li>
+    <li><a href="/en/event/9d6de9bd-ece5-4107-a6d7-5deb35e056ab/lecture-dali-and-surrealism/">Lecture &quot;Dali and Surrealism&quot; <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/485620e4-f140-48f6-b082-5d768dca23d8/lecture-albrecht-durer-the-artist-who-wanted-to-know-everything/">Lecture &quot;Albrecht Dürer. The Artist Who Wanted to Know Everything&quot; <time datetime="2026-11-03">November 3, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Nha Trang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/496c8006-bfab-4f54-86ad-032babe441de/do-you-want-to-feel-like-an-action-hero/">Do you want to feel like an action hero?</a> <time datetime="2026-10-24">October 24, 2026</time></li>
+    <li>Next: <a href="/en/event/5938a894-264e-4dbb-9de9-22587ced721a/erotraverse-group-session-for-girls/">EroTraverse group session for girls</a> <time datetime="2026-10-24">October 24, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
+</div>
+
+  </body>
+</html>

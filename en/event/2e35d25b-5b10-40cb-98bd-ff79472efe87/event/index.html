@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Material and Community Exhibition… — October 18, 2026 · Paphos</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Paphos, Cyprus, October 18, 2026. The action &quot;Matter and Community&quot; brings contemporary art into creative dialogue with the cultural heritage of the villages…" />
+    <link rel="canonical" href="https://mypins.site/en/event/2e35d25b-5b10-40cb-98bd-ff79472efe87/material-and-community-exhibition-walks-workshops/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Material and Community Exhibition… — October 18, 2026 · Paphos" />
+    <meta property="og:description" content="Paphos, Cyprus, October 18, 2026. The action &quot;Matter and Community&quot; brings contemporary art into creative dialogue with the cultural heritage of the villages…" />
+    <meta property="og:url" content="https://mypins.site/en/event/2e35d25b-5b10-40cb-98bd-ff79472efe87/material-and-community-exhibition-walks-workshops/" />
+    <meta property="og:image" content="https://www.letsculture.cy/wp-content/uploads/2026/08/PLA2026126-FB-EVENT.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/2e35d25b-5b10-40cb-98bd-ff79472efe87/material-and-community-exhibition-walks-workshops/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/2e35d25b-5b10-40cb-98bd-ff79472efe87/materiya-i-soobshchestvo-vystavka-progulki-master-klassy/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Material and Community Exhibition, walks, workshops","item":"https://mypins.site/en/event/2e35d25b-5b10-40cb-98bd-ff79472efe87/material-and-community-exhibition-walks-workshops/"}]}]}</script>
+    <script type="application/json" id="seo-alias-map">{"cloneId":"2e35d25b-5b10-40cb-98bd-ff79472efe87","keptId":"2e35d25b-5b10-40cb-98bd-ff79472efe87","ru":"https://mypins.site/event/2e35d25b-5b10-40cb-98bd-ff79472efe87/materiya-i-soobshchestvo-vystavka-progulki-master-klassy/","en":"https://mypins.site/en/event/2e35d25b-5b10-40cb-98bd-ff79472efe87/material-and-community-exhibition-walks-workshops/"}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Material and Community Exhibition, walks, workshops</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-18">October 18, 2026</time></p>
+  <p><time datetime="2026-10-18T10:00:00">October 18, 2026, 10:00 AM</time></p>
+  <address>Fyti Village Square, Paphos, Cyprus</address>
+  <p>The action &quot;Matter and Community&quot; brings contemporary art into creative dialogue with the cultural heritage of the villages of Lasa and Fyti, highlighting stone, earth, and traditional techniques as living elements of local identity. Through an art exhibition, an artist residency program, experiential workshops, presentations, and narrative tours, residents and visitors are invited to discover the stories, memories, and knowledge connected to the natural and built landscape of the area. The action promotes inclusion and participation for all, with workshops open to the bro</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Material and Community Exhibition, walks, workshops</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/exhibition/">🖼️ Exhibitions</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/0b09c2d7-31fa-420b-9b36-d6f71fc9b590/murmur-kairos/">MURMUR kairos <time datetime="2026-10-09">October 9, 2026</time></a></li>
+    <li><a href="/en/event/10fb7e8b-403b-495a-8b97-a8ca9e33663a/3rd-cyprus-poster-triennial-2026-international-poster-exhibition/">3rd Cyprus Poster Triennial 2026 - International Poster Exhibition <time datetime="2026-10-16">October 16, 2026</time></a></li>
+    <li><a href="/en/event/be557ef0-9fe5-4fd7-aa6d-c280f5a5d807/a-planet-in-common/">A Planet in Common <time datetime="2026-10-22">October 22, 2026</time></a></li>
+    <li><a href="/en/event/fead5de7-be84-4bf5-981b-64d74e89f5eb/land-written-in-verse-contemporary-landscapes/">Land Written in Verse: Contemporary Landscapes <time datetime="2026-10-22">October 22, 2026</time></a></li>
+    <li><a href="/en/event/3f1eed09-a99d-49fd-b547-e35e6531f456/sanctuary-of-small-things-georgia-michaelidis-saad-at-rouan-gallery/">Sanctuary of Small Things: Georgia Michaelidis Saad at Rouan Gallery <time datetime="2026-10-23">October 23, 2026</time></a></li>
+    <li><a href="/en/event/753bface-9158-4a6b-85b9-41e2eb4992ca/belonging/">Belonging <time datetime="2026-10-30">October 30, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/2dd0c3da-68bd-4632-b404-73ae7a8cbead/theater-performance-the-quax-family-18-10-26/">Theater performance The Quax Family, 18/10/26</a> <time datetime="2026-10-18">October 18, 2026</time></li>
+    <li>Next: <a href="/en/event/31651bf8-1f14-46b3-947b-ccc129cdabf8/care-connect-day/">Care &amp; Connect Day</a> <time datetime="2026-10-18">October 18, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

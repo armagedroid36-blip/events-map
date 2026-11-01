@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saturday MasterMind - new… — October 31, 2026 · Nha Trang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nha Trang, October 31, 2026. ☕️ Saturday MasterMind - new connections and fresh ideas! On Saturday we have a Helloween morning, which means... our traditional…" />
+    <link rel="canonical" href="https://mypins.site/en/event/1ead7b90-43dc-4dcd-bce5-8f7ffa51a650/saturday-mastermind-new-acquaintances-and-fresh-ideas/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Saturday MasterMind - new… — October 31, 2026 · Nha Trang" />
+    <meta property="og:description" content="Nha Trang, October 31, 2026. ☕️ Saturday MasterMind - new connections and fresh ideas! On Saturday we have a Helloween morning, which means... our traditional…" />
+    <meta property="og:url" content="https://mypins.site/en/event/1ead7b90-43dc-4dcd-bce5-8f7ffa51a650/saturday-mastermind-new-acquaintances-and-fresh-ideas/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/65a45d1c045fe1898a41b222637559ce.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/1ead7b90-43dc-4dcd-bce5-8f7ffa51a650/saturday-mastermind-new-acquaintances-and-fresh-ideas/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/1ead7b90-43dc-4dcd-bce5-8f7ffa51a650/subbotniy-mastermind-novye-znakomstva-i-svezhie-idei/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"Saturday MasterMind - new acquaintances and fresh ideas!","item":"https://mypins.site/en/event/1ead7b90-43dc-4dcd-bce5-8f7ffa51a650/saturday-mastermind-new-acquaintances-and-fresh-ideas/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Saturday MasterMind - new acquaintances and fresh ideas!</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-31">October 31, 2026</time></p>
+  <p><time datetime="2026-10-31T11:00:00">October 31, 2026, 11:00 AM</time></p>
+  <address>Prime, 27 Đ. Số 7, Khu đô thị Hà Quang 2, Nam Nha Trang, Khánh Hòa 54000</address>
+  <p>Free</p>
+  <p>☕️ Saturday MasterMind - new connections and fresh ideas!
+On Saturday we have a Helloween morning, which means... our traditional Mastermind is still on.
+If you want to meet new people - this is definitely the place for you!
+In a warm, friendly, relaxed atmosphere, we&#39;ll help you find answers to any question, build new connections, and maybe even make new friends.
+✨ Useful connections ✨ Feedback and support ✨ Live communication among like-minded people, and more. All of this:
+#date: 31.10
+Time 11:00
+📍 Prime — location 💸 Free (order at the cafe)
+🎙 Host — Roman Makeev (@rroman_a), this time with co-host @nikakinow
+☕️ Come. Let&#39;s meet, share ideas, and find new opportunities together!</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>Saturday MasterMind - new acquaintances and fresh ideas!</span></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a> · <a href="/en/nha-trang/meetup/">🤝 Meetups &amp; Networking</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/ab01546f-e9cc-441d-8eed-27a3f9c09e07/speed-dating-in-nha-trang/">Speed dating in Nha Trang <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/118ec0ed-f039-44ec-a7d3-2e80b35dc917/moved-but-inside-it-s-still-who-am-i-here/">Moved, but inside it&#39;s still &quot;who am I here?&quot; <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/6605e9fb-1a7d-4312-8ab7-8f6d8ae60c4d/meeting-of-the-book-field-of-experiments-literary-club/">Meeting of the &quot;Book Field of Experiments&quot; literary club <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/fa1951dc-b151-4d9b-808a-094c1a6ad7ab/psychological-club-meeting/">Psychological Club Meeting <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/cd1b4546-6aca-4f38-8e61-f0251bc2b462/free-networking-breakfast-in-nyachang/">FREE NETWORKING BREAKFAST IN NYACHANG <time datetime="2026-11-04">November 4, 2026</time></a></li>
+    <li><a href="/en/event/7ed8de6d-afa1-4de2-b31d-6aca37e7c314/join-the-business-breakfast/">Join the business breakfast! <time datetime="2026-11-05">November 5, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Nha Trang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/1ab41869-1139-4ce7-8c4a-5fc2c6d0357c/sinful-come-to-the-torture-room/">Sinful?! Come to the torture room</a> <time datetime="2026-10-31">October 31, 2026</time></li>
+    <li>Next: <a href="/en/event/1f25a4f4-1650-4861-a716-c4dc8019b6fb/om-chanting/">OM CHANTING</a> <time datetime="2026-10-31">October 31, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
+</div>
+
+  </body>
+</html>

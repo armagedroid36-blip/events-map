@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Набор из 2 кружек: ручная… — 31 октября 2026 · Никосия, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Никосия, Кипр, 31 октября 2026. Разовые мастер-классы ✨ Хотите попробовать керамику без больших обязательств? Наши разовые мастер-классы — идеальный способ…" />
+    <link rel="canonical" href="https://mypins.site/event/4c11531f-c90d-4bb0-927c-8afdba76c03c/nabor-iz-2-kruzhek-ruchnaya-lepka-i-rospis-unikalnyy-opyt-oktyabr/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Набор из 2 кружек: ручная… — 31 октября 2026 · Никосия, Кипр" />
+    <meta property="og:description" content="Никосия, Кипр, 31 октября 2026. Разовые мастер-классы ✨ Хотите попробовать керамику без больших обязательств? Наши разовые мастер-классы — идеальный способ…" />
+    <meta property="og:url" content="https://mypins.site/event/4c11531f-c90d-4bb0-927c-8afdba76c03c/nabor-iz-2-kruzhek-ruchnaya-lepka-i-rospis-unikalnyy-opyt-oktyabr/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/4c11531f-c90d-4bb0-927c-8afdba76c03c/nabor-iz-2-kruzhek-ruchnaya-lepka-i-rospis-unikalnyy-opyt-oktyabr/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/4c11531f-c90d-4bb0-927c-8afdba76c03c/set-of-2-mugs-hand-building-and-paint-one-off-experience-october/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Набор из 2 кружек: ручная лепка и роспись – уникальный опыт, октябрь","item":"https://mypins.site/event/4c11531f-c90d-4bb0-927c-8afdba76c03c/nabor-iz-2-kruzhek-ruchnaya-lepka-i-rospis-unikalnyy-opyt-oktyabr/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Набор из 2 кружек: ручная лепка и роспись – уникальный опыт, октябрь</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-31">31 октября 2026</time></p>
+  <p><time datetime="2026-10-31T10:30:00">31 октября 2026, 10:30</time></p>
+  <address>Kuns Studio, Никосия, Кипр</address>
+  <p>Разовые мастер-классы ✨
+
+Хотите попробовать керамику без больших обязательств? Наши разовые мастер-классы — идеальный способ прийти в студию, проявить творчество и поработать с глиной. 🏺🤲 Каждый месяц мы открываем студию для свободных сессий, обычно по четвергам и субботам. Каждый мастер-класс длится около 2–3 часов и посвящён созданию конкретного предмета — от кружек и высоких кружек до ваз, тарелок, маленьких шкатулок и многого другого.
+
+Опыт не требуется — создавайте что-то своими руками и наслаждайтесь процессом. 🤍
+
+📅 Разовые мастер-классы проходят с сентября по июль. Сессии с сентября по декабрь уже доступны!
+
+Посмотрите предстоящие</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Набор из 2 кружек: ручная лепка и роспись – уникальный опыт, октябрь</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/workshop/">🎨 Мастер-классы</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/1f367fea-f4f0-493e-a97d-470b1ce099b9/detskiy-khellouin-nochevka-magiya-nauka-i-vesele/">Детский Хэллоуин-ночёвка: Магия, Наука и Веселье <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/fd42c548-c950-4309-b22a-9c68d30b6910/masterskaya-gravyury/">Мастерская гравюры <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/0d62873e-4fbf-4cf8-a152-aabced085601/gotovim-rozhkovyy-med-i-rozhkovoe-pechene-s-rozhkovym-medom/">Готовим рожковый мед и рожковое печенье с рожковым медом <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/0dea223a-e532-4c09-8e17-2d6667e6348d/masterskaya-goncharnogo-dela/">Мастерская гончарного дела <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/3a19c601-4b81-4cc0-bc3d-18a5885739d8/tufli-drugikh/">Туфли других <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/6b8777ce-4f4c-474f-bf10-8866d3e2d7ba/masterskaya-empatii-dlya-detey/">Мастерская эмпатии для детей <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/4bab836d-d99a-4e8c-b615-dcaac7783dfa/trafik-reaktor/">Трафик-реактор</a> <time datetime="2026-10-31">31 октября 2026</time></li>
+    <li>Следующее: <a href="/event/4d701ce7-d90e-4f09-8a95-e906ca65ecd7/letloose-halloween-vecherinka-scary-movie-v-limassole/">LetLoose Halloween: вечеринка Scary Movie в Лимассоле</a> <time datetime="2026-10-31">31 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>

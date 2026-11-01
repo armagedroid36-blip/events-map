@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Аладдин и сказки 1001 ночи на… — 31 октября 2026 · Табанан, Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Табанан, Bali, 31 октября 2026. 31 октября в 16:00 в BLOCK42 на территории Nuanu пройдёт ледовое шоу «Аладдин и сказки 1001 ночи». Фигуристы и артисты цирка…" />
+    <link rel="canonical" href="https://mypins.site/event/e5403caf-0042-4bf6-a348-78a65705d4b5/aladdin-i-skazki-1001-nochi-na-ldu-31-oktyabrya-16-00/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Аладдин и сказки 1001 ночи на… — 31 октября 2026 · Табанан, Bali" />
+    <meta property="og:description" content="Табанан, Bali, 31 октября 2026. 31 октября в 16:00 в BLOCK42 на территории Nuanu пройдёт ледовое шоу «Аладдин и сказки 1001 ночи». Фигуристы и артисты цирка…" />
+    <meta property="og:url" content="https://mypins.site/event/e5403caf-0042-4bf6-a348-78a65705d4b5/aladdin-i-skazki-1001-nochi-na-ldu-31-oktyabrya-16-00/" />
+    <meta property="og:image" content="https://static.baliforum.ru/uploads/698367/conversions/b79ef22d6a71dd31b5a3f0fd614d2dab1d45a23eaed8ed9d0977dbdb1dc52ad8-preview.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/e5403caf-0042-4bf6-a348-78a65705d4b5/aladdin-i-skazki-1001-nochi-na-ldu-31-oktyabrya-16-00/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/e5403caf-0042-4bf6-a348-78a65705d4b5/aladdin-and-the-tales-of-1001-nights-on-ice-october-31-16-00/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Бали","item":"https://mypins.site/bali/"},{"@type":"ListItem","position":3,"name":"Аладдин и сказки 1001 ночи на льду — 31 октября, 16:00","item":"https://mypins.site/event/e5403caf-0042-4bf6-a348-78a65705d4b5/aladdin-i-skazki-1001-nochi-na-ldu-31-oktyabrya-16-00/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Аладдин и сказки 1001 ночи на льду — 31 октября, 16:00</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-31">31 октября 2026</time></p>
+  <p><time datetime="2026-10-31T16:00:00">31 октября 2026, 16:00</time></p>
+  <address>93CX+6C, Nuanu Creative City, Kabupaten Tabanan, Bali 82121, Табанан, Bali</address>
+  <p>200000 IDR</p>
+  <p>31 октября в 16:00 в BLOCK42 на территории Nuanu пройдёт ледовое шоу «Аладдин и сказки 1001 ночи». Фигуристы и артисты цирка покажут истории Шахерезады, Аладдина, Али-Бабы и Синдбада с акробатикой, жонглированием огнём, фокусами, костюмами и видеопроекциями. Вход в зал открывается за час до представления.
+
+На этот день также назначен отдельный сеанс той же программы в 19:00; при покупке выберите нужные дату, время и места. Билеты начинаются от 200 000 IDR и зависят от сектора и категории посетителя. Дети до 12 лет должны быть со взрослым; детям 0–4 лет нужен билет Kids без отдельного места, а с 5 лет — обычный билет с собственным местом. Билеты: https://megatix.co.id/events/shows-on-ice-first-time-in-bali</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/bali/">Бали</a> <span aria-hidden="true">›</span> <span>Аладдин и сказки 1001 ночи на льду — 31 октября, 16:00</span></p>
+    <p>Ещё события на Бали: <a href="/bali/">афиша</a> · <a href="/bali/theatre/">🎭 Театры и шоу</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/3ef4300d-9838-466e-9c2b-a321bab1fff7/kecak-i-tantsy-v-padang-tegal-kaja/">Kecak и танцы в Padang Tegal Kaja <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/905bb225-bc9c-46ea-9c5c-12da83fc1a11/tantsevalnye-predstavleniya-v-bale-banjar-ubud-kelod/">Танцевальные представления в Bale Banjar Ubud Kelod <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/a92f4b68-854e-4345-b3af-4cc5855a8012/kecak-fire-dance-v-khrame-uluvatu/">Kecak Fire Dance в храме Улувату <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/af63e539-e913-4ca3-a010-e7d3117a1975/tantsevalnye-predstavleniya-v-khrame-sarasvati/">Танцевальные представления в храме Сарасвати <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/e80e6f75-3afd-4173-828c-a05191a6708c/tantsevalnye-predstavleniya-v-ubud-palace/">Танцевальные представления в Ubud Palace <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/5cedeb4c-b109-4848-bedd-160690d80c27/tantsevalnoe-predstavlenie-arma/">Танцевальное представление ARMA <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Бали</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/e089439c-c77a-414d-a9d3-48ef5e90ee9d/mafiya-na-khellouin-v-ubude/">Мафия на Хеллоуин в Убуде</a> <time datetime="2026-10-31">31 октября 2026</time></li>
+    <li>Следующее: <a href="/event/f47c6d77-a3c3-4396-9309-4d7b6473b68d/khellouinskaya-vecherinka-v-la-brisa/">Хэллоуинская вечеринка в La Brisa</a> <time datetime="2026-10-31">31 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/bali/">Ближайшие события: Бали</a></p>
+</div>
+
+  </body>
+</html>

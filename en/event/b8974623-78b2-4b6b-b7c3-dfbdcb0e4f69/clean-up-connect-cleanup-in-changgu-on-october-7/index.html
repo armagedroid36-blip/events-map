@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clean Up &amp; Connect: Cleanup in Changgu… — October 7, 2026 · Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Bali, October 7, 2026. On October 7, from 07:00 to 10:00, Clean Up &amp; Connect will take place in the village of Canggu: participants will clean the area near…" />
+    <link rel="canonical" href="https://mypins.site/en/event/b8974623-78b2-4b6b-b7c3-dfbdcb0e4f69/clean-up-connect-cleanup-in-changgu-on-october-7/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Clean Up &amp; Connect: Cleanup in Changgu… — October 7, 2026 · Bali" />
+    <meta property="og:description" content="Bali, October 7, 2026. On October 7, from 07:00 to 10:00, Clean Up &amp; Connect will take place in the village of Canggu: participants will clean the area near…" />
+    <meta property="og:url" content="https://mypins.site/en/event/b8974623-78b2-4b6b-b7c3-dfbdcb0e4f69/clean-up-connect-cleanup-in-changgu-on-october-7/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/b8974623-78b2-4b6b-b7c3-dfbdcb0e4f69/clean-up-connect-cleanup-in-changgu-on-october-7/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/b8974623-78b2-4b6b-b7c3-dfbdcb0e4f69/clean-up-connect-uborka-v-changu-7-oktyabrya/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Bali","item":"https://mypins.site/en/bali/"},{"@type":"ListItem","position":3,"name":"Clean Up & Connect: Cleanup in Changgu on October 7","item":"https://mypins.site/en/event/b8974623-78b2-4b6b-b7c3-dfbdcb0e4f69/clean-up-connect-cleanup-in-changgu-on-october-7/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Clean Up &amp; Connect: Cleanup in Changgu on October 7</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-07">October 7, 2026</time></p>
+  <p><time datetime="2026-10-07T07:00:00">October 7, 2026, 7:00 AM</time></p>
+  <address>Jalan Canggu Padang Linjong No.7, Canggu, Kec. Kuta Utara, Kabupaten Badung, Bali 80351, Indonesia</address>
+  <p>135000 IDR</p>
+  <p>On October 7, from 07:00 to 10:00, Clean Up &amp; Connect will take place in the village of Canggu: participants will clean the area near the rice fields together. The organizers will provide gloves and bags. The exact meeting point near the cleanup site will be sent via WhatsApp after purchasing the mandatory ticket. After the cleanup, participants will head to Lima Bay Bali for drinks, snacks, music, and socializing; the pool is available throughout the day.
+
+A General Ticket costs 135,000 IDR and includes cleanup equipment, one drink, snacks, and access to the Lima Bay pool. Bring a reusable water bottle, comfortable clothing, and for the pool — a swimsuit and towel. Ticket and meeting point details: https://megatix.co.id/events/clean-bali-clean-up-connect</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/bali/">Bali</a> <span aria-hidden="true">›</span> <span>Clean Up &amp; Connect: Cleanup in Changgu on October 7</span></p>
+    <p>More events in Bali: <a href="/en/bali/">what&#39;s on</a> · <a href="/en/bali/meetup/">🤝 Meetups &amp; Networking</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/39fcd360-ee65-4b9d-bb1e-74c2404eec8f/evening-by-the-campfire-at-dragon-tea-temple/">Evening by the campfire at Dragon Tea Temple <time datetime="2026-10-07">October 7, 2026</time></a></li>
+    <li><a href="/en/event/494e8780-21e4-4521-a645-ab70f1ff148e/speed-dating/">Speed Dating <time datetime="2026-10-07">October 7, 2026</time></a></li>
+    <li><a href="/en/event/83d0bae4-25a5-47f2-ba55-73c321c83b34/networking-pro-motion-in-ubud/">Networking &quot;Pro-motion&quot; in Ubud <time datetime="2026-10-08">October 8, 2026</time></a></li>
+    <li><a href="/en/event/cb69ff8c-0764-4c7c-9727-d5875622427f/breakfast-networking-in-umalas/">Breakfast - Networking in Umalas <time datetime="2026-11-02">November 2, 2026</time></a></li>
+    <li><a href="/en/event/515ae428-a2a0-4376-8a39-990faace34c0/expat-women-s-breakfast-in-bukit/">Expat Women&#39;s Breakfast in Bukit <time datetime="2026-11-05">November 5, 2026</time></a></li>
+    <li><a href="/en/event/7d0df7d2-b499-476e-ac3a-55eab4cd9e4e/networking-pro-motion-in-ubud/">Networking &quot;Pro-motion&quot; in Ubud <time datetime="2026-11-05">November 5, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Bali</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/af869235-2450-421d-8853-9afa8c06e789/quiz-game-mozgoboynya-bali-4-years-together/">Quiz game Mozgoboynya Bali 4 years together</a> <time datetime="2026-10-07">October 7, 2026</time></li>
+    <li>Next: <a href="/en/event/c255bb46-e6d6-4cec-a9b6-72dae9e85063/what-the-body-remembers-exhibition-at-nuanu-until-november-29/">What The Body Remembers: exhibition at Nuanu until November 29</a> <time datetime="2026-10-07">October 7, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/bali/">Upcoming events in Bali</a></p>
+</div>
+
+  </body>
+</html>

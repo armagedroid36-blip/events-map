@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Рассвет на Горе Ангелов «Выше Гор» — 30 сентября 2026 · Нячанг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Нячанг, 30 сентября 2026. ⛰️ Рассвет на Горе Ангелов • «Выше Гор» 30 сентября идём на наш юбилейный рассвет на Горе Ангелов. Встречаемся ещё до рассвета…" />
+    <link rel="canonical" href="https://mypins.site/event/a96bf582-6965-47a3-b895-33cc7e060ab8/rassvet-na-gore-angelov-vyshe-gor/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Рассвет на Горе Ангелов «Выше Гор» — 30 сентября 2026 · Нячанг" />
+    <meta property="og:description" content="Нячанг, 30 сентября 2026. ⛰️ Рассвет на Горе Ангелов • «Выше Гор» 30 сентября идём на наш юбилейный рассвет на Горе Ангелов. Встречаемся ещё до рассвета…" />
+    <meta property="og:url" content="https://mypins.site/event/a96bf582-6965-47a3-b895-33cc7e060ab8/rassvet-na-gore-angelov-vyshe-gor/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/a96bf582-6965-47a3-b895-33cc7e060ab8/rassvet-na-gore-angelov-vyshe-gor/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/a96bf582-6965-47a3-b895-33cc7e060ab8/dawn-on-angel-mountain-above-the-mountains/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"Рассвет на Горе Ангелов «Выше Гор»","item":"https://mypins.site/event/a96bf582-6965-47a3-b895-33cc7e060ab8/rassvet-na-gore-angelov-vyshe-gor/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Рассвет на Горе Ангелов «Выше Гор»</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-09-30">30 сентября 2026</time></p>
+  <p><time datetime="2026-09-30T04:20:00">30 сентября 2026, 04:20</time></p>
+  <address>12.2937292,109.2081148, Нячанг</address>
+  <p>Бесплатно</p>
+  <p>⛰️ Рассвет на Горе Ангелов • «Выше Гор»
+
+30 сентября идём на наш юбилейный рассвет на Горе Ангелов.
+
+Встречаемся ещё до рассвета, поднимаемся наверх и любуемся солнцем с видом на море, горы и Нячанг. 
+
+Маршрут проходит через 3 пика. Первый подойдёт даже тем, кто впервые идёт в горы. Дальше становится интереснее: появляются более крутые участки, где местами нужно помогать себе руками, но без сложных технических препятствий.
+
+🟢 Уровень маршрута — зелёный
+
+Хороший вариант для первого знакомства с хайкингом и «Выше Гор».
+
+⏱ О маршруте:
+
+около 3 часов
+идём в комфортном среднем темпе
+маршрут проходит через 3 пика
+
+🗓 30 сентября, среда
+🕓 04:20 — встречаемся у подножия горы
+
+📍 Место встречи:
+Локация у горы
+
+ℹ️ Важно:
+
+после первого пика при желании можно вернуться по той же тропе
+байки оставляем на платной парковке
+
+После спуска по желанию:
+🌊 купаемся в море
+🍳 идём вместе завтракать
+
+🎒 Что взять:
+
+•кроссовки с хорошим сцеплением
+•воду 1,5 литра
+•лёгкий перекус
+•одежду как для пробежки
+
+💚 Участие бесплатное. Запись обязательна, количество мест ограничено.
+
+📩 Запись:
+@maxgooooo
+
+#дата: 30.09</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/nha-trang/">Нячанг</a> <span aria-hidden="true">›</span> <span>Рассвет на Горе Ангелов «Выше Гор»</span></p>
+    <p>Ещё события в Нячанге: <a href="/nha-trang/">афиша</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/ca71b163-70b8-424e-a499-a85acee18b6e/tur-k-samomu-krasivomu-vodopadu/">Тур к самому красивому водопаду <time datetime="2026-09-27">27 сентября 2026</time></a></li>
+    <li><a href="/event/afa7103f-1403-4ffa-a939-736dcc3b1b51/puteshestvie-k-tainstvennomu-ostrovu-i-mayaku-ai-lanh/">Путешествие к таинственному острову и маяку Đại Lãnh <time datetime="2026-10-01">1 октября 2026</time></a></li>
+    <li><a href="/event/49eda0ae-213c-476b-b66c-4ae5f9e61dab/1go-oktyabrya-v-cht/">1го октября в чт <time datetime="2026-10-01">1 октября 2026</time></a></li>
+    <li><a href="/event/c06cf122-e1ee-4033-8d20-0b9459819c43/rayskiy-plyazh-zoklet/">Райский пляж ЗОКЛЕТ <time datetime="2026-10-03">3 октября 2026</time></a></li>
+    <li><a href="/event/5f4b1718-d170-46b2-8751-c4cefdb9f8d6/puteshestvie-na-poluostrov-hon-heo/">Путешествие на полуостров Hòn Hèo <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/dea0b1b0-c99a-4c97-b6cc-a879f53cd598/poezdka-na-yuzhnye-ostrova-nyachanga/">ПОЕЗДКА НА ЮЖНЫЕ ОСТРОВА НЯЧАНГА <time datetime="2026-11-07">7 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Нячанг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/a17243fd-2aeb-4dab-9b83-267b8e2e62a0/vecher-igry-v-vo-vse-tyazhkie/">Вечер игры в &quot;ВО ВСЕ ТЯЖКИЕ&quot;</a> <time datetime="2026-09-30">30 сентября 2026</time></li>
+    <li>Следующее: <a href="/event/abd780c3-fac1-47bc-a02e-2a6e9710e1ee/utrennyaya-praktika-dlya-nachinayushchikh/">Утренняя практика для начинающих.</a> <time datetime="2026-09-30">30 сентября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/nha-trang/">Ближайшие события: Нячанг</a></p>
+</div>
+
+  </body>
+</html>

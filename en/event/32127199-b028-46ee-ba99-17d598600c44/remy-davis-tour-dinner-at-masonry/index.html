@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Remy Davis Tour Dinner at Masonry — October 16, 2026 · Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Bali, October 16, 2026. On October 16, Masonry Canggu celebrates its 8th anniversary and invites chef Remy Davis to the kitchen of The Back Room. Remy trained…" />
+    <link rel="canonical" href="https://mypins.site/en/event/32127199-b028-46ee-ba99-17d598600c44/remy-davis-tour-dinner-at-masonry/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Remy Davis Tour Dinner at Masonry — October 16, 2026 · Bali" />
+    <meta property="og:description" content="Bali, October 16, 2026. On October 16, Masonry Canggu celebrates its 8th anniversary and invites chef Remy Davis to the kitchen of The Back Room. Remy trained…" />
+    <meta property="og:url" content="https://mypins.site/en/event/32127199-b028-46ee-ba99-17d598600c44/remy-davis-tour-dinner-at-masonry/" />
+    <meta property="og:image" content="https://static.baliforum.ru/uploads/701615/conversions/97484734-68485939-preview.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/32127199-b028-46ee-ba99-17d598600c44/remy-davis-tour-dinner-at-masonry/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/32127199-b028-46ee-ba99-17d598600c44/gastrolnyy-uzhin-remy-davis-v-masonry/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Bali","item":"https://mypins.site/en/bali/"},{"@type":"ListItem","position":3,"name":"Remy Davis Tour Dinner at Masonry","item":"https://mypins.site/en/event/32127199-b028-46ee-ba99-17d598600c44/remy-davis-tour-dinner-at-masonry/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Remy Davis Tour Dinner at Masonry</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-16">October 16, 2026</time></p>
+  <p><time datetime="2026-10-16T18:00:00">October 16, 2026, 6:00 PM</time></p>
+  <address>Jl. Pantai Batu Bolong No.39a, Canggu, Kec. Kuta Utara, Kabupaten Badung, Bali 80361, Indonesia</address>
+  <p>On October 16, Masonry Canggu celebrates its 8th anniversary and invites chef Remy Davis to the kitchen of The Back Room.
+
+Remy trained at Elkano under Aitor Arregi and was previously head chef at Bessie&#39;s in Sydney. His style is open-fire cooking, seasonal produce, and a modern Basque approach to cuisine.
+
+In honor of Masonry&#39;s birthday, the chef will present a special menu. Details — in the post and via the link in the profile.
+
+Supported by @dimatiquefinewines and @noema.resort.
+
+📅 October 16 📍 Masonry Canggu
+
+INSTAGRAM (https://www.instagram.com/masonry.bali/)</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/bali/">Bali</a> <span aria-hidden="true">›</span> <span>Remy Davis Tour Dinner at Masonry</span></p>
+    <p>More events in Bali: <a href="/en/bali/">what&#39;s on</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/bcf851b7-09a7-4cd5-bf6a-b44d241aa124/indonesian-wine-tasting-at-potato-head/">Indonesian wine tasting at Potato Head <time datetime="2026-09-18">September 18, 2026</time></a></li>
+    <li><a href="/en/event/ba611e0c-1687-4006-bc25-fbf26cf8e23a/winemaker-in-conversation-at-dome/">Winemaker in Conversation at Dome <time datetime="2026-09-26">September 26, 2026</time></a></li>
+    <li><a href="/en/event/7e20cc52-7126-4b66-83bc-31937aab1450/sunset-dinner-aboard-bounty-cruises/">Sunset dinner aboard Bounty Cruises <time datetime="2026-09-30">September 30, 2026</time></a></li>
+    <li><a href="/en/event/8997d528-9a47-4a72-b4b7-538df2d0736d/closing-of-full-house-in-pererenan/">Closing of Full House in Pererenan <time datetime="2026-09-30">September 30, 2026</time></a></li>
+    <li><a href="/en/event/2d39a581-7c71-44e1-8f8e-056ed8aea5ca/wine-tasting-at-masonry/">Wine tasting at Masonry <time datetime="2026-10-01">October 1, 2026</time></a></li>
+    <li><a href="/en/event/524b7d6e-234a-4402-a54b-e43ad127b4c0/christmas-evenings-at-copper-music-and-festive-dinner/">Christmas evenings at Copper: music and festive dinner <time datetime="2026-12-24">December 24, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Bali</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/2d8a6e0f-0eb9-45c5-a5fa-513bc178b6c6/navratri-special-dhrupad-concert-at-usada/">Navratri Special: Dhrupad concert at Usada</a> <time datetime="2026-10-16">October 16, 2026</time></li>
+    <li>Next: <a href="/en/event/368a435d-b9b5-48f4-9747-f7fa45cc3000/rostarr-party-at-desa-potato-head/">Rostarr Party at Desa Potato Head</a> <time datetime="2026-10-16">October 16, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/bali/">Upcoming events in Bali</a></p>
+</div>
+
+  </body>
+</html>

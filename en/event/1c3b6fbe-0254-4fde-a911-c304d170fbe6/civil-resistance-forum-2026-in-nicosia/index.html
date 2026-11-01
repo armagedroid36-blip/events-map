@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Civil Resistance Forum 2026 in… — October 23, 2026 · Nicosia</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nicosia, Cyprus, October 23, 2026. Discover the Civil Resistance Forum 2026 — Third Edition, a free one-day forum in Nicosia, Cyprus on 23 October, exploring…" />
+    <link rel="canonical" href="https://mypins.site/en/event/1c3b6fbe-0254-4fde-a911-c304d170fbe6/civil-resistance-forum-2026-in-nicosia/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Civil Resistance Forum 2026 in… — October 23, 2026 · Nicosia" />
+    <meta property="og:description" content="Nicosia, Cyprus, October 23, 2026. Discover the Civil Resistance Forum 2026 — Third Edition, a free one-day forum in Nicosia, Cyprus on 23 October, exploring…" />
+    <meta property="og:url" content="https://mypins.site/en/event/1c3b6fbe-0254-4fde-a911-c304d170fbe6/civil-resistance-forum-2026-in-nicosia/" />
+    <meta property="og:image" content="https://ygyeyprogpawmjzjyrew.supabase.co/storage/v1/object/public/forecast-events/events/civil-resistance-forum-2026-in-nicosia-2026-10-23/cover-800.webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/1c3b6fbe-0254-4fde-a911-c304d170fbe6/civil-resistance-forum-2026-in-nicosia/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/1c3b6fbe-0254-4fde-a911-c304d170fbe6/forum-grazhdanskogo-soprotivleniya-2026-v-nikosii/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Civil Resistance Forum 2026 in Nicosia","item":"https://mypins.site/en/event/1c3b6fbe-0254-4fde-a911-c304d170fbe6/civil-resistance-forum-2026-in-nicosia/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Civil Resistance Forum 2026 in Nicosia</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-23">October 23, 2026</time></p>
+  <p><time datetime="2026-10-23T10:00:00">October 23, 2026, 10:00 AM</time></p>
+  <address>University of Cyprus (Old Campus), Nicosia</address>
+  <p>Free</p>
+  <p>Discover the Civil Resistance Forum 2026 — Third Edition, a free one-day forum in Nicosia, Cyprus on 23 October, exploring solidarity, democratic resilience and the long fight for freedom. Free entry.
+
+---
+
+Scroll down for English version 👇
+
+---
+
+For the third year, the Civil Resistance Forum returns to Nicosia, bringing voices from Cyprus, Lithuania, Ukraine and beyond. This year&#39;s theme, **The Long Fight**, examines how resistance, solidarity and truth can be sustained in the long term — not only in moments of crisis, but through long-term challeng</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Civil Resistance Forum 2026 in Nicosia</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/conference/">💼 Conferences</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/753f8862-a024-42ea-96d7-41b58c621277/slovonovo-2026-free-culture-forum/">SlovoNovo 2026 Free Culture Forum <time datetime="2026-10-23">October 23, 2026</time></a></li>
+    <li><a href="/en/event/140f41b9-6848-4775-804c-1a04b7703295/frederick-university-co-organises-the-15th-international-medpower-2026-conference/">Frederick University Co-organises the 15th International MEDPOWER 2026 Conference <time datetime="2026-11-06">November 6, 2026</time></a></li>
+    <li><a href="/en/event/74f1a139-5f91-4e32-9a8e-506ea4d6d656/strategic-corridors-and-alliances-transatlantic-cooperation-and-europe-s-global-connectivity/">Strategic Corridors and Alliances: Transatlantic Cooperation and Europe&#39;s Global Connectivity <time datetime="2026-11-06">November 6, 2026</time></a></li>
+    <li><a href="/en/event/c861eaf3-9fb8-4dd5-be71-1fcedcb92d2a/the-tragedy-of-democracy/">The Tragedy of Democracy <time datetime="2026-11-07">November 7, 2026</time></a></li>
+    <li><a href="/en/event/5e680358-cff1-4357-b889-587c607e0714/cyprus-advertising-and-communication-association-caca-conference/">Cyprus Advertising and Communication Association (CACA) Conference <time datetime="2026-11-20">November 20, 2026</time></a></li>
+    <li><a href="/en/event/9ef17e83-27a5-4555-b498-474f4483373f/cyprus-fintech-week-2026/">Cyprus Fintech Week ‘2026 <time datetime="2026-12-13">December 13, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/11039ca8-2cea-4a64-8356-032580b99488/the-belly/">The Belly</a> <time datetime="2026-10-23">October 23, 2026</time></li>
+    <li>Next: <a href="/en/event/1e286552-7d3c-478f-804a-8034105eda8c/showtime-fridays/">Showtime Fridays</a> <time datetime="2026-10-23">October 23, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

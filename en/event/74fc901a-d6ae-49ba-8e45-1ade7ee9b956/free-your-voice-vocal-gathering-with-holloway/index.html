@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Free Your Voice: vocal gathering with… — October 2, 2026 · Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Bali, October 2, 2026. On October 2, Free Your Voice with Australian musician Holloway will take place at Studio Lotus in The Yoga Barn complex in Ubud. This…" />
+    <link rel="canonical" href="https://mypins.site/en/event/74fc901a-d6ae-49ba-8e45-1ade7ee9b956/free-your-voice-vocal-gathering-with-holloway/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Free Your Voice: vocal gathering with… — October 2, 2026 · Bali" />
+    <meta property="og:description" content="Bali, October 2, 2026. On October 2, Free Your Voice with Australian musician Holloway will take place at Studio Lotus in The Yoga Barn complex in Ubud. This…" />
+    <meta property="og:url" content="https://mypins.site/en/event/74fc901a-d6ae-49ba-8e45-1ade7ee9b956/free-your-voice-vocal-gathering-with-holloway/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/74fc901a-d6ae-49ba-8e45-1ade7ee9b956/free-your-voice-vocal-gathering-with-holloway/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/74fc901a-d6ae-49ba-8e45-1ade7ee9b956/free-your-voice-vokalnaya-vstrecha-s-holloway/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Bali","item":"https://mypins.site/en/bali/"},{"@type":"ListItem","position":3,"name":"Free Your Voice: vocal gathering with Holloway","item":"https://mypins.site/en/event/74fc901a-d6ae-49ba-8e45-1ade7ee9b956/free-your-voice-vocal-gathering-with-holloway/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Free Your Voice: vocal gathering with Holloway</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-02">October 2, 2026</time></p>
+  <p><time datetime="2026-10-02T16:30:00">October 2, 2026, 4:30 PM</time></p>
+  <address>F7M8+PVG, Jl. Sukma Kesuma, Peliatan, Kecamatan Ubud, Kabupaten Gianyar, Bali 80571, Indonesia</address>
+  <p>450000 IDR</p>
+  <p>On October 2, Free Your Voice with Australian musician Holloway will take place at Studio Lotus in The Yoga Barn complex in Ubud. This is a group vocal gathering from 16:30 to 18:00 WITA. Participation fee is 450,000 IDR.
+
+Participants will try breathing, rhythm, and voice exercises, guided improvisation, and group singing. No musical experience is required: the program does not involve solo performances or judging singing quality. The finale will feature live instrumental music.
+
+Participation is allowed from age 10. Children aged 10–15 need a parent, guardian, or a sibling over 18. The ticket is personalized and cannot be transferred to another person. Arrive 15 minutes before the start: if you are late, entry may be denied without a refund.
+
+You can request a ticket refund no later than 24 hours before the start via the Yoga Barn reception. Booking fees are non-refundable. Buy a ticket for Free Your Voice (https://megatix.co.id/events/free-your-voice-OCTOBER).</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/bali/">Bali</a> <span aria-hidden="true">›</span> <span>Free Your Voice: vocal gathering with Holloway</span></p>
+    <p>More events in Bali: <a href="/en/bali/">what&#39;s on</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/df7aea38-3cf2-475c-abc6-70e5218e8792/robotics-class-at-unicorns/">Robotics class at Unicorns🤖🌈 <time datetime="2026-09-30">September 30, 2026</time></a></li>
+    <li><a href="/en/event/072fb052-8926-427d-ae19-f5923312e9e9/robotics-master-class-for-children-from-4-years-old/">Robotics master class for children from 4 years old <time datetime="2026-10-01">October 1, 2026</time></a></li>
+    <li><a href="/en/event/da0d9e99-8a19-4c39-9858-098d61e6e708/robotics-master-class-for-children-from-4-years-old/">Robotics master class for children from 4 years old <time datetime="2026-10-03">October 3, 2026</time></a></li>
+    <li><a href="/en/event/c4d924e7-47c1-4093-87d6-c8fa964934af/family-sunday-at-bangun-tidur-farm/">Family Sunday at Bangun Tidur Farm <time datetime="2026-10-04">October 4, 2026</time></a></li>
+    <li><a href="/en/event/9d416ede-c8d7-45e7-8cec-f499472d3da0/f-king-awesome-sketches-drawing-ubud/">F**king awesome sketches. Drawing. Ubud <time datetime="2026-11-06">November 6, 2026</time></a></li>
+    <li><a href="/en/event/ba420c05-aeaf-4568-a4f2-460e45395c20/vegan-chef-training-with-liza-at-sayuri-ubud/">Vegan Chef Training with Liza at Sayuri Ubud <time datetime="2026-12-31">December 31, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Bali</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/717466e3-04e0-4a5f-a65f-a0763827ab7b/exhibition-soot-on-the-edge-of-fire-at-galeri-zen1/">Exhibition &quot;Soot on the Edge of Fire&quot; at Galeri Zen1</a> <time datetime="2026-10-02">October 2, 2026</time></li>
+    <li>Next: <a href="/en/event/b9bedc28-5174-439a-afc7-1ff136b58ae6/quiz-please/">Quiz, please!</a> <time datetime="2026-10-02">October 2, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/bali/">Upcoming events in Bali</a></p>
+</div>
+
+  </body>
+</html>

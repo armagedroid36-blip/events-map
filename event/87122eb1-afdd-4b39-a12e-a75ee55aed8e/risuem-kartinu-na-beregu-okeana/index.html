@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Рисуем картину на берегу океана — 17 октября 2026 · Чангу, Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Чангу, Bali, 17 октября 2026. 🎨 + 🌊 Мастер-класс по рисованию картины на холсте на берегу океана в Чангу Ты можешь выбрать любой сюжет, а я помогу в его…" />
+    <link rel="canonical" href="https://mypins.site/event/87122eb1-afdd-4b39-a12e-a75ee55aed8e/risuem-kartinu-na-beregu-okeana/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Рисуем картину на берегу океана — 17 октября 2026 · Чангу, Bali" />
+    <meta property="og:description" content="Чангу, Bali, 17 октября 2026. 🎨 + 🌊 Мастер-класс по рисованию картины на холсте на берегу океана в Чангу Ты можешь выбрать любой сюжет, а я помогу в его…" />
+    <meta property="og:url" content="https://mypins.site/event/87122eb1-afdd-4b39-a12e-a75ee55aed8e/risuem-kartinu-na-beregu-okeana/" />
+    <meta property="og:image" content="https://static.baliforum.ru/uploads/701628/conversions/photo_2026-10-14-19.27.46-preview.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/87122eb1-afdd-4b39-a12e-a75ee55aed8e/risuem-kartinu-na-beregu-okeana/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/87122eb1-afdd-4b39-a12e-a75ee55aed8e/painting-a-picture-on-the-ocean-shore/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Бали","item":"https://mypins.site/bali/"},{"@type":"ListItem","position":3,"name":"Рисуем картину на берегу океана","item":"https://mypins.site/event/87122eb1-afdd-4b39-a12e-a75ee55aed8e/risuem-kartinu-na-beregu-okeana/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Рисуем картину на берегу океана</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-17">17 октября 2026</time></p>
+  <p><time datetime="2026-10-17T15:30:00">17 октября 2026, 15:30</time></p>
+  <address>84XF+RMJ, Jl. Pantai Pererenan No.171, Pererenan, Kec. Mengwi, Kabupaten Badung, Bali, Indonesia, Чангу, Bali</address>
+  <p>600000 IDR</p>
+  <p>🎨 + 🌊
+
+Мастер-класс по рисованию картины на холсте на берегу океана в Чангу
+
+Ты можешь выбрать любой сюжет, а я помогу в его воплощении. И через 3 часа сможешь забрать готовую работу домой!
+
+Я 3 года провожу арт-классы на острове и знаю, что даже без навыков рисования получится красиво ✨
+
+А ещё это возможность обрести друзей и сделать красивый контент, как в Pinterest 🥰
+
+⭐️ Cуббота 17 октября в 15:30
+
+Все материалы входят в стоимость 600к
+
+Для записи пиши @Art_Team_Bali_adm</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/bali/">Бали</a> <span aria-hidden="true">›</span> <span>Рисуем картину на берегу океана</span></p>
+    <p>Ещё события на Бали: <a href="/bali/">афиша</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/7200018c-b759-49d9-a262-c1f28967dd52/akh-nnye-sketchi-risovanie-ubud/">Ах**нные скетчи. Рисование. Убуд <time datetime="2026-10-16">16 октября 2026</time></a></li>
+    <li><a href="/event/f766b304-faf1-4f4c-b99f-27489766a3c1/nauchnaya-laboratoriya-v-unicorns/">Научная Лаборатория в Unicorns <time datetime="2026-10-16">16 октября 2026</time></a></li>
+    <li><a href="/event/678bd4cb-797e-4375-80c1-6d4b0eb9c42d/master-klass-po-robototekhnike-dlya-detey-s-4kh-det/">Мастер класс по робототехнике для детей с 4х дет <time datetime="2026-10-17">17 октября 2026</time></a></li>
+    <li><a href="/event/4a0fe362-b39e-4871-957e-5e9f9c41990e/zhenskiy-zavtrak-i-risovanie-neyrografiki/">Женский завтрак и рисование нейрографики <time datetime="2026-10-17">17 октября 2026</time></a></li>
+    <li><a href="/event/9d416ede-c8d7-45e7-8cec-f499472d3da0/akh-nnye-sketchi-risovanie-ubud/">Ах**нные скетчи. Рисование. Убуд <time datetime="2026-11-06">6 ноября 2026</time></a></li>
+    <li><a href="/event/ba420c05-aeaf-4568-a4f2-460e45395c20/obuchenie-na-vegan-povara-s-lizoy-v-sayuri-ubud/">Обучение на веган-повара с Лизой в Sayuri Ubud <time datetime="2026-12-31">31 декабря 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Бали</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/8190dd79-e42b-4959-8833-93cb300230d1/vystavka-aliks-eme-v-muzee-pasifika/">Выставка Аликс Эме в Музее Pasifika</a> <time datetime="2026-10-17">17 октября 2026</time></li>
+    <li>Следующее: <a href="/event/93b6d5c3-f6a8-4e66-ace4-fae64c98234f/kurs-podgotovki-prepodavateley-yogi/">Курс подготовки преподавателей йоги</a> <time datetime="2026-10-17">17 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/bali/">Ближайшие события: Бали</a></p>
+</div>
+
+  </body>
+</html>

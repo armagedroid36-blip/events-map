@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Functional fitness at CrossFit… — September 2, 2026 · Da Nang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Da Nang, September 2, 2026. Functional fitness at “CrossFit Harbour” 🏋️‍♂️ Any fitness level — welcome! It suits both guys and girls who would like to try…" />
+    <link rel="canonical" href="https://mypins.site/en/event/40a83f89-8ea6-4c16-98f1-ea60a58050e2/functional-fitness-at-crossfit-harbour/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Functional fitness at CrossFit… — September 2, 2026 · Da Nang" />
+    <meta property="og:description" content="Da Nang, September 2, 2026. Functional fitness at “CrossFit Harbour” 🏋️‍♂️ Any fitness level — welcome! It suits both guys and girls who would like to try…" />
+    <meta property="og:url" content="https://mypins.site/en/event/40a83f89-8ea6-4c16-98f1-ea60a58050e2/functional-fitness-at-crossfit-harbour/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/40a83f89-8ea6-4c16-98f1-ea60a58050e2/functional-fitness-at-crossfit-harbour/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/40a83f89-8ea6-4c16-98f1-ea60a58050e2/funktsionalnyy-fitnes-v-crossfit-harbour/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Da Nang","item":"https://mypins.site/en/da-nang/"},{"@type":"ListItem","position":3,"name":"Functional fitness at CrossFit Harbour","item":"https://mypins.site/en/event/40a83f89-8ea6-4c16-98f1-ea60a58050e2/functional-fitness-at-crossfit-harbour/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Functional fitness at CrossFit Harbour</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-09-16">September 16, 2026</time></p>
+  <p><time datetime="2026-09-02T09:30:00">September 2, 2026, 9:30 AM</time></p>
+  <address>CrossFit Harbour, 23 Trần Bạch Đằng, Phước Mỹ, Ngũ Hành Sơn, Đà Nẵng 50000, Da Nang</address>
+  <p>250000 VND</p>
+  <p>Functional fitness at “CrossFit Harbour” 🏋️‍♂️
+
+Any fitness level — welcome!
+
+It suits both guys and girls who would like to try CrossFit-style workouts, as well as those who have trained before and want to join the sports crew 💪
+
+Workouts are aimed at developing speed-strength indicators, endurance, and coordination;
+This type of training is also a great boost for achieving the desired visual results
+
+⏰ Wednesday (02.09.26.) at 9:30
+📍LOCATION
+💰Trial workout — 250,000 DNG (with a membership purchase — first workout is free)
+
+From you — comfortable sportswear and sneakers;
+From me — an interesting, dynamic, and useful workout!
+
+Mandatory sign-up for the workout: @NikitaCoach89
+
+#date: 02.09.26.</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/da-nang/">Da Nang</a> <span aria-hidden="true">›</span> <span>Functional fitness at CrossFit Harbour</span></p>
+    <p>More events in Da Nang: <a href="/en/da-nang/">what&#39;s on</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/416bfe39-71d0-42e1-a933-c790685f53b9/functional-fitness-at-crossfit-harbour/">Functional fitness at CrossFit Harbour <time datetime="2026-09-23">September 23, 2026</time></a></li>
+    <li><a href="/en/event/95aca38d-0af0-47d5-8c5a-5dcba7f6cd06/group-functional-training-in-da-nang/">Group functional training in Da Nang <time datetime="2026-10-09">October 9, 2026</time></a></li>
+    <li><a href="/en/event/9a6ea36b-d034-454e-bf44-2555c65a3e39/functional-fitness-at-crossfit-harbour/">Functional fitness at CrossFit Harbour <time datetime="2026-10-21">October 21, 2026</time></a></li>
+    <li><a href="/en/event/d7b11f1b-c99b-4c65-81db-aa7fb4816261/i-ll-take-you-by-the-hand-and-gently-introduce-you-to-the-world-of-functional-training/">I&#39;ll take you by the hand and gently introduce you to the world of functional training <time datetime="2026-10-23">October 23, 2026</time></a></li>
+    <li><a href="/en/event/b9cc5509-c24f-4d23-96e0-80505b2ec444/i-ll-take-you-by-the-hand-and-gently-introduce-you-to-the-world-of-functional-training/">I&#39;ll take you by the hand and gently introduce you to the world of functional training <time datetime="2026-10-28">October 28, 2026</time></a></li>
+    <li><a href="/en/event/4f4bc8ca-a898-43f0-b201-724990c46493/i-ll-take-you-by-the-hand-and-gently-introduce-you-to-the-world-of-functional-training/">I&#39;ll take you by the hand and gently introduce you to the world of functional training <time datetime="2026-10-30">October 30, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Da Nang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/3acee1bd-846f-450d-b481-f64137104eec/today-is-the-last-day-of-the-tac-game-open-house-at-restaurant-369/">Today is the last day of the TAC game open house at restaurant 369!</a> <time datetime="2026-09-16">September 16, 2026</time></li>
+    <li>Next: <a href="/en/event/a4ab92c4-eff7-4e08-8736-10c0b0ff7260/meetings-for-psychologists/">Meetings for psychologists.</a> <time datetime="2026-09-16">September 16, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/da-nang/">Upcoming events in Da Nang</a></p>
+</div>
+
+  </body>
+</html>

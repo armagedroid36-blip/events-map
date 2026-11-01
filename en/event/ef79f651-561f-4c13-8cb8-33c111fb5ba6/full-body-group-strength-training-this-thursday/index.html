@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Full-body group strength training… — October 1, 2026 · Nha Trang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nha Trang, October 1, 2026. Full-body group strength training 🌟 this Thursday 💜 Suitable for beginners! Session in a mini group of up to 3 people…" />
+    <link rel="canonical" href="https://mypins.site/en/event/ef79f651-561f-4c13-8cb8-33c111fb5ba6/full-body-group-strength-training-this-thursday/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Full-body group strength training… — October 1, 2026 · Nha Trang" />
+    <meta property="og:description" content="Nha Trang, October 1, 2026. Full-body group strength training 🌟 this Thursday 💜 Suitable for beginners! Session in a mini group of up to 3 people…" />
+    <meta property="og:url" content="https://mypins.site/en/event/ef79f651-561f-4c13-8cb8-33c111fb5ba6/full-body-group-strength-training-this-thursday/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/ef79f651-561f-4c13-8cb8-33c111fb5ba6/full-body-group-strength-training-this-thursday/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/ef79f651-561f-4c13-8cb8-33c111fb5ba6/silovaya-trenirovka-v-gruppe-na-vse-telo-v-etot-chetverg/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"Full-body group strength training this Thursday","item":"https://mypins.site/en/event/ef79f651-561f-4c13-8cb8-33c111fb5ba6/full-body-group-strength-training-this-thursday/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Full-body group strength training this Thursday</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-01">October 1, 2026</time></p>
+  <p><time datetime="2026-10-01T09:30:00">October 1, 2026, 9:30 AM</time></p>
+  <address>CLB THỂ HÌNH - GYM NHA TRANG, 102 Đ. Bắc Sơn, Bắc Nha Trang, Khánh Hòa 650000</address>
+  <p>200000 VND</p>
+  <p>Full-body group strength training 🌟 this Thursday 💜
+
+Suitable for beginners!
+Session in a mini group of up to 3 people.
+- development of muscular endurance
+- joint mobility
+- flexibility and stretching
+- strengthening the body&#39;s frame
+- physical and mental health 💖
+
+Start today!
+I&#39;ll teach you how to squat and train with pleasure 🫶
+
+
+🗓 When: 1.10 Thursday at 9:30, 14:30 and 17:00, duration 80
+minutes)
+📍 Where: https://maps.app.goo.gl/yhF5bbStFYPbQjyF8?g_st=ic
+
+💰 Price: 200k (trial session)
+
+
+✍️ Registration required: https://t.me/andreeva234
+
+#date: 01.10.2026
+Post by: Kate</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>Full-body group strength training this Thursday</span></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a> · <a href="/en/nha-trang/wellness/">🧘 Yoga &amp; Wellness</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/8db89faa-8dc5-4739-acea-2f9955c30d81/tala-tien-in-nha-trang/">Tala Tien in Nha Trang! <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/9fa904c9-d678-48ef-818a-6b8ddae938bb/art-of-contact/">ART OF CONTACT <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/f1021578-e909-4ab2-9194-59f8d8ac82c4/group-meeting-with-a-psychologist/">GROUP MEETING WITH A PSYCHOLOGIST <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/4634fbb4-6276-42f2-b6f5-60f01da962e4/flow-yoga/">FLOW YOGA <time datetime="2026-11-02">November 2, 2026</time></a></li>
+    <li><a href="/en/event/69fcb46d-60ec-4bb1-9414-37f54dc0d242/morning-practice/">Morning practice <time datetime="2026-11-02">November 2, 2026</time></a></li>
+    <li><a href="/en/event/8bc982b7-ecfc-47c5-9735-bfa9eda35771/practical-eft-training-emotional-freedom-technique/">Practical EFT Training, Emotional Freedom Technique <time datetime="2026-11-02">November 2, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Nha Trang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/e99504c1-fc04-4d3b-bdb4-e576793384ae/open-training-session-of-the-ttrc-running-club-in-nha-trang/">Open training session of the TTRC running club in Nha Trang</a> <time datetime="2026-10-01">October 1, 2026</time></li>
+    <li>Next: <a href="/en/event/f5f0d886-4052-47c5-9877-8cc28465a066/lecture-on-gestalt-psychology/">Lecture on Gestalt psychology.</a> <time datetime="2026-10-01">October 1, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>First Team Pickleball Championship — October 1, 2026 · Nha Trang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nha Trang, October 1, 2026. First Team Pickleball Championship Do you play this wonderful game? Gather a team (bring a partner) and come participate…" />
+    <link rel="canonical" href="https://mypins.site/en/event/31b9f986-1855-4d53-95ff-7cd6ee2f7bc6/first-team-pickleball-championship/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="First Team Pickleball Championship — October 1, 2026 · Nha Trang" />
+    <meta property="og:description" content="Nha Trang, October 1, 2026. First Team Pickleball Championship Do you play this wonderful game? Gather a team (bring a partner) and come participate…" />
+    <meta property="og:url" content="https://mypins.site/en/event/31b9f986-1855-4d53-95ff-7cd6ee2f7bc6/first-team-pickleball-championship/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/31b9f986-1855-4d53-95ff-7cd6ee2f7bc6/first-team-pickleball-championship/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/31b9f986-1855-4d53-95ff-7cd6ee2f7bc6/pervyy-komandnyy-chempionat-po-piklbolu/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"First Team Pickleball Championship","item":"https://mypins.site/en/event/31b9f986-1855-4d53-95ff-7cd6ee2f7bc6/first-team-pickleball-championship/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>First Team Pickleball Championship</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-01">October 1, 2026</time></p>
+  <p><time datetime="2026-10-01T09:00:00">October 1, 2026, 9:00 AM</time></p>
+  <address>Nha Trang</address>
+  <p>100000 VND</p>
+  <p>First Team Pickleball Championship
+Do you play this wonderful game? Gather a team (bring a partner) and come participate.
+
+Championship start:
+📆 October 1 at 9:00
+💰 100k / player
+📍ARMY Club in the north of the city
+
+Sign up: @kuzuk
+
+#date: 01.10.2026
+Post by: Evgeny</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>First Team Pickleball Championship</span></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/1fa2716c-652a-4b45-98f4-8332b4c7b08e/streetball-in-nha-trang-3x3-for-everyone/">Streetball in Nha Trang: 3x3 for everyone <time datetime="2026-09-28">September 28, 2026</time></a></li>
+    <li><a href="/en/event/e99504c1-fc04-4d3b-bdb4-e576793384ae/open-training-session-of-the-ttrc-running-club-in-nha-trang/">Open training session of the TTRC running club in Nha Trang <time datetime="2026-09-29">September 29, 2026</time></a></li>
+    <li><a href="/en/event/0b4951f8-2f51-4081-9c72-27a68c9408c8/archery-tag-in-nha-trang-archery-tag/">Archery Tag in Nha Trang: Archery Tag <time datetime="2026-10-03">October 3, 2026</time></a></li>
+    <li><a href="/en/event/3c48e227-c475-40da-a547-438f070dcbd6/learn-to-play-pickleball/">Learn to play PICKLEBALL <time datetime="2026-10-03">October 3, 2026</time></a></li>
+    <li><a href="/en/event/be0fffb5-00ce-4bd5-b924-9f1a67b89bed/weekend-run/">Weekend run <time datetime="2026-10-04">October 4, 2026</time></a></li>
+    <li><a href="/en/event/a6ebed74-2816-41cf-8679-a3021a4df398/weekend-run/">Weekend run <time datetime="2026-11-01">November 1, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Nha Trang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/19ca189e-e4c3-43f6-b738-2255bf97caed/we-re-back-to-our-plein-air-sessions/">We&#39;re back to our plein air sessions!</a> <time datetime="2026-10-01">October 1, 2026</time></li>
+    <li>Next: <a href="/en/event/33318a32-bd07-49a0-b649-400dea9a7480/dear-potterheads-we-invite-you-to-a-themed-game-based-on-the-films-of-the-harry-potter-cinematic-universe/">Dear Potterheads! We invite you to a themed game based on the films of the Harry Potter cinematic universe.</a> <time datetime="2026-10-01">October 1, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
+</div>
+
+  </body>
+</html>

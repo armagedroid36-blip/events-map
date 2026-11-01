@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Long-awaited meetups for moms (and… — October 30, 2026 · Da Nang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Da Nang, October 30, 2026. Long-awaited meetups for moms (and dads) 🧳 LIFE ON SUITCASES: PARENTING IN EMIGRATION Moving to live by the sea sounds great! But…" />
+    <link rel="canonical" href="https://mypins.site/en/event/a80f9bb9-16ac-4e0e-bb7f-8cff41df9f98/long-awaited-meetups-for-moms-and-dads/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Long-awaited meetups for moms (and… — October 30, 2026 · Da Nang" />
+    <meta property="og:description" content="Da Nang, October 30, 2026. Long-awaited meetups for moms (and dads) 🧳 LIFE ON SUITCASES: PARENTING IN EMIGRATION Moving to live by the sea sounds great! But…" />
+    <meta property="og:url" content="https://mypins.site/en/event/a80f9bb9-16ac-4e0e-bb7f-8cff41df9f98/long-awaited-meetups-for-moms-and-dads/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/a80f9bb9-16ac-4e0e-bb7f-8cff41df9f98/long-awaited-meetups-for-moms-and-dads/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/a80f9bb9-16ac-4e0e-bb7f-8cff41df9f98/dolgozhdannye-vstrechi-dlya-mam-i-pap/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Da Nang","item":"https://mypins.site/en/da-nang/"},{"@type":"ListItem","position":3,"name":"Long-awaited meetups for moms (and dads)","item":"https://mypins.site/en/event/a80f9bb9-16ac-4e0e-bb7f-8cff41df9f98/long-awaited-meetups-for-moms-and-dads/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Long-awaited meetups for moms (and dads)</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-30">October 30, 2026</time></p>
+  <p><time datetime="2026-10-30T10:00:00">October 30, 2026, 10:00 AM</time></p>
+  <address>Little M kid Lounge, Bùi Tá Hán, Ngũ Hành Sơn, Đà Nẵng, Da Nang</address>
+  <p>150000 VND</p>
+  <p>Long-awaited meetups for moms (and dads)
+
+🧳 LIFE ON SUITCASES: PARENTING IN EMIGRATION
+
+Moving to live by the sea sounds great! But along with our suitcases, we bring our family, children, parental responsibilities, and a million questions that we have to find answers to all over again in a new country))
+
+How to choose a kindergarten or school when it&#39;s unclear where we&#39;ll be living in a year?
+Which language should we teach our child?
+How to make acquaintances when even chatting with neighbors is an advanced-level task?
+
+On October 30, I invite moms (and dads) to a meetup dedicated to parenting in emigration
+
+We&#39;ll talk about:
+🟢how to make decisions about our children&#39;s future when our own looks uncertain
+🟢why you can feel lonely even surrounded by people
+🟢how the language barrier affects our independence and communication
+🟢why everyday tasks take so much energy and how to gradually settle into a new reality
+
+We&#39;ll share experiences, work through our feelings, and look for what helps us feel more confident far from our familiar home
+
+And, of course, meet each other! After all, one of the best things you can find in a new city is your own people💚
+
+Facilitator: Natalya Gorbunova, clinical psychologist, CBT consultant, psychologist for moms, mother of two, gave birth to a daughter in emigration
+
+📏October 30, Friday
+📏10:00–12:00
+📏Little M kid Lounge
+
+💰 Participation: 150,000 dong plus play area entry if you come with a child
+
+Yes, yes, you can come with children! We&#39;ll meet in the play area so the kids don&#39;t interfere with talking about them))
+
+To sign up: @breezeblock_psy
+
+#date: 30.11</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/da-nang/">Da Nang</a> <span aria-hidden="true">›</span> <span>Long-awaited meetups for moms (and dads)</span></p>
+    <p>More events in Da Nang: <a href="/en/da-nang/">what&#39;s on</a> · <a href="/en/da-nang/meetup/">🤝 Meetups &amp; Networking</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/c2ad364f-dd88-4909-a486-3b18592392cc/breakfast-with-placements-in-da-nang/">Breakfast with placements in Da Nang <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/6a61dc1d-acb6-403a-9de0-5a05d2db44e5/how-to-blend-in-as-one-of-your-own-and-live-care-free-in-vietnam/">How to BLEND IN AS ONE OF YOUR OWN and LIVE CARE FREE in Vietnam <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/38e2bcab-9f00-4395-a51a-428b5b0cc951/big-networking-event-in-danang/">BIG NETWORKING EVENT IN DANANG <time datetime="2026-11-05">November 5, 2026</time></a></li>
+    <li><a href="/en/event/7f036642-89cd-4f00-aa96-ffa97df0c512/how-much-time-is-wasted-on-questions-that-could-be-resolved-in-a-15-minute-live-conversation/">How much time is wasted on questions that could be resolved in a 15-minute live conversation? <time datetime="2026-11-05">November 5, 2026</time></a></li>
+    <li><a href="/en/event/ebf810b2-b2bf-45d1-854e-66978eafc4ba/100-entrepreneurs-from-da-nang-on-one-platform/">100 entrepreneurs from Da Nang on one platform <time datetime="2026-11-05">November 5, 2026</time></a></li>
+    <li><a href="/en/event/2738192a-7920-4965-8234-8993b6e2ac9c/therapeutic-book-club/">Therapeutic Book Club <time datetime="2026-11-26">November 26, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Da Nang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/8b74ba70-1f3d-4dd9-9be6-f17445536a4a/38th-meaningful-movie-night/">38th MEANINGFUL MOVIE NIGHT</a> <time datetime="2026-10-30">October 30, 2026</time></li>
+    <li>Next: <a href="/en/event/b9d8667b-0c93-4b87-bac1-6baeda29633e/full-body-group-functional-training-in-da-nang/">Full Body group functional training in Da Nang</a> <time datetime="2026-10-30">October 30, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/da-nang/">Upcoming events in Da Nang</a></p>
+</div>
+
+  </body>
+</html>

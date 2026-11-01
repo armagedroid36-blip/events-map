@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kundalini Activation / Kundalini… — September 8, 2026 · Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Bali, September 8, 2026. 🔴 Important: The practice is usually conducted in English. Language is not needed for the energy work itself — only your intention to…" />
+    <link rel="canonical" href="https://mypins.site/en/event/bf1a7078-4e74-4690-bf21-d4a17cf8b0d0/kundalini-activation-kundalini-activation/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Kundalini Activation / Kundalini… — September 8, 2026 · Bali" />
+    <meta property="og:description" content="Bali, September 8, 2026. 🔴 Important: The practice is usually conducted in English. Language is not needed for the energy work itself — only your intention to…" />
+    <meta property="og:url" content="https://mypins.site/en/event/bf1a7078-4e74-4690-bf21-d4a17cf8b0d0/kundalini-activation-kundalini-activation/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/bf1a7078-4e74-4690-bf21-d4a17cf8b0d0/kundalini-activation-kundalini-activation/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/bf1a7078-4e74-4690-bf21-d4a17cf8b0d0/aktivatsiya-kundalini-kundalini-activation/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Bali","item":"https://mypins.site/en/bali/"},{"@type":"ListItem","position":3,"name":"Kundalini Activation / Kundalini Activation","item":"https://mypins.site/en/event/bf1a7078-4e74-4690-bf21-d4a17cf8b0d0/kundalini-activation-kundalini-activation/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Kundalini Activation / Kundalini Activation</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-09-08">September 8, 2026</time></p>
+  <p><time datetime="2026-09-08T13:30:00">September 8, 2026, 1:30 PM</time></p>
+  <address>Jl. Kayu Manis, Canggu, Kec. Kuta Utara, Kabupaten Badung, Bali 80351, Indonesia</address>
+  <p>🔴 Important: The practice is usually conducted in English. Language is not needed for the energy work itself — only your intention to let go of control and allow yourself to feel everything that arises matters. Just be, breathe, and trust the process — the body knows everything.
+
+Kundalini Activation with Alina
+
+Alina Avdyukova (Bali, New York, Russia)
+
+Alina (@spiritual.koshka (https://www.instagram.com/spiritual.koshka/)) is a Kundalini Activation facilitator, retreat organizer, women&#39;s circle leader, and tarot reader living in Bali. After 10 years working at major S&amp;P 500 companies in New York and a deep personal transformation, she created peaceinside.me (https://peaceinside.me) — a mindfulness community that helps people worldwide find balance and inner harmony. In her work, Alina blends science and spirituality, combining Kundalini energy, Peruvian shamanic initiations, Tarot reading, and ThetaHealing with meditation, dance therapy, and classical psychology, creating a truly holistic approach.
+
+💫 Sessions are conducted in English. However, no language knowledge is required for the energy activation — energy works beyond words. The introduction and integration after the session are held in English.
+
+🔥 What is Kundalini Activation?
+
+It is a powerful energy practice that awakens the life force within you. The activation process rewires the brain and nervous system, raising awareness and connecting you to your true Self. It clears blocks on physical, emotional, and spiritual levels, unlocking your highest potential and triggering transformation toward the life of your dreams.
+
+Kundalini Activation helps you reach a state of wholeness, harmony, and inner peace, filling life with joy. This process tunes you into your true path, helping you unfold your potential.
+
+✔️ Rediscover the taste for life
+
+✔️ Connect more deeply with body, mind, and soul
+
+✔️ Release emotional blocks
+
+✔️ Gain clarity and inner harmony
+
+✔️ Open your heart and feel love for everything around you
+
+✔️ Awaken your intuition
+
+✨ What to Expect at a Kundalini Activation Session?
+
+Every experience is unique — from deep relaxation to cathartic spontaneous Kundalini dance.
+
+✅ Deep rest — a feeling of complete reset and a flow of healing energy.
+
+✅ Emotional release — tears, laughter, cries, or spontaneous expressions of emotion.
+
+✅ Physical sensations — tingling, warmth, goosebumps, waves of energy, or spontaneous movements.
+
+✅ Vivid visual imagery — past lives, ancestors, or profound symbolic visions.
+
+✅ Divine guidance — insights from the Higher Self or the Universe.
+
+✅ Bliss state — a deep, non-sexual orgasmic experience of love and unity.
+
+No words can convey this experience — just come and feel it yourself! ❤️
+
+🔥 How to Prepare for Kundalini Activation?
+
+• Dress comfortably — preferably in white or light-colored clothing 🤍
+
+• Eat lightly — an empty stomach will heighten sensitivity to energy 👌🏻
+
+• Drink more water before and after the session 💦
+
+• Avoid stimulants — coffee, alcohol, cigarettes, and other substances ❗</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/bali/">Bali</a> <span aria-hidden="true">›</span> <span>Kundalini Activation / Kundalini Activation</span></p>
+    <p>More events in Bali: <a href="/en/bali/">what&#39;s on</a> · <a href="/en/bali/wellness/">🧘 Yoga &amp; Wellness</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/366cddbd-5827-4ac9-aba9-b72616a56587/tantra-life-practice-the-taste-of-pleasure/">Tantra Life Practice. The Taste of Pleasure <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/8f5be29a-fb8a-4e77-8d95-a52d8428a155/standing-on-nails/">Standing on Nails <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/4de61bc7-8a45-4600-9abd-c05c8edc5203/kundalini-activation-kundalini-activation/">Kundalini Activation / Kundalini Activation <time datetime="2026-11-03">November 3, 2026</time></a></li>
+    <li><a href="/en/event/a0865764-66d3-4535-9a8a-e6f155b8f8f5/meditative-practice-and-sound-bath-at-nuanu/">Meditative practice and sound bath at Nuanu <time datetime="2026-11-06">November 6, 2026</time></a></li>
+    <li><a href="/en/event/013e01ab-7975-4a54-87d0-79816e590481/barefoot-walk-varash-fun-grounding-in-kerobokan/">Barefoot Walk Varash Fun Grounding in Kerobokan <time datetime="2026-11-08">November 8, 2026</time></a></li>
+    <li><a href="/en/event/31be750f-4f86-418b-a71a-9d220e1ad84d/yoga-in-ubud/">Yoga in Ubud <time datetime="2026-11-09">November 9, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Bali</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/bc8967af-1909-4446-abd3-c4bbfc1adec6/latin-tuesday-at-la-favela/">Latin Tuesday at La Favela</a> <time datetime="2026-09-08">September 8, 2026</time></li>
+    <li>Next: <a href="/en/event/c5c390ff-b476-4c37-b5fd-f25afb66e7ab/quiz-please/">Quiz, please!</a> <time datetime="2026-09-08">September 8, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/bali/">Upcoming events in Bali</a></p>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BACHATA SENSUAL PARTY ПЯТНИЦА, 25… — 25 сентября 2026 · Нячанг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Нячанг, 25 сентября 2026. ✨BACHATA SENSUAL PARTY — ПЯТНИЦА, 25 СЕНТЯБРЯ! 💃🕺 Танцы, новые знакомства и хорошее настроение — всё это ждёт тебя!🎉 Здесь тебе…" />
+    <link rel="canonical" href="https://mypins.site/event/ab7ff30b-ab28-4914-8dce-646c4ff0c432/bachata-sensual-party-pyatnitsa-25-sentyabrya/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="BACHATA SENSUAL PARTY ПЯТНИЦА, 25… — 25 сентября 2026 · Нячанг" />
+    <meta property="og:description" content="Нячанг, 25 сентября 2026. ✨BACHATA SENSUAL PARTY — ПЯТНИЦА, 25 СЕНТЯБРЯ! 💃🕺 Танцы, новые знакомства и хорошее настроение — всё это ждёт тебя!🎉 Здесь тебе…" />
+    <meta property="og:url" content="https://mypins.site/event/ab7ff30b-ab28-4914-8dce-646c4ff0c432/bachata-sensual-party-pyatnitsa-25-sentyabrya/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/ab7ff30b-ab28-4914-8dce-646c4ff0c432/bachata-sensual-party-pyatnitsa-25-sentyabrya/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/ab7ff30b-ab28-4914-8dce-646c4ff0c432/bachata-sensual-party-friday-september-25/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"BACHATA SENSUAL PARTY ПЯТНИЦА, 25 СЕНТЯБРЯ!","item":"https://mypins.site/event/ab7ff30b-ab28-4914-8dce-646c4ff0c432/bachata-sensual-party-pyatnitsa-25-sentyabrya/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>BACHATA SENSUAL PARTY ПЯТНИЦА, 25 СЕНТЯБРЯ!</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-09-25">25 сентября 2026</time></p>
+  <p><time datetime="2026-09-25T20:00:00">25 сентября 2026, 20:00</time></p>
+  <address>La Villa Art hotel &amp; restaurant, 176/3 Hùng Vương, Lộc Thọ, Nha Trang, Khánh Hòa 650000, Нячанг</address>
+  <p>Бесплатно</p>
+  <p>✨BACHATA SENSUAL PARTY — ПЯТНИЦА, 25 СЕНТЯБРЯ! 💃🕺
+
+Танцы, новые знакомства и хорошее настроение — всё это ждёт тебя!🎉
+Здесь тебе рады и найдется тот, кто скажет: &quot;Потанцуем?&quot;🥰
+
+⏰ 20:00 - 23:00 – Танцуем бачату
+📍 Место: La Villa Art Restaurant 
+🎶 Музыка: 100% бачата
+🎟 Вход: Бесплатный
+
+#дата: 25.09.2026
+Пост от: Misha Iurin</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/nha-trang/">Нячанг</a> <span aria-hidden="true">›</span> <span>BACHATA SENSUAL PARTY ПЯТНИЦА, 25 СЕНТЯБРЯ!</span></p>
+    <p>Ещё события в Нячанге: <a href="/nha-trang/">афиша</a> · <a href="/nha-trang/party/">🪩 Вечеринки</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/ef1018a9-33e7-4675-9323-c3f297468e97/bachata-sensual-party-pyatnitsa-18-sentyabrya/">BACHATA SENSUAL PARTY ПЯТНИЦА, 18 СЕНТЯБРЯ! <time datetime="2026-09-18">18 сентября 2026</time></a></li>
+    <li><a href="/event/083551e3-b869-412b-af1e-57a228c299ac/bachata-open-air-ponedelnik-21-sentyabrya/">BACHATA OPEN AIR ПОНЕДЕЛЬНИК, 21 СЕНТЯБРЯ! <time datetime="2026-09-21">21 сентября 2026</time></a></li>
+    <li><a href="/event/a5e9bfdc-773a-4a5b-ab5e-dedd9a2d3abe/rompe-karnavalnaya-vecherinka-next-level-club/">РОМПЕ КАРНАВАЛЬНАЯ ВЕЧЕРИНКА NEXT LEVEL CLUB <time datetime="2026-09-26">26 сентября 2026</time></a></li>
+    <li><a href="/event/530d6a9d-16f8-409d-9634-bf1265fae500/bachata-open-air-ponedelnik-28-sentyabrya/">BACHATA OPEN AIR ПОНЕДЕЛЬНИК, 28 СЕНТЯБРЯ! <time datetime="2026-09-28">28 сентября 2026</time></a></li>
+    <li><a href="/event/b41b6b44-4e33-46ba-be7f-4327de838ed9/dzhem-vsekh-stiley-prostranstvo/">ДЖЕМ ВСЕХ СТИЛЕЙ ПРОСТРАНСТВО <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/f9c9b4bd-2462-4ff3-bb55-1b8655eee94b/vecher-karaoke-1-noyabrya-vs/">ВЕЧЕР КАРАОКЕ 1 ноября (вс) <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Нячанг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/83535187-d3d3-4813-acaf-3b69135f1c5d/rolevaya-gorodskaya-mafiya-v-nyachange/">РОЛЕВАЯ (городская) МАФИЯ В НЯЧАНГЕ</a> <time datetime="2026-09-25">25 сентября 2026</time></li>
+    <li>Следующее: <a href="/event/b0d13871-ce1b-4fc5-b134-1db4f8c572f2/khatkha-yoga/">Хатха-Йога</a> <time datetime="2026-09-25">25 сентября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/nha-trang/">Ближайшие события: Нячанг</a></p>
+</div>
+
+  </body>
+</html>

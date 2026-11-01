@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DALAT September 19-20! — September 20, 2026 · Nha Trang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nha Trang, September 20, 2026. DALAT September 19-20! You don&#39;t need to buy tickets, choose where to go, where to stay, look for places to eat, find company…" />
+    <link rel="canonical" href="https://mypins.site/en/event/8f79d7a4-b226-41ff-8955-9f88bfaf49bf/dalat-september-19-20/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="DALAT September 19-20! — September 20, 2026 · Nha Trang" />
+    <meta property="og:description" content="Nha Trang, September 20, 2026. DALAT September 19-20! You don&#39;t need to buy tickets, choose where to go, where to stay, look for places to eat, find company…" />
+    <meta property="og:url" content="https://mypins.site/en/event/8f79d7a4-b226-41ff-8955-9f88bfaf49bf/dalat-september-19-20/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/8f79d7a4-b226-41ff-8955-9f88bfaf49bf/dalat-september-19-20/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/8f79d7a4-b226-41ff-8955-9f88bfaf49bf/dalat-19-20-sentyabrya/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"DALAT September 19-20!","item":"https://mypins.site/en/event/8f79d7a4-b226-41ff-8955-9f88bfaf49bf/dalat-september-19-20/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>DALAT September 19-20!</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-09-20">September 20, 2026</time></p>
+  <p><time datetime="2026-09-20T07:00:00">September 20, 2026, 7:00 AM</time></p>
+  <address>Nha Trang</address>
+  <p>50 VND</p>
+  <p>DALAT September 19-20!
+
+You don&#39;t need to buy tickets, choose where to go, where to stay, look for places to eat, find company, or constantly order taxis!
+
+I&#39;ve thought of everything for you!
+
+We&#39;re going for two days, departing
+09/19 (Sat) at 7:00, returning 09/20 (Sun) ~ at 19:00
+
+Now for the locations. We&#39;ll see the very best:
+
+1️⃣ clay village (where the two heads are)
+2️⃣ mongoland (where the big colorful slide is)
+3️⃣ we&#39;ll stroll through the hobbit valley
+4️⃣ we&#39;ll ride a cable car over the pine forest and relax by the lake
+5️⃣ we&#39;ll walk around the city and the night market at sunset
+6️⃣ we&#39;ll stop by the crazy house
+7️⃣ we&#39;ll see how coffee grows by visiting the most beautiful coffee plantation in this town
+
+💰participation is free, this is a joint trip! All transportation and accommodation - 1350 per person
+❗️Separately, at the entrance to each park you will need to pay entrance tickets (from 50 to 140)
+
+If you want, write right away and with any questions
+@alina_khmelinina
+
+#date: 09/19/2026
+Post by: Alina | Trips around Nha Trang and Vietnam ☀️</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>DALAT September 19-20!</span></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/8dd674ba-8864-4369-bd08-7c72a8da9090/hike-to-the-summit-through-the-jungle-and-mountain-river-above-the-mountains/">Hike to the summit through the jungle and mountain river &quot;Above the Mountains&quot; <time datetime="2026-09-19">September 19, 2026</time></a></li>
+    <li><a href="/en/event/ce0492a7-e6c6-49e8-a171-ac86bf592a3a/journey-to-nui-chua-nature-reserve/">Journey to Núi Chúa Nature Reserve <time datetime="2026-09-19">September 19, 2026</time></a></li>
+    <li><a href="/en/event/80cf4fcd-7dda-48d7-a73b-0654e262afed/dragon-labyrinth-sheep-farm-and-cam-ranh-beaches/">Dragon Labyrinth, sheep farm and Cam Ranh beaches <time datetime="2026-09-20">September 20, 2026</time></a></li>
+    <li><a href="/en/event/1bf87d8e-c964-4300-a8b0-62b98306d2d4/journey-to-the-hon-heo-peninsula/">Journey to the Hòn Hèo Peninsula <time datetime="2026-09-20">September 20, 2026</time></a></li>
+    <li><a href="/en/event/5f4b1718-d170-46b2-8751-c4cefdb9f8d6/journey-to-hon-heo-peninsula/">Journey to Hòn Hèo Peninsula <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/dea0b1b0-c99a-4c97-b6cc-a879f53cd598/trip-to-the-southern-islands-of-nyachanga/">TRIP TO THE SOUTHERN ISLANDS OF NYACHANGA <time datetime="2026-11-07">November 7, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Nha Trang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/88b90b5a-43d7-48d4-be7f-726a18ccb56b/seating-arrangements-september-20/">SEATING ARRANGEMENTS SEPTEMBER 20</a> <time datetime="2026-09-20">September 20, 2026</time></li>
+    <li>Next: <a href="/en/event/93e2adbe-93f8-4468-a643-99f2402935e0/screening-of-the-film-1-1-on-the-big-screen-at-the-prime-space/">Screening of the film &quot;1 1&quot; on the big screen at the PRIME space</a> <time datetime="2026-09-20">September 20, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
+</div>
+
+  </body>
+</html>

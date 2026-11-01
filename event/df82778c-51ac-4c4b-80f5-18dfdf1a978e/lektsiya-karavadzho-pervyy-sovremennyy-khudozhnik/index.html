@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Лекция «Караваджо. Первый… — 20 октября 2026 · Нячанг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Нячанг, 20 октября 2026. Лекция «Караваджо. Первый современный художник» Барочный живописец, новатор и провокатор, чей буйный нрав сыграл с ним злую шутку. Он…" />
+    <link rel="canonical" href="https://mypins.site/event/df82778c-51ac-4c4b-80f5-18dfdf1a978e/lektsiya-karavadzho-pervyy-sovremennyy-khudozhnik/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Лекция «Караваджо. Первый… — 20 октября 2026 · Нячанг" />
+    <meta property="og:description" content="Нячанг, 20 октября 2026. Лекция «Караваджо. Первый современный художник» Барочный живописец, новатор и провокатор, чей буйный нрав сыграл с ним злую шутку. Он…" />
+    <meta property="og:url" content="https://mypins.site/event/df82778c-51ac-4c4b-80f5-18dfdf1a978e/lektsiya-karavadzho-pervyy-sovremennyy-khudozhnik/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/nyachang_ru/24759-0.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/df82778c-51ac-4c4b-80f5-18dfdf1a978e/lektsiya-karavadzho-pervyy-sovremennyy-khudozhnik/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/df82778c-51ac-4c4b-80f5-18dfdf1a978e/lecture-caravaggio-the-first-modern-artist/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"Лекция «Караваджо. Первый современный художник»","item":"https://mypins.site/event/df82778c-51ac-4c4b-80f5-18dfdf1a978e/lektsiya-karavadzho-pervyy-sovremennyy-khudozhnik/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Лекция «Караваджо. Первый современный художник»</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-20">20 октября 2026</time></p>
+  <p><time datetime="2026-10-20T19:00:00">20 октября 2026, 19:00</time></p>
+  <address>Maple, 16 Tôn Đản, Nha Trang, Khánh Hòa 57000, Нячанг</address>
+  <p>250000 VND</p>
+  <p>Лекция «Караваджо. Первый современный художник»
+
+Барочный живописец, новатор и провокатор, чей буйный нрав сыграл с ним злую шутку. Он влюблялся, творил, убивал и скрывался. А ещё придумал тот самый контраст света и тьмы,
+который активно используют в кино.
+
+На лекции посмотрим главные работы Караваджо и ответим на вопрос, как этот бунтарь стал первым современным художником.
+
+Спикер: Ирина Корчагина, куратор, лектор, историк искусства с 20-летним стажем, специалист по искусству Италии
+
+20 октября, 19:00
+Maple hotel
+250k донгов
+Бронь @morethanvenice
+
+#дата: 20.10.2026
+Пост от: Irina</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/nha-trang/">Нячанг</a> <span aria-hidden="true">›</span> <span>Лекция «Караваджо. Первый современный художник»</span></p>
+    <p>Ещё события в Нячанге: <a href="/nha-trang/">афиша</a> · <a href="/nha-trang/lecture/">📚 Лекции</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/64a20bd1-df97-4d02-af7a-4002c58f846b/fraktalnyy-dizayn-cheloveka/">Фрактальный дизайн человека. <time datetime="2026-10-16">16 октября 2026</time></a></li>
+    <li><a href="/event/3fe69cd6-d478-4d75-8781-2878f3c06317/lektsiya-o-chem-krichit-ekspressionizm-edvard-munk-i-drugie/">Лекция &quot;О чем кричит экспрессионизм? Эдвард Мунк и другие» <time datetime="2026-10-16">16 октября 2026</time></a></li>
+    <li><a href="/event/b0f0e34c-b672-48fa-8f2d-2de77cb9fbe7/pochemu-my-sozdaem-opredelennye-stsenarii-otnosheniy/">Почему мы создаем определенные сценарии отношений? <time datetime="2026-10-16">16 октября 2026</time></a></li>
+    <li><a href="/event/d95057c3-ad8a-477b-831c-2bcd4bd8c2ed/lektsiya-kandinskiy-i-rannyaya-abstraktsiya/">Лекция «Кандинский и ранняя абстракция» <time datetime="2026-10-23">23 октября 2026</time></a></li>
+    <li><a href="/event/4f3cea56-3476-4959-8c72-59748cf76d77/seminar-kulturnye-pravila-i-etiket-vo-vetname-gde-vy-uznaete-osnovnye-pravila-povedeniya-i-vezhlivosti-v-nashey-strane/">Семинар «Культурные правила и этикет во Вьетнаме», где вы узнаете основные правила поведения и вежливости в нашей стране <time datetime="2026-10-24">24 октября 2026</time></a></li>
+    <li><a href="/event/485620e4-f140-48f6-b082-5d768dca23d8/lektsiya-albrekht-dyurer-khudozhnik-kotoryy-khotel-znat-vse/">Лекция «Альбрехт Дюрер. Художник, который хотел знать все» <time datetime="2026-11-03">3 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Нячанг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/d156f1f3-cd00-4643-812a-0febc30a70c3/bibleyskaya-vstrecha/">БИБЛЕЙСКАЯ ВСТРЕЧА</a> <time datetime="2026-10-20">20 октября 2026</time></li>
+    <li>Следующее: <a href="/event/e01a25be-4a83-456e-aaa3-e418101cf06c/movietalk-angliyskiy-cherez-serialy/">MovieTalk: английский через сериалы</a> <time datetime="2026-10-20">20 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/nha-trang/">Ближайшие события: Нячанг</a></p>
+</div>
+
+  </body>
+</html>

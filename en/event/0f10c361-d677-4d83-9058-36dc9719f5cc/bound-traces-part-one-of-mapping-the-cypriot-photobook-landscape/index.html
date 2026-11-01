@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bound Traces Part one of Mapping… — October 30, 2026 · Nicosia</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nicosia, Cyprus, October 30, 2026. Duration : 30 October – 9 November 2024 In the framework of the 7th International Conference on Photography and Theory…" />
+    <link rel="canonical" href="https://mypins.site/en/event/0f10c361-d677-4d83-9058-36dc9719f5cc/bound-traces-part-one-of-mapping-the-cypriot-photobook-landscape/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Bound Traces Part one of Mapping… — October 30, 2026 · Nicosia" />
+    <meta property="og:description" content="Nicosia, Cyprus, October 30, 2026. Duration : 30 October – 9 November 2024 In the framework of the 7th International Conference on Photography and Theory…" />
+    <meta property="og:url" content="https://mypins.site/en/event/0f10c361-d677-4d83-9058-36dc9719f5cc/bound-traces-part-one-of-mapping-the-cypriot-photobook-landscape/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/0f10c361-d677-4d83-9058-36dc9719f5cc/bound-traces-part-one-of-mapping-the-cypriot-photobook-landscape/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/0f10c361-d677-4d83-9058-36dc9719f5cc/svyazannye-sledy-chast-pervaya-kartografiya-kiprskogo-fotoknizhnogo-landshafta/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Bound Traces Part one of Mapping the Cypriot Photobook Landscape","item":"https://mypins.site/en/event/0f10c361-d677-4d83-9058-36dc9719f5cc/bound-traces-part-one-of-mapping-the-cypriot-photobook-landscape/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Bound Traces Part one of Mapping the Cypriot Photobook Landscape</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-30">October 30, 2026</time></p>
+  <p><time datetime="2026-10-30T00:00:00">October 30, 2026, 12:00 AM</time></p>
+  <address>Nicosia, Cyprus</address>
+  <p>Duration : 30 October – 9 November 2024
+
+In the framework of the 7th International Conference on Photography and Theory (ICPT2024), the International Association of Photography and Theory (IAPT) and the Nicosia Municipal Arts Centre, Associated with the Pierides Foundation (NiMAC) are organising the photobook presentation titled Bound Traces. Bound Traces is the first part of a larger project by IAPT titled Mapping the Cypriot Photobook Landscape , aiming to explore, map and showcase the production of photobooks by photographers in Cyprus.
+
+Since its invention, photography has been used in the</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Bound Traces Part one of Mapping the Cypriot Photobook Landscape</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/exhibition/">🖼️ Exhibitions</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/753bface-9158-4a6b-85b9-41e2eb4992ca/belonging/">Belonging <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/fb522d45-c084-4adb-8075-7c6d72abe990/international-exhibition-humble-earths-beyond-the-western-framework-cross-cultural-modernisms/">International Exhibition: Humble Earths: Beyond the Western Framework — Cross-Cultural Modernisms <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/8772dc05-001e-44eb-a048-8fd8f2c6848e/nicosia-flea-market-x-el-khalili-pop-up-market-in-nicosia/">Nicosia Flea Market x El Khalili Pop Up Market in Nicosia <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/d64e33ea-bd11-48ff-9853-caf4c9666c22/cmc-select-v2-0-2026-in-nicosia/">CMC Select V2.0 2026 in Nicosia <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/d208fee9-66ab-46ad-bee7-42cd7d721325/objects-in-the-mirror-may-be-closer-than-they-appear/">Objects in the mirror may be closer than they appear <time datetime="2026-11-02">November 2, 2026</time></a></li>
+    <li><a href="/en/event/0feb8e12-a23f-475a-86e6-a79bc18da44b/christina-drakos-brings-the-body-into-focus-at-limassol-solo-show/">Christina Drakos brings the body into focus at Limassol solo show <time datetime="2026-11-05">November 5, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/0d723e62-15ba-4d26-a566-e91d429dea1d/halloween-party-at-limassol-agora/">Halloween Party at Limassol Agora</a> <time datetime="2026-10-30">October 30, 2026</time></li>
+    <li>Next: <a href="/en/event/12af55aa-dda5-466b-9138-2e3d5b5bdcc5/mischievous-halloween-night-at-noc-night-club/">Mischievous Halloween Night at NOC Night Club</a> <time datetime="2026-10-30">October 30, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

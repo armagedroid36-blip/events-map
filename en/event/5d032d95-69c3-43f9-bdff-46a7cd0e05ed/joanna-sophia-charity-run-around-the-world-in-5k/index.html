@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Joanna Sophia - charity run Around… — October 25, 2026 · Paphos</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Paphos, Cyprus, October 25, 2026. On October 25, the Joanna Sophia Around the World in 5K charity run will take place in Paphos — a sporting and community…" />
+    <link rel="canonical" href="https://mypins.site/en/event/5d032d95-69c3-43f9-bdff-46a7cd0e05ed/joanna-sophia-charity-run-around-the-world-in-5k/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Joanna Sophia - charity run Around… — October 25, 2026 · Paphos" />
+    <meta property="og:description" content="Paphos, Cyprus, October 25, 2026. On October 25, the Joanna Sophia Around the World in 5K charity run will take place in Paphos — a sporting and community…" />
+    <meta property="og:url" content="https://mypins.site/en/event/5d032d95-69c3-43f9-bdff-46a7cd0e05ed/joanna-sophia-charity-run-around-the-world-in-5k/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/d84a70ff-b2db-4182-a1f1-260b51369f06/1790440646174.png?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/5d032d95-69c3-43f9-bdff-46a7cd0e05ed/joanna-sophia-charity-run-around-the-world-in-5k/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/5d032d95-69c3-43f9-bdff-46a7cd0e05ed/joanna-sophia-blagotvoritelnyy-zabeg-around-the-world-in-5k/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Joanna Sophia - charity run Around the World in 5K","item":"https://mypins.site/en/event/5d032d95-69c3-43f9-bdff-46a7cd0e05ed/joanna-sophia-charity-run-around-the-world-in-5k/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Joanna Sophia - charity run Around the World in 5K</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-25">October 25, 2026</time></p>
+  <p><time datetime="2026-10-25T08:00:00">October 25, 2026, 8:00 AM</time></p>
+  <address>Paphos, Cyprus</address>
+  <p>On October 25, the Joanna Sophia Around the World in 5K charity run will take place in Paphos — a sporting and community event bringing together people of all ages for an important cause. Participants will run or walk a 5-kilometer distance along a scenic route in Paphos. The run will start at the square...</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Joanna Sophia - charity run Around the World in 5K</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/sport/">🏃 Sports</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/1944adb2-e7a8-473c-aed4-335d3d7a7f7c/41st-xylotymvou-run/">41st Xylotymvou Run <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/240d0c40-8eda-4a40-b6ba-8eaf550da021/cyprus-runners-summit-2026-in-strovolos/">Cyprus Runners&#39; Summit 2026 in Strovolos <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/82ca4f87-c7f2-4c7f-bfab-1b15e8d22d7a/hiking-on-the-kannoures-trail-in-kakopetria/">Hiking on the Kannoures Trail in Kakopetria <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/cd50ee20-e799-4fff-97a8-e02e8b93fd30/race-for-the-cure-cyprus-biggest-run-walk-in-nicosia/">Race for the Cure Cyprus: Biggest Run &amp; Walk in Nicosia <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/b725e327-3d58-4360-aa70-d8c99ff7eb91/itf-masters-400/">ITF MASTERS 400 <time datetime="2026-11-02">November 2, 2026</time></a></li>
+    <li><a href="/en/event/2ec4ceb7-e279-4c55-a4db-aad3a76300ce/olympusman-triathlon-2026-the-ultimate-cyprus-challenge/">OlympusMan Triathlon 2026: The Ultimate Cyprus Challenge <time datetime="2026-11-05">November 5, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/54ad4fcb-7b26-4de0-841e-8e83e147ef75/mafia-game-night/">Mafia Game Night</a> <time datetime="2026-10-25">October 25, 2026</time></li>
+    <li>Next: <a href="/en/event/5d68d417-7817-40bd-95ec-4a6fc37443fb/kazaniasmata-festival-in-arsos/">Kazaniasmata Festival in Arsos</a> <time datetime="2026-10-25">October 25, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

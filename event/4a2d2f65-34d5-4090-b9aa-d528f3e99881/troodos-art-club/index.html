@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Живописные прогулки с Troodos… — 25 ноября 2026 · Лимасол, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Лимасол, Кипр, 25 ноября 2026. Творческая мастерская живописного путешествия от Troodos Art Club приглашает детей и взрослых открыть для себя красоту горных…" />
+    <link rel="canonical" href="https://mypins.site/event/4a2d2f65-34d5-4090-b9aa-d528f3e99881/zhivopisnye-progulki-s-troodos-art-club-v-dimes/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Живописные прогулки с Troodos… — 25 ноября 2026 · Лимасол, Кипр" />
+    <meta property="og:description" content="Лимасол, Кипр, 25 ноября 2026. Творческая мастерская живописного путешествия от Troodos Art Club приглашает детей и взрослых открыть для себя красоту горных…" />
+    <meta property="og:url" content="https://mypins.site/event/4a2d2f65-34d5-4090-b9aa-d528f3e99881/zhivopisnye-progulki-s-troodos-art-club-v-dimes/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/4a2d2f65-34d5-4090-b9aa-d528f3e99881/zhivopisnye-progulki-s-troodos-art-club-v-dimes/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/4a2d2f65-34d5-4090-b9aa-d528f3e99881/painting-excursions-with-the-troodos-art-club-in-dymes/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Живописные прогулки с Troodos Art Club в Димес","url":"https://mypins.site/event/4a2d2f65-34d5-4090-b9aa-d528f3e99881/zhivopisnye-progulki-s-troodos-art-club-v-dimes/","startDate":"2026-11-25T11:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Dymes Village Square","address":{"@type":"PostalAddress","addressLocality":"Лимасол","streetAddress":"Dymes Village Square","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.9169341,"longitude":32.9843429}},"offers":{"@type":"Offer","url":"https://mypins.site/event/4a2d2f65-34d5-4090-b9aa-d528f3e99881/zhivopisnye-progulki-s-troodos-art-club-v-dimes/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-10-04"},"description":"Творческая мастерская живописного путешествия от Troodos Art Club приглашает детей и взрослых открыть для себя красоту горных деревень через искусство. Под руководством художницы Konstantina Niina Achilleos участники прогуляются по живописным улочкам, понаблюдают за природой, традиционной архитектурой и мелкими деталями, которые формируют характер каждого сообщества, и запечатлеют их в серии живописных работ. Творческий маршрут включает остановки в местах природного и культурного интереса, а завершается местным ке","endDate":"2026-11-25T15:00:00","image":"https://mypins.site/logo.png","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CE%B6%CF%89%CE%B3%CF%81%CE%B1%CF%86%CE%B9%CE%BA%CE%AD%CF%82-%CF%80%CE%B5%CF%81%CE%B9%CE%B7%CE%B3%CE%AE%CF%83%CE%B5%CE%B9%CF%82-%CE%BC%CE%B5-%CF%84%CE%BF-troodos-art-club-%CF%83%CF%84%CE%B9%CF%82-%CE%B4%CF%8D%CE%BC%CE%B5%CF%82-2026-11-25"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Живописные прогулки с Troodos Art Club в Димес","item":"https://mypins.site/event/4a2d2f65-34d5-4090-b9aa-d528f3e99881/zhivopisnye-progulki-s-troodos-art-club-v-dimes/"}]}]}</script>
+    <script type="application/json" id="seo-alias-map">{"cloneId":"4a2d2f65-34d5-4090-b9aa-d528f3e99881","keptId":"4a2d2f65-34d5-4090-b9aa-d528f3e99881","ru":"https://mypins.site/event/4a2d2f65-34d5-4090-b9aa-d528f3e99881/zhivopisnye-progulki-s-troodos-art-club-v-dimes/","en":"https://mypins.site/en/event/4a2d2f65-34d5-4090-b9aa-d528f3e99881/painting-excursions-with-the-troodos-art-club-in-dymes/"}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Живописные прогулки с Troodos Art Club в Димес</h1>
+  <p><time datetime="2026-11-25T11:00:00">25 ноября 2026, 11:00</time></p>
+  <address>Dymes Village Square, Лимасол, Кипр</address>
+  <p>Творческая мастерская живописного путешествия от Troodos Art Club приглашает детей и взрослых открыть для себя красоту горных деревень через искусство. Под руководством художницы Konstantina Niina Achilleos участники прогуляются по живописным улочкам, понаблюдают за природой, традиционной архитектурой и мелкими деталями, которые формируют характер каждого сообщества, и запечатлеют их в серии живописных работ. Творческий маршрут включает остановки в местах природного и культурного интереса, а завершается местным ке</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Живописные прогулки с Troodos Art Club в Димес</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/workshop/">🎨 Мастер-классы</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/8ecb44dc-5fff-4092-a794-a3778427b139/sketching-po-voskresenyam-risunok-s-natury-v-nikosii/">Скетчинг по воскресеньям: рисунок с натуры в Никосии <time datetime="2026-11-22">22 ноября 2026</time></a></li>
+    <li><a href="/event/ad5fbb39-57e9-43df-9728-ceca4e7e7c3d/chto-ty-mozhesh-sdelat-s-problemoy/">Что ты можешь сделать с проблемой? <time datetime="2026-11-22">22 ноября 2026</time></a></li>
+    <li><a href="/event/ce65b620-41ad-44e1-a0d9-4d1f6bce978e/vecher-risunka-s-natury/">Вечер рисунка с натуры <time datetime="2026-11-22">22 ноября 2026</time></a></li>
+    <li><a href="/event/a1dd1831-535c-4739-867b-473310565fda/master-klassy-traditsionnogo-tantsa-khor-traditsionnoy-pesni/">Мастер-классы традиционного танца - Хор традиционной песни <time datetime="2026-11-24">24 ноября 2026</time></a></li>
+    <li><a href="/event/aed3b1df-6263-4d6f-b5d9-5f761ce5342a/an-advent-calendar-to-empower-your-child-tvorcheskiy-rozhdestvenskiy-master-klass-dlya-mam/">An Advent Calendar to Empower Your Child | Творческий рождественский мастер-класс для мам <time datetime="2026-11-25">25 ноября 2026</time></a></li>
+    <li><a href="/event/0a37c196-c6d1-42bf-9984-11ab1af27b99/k-performansu-master-klass-po-tantsu-i-improvizatsii-v-nikosii/">К перформансу: мастер-класс по танцу и импровизации в Никосии <time datetime="2026-11-28">28 ноября 2026</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>

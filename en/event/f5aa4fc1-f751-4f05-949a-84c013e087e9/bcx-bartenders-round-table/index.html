@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BCX Bartenders&#39; Round Table — September 15, 2026 · Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Bali, September 15, 2026. On 15.09.2026 from 15:00 to 17:00, the BCX Bartenders&#39; Round Table will take place at KU DE TA. An open round table and Q&amp;A session…" />
+    <link rel="canonical" href="https://mypins.site/en/event/f5aa4fc1-f751-4f05-949a-84c013e087e9/bcx-bartenders-round-table/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="BCX Bartenders&#39; Round Table — September 15, 2026 · Bali" />
+    <meta property="og:description" content="Bali, September 15, 2026. On 15.09.2026 from 15:00 to 17:00, the BCX Bartenders&#39; Round Table will take place at KU DE TA. An open round table and Q&amp;A session…" />
+    <meta property="og:url" content="https://mypins.site/en/event/f5aa4fc1-f751-4f05-949a-84c013e087e9/bcx-bartenders-round-table/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/f5aa4fc1-f751-4f05-949a-84c013e087e9/bcx-bartenders-round-table/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/f5aa4fc1-f751-4f05-949a-84c013e087e9/kruglyy-stol-barmenov-bcx/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Bali","item":"https://mypins.site/en/bali/"},{"@type":"ListItem","position":3,"name":"BCX Bartenders' Round Table","item":"https://mypins.site/en/event/f5aa4fc1-f751-4f05-949a-84c013e087e9/bcx-bartenders-round-table/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>BCX Bartenders&#39; Round Table</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-09-15">September 15, 2026</time></p>
+  <p><time datetime="2026-09-15T15:00:00">September 15, 2026, 3:00 PM</time></p>
+  <address>Jl. Kayu Aya No.9, Seminyak, Kec. Kuta, Kabupaten Badung, Bali, Indonesia</address>
+  <p>On 15.09.2026 from 15:00 to 17:00, the BCX Bartenders&#39; Round Table will take place at KU DE TA. An open round table and Q&amp;A session with the bartenders of Bali Cocktail Exchange.</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/bali/">Bali</a> <span aria-hidden="true">›</span> <span>BCX Bartenders&#39; Round Table</span></p>
+    <p>More events in Bali: <a href="/en/bali/">what&#39;s on</a> · <a href="/en/bali/meetup/">🤝 Meetups &amp; Networking</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/18f479e8-8647-47ec-8420-71097906cb80/speed-dating/">Speed dating <time datetime="2026-09-16">September 16, 2026</time></a></li>
+    <li><a href="/en/event/7c4cd251-1d7b-47d8-ab40-8b46ac12e441/networking-pro-motion-in-ubud/">Networking &quot;Pro-motion&quot; in Ubud <time datetime="2026-09-17">September 17, 2026</time></a></li>
+    <li><a href="/en/event/6f25911a-f3f9-4f91-a3dd-a8b50702c7b1/speed-dating/">Speed dating <time datetime="2026-09-17">September 17, 2026</time></a></li>
+    <li><a href="/en/event/cb69ff8c-0764-4c7c-9727-d5875622427f/breakfast-networking-in-umalas/">Breakfast - Networking in Umalas <time datetime="2026-11-02">November 2, 2026</time></a></li>
+    <li><a href="/en/event/515ae428-a2a0-4376-8a39-990faace34c0/expat-women-s-breakfast-in-bukit/">Expat Women&#39;s Breakfast in Bukit <time datetime="2026-11-05">November 5, 2026</time></a></li>
+    <li><a href="/en/event/7d0df7d2-b499-476e-ac3a-55eab4cd9e4e/networking-pro-motion-in-ubud/">Networking &quot;Pro-motion&quot; in Ubud <time datetime="2026-11-05">November 5, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Bali</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/f587c5fe-fb09-409d-92c6-1dba0c94d18d/acrobatics-class-at-unicorns/">Acrobatics class at Unicorns!🤸‍♀️</a> <time datetime="2026-09-15">September 15, 2026</time></li>
+    <li>Next: <a href="/en/event/f9fb10cb-25fa-4a73-9645-08fafe3a33b6/women-s-bathhouse/">Women&#39;s Bathhouse</a> <time datetime="2026-09-15">September 15, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/bali/">Upcoming events in Bali</a></p>
+</div>
+
+  </body>
+</html>

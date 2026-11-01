@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Imprint on Clay — November 13, 2026 · Limassol</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Theatres &amp; Shows in Limassol: Imprint on Clay. November 13, 2026, 7:00 PM. Venue: Rialto Theatre, Limassol, Cyprus. Details and listings on MyPins." />
+    <link rel="canonical" href="https://mypins.site/en/event/fac87770-048b-47e7-9bd5-b1d9e20df8b2/imprint-on-clay/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Imprint on Clay — November 13, 2026 · Limassol" />
+    <meta property="og:description" content="Theatres &amp; Shows in Limassol: Imprint on Clay. November 13, 2026, 7:00 PM. Venue: Rialto Theatre, Limassol, Cyprus. Details and listings on MyPins." />
+    <meta property="og:url" content="https://mypins.site/en/event/fac87770-048b-47e7-9bd5-b1d9e20df8b2/imprint-on-clay/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/fac87770-048b-47e7-9bd5-b1d9e20df8b2/imprint-on-clay/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/fac87770-048b-47e7-9bd5-b1d9e20df8b2/otpechatok-na-gline/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Imprint on Clay","url":"https://mypins.site/en/event/fac87770-048b-47e7-9bd5-b1d9e20df8b2/imprint-on-clay/","startDate":"2026-11-13T19:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Rialto Theatre, Limassol","address":{"@type":"PostalAddress","addressLocality":"Limassol","streetAddress":"Rialto Theatre, Limassol","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.679538,"longitude":33.0458112}},"offers":{"@type":"Offer","url":"https://mypins.site/en/event/fac87770-048b-47e7-9bd5-b1d9e20df8b2/imprint-on-clay/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-10-17"},"endDate":"2026-11-13","image":"https://mypins.site/logo.png","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CE%B1%CF%80%CE%BF%CF%84%CF%8D%CF%80%CF%89%CE%BC%CE%B1-%CF%83%CF%84%CE%BF%CE%BD-%CF%80%CE%B7%CE%BB%CF%8C-2026-11-13"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Imprint on Clay","item":"https://mypins.site/en/event/fac87770-048b-47e7-9bd5-b1d9e20df8b2/imprint-on-clay/"}]}]}</script>
+    <script type="application/json" id="seo-alias-map">{"cloneId":"fac87770-048b-47e7-9bd5-b1d9e20df8b2","keptId":"fac87770-048b-47e7-9bd5-b1d9e20df8b2","ru":"https://mypins.site/event/fac87770-048b-47e7-9bd5-b1d9e20df8b2/otpechatok-na-gline/","en":"https://mypins.site/en/event/fac87770-048b-47e7-9bd5-b1d9e20df8b2/imprint-on-clay/"}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Imprint on Clay</h1>
+  <p><time datetime="2026-11-13T19:00:00">November 13, 2026, 7:00 PM</time></p>
+  <address>Rialto Theatre, Limassol, Cyprus</address>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Imprint on Clay</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/theatre/">🎭 Theatres &amp; Shows</a></p>
+  </nav>
+  <p class="event-facts">Theatres &amp; Shows in Limassol: Imprint on Clay. November 13, 2026, 7:00 PM. Venue: Rialto Theatre, Limassol, Cyprus. Details and listings on MyPins.</p>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/50849edb-69e9-48c9-b9c3-cfccdc8bc66f/madam-marianna-by-andreas-aristotellous/">Madam Marianna by Andreas Aristotellous <time datetime="2026-11-13">November 13, 2026</time></a></li>
+    <li><a href="/en/event/b42b4d1b-d0d8-4697-9d5a-746888cf90a0/enta-gabler-hedda-gabler/">Enta Gabler | Hedda Gabler <time datetime="2026-11-13">November 13, 2026</time></a></li>
+    <li><a href="/en/event/bb107ad0-6583-4bee-992d-682db3444a20/all-of-it/">All of it <time datetime="2026-11-13">November 13, 2026</time></a></li>
+    <li><a href="/en/event/d68aec7d-19e0-426b-b444-458083bc4ba0/rokstarilikia-vol-2-in-limassol/">Rokstarilikia Vol.2 in Limassol <time datetime="2026-11-13">November 13, 2026</time></a></li>
+    <li><a href="/en/event/e629c2da-1b1a-4f21-9d0f-4f6c3f8cebbe/marathon-of-theatrical-readings-every-reading-a-world-that-awakens/">Marathon of Theatrical Readings: Every reading a world that awakens <time datetime="2026-11-13">November 13, 2026</time></a></li>
+    <li><a href="/en/event/f86a5399-d399-40d0-83b5-6c219747fdc5/imprint-in-clay/">Imprint in Clay <time datetime="2026-11-13">November 13, 2026</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>

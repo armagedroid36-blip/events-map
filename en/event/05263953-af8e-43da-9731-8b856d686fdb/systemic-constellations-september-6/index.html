@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SYSTEMIC CONSTELLATIONS… — September 6, 2026 · Nha Trang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nha Trang, September 6, 2026. SYSTEMIC CONSTELLATIONS // SEPTEMBER 6 Sometimes a person understands their situation very well intellectually. They understand…" />
+    <link rel="canonical" href="https://mypins.site/en/event/05263953-af8e-43da-9731-8b856d686fdb/systemic-constellations-september-6/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="SYSTEMIC CONSTELLATIONS… — September 6, 2026 · Nha Trang" />
+    <meta property="og:description" content="Nha Trang, September 6, 2026. SYSTEMIC CONSTELLATIONS // SEPTEMBER 6 Sometimes a person understands their situation very well intellectually. They understand…" />
+    <meta property="og:url" content="https://mypins.site/en/event/05263953-af8e-43da-9731-8b856d686fdb/systemic-constellations-september-6/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/05263953-af8e-43da-9731-8b856d686fdb/systemic-constellations-september-6/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/05263953-af8e-43da-9731-8b856d686fdb/rasstanovki-6-sentyabrya/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"SYSTEMIC CONSTELLATIONS SEPTEMBER 6","item":"https://mypins.site/en/event/05263953-af8e-43da-9731-8b856d686fdb/systemic-constellations-september-6/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>SYSTEMIC CONSTELLATIONS SEPTEMBER 6</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-09-06">September 6, 2026</time></p>
+  <p><time datetime="2026-09-06T12:00:00">September 6, 2026, 12:00 PM</time></p>
+  <address>Yen Garden Bistro, Nha Trang</address>
+  <p>Donation</p>
+  <p>SYSTEMIC CONSTELLATIONS // SEPTEMBER 6
+
+Sometimes a person understands their situation very well intellectually.
+
+They understand why relationships unfold the way they do.
+They understand where the fear comes from.
+They understand it&#39;s time to change jobs, step out of an old scenario, or finally make a decision.
+
+But understanding is not enough!!
+
+Because part of what drives our lives lies deeper than habitual logic — in relationships with parents, family ties, old adaptations, feelings, and inner decisions that once helped us survive but today only limit us.
+
+On September 6 at 12:00 we meet again at the open systemic constellations group in Nha Trang.
+
+You can come to the meeting with various requests:
+
+— relationships and partnership
+— mom, dad, and the parental family
+— money and fulfillment
+— difficult choices
+— recurring scenarios
+— inner conflict
+— the feeling that &quot;I understand everything, but nothing changes&quot;
+— or simply with a question that has been bothering you for a long time
+
+You don&#39;t have to do your own constellation right away.
+
+You can come as a guest, be a representative, watch how the field works, get acquainted with the constellation method and the facilitator.
+
+(if you want to guarantee working on your own situation, it&#39;s better to book a client spot in advance — the number of full sessions in one group is limited)
+
+The meeting is led by Oleg Shtark
+@ShtarkOleg — psychologist, systemic constellations facilitator, student of Hellinger, over 18 years of practice.
+
+📍 Nha Trang, Yen Garden Bistro
+🌞 September 6, Sunday
+✍ 12:00
+🐆 Participation for guests and representatives — donation
+
+To sign up, write @arhangelinaa the word CONSTELLATIONS.
+
+Come with your question. We will look not at how it &quot;should be,&quot; but at what is actually happening.
+
+#date: 06.09</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>SYSTEMIC CONSTELLATIONS SEPTEMBER 6</span></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a> · <a href="/en/nha-trang/meetup/">🤝 Meetups &amp; Networking</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/47372d95-a6e6-450e-af9c-8403ccca95d2/group-meeting-with-a-psychologist/">Group meeting with a psychologist <time datetime="2026-09-06">September 6, 2026</time></a></li>
+    <li><a href="/en/event/118ec0ed-f039-44ec-a7d3-2e80b35dc917/moved-but-inside-it-s-still-who-am-i-here/">Moved, but inside it&#39;s still &quot;who am I here?&quot; <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/6605e9fb-1a7d-4312-8ab7-8f6d8ae60c4d/meeting-of-the-book-field-of-experiments-literary-club/">Meeting of the &quot;Book Field of Experiments&quot; literary club <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/fa1951dc-b151-4d9b-808a-094c1a6ad7ab/psychological-club-meeting/">Psychological Club Meeting <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/cd1b4546-6aca-4f38-8e61-f0251bc2b462/free-networking-breakfast-in-nyachang/">FREE NETWORKING BREAKFAST IN NYACHANG <time datetime="2026-11-04">November 4, 2026</time></a></li>
+    <li><a href="/en/event/7ed8de6d-afa1-4de2-b31d-6aca37e7c314/join-the-business-breakfast/">Join the business breakfast! <time datetime="2026-11-05">November 5, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Nha Trang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/01909b99-47f9-40ca-9960-db2bfc7408ef/friends-we-invite-you-to-the-art-exhibition-istina-dobrota-terpeniye/">Friends, we invite you to the art exhibition &quot;Istina Dobrota Terpeniye&quot;!</a> <time datetime="2026-09-06">September 6, 2026</time></li>
+    <li>Next: <a href="/en/event/1ae5c7bd-2075-41e7-945b-012b287f3098/live-looping-trip-hop-retro-wave-on-sunday-evening/">Live Looping, Trip-Hop Retro Wave on Sunday evening!</a> <time datetime="2026-09-06">September 6, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Мастер-классы в La… — 22 августа 2026 · Печату (Улувату), Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Печату (Улувату), Bali, 22 августа 2026. В этом месяце в La Tribu Bali вас ждёт целая серия творческих и практических воркшопов для взрослых и детей. 🧬…" />
+    <link rel="canonical" href="https://mypins.site/event/3df8191a-447c-4109-9894-08b0cc9bbc07/master-klassy-v-la-tribu-bali/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Мастер-классы в La… — 22 августа 2026 · Печату (Улувату), Bali" />
+    <meta property="og:description" content="Печату (Улувату), Bali, 22 августа 2026. В этом месяце в La Tribu Bali вас ждёт целая серия творческих и практических воркшопов для взрослых и детей. 🧬…" />
+    <meta property="og:url" content="https://mypins.site/event/3df8191a-447c-4109-9894-08b0cc9bbc07/master-klassy-v-la-tribu-bali/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Бали","item":"https://mypins.site/bali/"},{"@type":"ListItem","position":3,"name":"Мастер-классы в La Tribu Bali","item":"https://mypins.site/event/3df8191a-447c-4109-9894-08b0cc9bbc07/master-klassy-v-la-tribu-bali/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Мастер-классы в La Tribu Bali</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-08-22">22 августа 2026</time></p>
+  <p><time datetime="2026-08-22T10:00:00">22 августа 2026, 10:00</time></p>
+  <address>Jl. Buana Sari Gg. Pirta, Pecatu, Kec. Kuta Sel., Kabupaten Badung, Bali 80361, Индонезия, Печату (Улувату), Bali</address>
+  <p>В этом месяце в La Tribu Bali вас ждёт целая серия творческих и практических воркшопов для взрослых и детей.
+
+🧬 Создание парфюма — выберите из более чем 40 ароматов и создайте свой уникальный парфюм. В подарок заберёте сразу 2 флакона. Каждый вторник, 13:00–15:00.
+
+✨ Путешествие через дыхание — практика осознанного дыхания, интуитивных звуков и вибрационного языка. По субботам 10:30–12:00 и вторникам 17:30–19:00.
+
+📿 Мастер-класс по созданию мала — соберите собственные бусы-мала и заберите их домой.
+
+🤸 Капоэйра для детей — активное и весёлое занятие для маленьких участников.
+
+🤸‍♀️ Воркшоп по балансам на руках с @aqua.andrei — подходит даже для новичков. Вы научитесь правильной постановке рук, переносу веса, активации кора и бандх, а также безопасным переходам. 19 августа, 10:30–12:30.
+
+🏺 Гончарный мастер-класс — два часа работы с глиной, где вы создадите и заберёте домой 2 изделия, используя техники работы на гончарном круге и ручной лепки. Каждую среду, 10:00–12:00.
+
+instagram (https://www.instagram.com/latribubali/)</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/bali/">Бали</a> <span aria-hidden="true">›</span> <span>Мастер-классы в La Tribu Bali</span></p>
+    <p>Ещё события на Бали: <a href="/bali/">афиша</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/c743c38e-42da-4aa5-a84a-751869521f39/master-klass-po-robototekhnike-dlya-detey-s-4kh-det/">Мастер класс по робототехнике для детей с 4х дет <time datetime="2026-08-22">22 августа 2026</time></a></li>
+    <li><a href="/event/18a3353c-0c1e-46f6-9150-f40c229b639a/risuem-kartinu-na-beregu-okeana/">🌊 Рисуем картину на берегу океана <time datetime="2026-08-23">23 августа 2026</time></a></li>
+    <li><a href="/event/f621fae9-2ba4-4d91-81e1-c7a120ec8ec6/master-klass-po-guasha-v-yoga-barn/">Мастер-класс по гуаша в Yoga Barn <time datetime="2026-08-25">25 августа 2026</time></a></li>
+    <li><a href="/event/ce8739ee-bf4c-4cc1-8115-a959d9d6defd/zanyatie-po-robototekhnike-v-unicorns/">Занятие по Робототехнике в Unicorns🤖🌈 <time datetime="2026-08-26">26 августа 2026</time></a></li>
+    <li><a href="/event/9d416ede-c8d7-45e7-8cec-f499472d3da0/akh-nnye-sketchi-risovanie-ubud/">Ах**нные скетчи. Рисование. Убуд <time datetime="2026-11-06">6 ноября 2026</time></a></li>
+    <li><a href="/event/ba420c05-aeaf-4568-a4f2-460e45395c20/obuchenie-na-vegan-povara-s-lizoy-v-sayuri-ubud/">Обучение на веган-повара с Лизой в Sayuri Ubud <time datetime="2026-12-31">31 декабря 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Бали</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/3703e179-eb14-4351-9933-8bfca5a05f35/pyatnichnaya-vecherinka-circa-fridays-v-luigi-s/">Пятничная вечеринка Circa Fridays в Luigi&#39;s</a> <time datetime="2026-08-22">22 августа 2026</time></li>
+    <li>Следующее: <a href="/event/75258dd8-9bb9-4d3a-a4df-4b79660e9c46/vystavka-lucid-dreams-repetisi-memori/">Выставка Lucid Dreams &amp; Repetisi Memori</a> <time datetime="2026-08-22">22 августа 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/bali/">Ближайшие события: Бали</a></p>
+</div>
+
+  </body>
+</html>

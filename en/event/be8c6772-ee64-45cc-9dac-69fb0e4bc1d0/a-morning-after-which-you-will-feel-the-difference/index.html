@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A morning after which you will feel… — October 9, 2026 · Da Nang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Da Nang, October 9, 2026. 🌿 A morning after which you&#39;ll feel the difference. If your head is already full of a million thoughts in the morning and your body…" />
+    <link rel="canonical" href="https://mypins.site/en/event/be8c6772-ee64-45cc-9dac-69fb0e4bc1d0/a-morning-after-which-you-will-feel-the-difference/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="A morning after which you will feel… — October 9, 2026 · Da Nang" />
+    <meta property="og:description" content="Da Nang, October 9, 2026. 🌿 A morning after which you&#39;ll feel the difference. If your head is already full of a million thoughts in the morning and your body…" />
+    <meta property="og:url" content="https://mypins.site/en/event/be8c6772-ee64-45cc-9dac-69fb0e4bc1d0/a-morning-after-which-you-will-feel-the-difference/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/be8c6772-ee64-45cc-9dac-69fb0e4bc1d0/a-morning-after-which-you-will-feel-the-difference/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/be8c6772-ee64-45cc-9dac-69fb0e4bc1d0/utro-posle-kotorogo-ty-pochuvstvuesh-raznitsu/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Da Nang","item":"https://mypins.site/en/da-nang/"},{"@type":"ListItem","position":3,"name":"A morning after which you will feel the difference.","item":"https://mypins.site/en/event/be8c6772-ee64-45cc-9dac-69fb0e4bc1d0/a-morning-after-which-you-will-feel-the-difference/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>A morning after which you will feel the difference.</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-16">October 16, 2026</time></p>
+  <p><time datetime="2026-10-09T10:00:00">October 9, 2026, 10:00 AM</time></p>
+  <address>JADE YOGA, 128 Đ. Lê Văn Hiến, Ngũ Hành Sơn, Đà Nẵng 50000, Da Nang</address>
+  <p>Donation</p>
+  <p>🌿 A morning after which you&#39;ll feel the difference.
+
+If your head is already full of a million thoughts in the morning and your body is asking for movement — come to hatha yoga.
+
+In one hour we will:
+• warm up and strengthen
+• work on flexibility and beautiful body lines
+• unload the mind and turn off mental chatter
+• through breathing, shift from &quot;have to&quot; into a state of &quot;I feel good&quot;
+
+Yoga is not just about splits and beautiful asanas.
+It&#39;s also about a toned body, beautiful posture, and a calm mind.
+
+The practice is suitable for any level of fitness.
+
+📅Friday | 9.10. | 10:00–11:00
+📍JADE YOGA
+💰Donation (any amount from the heart)
+
+Come to the practice — let&#39;s start the day with ourselves 🤍
+
+Registration is required, spots are limited so that everyone is comfortable and I can give enough attention to each person.
+💌Sign up @maniadelyoga
+#date: 9.10.</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/da-nang/">Da Nang</a> <span aria-hidden="true">›</span> <span>A morning after which you will feel the difference.</span></p>
+    <p>More events in Da Nang: <a href="/en/da-nang/">what&#39;s on</a> · <a href="/en/da-nang/wellness/">🧘 Yoga &amp; Wellness</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/ba677e42-08a1-448a-a2af-21fce6dc5b62/anti-age-release-free-and-young-body/">ANTI-AGE RELEASE free and young body <time datetime="2026-10-09">October 9, 2026</time></a></li>
+    <li><a href="/en/event/73b1bd80-78a0-45fd-ba12-f21e8539c044/yoga-class/">YOGA CLASS <time datetime="2026-10-09">October 9, 2026</time></a></li>
+    <li><a href="/en/event/eaa83c41-cdc7-4237-940f-754ff890b248/yoga-in-da-nang/">YOGA in Da Nang <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/7d61a89a-0d42-4f04-a0a3-8dda0ff4ab94/stretching-in-danang/">STRETCHING IN DANANG <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/877895b5-5393-4099-8b81-e0325bbf6cda/qigong-on-the-beach/">QIGONG on the beach <time datetime="2026-11-02">November 2, 2026</time></a></li>
+    <li><a href="/en/event/9b43c15d-5232-4799-9403-9bcfcdc412c0/pilates-in-danang-group-training/">PILATES IN DANANG GROUP TRAINING <time datetime="2026-11-04">November 4, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Da Nang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/bdc71ab4-240a-4814-83e5-4d3cded14435/anxiety-where-does-it-come-from-and-what-to-do-about-it/">Anxiety: Where Does It Come From and What to Do About It?</a> <time datetime="2026-10-16">October 16, 2026</time></li>
+    <li>Next: <a href="/en/event/ec755da8-b611-4560-b45b-8b431e2662ef/mafia-predictor-friday-october-16/">MAFIA PREDICTOR FRIDAY, OCTOBER 16</a> <time datetime="2026-10-16">October 16, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/da-nang/">Upcoming events in Da Nang</a></p>
+</div>
+
+  </body>
+</html>

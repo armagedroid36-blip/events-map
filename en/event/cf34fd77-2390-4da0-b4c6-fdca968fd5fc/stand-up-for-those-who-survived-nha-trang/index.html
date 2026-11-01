@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>STAND-UP - For those who… — October 25, 2026 · Nha Trang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nha Trang, October 25, 2026. 🎤 STAND-UP - “For Those Who Survived Nha Trang” There will be humor, jokes, and something tasty! 🌴 IF YOU SURVIVED NHA TRANG…" />
+    <link rel="canonical" href="https://mypins.site/en/event/cf34fd77-2390-4da0-b4c6-fdca968fd5fc/stand-up-for-those-who-survived-nha-trang/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="STAND-UP - For those who… — October 25, 2026 · Nha Trang" />
+    <meta property="og:description" content="Nha Trang, October 25, 2026. 🎤 STAND-UP - “For Those Who Survived Nha Trang” There will be humor, jokes, and something tasty! 🌴 IF YOU SURVIVED NHA TRANG…" />
+    <meta property="og:url" content="https://mypins.site/en/event/cf34fd77-2390-4da0-b4c6-fdca968fd5fc/stand-up-for-those-who-survived-nha-trang/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/028f95d7300e5ac90cab83b101f3f43d.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/cf34fd77-2390-4da0-b4c6-fdca968fd5fc/stand-up-for-those-who-survived-nha-trang/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/cf34fd77-2390-4da0-b4c6-fdca968fd5fc/stendap-dlya-tekh-kto-vyzhil-v-nyachange/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"STAND-UP - For those who survived Nha Trang","item":"https://mypins.site/en/event/cf34fd77-2390-4da0-b4c6-fdca968fd5fc/stand-up-for-those-who-survived-nha-trang/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>STAND-UP - For those who survived Nha Trang</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-25">October 25, 2026</time></p>
+  <p><time datetime="2026-10-25T20:00:00">October 25, 2026, 8:00 PM</time></p>
+  <address>CHAIHANA №1, Nha Trang</address>
+  <p>150000 VND</p>
+  <p>🎤 STAND-UP - “For Those Who Survived Nha Trang”
+There will be humor, jokes, and something tasty!
+
+🌴 IF YOU SURVIVED NHA TRANG, IT&#39;S TIME TO CHECK IF YOU STILL HAVE A SENSE OF HUMOR!?
+
+📅 25.10 (Sunday)
+🕗 Guest check-in: from 19:30
+🕗 Start: 20:00
+📍 CHAIHANA №1, Nha Trang
+https://maps.app.goo.gl/vUmWEFqmFe8mwLZN7
+💰 150k dong
+🔞 18+
+
+On stage: three experienced comedians, three styles, three personalities, and not a single chance not to smile:
+🎙 SeryogaSeryoga
+🎙 Viktor Bezgin
+🎙 Ivan Gromut
+
+On the program:
+😂 New and proven jokes
+🔥 Improvisation with the audience
+🌴 About life in Asia and beyond
+🍜 Stories in which you will recognize yourself, your friends, and of course the locals
+
+If you have ever yelled at a motorbike, haggled with a seller, communicated through Google Translate, or tried to understand local rules, then this is for you!
+📲 Booking: @Ok_Ok_No_Problem
+
+#date: 25.10</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>STAND-UP - For those who survived Nha Trang</span></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a> · <a href="/en/nha-trang/theatre/">🎭 Theatres &amp; Shows</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/bfda08fc-b688-4960-8139-9cf7aec74c77/comedy-show-what-problems/">Comedy show &quot;WHAT, PROBLEMS?&quot; <time datetime="2026-10-23">October 23, 2026</time></a></li>
+    <li><a href="/en/event/01c938e5-e952-44a3-90e3-803368594dda/sunday-october-25-nha-trang/">Sunday (October 25) Nha Trang <time datetime="2026-10-25">October 25, 2026</time></a></li>
+    <li><a href="/en/event/37b399fa-0fd8-41a5-8697-79211b7b7819/shalyapin-theater-studio/">SHALYAPIN THEATER-STUDIO <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/7ef1341a-3bc0-476d-b393-7b93755d82e0/tata-show-at-vinwonders/">Tata Show at VinWonders <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/d87e2814-7362-4047-8ae6-0566ebe06320/life-puppets-show-at-do-theatre/">Life Puppets show at Do Theatre <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/4df7da34-c18c-48ef-962d-db2f7f041a07/chum-show/">Chum Show <time datetime="2026-11-01">November 1, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Nha Trang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/ca444fdf-12e3-4b04-985f-da066f6e917f/meeting-of-the-time-to-talk-english-speaking-club-for-teenagers/">Meeting of the TIME TO TALK English Speaking Club for teenagers</a> <time datetime="2026-10-25">October 25, 2026</time></li>
+    <li>Next: <a href="/en/event/cf7f4a65-6825-492c-93e8-cb7472476b61/scooter-party-cave-with-a-temple-mini-hike/">Scooter Party. Cave with a temple, mini hike!</a> <time datetime="2026-10-25">October 25, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
+</div>
+
+  </body>
+</html>

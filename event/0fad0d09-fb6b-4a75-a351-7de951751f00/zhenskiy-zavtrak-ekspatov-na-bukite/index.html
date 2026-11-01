@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Женский завтрак экспатов на… — 8 октября 2026 · Унгасан, Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Унгасан, Bali, 8 октября 2026. Экспатские женские завтраки на Буките 🫶🏼 Мы женщины-экспаты, которые выбрали жить и создавать свою жизнь на Бали. За вкусным…" />
+    <link rel="canonical" href="https://mypins.site/event/0fad0d09-fb6b-4a75-a351-7de951751f00/zhenskiy-zavtrak-ekspatov-na-bukite/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Женский завтрак экспатов на… — 8 октября 2026 · Унгасан, Bali" />
+    <meta property="og:description" content="Унгасан, Bali, 8 октября 2026. Экспатские женские завтраки на Буките 🫶🏼 Мы женщины-экспаты, которые выбрали жить и создавать свою жизнь на Бали. За вкусным…" />
+    <meta property="og:url" content="https://mypins.site/event/0fad0d09-fb6b-4a75-a351-7de951751f00/zhenskiy-zavtrak-ekspatov-na-bukite/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/0fad0d09-fb6b-4a75-a351-7de951751f00/zhenskiy-zavtrak-ekspatov-na-bukite/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/0fad0d09-fb6b-4a75-a351-7de951751f00/women-s-expat-breakfast-in-bukit/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Бали","item":"https://mypins.site/bali/"},{"@type":"ListItem","position":3,"name":"Женский завтрак экспатов на Буките","item":"https://mypins.site/event/0fad0d09-fb6b-4a75-a351-7de951751f00/zhenskiy-zavtrak-ekspatov-na-bukite/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Женский завтрак экспатов на Буките</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-08">8 октября 2026</time></p>
+  <p><time datetime="2026-10-08T10:00:00">8 октября 2026, 10:00</time></p>
+  <address>Ungasan, South Kuta, Badung Regency, Bali, Индонезия, Унгасан, Bali</address>
+  <p>Бесплатно</p>
+  <p>Экспатские женские завтраки на Буките 🫶🏼
+
+Мы женщины-экспаты, которые выбрали жить и создавать свою жизнь на Бали. За вкусным завтраком мы собираемся вместе, чтобы делиться опытом, поддержкой и вдохновением.
+
+Помимо душевных разговоров у нас бывают бизнес-игры, выступления приглашённых спикеров и форматы, которые помогают раскрыться и прокачать себя.
+
+💌 Приглашаем тебя в круг, где можно быть собой, завести новые знакомства и найти поддержку среди тех, кто живёт похожим путём). Когда:Каждый четверг
+
+Во сколько: 10:00 🕙
+
+Где: Букит
+
+Встречи безоплатные, но места ограничены! Чтобы записаться пиши в тг @juli_heal ✨</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/bali/">Бали</a> <span aria-hidden="true">›</span> <span>Женский завтрак экспатов на Буките</span></p>
+    <p>Ещё события на Бали: <a href="/bali/">афиша</a> · <a href="/bali/meetup/">🤝 Встречи и нетворкинг</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/39fcd360-ee65-4b9d-bb1e-74c2404eec8f/vecher-u-kostra-v-dragon-tea-temple/">Вечер у костра в Dragon Tea Temple <time datetime="2026-10-07">7 октября 2026</time></a></li>
+    <li><a href="/event/b8974623-78b2-4b6b-b7c3-dfbdcb0e4f69/clean-up-connect-uborka-v-changu-7-oktyabrya/">Clean Up &amp; Connect: уборка в Чангу 7 октября <time datetime="2026-10-07">7 октября 2026</time></a></li>
+    <li><a href="/event/83d0bae4-25a5-47f2-ba55-73c321c83b34/netvorking-pro-dvizhnie-v-ubude/">Нетворкинг «Pro-движние» в Убуде <time datetime="2026-10-08">8 октября 2026</time></a></li>
+    <li><a href="/event/cb69ff8c-0764-4c7c-9727-d5875622427f/zavtrak-netvorking-v-umalas/">Завтрак - Нетворкинг в Umalas <time datetime="2026-11-02">2 ноября 2026</time></a></li>
+    <li><a href="/event/515ae428-a2a0-4376-8a39-990faace34c0/zhenskiy-zavtrak-ekspatov-na-bukite/">Женский завтрак экспатов на Буките <time datetime="2026-11-05">5 ноября 2026</time></a></li>
+    <li><a href="/event/7d0df7d2-b499-476e-ac3a-55eab4cd9e4e/netvorking-pro-dvizhnie-v-ubude/">Нетворкинг «Pro-движние» в Убуде <time datetime="2026-11-05">5 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Бали</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/0f208524-2c16-4047-b98f-093f95743d29/gvozdestoyanie/">Гвоздестояние</a> <time datetime="2026-10-08">8 октября 2026</time></li>
+    <li>Следующее: <a href="/event/14c02b3d-68a2-4702-aec5-f848b35eacb5/kontsert-diplo-v-savaya/">Концерт Diplo в Savaya</a> <time datetime="2026-10-08">8 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/bali/">Ближайшие события: Бали</a></p>
+</div>
+
+  </body>
+</html>

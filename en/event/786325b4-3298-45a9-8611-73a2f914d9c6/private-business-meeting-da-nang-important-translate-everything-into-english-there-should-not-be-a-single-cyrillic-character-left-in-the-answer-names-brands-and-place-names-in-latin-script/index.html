@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PRIVATE BUSINESS MEETING DA NANG… — October 1, 2026 · Da Nang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Da Nang, October 1, 2026. PRIVATE BUSINESS MEETING · DA NANG 🌏 A private business meeting for entrepreneurs, investors, project founders, and strong…" />
+    <link rel="canonical" href="https://mypins.site/en/event/786325b4-3298-45a9-8611-73a2f914d9c6/private-business-meeting-da-nang-important-translate-everything-into-english-there-should-not-be-a-single-cyrillic-character-left-in-the-answer-names-brands-and-place-names-in-latin-script/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="PRIVATE BUSINESS MEETING DA NANG… — October 1, 2026 · Da Nang" />
+    <meta property="og:description" content="Da Nang, October 1, 2026. PRIVATE BUSINESS MEETING · DA NANG 🌏 A private business meeting for entrepreneurs, investors, project founders, and strong…" />
+    <meta property="og:url" content="https://mypins.site/en/event/786325b4-3298-45a9-8611-73a2f914d9c6/private-business-meeting-da-nang-important-translate-everything-into-english-there-should-not-be-a-single-cyrillic-character-left-in-the-answer-names-brands-and-place-names-in-latin-script/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/786325b4-3298-45a9-8611-73a2f914d9c6/private-business-meeting-da-nang-important-translate-everything-into-english-there-should-not-be-a-single-cyrillic-character-left-in-the-answer-names-brands-and-place-names-in-latin-script/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/786325b4-3298-45a9-8611-73a2f914d9c6/chastnaya-delovaya-vstrecha-da-nang/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Da Nang","item":"https://mypins.site/en/da-nang/"},{"@type":"ListItem","position":3,"name":"PRIVATE BUSINESS MEETING DA NANG\n\nIMPORTANT: translate EVERYTHING into English, there should not be a single Cyrillic character left in the answer: names, brands, and place names — in Latin script.","item":"https://mypins.site/en/event/786325b4-3298-45a9-8611-73a2f914d9c6/private-business-meeting-da-nang-important-translate-everything-into-english-there-should-not-be-a-single-cyrillic-character-left-in-the-answer-names-brands-and-place-names-in-latin-script/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>PRIVATE BUSINESS MEETING DA NANG
+
+IMPORTANT: translate EVERYTHING into English, there should not be a single Cyrillic character left in the answer: names, brands, and place names — in Latin script.</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-01">October 1, 2026</time></p>
+  <p><time datetime="2026-10-01T19:00:00">October 1, 2026, 7:00 PM</time></p>
+  <address>NORMAD CAFE - Da Nang, 106 Phạm Văn Đồng, An Hải, Đà Nẵng 550000</address>
+  <p>PRIVATE BUSINESS MEETING · DA NANG 🌏
+
+A private business meeting for entrepreneurs, investors, project founders, and strong professionals who want to expand their network, find partners, and create new deals.
+
+We want to invite people who truly value their time, business contacts, and a quality environment.
+
+In one evening, you will be able to meet entrepreneurs from various fields, briefly introduce yourself and your project, and find potential clients, partners, investors, or people for joint launches.
+
+Program:
+
+• curated networking and personal introductions
+• introduction of each participant
+• discussion of projects and business opportunities
+• AI, IT, investments, marketing, media, e-commerce
+• international connections
+• dinner and free networking
+• private participant chat after the meeting
+
+📍 https://maps.app.goo.gl/7aU2NiWmvtaN73DV8?g_st=ipc
+
+To participate, send a direct message with:
+
+1. Name
+2. What you want to find at the meeting
+
+Contact for registration: @monicashe
+
+🕖 19:00
+#Date: 01.10.2026</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/da-nang/">Da Nang</a> <span aria-hidden="true">›</span> <span>PRIVATE BUSINESS MEETING DA NANG
+
+IMPORTANT: translate EVERYTHING into English, there should not be a single Cyrillic character left in the answer: names, brands, and place names — in Latin script.</span></p>
+    <p>More events in Da Nang: <a href="/en/da-nang/">what&#39;s on</a> · <a href="/en/da-nang/meetup/">🤝 Meetups &amp; Networking</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/12812e68-c9a5-44a9-b38a-8aa8e615a083/business-club-meetings-continue/">Business club meetings continue <time datetime="2026-10-01">October 1, 2026</time></a></li>
+    <li><a href="/en/event/6a61dc1d-acb6-403a-9de0-5a05d2db44e5/how-to-blend-in-as-one-of-your-own-and-live-care-free-in-vietnam/">How to BLEND IN AS ONE OF YOUR OWN and LIVE CARE FREE in Vietnam <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/38e2bcab-9f00-4395-a51a-428b5b0cc951/big-networking-event-in-danang/">BIG NETWORKING EVENT IN DANANG <time datetime="2026-11-05">November 5, 2026</time></a></li>
+    <li><a href="/en/event/7f036642-89cd-4f00-aa96-ffa97df0c512/how-much-time-is-wasted-on-questions-that-could-be-resolved-in-a-15-minute-live-conversation/">How much time is wasted on questions that could be resolved in a 15-minute live conversation? <time datetime="2026-11-05">November 5, 2026</time></a></li>
+    <li><a href="/en/event/ebf810b2-b2bf-45d1-854e-66978eafc4ba/100-entrepreneurs-from-da-nang-on-one-platform/">100 entrepreneurs from Da Nang on one platform <time datetime="2026-11-05">November 5, 2026</time></a></li>
+    <li><a href="/en/event/2738192a-7920-4965-8234-8993b6e2ac9c/therapeutic-book-club/">Therapeutic Book Club <time datetime="2026-11-26">November 26, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Da Nang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/68312cba-2eb4-4767-b2ff-282d3cf33482/high-heels-dance-in-da-nang-liberation/">HIGH HEELS DANCE in Da Nang Liberation</a> <time datetime="2026-10-01">October 1, 2026</time></li>
+    <li>Next: <a href="/en/event/7d9f7d56-2d03-4beb-a5b7-391ae789ca70/board-games-that-aren-t-board-games-but-mind-expanders/">Board games that aren&#39;t board games but mind expanders</a> <time datetime="2026-10-01">October 1, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/da-nang/">Upcoming events in Da Nang</a></p>
+</div>
+
+  </body>
+</html>

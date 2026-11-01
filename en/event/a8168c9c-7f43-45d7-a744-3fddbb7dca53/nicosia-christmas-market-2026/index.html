@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nicosia Christmas Market 2026 — November 28, 2026 · Nicosia</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nicosia, Cyprus, November 28, 2026. At the end of November, the festive Christmas market - Nicosia Christmas Market by Handmade in Cyprus - will return to the…" />
+    <link rel="canonical" href="https://mypins.site/en/event/a8168c9c-7f43-45d7-a744-3fddbb7dca53/nicosia-christmas-market-2026/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Nicosia Christmas Market 2026 — November 28, 2026 · Nicosia" />
+    <meta property="og:description" content="Nicosia, Cyprus, November 28, 2026. At the end of November, the festive Christmas market - Nicosia Christmas Market by Handmade in Cyprus - will return to the…" />
+    <meta property="og:url" content="https://mypins.site/en/event/a8168c9c-7f43-45d7-a744-3fddbb7dca53/nicosia-christmas-market-2026/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/44e726f7-6e81-497d-b747-57c0726a343f/1790440652121.png?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/a8168c9c-7f43-45d7-a744-3fddbb7dca53/nicosia-christmas-market-2026/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/a8168c9c-7f43-45d7-a744-3fddbb7dca53/rozhdestvenskaya-yarmarka-v-nikosii-2026/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Nicosia Christmas Market 2026","url":"https://mypins.site/en/event/a8168c9c-7f43-45d7-a744-3fddbb7dca53/nicosia-christmas-market-2026/","startDate":"2026-11-28T11:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Plateia Eleytherias / Eleftheria Square, Nicosia","address":{"@type":"PostalAddress","addressLocality":"Nicosia","streetAddress":"Plateia Eleytherias / Eleftheria Square, Nicosia","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1699953,"longitude":33.3602499}},"description":"At the end of November, the festive Christmas market - Nicosia Christmas Market by Handmade in Cyprus - will return to the heart of Nicosia. Eleftheria Square will be transformed into a cosy Christmas space where visitors can discover the work of local makers, choose unique holiday gifts, try...","endDate":"2026-12-21","image":"https://cyprus.bz/img/images/events/44e726f7-6e81-497d-b747-57c0726a343f/1790440652121.png?w=516&h=516&q=80","organizer":{"@type":"Organization","name":"cyprus.bz","url":"https://cyprus.bz/event/3590/nicosia-christmas-market-2026"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Nicosia Christmas Market 2026","item":"https://mypins.site/en/event/a8168c9c-7f43-45d7-a744-3fddbb7dca53/nicosia-christmas-market-2026/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Nicosia Christmas Market 2026</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-12-21">December 21, 2026</time></p>
+  <p><time datetime="2026-11-28T11:00:00">November 28, 2026, 11:00 AM</time></p>
+  <address>Plateia Eleytherias / Eleftheria Square, Nicosia, Cyprus</address>
+  <p>At the end of November, the festive Christmas market - Nicosia Christmas Market by Handmade in Cyprus - will return to the heart of Nicosia. Eleftheria Square will be transformed into a cosy Christmas space where visitors can discover the work of local makers, choose unique holiday gifts, try...</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Nicosia Christmas Market 2026</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/exhibition/">🖼️ Exhibitions</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/34f9858a-905c-4e2a-b2a4-2dc1c7c2f3a2/grand-antiques-vintage-market-antiques-and-vintage-market/">Grand Antiques &amp; Vintage Market - antiques and vintage market <time datetime="2026-11-21">November 21, 2026</time></a></li>
+    <li><a href="/en/event/15a731ea-584d-40da-b33e-6e93dbe261ce/blue-mind/">Blue Mind <time datetime="2026-11-26">November 26, 2026</time></a></li>
+    <li><a href="/en/event/ebf76e89-06c9-4182-a176-11c055b75b72/opening-of-the-art-exhibition-michalis-kirilitzias/">Opening of the art exhibition &quot;Michalis Kirilitzias&quot; <time datetime="2026-11-27">November 27, 2026</time></a></li>
+    <li><a href="/en/event/3251e5ef-e0c4-48e3-ae73-84b379be3cbe/tracks-from-stone-to-concrete/">TRACKS: From Stone to Concrete <time datetime="2026-11-28">November 28, 2026</time></a></li>
+    <li><a href="/en/event/cfad1e23-2c2a-4c00-b3ed-c4a3574818e3/official-nicosia-christmas-market-2026/">Official Nicosia Christmas Market 2026 <time datetime="2026-11-28">November 28, 2026</time></a></li>
+    <li><a href="/en/event/393283f0-d851-4307-9a64-2270cedcf9e9/material-and-community-exhibition-walks-workshops-in-fyti/">Material and Community – Exhibition, walks, workshops in Fyti <time datetime="2026-12-01">December 1, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/dccdf0b1-becf-46f5-a233-7963d3f4e6a9/festive-festival-the-magic-of-christmas/">Festive Festival The Magic of Christmas</a> <time datetime="2026-12-20">December 20, 2026</time></li>
+    <li>Next: <a href="/en/event/5fc31b26-1d12-4f61-9352-7f0ec9b6993e/christmas-concert-2026-works-by-strauss-robert-stolz/">Christmas Concert 2026: Works by Strauss &amp; Robert Stolz</a> <time datetime="2026-12-23">December 23, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

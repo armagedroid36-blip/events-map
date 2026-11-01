@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Art Talk &quot;Titian: Power… — October 6, 2026 · Nha Trang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nha Trang, October 6, 2026. Art meetup &quot;Titian: Power, Eroticism, and Color&quot; Let&#39;s talk about Titian — the greatest artist of Venice, who reformed all known…" />
+    <link rel="canonical" href="https://mypins.site/en/event/66a73436-b4f2-4dc7-80fc-681d1aaac611/art-talk-titian-power-eroticism-and-color/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Art Talk &quot;Titian: Power… — October 6, 2026 · Nha Trang" />
+    <meta property="og:description" content="Nha Trang, October 6, 2026. Art meetup &quot;Titian: Power, Eroticism, and Color&quot; Let&#39;s talk about Titian — the greatest artist of Venice, who reformed all known…" />
+    <meta property="og:url" content="https://mypins.site/en/event/66a73436-b4f2-4dc7-80fc-681d1aaac611/art-talk-titian-power-eroticism-and-color/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/66a73436-b4f2-4dc7-80fc-681d1aaac611/art-talk-titian-power-eroticism-and-color/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/66a73436-b4f2-4dc7-80fc-681d1aaac611/art-vstrecha-titsian-vlast-erotika-i-tsvet/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"Art Talk \"Titian: Power, Eroticism, and Color\"","item":"https://mypins.site/en/event/66a73436-b4f2-4dc7-80fc-681d1aaac611/art-talk-titian-power-eroticism-and-color/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Art Talk &quot;Titian: Power, Eroticism, and Color&quot;</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-06">October 6, 2026</time></p>
+  <p><time datetime="2026-10-06T19:00:00">October 6, 2026, 7:00 PM</time></p>
+  <address>Nha Trang</address>
+  <p>250000 VND</p>
+  <p>Art meetup &quot;Titian: Power, Eroticism, and Color&quot;
+
+Let&#39;s talk about Titian — the greatest artist of Venice, who reformed all known genres.
+
+We&#39;ll discuss without boring lists of dates and names:
+- his ambiguous Venuses
+- sensual mythological stories
+- the incredible freedom of his late style
+
+About the speaker: Irina Korchagina — a Titian fan — art historian with 20 years of experience, curator, lecturer
+
+October 6, 19:00
+Maple hotel
+250k dong
+Reservation @morethanvenice
+
+#date: 06.10.2026
+Post by: Irina</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>Art Talk &quot;Titian: Power, Eroticism, and Color&quot;</span></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/43bc918d-a718-4b79-a3f4-1ff8320942a0/fractal-human-design/">Fractal Human Design. <time datetime="2026-09-30">September 30, 2026</time></a></li>
+    <li><a href="/en/event/6749b7e5-3046-4441-92cc-cf8b7a0dde1f/i-invite-you-to-attend-the-legal-seminar-business-and-visas-in-vietnam/">I invite you to attend the legal seminar &quot;Business and Visas in Vietnam&quot; <time datetime="2026-10-01">October 1, 2026</time></a></li>
+    <li><a href="/en/event/f5f0d886-4052-47c5-9877-8cc28465a066/lecture-on-gestalt-psychology/">Lecture on Gestalt psychology. <time datetime="2026-10-01">October 1, 2026</time></a></li>
+    <li><a href="/en/event/2536fdd3-18ee-4a0f-b29b-f66af8f4bef6/meetup-for-moms-with-babies-in-nha-trang-about-complementary-feeding/">Meetup for moms with babies in Nha Trang &quot;About Complementary Feeding&quot;. <time datetime="2026-10-08">October 8, 2026</time></a></li>
+    <li><a href="/en/event/157b225b-b1ba-48cc-882d-e4eebed71002/fractal-human-design/">Fractal Human Design. <time datetime="2026-10-09">October 9, 2026</time></a></li>
+    <li><a href="/en/event/485620e4-f140-48f6-b082-5d768dca23d8/lecture-albrecht-durer-the-artist-who-wanted-to-know-everything/">Lecture &quot;Albrecht Dürer. The Artist Who Wanted to Know Everything&quot; <time datetime="2026-11-03">November 3, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Nha Trang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/4bcf6403-386c-458a-a432-bf5496f47c92/nha-trang-english-club/">Nha Trang English Club</a> <time datetime="2026-10-06">October 6, 2026</time></li>
+    <li>Next: <a href="/en/event/6d68f183-a109-4674-91f5-daaba32464ff/morning-pilates-session-with-a-certified-healthy-movement-expert-franklin-method/">Morning Pilates session with a certified healthy movement expert (Franklin Method)</a> <time datetime="2026-10-06">October 6, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>СЕМЕЙНАЯ ТАНЦЕВАЛЬНАЯ ВЕЧЕРИНКА — 2 октября 2026 · Нячанг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Нячанг, 2 октября 2026. FAMILY DANCE PARTY 🪩 Родители тоже имеют право оторваться😅 Не сдавая детей няне. Когда последний раз вы танцевали вдвоём, без детей…" />
+    <link rel="canonical" href="https://mypins.site/event/df93642d-f61e-4122-8244-4f01efb4a584/semeynaya-tantsevalnaya-vecherinka/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="СЕМЕЙНАЯ ТАНЦЕВАЛЬНАЯ ВЕЧЕРИНКА — 2 октября 2026 · Нячанг" />
+    <meta property="og:description" content="Нячанг, 2 октября 2026. FAMILY DANCE PARTY 🪩 Родители тоже имеют право оторваться😅 Не сдавая детей няне. Когда последний раз вы танцевали вдвоём, без детей…" />
+    <meta property="og:url" content="https://mypins.site/event/df93642d-f61e-4122-8244-4f01efb4a584/semeynaya-tantsevalnaya-vecherinka/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/df93642d-f61e-4122-8244-4f01efb4a584/semeynaya-tantsevalnaya-vecherinka/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/df93642d-f61e-4122-8244-4f01efb4a584/family-dance-party/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"СЕМЕЙНАЯ ТАНЦЕВАЛЬНАЯ ВЕЧЕРИНКА","item":"https://mypins.site/event/df93642d-f61e-4122-8244-4f01efb4a584/semeynaya-tantsevalnaya-vecherinka/"}]}]}</script>
+    <script type="application/json" id="seo-alias-map">{"cloneId":"df93642d-f61e-4122-8244-4f01efb4a584","keptId":"df93642d-f61e-4122-8244-4f01efb4a584","ru":"https://mypins.site/event/df93642d-f61e-4122-8244-4f01efb4a584/semeynaya-tantsevalnaya-vecherinka/","en":"https://mypins.site/en/event/df93642d-f61e-4122-8244-4f01efb4a584/family-dance-party/"}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>СЕМЕЙНАЯ ТАНЦЕВАЛЬНАЯ ВЕЧЕРИНКА</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-02">2 октября 2026</time></p>
+  <p><time datetime="2026-10-02T17:00:00">2 октября 2026, 17:00</time></p>
+  <address>Bông Villa, Tổ 14 Cầu Ngọc Thảo, Cồn Ngọc Thảo, Tây Nha Trang, Khánh Hòa, Нячанг</address>
+  <p>150000 VND</p>
+  <p>FAMILY DANCE PARTY 🪩
+
+Родители тоже имеют право оторваться😅
+Не сдавая детей няне.
+
+Когда последний раз вы танцевали вдвоём, без детей. 
+Или жгли костер и пели песни…
+А что, если дети могут быть рядом?
+Танцевать с вами, или играть с другими детьми, предоставив вам возможность просто быть.
+
+2 ОКТЯБРЯ · 17:00–21:00
+BONG VILLA https://maps.app.goo.gl/JgcnUKX6smBYeYGq5?g_st=ic
+
+🎶 17:00-19:00 музыка и танцы
+🔥 19:00-21:00 костёр у реки
+
+🎨 детям будут доступны рисование, лепка и активные игры на открытом воздухе
+🍹 бар и кухня пространства
+и просто вечер на природе в хорошей компании
+
+Стоимость:
+150 000 VND — предпродажа
+200 000 VND — на входе
+Дети до 2-ух лет без оплаты.
+
+Можно прийти вдвоем, или взять детей с собой… они могут танцевать с вами, или играть и рисовать.
+
+Билеты: @annushka_privet
+
+🧚‍♀️пришлите мне пару треков до 1.10, которые хотели бы услышать на вечеринке.
+
+Дата: #02.10
+
+#дата: 02.10.2026
+Пост от: Анна Фотограф Нячанг</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/nha-trang/">Нячанг</a> <span aria-hidden="true">›</span> <span>СЕМЕЙНАЯ ТАНЦЕВАЛЬНАЯ ВЕЧЕРИНКА</span></p>
+    <p>Ещё события в Нячанге: <a href="/nha-trang/">афиша</a> · <a href="/nha-trang/party/">🪩 Вечеринки</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/aae25fd7-7888-4644-9db7-cfc1689bd761/bachata-sensual-party-pyatnitsa-02-oktyabrya/">BACHATA SENSUAL PARTY ПЯТНИЦА, 02 ОКТЯБРЯ! <time datetime="2026-10-02">2 октября 2026</time></a></li>
+    <li><a href="/event/972d90e2-cf29-4acc-8f50-06032870b214/karaoke-vecher-dlya-zozh-devchonok/">&quot;КАРАОКЕ-ВЕЧЕР ДЛЯ ЗОЖ ДЕВЧОНОК&quot; <time datetime="2026-10-02">2 октября 2026</time></a></li>
+    <li><a href="/event/70f7f155-7328-45c4-a609-426118073b2c/latinskaya-vecherinka-rompe/">ЛАТИНСКАЯ ВЕЧЕРИНКА ROMPE <time datetime="2026-10-03">3 октября 2026</time></a></li>
+    <li><a href="/event/ad40b390-c683-466c-a393-68597717895f/piklbol-tusovka-na-lodke-uzhe-v-eto-voskresene/">ПИКЛБОЛ-тусовка на ЛОДКЕ уже в это воскресенье! <time datetime="2026-10-04">4 октября 2026</time></a></li>
+    <li><a href="/event/b41b6b44-4e33-46ba-be7f-4327de838ed9/dzhem-vsekh-stiley-prostranstvo/">ДЖЕМ ВСЕХ СТИЛЕЙ ПРОСТРАНСТВО <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/f9c9b4bd-2462-4ff3-bb55-1b8655eee94b/vecher-karaoke-1-noyabrya-vs/">ВЕЧЕР КАРАОКЕ 1 ноября (вс) <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Нячанг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/c82145bd-8df8-4001-b4f7-ae6a1bf2b48f/morningtalk-nachni-pyatnitsu-s-angliyskogo/">MorningTalk: начни пятницу с английского</a> <time datetime="2026-10-02">2 октября 2026</time></li>
+    <li>Следующее: <a href="/event/e7a8ee3a-62f7-4116-bdf6-cfbda1f63792/yoga-zavtrak/">ЙОГА-ЗАВТРАК</a> <time datetime="2026-10-02">2 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/nha-trang/">Ближайшие события: Нячанг</a></p>
+</div>
+
+  </body>
+</html>

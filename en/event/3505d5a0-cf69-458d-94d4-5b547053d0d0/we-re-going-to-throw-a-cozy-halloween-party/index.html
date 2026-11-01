@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>We&#39;re going to throw a cozy… — October 31, 2026 · Da Nang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Da Nang, October 31, 2026. Dear friends! We&#39;re throwing a cozy HALLOWEEN party 🎃 The main part is on October 31 from 7 to 11 PM! And after that there will be…" />
+    <link rel="canonical" href="https://mypins.site/en/event/3505d5a0-cf69-458d-94d4-5b547053d0d0/we-re-going-to-throw-a-cozy-halloween-party/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="We&#39;re going to throw a cozy… — October 31, 2026 · Da Nang" />
+    <meta property="og:description" content="Da Nang, October 31, 2026. Dear friends! We&#39;re throwing a cozy HALLOWEEN party 🎃 The main part is on October 31 from 7 to 11 PM! And after that there will be…" />
+    <meta property="og:url" content="https://mypins.site/en/event/3505d5a0-cf69-458d-94d4-5b547053d0d0/we-re-going-to-throw-a-cozy-halloween-party/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/faa64134c594b09ec8614cb6b230ea65.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/3505d5a0-cf69-458d-94d4-5b547053d0d0/we-re-going-to-throw-a-cozy-halloween-party/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/3505d5a0-cf69-458d-94d4-5b547053d0d0/my-ustroim-uyutnuyu-vecherinku-na-khellouin/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Da Nang","item":"https://mypins.site/en/da-nang/"},{"@type":"ListItem","position":3,"name":"We're going to throw a cozy Halloween party","item":"https://mypins.site/en/event/3505d5a0-cf69-458d-94d4-5b547053d0d0/we-re-going-to-throw-a-cozy-halloween-party/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>We&#39;re going to throw a cozy Halloween party</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-31">October 31, 2026</time></p>
+  <p><time datetime="2026-10-31T19:00:00">October 31, 2026, 7:00 PM</time></p>
+  <address>CREAMBERG, Da Nang</address>
+  <p>150000 VND</p>
+  <p>Dear friends! We&#39;re throwing a cozy HALLOWEEN party 🎃
+
+The main part is on October 31 from 7 to 11 PM! And after that there will be an AFTERPARTY👽
+
+Entry is free! To see the creepy art, but if you want to stay for the active part and after party, then feel free to buy an invite online or at the entrance! The ticket includes food, drinks, ice cream tasting, and a raffle for a coupon to our restaurant!
+
+TICKETS — 150k VND PER PERSON 🩸
+The ticket price includes:
+🍽️ Delicious snacks, barbecue, and pancakes
+🥤 Refreshing drinks or mulled wine
+🍧 Ice cream tasting with liqueurs
+🫯 Raffle for coupons worth 300k, 200k, 100k VND to visit our restaurant!
+🎶Mystical Halloween music from the DJ
+
+Join us! It&#39;s the Halloween night vibe together with CREAMBERG 🤌
+
+🩸 Tickets are available until October 29. Tickets purchased at the entrance will cost MORE🎃🩸
+
+More details - HERE
+
+#Date: 31.10</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/da-nang/">Da Nang</a> <span aria-hidden="true">›</span> <span>We&#39;re going to throw a cozy Halloween party</span></p>
+    <p>More events in Da Nang: <a href="/en/da-nang/">what&#39;s on</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/604ec1d6-0653-41bf-8b3d-74bd02473760/friday-in-da-nang-learn-salsa-and-dance/">FRIDAY IN DA NANG: LEARN SALSA AND DANCE! <time datetime="2026-10-23">October 23, 2026</time></a></li>
+    <li><a href="/en/event/08de78ad-1daa-48dd-937a-d33b064f3065/sounds-of-goa/">Sounds of Goa <time datetime="2026-10-25">October 25, 2026</time></a></li>
+    <li><a href="/en/event/0f79ad3e-4efd-46bf-bb1d-362526ddcc8a/friday-in-danang-learn-salsa-and-dance/">FRIDAY IN DANANG: LEARN SALSA AND DANCE! <time datetime="2026-10-30">October 30, 2026</time></a></li>
+    <li><a href="/en/event/d0b00887-96fb-4420-897d-15a1455ab333/if-the-rainy-season-has-already-settled-into-your-sofa-this-saturday-we-re-holding-a-latin-exorcism-session/">IF THE RAINY SEASON HAS ALREADY SETTLED INTO YOUR SOFA, THIS SATURDAY WE&#39;RE HOLDING A LATIN EXORCISM SESSION! <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/ea47b25a-e0b4-4a15-8391-bf57595945db/halloween-9-circles-of-hell-dating/">HALLOWEEN: 9 CIRCLES OF HELL DATING <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/2477a4c0-1f9a-4c56-8c1f-de6708c0c1f0/disco-halloween-is-approaching/">DISCO HALLOWEEN IS APPROACHING! <time datetime="2026-10-31">October 31, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Da Nang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/3398a68c-50dc-4f39-8b80-9647e5b1328f/hatha-yoga-in-fysm-style-saturday/">Hatha Yoga in FYSM Style SATURDAY</a> <time datetime="2026-10-31">October 31, 2026</time></li>
+    <li>Next: <a href="/en/event/4d244a54-7d55-4970-828a-7194c80cbba6/argentine-tango-the-art-of-interaction-in-a-couple/">Argentine tango The art of interaction in a couple</a> <time datetime="2026-10-31">October 31, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/da-nang/">Upcoming events in Da Nang</a></p>
+</div>
+
+  </body>
+</html>

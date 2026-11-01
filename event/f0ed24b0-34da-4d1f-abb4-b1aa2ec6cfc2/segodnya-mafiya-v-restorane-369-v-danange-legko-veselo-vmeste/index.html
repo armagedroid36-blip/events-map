@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Сегодня МАФИЯ в ресторане 369 в… — 29 октября 2026 · Дананг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Дананг, 29 октября 2026. Сегодня МАФИЯ в ресторане 369 в Дананге легко, весело, вместе! 🃏 Простая версия игры, дружеская атмосфера и отличная компания ждет…" />
+    <link rel="canonical" href="https://mypins.site/event/f0ed24b0-34da-4d1f-abb4-b1aa2ec6cfc2/segodnya-mafiya-v-restorane-369-v-danange-legko-veselo-vmeste/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Сегодня МАФИЯ в ресторане 369 в… — 29 октября 2026 · Дананг" />
+    <meta property="og:description" content="Дананг, 29 октября 2026. Сегодня МАФИЯ в ресторане 369 в Дананге легко, весело, вместе! 🃏 Простая версия игры, дружеская атмосфера и отличная компания ждет…" />
+    <meta property="og:url" content="https://mypins.site/event/f0ed24b0-34da-4d1f-abb4-b1aa2ec6cfc2/segodnya-mafiya-v-restorane-369-v-danange-legko-veselo-vmeste/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/6c3c47daec77e9402d1a2220e4a0b2b1.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/f0ed24b0-34da-4d1f-abb4-b1aa2ec6cfc2/segodnya-mafiya-v-restorane-369-v-danange-legko-veselo-vmeste/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/f0ed24b0-34da-4d1f-abb4-b1aa2ec6cfc2/today-mafia-at-restaurant-369-in-da-nang-easy-fun-together/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Дананг","item":"https://mypins.site/da-nang/"},{"@type":"ListItem","position":3,"name":"Сегодня МАФИЯ в ресторане 369 в Дананге легко, весело, вместе!","item":"https://mypins.site/event/f0ed24b0-34da-4d1f-abb4-b1aa2ec6cfc2/segodnya-mafiya-v-restorane-369-v-danange-legko-veselo-vmeste/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Сегодня МАФИЯ в ресторане 369 в Дананге легко, весело, вместе!</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-29">29 октября 2026</time></p>
+  <p><time datetime="2026-10-29T19:30:00">29 октября 2026, 19:30</time></p>
+  <address>Family Restaurant 369 Семейный ресторан, Lagom Boutique Hotel , 1st floor, 71-73 Phan Tôn, Ngũ Hành Sơn, Đà Nẵng 550000, Vietnam, Дананг</address>
+  <p>150000 VND</p>
+  <p>Сегодня МАФИЯ в ресторане 369 в Дананге легко, весело, вместе! 🃏
+
+Простая версия игры, дружеская атмосфера и отличная компания ждет тебя 🥰
+
+Идеально для знакомства с новыми людьми и увлекательных обсуждений.
+
+📆 29 октября (четверг)
+⏰ 19:30 – начало мафии
+👥 Максимально – 15 участников
+🎫 150.000 VND за участие
++ любой заказ 🥗
+
+РЕГИСТРАЦИЯ: @restaurant_369_danang
+
+Приходи, будет интересно!
+
+#дата: 29.10</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/da-nang/">Дананг</a> <span aria-hidden="true">›</span> <span>Сегодня МАФИЯ в ресторане 369 в Дананге легко, весело, вместе!</span></p>
+    <p>Ещё события в Дананге: <a href="/da-nang/">афиша</a> · <a href="/da-nang/games/">🎲 Игры и квизы</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/75da24d5-1691-42ff-b544-a2380969175d/predictor-mix-tri-mafii-za-odin-vecher/">PREDICTOR MIX три Мафии за один вечер <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/e176d331-51d4-429e-8221-7ec81333d4e8/kviz-pliz-garri-potter-igra-dlya-tekh-kto-pomnit-vse-frazy-drako-malfoya-otlichaet-gerbologiyu-ot-zelevareniya-i-do-sikh/">Квиз, плиз! Гарри Поттер игра для тех, кто помнит все фразы Драко Малфоя, отличает гербологию от зельеварения, и до сих <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/41f028ec-cc6f-4e4b-9f73-ed86ce0fe59d/kviz-pliz-komandnaya-igra-s-voprosami-na-absolyutno-raznye-temy-vspominayte-vse-chto-znali-uznavayte-novoe-do-igry-i-p/">Квиз, плиз! командная игра с вопросами на абсолютно разные темы. Вспоминайте всё, что знали, узнавайте новое до игры и п <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/e5d275c2-c736-4faa-b484-0f9e7f994f7f/segodnya-mafiya-v-restorane-369-v-danange-legko-veselo-vmeste/">Сегодня МАФИЯ в ресторане 369 в Дананге легко, весело, вместе! <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/9f63ff29-0aee-4601-a927-655a172e9cb8/vo-vtornik-3-noyabrya-my-provodim-v-danange-ocherednuyu-igru-v-chto-gde-kogda-i-v-etot-raz-osobenno-khochetsya-pozvat-te/">Во вторник, 3 ноября, мы проводим в Дананге очередную игру в «Что? Где? Когда?» и в этот раз особенно хочется позвать те <time datetime="2026-11-03">3 ноября 2026</time></a></li>
+    <li><a href="/event/23a444f0-d1a3-4a0d-996c-ef5f25e53dd2/voskresene-vecher-tac-v-restorane-369/">ВОСКРЕСЕНЬЕ ВЕЧЕР TAC в ресторане 369! <time datetime="2026-12-01">1 декабря 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Дананг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/d918f213-fab3-4386-8715-a5507c493394/sezon-dozhdey-nachalsya-no-tvoya-sotsialnaya-zhizn-ne-dolzhna-tonut/">Сезон дождей начался. Но твоя социальная жизнь не должна тонуть!</a> <time datetime="2026-10-29">29 октября 2026</time></li>
+    <li>Следующее: <a href="/event/0d3e7523-322a-4a46-a00a-10a9a866e054/khellouinskiy-kinovecher-tayna-koko/">Хэллоуинский киновечер: «Тайна Коко»</a> <time datetime="2026-10-30">30 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/da-nang/">Ближайшие события: Дананг</a></p>
+</div>
+
+  </body>
+</html>

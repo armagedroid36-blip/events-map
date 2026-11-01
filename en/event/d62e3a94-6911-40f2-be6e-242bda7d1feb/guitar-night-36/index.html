@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GUITAR NIGHT 36 — October 24, 2026 · Da Nang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Da Nang, October 24, 2026. 🎸 GITARNIK #36 🎸🌴 We gather every SATURDAY to enjoy favorite songs with guitar in good company! Bring good mood, song list, as…" />
+    <link rel="canonical" href="https://mypins.site/en/event/d62e3a94-6911-40f2-be6e-242bda7d1feb/guitar-night-36/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="GUITAR NIGHT 36 — October 24, 2026 · Da Nang" />
+    <meta property="og:description" content="Da Nang, October 24, 2026. 🎸 GITARNIK #36 🎸🌴 We gather every SATURDAY to enjoy favorite songs with guitar in good company! Bring good mood, song list, as…" />
+    <meta property="og:url" content="https://mypins.site/en/event/d62e3a94-6911-40f2-be6e-242bda7d1feb/guitar-night-36/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/de0380acbf0e7e98016c2f899dfbfe88.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/d62e3a94-6911-40f2-be6e-242bda7d1feb/guitar-night-36/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/d62e3a94-6911-40f2-be6e-242bda7d1feb/gitarnik-36/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Da Nang","item":"https://mypins.site/en/da-nang/"},{"@type":"ListItem","position":3,"name":"GUITAR NIGHT 36","item":"https://mypins.site/en/event/d62e3a94-6911-40f2-be6e-242bda7d1feb/guitar-night-36/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>GUITAR NIGHT 36</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-24">October 24, 2026</time></p>
+  <p><time datetime="2026-10-24T21:30:00">October 24, 2026, 9:30 PM</time></p>
+  <address>Da Nang</address>
+  <p>50000 VND</p>
+  <p>🎸 GITARNIK #36 🎸🌴
+
+We gather every SATURDAY to enjoy favorite songs with guitar in good company!
+
+Bring good mood, song list, as well as snacks and drinks optionally, tea will be provided.
+
+When: 24.10.2026 Saturday 21:30
+
+Where: Mian beach - location in the group
+
+Participation: 50k
+
+For registration inquiries @fisenkoyury
+
+#date: 24.10.2026</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/da-nang/">Da Nang</a> <span aria-hidden="true">›</span> <span>GUITAR NIGHT 36</span></p>
+    <p>More events in Da Nang: <a href="/en/da-nang/">what&#39;s on</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/66d80701-3154-4573-aad2-79fcda745e2a/gitarnik-35/">GITARNIK 35 <time datetime="2026-10-17">October 17, 2026</time></a></li>
+    <li><a href="/en/event/f718bda4-ba2f-4772-99d7-0fb84e4a659a/the-beatles-michael-jackson-queen-tribute-on-saxophone/">THE BEATLES MICHAEL JACKSON QUEEN TRIBUTE ON SAXOPHONE <time datetime="2026-10-17">October 17, 2026</time></a></li>
+    <li><a href="/en/event/ee64ee2c-cf1c-4108-afea-be65eaa9837d/sax-live-huge-music-mix/">SAX LIVE HUGE MUSIC MIX <time datetime="2026-10-20">October 20, 2026</time></a></li>
+    <li><a href="/en/event/7df5ac4e-6b25-4116-b869-af88019c2d7c/our-music-of-the-90s-and-2000s-on-saxophone/">OUR MUSIC of the 90s and 2000s on saxophone <time datetime="2026-10-24">October 24, 2026</time></a></li>
+    <li><a href="/en/event/e76bd1f2-06dd-4e6b-890d-2cc487f9f1df/interactive-saxophone-concert-pub-kvartira/">INTERACTIVE SAXOPHONE CONCERT PUB KVARTIRA <time datetime="2026-10-27">October 27, 2026</time></a></li>
+    <li><a href="/en/event/96e09b73-9d04-44ad-a96d-b42863225f68/guitar-night-37/">GUITAR NIGHT 37 <time datetime="2026-10-31">October 31, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Da Nang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/cf274443-6543-4b00-9fc0-a7b0d798753c/descending-into-the-bunker/">DESCENDING INTO THE BUNKER!</a> <time datetime="2026-10-24">October 24, 2026</time></li>
+    <li>Next: <a href="/en/event/e57c53bc-91fc-434d-b332-f4fb8e8cdd67/transformational-games/">TRANSFORMATIONAL GAMES</a> <time datetime="2026-10-24">October 24, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/da-nang/">Upcoming events in Da Nang</a></p>
+</div>
+
+  </body>
+</html>

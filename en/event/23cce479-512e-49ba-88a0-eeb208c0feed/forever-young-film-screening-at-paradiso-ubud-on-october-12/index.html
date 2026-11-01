@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Forever Young film screening at… — October 12, 2026 · Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Bali, October 12, 2026. On October 12 at 16:00, Studio B Paradiso Ubud will screen the documentary &quot;Forever Young&quot; (2025). It explores research into biological…" />
+    <link rel="canonical" href="https://mypins.site/en/event/23cce479-512e-49ba-88a0-eeb208c0feed/forever-young-film-screening-at-paradiso-ubud-on-october-12/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Forever Young film screening at… — October 12, 2026 · Bali" />
+    <meta property="og:description" content="Bali, October 12, 2026. On October 12 at 16:00, Studio B Paradiso Ubud will screen the documentary &quot;Forever Young&quot; (2025). It explores research into biological…" />
+    <meta property="og:url" content="https://mypins.site/en/event/23cce479-512e-49ba-88a0-eeb208c0feed/forever-young-film-screening-at-paradiso-ubud-on-october-12/" />
+    <meta property="og:image" content="https://static.baliforum.ru/uploads/699920/conversions/paradiso-program-20261008-15-preview.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/23cce479-512e-49ba-88a0-eeb208c0feed/forever-young-film-screening-at-paradiso-ubud-on-october-12/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/23cce479-512e-49ba-88a0-eeb208c0feed/kinopokaz-forever-young-v-paradiso-ubud-12-oktyabrya/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Bali","item":"https://mypins.site/en/bali/"},{"@type":"ListItem","position":3,"name":"Forever Young film screening at Paradiso Ubud on October 12","item":"https://mypins.site/en/event/23cce479-512e-49ba-88a0-eeb208c0feed/forever-young-film-screening-at-paradiso-ubud-on-october-12/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Forever Young film screening at Paradiso Ubud on October 12</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-12">October 12, 2026</time></p>
+  <p><time datetime="2026-10-12T16:00:00">October 12, 2026, 4:00 PM</time></p>
+  <address>Jl. Goutama Sel., Ubud, Kec. Gianyar, Kabupaten Gianyar, Bali 80571, Indonesia</address>
+  <p>On October 12 at 16:00, Studio B Paradiso Ubud will screen the documentary &quot;Forever Young&quot; (2025). It explores research into biological aging and the questions raised by the prospect of longer life.
+
+Duration — 1 hour 28 minutes.</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/bali/">Bali</a> <span aria-hidden="true">›</span> <span>Forever Young film screening at Paradiso Ubud on October 12</span></p>
+    <p>More events in Bali: <a href="/en/bali/">what&#39;s on</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/859cde70-46ad-40d6-8fe3-6081090f758e/screening-of-2001-a-space-odyssey-at-paradiso-ubud-on-october-11/">Screening of &quot;2001: A Space Odyssey&quot; at Paradiso Ubud on October 11 <time datetime="2026-10-11">October 11, 2026</time></a></li>
+    <li><a href="/en/event/72d4866b-e61e-4492-a115-973ab5f46522/wild-film-screening-at-paradiso-ubud-on-october-11/">Wild film screening at Paradiso Ubud on October 11 <time datetime="2026-10-11">October 11, 2026</time></a></li>
+    <li><a href="/en/event/e480c0d4-62ad-4521-bbf9-f03b6f01afcd/e-t-the-extra-terrestrial-screening-at-paradiso-ubud-on-october-11/">E.T. the Extra-Terrestrial screening at Paradiso Ubud on October 11 <time datetime="2026-10-11">October 11, 2026</time></a></li>
+    <li><a href="/en/event/69bf2748-f30d-4a64-9017-d0b923e7ed13/brave-screening-at-paradiso-ubud-on-october-11/">Brave screening at Paradiso Ubud on October 11 <time datetime="2026-10-11">October 11, 2026</time></a></li>
+    <li><a href="/en/event/9b2da612-75c7-405a-abc4-85c4b38ce970/screening-of-a-real-bug-s-life-at-paradiso-ubud-on-october-11/">Screening of A Real Bug’s Life at Paradiso Ubud on October 11 <time datetime="2026-10-11">October 11, 2026</time></a></li>
+    <li><a href="/en/event/c6fcd96b-d7bf-4f65-aa43-35cfd5e23ff8/screening-of-the-grand-budapest-hotel-at-paradiso-ubud-on-october-12/">Screening of &quot;The Grand Budapest Hotel&quot; at Paradiso Ubud on October 12 <time datetime="2026-10-12">October 12, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Bali</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/16baed19-5a0b-4a5c-a14c-99412ce9ec49/ubud-world-singers-session-at-paradiso-ubud-on-october-12/">Ubud World Singers session at Paradiso Ubud on October 12</a> <time datetime="2026-10-12">October 12, 2026</time></li>
+    <li>Next: <a href="/en/event/4c290600-6790-42a1-8ec6-f866fdc3d3de/lila-game/">Lila Game</a> <time datetime="2026-10-12">October 12, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/bali/">Upcoming events in Bali</a></p>
+</div>
+
+  </body>
+</html>

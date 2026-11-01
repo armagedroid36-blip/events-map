@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Встречаюсь в Лимасоле — 10 ноября 2026 · Лимасол, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Лимасол, Кипр, 10 ноября 2026. Новый цикл спектаклей театрального монолога «Анакутревко» в постановке Анны Янгьози. Монолог, балансирующий между криком…" />
+    <link rel="canonical" href="https://mypins.site/event/9a816063-5b88-4d3d-8158-ab603f527923/vstrechayus-v-limasole/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Встречаюсь в Лимасоле — 10 ноября 2026 · Лимасол, Кипр" />
+    <meta property="og:description" content="Лимасол, Кипр, 10 ноября 2026. Новый цикл спектаклей театрального монолога «Анакутревко» в постановке Анны Янгьози. Монолог, балансирующий между криком…" />
+    <meta property="og:url" content="https://mypins.site/event/9a816063-5b88-4d3d-8158-ab603f527923/vstrechayus-v-limasole/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/9a816063-5b88-4d3d-8158-ab603f527923/vstrechayus-v-limasole/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/9a816063-5b88-4d3d-8158-ab603f527923/i-m-recovering-in-limassol/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Встречаюсь в Лимасоле","url":"https://mypins.site/event/9a816063-5b88-4d3d-8158-ab603f527923/vstrechayus-v-limasole/","startDate":"2026-11-10T20:30:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Palio Xidadiko","address":{"@type":"PostalAddress","addressLocality":"Лимасол","streetAddress":"Palio Xidadiko","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.6732045,"longitude":33.0436665}},"description":"Новый цикл спектаклей театрального монолога «Анакутревко» в постановке Анны Янгьози. Монолог, балансирующий между криком экзистенциальной тревоги и призывом сохранить нашу память живой. Вдохновлён современными эссе и текстами мировой литературы (Сэмюэл Беккет, Хронис Миссиос, Томас Остермайер). Персонаж в ожидании. Чрезвычайная ситуация. Скамейка. Пиротехническая критика современной жизни. Депрессия или эмоциональная забастовка? Игра. Память. Девушка, изображённая на кипрском фунте, возвращается как символ памяти.","endDate":"2026-11-10","image":"https://mypins.site/logo.png","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CE%B1%CE%BD%CE%B1%CE%BA%CE%BF%CF%85%CF%84%CF%81%CE%B5%CF%8D%CE%BA%CF%89-%CF%83%CF%84%CE%B7-%CE%BB%CE%B5%CE%BC%CE%B5%CF%83%CF%8C-2026-11-10"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Встречаюсь в Лимасоле","item":"https://mypins.site/event/9a816063-5b88-4d3d-8158-ab603f527923/vstrechayus-v-limasole/"}]}]}</script>
+    <script type="application/json" id="seo-alias-map">{"cloneId":"9a816063-5b88-4d3d-8158-ab603f527923","keptId":"9a816063-5b88-4d3d-8158-ab603f527923","ru":"https://mypins.site/event/9a816063-5b88-4d3d-8158-ab603f527923/vstrechayus-v-limasole/","en":"https://mypins.site/en/event/9a816063-5b88-4d3d-8158-ab603f527923/i-m-recovering-in-limassol/"}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Встречаюсь в Лимасоле</h1>
+  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-11-10">10 ноября 2026</time></p>
+  <p><time datetime="2026-11-10T20:30:00">10 ноября 2026, 20:30</time></p>
+  <address>Palio Xidadiko, Лимасол, Кипр</address>
+  <p>Новый цикл спектаклей театрального монолога «Анакутревко» в постановке Анны Янгьози.
+
+Монолог, балансирующий между криком экзистенциальной тревоги и призывом сохранить нашу память живой. Вдохновлён современными эссе и текстами мировой литературы (Сэмюэл Беккет, Хронис Миссиос, Томас Остермайер).
+
+Персонаж в ожидании. Чрезвычайная ситуация. Скамейка.
+
+Пиротехническая критика современной жизни.
+
+Депрессия или эмоциональная забастовка?
+
+Игра.
+
+Память.
+
+Девушка, изображённая на кипрском фунте, возвращается как символ памяти.</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Встречаюсь в Лимасоле</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/festival/">🎉 Фестивали</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/428c8398-2e4f-48ba-8160-eef6c49dd04e/chili-fest-sia/">Чили Фест Сиа <time datetime="2026-11-07">7 ноября 2026</time></a></li>
+    <li><a href="/event/6582ec30-c018-4957-ba2c-050a20bd7075/festival-zivanii-v-pelendri-2026/">Фестиваль Зивании в Пелендри 2026 <time datetime="2026-11-07">7 ноября 2026</time></a></li>
+    <li><a href="/event/7de31033-cedc-4360-b262-a23e8dfa1d80/festival-zivanii/">Фестиваль зивании <time datetime="2026-11-07">7 ноября 2026</time></a></li>
+    <li><a href="/event/5ecf6442-1838-4c86-892a-c763eb737397/festival-sosedstvo-kino-volosa-3-y-vypusk/">Фестиваль «Соседство кино Волоса» — 3-й выпуск <time datetime="2026-11-08">8 ноября 2026</time></a></li>
+    <li><a href="/event/a616bc3d-22b9-4db0-952d-b87aa8b6920e/festival-zivanii-2026-v-pelendri/">Фестиваль зивании 2026 в Пелендри <time datetime="2026-11-08">8 ноября 2026</time></a></li>
+    <li><a href="/event/c8cfeb37-5bfb-46bc-8b40-d78113f035f1/4-y-festival-paragemisto-i-traditsionnykh-vkusov/">4-й Фестиваль парагемисто и традиционных вкусов <time datetime="2026-11-08">8 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/6f07b75c-5e49-4928-807d-6e573d61c765/dzhon-kliz-posledniy-raz-kogda-vy-mozhete-menya-uvidet-prezhde-chem-ya-umru-na-arene-elefteriya/">Джон Клиз: Последний раз, когда вы можете меня увидеть, прежде чем я умру, на арене Элефтерия</a> <time datetime="2026-11-10">10 ноября 2026</time></li>
+    <li>Следующее: <a href="/event/9f680480-88ac-439a-b3b9-0ac418f9add5/3-y-gala-kontsert/">3-й гала-концерт</a> <time datetime="2026-11-10">10 ноября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>

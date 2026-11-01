@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EDCON 2026: конференция об… — 16 октября 2026 · Санур, Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Санур, Bali, 16 октября 2026. 15–16 октября 2026 года в Grand Palace Hotel Sanur пройдёт EDCON 2026 — международная конференция об образовании, преподавании и…" />
+    <link rel="canonical" href="https://mypins.site/event/f705a154-905e-49d3-aa52-7659fb244813/edcon-2026-konferentsiya-ob-obrazovanii-i-obuchenii-v-sanure/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="EDCON 2026: конференция об… — 16 октября 2026 · Санур, Bali" />
+    <meta property="og:description" content="Санур, Bali, 16 октября 2026. 15–16 октября 2026 года в Grand Palace Hotel Sanur пройдёт EDCON 2026 — международная конференция об образовании, преподавании и…" />
+    <meta property="og:url" content="https://mypins.site/event/f705a154-905e-49d3-aa52-7659fb244813/edcon-2026-konferentsiya-ob-obrazovanii-i-obuchenii-v-sanure/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/f705a154-905e-49d3-aa52-7659fb244813/edcon-2026-konferentsiya-ob-obrazovanii-i-obuchenii-v-sanure/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/f705a154-905e-49d3-aa52-7659fb244813/edcon-2026-conference-on-education-and-learning-in-sanur/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Бали","item":"https://mypins.site/bali/"},{"@type":"ListItem","position":3,"name":"EDCON 2026: конференция об образовании и обучении в Сануре","item":"https://mypins.site/event/f705a154-905e-49d3-aa52-7659fb244813/edcon-2026-konferentsiya-ob-obrazovanii-i-obuchenii-v-sanure/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>EDCON 2026: конференция об образовании и обучении в Сануре</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-16">16 октября 2026</time></p>
+  <p><time datetime="2026-10-16">16 октября 2026</time></p>
+  <address>Jl. Bypass Ngurah Rai No.165, Sanur, Denpasar Selatan, Bali, Санур, Bali</address>
+  <p>230 USD</p>
+  <p>15–16 октября 2026 года в Grand Palace Hotel Sanur пройдёт EDCON 2026 — международная конференция об образовании, преподавании и обучении. Доступны очное участие на Бали и онлайн-формат.
+
+Программа объединяет выступления и обсуждения педагогических исследований: дизайн обучения, вовлечённость учащихся, искусственный интеллект в образовании и обучение на протяжении жизни. Среди заявленных спикеров — профессор Voltaire M. Mistades, доктор Saher Ali и доктор Lo Yueh Yea.
+
+Участие платное. Для международных слушателей без доклада очный билет стоит 410 USD, онлайн-участие — 230 USD. Регистрация и варианты участия (https://educateconference.com/registration-fee-and-packages/).</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/bali/">Бали</a> <span aria-hidden="true">›</span> <span>EDCON 2026: конференция об образовании и обучении в Сануре</span></p>
+    <p>Ещё события на Бали: <a href="/bali/">афиша</a> · <a href="/bali/conference/">💼 Конференции</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/e6d4d416-f7a3-4c17-a558-947e5dca5235/edcon-2026-konferentsiya-ob-obrazovanii-i-obuchenii-v-sanure/">EDCON 2026: конференция об образовании и обучении в Сануре <time datetime="2026-10-15">15 октября 2026</time></a></li>
+    <li><a href="/event/913300e1-88b8-4d72-a653-e7a75f6c457d/natsionalnaya-vstrecha-hiv-research-network-i-indoqi-hiv-2026/">Национальная встреча HIV Research Network и INDOQI-HIV 2026 <time datetime="2026-10-16">16 октября 2026</time></a></li>
+    <li><a href="/event/430d89fc-f8dc-452d-859b-0c54b1cd3fe8/natsionalnaya-vstrecha-hiv-research-network-i-indoqi-hiv-2026/">Национальная встреча HIV Research Network и INDOQI-HIV 2026 <time datetime="2026-10-17">17 октября 2026</time></a></li>
+    <li><a href="/event/1e406702-0f84-4357-b31e-dee8ddf1b5fa/genius-future-summit-2026-v-nuanu-5-6-noyabrya/">Genius Future Summit 2026 в Nuanu 5–6 ноября <time datetime="2026-11-05">5 ноября 2026</time></a></li>
+    <li><a href="/event/e325163d-9022-4207-a83b-9155d54fe7d1/apsec-2026-konferentsiya-po-programmnoy-inzhenerii/">APSEC 2026: конференция по программной инженерии <time datetime="2026-12-07">7 декабря 2026</time></a></li>
+    <li><a href="/event/8bd161f6-030c-4365-b4b3-6114f7c08297/psycon-bali-konferentsiya-po-psikhologii-i-psikhiatrii/">PsyCon Bali: конференция по психологии и психиатрии <time datetime="2026-12-17">17 декабря 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Бали</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/f380f6dd-2467-43c6-86d5-49ec4fb82c4f/mafiya-sportivnaya/">Мафия (спортивная)</a> <time datetime="2026-10-16">16 октября 2026</time></li>
+    <li>Следующее: <a href="/event/f766b304-faf1-4f4c-b99f-27489766a3c1/nauchnaya-laboratoriya-v-unicorns/">Научная Лаборатория в Unicorns</a> <time datetime="2026-10-16">16 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/bali/">Ближайшие события: Бали</a></p>
+</div>
+
+  </body>
+</html>

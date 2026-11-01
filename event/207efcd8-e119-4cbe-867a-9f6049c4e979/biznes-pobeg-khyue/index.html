@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>БИЗНЕС-ПОБЕГ ХЮЭ — 5 сентября 2026 · Дананг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Дананг, 5 сентября 2026. 💼 BUSINESS ESCAPE HUẾ Отдых, который становится инвестицией в ваш бизнес. Древняя императорская столица Вьетнама, где отдых и рост…" />
+    <link rel="canonical" href="https://mypins.site/event/207efcd8-e119-4cbe-867a-9f6049c4e979/biznes-pobeg-khyue/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="БИЗНЕС-ПОБЕГ ХЮЭ — 5 сентября 2026 · Дананг" />
+    <meta property="og:description" content="Дананг, 5 сентября 2026. 💼 BUSINESS ESCAPE HUẾ Отдых, который становится инвестицией в ваш бизнес. Древняя императорская столица Вьетнама, где отдых и рост…" />
+    <meta property="og:url" content="https://mypins.site/event/207efcd8-e119-4cbe-867a-9f6049c4e979/biznes-pobeg-khyue/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Дананг","item":"https://mypins.site/da-nang/"},{"@type":"ListItem","position":3,"name":"БИЗНЕС-ПОБЕГ ХЮЭ","item":"https://mypins.site/event/207efcd8-e119-4cbe-867a-9f6049c4e979/biznes-pobeg-khyue/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>БИЗНЕС-ПОБЕГ ХЮЭ</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-09-05">5 сентября 2026</time></p>
+  <p><time datetime="2026-09-05T19:21:00">5 сентября 2026, 19:21</time></p>
+  <address>Дананг</address>
+  <p>320 USD</p>
+  <p>💼 BUSINESS ESCAPE HUẾ
+
+Отдых, который становится инвестицией в ваш бизнес.
+
+Древняя императорская столица Вьетнама, где отдых и рост идут вместе. Красивая перезагрузка вдали от рутины, сильное предпринимательское окружение, новые идеи и инструменты, которые останутся с вами и после поездки.
+
+🔑 Формат «под ключ». Вам не нужно думать ни о логистике, ни о программе. Всё продумано до мелочей, вы просто приезжаете и получаете максимум пользы и удовольствия.
+
+Что входит в программу:
+
+🚆 Путешествие на туристическом поезде через перевал Хайван, один из самых живописных железнодорожных маршрутов мира.
+
+🏨 Проживание в 5★ TTC Imperial Hotel в самом центре Хюэ: бассейн, SPA, тренажёрный зал.
+
+🗺 Авторский бизнес-квест в императорской гробнице. Не экскурсия, а живой формат, где история великой династии превращается в разговор о лидерстве, стратегии и вашем бизнесе.
+
+🧠 Бизнес-интенсив «Системный рост бизнеса». Три спикера, три темы: лидогенерация, построение отдела продаж, оцифровка и систематизация.
+
+🍽 Совместный обед и ужин-знакомство в кругу предпринимателей.
+
+🤝 30 участников. Живое общение без формальностей и деловые связи, ради которых стоит приехать.
+
+Стоимость участия:
+🐦 Regular — 320 $ (до 5 сентября)
+🐦 Final Price — 350 $ (с 6 сентября)
+
+📍 19-21 сентября, две ночи · Хюэ · всего 30 мест.
+После набора группы регистрация закрывается.
+
+📩 Пишите @yasnaya_olya, пришлём подробную программу.
+
+#дата: 19.09</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/da-nang/">Дананг</a> <span aria-hidden="true">›</span> <span>БИЗНЕС-ПОБЕГ ХЮЭ</span></p>
+    <p>Ещё события в Дананге: <a href="/da-nang/">афиша</a> · <a href="/da-nang/meetup/">🤝 Встречи и нетворкинг</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/30436690-bb36-4743-991a-3eb7cdac8f17/vera-ot-slova-k-obrazu/">Вера: от слова к образу <time datetime="2026-09-05">5 сентября 2026</time></a></li>
+    <li><a href="/event/6a61dc1d-acb6-403a-9de0-5a05d2db44e5/kak-zakosit-pod-svoego-i-zhit-bez-trevogi-vo-vetname/">Как ЗАКОСИТЬ ПОД СВОЕГО и ЖИТЬ БЕЗ ТРЕВОГИ во Вьетнаме <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/38e2bcab-9f00-4395-a51a-428b5b0cc951/bolshoy-netvorking-v-danange/">БОЛЬШОЙ НЕТВОРКИНГ В ДАНАНГЕ <time datetime="2026-11-05">5 ноября 2026</time></a></li>
+    <li><a href="/event/7f036642-89cd-4f00-aa96-ffa97df0c512/skolko-vremeni-ukhodit-na-voprosy-kotorye-reshayutsya-za-15-minut-zhivogo-dialoga/">Сколько времени уходит на вопросы, которые решаются за 15 минут живого диалога? <time datetime="2026-11-05">5 ноября 2026</time></a></li>
+    <li><a href="/event/ebf810b2-b2bf-45d1-854e-66978eafc4ba/100-predprinimateley-dananga-na-odnoy-ploshchadke/">100 предпринимателей Дананга на одной площадке <time datetime="2026-11-05">5 ноября 2026</time></a></li>
+    <li><a href="/event/2738192a-7920-4965-8234-8993b6e2ac9c/terapevticheskiy-knizhnyy-klub/">Терапевтический книжный клуб <time datetime="2026-11-26">26 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Дананг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/ed9a5f90-aca3-4c33-bc60-2b0d2203eab2/vsem-privet/">Всем привет!</a> <time datetime="2026-09-04">4 сентября 2026</time></li>
+    <li>Следующее: <a href="/event/30436690-bb36-4743-991a-3eb7cdac8f17/vera-ot-slova-k-obrazu/">Вера: от слова к образу</a> <time datetime="2026-09-05">5 сентября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/da-nang/">Ближайшие события: Дананг</a></p>
+</div>
+
+  </body>
+</html>

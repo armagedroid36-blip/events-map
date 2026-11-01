@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Фестиваль Bali Movement… — 22 августа 2026 · Нет в списке, Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Нет в списке, Bali, 22 августа 2026. Большой бесплатный фестиваль, посвящённый музыке, спорту, развлечениям, еде, искусству и культуре Бали. В программе…" />
+    <link rel="canonical" href="https://mypins.site/event/a8ceeaab-c9e1-4fb2-a1f2-cac613edd22e/festival-bali-movement-v-bangli/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Фестиваль Bali Movement… — 22 августа 2026 · Нет в списке, Bali" />
+    <meta property="og:description" content="Нет в списке, Bali, 22 августа 2026. Большой бесплатный фестиваль, посвящённый музыке, спорту, развлечениям, еде, искусству и культуре Бали. В программе…" />
+    <meta property="og:url" content="https://mypins.site/event/a8ceeaab-c9e1-4fb2-a1f2-cac613edd22e/festival-bali-movement-v-bangli/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Бали","item":"https://mypins.site/bali/"},{"@type":"ListItem","position":3,"name":"Фестиваль Bali Movement в Bangli","item":"https://mypins.site/event/a8ceeaab-c9e1-4fb2-a1f2-cac613edd22e/festival-bali-movement-v-bangli/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Фестиваль Bali Movement в Bangli</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-08-22">22 августа 2026</time></p>
+  <p><time datetime="2026-08-22T10:00:00">22 августа 2026, 10:00</time></p>
+  <address>Jl. Brigjen Ngurah Rai, Kawan, Kec. Bangli, Kabupaten Bangli, Bali, Индонезия, Нет в списке, Bali</address>
+  <p>Большой бесплатный фестиваль, посвящённый музыке, спорту, развлечениям, еде, искусству и культуре Бали.
+
+В программе — выступления Vierratale, Tika Pagraky, Lee Yonksinatra, Kadek Soma и более 15 местных артистов и талантов Бали. Гостей также ждут семейные развлечения, спортивные активности, F&amp;B-фестиваль, а также знакомство с традиционным искусством и культурой острова.
+
+🎶 Музыка и выступления артистов🎡 Развлечения для всей семьи🏃 Спортивные активности🍽️ Фестиваль еды и напитков🎭 Искусство и культура Бали
+
+📅 17–25 августа 2026📍 Alun-Alun Bangli, Bali🎟️ Вход бесплатный для всех желающих.
+
+Фестиваль проходит в рамках празднования 81-й годовщины независимости Индонезии. 🇮🇩
+
+instagram (https://www.instagram.com/balimovementfestival/)</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/bali/">Бали</a> <span aria-hidden="true">›</span> <span>Фестиваль Bali Movement в Bangli</span></p>
+    <p>Ещё события на Бали: <a href="/bali/">афиша</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/0369dea5-e245-4dc0-bb1d-9c8f5edbf01a/festival-bali-movement-v-bangli/">Фестиваль Bali Movement в Bangli <time datetime="2026-08-23">23 августа 2026</time></a></li>
+    <li><a href="/event/9331ad03-0c42-40c5-b033-ef59bc3279ba/festival-bali-movement-v-bangli/">Фестиваль Bali Movement в Bangli <time datetime="2026-08-24">24 августа 2026</time></a></li>
+    <li><a href="/event/04f30b8a-b085-4fac-8d8d-c4c561d4e71d/festival-bali-movement-v-bangli/">Фестиваль Bali Movement в Bangli <time datetime="2026-08-25">25 августа 2026</time></a></li>
+    <li><a href="/event/07836a63-1151-4b8a-bd32-a4bd9dae31c6/muzykalnyy-festival-axean-v-jimbaran-hub/">Музыкальный фестиваль AXEAN  в Jimbaran Hub <time datetime="2026-08-29">29 августа 2026</time></a></li>
+    <li><a href="/event/bc9cae7c-fe41-45ba-87a8-b341d485cdfd/healix-the-fest-2026-festival-muzyki/">Healix The Fest 2026 — фестиваль музыки <time datetime="2026-11-28">28 ноября 2026</time></a></li>
+    <li><a href="/event/d89f1926-db30-407e-bbba-896a76edea72/connections-bali-2026-festival-urbankiz/">Connections Bali 2026: фестиваль UrbanKiz <time datetime="2026-12-04">4 декабря 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Бали</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/a71ffc67-02ef-427c-9aba-753afc2817ac/vystuplenie-cristoph-v-savaya/">Выступление Cristoph в Savaya</a> <time datetime="2026-08-22">22 августа 2026</time></li>
+    <li>Следующее: <a href="/event/af9c1f10-c458-46cf-8e28-b64cdc80e1bc/shou-svidanie-vslepuyu/">Шоу «Свидание вслепую»</a> <time datetime="2026-08-22">22 августа 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/bali/">Ближайшие события: Бали</a></p>
+</div>
+
+  </body>
+</html>

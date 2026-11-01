@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Живая легенда: мифопоэтическое… — 22 сентября 2026 · Убуд, Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Убуд, Bali, 22 сентября 2026. Living Legend: Mythopoetic Manifestation пройдёт 2026-09-22 на площадке The Yoga Barn. Начало в 15:00. Двухчасовой практикум…" />
+    <link rel="canonical" href="https://mypins.site/event/20ac2c16-af42-401b-ba4a-b36e3b968d4f/zhivaya-legenda-mifopoeticheskoe-proyavlenie/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Живая легенда: мифопоэтическое… — 22 сентября 2026 · Убуд, Bali" />
+    <meta property="og:description" content="Убуд, Bali, 22 сентября 2026. Living Legend: Mythopoetic Manifestation пройдёт 2026-09-22 на площадке The Yoga Barn. Начало в 15:00. Двухчасовой практикум…" />
+    <meta property="og:url" content="https://mypins.site/event/20ac2c16-af42-401b-ba4a-b36e3b968d4f/zhivaya-legenda-mifopoeticheskoe-proyavlenie/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/20ac2c16-af42-401b-ba4a-b36e3b968d4f/zhivaya-legenda-mifopoeticheskoe-proyavlenie/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/20ac2c16-af42-401b-ba4a-b36e3b968d4f/living-legend-mythopoetic-manifestation/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Бали","item":"https://mypins.site/bali/"},{"@type":"ListItem","position":3,"name":"Живая легенда: мифопоэтическое проявление","item":"https://mypins.site/event/20ac2c16-af42-401b-ba4a-b36e3b968d4f/zhivaya-legenda-mifopoeticheskoe-proyavlenie/"}]}]}</script>
+    <script type="application/json" id="seo-alias-map">{"cloneId":"20ac2c16-af42-401b-ba4a-b36e3b968d4f","keptId":"20ac2c16-af42-401b-ba4a-b36e3b968d4f","ru":"https://mypins.site/event/20ac2c16-af42-401b-ba4a-b36e3b968d4f/zhivaya-legenda-mifopoeticheskoe-proyavlenie/","en":"https://mypins.site/en/event/20ac2c16-af42-401b-ba4a-b36e3b968d4f/living-legend-mythopoetic-manifestation/"}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Живая легенда: мифопоэтическое проявление</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-09-22">22 сентября 2026</time></p>
+  <p><time datetime="2026-09-22T15:00:00">22 сентября 2026, 15:00</time></p>
+  <address>F7M8+PVG, Jl. Sukma Kesuma, Peliatan, Kecamatan Ubud, Kabupaten Gianyar, Bali 80571, Индонезия, Убуд, Bali</address>
+  <p>Living Legend: Mythopoetic Manifestation пройдёт 2026-09-22 на площадке The Yoga Barn. Начало в 15:00.
+
+Двухчасовой практикум сочетает движение, мифологические образы, сторителлинг и письменную рефлексию. Участники исследуют личные цели и будущую роль через творческие упражнения.</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/bali/">Бали</a> <span aria-hidden="true">›</span> <span>Живая легенда: мифопоэтическое проявление</span></p>
+    <p>Ещё события на Бали: <a href="/bali/">афиша</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/bf7dc46c-995d-4475-8ac2-32faa091b648/master-klass-po-robototekhnike-dlya-detey-s-4kh-det/">Мастер класс по робототехнике для детей с 4х дет <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/60b789b7-95dc-4bf3-b544-d790fc84b136/volshebnyy-sad-yunyy-uchenyy/">Волшебный сад Юный ученый <time datetime="2026-09-20">20 сентября 2026</time></a></li>
+    <li><a href="/event/656d8ec0-fdad-477e-80f4-c6c5140c186c/zhenskiy-zavtrak-i-risovanie-neyrografiki/">Женский завтрак и рисование нейрографики <time datetime="2026-09-23">23 сентября 2026</time></a></li>
+    <li><a href="/event/21ba81ab-64dc-46b8-9f49-871d9d54413c/zhenskiy-zavtrak-i-risovanie-neyrografiki/">Женский завтрак и рисование нейрографики <time datetime="2026-09-24">24 сентября 2026</time></a></li>
+    <li><a href="/event/9d416ede-c8d7-45e7-8cec-f499472d3da0/akh-nnye-sketchi-risovanie-ubud/">Ах**нные скетчи. Рисование. Убуд <time datetime="2026-11-06">6 ноября 2026</time></a></li>
+    <li><a href="/event/ba420c05-aeaf-4568-a4f2-460e45395c20/obuchenie-na-vegan-povara-s-lizoy-v-sayuri-ubud/">Обучение на веган-повара с Лизой в Sayuri Ubud <time datetime="2026-12-31">31 декабря 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Бали</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/1175ff60-1a8d-4505-999b-da5b3fae37e4/pyatnichnaya-vecherinka-circa-fridays-v-luigi-s/">Пятничная вечеринка Circa Fridays в Luigi&#39;s</a> <time datetime="2026-09-22">22 сентября 2026</time></li>
+    <li>Следующее: <a href="/event/21d35ac4-18f7-4a71-9819-49ac4d06d915/vystavka-sazha-na-krayu-ognya-v-galeri-zen1/">Выставка «Сажа на краю огня» в Galeri Zen1</a> <time datetime="2026-09-22">22 сентября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/bali/">Ближайшие события: Бали</a></p>
+</div>
+
+  </body>
+</html>

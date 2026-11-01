@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Мастер-классы «Парадоксальная… — 11 октября 2026 · Лимасол, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Лимасол, Кипр, 11 октября 2026. В это Хэллоуин загляни в самую парадоксальную тыквенную мастерскую! Всего на несколько дней каждого октября в Paradox Museum…" />
+    <link rel="canonical" href="https://mypins.site/event/899e0ae9-15a0-4797-ba8b-76be204e9af9/master-klassy-paradoksalnaya-tykva/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Мастер-классы «Парадоксальная… — 11 октября 2026 · Лимасол, Кипр" />
+    <meta property="og:description" content="Лимасол, Кипр, 11 октября 2026. В это Хэллоуин загляни в самую парадоксальную тыквенную мастерскую! Всего на несколько дней каждого октября в Paradox Museum…" />
+    <meta property="og:url" content="https://mypins.site/event/899e0ae9-15a0-4797-ba8b-76be204e9af9/master-klassy-paradoksalnaya-tykva/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/899e0ae9-15a0-4797-ba8b-76be204e9af9/master-klassy-paradoksalnaya-tykva/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/899e0ae9-15a0-4797-ba8b-76be204e9af9/paradox-pumpkin-workshops/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Мастер-классы «Парадоксальная тыква»","item":"https://mypins.site/event/899e0ae9-15a0-4797-ba8b-76be204e9af9/master-klassy-paradoksalnaya-tykva/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Мастер-классы «Парадоксальная тыква»</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-11">11 октября 2026</time></p>
+  <p><time datetime="2026-10-11T11:00:00">11 октября 2026, 11:00</time></p>
+  <address>Limassol Paradox Museum, Лимасол, Кипр</address>
+  <p>В это Хэллоуин загляни в самую парадоксальную тыквенную мастерскую!
+
+Всего на несколько дней каждого октября в Paradox Museum Limassol открывает двери секретная мастерская.
+
+Там работает BOO — самый милый (и немного неуклюжий!) помощник музея, с одной-единственной задачей: создать самые странные тыквы на свете. Проблема? Каждый раз что-то идёт… парадоксально!
+
+Запаситесь креативностью и станьте частью Paradox Pumpkin Workshop, создавая уникальные Paradox Pumpkins, собственного BOO и незабываемые воспоминания о Хэллоуине!
+
+🎃 Впечатление включает
+
+✔</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Мастер-классы «Парадоксальная тыква»</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/workshop/">🎨 Мастер-классы</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/2b19c7ba-1191-49a6-b21e-7ba18baed497/master-klassy-laboratoriya-monstrov-ot-tgi-fridays-khellouinskiy-detskiy-master-klass/">Мастер-классы «Лаборатория монстров» от TGI Fridays: Хэллоуинский детский мастер-класс <time datetime="2026-10-27">27 октября 2026</time></a></li>
+    <li><a href="/event/e135059f-510e-4619-9177-76ede31a7562/monster-lab-workshops-by-tgi-fridays-master-klass-na-khellouin-dlya-detey/">Monster Lab Workshops by TGI Fridays: Мастер-класс на Хэллоуин для детей <time datetime="2026-10-27">27 октября 2026</time></a></li>
+    <li><a href="/event/1f367fea-f4f0-493e-a97d-470b1ce099b9/detskiy-khellouin-nochevka-magiya-nauka-i-vesele/">Детский Хэллоуин-ночёвка: Магия, Наука и Веселье <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/fd42c548-c950-4309-b22a-9c68d30b6910/masterskaya-gravyury/">Мастерская гравюры <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/0d62873e-4fbf-4cf8-a152-aabced085601/gotovim-rozhkovyy-med-i-rozhkovoe-pechene-s-rozhkovym-medom/">Готовим рожковый мед и рожковое печенье с рожковым медом <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/0dea223a-e532-4c09-8e17-2d6667e6348d/masterskaya-goncharnogo-dela/">Мастерская гончарного дела <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/8581dc69-b3c6-40bb-b1a0-b1cc9be340ed/master-klass-po-mylovareniyu/">Мастер-класс по мыловарению</a> <time datetime="2026-10-11">11 октября 2026</time></li>
+    <li>Следующее: <a href="/event/8a3c43a2-7900-41e0-940d-67fbbc2e5a91/vecherinka-na-ulitse-filomena-pitstsa-dzhelato-i-dj-set-v-larnake/">Вечеринка на улице Филомена: пицца, джелато и DJ-сет в Ларнаке</a> <time datetime="2026-10-11">11 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>

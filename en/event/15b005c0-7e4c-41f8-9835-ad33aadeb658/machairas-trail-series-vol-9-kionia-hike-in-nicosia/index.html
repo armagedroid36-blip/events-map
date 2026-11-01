@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Machairas Trail Series Vol. 9… — November 29, 2026 · Nicosia</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nicosia, Cyprus, November 29, 2026. Discover the Kionia trail in the Machairas forest near Nicosia on Sunday 29 November 2026 — a 14km circular hike for…" />
+    <link rel="canonical" href="https://mypins.site/en/event/15b005c0-7e4c-41f8-9835-ad33aadeb658/machairas-trail-series-vol-9-kionia-hike-in-nicosia/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Machairas Trail Series Vol. 9… — November 29, 2026 · Nicosia" />
+    <meta property="og:description" content="Nicosia, Cyprus, November 29, 2026. Discover the Kionia trail in the Machairas forest near Nicosia on Sunday 29 November 2026 — a 14km circular hike for…" />
+    <meta property="og:url" content="https://mypins.site/en/event/15b005c0-7e4c-41f8-9835-ad33aadeb658/machairas-trail-series-vol-9-kionia-hike-in-nicosia/" />
+    <meta property="og:image" content="https://eventor-images-s3.s3.eu-west-2.amazonaws.com/high-res/406b1045-c9aa-44c4-bb70-5642534a23f4.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/15b005c0-7e4c-41f8-9835-ad33aadeb658/machairas-trail-series-vol-9-kionia-hike-in-nicosia/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/15b005c0-7e4c-41f8-9835-ad33aadeb658/seriya-trop-makheras-vypusk-9-pokhod-k-kionii-v-nikosii/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Machairas Trail Series Vol. 9: Kionia Hike in Nicosia","url":"https://mypins.site/en/event/15b005c0-7e4c-41f8-9835-ad33aadeb658/machairas-trail-series-vol-9-kionia-hike-in-nicosia/","startDate":"2026-11-29T09:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Kakokefalos View Point, Nicosia","address":{"@type":"PostalAddress","addressLocality":"Nicosia","streetAddress":"Kakokefalos View Point, Nicosia","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.920336,"longitude":33.2043255}},"description":"Discover the Kionia trail in the Machairas forest near Nicosia on Sunday 29 November 2026 — a 14km circular hike for intermediate to advanced hikers. Registration required, fee €3. --- Scroll down for English version 👇 --- Vounisious Adventure Club invites you to the 9th chapter of the Machairas Trail Series, heading to Kionia. The hike takes place on Sunday, 29 November 2026, starting at 9:00 from the Kakokefalos viewpoint (meeting at 8:45). The route is circular, 14 km, lasting approximately 5:30 hours, suitable for intermediate to advanced hikers.","endDate":"2026-11-29T14:30:00","image":"https://eventor-images-s3.s3.eu-west-2.amazonaws.com/high-res/406b1045-c9aa-44c4-bb70-5642534a23f4.jpg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/machairas-trail-series-vol-9-kionia-hike-in-nicosia-2026-11-29"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Machairas Trail Series Vol. 9: Kionia Hike in Nicosia","item":"https://mypins.site/en/event/15b005c0-7e4c-41f8-9835-ad33aadeb658/machairas-trail-series-vol-9-kionia-hike-in-nicosia/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Machairas Trail Series Vol. 9: Kionia Hike in Nicosia</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-11-29">November 29, 2026</time></p>
+  <p><time datetime="2026-11-29T09:00:00">November 29, 2026, 9:00 AM</time></p>
+  <address>Kakokefalos View Point, Nicosia, Cyprus</address>
+  <p>Discover the Kionia trail in the Machairas forest near Nicosia on Sunday 29 November 2026 — a 14km circular hike for intermediate to advanced hikers. Registration required, fee €3.
+
+---
+
+Scroll down for English version 👇
+
+---
+
+Vounisious Adventure Club invites you to the 9th chapter of the Machairas Trail Series, heading to Kionia. The hike takes place on Sunday, 29 November 2026, starting at 9:00 from the Kakokefalos viewpoint (meeting at 8:45). The route is circular, 14 km, lasting approximately 5:30 hours, suitable for intermediate to advanced hikers.</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Machairas Trail Series Vol. 9: Kionia Hike in Nicosia</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/tour/">🗺️ Tours &amp; Excursions</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/17b2c999-dbda-4cbc-889e-545ae4d8cc1d/kyperounta-christmas-village/">Kyperounta Christmas Village <time datetime="2026-11-22">November 22, 2026</time></a></li>
+    <li><a href="/en/event/d51ea7ec-bc18-4f8c-89df-80ea52699cfc/historic-limassol-walk/">Historic Limassol Walk <time datetime="2026-11-25">November 25, 2026</time></a></li>
+    <li><a href="/en/event/6c97ac73-9026-4031-9bbc-320fef2267d1/kakopetria-christmas-village/">Kakopetria Christmas Village <time datetime="2026-11-28">November 28, 2026</time></a></li>
+    <li><a href="/en/event/04d6b2ee-6db7-4761-973e-e9c2d00cd912/christmas-village-of-kyperounta/">Christmas Village of Kyperounta <time datetime="2026-11-29">November 29, 2026</time></a></li>
+    <li><a href="/en/event/b5e34f45-e060-4480-a2d2-3bdda1abc200/historic-limassol-walk/">Historic Limassol Walk <time datetime="2026-12-02">December 2, 2026</time></a></li>
+    <li><a href="/en/event/bc6142c7-7898-4dac-9617-ca1072509a6a/kakopetria-christmas-village/">Kakopetria Christmas Village <time datetime="2026-12-05">December 5, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/d3061d9d-e416-492f-a527-9d02a491665a/social-animals-venue-in-larnaca/">Social Animals: Venue in Larnaca</a> <time datetime="2026-11-28">November 28, 2026</time></li>
+    <li>Next: <a href="/en/event/6b20979c-7817-4c41-9609-5d0245ff41c7/runidalion-2026-road-race-fun-run-in-dali-nicosia/">RunIdalion 2026: Road Race &amp; Fun Run in Dali Nicosia</a> <time datetime="2026-11-29">November 29, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

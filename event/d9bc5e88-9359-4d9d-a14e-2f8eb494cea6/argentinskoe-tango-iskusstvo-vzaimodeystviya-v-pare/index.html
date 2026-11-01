@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Аргентинское танго Искусство… — 27 сентября 2026 · Дананг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Дананг, 27 сентября 2026. 💃 Аргентинское танго / Искусство взаимодействия в паре🕺 На занятии мы будем учиться: ✨ слышать и чувствовать партнёра; ✨ доверять и…" />
+    <link rel="canonical" href="https://mypins.site/event/d9bc5e88-9359-4d9d-a14e-2f8eb494cea6/argentinskoe-tango-iskusstvo-vzaimodeystviya-v-pare/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Аргентинское танго Искусство… — 27 сентября 2026 · Дананг" />
+    <meta property="og:description" content="Дананг, 27 сентября 2026. 💃 Аргентинское танго / Искусство взаимодействия в паре🕺 На занятии мы будем учиться: ✨ слышать и чувствовать партнёра; ✨ доверять и…" />
+    <meta property="og:url" content="https://mypins.site/event/d9bc5e88-9359-4d9d-a14e-2f8eb494cea6/argentinskoe-tango-iskusstvo-vzaimodeystviya-v-pare/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/d9bc5e88-9359-4d9d-a14e-2f8eb494cea6/argentinskoe-tango-iskusstvo-vzaimodeystviya-v-pare/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/d9bc5e88-9359-4d9d-a14e-2f8eb494cea6/argentine-tango-the-art-of-interaction-in-a-couple/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Дананг","item":"https://mypins.site/da-nang/"},{"@type":"ListItem","position":3,"name":"Аргентинское танго Искусство взаимодействия в паре","item":"https://mypins.site/event/d9bc5e88-9359-4d9d-a14e-2f8eb494cea6/argentinskoe-tango-iskusstvo-vzaimodeystviya-v-pare/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Аргентинское танго Искусство взаимодействия в паре</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-09-27">27 сентября 2026</time></p>
+  <p><time datetime="2026-09-27T19:00:00">27 сентября 2026, 19:00</time></p>
+  <address>Passion Dance Studio, Дананг</address>
+  <p>150000 VND</p>
+  <p>💃 Аргентинское танго / Искусство взаимодействия в паре🕺
+
+На занятии мы будем учиться:
+✨ слышать и чувствовать партнёра;
+✨ доверять и брать ответственность;
+✨ вести и следовать без слов;
+✨ создавать комфортное взаимодействие, в котором хорошо обоим;
+✨ двигаться естественно, красиво и уверенно.
+
+Для мужчин - это возможность развить уверенное, комфортное и уважительное лидерство.
+Для девушек - научиться расслабляться, доверять партнёру, чувствовать его намерения и получать удовольствие от совместного движения.
+
+Эти навыки остаются не только на танцполе - они помогают лучше понимать друг друга, легче выстраивать контакт и получать удовольствие от общения.
+
+✨ Опыт не требуется. Приходите сами или с партнёром.
+
+📅 ВС 
+⏰ 19:00 - 20:00
+💰 Стоимость: 150 000 VND 
+📍 Место: Passion Dance Studio 
+📌 Запись: @edepic
+
+#дата: 20.09</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/da-nang/">Дананг</a> <span aria-hidden="true">›</span> <span>Аргентинское танго Искусство взаимодействия в паре</span></p>
+    <p>Ещё события в Дананге: <a href="/da-nang/">афиша</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/0628f6b7-cb72-4c91-9d99-61e5e405552e/v-pyatnitsu-v-13-00/">В пятницу в 13:00, <time datetime="2026-09-25">25 сентября 2026</time></a></li>
+    <li><a href="/event/ad900736-2b2f-4e46-8691-25583b400aa9/vpervye-vo-vetname/">ВПЕРВЫЕ ВО ВЬЕТНАМЕ <time datetime="2026-09-26">26 сентября 2026</time></a></li>
+    <li><a href="/event/2789a6a9-9c95-47eb-8d13-33fb50cacfc1/klienty-i-prodazhi-gde-vy-teryaete-dengi/">КЛИЕНТЫ И ПРОДАЖИ: ГДЕ ВЫ ТЕРЯЕТЕ ДЕНЬГИ. <time datetime="2026-09-26">26 сентября 2026</time></a></li>
+    <li><a href="/event/49297584-b9c9-4fb5-9357-ab86abe61bcd/master-klass-po-sozdaniyu-parfyumerii/">Мастер-класс по созданию парфюмерии <time datetime="2026-09-26">26 сентября 2026</time></a></li>
+    <li><a href="/event/2ddf7461-3309-4753-8ed8-ae2cad0b7864/master-klass-po-improvizatsii/">Мастер-класс по импровизации <time datetime="2026-11-04">4 ноября 2026</time></a></li>
+    <li><a href="/event/f45f3e8d-1990-46b4-aef2-5cc626244f8e/znakomstvo-s-gipnozom/">ЗНАКОМСТВО С ГИПНОЗОМ <time datetime="2026-11-04">4 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Дананг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/d63158db-92b7-435f-bd1d-312e9006ee87/privet-rebyata/">Привет, ребята!</a> <time datetime="2026-09-27">27 сентября 2026</time></li>
+    <li>Следующее: <a href="/event/da12271f-e7b6-466b-829f-6cede5644d5b/tac-igraem-uzhe-v-eti-vykhodnye-v-restorane-369/">TAC играем УЖЕ В ЭТИ ВЫХОДНЫЕ в ресторане 369!</a> <time datetime="2026-09-27">27 сентября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/da-nang/">Ближайшие события: Дананг</a></p>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Literary Club in Nha Trang — October 10, 2026 · Nha Trang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nha Trang, October 10, 2026. Literary club in Nha Trang An intimate literary club where we will carefully, without haste, analyze and discuss texts. No…" />
+    <link rel="canonical" href="https://mypins.site/en/event/7a07f7d5-ba8e-43c7-bf33-d56786221f9e/literary-club-in-nha-trang/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Literary Club in Nha Trang — October 10, 2026 · Nha Trang" />
+    <meta property="og:description" content="Nha Trang, October 10, 2026. Literary club in Nha Trang An intimate literary club where we will carefully, without haste, analyze and discuss texts. No…" />
+    <meta property="og:url" content="https://mypins.site/en/event/7a07f7d5-ba8e-43c7-bf33-d56786221f9e/literary-club-in-nha-trang/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/7a07f7d5-ba8e-43c7-bf33-d56786221f9e/literary-club-in-nha-trang/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/7a07f7d5-ba8e-43c7-bf33-d56786221f9e/literaturnyy-klub-v-nyachange/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"Literary Club in Nha Trang","item":"https://mypins.site/en/event/7a07f7d5-ba8e-43c7-bf33-d56786221f9e/literary-club-in-nha-trang/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Literary Club in Nha Trang</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-10">October 10, 2026</time></p>
+  <p><time datetime="2026-10-10T16:00:00">October 10, 2026, 4:00 PM</time></p>
+  <address>Alam Coffee, Nha Trang</address>
+  <p>Donation</p>
+  <p>Literary club in Nha Trang
+
+An intimate literary club where we will carefully, without haste, analyze and discuss texts. No retelling of the plot and no &quot;liked / didn&#39;t like&quot; questions, but an attempt to unravel meanings and ideas together.
+
+Meeting:
+📍 Alam Coffee
+🗓 October 10 (Saturday), 16:00
+🕓 1.5 — 2 hrs.
+A thoughtful but comfortable atmosphere for reflection and philosophical conversations
+
+Reading:
+Mikhail Bulgakov — &quot;The Red Crown&quot;
+
+Meeting: donation
+
+To sign up, message @dekobrina
+
+#date: 10.10.2026
+Post by: Dara</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>Literary Club in Nha Trang</span></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a> · <a href="/en/nha-trang/meetup/">🤝 Meetups &amp; Networking</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/62e11b0f-725f-4f1d-9bb6-826169ac6acf/meeting-of-the-magic-match-club-learning-to-fulfill-wishes/">Meeting of the MAGIC MATCH Club learning to fulfill wishes <time datetime="2026-10-10">October 10, 2026</time></a></li>
+    <li><a href="/en/event/118ec0ed-f039-44ec-a7d3-2e80b35dc917/moved-but-inside-it-s-still-who-am-i-here/">Moved, but inside it&#39;s still &quot;who am I here?&quot; <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/6605e9fb-1a7d-4312-8ab7-8f6d8ae60c4d/meeting-of-the-book-field-of-experiments-literary-club/">Meeting of the &quot;Book Field of Experiments&quot; literary club <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/fa1951dc-b151-4d9b-808a-094c1a6ad7ab/psychological-club-meeting/">Psychological Club Meeting <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/cd1b4546-6aca-4f38-8e61-f0251bc2b462/free-networking-breakfast-in-nyachang/">FREE NETWORKING BREAKFAST IN NYACHANG <time datetime="2026-11-04">November 4, 2026</time></a></li>
+    <li><a href="/en/event/7ed8de6d-afa1-4de2-b31d-6aca37e7c314/join-the-business-breakfast/">Join the business breakfast! <time datetime="2026-11-05">November 5, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Nha Trang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/70f7f155-7328-45c4-a609-426118073b2c/rompe-latin-party/">ROMPE LATIN PARTY</a> <time datetime="2026-10-10">October 10, 2026</time></li>
+    <li>Next: <a href="/en/event/7be6f4fa-c454-4f72-820f-36f0de8752a5/saturday-night-rock-n-roll-at-vice/">Saturday night: Rock&#39;n&#39;roll at VICE!</a> <time datetime="2026-10-10">October 10, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
+</div>
+
+  </body>
+</html>

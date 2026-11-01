@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kalopanagiotis Christmas Village… — November 21, 2026 · Nicosia</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nicosia, Cyprus, November 21, 2026. A fairytale Christmas village in Kalopanagiotis of Marathasa, from November 21, 2026 to January 6, 2027, with music, dance…" />
+    <link rel="canonical" href="https://mypins.site/en/event/2a81f375-cbfb-4136-909c-575a57480a1f/kalopanagiotis-christmas-village-2026-programme-dates/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Kalopanagiotis Christmas Village… — November 21, 2026 · Nicosia" />
+    <meta property="og:description" content="Nicosia, Cyprus, November 21, 2026. A fairytale Christmas village in Kalopanagiotis of Marathasa, from November 21, 2026 to January 6, 2027, with music, dance…" />
+    <meta property="og:url" content="https://mypins.site/en/event/2a81f375-cbfb-4136-909c-575a57480a1f/kalopanagiotis-christmas-village-2026-programme-dates/" />
+    <meta property="og:image" content="https://eventor-images-s3.s3.eu-west-2.amazonaws.com/high-res/a9b188ec-bedb-41c8-8e34-04ddeb795a50.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/2a81f375-cbfb-4136-909c-575a57480a1f/kalopanagiotis-christmas-village-2026-programme-dates/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/2a81f375-cbfb-4136-909c-575a57480a1f/derevnya-rozhdestva-v-kalopanayotise-2026-programma-i-daty/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Kalopanagiotis Christmas Village 2026: Programme & Dates","url":"https://mypins.site/en/event/2a81f375-cbfb-4136-909c-575a57480a1f/kalopanagiotis-christmas-village-2026-programme-dates/","startDate":"2026-11-21T11:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Kalopanayiotis Christmas Village, Nicosia","address":{"@type":"PostalAddress","addressLocality":"Nicosia","streetAddress":"Kalopanayiotis Christmas Village, Nicosia","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.9927086,"longitude":32.8304631}},"description":"A fairytale Christmas village in Kalopanagiotis of Marathasa, from November 21, 2026 to January 6, 2027, with music, dance, and workshops. Scroll down for English version 👇 ✨ Kalopanagiotis in the Marathasa valley transforms into a Fairytale Christmas Village from November 21, 2026 to January 6, 2027. The village will operate on weekends until December 20 and daily from December 21. ⛪ Kalopanagiotis stands out for the Monastery of Saint John Lampadistis, a UNESCO World Heritage Site, the Venetian bridge, the Kykkos watermill, the...","endDate":"2027-01-06","image":"https://eventor-images-s3.s3.eu-west-2.amazonaws.com/high-res/a9b188ec-bedb-41c8-8e34-04ddeb795a50.jpg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/kalopanagiotis-christmas-village-2026-programme-dates-2026-11-21"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Kalopanagiotis Christmas Village 2026: Programme & Dates","item":"https://mypins.site/en/event/2a81f375-cbfb-4136-909c-575a57480a1f/kalopanagiotis-christmas-village-2026-programme-dates/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Kalopanagiotis Christmas Village 2026: Programme &amp; Dates</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2027-01-06">January 6, 2027</time></p>
+  <p><time datetime="2026-11-21T11:00:00">November 21, 2026, 11:00 AM</time></p>
+  <address>Kalopanayiotis Christmas Village, Nicosia, Cyprus</address>
+  <p>A fairytale Christmas village in Kalopanagiotis of Marathasa, from November 21, 2026 to January 6, 2027, with music, dance, and workshops.
+
+Scroll down for English version 👇
+
+✨ Kalopanagiotis in the Marathasa valley transforms into a Fairytale Christmas Village from November 21, 2026 to January 6, 2027. The village will operate on weekends until December 20 and daily from December 21.
+
+⛪ Kalopanagiotis stands out for the Monastery of Saint John Lampadistis, a UNESCO World Heritage Site, the Venetian bridge, the Kykkos watermill, the...</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Kalopanagiotis Christmas Village 2026: Programme &amp; Dates</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/festival/">🎉 Festivals</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/2372d539-039b-4d0e-8084-fbcbf098be1b/deryneia-christmas-village-2026-programme-dates/">Deryneia Christmas Village 2026: Programme &amp; Dates <time datetime="2026-11-21">November 21, 2026</time></a></li>
+    <li><a href="/en/event/4078fa8b-af7c-4c31-b3f3-8eea8aaa6179/kyperounta-christmas-village-2026-programme-dates/">Kyperounta Christmas Village 2026: Programme &amp; Dates <time datetime="2026-11-21">November 21, 2026</time></a></li>
+    <li><a href="/en/event/4cf5d3f2-d881-469d-95d7-277b3b1c7090/fairytale-christmas-village-magic-returns-to-kalopanayiotis/">Fairytale Christmas Village - Magic Returns to Kalopanayiotis <time datetime="2026-11-21">November 21, 2026</time></a></li>
+    <li><a href="/en/event/554c9bf1-2933-4ee7-9ae6-7dad2a7fa181/lofou-christmas-village-2026-programme-dates/">Lofou Christmas Village 2026: Programme &amp; Dates <time datetime="2026-11-21">November 21, 2026</time></a></li>
+    <li><a href="/en/event/7658fe24-ed0b-4cd8-a872-900ab091da13/lefkara-christmas-village-2026-programme-dates/">Lefkara Christmas Village 2026: Programme &amp; Dates <time datetime="2026-11-21">November 21, 2026</time></a></li>
+    <li><a href="/en/event/8040a999-fca9-4fab-ae7f-ae480cc05f89/christmas-market-2026-at-mall-of-cyprus/">Christmas Market 2026 at Mall of Cyprus <time datetime="2026-11-21">November 21, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/dabc761b-7d2d-4f85-a8e9-b897420962e3/celebrate-new-year-s-eve-in-style/">Celebrate New Year&#39;s Eve in style</a> <time datetime="2026-12-31">December 31, 2026</time></li>
+    <li>Next: <a href="/en/event/9f68ac72-6807-49f9-b0a9-406060ece8d2/statos-agios-fotios-christmas-village-a-winter-fairy-tale-in-the-mountains-of-cyprus/">Statos-Agios Fotios Christmas Village: A Winter Fairy Tale in the Mountains of Cyprus</a> <time datetime="2027-01-06">January 6, 2027</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

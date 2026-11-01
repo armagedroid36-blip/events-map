@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>НЕЙРОБИОЛОГИЯ УСПЕХА — 22 октября 2026 · Дананг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Дананг, 22 октября 2026. НЕЙРОБИОЛОГИЯ УСПЕХА За несколько лет работы с людьми я выделил 6 ключевых способностей мозга, которые влияют на достижение целей…" />
+    <link rel="canonical" href="https://mypins.site/event/59b6a7fb-c74c-4750-b33c-b8d348841034/neyrobiologiya-uspekha/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="НЕЙРОБИОЛОГИЯ УСПЕХА — 22 октября 2026 · Дананг" />
+    <meta property="og:description" content="Дананг, 22 октября 2026. НЕЙРОБИОЛОГИЯ УСПЕХА За несколько лет работы с людьми я выделил 6 ключевых способностей мозга, которые влияют на достижение целей…" />
+    <meta property="og:url" content="https://mypins.site/event/59b6a7fb-c74c-4750-b33c-b8d348841034/neyrobiologiya-uspekha/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/de0380acbf0e7e98016c2f899dfbfe88.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/59b6a7fb-c74c-4750-b33c-b8d348841034/neyrobiologiya-uspekha/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/59b6a7fb-c74c-4750-b33c-b8d348841034/neurobiology-of-success/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Дананг","item":"https://mypins.site/da-nang/"},{"@type":"ListItem","position":3,"name":"НЕЙРОБИОЛОГИЯ УСПЕХА","item":"https://mypins.site/event/59b6a7fb-c74c-4750-b33c-b8d348841034/neyrobiologiya-uspekha/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>НЕЙРОБИОЛОГИЯ УСПЕХА</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-29">29 октября 2026</time></p>
+  <p><time datetime="2026-10-22T19:00:00">22 октября 2026, 19:00</time></p>
+  <address>Tổ cà phê, Дананг</address>
+  <p>200000 VND</p>
+  <p>НЕЙРОБИОЛОГИЯ УСПЕХА
+
+За несколько лет работы с людьми я выделил 6 ключевых способностей мозга, которые влияют на достижение целей, реализовывать свой потенциал и попутно получать удовольствие от жизни.
+
+На встрече разберём, как они работают с точки зрения нейробиологии, психологии и реальных ситуаций в жизни.
+
+На встрече вы:
+
+— узнаете 6 ключевых способностей, которые помогают добиваться результатов и ускорять рост
+
+— поймёте, как особенности работы вашей психики влияют на успех и качество жизни
+
+— научитесь определять главное ограничение, которое тормозит ваше развитие
+
+Формат: теория + практический разбор участников
+
+Ведущий: Антон Шевляков — психолог, нейробиолог
+
+БОНУС: каждый участник получит PDF-гайд с резюме встречи и практическими рекомендациями.
+
+Количество мест ограничено: 12 человек
+
+🗓 22.10, четверг | 19:00
+📍 Tổ cà phê
+💰 200k VND
+⏱️ ~2 часа
+
+Запись в лс: @DrShevlyakov
+
+#Дата: 22.10</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/da-nang/">Дананг</a> <span aria-hidden="true">›</span> <span>НЕЙРОБИОЛОГИЯ УСПЕХА</span></p>
+    <p>Ещё события в Дананге: <a href="/da-nang/">афиша</a> · <a href="/da-nang/lecture/">📚 Лекции</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/1b3c40cb-755b-4cfc-9a5b-718c797c1510/kak-voyti-v-potok-neyrobiologiya-produktivnosti/">КАК ВОЙТИ В ПОТОК: нейробиология продуктивности <time datetime="2026-09-10">10 сентября 2026</time></a></li>
+    <li><a href="/event/1b7e73fa-f5cc-403f-9f82-c80bd31a03fd/danang-11-sentyabrya-v-11-00/">ДАНАНГ! 11 СЕНТЯБРЯ В 11:00 <time datetime="2026-09-11">11 сентября 2026</time></a></li>
+    <li><a href="/event/8e9231ae-f538-4dff-871d-5cd929fff49c/podavlennyy-gnev-i-samosabotazh/">ПОДАВЛЕННЫЙ ГНЕВ И САМОСАБОТАЖ <time datetime="2026-09-17">17 сентября 2026</time></a></li>
+    <li><a href="/event/2a0ea2e0-9b60-4197-8ce7-697a15847eec/kak-s-pomoshchyu-otnosheniy-i-seksa-zarabatyvat-bolshe-deneg/">«Как с помощью отношений и секса зарабатывать больше денег!» <time datetime="2026-09-24">24 сентября 2026</time></a></li>
+    <li><a href="/event/0cd69e17-214a-497a-afed-c0a52c8be84c/dengi-i-samootsenka/">ДЕНЬГИ И САМООЦЕНКА <time datetime="2026-10-04">4 октября 2026</time></a></li>
+    <li><a href="/event/bdc71ab4-240a-4814-83e5-4d3cded14435/trevozhnost-otkuda-ona-beretsya-i-chto-s-ney-delat/">«Тревожность: откуда она берётся и что с ней делать?» <time datetime="2026-10-16">16 октября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Дананг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/43ce2397-ada2-4131-bab7-4d39b5125167/vnov-provodim-psikhologicheskuyu-praktiku-v-soprovozhdenii-sound-healing/">Вновь проводим Психологическую Практику в сопровождении Sound Healing</a> <time datetime="2026-10-29">29 октября 2026</time></li>
+    <li>Следующее: <a href="/event/9e72e55a-b5af-47d7-8fc6-f9e23f22f754/zachistka-zhizni-kuda-slivaetsya-energiya-i-kak-vernut-resurs-praktikum-v-danange/">Зачистка жизни: куда сливается энергия и как вернуть ресурс Практикум в Дананге</a> <time datetime="2026-10-29">29 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/da-nang/">Ближайшие события: Дананг</a></p>
+</div>
+
+  </body>
+</html>

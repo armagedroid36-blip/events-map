@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>STAND-UP EVENING with Seryoga… — October 15, 2026 · Nha Trang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nha Trang, October 15, 2026. 👀 STAND-UP EVENING with Seryoga and Seva Two experienced comedians on stage at once - Seryoga Lavrov and Seva Vertman 🔥 We chat…" />
+    <link rel="canonical" href="https://mypins.site/en/event/a38cc9b6-d7b8-47ed-af8d-772ddf1c172d/stand-up-evening-with-seryoga-and-seva/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="STAND-UP EVENING with Seryoga… — October 15, 2026 · Nha Trang" />
+    <meta property="og:description" content="Nha Trang, October 15, 2026. 👀 STAND-UP EVENING with Seryoga and Seva Two experienced comedians on stage at once - Seryoga Lavrov and Seva Vertman 🔥 We chat…" />
+    <meta property="og:url" content="https://mypins.site/en/event/a38cc9b6-d7b8-47ed-af8d-772ddf1c172d/stand-up-evening-with-seryoga-and-seva/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/a38cc9b6-d7b8-47ed-af8d-772ddf1c172d/stand-up-evening-with-seryoga-and-seva/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/a38cc9b6-d7b8-47ed-af8d-772ddf1c172d/stendap-vecher-s-seregoy-i-sevoy/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"STAND-UP EVENING with Seryoga and Seva","item":"https://mypins.site/en/event/a38cc9b6-d7b8-47ed-af8d-772ddf1c172d/stand-up-evening-with-seryoga-and-seva/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>STAND-UP EVENING with Seryoga and Seva</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-15">October 15, 2026</time></p>
+  <p><time datetime="2026-10-15T20:00:00">October 15, 2026, 8:00 PM</time></p>
+  <address>Tê Bê Chilling Cocktail Bar, 04 Trần Phú Mường Thanh, 04 Trần Phú, Nha Trang, Khánh Hòa</address>
+  <p>100000 VND</p>
+  <p>👀 STAND-UP EVENING with Seryoga and Seva
+
+Two experienced comedians on stage at once - Seryoga Lavrov and Seva Vertman 🔥
+
+We chat with the audience, tell stories, test out new jokes and do everything to have a laugh 😁
+
+Join us, it&#39;s going to be fun 😉
+
+⏰ October 15 (Thursday)
+guest gathering 19:30
+start 20:00
+
+📍 Te Be Chilling
+
+💵 Entry: 100k VND
+
+❗️LIMITED SEATS
+
+🔞 18+
+
+✉️ Booking: @lavrooov
+
+#date: 15.10.2026
+Post by: Seryoga Lavrov</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>STAND-UP EVENING with Seryoga and Seva</span></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a> · <a href="/en/nha-trang/theatre/">🎭 Theatres &amp; Shows</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/cb3a8eb7-733b-4a1e-adf2-7553fcfcf32f/theater-class-for/">Theater class for <time datetime="2026-10-15">October 15, 2026</time></a></li>
+    <li><a href="/en/event/c56255f9-1c04-423e-8880-d5033c029620/today-the-best-stand-up/">TODAY - THE BEST STAND-UP <time datetime="2026-10-16">October 16, 2026</time></a></li>
+    <li><a href="/en/event/1da34146-9b99-4f15-8e48-afd9dd854457/sunday-october-18-nha-trang/">Sunday (October 18) Nha Trang <time datetime="2026-10-18">October 18, 2026</time></a></li>
+    <li><a href="/en/event/7ef1341a-3bc0-476d-b393-7b93755d82e0/tata-show-at-vinwonders/">Tata Show at VinWonders <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/d87e2814-7362-4047-8ae6-0566ebe06320/life-puppets-show-at-do-theatre/">Life Puppets show at Do Theatre <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/4df7da34-c18c-48ef-962d-db2f7f041a07/chum-show/">Chum Show <time datetime="2026-11-01">November 1, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Nha Trang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/955f4511-0ffa-436b-b70a-edc0fc883913/we-paint-from-life-in-watercolor-or-pencils-or-even-in-mixed-media-there-are-several-materials-to-choose-from/">We paint from life in watercolor or pencils, or even in mixed media — there are several materials to choose from</a> <time datetime="2026-10-15">October 15, 2026</time></li>
+    <li>Next: <a href="/en/event/aac88883-19cd-433a-ae28-f948a5bf6303/bead-workshop/">Bead workshop</a> <time datetime="2026-10-15">October 15, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
+</div>
+
+  </body>
+</html>

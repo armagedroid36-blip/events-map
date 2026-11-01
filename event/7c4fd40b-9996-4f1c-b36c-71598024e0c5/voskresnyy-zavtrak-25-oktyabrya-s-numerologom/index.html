@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Воскресный завтрак 25 октября с… — 25 октября 2026 · Дананг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Дананг, 25 октября 2026. 🎴🤩🤩 Воскресный завтрак 25 октября с нумерологом «Где пропадают ваши деньги и здоровье» 💰в кафе Solis Вы удивитесь, но в вашей дате…" />
+    <link rel="canonical" href="https://mypins.site/event/7c4fd40b-9996-4f1c-b36c-71598024e0c5/voskresnyy-zavtrak-25-oktyabrya-s-numerologom/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Воскресный завтрак 25 октября с… — 25 октября 2026 · Дананг" />
+    <meta property="og:description" content="Дананг, 25 октября 2026. 🎴🤩🤩 Воскресный завтрак 25 октября с нумерологом «Где пропадают ваши деньги и здоровье» 💰в кафе Solis Вы удивитесь, но в вашей дате…" />
+    <meta property="og:url" content="https://mypins.site/event/7c4fd40b-9996-4f1c-b36c-71598024e0c5/voskresnyy-zavtrak-25-oktyabrya-s-numerologom/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/de0380acbf0e7e98016c2f899dfbfe88.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/7c4fd40b-9996-4f1c-b36c-71598024e0c5/voskresnyy-zavtrak-25-oktyabrya-s-numerologom/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/7c4fd40b-9996-4f1c-b36c-71598024e0c5/sunday-breakfast-on-october-25-with-a-numerologist/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Дананг","item":"https://mypins.site/da-nang/"},{"@type":"ListItem","position":3,"name":"Воскресный завтрак 25 октября с нумерологом","item":"https://mypins.site/event/7c4fd40b-9996-4f1c-b36c-71598024e0c5/voskresnyy-zavtrak-25-oktyabrya-s-numerologom/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Воскресный завтрак 25 октября с нумерологом</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-25">25 октября 2026</time></p>
+  <p><time datetime="2026-10-25T11:00:00">25 октября 2026, 11:00</time></p>
+  <address>Solis Coffee Brunch &amp; Beer, 36 An Thượng 30, Ngũ Hành Sơn, Đà Nẵng 50000, Дананг</address>
+  <p>150000 VND</p>
+  <p>🎴🤩🤩 Воскресный завтрак 25 октября с нумерологом
+«Где пропадают ваши деньги и здоровье» 💰в кафе Solis
+
+Вы удивитесь, но в вашей дате рождения уже все зашифровано, запрограммировано и встроено в вас! А наша задача - это рассчитать, увидеть, узнать и понять, что с этим делать 💪🏼
+
+Есть такая специальная точка, которая влияет на ваши деньги, здоровье и материю. И когда вы в ней, то деньги утекают, здоровье начинает страдать, а радости в жизни становится все меньше 🙇🏻‍♂️
+
+На нашей встрече мы с вами:
+
+👭 Познакомимся и проведём утро в приятной компании;
+📈 Построим личную диаграмму рождения;
+🔥 Разберёмся в том, что влияет на ваши финансы, здоровье и всю материю, как остановить утечку энергии;
+🧭 Получим персональные рекомендации;
+🎴 Поработаем с метафорическими картами.
+
+Иногда, чтобы сиять, быть здоровым, богатым и ресурсным человеком - нужно себя узнать и понять, как работает внутренний механизм 🤩
+
+Наш завтрак состоится:
+📅 Воскресенье 25 октября в 11:00
+📍 Кафе «Solis»
+💰 Участие — 150.000
+
+❗️ Максимум 4 человека ❗️
+
+Для записи пишите мне в личные сообщения 💌 @ammi_nova
+
+Буду очень рада познакомиться с вами 🫂
+
+#дата: 25.10</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/da-nang/">Дананг</a> <span aria-hidden="true">›</span> <span>Воскресный завтрак 25 октября с нумерологом</span></p>
+    <p>Ещё события в Дананге: <a href="/da-nang/">афиша</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/44695b63-f9e6-4fd6-8076-5573fca071c9/trening-razbor/">Тренинг-разбор <time datetime="2026-10-24">24 октября 2026</time></a></li>
+    <li><a href="/event/aa6fae60-5151-4161-ab9e-025f1dfe836e/klass-po-sovremennomu-tantsu-v-danange/">Класс по современному танцу в Дананге! <time datetime="2026-10-24">24 октября 2026</time></a></li>
+    <li><a href="/event/fd8f38b4-cbba-44ac-a271-580f0599416a/vot-i-prishla-pora-gotovitsya-k-helloween/">Вот и пришла пора готовиться к Helloween! <time datetime="2026-10-24">24 октября 2026</time></a></li>
+    <li><a href="/event/3f41eae4-2e4c-43a1-925e-b3b4c7fa4150/master-klass-po-sozdaniyu-ukrasheniy/">Мастер-класс по созданию украшений <time datetime="2026-10-25">25 октября 2026</time></a></li>
+    <li><a href="/event/2ddf7461-3309-4753-8ed8-ae2cad0b7864/master-klass-po-improvizatsii/">Мастер-класс по импровизации <time datetime="2026-11-04">4 ноября 2026</time></a></li>
+    <li><a href="/event/f45f3e8d-1990-46b4-aef2-5cc626244f8e/znakomstvo-s-gipnozom/">ЗНАКОМСТВО С ГИПНОЗОМ <time datetime="2026-11-04">4 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Дананг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/786a0529-91ac-4ed9-9ff2-7988d78298db/kviz-pliz-komandnaya-igra-s-voprosami-na-absolyutno-raznye-temy-vspominayte-vse-chto-znali-uznavayte-novoe-do-igry-i-p/">Квиз, плиз! командная игра с вопросами на абсолютно разные темы. Вспоминайте всё, что знали, узнавайте новое до игры и п</a> <time datetime="2026-10-25">25 октября 2026</time></li>
+    <li>Следующее: <a href="/event/c6b4d234-af3a-4d65-8dda-a561f0fab280/v-eto-voskresene-v-da-nang-english-speaking-club-luchshem-meste-dlya-znakomstv-i-praktiki-angliyskogo-my-budem-govorit-o/">В это воскресенье в Da Nang English Speaking Club лучшем месте для знакомств и практики английского мы будем говорить о</a> <time datetime="2026-10-25">25 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/da-nang/">Ближайшие события: Дананг</a></p>
+</div>
+
+  </body>
+</html>

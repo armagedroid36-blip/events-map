@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Книжный фестиваль Никосии… — 11 октября 2026 · Никосия, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Никосия, Кипр, 11 октября 2026. По случаю сегодняшнего Всемирного дня книги Nicosia Book Fest объявляет ключевую информацию об организации мероприятия 2026…" />
+    <link rel="canonical" href="https://mypins.site/event/6c026f18-a36f-4a58-bc83-435dfc43bac7/knizhnyy-festival-nikosii-2026-vsemirnyy-den-knigi/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Книжный фестиваль Никосии… — 11 октября 2026 · Никосия, Кипр" />
+    <meta property="og:description" content="Никосия, Кипр, 11 октября 2026. По случаю сегодняшнего Всемирного дня книги Nicosia Book Fest объявляет ключевую информацию об организации мероприятия 2026…" />
+    <meta property="og:url" content="https://mypins.site/event/6c026f18-a36f-4a58-bc83-435dfc43bac7/knizhnyy-festival-nikosii-2026-vsemirnyy-den-knigi/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/6c026f18-a36f-4a58-bc83-435dfc43bac7/knizhnyy-festival-nikosii-2026-vsemirnyy-den-knigi/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/6c026f18-a36f-4a58-bc83-435dfc43bac7/nicosia-book-fest-2026-world-book-day/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Книжный фестиваль Никосии 2026 – Всемирный день книги","item":"https://mypins.site/event/6c026f18-a36f-4a58-bc83-435dfc43bac7/knizhnyy-festival-nikosii-2026-vsemirnyy-den-knigi/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Книжный фестиваль Никосии 2026 – Всемирный день книги</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-11">11 октября 2026</time></p>
+  <p><time datetime="2026-10-11T10:00:00">11 октября 2026, 10:00</time></p>
+  <address>Caves of Acropolis Park, Никосия, Кипр</address>
+  <p>По случаю сегодняшнего Всемирного дня книги Nicosia Book Fest объявляет ключевую информацию об организации мероприятия 2026 года, подтверждая свою приверженность продвижению книги и любви к чтению на Кипре.</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Книжный фестиваль Никосии 2026 – Всемирный день книги</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/festival/">🎉 Фестивали</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/69edaa68-9666-44bf-ab9a-9c7faa9a52c7/festival-iskusstv-rayona-makhalart-26/">Фестиваль искусств района Махаларт 26 <time datetime="2026-10-08">8 октября 2026</time></a></li>
+    <li><a href="/event/963fdbe5-4e9e-41f8-96ec-c89b1a82c4bd/art-explora-festival-v-limasole/">Art Explora Festival в Лимасоле <time datetime="2026-10-25">25 октября 2026</time></a></li>
+    <li><a href="/event/51861796-19bc-4e0d-875e-3ec4ab13fafa/khellouin-v-toy-town/">Хэллоуин в Toy Town <time datetime="2026-10-28">28 октября 2026</time></a></li>
+    <li><a href="/event/2613160e-8bee-4444-ace1-2d8f1bf87c42/3-y-osenniy-festival-khellouina/">3-й осенний фестиваль Хэллоуина <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/27755ed9-24b0-4f42-8956-2fb7b78b91ea/zhutkiy-bilet-issledovatelya-v-nikosii/">Жуткий билет исследователя в Никосии <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/3a4a9076-860d-41ea-9998-fef116247a19/semeynye-vykhodnye-kosmos-nauka-i-khellouinskoe-vesele/">Семейные выходные: космос, наука и хэллоуинское веселье <time datetime="2026-10-31">31 октября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/6898c057-50b2-4d8e-b5c0-4e56de10a556/strunnyy-kvartet-tratsik/">Струнный квартет TratSik</a> <time datetime="2026-10-11">11 октября 2026</time></li>
+    <li>Следующее: <a href="/event/6d63c514-2c87-4977-b8b2-c8170f7ac11d/velosipedom-i-peshkom-v-podderzhku-opeki-2026/">Велосипедом и пешком в поддержку опеки 2026</a> <time datetime="2026-10-11">11 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>

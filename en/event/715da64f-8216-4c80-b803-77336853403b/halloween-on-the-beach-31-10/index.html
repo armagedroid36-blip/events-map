@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HALLOWEEN ON THE BEACH 31.10 — October 31, 2026 · Nha Trang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nha Trang, October 31, 2026. 🎃 HALLOWEEN ON THE BEACH • 31.10 Meet us on October 31 at Aloha Beach Club for the main Halloween ritual of this season! A…" />
+    <link rel="canonical" href="https://mypins.site/en/event/715da64f-8216-4c80-b803-77336853403b/halloween-on-the-beach-31-10/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="HALLOWEEN ON THE BEACH 31.10 — October 31, 2026 · Nha Trang" />
+    <meta property="og:description" content="Nha Trang, October 31, 2026. 🎃 HALLOWEEN ON THE BEACH • 31.10 Meet us on October 31 at Aloha Beach Club for the main Halloween ritual of this season! A…" />
+    <meta property="og:url" content="https://mypins.site/en/event/715da64f-8216-4c80-b803-77336853403b/halloween-on-the-beach-31-10/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/0a4d30fe36dad4cbf2cf1b8c85a32291.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/715da64f-8216-4c80-b803-77336853403b/halloween-on-the-beach-31-10/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/715da64f-8216-4c80-b803-77336853403b/khellouin-na-plyazhe-31-10/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"HALLOWEEN ON THE BEACH 31.10","item":"https://mypins.site/en/event/715da64f-8216-4c80-b803-77336853403b/halloween-on-the-beach-31-10/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>HALLOWEEN ON THE BEACH 31.10</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-31">October 31, 2026</time></p>
+  <p><time datetime="2026-10-31T16:00:00">October 31, 2026, 4:00 PM</time></p>
+  <address>Aloha Beach Club, Nha Trang</address>
+  <p>200000 VND</p>
+  <p>🎃 HALLOWEEN ON THE BEACH • 31.10
+
+Meet us on October 31 at Aloha Beach Club for the main Halloween ritual of this season!
+
+A mystical island atmosphere awaits us, pumping Afro House, live drums and a fire show 🔥
+
+📅 Date: October 31
+⏰ Start: 16:00
+📍 Location: ALOHA BEACH CLUB, NHA TRANG
+
+On the program:
+🎧 Afro / House / Organic set by AVAN &amp; MOZŸS
+🥁 Live drums and percussion show
+💥 Mesmerizing fire show
+🎭 Best costume contest
+🪅 Halloween piñata
+🎁 Secret prizes giveaway
+
+🎟 Entry: 200.000 VND (by lists)
++ FREE WELCOME DRINK 🍹
+
+📩 To get on the lists - write to: @AVNMII
+
+#date: 31.10</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>HALLOWEEN ON THE BEACH 31.10</span></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/13987af4-9aba-4a20-a447-e39170d4c365/31-october-halloween-night-at-onemore/">31 OCTOBER HALLOWEEN NIGHT AT ONEMORE! <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/812b2fc9-08ae-4751-a4e8-2f940a71a393/saturday-halloween-the-main-party-of-the-night/">Saturday Halloween: The Main Party of the Night! <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/d8cb3a5f-d3eb-4097-9417-0d27272de8ee/rompe-halloween-latin-party/">ROMPE HALLOWEEN LATIN PARTY <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/a5cb6b3f-f7d2-420d-9e52-0b9e938cabea/open-karaoke-battle/">Open Karaoke Battle! <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/b41b6b44-4e33-46ba-be7f-4327de838ed9/all-styles-jam-prostranstvo/">ALL STYLES JAM PROSTRANSTVO <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/f9c9b4bd-2462-4ff3-bb55-1b8655eee94b/karaoke-night-november-1-sun/">KARAOKE NIGHT November 1 (Sun) <time datetime="2026-11-01">November 1, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Nha Trang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/6fc9aedb-1710-415e-9e2a-7de94978cef6/golf-spa-tour-at-vinpearl/">GOLF-SPA TOUR AT VINPEARL!</a> <time datetime="2026-10-31">October 31, 2026</time></li>
+    <li>Next: <a href="/en/event/7ddf2eac-743d-417b-a71f-f6a2adb3f46c/women-s-breakfast-pro-relationships/">WOMEN&#39;S BREAKFAST PRO RELATIONSHIPS</a> <time datetime="2026-10-31">October 31, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
+</div>
+
+  </body>
+</html>

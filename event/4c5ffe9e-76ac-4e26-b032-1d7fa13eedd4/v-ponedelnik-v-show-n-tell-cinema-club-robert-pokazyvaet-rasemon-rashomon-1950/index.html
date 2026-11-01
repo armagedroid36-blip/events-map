@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>В понедельник в Show n Tell Cinema… — 21 сентября 2026 · Дананг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Дананг, 21 сентября 2026. 🎬 В понедельник в Show’n’Tell Cinema Club Роберт показывает «Расёмон» (Rashomon, 1950)! ✨ Это первый фильм Акиры Куросавы, который…" />
+    <link rel="canonical" href="https://mypins.site/event/4c5ffe9e-76ac-4e26-b032-1d7fa13eedd4/v-ponedelnik-v-show-n-tell-cinema-club-robert-pokazyvaet-rasemon-rashomon-1950/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="В понедельник в Show n Tell Cinema… — 21 сентября 2026 · Дананг" />
+    <meta property="og:description" content="Дананг, 21 сентября 2026. 🎬 В понедельник в Show’n’Tell Cinema Club Роберт показывает «Расёмон» (Rashomon, 1950)! ✨ Это первый фильм Акиры Куросавы, который…" />
+    <meta property="og:url" content="https://mypins.site/event/4c5ffe9e-76ac-4e26-b032-1d7fa13eedd4/v-ponedelnik-v-show-n-tell-cinema-club-robert-pokazyvaet-rasemon-rashomon-1950/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/4c5ffe9e-76ac-4e26-b032-1d7fa13eedd4/v-ponedelnik-v-show-n-tell-cinema-club-robert-pokazyvaet-rasemon-rashomon-1950/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/4c5ffe9e-76ac-4e26-b032-1d7fa13eedd4/on-monday-at-show-n-tell-cinema-club-robert-is-showing-rashomon-rashomon-1950/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Дананг","item":"https://mypins.site/da-nang/"},{"@type":"ListItem","position":3,"name":"В понедельник в Show n Tell Cinema Club Роберт показывает «Расёмон» (Rashomon, 1950)!","item":"https://mypins.site/event/4c5ffe9e-76ac-4e26-b032-1d7fa13eedd4/v-ponedelnik-v-show-n-tell-cinema-club-robert-pokazyvaet-rasemon-rashomon-1950/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>В понедельник в Show n Tell Cinema Club Роберт показывает «Расёмон» (Rashomon, 1950)!</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-09-21">21 сентября 2026</time></p>
+  <p><time datetime="2026-09-21T19:00:00">21 сентября 2026, 19:00</time></p>
+  <address>The Workshop, 35 Che Lan Vien, Дананг</address>
+  <p>Донат</p>
+  <p>🎬 В понедельник в Show’n’Tell Cinema Club Роберт показывает «Расёмон» (Rashomon, 1950)!
+
+✨ Это первый фильм Акиры Куросавы, который мы показываем в нашем клубе!
+
+Режиссёр рассказывает историю жестокого преступления через несколько противоречащих друг другу свидетельств. Самурай найден мёртвым, а его жена подверглась нападению. Но каждый из участников и свидетелей описывает произошедшее по-своему, и постепенно перед нами возникают совершенно разные версии одной и той же истории.
+Фильм не даёт простого ответа и задаёт куда более тревожный вопрос: можем ли мы вообще узнать правду, если каждый человек воспринимает реальность по-своему?
+
+Загадочный, атмосферный и психологически напряжённый, «Расёмон» исследует природу правды, памяти, восприятия и человеческой природы. Это один из тех фильмов, которые изменили само представление о том, как можно рассказывать истории в кино.
+
+🗣 Фильм будет показан на языке оригинала (японский) с английскими субтитрами, после чего мы вместе обсудим фильм и поделимся своими впечатлениями.
+
+📽 Участие: донейшн (рекомендованная сумма 50к)
+⏰ Время: 21 сентября, 19.00
+📍 Место: The Workshop
+📫 Адрес: 35 Che Lan Vien, Da Nang, Vietnam
+
+Контактная информация @infraredfade
+#дата: 21.09</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/da-nang/">Дананг</a> <span aria-hidden="true">›</span> <span>В понедельник в Show n Tell Cinema Club Роберт показывает «Расёмон» (Rashomon, 1950)!</span></p>
+    <p>Ещё события в Дананге: <a href="/da-nang/">афиша</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/9356724b-9bfd-46e5-bf2f-69b431ff6459/v-ponedelnik-v-show-n-tell-cinema-club-evgeniy-pokazyvaet-otrochestvo-boyhood-2014/">В понедельник в Show n Tell Cinema Club Евгений показывает «Отрочество» (Boyhood, 2014)! <time datetime="2026-09-07">7 сентября 2026</time></a></li>
+    <li><a href="/event/63610477-0ccf-4f9b-aa6b-eb50ab5070a5/smyslovaya-kinovecherinka/">СМЫСЛОВАЯ КИНОВЕЧЕРИНКА <time datetime="2026-09-11">11 сентября 2026</time></a></li>
+    <li><a href="/event/431f4e1d-a132-4c0e-b142-580a37dde0d6/pyatnitsa-smyslovaya-kinovecherinka/">ПЯТНИЦА - СМЫСЛОВАЯ КИНОВЕЧЕРИНКА <time datetime="2026-09-18">18 сентября 2026</time></a></li>
+    <li><a href="/event/019d0935-2369-44de-8a3b-1f4e2d5c6c8e/v-ponedelnik-v-show-n-tell-cinema-club-zhenya-pokazyvaet-armiyu-tmy-army-of-darkness-1992/">В понедельник в Show n Tell Cinema Club Женя показывает «Армию тьмы» (Army of Darkness, 1992)! <time datetime="2026-09-28">28 сентября 2026</time></a></li>
+    <li><a href="/event/6c37d823-1463-4533-bdcb-19bcaa6f528e/smyslovaya-kinovecherinka/">СМЫСЛОВАЯ КИНОВЕЧЕРИНКА <time datetime="2026-10-02">2 октября 2026</time></a></li>
+    <li><a href="/event/099cd613-2b6d-4820-88d4-5631d9d3bb57/v-ponedelnik-v-show-n-tell-cinema-club-dzheyk-pokazyvaet-oderzhimuyu-possession-1981/">В понедельник в Show n Tell Cinema Club Джейк показывает «Одержимую» (Possession, 1981)! <time datetime="2026-10-05">5 октября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Дананг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/2b18f569-d40e-401a-b505-5627259344c8/zhenskiy-krug-v-danange-21-sentyabrya-zhenskoe-podderzhivayushchee-prostranstvo-bez-konkurentsii/">ЖЕНСКИЙ КРУГ В ДАНАНГЕ 21 СЕНТЯБРЯ (женское поддерживающее пространство без конкуренции)</a> <time datetime="2026-09-21">21 сентября 2026</time></li>
+    <li>Следующее: <a href="/event/a643c26a-ba79-4862-81e9-ceaf684e3449/monday-latino-night-party-v-danange/">MONDAY LATINO NIGHT PARTY В ДАНАНГЕ</a> <time datetime="2026-09-21">21 сентября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/da-nang/">Ближайшие события: Дананг</a></p>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Киноклуб: «Cirque du… — 21 октября 2026 · Печату (Улувату), Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Печату (Улувату), Bali, 21 октября 2026. Волшебная фантазия о мечтах, любви, разлуке и надежде. Это захватывающее зрелище обходится почти без слов. Давайте…" />
+    <link rel="canonical" href="https://mypins.site/event/d52043d9-c862-4da0-9513-059f3a9b19f6/kinoklub-cirque-du-soleil-skazochnyy-mir/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Киноклуб: «Cirque du… — 21 октября 2026 · Печату (Улувату), Bali" />
+    <meta property="og:description" content="Печату (Улувату), Bali, 21 октября 2026. Волшебная фантазия о мечтах, любви, разлуке и надежде. Это захватывающее зрелище обходится почти без слов. Давайте…" />
+    <meta property="og:url" content="https://mypins.site/event/d52043d9-c862-4da0-9513-059f3a9b19f6/kinoklub-cirque-du-soleil-skazochnyy-mir/" />
+    <meta property="og:image" content="https://static.baliforum.ru/uploads/702581/conversions/0-preview.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/d52043d9-c862-4da0-9513-059f3a9b19f6/kinoklub-cirque-du-soleil-skazochnyy-mir/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/d52043d9-c862-4da0-9513-059f3a9b19f6/film-club-cirque-du-soleil-a-fairy-tale-world/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Бали","item":"https://mypins.site/bali/"},{"@type":"ListItem","position":3,"name":"Киноклуб: «Cirque du Soleil: Сказочный мир»","item":"https://mypins.site/event/d52043d9-c862-4da0-9513-059f3a9b19f6/kinoklub-cirque-du-soleil-skazochnyy-mir/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Киноклуб: «Cirque du Soleil: Сказочный мир»</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-21">21 октября 2026</time></p>
+  <p><time datetime="2026-10-21T18:30:00">21 октября 2026, 18:30</time></p>
+  <address>Jalan Pecatu Indah Raya Resort, Pecatu, Kec. Kuta Sel., Kabupaten Badung, Bali 80362, Indonesia, Печату (Улувату), Bali</address>
+  <p>Бесплатно</p>
+  <p>Волшебная фантазия о мечтах, любви, разлуке и надежде. Это захватывающее зрелище обходится почти без слов. Давайте окунёмся в мир снов, наполненный музыкой и чудесами.
+
+.
+
+«Цирк дю Солей» — не просто самая известная цирковая труппа мира. Вот уже 42 года эта команда создаёт одни из лучших шоу на планете. В 2012-м они превратили свои самые изобретательные и яркие номера в полнометражный фильм.
+
+.
+
+Трейлер (https://youtu.be/VqTCe3CPMm8?si=-sJiz9obU_-_Hl6z)
+
+Фильм на Кинопоиске (https://www.kinopoisk.ru/film/575211) | IMDB (https://www.imdb.com/title/tt1792647/)
+
+.
+
+Режиссёр — Эндрю Адамсон
+
+В ролях — Эрика Линц, Игорь Зарипов, Лутс Халбхюбнер
+
+Продюсер — Джеймс Кэмерон («Аватар»)
+
+Возраст — 6+
+
+Год выхода — 2012
+
+Длительность — 1ч 31м
+
+.
+
+Дата — 21 октября (ср)
+
+Время — 18:30
+
+Место — BALAGAN Resto &amp; Lounge Bar (https://maps.app.goo.gl/NeJbRyrQ5TFHR5Wo8) (Букит)
+
+Вход свободный
+
+.
+
+После просмотра — традиционное обсуждение. Поговорим о «Цирке дю Солей», истории публичных шоу, массовых зрелищ и циркового искусства. Поделимся впечатлениями, мыслями и эмоциями.
+
+.
+
+Киноклуб «Аталанта»</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/bali/">Бали</a> <span aria-hidden="true">›</span> <span>Киноклуб: «Cirque du Soleil: Сказочный мир»</span></p>
+    <p>Ещё события на Бали: <a href="/bali/">афиша</a> · <a href="/bali/cinema/">🎬 Киноклуб</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/859cde70-46ad-40d6-8fe3-6081090f758e/kinopokaz-2001-god-kosmicheskaya-odisseya-v-paradiso-ubud-11-oktyabrya/">Кинопоказ «2001 год: Космическая одиссея» в Paradiso Ubud 11 октября <time datetime="2026-10-11">11 октября 2026</time></a></li>
+    <li><a href="/event/c6fcd96b-d7bf-4f65-aa43-35cfd5e23ff8/kinopokaz-otel-grand-budapesht-v-paradiso-ubud-12-oktyabrya/">Кинопоказ «Отель „Гранд Будапешт“» в Paradiso Ubud 12 октября <time datetime="2026-10-12">12 октября 2026</time></a></li>
+    <li><a href="/event/23cce479-512e-49ba-88a0-eeb208c0feed/kinopokaz-forever-young-v-paradiso-ubud-12-oktyabrya/">Кинопоказ Forever Young в Paradiso Ubud 12 октября <time datetime="2026-10-12">12 октября 2026</time></a></li>
+    <li><a href="/event/7505db03-02a9-40fb-bfe9-8d6031e4c863/kinopokaz-myuzikla-amerikanets-v-parizhe-v-paradiso-ubud-14-oktyabrya/">Кинопоказ мюзикла «Американец в Париже» в Paradiso Ubud 14 октября <time datetime="2026-10-14">14 октября 2026</time></a></li>
+    <li><a href="/event/4d21e3e6-e100-4cb8-8e0a-a52894607b1a/kinoklub-ernest-i-selestina/">Киноклуб: «Эрнест и Селестина» <time datetime="2026-10-14">14 октября 2026</time></a></li>
+    <li><a href="/event/913efbab-06bc-40ac-8062-8a5e3826ff43/bali-1928-arkhivnoe-kino-s-zhivoy-muzykoy-v-klymax-18-oktyabrya/">Bali 1928: архивное кино с живой музыкой в Klymax 18 октября <time datetime="2026-10-18">18 октября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Бали</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/ad2c109b-77db-43c6-958a-f2933df76191/public-health-2026-konferentsiya-po-obshchestvennomu-zdorovyu-v-sanure/">Public Health 2026: конференция по общественному здоровью в Сануре</a> <time datetime="2026-10-21">21 октября 2026</time></li>
+    <li>Следующее: <a href="/event/ec834e61-5cfb-4116-b667-e30f092b3a6b/vystavka-aliks-eme-v-muzee-pasifika/">Выставка Аликс Эме в Музее Pasifika</a> <time datetime="2026-10-21">21 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/bali/">Ближайшие события: Бали</a></p>
+</div>
+
+  </body>
+</html>

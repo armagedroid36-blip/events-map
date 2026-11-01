@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>УЖЕ СЕГОДНЯ В 18.00 — 24 октября 2026 · Дананг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Дананг, 24 октября 2026. УЖЕ СЕГОДНЯ В 18.00 🎥 37-я СМЫСЛОВАЯ КИНОВЕЧЕРИНКА Просмотр фильма с разбором 🎬 &quot;Бёрдмэн&quot; – забрал целых 4 Оскара. От легендарного…" />
+    <link rel="canonical" href="https://mypins.site/event/273ca435-9cff-49c7-8bb2-65381a3e93ad/uzhe-segodnya-v-18-00/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="УЖЕ СЕГОДНЯ В 18.00 — 24 октября 2026 · Дананг" />
+    <meta property="og:description" content="Дананг, 24 октября 2026. УЖЕ СЕГОДНЯ В 18.00 🎥 37-я СМЫСЛОВАЯ КИНОВЕЧЕРИНКА Просмотр фильма с разбором 🎬 &quot;Бёрдмэн&quot; – забрал целых 4 Оскара. От легендарного…" />
+    <meta property="og:url" content="https://mypins.site/event/273ca435-9cff-49c7-8bb2-65381a3e93ad/uzhe-segodnya-v-18-00/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/273ca435-9cff-49c7-8bb2-65381a3e93ad/uzhe-segodnya-v-18-00/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/273ca435-9cff-49c7-8bb2-65381a3e93ad/today-at-18-00/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Дананг","item":"https://mypins.site/da-nang/"},{"@type":"ListItem","position":3,"name":"УЖЕ СЕГОДНЯ В 18.00","item":"https://mypins.site/event/273ca435-9cff-49c7-8bb2-65381a3e93ad/uzhe-segodnya-v-18-00/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>УЖЕ СЕГОДНЯ В 18.00</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-24">24 октября 2026</time></p>
+  <p><time datetime="2026-10-24T18:00:00">24 октября 2026, 18:00</time></p>
+  <address>Tổ càphê, Дананг</address>
+  <p>200000 VND</p>
+  <p>УЖЕ СЕГОДНЯ В 18.00
+🎥 37-я СМЫСЛОВАЯ КИНОВЕЧЕРИНКА
+Просмотр фильма с разбором
+
+🎬 &quot;Бёрдмэн&quot; – забрал целых 4 Оскара.
+От легендарного режиссера Алехандро Иньярриту.
+
+Этот фильм вышел тогда, когда мы были молоды и не способны понять его в полной мере.
+
+Мы хотим его переосмыслить, разобраться почему он стал культовым.
+
+История актёра, который пытается доказать свою значимость миру и самому себе. О славе и признании, страхе оказаться никем, конфликте между настоящим искусством и желанием быть любимым. И о том, как легко потерять себя, пытаясь стать кем-то в чужих глазах.
+
+🗣🎬 После просмотра мы вместе разберем фильм
+
+– поговорим о символах, образах и скрытых смыслах, посмотрим, какие психические процессы стоят за поступками героев, и попробуем понять, почему именно эта история откликается каждому по-своему.
+
+❗️P.s. если вы просто хотите посмотреть фильм в русской озвучке на большом экране, с хорошей картинкой, звуком, в удобных мягких креслах, то можете пропустить обсуждение.
+
+⭐️ОСТАЛОСЬ НЕСКОЛЬКО МЕСТ
+
+📅 Суббота 24.10
+🕖 Начало: 18:00
+📍 Место: Tổ càphê
+💰 Цена: 200к
+✉️ Регистрация - @breezeblock_psy
+
+#дата: 24.10</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/da-nang/">Дананг</a> <span aria-hidden="true">›</span> <span>УЖЕ СЕГОДНЯ В 18.00</span></p>
+    <p>Ещё события в Дананге: <a href="/da-nang/">афиша</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/6ff889c5-6b26-41fd-b0e6-4416c9b06f8b/v-ponedelnik-v-show-n-tell-cinema-club-anna-pokazyvaet-turbo-patsan-turbo-kid-2015/">В понедельник в Show n Tell Cinema Club Анна показывает «Турбо пацан» (Turbo Kid, 2015)! <time datetime="2026-10-19">19 октября 2026</time></a></li>
+    <li><a href="/event/87c126ad-9cca-4ccf-9686-939d29889506/37-ya-smyslovaya-kinovecherinka/">37-я СМЫСЛОВАЯ КИНОВЕЧЕРИНКА <time datetime="2026-10-24">24 октября 2026</time></a></li>
+    <li><a href="/event/f379794a-8052-481a-8d93-d26c0aed8b32/v-ponedelnik-v-show-n-tell-cinema-club-zhenya-pokazyvaet-siyanie-the-shining-1980/">В понедельник в Show n Tell Cinema Club Женя показывает «Сияние» (The Shining, 1980)! <time datetime="2026-10-26">26 октября 2026</time></a></li>
+    <li><a href="/event/3aec4f1c-f07b-46a4-9065-dd3507422d2f/khellouinskiy-kinovecher-trup-nevesty/">Хэллоуинский киновечер: «Труп невесты» <time datetime="2026-10-29">29 октября 2026</time></a></li>
+    <li><a href="/event/8b74ba70-1f3d-4dd9-9be6-f17445536a4a/38-ya-smyslovaya-kinovecherinka/">38-я СМЫСЛОВАЯ КИНОВЕЧЕРИНКА <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/0d3e7523-322a-4a46-a00a-10a9a866e054/khellouinskiy-kinovecher-tayna-koko/">Хэллоуинский киновечер: «Тайна Коко» <time datetime="2026-10-30">30 октября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Дананг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/17cd02d0-5404-400b-9eab-0d7c310ac98d/khatkha-yoga/">ХАТХА ЙОГА</a> <time datetime="2026-10-24">24 октября 2026</time></li>
+    <li>Следующее: <a href="/event/40b780eb-a065-4173-a567-c71fdce4253b/pochemu-ya-pytayus-zasluzhit-lyubov/">«ПОЧЕМУ Я ПЫТАЮСЬ ЗАСЛУЖИТЬ ЛЮБОВЬ?»</a> <time datetime="2026-10-24">24 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/da-nang/">Ближайшие события: Дананг</a></p>
+</div>
+
+  </body>
+</html>

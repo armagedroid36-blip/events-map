@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Международный фестиваль… — 30 октября 2026 · Никосия, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Никосия, Кипр, 30 октября 2026. Международный фестиваль поэзии и син+движения «Poetry MOVES International Festival / Диэтнес Фестиваль Пиисис кай Син+Кинисис»…" />
+    <link rel="canonical" href="https://mypins.site/event/09cad680-b60b-40aa-a2ef-daf782be9ad5/mezhdunarodnyy-festival-poezii-i-dvizheniya-poetry-moves/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Международный фестиваль… — 30 октября 2026 · Никосия, Кипр" />
+    <meta property="og:description" content="Никосия, Кипр, 30 октября 2026. Международный фестиваль поэзии и син+движения «Poetry MOVES International Festival / Диэтнес Фестиваль Пиисис кай Син+Кинисис»…" />
+    <meta property="og:url" content="https://mypins.site/event/09cad680-b60b-40aa-a2ef-daf782be9ad5/mezhdunarodnyy-festival-poezii-i-dvizheniya-poetry-moves/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/09cad680-b60b-40aa-a2ef-daf782be9ad5/mezhdunarodnyy-festival-poezii-i-dvizheniya-poetry-moves/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/09cad680-b60b-40aa-a2ef-daf782be9ad5/poetry-moves-international-festival-international-festival-of-poetry-and-syn-movement/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Международный фестиваль поэзии и движения «Poetry MOVES»","item":"https://mypins.site/event/09cad680-b60b-40aa-a2ef-daf782be9ad5/mezhdunarodnyy-festival-poezii-i-dvizheniya-poetry-moves/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Международный фестиваль поэзии и движения «Poetry MOVES»</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-30">30 октября 2026</time></p>
+  <p><time datetime="2026-10-30T18:30:00">30 октября 2026, 18:30</time></p>
+  <address>Artos House, Никосия, Кипр</address>
+  <p>Международный фестиваль поэзии и син+движения «Poetry MOVES International Festival / Диэтнес Фестиваль Пиисис кай Син+Кинисис» включает выставки, музыку, видео и перформансы.
+
+4-й год подряд Poetry MOVES International Festival возвращается, уже утвердившись как международный ежегодный институт.
+
+Poetry MOVES — это не фестиваль поэзии в традиционном смысле. Это инновационный, многотематический фестиваль, который ставит поэзию в центр всех искусств и функционирует как платформа для диалога между поэзией, музыкой, современным танцем, песней, фотографией и другими</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Международный фестиваль поэзии и движения «Poetry MOVES»</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/festival/">🎉 Фестивали</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/2613160e-8bee-4444-ace1-2d8f1bf87c42/3-y-osenniy-festival-khellouina/">3-й осенний фестиваль Хэллоуина <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/27755ed9-24b0-4f42-8956-2fb7b78b91ea/zhutkiy-bilet-issledovatelya-v-nikosii/">Жуткий билет исследователя в Никосии <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/3a4a9076-860d-41ea-9998-fef116247a19/semeynye-vykhodnye-kosmos-nauka-i-khellouinskoe-vesele/">Семейные выходные: космос, наука и хэллоуинское веселье <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/8f33f05c-d67d-4118-917d-d2d46becb228/cyberness-market-na-khellouin/">Cyberness: маркет на Хэллоуин <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/b84f7869-754c-418c-ab74-9b507e5adaf3/yarkiy-khellouin-dlya-vsey-semi/">Яркий Хэллоуин для всей семьи <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/c935faf3-0da7-49ec-ab1d-4cd7bf1e76ef/spooky-halloween-weekend-v-my-mall-limassol/">Spooky Halloween Weekend в MY MALL Limassol <time datetime="2026-10-31">31 октября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/0890d5b1-dd98-4e1e-ab2f-ec3ccf7ada16/vse-nashe-vashe-vremya-mezhdunarodnyy-festival-nikosii-2026/">Всё (наше) ваше время – Международный фестиваль Никосии 2026</a> <time datetime="2026-10-30">30 октября 2026</time></li>
+    <li>Следующее: <a href="/event/0d723e62-15ba-4d26-a566-e91d429dea1d/khellouinskaya-vecherinka-v-limassol-agora/">Хэллоуинская вечеринка в Limassol Agora</a> <time datetime="2026-10-30">30 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>

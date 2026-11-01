@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>8th Pancyprian Sports Management… — October 20, 2026 · Larnaca</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Larnaca, Cyprus, October 20, 2026. Free seminar on Sports Organization Management with emphasis on Artificial Intelligence, at Lordos Beach Hotel &amp; Spa in…" />
+    <link rel="canonical" href="https://mypins.site/en/event/ad9ebc1f-cf68-44b6-b893-7acf645593b9/8th-pancyprian-sports-management-conference-in-larnaca/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="8th Pancyprian Sports Management… — October 20, 2026 · Larnaca" />
+    <meta property="og:description" content="Larnaca, Cyprus, October 20, 2026. Free seminar on Sports Organization Management with emphasis on Artificial Intelligence, at Lordos Beach Hotel &amp; Spa in…" />
+    <meta property="og:url" content="https://mypins.site/en/event/ad9ebc1f-cf68-44b6-b893-7acf645593b9/8th-pancyprian-sports-management-conference-in-larnaca/" />
+    <meta property="og:image" content="https://eventor-images-s3.s3.eu-west-2.amazonaws.com/high-res/a814fe5a-450c-4c1b-afdd-7ca22afb1867.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/ad9ebc1f-cf68-44b6-b893-7acf645593b9/8th-pancyprian-sports-management-conference-in-larnaca/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/ad9ebc1f-cf68-44b6-b893-7acf645593b9/8-ya-pagkipriyskaya-konferentsiya-po-sportivnomu-menedzhmentu-v-larnake/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"8th Pancyprian Sports Management Conference in Larnaca","item":"https://mypins.site/en/event/ad9ebc1f-cf68-44b6-b893-7acf645593b9/8th-pancyprian-sports-management-conference-in-larnaca/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>8th Pancyprian Sports Management Conference in Larnaca</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-20">October 20, 2026</time></p>
+  <p><time datetime="2026-10-20T09:00:00">October 20, 2026, 9:00 AM</time></p>
+  <address>Lordos Beach Hotel &amp; Spa, Larnaca, Cyprus</address>
+  <p>Free seminar on Sports Organization Management with emphasis on Artificial Intelligence, at Lordos Beach Hotel &amp; Spa in Larnaca, Tuesday, October 20, 2026 — program available.
+
+---
+
+Scroll down for English version 👇
+
+---
+
+The 8th Pancyprian Seminar on Sports Organization Management returns with the theme: &quot;Use of Artificial Intelligence – Sports Organizations of Tomorrow - Modern Challenges.&quot; The event takes place on Tuesday, October 20, 2026 at Lordos Beach Hotel &amp; Spa in Larnaca, from 9:00 to 13:30. Attendance is free and certificates of attendance are provided.
+
+🎟️ Free entry.
+
+The</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>8th Pancyprian Sports Management Conference in Larnaca</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/conference/">💼 Conferences</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/753f8862-a024-42ea-96d7-41b58c621277/slovonovo-2026-free-culture-forum/">SlovoNovo 2026 Free Culture Forum <time datetime="2026-10-23">October 23, 2026</time></a></li>
+    <li><a href="/en/event/140f41b9-6848-4775-804c-1a04b7703295/frederick-university-co-organises-the-15th-international-medpower-2026-conference/">Frederick University Co-organises the 15th International MEDPOWER 2026 Conference <time datetime="2026-11-06">November 6, 2026</time></a></li>
+    <li><a href="/en/event/74f1a139-5f91-4e32-9a8e-506ea4d6d656/strategic-corridors-and-alliances-transatlantic-cooperation-and-europe-s-global-connectivity/">Strategic Corridors and Alliances: Transatlantic Cooperation and Europe&#39;s Global Connectivity <time datetime="2026-11-06">November 6, 2026</time></a></li>
+    <li><a href="/en/event/c861eaf3-9fb8-4dd5-be71-1fcedcb92d2a/the-tragedy-of-democracy/">The Tragedy of Democracy <time datetime="2026-11-07">November 7, 2026</time></a></li>
+    <li><a href="/en/event/5e680358-cff1-4357-b889-587c607e0714/cyprus-advertising-and-communication-association-caca-conference/">Cyprus Advertising and Communication Association (CACA) Conference <time datetime="2026-11-20">November 20, 2026</time></a></li>
+    <li><a href="/en/event/9ef17e83-27a5-4555-b498-474f4483373f/cyprus-fintech-week-2026/">Cyprus Fintech Week ‘2026 <time datetime="2026-12-13">December 13, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/ad165d15-1246-4cf6-a9cf-47464c18de10/carob-awards-2026-cyprus-advertising-festival-ceremony-in-nicosia/">Carob Awards 2026: Cyprus Advertising Festival ceremony in Nicosia</a> <time datetime="2026-10-20">October 20, 2026</time></li>
+    <li>Next: <a href="/en/event/b01eb614-4a63-4bee-8619-8ea6d175617a/afro-freeq-tuesdays/">Afro Freeq Tuesdays</a> <time datetime="2026-10-20">October 20, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

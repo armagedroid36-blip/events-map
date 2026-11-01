@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>English language class at Unicorns — October 15, 2026 · Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Bali, October 15, 2026. We invite kids to an exciting and engaging English language class🇬🇧✨ 👇🏻Important: any child can take part — a kindergarten…" />
+    <link rel="canonical" href="https://mypins.site/en/event/ab61caf3-443a-4189-920a-023d76089bc4/english-language-class-at-unicorns/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="English language class at Unicorns — October 15, 2026 · Bali" />
+    <meta property="og:description" content="Bali, October 15, 2026. We invite kids to an exciting and engaging English language class🇬🇧✨ 👇🏻Important: any child can take part — a kindergarten…" />
+    <meta property="og:url" content="https://mypins.site/en/event/ab61caf3-443a-4189-920a-023d76089bc4/english-language-class-at-unicorns/" />
+    <meta property="og:image" content="https://static.baliforum.ru/uploads/701207/conversions/IMG_5438-preview.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/ab61caf3-443a-4189-920a-023d76089bc4/english-language-class-at-unicorns/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/ab61caf3-443a-4189-920a-023d76089bc4/zanyatie-po-angliyskomu-yazyku-v-unicorns/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Bali","item":"https://mypins.site/en/bali/"},{"@type":"ListItem","position":3,"name":"English language class at Unicorns","item":"https://mypins.site/en/event/ab61caf3-443a-4189-920a-023d76089bc4/english-language-class-at-unicorns/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>English language class at Unicorns</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-15">October 15, 2026</time></p>
+  <p><time datetime="2026-10-15T11:00:00">October 15, 2026, 11:00 AM</time></p>
+  <address>Jl. Baru Indah, Tibubeneng, Kec. Kuta Utara, Kabupaten Badung, Bali, Indonesia</address>
+  <p>200000 IDR</p>
+  <p>We invite kids to an exciting and engaging English language class🇬🇧✨
+
+👇🏻Important: any child can take part — a kindergarten membership is not required🤍
+
+📅Date: October 15, 2026 (Thursday)
+
+⏰Time: 11:00
+
+📍Location: Unicorns Changgu
+
+💰Price: 200,000 IDR
+
+👶 from 3 years old
+
+🌟What to expect in the class:
+
+— Full immersion in an English-speaking environment: the class takes place without boring translations
+
+— Live communication through games, creativity, and movement — kids genuinely enjoy it, not &quot;like at school&quot;
+
+— A warm, friendly atmosphere where it&#39;s not scary to make mistakes and easy to open up
+
+— Small groups so we can give attention to everyone
+
+🎈We don&#39;t just teach words — we help children fall in love with English and use it in life
+
+This is a great opportunity to improve language skills, make new friends, and spend time productively 😊
+
+We&#39;ll be happy to see you💛
+
+Message us for more details on
+
+WA: + 62 821 4462 5492✨</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/bali/">Bali</a> <span aria-hidden="true">›</span> <span>English language class at Unicorns</span></p>
+    <p>More events in Bali: <a href="/en/bali/">what&#39;s on</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/1ba9deea-9543-45e5-92f1-be84bf40a1cf/robotics-master-class-for-children-from-4-years-old/">Robotics master class for children from 4 years old <time datetime="2026-10-15">October 15, 2026</time></a></li>
+    <li><a href="/en/event/8d5a3eb3-e8a1-4fae-8934-d4f3fd451f5d/women-s-breakfast-and-neurographic-drawing/">Women&#39;s breakfast and neurographic drawing <time datetime="2026-10-15">October 15, 2026</time></a></li>
+    <li><a href="/en/event/cf881660-fa09-4567-a771-62f504267f5f/vocal-masterclass-with-dhani-gundecha/">Vocal masterclass with Dhani Gundecha <time datetime="2026-10-15">October 15, 2026</time></a></li>
+    <li><a href="/en/event/0039d65c-5d00-4bcf-a91a-10e3f5b52c93/chroma-natural-dyeing-workshops-on-october-15-22-and-29/">Chroma: Natural Dyeing Workshops on October 15, 22, and 29 <time datetime="2026-10-15">October 15, 2026</time></a></li>
+    <li><a href="/en/event/9d416ede-c8d7-45e7-8cec-f499472d3da0/f-king-awesome-sketches-drawing-ubud/">F**king awesome sketches. Drawing. Ubud <time datetime="2026-11-06">November 6, 2026</time></a></li>
+    <li><a href="/en/event/ba420c05-aeaf-4568-a4f2-460e45395c20/vegan-chef-training-with-liza-at-sayuri-ubud/">Vegan Chef Training with Liza at Sayuri Ubud <time datetime="2026-12-31">December 31, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Bali</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/ab272f69-462c-4f40-abff-733fdb2609ed/english-speaking-club-ubud/">English Speaking Club, Ubud</a> <time datetime="2026-10-15">October 15, 2026</time></li>
+    <li>Next: <a href="/en/event/ae0828d1-74a3-4d86-b952-68861565f1ad/yoga-teacher-training-course/">Yoga Teacher Training Course</a> <time datetime="2026-10-15">October 15, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/bali/">Upcoming events in Bali</a></p>
+</div>
+
+  </body>
+</html>

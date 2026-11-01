@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Встреча-практикум. Что за тип?!»… — 28 августа 2026 · Нячанг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Нячанг, 28 августа 2026. Встреча-практикум. Что за тип?!» / Соционика и взаимоотношения Хочешь понять свою главную силу, как тебя видят окружающие и почему с…" />
+    <link rel="canonical" href="https://mypins.site/event/b149f0aa-70a0-44be-90c5-51bf8c098a9a/vstrecha-praktikum-chto-za-tip-sotsionika-i-vzaimootnosheniya/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Встреча-практикум. Что за тип?!»… — 28 августа 2026 · Нячанг" />
+    <meta property="og:description" content="Нячанг, 28 августа 2026. Встреча-практикум. Что за тип?!» / Соционика и взаимоотношения Хочешь понять свою главную силу, как тебя видят окружающие и почему с…" />
+    <meta property="og:url" content="https://mypins.site/event/b149f0aa-70a0-44be-90c5-51bf8c098a9a/vstrecha-praktikum-chto-za-tip-sotsionika-i-vzaimootnosheniya/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"Встреча-практикум. Что за тип?!» Соционика и взаимоотношения","item":"https://mypins.site/event/b149f0aa-70a0-44be-90c5-51bf8c098a9a/vstrecha-praktikum-chto-za-tip-sotsionika-i-vzaimootnosheniya/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Встреча-практикум. Что за тип?!» Соционика и взаимоотношения</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-08-28">28 августа 2026</time></p>
+  <p><time datetime="2026-08-28T16:00:00">28 августа 2026, 16:00</time></p>
+  <address>Jungle Coffee Nha Trang, 8 Lê Quý Đôn, Nha Trang, Khánh Hòa 650000, Нячанг</address>
+  <p>Встреча-практикум. Что за тип?!» / Соционика и взаимоотношения
+
+Хочешь понять свою главную силу, как тебя видят окружающие и почему с некоторыми людьми мы будто говорим на разных языках?
+
+Добро пожаловать на нашу встречу!
+
+В узком кругу познакомимся с соционикой, разберём 16 психотипов и перейдём от теории к практике — на живых примерах увидим, как устроена коммуникация разных людей.
+
+В программе:
+🔹 Определим твой психотип, сильные стороны и зоны роста.
+🔹 Посмотрим, как тебя считывают окружающие.
+🔹 Через практику попробуем новые сценарии общения.
+🔹 Научимся лучше понимать психотипы других людей.
+🔹 Разберём, как говорить с близкими, коллегами и клиентами на их «языке».
+
+🎙 Ведущие:
+Юлечка Дорохина — игропрактик, бизнес-леди
+Игорь Шерлок — предприниматель, мастер-соционик (6+ лет практики)
+
+🤝 Формат: живое общение + практикум
+⏰ Когда: в пятницу 28 августа 16:00
+👥 Мест: всего 10–12 участников
+
+📍 Место встречи: https://maps.app.goo.gl/X14xp3tWzREGcikt6
+
+#дата: 28.08.2026
+Пост от: Юлечка</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/nha-trang/">Нячанг</a> <span aria-hidden="true">›</span> <span>Встреча-практикум. Что за тип?!» Соционика и взаимоотношения</span></p>
+    <p>Ещё события в Нячанге: <a href="/nha-trang/">афиша</a> · <a href="/nha-trang/meetup/">🤝 Встречи и нетворкинг</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/e2582dfc-fc91-4599-81d0-bf6c0d9af0b1/a-chto-esli-odnazhdy-utrom-vybrat-ne-dela-ne-rabotu-i-ne-chuzhie-zhelaniya-a-sebya/">А что, если однажды утром выбрать не дела, не работу и не чужие желания а себя? <time datetime="2026-08-28">28 августа 2026</time></a></li>
+    <li><a href="/event/118ec0ed-f039-44ec-a7d3-2e80b35dc917/pereekhali-a-vnutri-vse-eshche-kto-ya-zdes/">Переехали, а внутри всё ещё «кто я здесь?» <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/6605e9fb-1a7d-4312-8ab7-8f6d8ae60c4d/vstrecha-literaturnogo-kluba-knizhnoe-pole-eksperimentov/">Встреча литературного клуба «Книжное поле экспериментов» <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/fa1951dc-b151-4d9b-808a-094c1a6ad7ab/vstrecha-psikhologicheskogo-kluba/">Встреча психологического клуба <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/cd1b4546-6aca-4f38-8e61-f0251bc2b462/besplatnyy-zavtrak-znakomstvo-v-nyachange/">БЕСПЛАТНЫЙ ЗАВТРАК-ЗНАКОМСТВО В НЯЧАНГЕ <time datetime="2026-11-04">4 ноября 2026</time></a></li>
+    <li><a href="/event/7ed8de6d-afa1-4de2-b31d-6aca37e7c314/prisoedinyaytes-k-biznes-zavtraku/">Присоединяйтесь к бизнес-завтраку! <time datetime="2026-11-05">5 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Нячанг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/a5441b5f-db10-4fc6-a32b-5990f186e0aa/teatr-studiya-shalyapinykh-priglashaet-na-zanyatie/">ТЕАТР-СТУДИЯ ШАЛЯПИНЫХ приглашает на занятие</a> <time datetime="2026-08-28">28 августа 2026</time></li>
+    <li>Следующее: <a href="/event/db91d55e-5d22-4162-8904-e4a3a8e7dd27/plany-na-pyatnitsu-rok-n-roll-v-vice/">Планы на пятницу: Рок-н-ролл в VICE!</a> <time datetime="2026-08-28">28 августа 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/nha-trang/">Ближайшие события: Нячанг</a></p>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Мадам Марианна Андреаса… — 13 ноября 2026 · Никосия, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Никосия, Кипр, 13 ноября 2026. Полицейская комедия, полюбившаяся в Афинах, впервые ставится на Кипре! Purple Sparrow Productions динамично возвращается в новом…" />
+    <link rel="canonical" href="https://mypins.site/event/50849edb-69e9-48c9-b9c3-cfccdc8bc66f/madam-marianna-andreasa-aristotelusa/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Мадам Марианна Андреаса… — 13 ноября 2026 · Никосия, Кипр" />
+    <meta property="og:description" content="Никосия, Кипр, 13 ноября 2026. Полицейская комедия, полюбившаяся в Афинах, впервые ставится на Кипре! Purple Sparrow Productions динамично возвращается в новом…" />
+    <meta property="og:url" content="https://mypins.site/event/50849edb-69e9-48c9-b9c3-cfccdc8bc66f/madam-marianna-andreasa-aristotelusa/" />
+    <meta property="og:image" content="https://www.nicosia.org.cy/CMSPages/GetFile.aspx?guid=5389f6b2-7f41-4c49-9c3a-daecc85c6005&amp;width=320" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/50849edb-69e9-48c9-b9c3-cfccdc8bc66f/madam-marianna-andreasa-aristotelusa/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/50849edb-69e9-48c9-b9c3-cfccdc8bc66f/madam-marianna-by-andreas-aristotellous/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Мадам Марианна Андреаса Аристотелуса","url":"https://mypins.site/event/50849edb-69e9-48c9-b9c3-cfccdc8bc66f/madam-marianna-andreasa-aristotelusa/","startDate":"2026-11-13T20:30:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Αίθουσα Μελίνα Μερκούρη","address":{"@type":"PostalAddress","addressLocality":"Никосия","streetAddress":"Αίθουσα Μελίνα Μερκούρη","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.126413,"longitude":33.429859}},"offers":{"@type":"Offer","url":"https://mypins.site/event/50849edb-69e9-48c9-b9c3-cfccdc8bc66f/madam-marianna-andreasa-aristotelusa/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-10-15"},"description":"Полицейская комедия, полюбившаяся в Афинах, впервые ставится на Кипре! Purple Sparrow Productions динамично возвращается в новом сезоне с полицейской пародией, полной поворотов, тайн и обилия смеха. После успешного показа в Афинах, искромётная комедия Андреаса Аристотелуса «МАДАМ МАРИАННА» в режиссуре Янниса Клидериса впервые ставится на Кипре в совершенно новой постановке Паноса Струту, готовой перевернуть театральные устои! Сюжет Пирей, 1967. Преступление потрясает публичный дом; владелица найдена зарезанной. Полицей...","endDate":"2026-11-13","image":"https://www.nicosia.org.cy/CMSPages/GetFile.aspx?guid=5389f6b2-7f41-4c49-9c3a-daecc85c6005&width=320","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CE%BC%CE%B1%CE%BD%CF%84%CE%AC%CE%BC-%CE%BC%CE%B1%CF%81%CE%B9%CE%AC%CE%BD%CE%BD%CE%B1-%CF%84%CE%BF%CF%85-%CE%B1%CE%BD%CE%B4%CF%81%CE%AD%CE%B1-%CE%B1%CF%81%CE%B9%CF%83%CF%84%CE%BF%CF%84%CE%AD%CE%BB%CE%BF%CF%85%CF%82-2026-11-13"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Мадам Марианна Андреаса Аристотелуса","item":"https://mypins.site/event/50849edb-69e9-48c9-b9c3-cfccdc8bc66f/madam-marianna-andreasa-aristotelusa/"}]}]}</script>
+    <script type="application/json" id="seo-alias-map">{"cloneId":"50849edb-69e9-48c9-b9c3-cfccdc8bc66f","keptId":"50849edb-69e9-48c9-b9c3-cfccdc8bc66f","ru":"https://mypins.site/event/50849edb-69e9-48c9-b9c3-cfccdc8bc66f/madam-marianna-andreasa-aristotelusa/","en":"https://mypins.site/en/event/50849edb-69e9-48c9-b9c3-cfccdc8bc66f/madam-marianna-by-andreas-aristotellous/"}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Мадам Марианна Андреаса Аристотелуса</h1>
+  <p><time datetime="2026-11-13T20:30:00">13 ноября 2026, 20:30</time></p>
+  <address>Αίθουσα Μελίνα Μερκούρη, Никосия, Кипр</address>
+  <p>Полицейская комедия, полюбившаяся в Афинах, впервые ставится на Кипре!
+
+Purple Sparrow Productions динамично возвращается в новом сезоне с полицейской пародией, полной поворотов, тайн и обилия смеха.
+
+После успешного показа в Афинах, искромётная комедия Андреаса Аристотелуса «МАДАМ МАРИАННА» в режиссуре Янниса Клидериса впервые ставится на Кипре в совершенно новой постановке Паноса Струту, готовой перевернуть театральные устои!
+
+Сюжет
+
+Пирей, 1967. Преступление потрясает публичный дом; владелица найдена зарезанной.
+
+Полицей...</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Мадам Марианна Андреаса Аристотелуса</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/theatre/">🎭 Театры и шоу</a></p>
+  </nav>
+  <p>Другие даты серии:</p>
+  <ul>
+    <li><a href="/event/11ad5128-5b91-4492-a221-aad53a02e5b4/madam-marianna-andreasa-aristotelusa/"><time datetime="2026-11-07">7 ноября 2026</time></a></li>
+    <li><a href="/event/2a5d034b-b021-4516-b070-e10e866f3daf/madam-marianna-andreasa-aristotelusa/"><time datetime="2026-11-08">8 ноября 2026</time></a></li>
+    <li><a href="/event/17901325-02a2-4fd6-9dee-39bed71b32b5/madam-marianna-andreasa-aristotelusa/"><time datetime="2026-11-14">14 ноября 2026</time></a></li>
+    <li><a href="/event/07486025-2d1e-43c7-bd75-3332a91a268c/madam-marianna-andreasa-aristotelusa/"><time datetime="2026-11-15">15 ноября 2026</time></a></li>
+  </ul>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/b42b4d1b-d0d8-4697-9d5a-746888cf90a0/khedda-gabler-hedda-gabler/">Хедда Габлер | Hedda Gabler <time datetime="2026-11-13">13 ноября 2026</time></a></li>
+    <li><a href="/event/bb107ad0-6583-4bee-992d-682db3444a20/vse-eto/">Всё это <time datetime="2026-11-13">13 ноября 2026</time></a></li>
+    <li><a href="/event/d68aec7d-19e0-426b-b444-458083bc4ba0/rokstarilikia-vol-2-v-limasole/">Рокстариликиа Vol.2 в Лимасоле <time datetime="2026-11-13">13 ноября 2026</time></a></li>
+    <li><a href="/event/e629c2da-1b1a-4f21-9d0f-4f6c3f8cebbe/marafon-teatralnykh-chteniy-kazhdoe-chtenie-mir-kotoryy-prosypaetsya/">Марафон театральных чтений: каждое чтение — мир, который просыпается <time datetime="2026-11-13">13 ноября 2026</time></a></li>
+    <li><a href="/event/f86a5399-d399-40d0-83b5-6c219747fdc5/otpechatok-v-gline/">Отпечаток в глине <time datetime="2026-11-13">13 ноября 2026</time></a></li>
+    <li><a href="/event/fac87770-048b-47e7-9bd5-b1d9e20df8b2/otpechatok-na-gline/">Отпечаток на глине <time datetime="2026-11-13">13 ноября 2026</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>

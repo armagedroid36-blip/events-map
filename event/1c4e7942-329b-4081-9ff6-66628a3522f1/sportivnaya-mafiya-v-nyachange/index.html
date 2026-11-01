@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>СПОРТИВНАЯ МАФИЯ В НЯЧАНГЕ — 29 августа 2026 · Нячанг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Нячанг, 29 августа 2026. СПОРТИВНАЯ МАФИЯ В НЯЧАНГЕ 🎭 Суббота 22.08 - СЕГОДНЯ❗️ Приглашаем желающих провести время с пользой, найти новых друзей и прокачать…" />
+    <link rel="canonical" href="https://mypins.site/event/1c4e7942-329b-4081-9ff6-66628a3522f1/sportivnaya-mafiya-v-nyachange/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="СПОРТИВНАЯ МАФИЯ В НЯЧАНГЕ — 29 августа 2026 · Нячанг" />
+    <meta property="og:description" content="Нячанг, 29 августа 2026. СПОРТИВНАЯ МАФИЯ В НЯЧАНГЕ 🎭 Суббота 22.08 - СЕГОДНЯ❗️ Приглашаем желающих провести время с пользой, найти новых друзей и прокачать…" />
+    <meta property="og:url" content="https://mypins.site/event/1c4e7942-329b-4081-9ff6-66628a3522f1/sportivnaya-mafiya-v-nyachange/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/1c4e7942-329b-4081-9ff6-66628a3522f1/sportivnaya-mafiya-v-nyachange/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/1c4e7942-329b-4081-9ff6-66628a3522f1/sports-mafia-in-nha-trang/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"СПОРТИВНАЯ МАФИЯ В НЯЧАНГЕ","item":"https://mypins.site/event/1c4e7942-329b-4081-9ff6-66628a3522f1/sportivnaya-mafiya-v-nyachange/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>СПОРТИВНАЯ МАФИЯ В НЯЧАНГЕ</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-09-12">12 сентября 2026</time></p>
+  <p><time datetime="2026-08-29T17:00:00">29 августа 2026, 17:00</time></p>
+  <address>Нячанг</address>
+  <p>70 VND</p>
+  <p>СПОРТИВНАЯ МАФИЯ В НЯЧАНГЕ 🎭
+Суббота 22.08 - СЕГОДНЯ❗️
+
+Приглашаем желающих провести время с пользой, найти новых друзей и прокачать навыки коммуникации!
+
+Играем в Спортивную (классическую) мафию по всем стандартам и правилам: (обучаем для турниров/ проводим турниры и мастер-классы по игре)
+
+⭐️Профессиональные ведущие с опытом более 12 лет!
+
+- - -
+
+🕰️ С 17:00 до 04:00
+🎯 Играем за круглым столом😎
+
+💵Стоимость: 70 донгов / вечер
+(При покупке абонемента) 😉
+
+
+📥Для записи на игры и по всем вопросам пишите @Chev_Ch
+
+✨ Наш клуб докажет: Мафия – это просто и нереально увлекательно❗️
+🎉 Почувствуй азарт, логику и драйв своего мозга – и заряди себя эмоциями на всю неделю!😜
+
+#дата: 22.08.2026
+Пост от: Chev Chelios</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/nha-trang/">Нячанг</a> <span aria-hidden="true">›</span> <span>СПОРТИВНАЯ МАФИЯ В НЯЧАНГЕ</span></p>
+    <p>Ещё события в Нячанге: <a href="/nha-trang/">афиша</a> · <a href="/nha-trang/games/">🎲 Игры и квизы</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/1df45898-06da-4b8b-b449-94fc08202156/finansovaya-igra/">ФИНАНСОВАЯ ИГРА <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/2922621b-4ee1-4521-bc47-f464329533a8/igraem-v-bunker-vyshe-gor/">Играем в «Бункер» «Выше Гор» <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/2fc86e8e-ac83-43d3-ab6b-13f547d4fb41/den-nastolnykh-igr/">День НАСТОЛЬНЫХ ИГР <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/819eef30-86ed-416a-90fd-31f46c19c9a8/samaya-zhutkaya-v-godu-tematicheskaya-igra-kviz-pliz-posvyashchennaya-khellouinu-v-den-vsekh-svyatykh-my-vspomnim-topovye-uzhasti/">Самая жуткая в году - тематическая игра Квиз, плиз! посвященная Хэллоуину. В день Всех Святых мы вспомним топовые ужасти <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/b7aa3a77-941a-489c-8817-b0a373ce06fe/krov-na-chasovoy-bashne/">КРОВЬ НА ЧАСОВОЙ БАШНЕ <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/3a8ee991-6b81-40ab-9cb4-dabc9ddc2241/zapuskaem-novyy-proekt-po-podgotovke-masterov-kak-nachinayushchikh-tak-i-opytnykh-dlya-nastolnykh-rolevykh-igr-sut-proekta-z/">Запускаем новый проект по подготовке мастеров, как начинающих, так и опытных, для настольных ролевых игр. Суть проекта з <time datetime="2026-11-02">2 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Нячанг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/0a638709-cfad-48cd-bbb8-ae4094221ab0/art-praktika/">АРТ ПРАКТИКА:</a> <time datetime="2026-09-12">12 сентября 2026</time></li>
+    <li>Следующее: <a href="/event/308b700f-3665-460b-b416-3313772ee123/detskaya-liga-easy-game-league/">ДЕТСКАЯ ЛИГА EASY GAME LEAGUE</a> <time datetime="2026-09-12">12 сентября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/nha-trang/">Ближайшие события: Нячанг</a></p>
+</div>
+
+  </body>
+</html>

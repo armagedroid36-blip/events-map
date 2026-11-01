@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>INTELLECTUAL SHOW - &quot;WHAT?… — October 25, 2026 · Nha Trang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nha Trang, October 25, 2026. 🎲 INTELLECTUAL SHOW - &quot;WHAT? WHERE? WHEN?&quot; Now in NYACHANG 😎🌴 Hi friends! 🤗 Life is also a bit of a quiz: sometimes you guess…" />
+    <link rel="canonical" href="https://mypins.site/en/event/510889fe-1224-4eb0-a874-b113e2f66d2d/intellectual-show-what-where-when-already-in-nyachang/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="INTELLECTUAL SHOW - &quot;WHAT?… — October 25, 2026 · Nha Trang" />
+    <meta property="og:description" content="Nha Trang, October 25, 2026. 🎲 INTELLECTUAL SHOW - &quot;WHAT? WHERE? WHEN?&quot; Now in NYACHANG 😎🌴 Hi friends! 🤗 Life is also a bit of a quiz: sometimes you guess…" />
+    <meta property="og:url" content="https://mypins.site/en/event/510889fe-1224-4eb0-a874-b113e2f66d2d/intellectual-show-what-where-when-already-in-nyachang/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/nyachang_ru/24772-0.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/510889fe-1224-4eb0-a874-b113e2f66d2d/intellectual-show-what-where-when-already-in-nyachang/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/510889fe-1224-4eb0-a874-b113e2f66d2d/intellektualnoe-shou-chto-gde-kogda-uzhe-v-nyachange/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"INTELLECTUAL SHOW - \"WHAT? WHERE? WHEN?\" Already in NYACHANG","item":"https://mypins.site/en/event/510889fe-1224-4eb0-a874-b113e2f66d2d/intellectual-show-what-where-when-already-in-nyachang/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>INTELLECTUAL SHOW - &quot;WHAT? WHERE? WHEN?&quot; Already in NYACHANG</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-25">October 25, 2026</time></p>
+  <p><time datetime="2026-10-25T20:00:00">October 25, 2026, 8:00 PM</time></p>
+  <address>Vandana gastropub, 11 Đặng Tất, Vĩnh Hải, Bắc Nha Trang, Khánh Hòa 65000</address>
+  <p>300000 VND</p>
+  <p>🎲 INTELLECTUAL SHOW - &quot;WHAT? WHERE? WHEN?&quot; Now in NYACHANG 😎🌴
+
+Hi friends! 🤗
+Life is also a bit of a quiz: sometimes you guess right, sometimes you get it wrong,
+but the main thing is to never stop playing!
+
+It&#39;s precisely for this magic that we&#39;re gathering again for
+🧠 the intellectual show &quot;WHAT? WHERE? WHEN? NYACHANG!&quot; 🌴✨
+
+📅 Sunday 25.10. 2026
+
+📍 NYACHANG restaurant VANDANA
+
+🕢 Guest gathering — 19:30
+🎬 Start — 20:00
+
+👥 Up to 10 participants
+❓ 15 exciting questions (experts vs. host)
+⏳ 1.5 - 2 hours of mental adventure
+
+💰 Participation 300k
+
+Want to test yourself, laugh, and be amazed?
+Sign up with @MskBrabus
+
+#Date: 25.08</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>INTELLECTUAL SHOW - &quot;WHAT? WHERE? WHEN?&quot; Already in NYACHANG</span></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a> · <a href="/en/nha-trang/games/">🎲 Games &amp; Quizzes</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/1df45898-06da-4b8b-b449-94fc08202156/financial-game/">FINANCIAL GAME <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/2922621b-4ee1-4521-bc47-f464329533a8/playing-bunker-at-vyshe-gor/">Playing &quot;Bunker&quot; at &quot;Vyshe Gor&quot; <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/2fc86e8e-ac83-43d3-ab6b-13f547d4fb41/board-game-day/">Board Game Day <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/819eef30-86ed-416a-90fd-31f46c19c9a8/the-spookiest-one-of-the-year-a-halloween-themed-quiz-please-game-on-all-saints-day-we-ll-recall-the-top-horror-movies/">The spookiest one of the year - a Halloween-themed Quiz, Please! game. On All Saints&#39; Day we&#39;ll recall the top horror movies <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/b7aa3a77-941a-489c-8817-b0a373ce06fe/blood-on-the-clock-tower/">BLOOD ON THE CLOCK TOWER <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/3a8ee991-6b81-40ab-9cb4-dabc9ddc2241/launching-a-new-project-to-train-game-masters-both-beginners-and-experienced-for-tabletop-role-playing-games-the-essence-of-the-project-is/">Launching a new project to train game masters, both beginners and experienced, for tabletop role-playing games. The essence of the project is <time datetime="2026-11-02">November 2, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Nha Trang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/468ebaba-0814-4a50-91ae-ebc1b5d51621/weekend-run/">Weekend run</a> <time datetime="2026-10-25">October 25, 2026</time></li>
+    <li>Next: <a href="/en/event/512315fc-a250-4dbb-b952-7c88bfdb63a4/group-meeting-with-a-psychologist/">GROUP MEETING WITH A PSYCHOLOGIST</a> <time datetime="2026-10-25">October 25, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Правь ночью: вечеринка с… — 4 октября 2026 · Лимасол, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Лимасол, Кипр, 4 октября 2026. Интерактивная вечеринка в Tzar Night Club в Лимасоле в это воскресенье, 4 октября 2026 — ты выбираешь песни, они создают…" />
+    <link rel="canonical" href="https://mypins.site/event/37b8bece-5211-477f-a5ea-330c93cd13e6/prav-nochyu-vecherinka-s-zakazom-pesen-v-limasole/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Правь ночью: вечеринка с… — 4 октября 2026 · Лимасол, Кипр" />
+    <meta property="og:description" content="Лимасол, Кипр, 4 октября 2026. Интерактивная вечеринка в Tzar Night Club в Лимасоле в это воскресенье, 4 октября 2026 — ты выбираешь песни, они создают…" />
+    <meta property="og:url" content="https://mypins.site/event/37b8bece-5211-477f-a5ea-330c93cd13e6/prav-nochyu-vecherinka-s-zakazom-pesen-v-limasole/" />
+    <meta property="og:image" content="https://eventor-images-s3.s3.eu-west-2.amazonaws.com/high-res/84be5c85-ac21-49b3-889a-d7b3494d987d.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/37b8bece-5211-477f-a5ea-330c93cd13e6/prav-nochyu-vecherinka-s-zakazom-pesen-v-limasole/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/37b8bece-5211-477f-a5ea-330c93cd13e6/rule-the-night-request-your-song-party-in-limassol/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Правь ночью: вечеринка с заказом песен в Лимасоле","item":"https://mypins.site/event/37b8bece-5211-477f-a5ea-330c93cd13e6/prav-nochyu-vecherinka-s-zakazom-pesen-v-limasole/"}]}]}</script>
+    <script type="application/json" id="seo-alias-map">{"cloneId":"37b8bece-5211-477f-a5ea-330c93cd13e6","keptId":"37b8bece-5211-477f-a5ea-330c93cd13e6","ru":"https://mypins.site/event/37b8bece-5211-477f-a5ea-330c93cd13e6/prav-nochyu-vecherinka-s-zakazom-pesen-v-limasole/","en":"https://mypins.site/en/event/37b8bece-5211-477f-a5ea-330c93cd13e6/rule-the-night-request-your-song-party-in-limassol/"}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Правь ночью: вечеринка с заказом песен в Лимасоле</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-04">4 октября 2026</time></p>
+  <p><time datetime="2026-10-04T19:00:00">4 октября 2026, 19:00</time></p>
+  <address>Tzar Nightclub, Лимасол, Кипр</address>
+  <p>Интерактивная вечеринка в Tzar Night Club в Лимасоле в это воскресенье, 4 октября 2026 — ты выбираешь песни, они создают атмосферу. Билеты доступны.
+
+---
+
+Прокрутите вниз для английской версии 👇
+
+---
+
+Вечер, музыкальную программу которого пишешь ты. В это воскресенье, 4 октября 2026, Tzar Night Club в Лимасоле превращается в живую танцплощадку, где ты можешь заказать любую песню, какую захочешь — от международных хитов и throwbacks до party classics или чего-то совершенно неожиданного.
+
+Идея проста: ты выбираешь музыку, клуб заботится об атмосфере. 🎶
+
+🗓️ Программа
+Воскресенье,</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Правь ночью: вечеринка с заказом песен в Лимасоле</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/party/">🪩 Вечеринки</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/115c2734-ad60-4e7b-8499-afe884f11ed2/leggo-x-kybba-khellouinskaya-denskholl-vecherinka-v-the-warehouse/">Leggo x Kybba: Хэллоуинская дэнсхолл-вечеринка в The Warehouse <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/1d5d0d22-add6-4f22-9248-6b62339ac977/dan-priglashaet-sina-xx-v-sllip/">DANÆ приглашает: Sina XX в Sllip <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/38f6fe8e-7659-4a74-b88c-de27580be2d1/nash-dom-v-sousami/">«Наш дом» в Sousami <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/3f7a704d-5cce-42bb-9304-f93c13fae655/matrix-halloween-face2face-v-fever-club/">Matrix Halloween Face2Face в Fever Club <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/5a490844-70b3-48dd-a88c-8461a175b486/dane-priglashaet-sina-xx/">Дане приглашает: Сина Xx <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/8af80e0f-df71-46f8-80bb-2e08398f5d47/khellouin-tsirk-cielo-x-sova-vecherinka-v-nikosii/">Хэллоуин Цирк: Cielo x Sova Вечеринка в Никосии <time datetime="2026-10-31">31 октября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/32f55a5f-a036-41fd-8545-005de62f14df/snezhnaya-koroleva/">Снежная королева</a> <time datetime="2026-10-04">4 октября 2026</time></li>
+    <li>Следующее: <a href="/event/387a14c0-34ea-47ad-8f62-7586d9ced4ec/muzykalnyy-vecher-ekho-pamyati/">Музыкальный вечер «Эхо памяти»</a> <time datetime="2026-10-04">4 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>

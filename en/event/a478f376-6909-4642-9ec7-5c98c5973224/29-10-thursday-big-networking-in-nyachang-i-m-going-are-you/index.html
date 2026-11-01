@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>29.10 Thursday BIG NETWORKING IN… — October 29, 2026 · Nha Trang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nha Trang, October 29, 2026. 29.10 Thursday | BIG NETWORKING EVENT IN NHATRANG | I&#39;m going, are you? 3 rounds of networking • Connections • Contacts • Profit •…" />
+    <link rel="canonical" href="https://mypins.site/en/event/a478f376-6909-4642-9ec7-5c98c5973224/29-10-thursday-big-networking-in-nyachang-i-m-going-are-you/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="29.10 Thursday BIG NETWORKING IN… — October 29, 2026 · Nha Trang" />
+    <meta property="og:description" content="Nha Trang, October 29, 2026. 29.10 Thursday | BIG NETWORKING EVENT IN NHATRANG | I&#39;m going, are you? 3 rounds of networking • Connections • Contacts • Profit •…" />
+    <meta property="og:url" content="https://mypins.site/en/event/a478f376-6909-4642-9ec7-5c98c5973224/29-10-thursday-big-networking-in-nyachang-i-m-going-are-you/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/e8812801e83532e21ad65294aa757c34.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/a478f376-6909-4642-9ec7-5c98c5973224/29-10-thursday-big-networking-in-nyachang-i-m-going-are-you/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/a478f376-6909-4642-9ec7-5c98c5973224/29-10-chetverg-bolshoy-netvorking-v-nyachange-ya-idu-a-ty/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"29.10 Thursday BIG NETWORKING IN NYACHANG I'm going, are you?","item":"https://mypins.site/en/event/a478f376-6909-4642-9ec7-5c98c5973224/29-10-thursday-big-networking-in-nyachang-i-m-going-are-you/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>29.10 Thursday BIG NETWORKING IN NYACHANG I&#39;m going, are you?</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-29">October 29, 2026</time></p>
+  <p><time datetime="2026-10-29T12:00:00">October 29, 2026, 12:00 PM</time></p>
+  <address>Stockholm Bistro &amp; Co-working | Coworking Space in Nha Trang, 43 Lý Tự Trọng, Nha Trang, Khánh Hòa 650000</address>
+  <p>290000 VND</p>
+  <p>29.10 Thursday | BIG NETWORKING EVENT IN NHATRANG | I&#39;m going, are you?
+
+3 rounds of networking • Connections • Contacts • Profit • Travel
+
+🎤 Headliner — Vladislav Khoroshilov
+Producer of TNT stars, entrepreneur, founder of an international business community.
+
+What will you get in 3 hours?
+
+🤝 Up to 30+ new useful connections.
+
+💼 Potential clients, partners, and collaborations.
+
+🎤 The opportunity to tell a strong audience about yourself and your project.
+
+💡 New ideas for business growth and increasing income.
+
+🌍 Useful contacts in Vietnam and beyond.
+
+🚀 Opportunities you can&#39;t find sitting at home.
+
+Who is this meeting for?
+
+✔️ Entrepreneurs
+
+✔️ Experts
+
+✔️ Bloggers
+
+✔️ Online business owners
+
+✔️ Freelancers and specialists
+
+✔️ Expats and those who want to build international connections
+
+Imagine the result after the meeting:
+
+✅ Dozens of new useful contacts in your phone.
+
+✅ Several agreements on cooperation.
+
+✅ Potential clients already know what you do.
+
+✅ New friends, environment, and opportunities that can change the next year of your life.
+
+Sometimes one connection brings more profit than several months of working alone.
+
+📅 29.10 Thursday
+🕛 12:00–15:00
+
+📍 Stockholm Bistro 2nd floor
+https://maps.app.goo.gl/pPQix8CsiNPVkwc17?g_st=ic
+
+🎟 Entry — Donation from 290,000 VND (organizational fee) Investment in business contacts
+
+⚠️ Only 35 spots.
+
+📩 Registration: @HorosSekret
+#date: 29.10</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>29.10 Thursday BIG NETWORKING IN NYACHANG I&#39;m going, are you?</span></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a> · <a href="/en/nha-trang/meetup/">🤝 Meetups &amp; Networking</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/8ece6ead-e254-4954-89df-d37af64d6a9e/creative-evening-in-nha-trang/">Creative evening in Nha Trang! <time datetime="2026-10-29">October 29, 2026</time></a></li>
+    <li><a href="/en/event/118ec0ed-f039-44ec-a7d3-2e80b35dc917/moved-but-inside-it-s-still-who-am-i-here/">Moved, but inside it&#39;s still &quot;who am I here?&quot; <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/6605e9fb-1a7d-4312-8ab7-8f6d8ae60c4d/meeting-of-the-book-field-of-experiments-literary-club/">Meeting of the &quot;Book Field of Experiments&quot; literary club <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/fa1951dc-b151-4d9b-808a-094c1a6ad7ab/psychological-club-meeting/">Psychological Club Meeting <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/cd1b4546-6aca-4f38-8e61-f0251bc2b462/free-networking-breakfast-in-nyachang/">FREE NETWORKING BREAKFAST IN NYACHANG <time datetime="2026-11-04">November 4, 2026</time></a></li>
+    <li><a href="/en/event/7ed8de6d-afa1-4de2-b31d-6aca37e7c314/join-the-business-breakfast/">Join the business breakfast! <time datetime="2026-11-05">November 5, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Nha Trang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/9eed17ba-b390-40bb-a88f-59c23934b5e5/bead-workshop-in-nha-trang/">Bead Workshop in Nha Trang</a> <time datetime="2026-10-29">October 29, 2026</time></li>
+    <li>Next: <a href="/en/event/a5847a42-1718-4e1f-aa00-327cb07ab602/meeting-of-the-gestalt-underground/">Meeting of the &quot;Gestalt Underground&quot;</a> <time datetime="2026-10-29">October 29, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OM CHANTING — October 10, 2026 · Nha Trang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nha Trang, October 10, 2026. OM CHANTING OM Chanting is a free group practice that uses the transformative power of the sound &quot;OM&quot; to activate participants&#39;…" />
+    <link rel="canonical" href="https://mypins.site/en/event/47eb475a-fb46-4767-b9ce-8fec3d9e7474/om-chanting/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OM CHANTING — October 10, 2026 · Nha Trang" />
+    <meta property="og:description" content="Nha Trang, October 10, 2026. OM CHANTING OM Chanting is a free group practice that uses the transformative power of the sound &quot;OM&quot; to activate participants&#39;…" />
+    <meta property="og:url" content="https://mypins.site/en/event/47eb475a-fb46-4767-b9ce-8fec3d9e7474/om-chanting/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/47eb475a-fb46-4767-b9ce-8fec3d9e7474/om-chanting/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/47eb475a-fb46-4767-b9ce-8fec3d9e7474/om-chanting/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"OM CHANTING","item":"https://mypins.site/en/event/47eb475a-fb46-4767-b9ce-8fec3d9e7474/om-chanting/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>OM CHANTING</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-10">October 10, 2026</time></p>
+  <p><time datetime="2026-10-10T14:00:00">October 10, 2026, 2:00 PM</time></p>
+  <address>Nha Trang</address>
+  <p>Donation</p>
+  <p>OM CHANTING
+
+OM Chanting is a free group practice that uses the transformative power of the sound &quot;OM&quot; to activate participants&#39; self-healing abilities and purify the surrounding space.
+
+– Transforms negativity into positive energy
+– Supports emotional, mental, and physical well-being
+– Helps cultivate more joy and peace for the world
+
+Cost: donation
+
+Where and when:
+Saturday
+October 10, 14:00 – gathering and introduction, 14:10 – practice begins
+
+Orchid Studio (how to get there – via DM)
+
+Registration required: @GautamSV
+
+#date: 10.10.2026
+Post by: Georgy Gautam | Vocals and mantras</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>OM CHANTING</span></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a> · <a href="/en/nha-trang/wellness/">🧘 Yoga &amp; Wellness</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/8db89faa-8dc5-4739-acea-2f9955c30d81/tala-tien-in-nha-trang/">Tala Tien in Nha Trang! <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/9fa904c9-d678-48ef-818a-6b8ddae938bb/art-of-contact/">ART OF CONTACT <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/f1021578-e909-4ab2-9194-59f8d8ac82c4/group-meeting-with-a-psychologist/">GROUP MEETING WITH A PSYCHOLOGIST <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/4634fbb4-6276-42f2-b6f5-60f01da962e4/flow-yoga/">FLOW YOGA <time datetime="2026-11-02">November 2, 2026</time></a></li>
+    <li><a href="/en/event/69fcb46d-60ec-4bb1-9414-37f54dc0d242/morning-practice/">Morning practice <time datetime="2026-11-02">November 2, 2026</time></a></li>
+    <li><a href="/en/event/8bc982b7-ecfc-47c5-9735-bfa9eda35771/practical-eft-training-emotional-freedom-technique/">Practical EFT Training, Emotional Freedom Technique <time datetime="2026-11-02">November 2, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Nha Trang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/3142e1d4-5cc8-407c-94fe-dfe4424b9f37/where-to-go-this-weekend/">WHERE TO GO THIS WEEKEND?</a> <time datetime="2026-10-10">October 10, 2026</time></li>
+    <li>Next: <a href="/en/event/62e11b0f-725f-4f1d-9bb6-826169ac6acf/meeting-of-the-magic-match-club-learning-to-fulfill-wishes/">Meeting of the MAGIC MATCH Club learning to fulfill wishes</a> <time datetime="2026-10-10">October 10, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
+</div>
+
+  </body>
+</html>

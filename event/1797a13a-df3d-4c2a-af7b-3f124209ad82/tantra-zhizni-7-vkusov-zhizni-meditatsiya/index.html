@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Тантра жизни. 7 вкусов жизни… — 4 октября 2026 · Чангу, Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Чангу, Bali, 4 октября 2026. Я ЕСТЬ. Я ЧУВСТВУЮ. Я ХОЧУ. Первая практика курса «Тантра. 7 вкусов жизни» Муладхара и Свадхистхана Насколько мне спокойно быть…" />
+    <link rel="canonical" href="https://mypins.site/event/1797a13a-df3d-4c2a-af7b-3f124209ad82/tantra-zhizni-7-vkusov-zhizni-meditatsiya/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Тантра жизни. 7 вкусов жизни… — 4 октября 2026 · Чангу, Bali" />
+    <meta property="og:description" content="Чангу, Bali, 4 октября 2026. Я ЕСТЬ. Я ЧУВСТВУЮ. Я ХОЧУ. Первая практика курса «Тантра. 7 вкусов жизни» Муладхара и Свадхистхана Насколько мне спокойно быть…" />
+    <meta property="og:url" content="https://mypins.site/event/1797a13a-df3d-4c2a-af7b-3f124209ad82/tantra-zhizni-7-vkusov-zhizni-meditatsiya/" />
+    <meta property="og:image" content="https://static.baliforum.ru/uploads/697172/conversions/9851A6A4-1A40-4048-9562-19B47DF51DD7-preview.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/1797a13a-df3d-4c2a-af7b-3f124209ad82/tantra-zhizni-7-vkusov-zhizni-meditatsiya/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/1797a13a-df3d-4c2a-af7b-3f124209ad82/tantra-of-life-7-flavors-of-life-meditation/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Бали","item":"https://mypins.site/bali/"},{"@type":"ListItem","position":3,"name":"Тантра жизни. 7 вкусов жизни. Медитация","item":"https://mypins.site/event/1797a13a-df3d-4c2a-af7b-3f124209ad82/tantra-zhizni-7-vkusov-zhizni-meditatsiya/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Тантра жизни. 7 вкусов жизни. Медитация</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-04">4 октября 2026</time></p>
+  <p><time datetime="2026-10-04T12:00:00">4 октября 2026, 12:00</time></p>
+  <address>Чангу, Kuta Utara, Бадунг, Бали, Индонезия, Чангу, Bali</address>
+  <p>Я ЕСТЬ. Я ЧУВСТВУЮ. Я ХОЧУ.
+
+Первая практика курса
+
+«Тантра. 7 вкусов жизни»
+
+Муладхара и Свадхистхана
+
+Насколько мне спокойно быть собой? Чувствую ли я, чего хочу, или быстрее понимаю, чего от меня ждут? Могу ли получать удовольствие без мысли, что сначала нужно сделать всё полезное, заслужить, закончить дела?
+
+На первой встрече будем работать с двумя нижними чакрами. В системе, которую мы исследуем (тантрическая философия чакр), Муладхара связана с опорой и безопасностью, Свадхистхана - с чувствами, желаниями, чувственностью и удовольствием.
+
+Это будет тантрическая практика: движение, дыхание, голос, внимание к телу. Начнём с опоры и постепенно перейдём к чувствительности, движению таза, исследованию своего желания. Будем замечать, где движение свободное, где мы себя удерживаем, когда хочется продолжить, а когда достаточно.
+
+Мне важно, чтобы за словами «я чувствую» появилось собственное ощущение. Чтобы можно было различить: мне приятно или я терплю? Я хочу или соглашаюсь по привычке? Могу ли я остаться в удовольствии, не торопясь переключиться на следующую задачу?
+
+На этой встрече будем учиться чувствовать опору в теле, яснее замечать свои «да» и «нет» и позволять себе больше удовольствия в движении. Этот опыт можно унести в обычную жизнь: в то, как выбираешь, отдыхаешь, общаешься и принимаешь близость.
+
+Приглашаю мужчин и женщин, независимо от опыта. Без парного взаимодействия.
+
+Я - Елена, Pragya Devi. Преподаватель кундалини-йоги, тантры, дыхательных и телесных практик, гонг-мастер, коуч по стандартам ICF. Более 25 лет работы с людьми. Мои практики помогают находить внутреннюю опору и соединять духовный опыт с повседневной жизнью.
+
+🗓️4 октября | 12.00-14.00 | Чангу
+
+запись @ustimenko_elena</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/bali/">Бали</a> <span aria-hidden="true">›</span> <span>Тантра жизни. 7 вкусов жизни. Медитация</span></p>
+    <p>Ещё события на Бали: <a href="/bali/">афиша</a> · <a href="/bali/wellness/">🧘 Йога и здоровье</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/366cddbd-5827-4ac9-aba9-b72616a56587/praktika-tantra-zhizni-vkus-naslazhdeniya/">Практика тантра жизни. Вкус наслаждения <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/8f5be29a-fb8a-4e77-8d95-a52d8428a155/gvozdestoyanie/">Гвоздестояние <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/4de61bc7-8a45-4600-9abd-c05c8edc5203/aktivatsiya-kundalini-kundalini-activation/">Активация Кундалини / Kundalini Activation <time datetime="2026-11-03">3 ноября 2026</time></a></li>
+    <li><a href="/event/a0865764-66d3-4535-9a8a-e6f155b8f8f5/meditativnaya-praktika-i-saund-bat-v-nuanu/">Медитативная практика и саунд-бат в Nuanu <time datetime="2026-11-06">6 ноября 2026</time></a></li>
+    <li><a href="/event/013e01ab-7975-4a54-87d0-79816e590481/progulka-bosikom-varash-fun-grounding-v-kerobokane/">Прогулка босиком Varash Fun Grounding в Керобокане <time datetime="2026-11-08">8 ноября 2026</time></a></li>
+    <li><a href="/event/31be750f-4f86-418b-a71a-9d220e1ad84d/yoga-v-ubude/">Йога в Убуде <time datetime="2026-11-09">9 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Бали</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/f4275b8a-6af8-4ff0-89ce-4a8096d08b2e/gitarnyy-vecher/">Гитарный вечер</a> <time datetime="2026-10-03">3 октября 2026</time></li>
+    <li>Следующее: <a href="/event/1a587d4b-70a2-4a42-8d7e-92b9d2c90f5a/zvukovoe-puteshestvie-ot-holloway/">Звуковое путешествие от Holloway</a> <time datetime="2026-10-04">4 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/bali/">Ближайшие события: Бали</a></p>
+</div>
+
+  </body>
+</html>

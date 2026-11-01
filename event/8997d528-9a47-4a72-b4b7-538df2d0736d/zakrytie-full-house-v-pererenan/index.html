@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Закрытие Full House в Pererenan — 30 сентября 2026 · Чангу, Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Чангу, Bali, 30 сентября 2026. Full House Pererenan готовится закрыть двери своего нынешнего дома 30 сентября. Проект появился в старом традиционном балийском…" />
+    <link rel="canonical" href="https://mypins.site/event/8997d528-9a47-4a72-b4b7-538df2d0736d/zakrytie-full-house-v-pererenan/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Закрытие Full House в Pererenan — 30 сентября 2026 · Чангу, Bali" />
+    <meta property="og:description" content="Чангу, Bali, 30 сентября 2026. Full House Pererenan готовится закрыть двери своего нынешнего дома 30 сентября. Проект появился в старом традиционном балийском…" />
+    <meta property="og:url" content="https://mypins.site/event/8997d528-9a47-4a72-b4b7-538df2d0736d/zakrytie-full-house-v-pererenan/" />
+    <meta property="og:image" content="https://static.baliforum.ru/uploads/696981/conversions/97296153-68353332-preview.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/8997d528-9a47-4a72-b4b7-538df2d0736d/zakrytie-full-house-v-pererenan/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/8997d528-9a47-4a72-b4b7-538df2d0736d/closing-of-full-house-in-pererenan/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Бали","item":"https://mypins.site/bali/"},{"@type":"ListItem","position":3,"name":"Закрытие Full House в Pererenan","item":"https://mypins.site/event/8997d528-9a47-4a72-b4b7-538df2d0736d/zakrytie-full-house-v-pererenan/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Закрытие Full House в Pererenan</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-09-30">30 сентября 2026</time></p>
+  <p><time datetime="2026-09-30T09:00:00">30 сентября 2026, 09:00</time></p>
+  <address>Jl. Pantai Pererenan No.129, Pererenan, Kec. Mengwi, Kabupaten Badung, Bali 80351, Индонезия, Чангу, Bali</address>
+  <p>Full House Pererenan готовится закрыть двери своего нынешнего дома 30 сентября.
+
+Проект появился в старом традиционном балийском доме, который создатели решили сохранить и наполнить новой жизнью. Здесь проходили ужины, творческие мероприятия, кинопоказы, выставки местных художников и встречи в саду.
+
+За время работы Full House стал местом, где можно было есть, творить, общаться и чувствовать себя как дома вдали от дома.
+
+Теперь эта глава заканчивается, но проект продолжится уже в новом месте и в новом формате, сохранив тот же дух, с которого всё начиналось.
+
+📅 Последний день — 30 сентября📍 Full House, Pererenan
+
+Если давно хотели заглянуть в Full House — сейчас последний шанс посетить это особенное место перед закрытием. 🏡✨
+
+instagram (https://www.instagram.com/fullhouse.bali/)</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/bali/">Бали</a> <span aria-hidden="true">›</span> <span>Закрытие Full House в Pererenan</span></p>
+    <p>Ещё события на Бали: <a href="/bali/">афиша</a> · <a href="/bali/food/">🍜 Еда и напитки</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/c0400dca-4886-4926-ab8d-030116e64cb4/diskussiya-o-ede-i-kulture-v-dragon-tea-temple/">Дискуссия о еде и культуре в Dragon Tea Temple <time datetime="2026-09-16">16 сентября 2026</time></a></li>
+    <li><a href="/event/bcf851b7-09a7-4cd5-bf6a-b44d241aa124/degustatsiya-indoneziyskikh-vin-v-potato-head/">Дегустация индонезийских вин в Potato Head <time datetime="2026-09-18">18 сентября 2026</time></a></li>
+    <li><a href="/event/ba611e0c-1687-4006-bc25-fbf26cf8e23a/winemaker-in-conversation-v-dome/">Winemaker in Conversation в Dome <time datetime="2026-09-26">26 сентября 2026</time></a></li>
+    <li><a href="/event/7e20cc52-7126-4b66-83bc-31937aab1450/uzhin-na-zakate-na-bortu-bounty-cruises/">Ужин на закате на борту Bounty Cruises <time datetime="2026-09-30">30 сентября 2026</time></a></li>
+    <li><a href="/event/2d39a581-7c71-44e1-8f8e-056ed8aea5ca/degustatsiya-vin-v-masonry/">Дегустация вин в Masonry <time datetime="2026-10-01">1 октября 2026</time></a></li>
+    <li><a href="/event/524b7d6e-234a-4402-a54b-e43ad127b4c0/rozhdestvenskie-vechera-v-copper-muzyka-i-prazdnichnyy-uzhin/">Рождественские вечера в Copper: музыка и праздничный ужин <time datetime="2026-12-24">24 декабря 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Бали</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/874620b8-7982-4ab2-87cd-909a727164be/vecherinka-midweek-pulse-v-red-ruby/">Вечеринка Midweek Pulse в Red Ruby</a> <time datetime="2026-09-30">30 сентября 2026</time></li>
+    <li>Следующее: <a href="/event/9fafeaa0-1593-41f1-a7b5-2223a51354b1/yoga-v-ubude/">Йога в Убуде</a> <time datetime="2026-09-30">30 сентября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/bali/">Ближайшие события: Бали</a></p>
+</div>
+
+  </body>
+</html>

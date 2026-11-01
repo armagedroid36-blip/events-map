@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Business breakfast and networking — September 3, 2026 · Da Nang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Da Nang, September 3, 2026. Business breakfast and networking ☕️ One of the club&#39;s core values is its people. On Thursday, we&#39;re gathering for breakfast to get…" />
+    <link rel="canonical" href="https://mypins.site/en/event/9bd3fe49-dd6f-44fc-8223-34c794739dfe/business-breakfast-and-networking/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Business breakfast and networking — September 3, 2026 · Da Nang" />
+    <meta property="og:description" content="Da Nang, September 3, 2026. Business breakfast and networking ☕️ One of the club&#39;s core values is its people. On Thursday, we&#39;re gathering for breakfast to get…" />
+    <meta property="og:url" content="https://mypins.site/en/event/9bd3fe49-dd6f-44fc-8223-34c794739dfe/business-breakfast-and-networking/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/9bd3fe49-dd6f-44fc-8223-34c794739dfe/business-breakfast-and-networking/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/9bd3fe49-dd6f-44fc-8223-34c794739dfe/biznes-zavtrak-i-netvorking/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Da Nang","item":"https://mypins.site/en/da-nang/"},{"@type":"ListItem","position":3,"name":"Business breakfast and networking","item":"https://mypins.site/en/event/9bd3fe49-dd6f-44fc-8223-34c794739dfe/business-breakfast-and-networking/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Business breakfast and networking</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-09-17">September 17, 2026</time></p>
+  <p><time datetime="2026-09-03T11:00:00">September 3, 2026, 11:00 AM</time></p>
+  <address>Eco Green Cafe &amp; Bistro, 1 An Thượng 3, Ngũ Hành Sơn, Đà Nẵng 550000, Vietnam, Da Nang</address>
+  <p>100000 VND</p>
+  <p>Business breakfast and networking ☕️
+
+One of the club&#39;s core values is its people. On Thursday, we&#39;re gathering for breakfast to get to know each other better and find &quot;your people&quot; among Danang entrepreneurs.
+
+Why come:
+- Connect with those who are also building businesses and speak your language
+- Create new partnerships — many strong collaborations in the club were born over morning coffee
+- Find out who does what in Danang
+
+Come even if you&#39;ve just landed or haven&#39;t attended any meetings yet.
+
+📅 When: Sept 3 at 11:00
+💰 Entry: 100,000 dong
+👥 Number of spots: 40
+📍 Location: https://maps.app.goo.gl/rVLBXZxGjmKnsueQA?g_st=ic
+
+Sign up - https://t.me/Biz_danang_club_bot?startapp=event_33 🚀
+
+Questions @yasnaya_olya
+#date: Sept 3</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/da-nang/">Da Nang</a> <span aria-hidden="true">›</span> <span>Business breakfast and networking</span></p>
+    <p>More events in Da Nang: <a href="/en/da-nang/">what&#39;s on</a> · <a href="/en/da-nang/meetup/">🤝 Meetups &amp; Networking</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/a5617bcf-b5de-413c-978a-f9e116b3b749/therapeutic-book-club/">Therapeutic book club <time datetime="2026-09-03">September 3, 2026</time></a></li>
+    <li><a href="/en/event/6a61dc1d-acb6-403a-9de0-5a05d2db44e5/how-to-blend-in-as-one-of-your-own-and-live-care-free-in-vietnam/">How to BLEND IN AS ONE OF YOUR OWN and LIVE CARE FREE in Vietnam <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/38e2bcab-9f00-4395-a51a-428b5b0cc951/big-networking-event-in-danang/">BIG NETWORKING EVENT IN DANANG <time datetime="2026-11-05">November 5, 2026</time></a></li>
+    <li><a href="/en/event/7f036642-89cd-4f00-aa96-ffa97df0c512/how-much-time-is-wasted-on-questions-that-could-be-resolved-in-a-15-minute-live-conversation/">How much time is wasted on questions that could be resolved in a 15-minute live conversation? <time datetime="2026-11-05">November 5, 2026</time></a></li>
+    <li><a href="/en/event/ebf810b2-b2bf-45d1-854e-66978eafc4ba/100-entrepreneurs-from-da-nang-on-one-platform/">100 entrepreneurs from Da Nang on one platform <time datetime="2026-11-05">November 5, 2026</time></a></li>
+    <li><a href="/en/event/2738192a-7920-4965-8234-8993b6e2ac9c/therapeutic-book-club/">Therapeutic Book Club <time datetime="2026-11-26">November 26, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Da Nang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/94eeb010-3eb2-412e-8325-47e3d46289f1/hatha-yoga-class/">HATHA YOGA CLASS</a> <time datetime="2026-09-17">September 17, 2026</time></li>
+    <li>Next: <a href="/en/event/bfa9276a-3b31-4c55-af09-e348ceda31ca/jewelry-making-workshop/">Jewelry making workshop</a> <time datetime="2026-09-17">September 17, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/da-nang/">Upcoming events in Da Nang</a></p>
+</div>
+
+  </body>
+</html>

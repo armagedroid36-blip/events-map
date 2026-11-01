@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mafia (sports) — October 4, 2026 · Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Bali, October 4, 2026. Sports Mafia 😎 We invite you to Mafia in Ubud! 😎 We welcome experienced players and beginners 🫂 👉 To sign up for a game, message us…" />
+    <link rel="canonical" href="https://mypins.site/en/event/998ba4c2-d1d7-45d3-922e-edef4df8a9a4/mafia-sports/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Mafia (sports) — October 4, 2026 · Bali" />
+    <meta property="og:description" content="Bali, October 4, 2026. Sports Mafia 😎 We invite you to Mafia in Ubud! 😎 We welcome experienced players and beginners 🫂 👉 To sign up for a game, message us…" />
+    <meta property="og:url" content="https://mypins.site/en/event/998ba4c2-d1d7-45d3-922e-edef4df8a9a4/mafia-sports/" />
+    <meta property="og:image" content="https://static.baliforum.ru/uploads/595722/conversions/IMG_2128___responsive-webp_960_1280-preview.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/998ba4c2-d1d7-45d3-922e-edef4df8a9a4/mafia-sports/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/998ba4c2-d1d7-45d3-922e-edef4df8a9a4/mafiya-sportivnaya/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Bali","item":"https://mypins.site/en/bali/"},{"@type":"ListItem","position":3,"name":"Mafia (sports)","item":"https://mypins.site/en/event/998ba4c2-d1d7-45d3-922e-edef4df8a9a4/mafia-sports/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Mafia (sports)</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-04">October 4, 2026</time></p>
+  <p><time datetime="2026-10-04T18:00:00">October 4, 2026, 6:00 PM</time></p>
+  <address>Ubud, Gianyar Regency, Bali, Indonesia</address>
+  <p>Sports Mafia
+
+😎 We invite you to Mafia in Ubud! 😎
+
+We welcome experienced players and beginners 🫂
+
+👉 To sign up for a game, message us on TG @day_the_best
+
+For experienced participants. 👍👎👌🤲🤙 Sports version of the game. Our club is a member of FIIM. We maintain a game rating, hold minicaps and tournaments.
+
+🥰 For beginners ❤️🖤. We&#39;ll tell and show you everything! We&#39;re always happy to welcome new participants, we help them get up to speed quickly and provide worthy competition to experienced players.
+
+🤗 With us, you&#39;ll spend an interesting, fun, and useful evening, make new friends, and train your logic, communication, and persuasion skills. See you there ❤️</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/bali/">Bali</a> <span aria-hidden="true">›</span> <span>Mafia (sports)</span></p>
+    <p>More events in Bali: <a href="/en/bali/">what&#39;s on</a> · <a href="/en/bali/games/">🎲 Games &amp; Quizzes</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/20c1abf9-31fd-4399-8af4-b5b18212c2c8/quiz-please/">Quiz, please! <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/26a731ba-59d4-46d2-a1f6-4500b3b7c9e5/dota-2-tournament-at-cube-jimbaran-november-1/">Dota 2 Tournament at CUBE, Jimbaran - November 1 <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/88277214-598a-442f-bfbb-d6c2eab23fd7/brainstorming-bali-at-a-corporate-event-yes-it-s-possible/">Brainstorming Bali at a corporate event! Yes, it&#39;s possible <time datetime="2026-11-02">November 2, 2026</time></a></li>
+    <li><a href="/en/event/5cac553d-a3cb-4440-abdc-13c5961e5a8b/mafia-in-ubud/">Mafia in Ubud <time datetime="2026-11-03">November 3, 2026</time></a></li>
+    <li><a href="/en/event/c80f97ed-6367-4437-a51a-5b44d8e45929/city-mafia-on-bukita/">City mafia on Bukita <time datetime="2026-11-03">November 3, 2026</time></a></li>
+    <li><a href="/en/event/27bda3e4-fa39-4b96-aafa-97c7591772b3/mozgoboynya-music-bali-women-vs-men/">Mozgoboynya Music Bali &quot;Women vs Men&quot; <time datetime="2026-11-04">November 4, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Bali</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/97e64fac-89e9-4d0e-ab3d-eb1a061bdcab/nrl-final-on-the-screens-of-paradise-lane/">NRL Final on the screens of Paradise Lane</a> <time datetime="2026-10-04">October 4, 2026</time></li>
+    <li>Next: <a href="/en/event/a6d933e3-1afd-4291-9332-91912990b760/speed-dating/">Speed Dating</a> <time datetime="2026-10-04">October 4, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/bali/">Upcoming events in Bali</a></p>
+</div>
+
+  </body>
+</html>

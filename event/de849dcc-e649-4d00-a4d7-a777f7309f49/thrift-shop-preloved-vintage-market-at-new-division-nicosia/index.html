@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Барахолка: Маркет подержанных и… — 8 ноября 2026 · Никосия, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Никосия, Кипр, 8 ноября 2026. Барахолка от Thriftaro.cy — винтажный маркет и маркет вещей с историей: одежда от €2, аксессуары, украшения и коктейли в New…" />
+    <link rel="canonical" href="https://mypins.site/event/de849dcc-e649-4d00-a4d7-a777f7309f49/barakholka-market-poderzhannykh-i-vintazhnykh-veshchey-v-new-division-nikosiya/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Барахолка: Маркет подержанных и… — 8 ноября 2026 · Никосия, Кипр" />
+    <meta property="og:description" content="Никосия, Кипр, 8 ноября 2026. Барахолка от Thriftaro.cy — винтажный маркет и маркет вещей с историей: одежда от €2, аксессуары, украшения и коктейли в New…" />
+    <meta property="og:url" content="https://mypins.site/event/de849dcc-e649-4d00-a4d7-a777f7309f49/barakholka-market-poderzhannykh-i-vintazhnykh-veshchey-v-new-division-nikosiya/" />
+    <meta property="og:image" content="https://eventor-images-s3.s3.eu-west-2.amazonaws.com/high-res/42f0a1aa-86cc-452c-84b6-7d3bff2bed0f.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/de849dcc-e649-4d00-a4d7-a777f7309f49/barakholka-market-poderzhannykh-i-vintazhnykh-veshchey-v-new-division-nikosiya/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/de849dcc-e649-4d00-a4d7-a777f7309f49/thrift-shop-preloved-vintage-market-at-new-division-nicosia/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Барахолка: Маркет подержанных и винтажных вещей в New Division, Никосия","url":"https://mypins.site/event/de849dcc-e649-4d00-a4d7-a777f7309f49/barakholka-market-poderzhannykh-i-vintazhnykh-veshchey-v-new-division-nikosiya/","startDate":"2026-11-08T11:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"New Division","address":{"@type":"PostalAddress","addressLocality":"Никосия","streetAddress":"New Division","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1671745,"longitude":33.3567157}},"offers":{"@type":"Offer","url":"https://mypins.site/event/de849dcc-e649-4d00-a4d7-a777f7309f49/barakholka-market-poderzhannykh-i-vintazhnykh-veshchey-v-new-division-nikosiya/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-10-11"},"description":"Барахолка от Thriftaro.cy — винтажный маркет и маркет вещей с историей: одежда от €2, аксессуары, украшения и коктейли в New Division Nicosia 8 ноября 2026 года. --- Уникальный маркет с вещами с историей и новыми вещами от €2, винтажными аксессуарами, украшениями, обувью, предметами интерьера и многим другим! Мероприятие организует @thriftaro.cy в New Division в Никосии, поддерживая осознанную моду со стилем и радостью. И конечно — не уходите, не попробовав уникальные коктейли! 🤍 🗓️ Программа Воскресенье, 8 ноября 2026 | 11:00–18:00 (New Division,","endDate":"2026-11-08T18:00:00","image":"https://eventor-images-s3.s3.eu-west-2.amazonaws.com/high-res/42f0a1aa-86cc-452c-84b6-7d3bff2bed0f.jpg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/thrift-shop-preloved-vintage-market-at-new-division-nicosia-2026-11-08"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Барахолка: Маркет подержанных и винтажных вещей в New Division, Никосия","item":"https://mypins.site/event/de849dcc-e649-4d00-a4d7-a777f7309f49/barakholka-market-poderzhannykh-i-vintazhnykh-veshchey-v-new-division-nikosiya/"}]}]}</script>
+    <script type="application/json" id="seo-alias-map">{"cloneId":"de849dcc-e649-4d00-a4d7-a777f7309f49","keptId":"de849dcc-e649-4d00-a4d7-a777f7309f49","ru":"https://mypins.site/event/de849dcc-e649-4d00-a4d7-a777f7309f49/barakholka-market-poderzhannykh-i-vintazhnykh-veshchey-v-new-division-nikosiya/","en":"https://mypins.site/en/event/de849dcc-e649-4d00-a4d7-a777f7309f49/thrift-shop-preloved-vintage-market-at-new-division-nicosia/"}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Барахолка: Маркет подержанных и винтажных вещей в New Division, Никосия</h1>
+  <p><time datetime="2026-11-08T11:00:00">8 ноября 2026, 11:00</time></p>
+  <address>New Division, Никосия, Кипр</address>
+  <p>Барахолка от Thriftaro.cy — винтажный маркет и маркет вещей с историей: одежда от €2, аксессуары, украшения и коктейли в New Division Nicosia 8 ноября 2026 года.
+
+---
+
+Уникальный маркет с вещами с историей и новыми вещами от €2, винтажными аксессуарами, украшениями, обувью, предметами интерьера и многим другим! Мероприятие организует @thriftaro.cy в New Division в Никосии, поддерживая осознанную моду со стилем и радостью. И конечно — не уходите, не попробовав уникальные коктейли! 🤍
+
+🗓️ Программа
+Воскресенье, 8 ноября 2026 | 11:00–18:00 (New Division,</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Барахолка: Маркет подержанных и винтажных вещей в New Division, Никосия</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/exhibition/">🖼️ Выставки</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/05b24287-7f9a-4b4a-aeb6-5b0e0a322083/sekond-khend-i-vintazhnyy-bazar-v-nikosii/">Секонд-хенд и винтажный базар в Никосии <time datetime="2026-11-07">7 ноября 2026</time></a></li>
+    <li><a href="/event/08b8aca5-56c5-4657-b2e9-d740f2dfb59a/pazarak-v-spile-v-nikosii/">Пазаракі в Спилье в Никосии <time datetime="2026-11-07">7 ноября 2026</time></a></li>
+    <li><a href="/event/0b0e3c17-11e6-4e96-a58a-ccd6e89296c4/cyprus-insula-ekskursii-po-vystavke/">Cyprus Insula: экскурсии по выставке <time datetime="2026-11-07">7 ноября 2026</time></a></li>
+    <li><a href="/event/23a9e498-205b-4724-833d-f1485267ba6f/biennale-ayya-napy-2026-mezhdunarodnaya-vystavka-sovremennogo-iskusstva/">Биеннале Айя-Напы 2026 — международная выставка современного искусства <time datetime="2026-11-07">7 ноября 2026</time></a></li>
+    <li><a href="/event/03807c6a-0998-4d26-a535-9ad2f4f8d437/vystavka-klassicheskikh-avtomobiley-v-larnake/">Выставка классических автомобилей в Ларнаке <time datetime="2026-11-08">8 ноября 2026</time></a></li>
+    <li><a href="/event/0535524b-dac3-46f2-8d16-3bcaa37935ec/mify-kipra/">Мифы Кипра <time datetime="2026-11-08">8 ноября 2026</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>

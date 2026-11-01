@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>КАТАРСИС — Живое импровизационн… — 5 сентября 2026 · Балиан, Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Балиан, Bali, 5 сентября 2026. 📍 ASH Nuanu, Nuanu Creative City 📅 Суббота, 5 сентября 2026 🚪 Открытие дверей - 18:00 🎶 CATHARSIS - 19:00 🎤 Alex Tsaga +…" />
+    <link rel="canonical" href="https://mypins.site/event/d81124f7-c462-4768-8250-5a304a44c1d2/katarsis-zhivoe-improvizatsionnoe-shou/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="КАТАРСИС — Живое импровизационн… — 5 сентября 2026 · Балиан, Bali" />
+    <meta property="og:description" content="Балиан, Bali, 5 сентября 2026. 📍 ASH Nuanu, Nuanu Creative City 📅 Суббота, 5 сентября 2026 🚪 Открытие дверей - 18:00 🎶 CATHARSIS - 19:00 🎤 Alex Tsaga +…" />
+    <meta property="og:url" content="https://mypins.site/event/d81124f7-c462-4768-8250-5a304a44c1d2/katarsis-zhivoe-improvizatsionnoe-shou/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Бали","item":"https://mypins.site/bali/"},{"@type":"ListItem","position":3,"name":"КАТАРСИС — Живое импровизационное шоу","item":"https://mypins.site/event/d81124f7-c462-4768-8250-5a304a44c1d2/katarsis-zhivoe-improvizatsionnoe-shou/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>КАТАРСИС — Живое импровизационное шоу</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-09-05">5 сентября 2026</time></p>
+  <p><time datetime="2026-09-05T19:00:00">5 сентября 2026, 19:00</time></p>
+  <address>93CW+W5, Beraban, Kediri, Tabanan Regency, Bali 82121, Индонезия, Балиан, Bali</address>
+  <p>📍 ASH Nuanu, Nuanu Creative City
+
+📅 Суббота, 5 сентября 2026
+
+🚪 Открытие дверей - 18:00
+
+🎶 CATHARSIS - 19:00
+
+🎤 Alex Tsaga + открытый микрофон - 21:00
+
+Музыка, которая создаётся здесь и сейчас - и никогда не повторится точно так же.
+
+CATHARSIS - живое импровизационное шоу, где одни из лучших музыкантов острова собираются на одной сцене и создают музыку прямо перед зрителями.
+
+Здесь нет фиксированного сет-листа и заранее прописанного сценария.
+
+Каждый звук, каждый музыкальный поворот и каждое взаимодействие между артистами рождаются в моменте. Музыканты слушают друг друга, реагируют и вместе развивают композицию, не зная заранее, куда приведёт музыка.
+
+Музыкальные направления вечера:
+
+Neo-Classical • Funk / Neo-Soul • Cinematic Ambient
+
+В основе CATHARSIS - постепенное нарастание эмоций, энергии и напряжения, которое приводит к кульминации и эмоциональному освобождению.
+
+Вы не просто смотрите заранее подготовленный концерт - вы видите, как музыка создаётся прямо на сцене.
+
+ПРОГРАММА
+
+19:00 - CATHARSISЖивая музыкальная импровизация, полностью создаваемая на сцене в реальном времени.
+
+21:00 - ALEX TSAGAСпециально подготовленный авторский мини-концерт Alex Tsaga, который продолжит вечер и создаст контраст после импровизационной части.
+
+После - MUSIC JAM / ОТКРЫТЫЙ МИКРОФОНСцена открывается для музыкантов, вокалистов и артистов, которые захотят присоединиться и выступить.
+
+🍽 Еда и напитки доступны в ASH в течение всего вечера.
+
+ЧТО ВХОДИТ В БИЛЕТ
+
+Билет на CATHARSIS также включает вход в Nuanu Creative City.
+
+Можно приехать раньше, прогуляться по Nuanu и посмотреть его пространства и достопримечательности, а затем продолжить вечер за ужином, напитками и живой музыкой в ASH.
+
+КАК ДОБРАТЬСЯ ДО ASH
+
+Заезжайте в Nuanu через Parking 1 - главную гостевую парковку - и покажите QR-код Megatix на входе.
+
+От Parking 1 до ASH около 5 минут пешком. Также можно воспользоваться бесплатным шаттлом Nuanu.
+
+Услышьте музыку в момент её создания - а после оставайтесь на выступление Alex Tsaga и открытый джем.
+
+🎟 Билеты - на Megatix</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/bali/">Бали</a> <span aria-hidden="true">›</span> <span>КАТАРСИС — Живое импровизационное шоу</span></p>
+    <p>Ещё события на Бали: <a href="/bali/">афиша</a> · <a href="/bali/concert/">🎤 Концерты</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/10f48477-8fbd-4085-a860-ba2b17633a41/poet-not-dead-poeticheskiy-muzykalnyy-open-mic/">Poet Not Dead - поэтический/музыкальный open mic <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/79b002b7-3b18-4fe9-8804-95eafd3307bc/360-tur-rodrigo-gallardo-na-bali-2026/">360°: Тур Родриго Галлардо на Бали 2026 <time datetime="2026-11-04">4 ноября 2026</time></a></li>
+    <li><a href="/event/bbdb6929-97e1-4c98-93d9-1bf2c28a3337/baron-v-desa-kitsune/">Baron в Desa Kitsuné <time datetime="2026-11-10">10 ноября 2026</time></a></li>
+    <li><a href="/event/96b75f90-fd77-45b6-8131-32f732c2f0d3/koiaa-i-pretty-liar-v-hatch-uluvatu/">KOIAA и Pretty Liar в Hatch, Улувату <time datetime="2026-11-13">13 ноября 2026</time></a></li>
+    <li><a href="/event/cb5b7885-e155-4648-85d3-daac409874f5/lee-burridge-v-savaya-bali/">LEE BURRIDGE в Savaya Bali <time datetime="2026-11-15">15 ноября 2026</time></a></li>
+    <li><a href="/event/1f2ff1a0-b33c-418b-9018-1d8927dcce2f/damian-lazarus-v-savaya-bali/">DAMIAN LAZARUS в Savaya Bali <time datetime="2026-11-21">21 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Бали</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/cc709072-1271-4c16-ade4-75b9c6b435ab/gitarnyy-vecher/">Гитарный вечер</a> <time datetime="2026-09-05">5 сентября 2026</time></li>
+    <li>Следующее: <a href="/event/d8a8aa8e-9f04-40ef-bf57-7ba2862e2062/kurs-podgotovki-prepodavateley-yogi/">Курс подготовки преподавателей йоги</a> <time datetime="2026-09-05">5 сентября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/bali/">Ближайшие события: Бали</a></p>
+</div>
+
+  </body>
+</html>

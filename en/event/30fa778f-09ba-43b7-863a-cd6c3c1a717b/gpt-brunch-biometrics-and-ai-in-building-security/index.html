@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GPT Brunch: Biometrics and AI in… — October 16, 2026 · Limassol</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Limassol, Cyprus, October 16, 2026. Free expert talk on biometrics and AI in building security in Limassol, October 2026 — registration required. Schedule…" />
+    <link rel="canonical" href="https://mypins.site/en/event/30fa778f-09ba-43b7-863a-cd6c3c1a717b/gpt-brunch-biometrics-and-ai-in-building-security/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="GPT Brunch: Biometrics and AI in… — October 16, 2026 · Limassol" />
+    <meta property="og:description" content="Limassol, Cyprus, October 16, 2026. Free expert talk on biometrics and AI in building security in Limassol, October 2026 — registration required. Schedule…" />
+    <meta property="og:url" content="https://mypins.site/en/event/30fa778f-09ba-43b7-863a-cd6c3c1a717b/gpt-brunch-biometrics-and-ai-in-building-security/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/30fa778f-09ba-43b7-863a-cd6c3c1a717b/gpt-brunch-biometrics-and-ai-in-building-security/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/30fa778f-09ba-43b7-863a-cd6c3c1a717b/gpt-branch-biometriya-i-ii-v-bezopasnosti-zdaniy/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"GPT Brunch: Biometrics and AI in Building Security","item":"https://mypins.site/en/event/30fa778f-09ba-43b7-863a-cd6c3c1a717b/gpt-brunch-biometrics-and-ai-in-building-security/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>GPT Brunch: Biometrics and AI in Building Security</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-16">October 16, 2026</time></p>
+  <p><time datetime="2026-10-16T19:00:00">October 16, 2026, 7:00 PM</time></p>
+  <address>Agios Georgios Prasteio Morfou Club &amp; Tavern, Limassol, Cyprus</address>
+  <p>Free expert talk on biometrics and AI in building security in Limassol, October 2026 — registration required. Schedule available.
+
+---
+
+Scroll down for English version 👇
+
+---
+
+GPT Brunch returns after the summer break with a new series of events. The first topic concerns biometrics and artificial intelligence in building security — not theoretical demonstrations, but systems already operating in Cyprus. The event takes place on Friday, 16 October 2026, at 19:00, at Agios Georgios Prasteio Morfou Club &amp; Tavern in Limassol.
+
+🎟️ Free admission. Registration required.
+
+Speaker</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>GPT Brunch: Biometrics and AI in Building Security</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/festival/">🎉 Festivals</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/69edaa68-9666-44bf-ab9a-9c7faa9a52c7/machalart-26-neighbourhood-arts-festival/">Machalárt 26: Neighbourhood Arts Festival <time datetime="2026-10-08">October 8, 2026</time></a></li>
+    <li><a href="/en/event/963fdbe5-4e9e-41f8-96ec-c89b1a82c4bd/art-explora-festival-in-limassol/">Art Explora Festival in Limassol <time datetime="2026-10-25">October 25, 2026</time></a></li>
+    <li><a href="/en/event/51861796-19bc-4e0d-875e-3ec4ab13fafa/halloween-at-toy-town/">Halloween at Toy Town <time datetime="2026-10-28">October 28, 2026</time></a></li>
+    <li><a href="/en/event/2613160e-8bee-4444-ace1-2d8f1bf87c42/3rd-autumn-halloween-festival/">3rd Autumn Halloween Festival <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/27755ed9-24b0-4f42-8956-2fb7b78b91ea/spooky-explorer-ticket-in-nicosia/">Spooky Explorer Ticket in Nicosia <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/3a4a9076-860d-41ea-9998-fef116247a19/family-weekends-space-science-and-halloween-fun/">Family weekends: space, science and Halloween fun <time datetime="2026-10-31">October 31, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/2edfb7fb-d6a8-45e0-9b34-5db44260684c/the-effect/">The Effect</a> <time datetime="2026-10-16">October 16, 2026</time></li>
+    <li>Next: <a href="/en/event/39908660-8498-4cb1-8430-137a3577e76c/guaba-goes-latin-summer-closing-latin-party-in-limassol/">Guaba Goes Latin: Summer Closing Latin Party in Limassol</a> <time datetime="2026-10-16">October 16, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

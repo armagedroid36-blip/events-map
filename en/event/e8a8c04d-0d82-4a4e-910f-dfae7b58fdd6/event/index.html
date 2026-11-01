@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rudolf and Santa&#39;s Elves — December 12, 2026 · Limassol</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Limassol, Cyprus, December 12, 2026. The beloved Christmas children&#39;s show &quot;Rudolf and Santa&#39;s Elves&quot; is coming to Cyprus for the first time in December 2026…" />
+    <link rel="canonical" href="https://mypins.site/en/event/e8a8c04d-0d82-4a4e-910f-dfae7b58fdd6/rudolf-and-santa-s-elves/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Rudolf and Santa&#39;s Elves — December 12, 2026 · Limassol" />
+    <meta property="og:description" content="Limassol, Cyprus, December 12, 2026. The beloved Christmas children&#39;s show &quot;Rudolf and Santa&#39;s Elves&quot; is coming to Cyprus for the first time in December 2026…" />
+    <meta property="og:url" content="https://mypins.site/en/event/e8a8c04d-0d82-4a4e-910f-dfae7b58fdd6/rudolf-and-santa-s-elves/" />
+    <meta property="og:image" content="https://eventor-images-s3.s3.eu-west-2.amazonaws.com/high-res/73b2107a-57b1-4903-9bd2-ed8111d86091.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/e8a8c04d-0d82-4a4e-910f-dfae7b58fdd6/rudolf-and-santa-s-elves/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/e8a8c04d-0d82-4a4e-910f-dfae7b58fdd6/rudolf-i-elfy-santa-klausa/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Rudolf and Santa's Elves","url":"https://mypins.site/en/event/e8a8c04d-0d82-4a4e-910f-dfae7b58fdd6/rudolf-and-santa-s-elves/","startDate":"2026-12-12T11:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Limassol","address":{"@type":"PostalAddress","addressLocality":"Limassol","streetAddress":"Limassol","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.6852901,"longitude":33.0332657}},"offers":{"@type":"Offer","url":"https://mypins.site/en/event/e8a8c04d-0d82-4a4e-910f-dfae7b58fdd6/rudolf-and-santa-s-elves/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-10-18"},"description":"The beloved Christmas children's show \"Rudolf and Santa's Elves\" is coming to Cyprus for the first time in December 2026 — tickets available. --- Scroll down for English version 👇 --- The beloved story of the world's most famous reindeer comes to life on stage! After four consecutive successful years in Greece, the show is coming to Cyprus for the first time — in Limassol (December 12) and Nicosia (December 13). A magical, interactive experience for children aged 1.5 to 10 years, lasting 75 minutes with no intermission. 🎟️ Tickets from €10. Persons m","endDate":"2026-12-13","image":"https://eventor-images-s3.s3.eu-west-2.amazonaws.com/high-res/73b2107a-57b1-4903-9bd2-ed8111d86091.jpg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CE%BF-%CF%81%CE%BF%CF%8D%CE%BD%CF%84%CE%BF%CE%BB%CF%86-%CE%BA%CE%B1%CE%B9-%CF%84%CE%B1-%CE%BE%CF%89%CF%84%CE%B9%CE%BA%CE%AC-%CF%84%CE%BF%CF%85-%CE%B1%CF%8A-%CE%B2%CE%B1%CF%83%CE%AF%CE%BB%CE%B7-2026-12-12"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Rudolf and Santa's Elves","item":"https://mypins.site/en/event/e8a8c04d-0d82-4a4e-910f-dfae7b58fdd6/rudolf-and-santa-s-elves/"}]}]}</script>
+    <script type="application/json" id="seo-alias-map">{"cloneId":"e8a8c04d-0d82-4a4e-910f-dfae7b58fdd6","keptId":"e8a8c04d-0d82-4a4e-910f-dfae7b58fdd6","ru":"https://mypins.site/event/e8a8c04d-0d82-4a4e-910f-dfae7b58fdd6/rudolf-i-elfy-santa-klausa/","en":"https://mypins.site/en/event/e8a8c04d-0d82-4a4e-910f-dfae7b58fdd6/rudolf-and-santa-s-elves/"}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Rudolf and Santa&#39;s Elves</h1>
+  <p><time datetime="2026-12-12T11:00:00">December 12, 2026, 11:00 AM</time></p>
+  <address>Limassol, Cyprus</address>
+  <p>The beloved Christmas children&#39;s show &quot;Rudolf and Santa&#39;s Elves&quot; is coming to Cyprus for the first time in December 2026 — tickets available.
+
+---
+
+Scroll down for English version 👇
+
+---
+
+The beloved story of the world&#39;s most famous reindeer comes to life on stage! After four consecutive successful years in Greece, the show is coming to Cyprus for the first time — in Limassol (December 12) and Nicosia (December 13). A magical, interactive experience for children aged 1.5 to 10 years, lasting 75 minutes with no intermission.
+
+🎟️ Tickets from €10. Persons m</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Rudolf and Santa&#39;s Elves</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/theatre/">🎭 Theatres &amp; Shows</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/02f5f69b-0381-43f5-a7b7-dd0c2df80ff7/the-story-of-ernest-celestine/">The Story Of Ernest &amp; Celestine <time datetime="2026-12-12">December 12, 2026</time></a></li>
+    <li><a href="/en/event/06980fa9-1976-4491-90dc-915705fb1a19/rudolf-and-santa-s-helpers/">Rudolf and Santa&#39;s Helpers <time datetime="2026-12-12">December 12, 2026</time></a></li>
+    <li><a href="/en/event/78eb1c5c-c626-47dd-96f7-cfdbf70d6316/rudolph-s-magical-christmas/">Rudolph&#39;s Magical Christmas <time datetime="2026-12-12">December 12, 2026</time></a></li>
+    <li><a href="/en/event/8a734344-4f51-4572-b528-28ffe74f4e22/new-year-s-tree/">New Year&#39;S Tree <time datetime="2026-12-12">December 12, 2026</time></a></li>
+    <li><a href="/en/event/b4dc908d-9b5c-47aa-8743-5399e92c13d1/the-nutcracker-friends-a-christmas-gala-evening/">The Nutcracker &amp; Friends - A Christmas Gala Evening <time datetime="2026-12-12">December 12, 2026</time></a></li>
+    <li><a href="/en/event/12e122a0-882f-4ea0-b933-17cec185bcfa/little-red-riding-hood/">Little Red Riding Hood <time datetime="2026-12-13">December 13, 2026</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>

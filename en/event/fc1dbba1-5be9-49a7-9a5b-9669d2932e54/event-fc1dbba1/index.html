@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A Night in Paradise (Winter Tour)… — January 23, 2027 · Paphos</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Paphos, Cyprus, January 23, 2027. The performance you loved returns dynamically and travels again to all the cities of Cyprus! A Night in Paradise: Loris…" />
+    <link rel="canonical" href="https://mypins.site/en/event/fc1dbba1-5be9-49a7-9a5b-9669d2932e54/a-night-in-paradise-winter-tour-in-paphos/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="A Night in Paradise (Winter Tour)… — January 23, 2027 · Paphos" />
+    <meta property="og:description" content="Paphos, Cyprus, January 23, 2027. The performance you loved returns dynamically and travels again to all the cities of Cyprus! A Night in Paradise: Loris…" />
+    <meta property="og:url" content="https://mypins.site/en/event/fc1dbba1-5be9-49a7-9a5b-9669d2932e54/a-night-in-paradise-winter-tour-in-paphos/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/fc1dbba1-5be9-49a7-9a5b-9669d2932e54/a-night-in-paradise-winter-tour-in-paphos/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/fc1dbba1-5be9-49a7-9a5b-9669d2932e54/odna-noch-v-rayu-zimniy-tur-v-pafose/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"A Night in Paradise (Winter Tour) in Paphos","url":"https://mypins.site/en/event/fc1dbba1-5be9-49a7-9a5b-9669d2932e54/a-night-in-paradise-winter-tour-in-paphos/","startDate":"2027-01-23T20:30:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Markideio Municipal Theatre, Paphos","address":{"@type":"PostalAddress","addressLocality":"Paphos","streetAddress":"Markideio Municipal Theatre, Paphos","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.7781598,"longitude":32.4232334}},"offers":{"@type":"Offer","url":"https://mypins.site/en/event/fc1dbba1-5be9-49a7-9a5b-9669d2932e54/a-night-in-paradise-winter-tour-in-paphos/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-10-05"},"description":"The performance you loved returns dynamically and travels again to all the cities of Cyprus! A Night in Paradise: Loris Loizidis and his company return. Cosmos Wireless presents the divine theatrical comedy A Night in Paradise on a winter tour. The modern theatrical comedy, written and directed by Loris Loizidis, which was presented by Pirasmos Productions in the summer of 2026, returns dynamically to all cities! Premiere November 27, Latsia Municipal Theatre, Nicosia. Text and direction: Loris Loizidis Starring: Loris Loizidis, Sofoklis Kask","endDate":"2027-01-23","image":"https://mypins.site/logo.png","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CE%BC%CE%B9%CE%B1-%CE%BD%CF%8D%CE%BA%CF%84%CE%B1-%CF%83%CF%84%CE%BF%CE%BD-%CF%80%CE%B1%CF%81%CE%AC%CE%B4%CE%B5%CE%B9%CF%83%CE%BF-%CF%87%CE%B5%CE%B9%CE%BC%CE%B5%CF%81%CE%B9%CE%BD%CE%AE-%CF%80%CE%B5%CF%81%CE%B9%CE%BF%CE%B4%CE%B5%CE%AF%CE%B1-%CF%83%CF%84%CE%B7%CE%BD-%CF%80%CE%AC%CF%86%CE%BF-2027-01-23"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"A Night in Paradise (Winter Tour) in Paphos","item":"https://mypins.site/en/event/fc1dbba1-5be9-49a7-9a5b-9669d2932e54/a-night-in-paradise-winter-tour-in-paphos/"}]}]}</script>
+    <script type="application/json" id="seo-alias-map">{"cloneId":"fc1dbba1-5be9-49a7-9a5b-9669d2932e54","keptId":"fc1dbba1-5be9-49a7-9a5b-9669d2932e54","ru":"https://mypins.site/event/fc1dbba1-5be9-49a7-9a5b-9669d2932e54/odna-noch-v-rayu-zimniy-tur-v-pafose/","en":"https://mypins.site/en/event/fc1dbba1-5be9-49a7-9a5b-9669d2932e54/a-night-in-paradise-winter-tour-in-paphos/"}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>A Night in Paradise (Winter Tour) in Paphos</h1>
+  <p><time datetime="2027-01-23T20:30:00">January 23, 2027, 8:30 PM</time></p>
+  <address>Markideio Municipal Theatre, Paphos, Cyprus</address>
+  <p>The performance you loved returns dynamically and travels again to all the cities of Cyprus!
+
+A Night in Paradise: Loris Loizidis and his company return.
+
+Cosmos Wireless presents the divine theatrical comedy A Night in Paradise on a winter tour.
+
+The modern theatrical comedy, written and directed by Loris Loizidis, which was presented by Pirasmos Productions in the summer of 2026, returns dynamically to all cities!
+
+Premiere November 27, Latsia Municipal Theatre, Nicosia.
+
+Text and direction: Loris Loizidis
+
+Starring: Loris Loizidis, Sofoklis Kask</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>A Night in Paradise (Winter Tour) in Paphos</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/theatre/">🎭 Theatres &amp; Shows</a></p>
+  </nav>
+  <p>Other dates in this series:</p>
+  <ul>
+    <li><a href="/en/event/cd3c378c-6cbd-4661-b493-0d2af8f0a4ad/a-night-in-paradise-winter-tour-in-paphos/"><time datetime="2027-01-22">January 22, 2027</time></a></li>
+    <li><a href="/en/event/89159e6b-d21b-4440-ac9c-b8866d9c0475/a-night-in-paradise-winter-tour-in-paphos/"><time datetime="2027-01-24">January 24, 2027</time></a></li>
+  </ul>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/310bb8aa-4c79-4844-a720-42e7ecee62da/to-gala/">To Gala <time datetime="2027-01-19">January 19, 2027</time></a></li>
+    <li><a href="/en/event/d56db48a-fba2-42d1-bbe4-80360bf4ba7d/the-little-mermaid/">The Little Mermaid <time datetime="2027-01-24">January 24, 2027</time></a></li>
+    <li><a href="/en/event/5a4428de-d48e-440f-8b5d-cec827b52730/the-biggest-problem-in-the-world-stand-up-comedy-with-victor-patrascan/">The Biggest Problem in the World – Stand-up Comedy with Victor Patrascan <time datetime="2027-01-29">January 29, 2027</time></a></li>
+    <li><a href="/en/event/76c8403e-2436-4c41-94e2-f52bd09acc14/one-night-in-paradise-greek-comedy-theatre-tour-in-nicosia/">One Night in Paradise: Greek Comedy Theatre Tour in Nicosia <time datetime="2027-01-29">January 29, 2027</time></a></li>
+    <li><a href="/en/event/79120bb8-3a56-4d76-899a-cef9fa905539/the-addams-family-the-musical-2027/">The Addams Family: The Musical 2027 <time datetime="2027-02-01">February 1, 2027</time></a></li>
+    <li><a href="/en/event/c8f4e64d-9b44-408f-9a9b-a4007b974777/a-night-in-paradise/">A Night in Paradise <time datetime="2027-02-05">February 5, 2027</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Среда! Играем в КРОВЬ НА ЧАСОВОЙ… — 28 октября 2026 · Нячанг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Нячанг, 28 октября 2026. Среда! Играем в КРОВЬ НА ЧАСОВОЙ БАШНЕ 🏰🩸 Любишь Мафию, но хочется чего-то гораздо интереснее? 😈 Представь игру, где у каждого своя…" />
+    <link rel="canonical" href="https://mypins.site/event/51b824ad-38ee-435d-bcf4-e8be7de273af/sreda-igraem-v-krov-na-chasovoy-bashne/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Среда! Играем в КРОВЬ НА ЧАСОВОЙ… — 28 октября 2026 · Нячанг" />
+    <meta property="og:description" content="Нячанг, 28 октября 2026. Среда! Играем в КРОВЬ НА ЧАСОВОЙ БАШНЕ 🏰🩸 Любишь Мафию, но хочется чего-то гораздо интереснее? 😈 Представь игру, где у каждого своя…" />
+    <meta property="og:url" content="https://mypins.site/event/51b824ad-38ee-435d-bcf4-e8be7de273af/sreda-igraem-v-krov-na-chasovoy-bashne/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/28d719fdd24b26c1bbee8300180e7421.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/51b824ad-38ee-435d-bcf4-e8be7de273af/sreda-igraem-v-krov-na-chasovoy-bashne/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/51b824ad-38ee-435d-bcf4-e8be7de273af/wednesday-we-re-playing-blood-on-the-clocktower/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"Среда! Играем в КРОВЬ НА ЧАСОВОЙ БАШНЕ","item":"https://mypins.site/event/51b824ad-38ee-435d-bcf4-e8be7de273af/sreda-igraem-v-krov-na-chasovoy-bashne/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Среда! Играем в КРОВЬ НА ЧАСОВОЙ БАШНЕ</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-28">28 октября 2026</time></p>
+  <p><time datetime="2026-10-28T19:00:00">28 октября 2026, 19:00</time></p>
+  <address>Party Game Нячанг, 112 Đ. Hồng Bàng, Nha Trang, Khánh Hòa 650000, Нячанг</address>
+  <p>200000 VND</p>
+  <p>Среда! Играем в КРОВЬ НА ЧАСОВОЙ БАШНЕ 🏰🩸
+
+Любишь Мафию, но хочется чего-то гораздо интереснее? 😈
+
+Представь игру, где у каждого своя уникальная роль и способность. Ещё больше блефа, психологии, тайных разговоров и неожиданных поворотов!
+
+🔎 Что здесь можно делать?
+🤫 Уходить на тайные разговоры один на один и обсуждать подозрения.
+🎭 Блефовать, притворяться другим персонажем и запутывать игроков.
+🕵️ Проверять подозреваемых, искать союзников и раскрывать секреты.
+💀 Даже после смерти оставаться частью игры!
+🔥 У каждого свои способности, и у добрых, и у злых. Поэтому скучать точно не придётся!
+
+❤️ Новички, смело присоединяйтесь! Всё объясним с нуля, даже если никогда не играли. Приходите за новыми эмоциями и классной компанией!
+
+📆 Когда? Среда, 28 октября
+⏰ Во сколько? 19:00–23:00
+📍 Где? CCCP Coffee
+💰 Сколько? 200k ₫ (за вечер 4-5 игр)
+
+📝 Запись @juliana_murr
+Мест всего 13, бронируй заранее! ✍️
+
+#дата: 28.10.2026
+Пост от: Juliana</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/nha-trang/">Нячанг</a> <span aria-hidden="true">›</span> <span>Среда! Играем в КРОВЬ НА ЧАСОВОЙ БАШНЕ</span></p>
+    <p>Ещё события в Нячанге: <a href="/nha-trang/">афиша</a> · <a href="/nha-trang/games/">🎲 Игры и квизы</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/1df45898-06da-4b8b-b449-94fc08202156/finansovaya-igra/">ФИНАНСОВАЯ ИГРА <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/2922621b-4ee1-4521-bc47-f464329533a8/igraem-v-bunker-vyshe-gor/">Играем в «Бункер» «Выше Гор» <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/2fc86e8e-ac83-43d3-ab6b-13f547d4fb41/den-nastolnykh-igr/">День НАСТОЛЬНЫХ ИГР <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/819eef30-86ed-416a-90fd-31f46c19c9a8/samaya-zhutkaya-v-godu-tematicheskaya-igra-kviz-pliz-posvyashchennaya-khellouinu-v-den-vsekh-svyatykh-my-vspomnim-topovye-uzhasti/">Самая жуткая в году - тематическая игра Квиз, плиз! посвященная Хэллоуину. В день Всех Святых мы вспомним топовые ужасти <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/b7aa3a77-941a-489c-8817-b0a373ce06fe/krov-na-chasovoy-bashne/">КРОВЬ НА ЧАСОВОЙ БАШНЕ <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/3a8ee991-6b81-40ab-9cb4-dabc9ddc2241/zapuskaem-novyy-proekt-po-podgotovke-masterov-kak-nachinayushchikh-tak-i-opytnykh-dlya-nastolnykh-rolevykh-igr-sut-proekta-z/">Запускаем новый проект по подготовке мастеров, как начинающих, так и опытных, для настольных ролевых игр. Суть проекта з <time datetime="2026-11-02">2 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Нячанг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/4e7f6bcd-a566-4f0d-997e-fff41d944dda/potokovaya-yoga/">Потоковая йога</a> <time datetime="2026-10-28">28 октября 2026</time></li>
+    <li>Следующее: <a href="/event/56c39bb9-065d-45f1-8c0e-e16d31553b63/gametalk-nastolnye-igry-na-angliyskom/">GameTalk: настольные игры на английском</a> <time datetime="2026-10-28">28 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/nha-trang/">Ближайшие события: Нячанг</a></p>
+</div>
+
+  </body>
+</html>

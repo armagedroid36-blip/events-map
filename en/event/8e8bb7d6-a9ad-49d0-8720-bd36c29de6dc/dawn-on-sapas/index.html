@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DAWN ON SAPAS — October 14, 2026 · Nha Trang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nha Trang, October 14, 2026. SUNRISE ON SUPS 🌅 Get ready for a morning SUP ride with beautiful views, the sea, and a complete reset ✨ ⚫️ SUP ride on the sea…" />
+    <link rel="canonical" href="https://mypins.site/en/event/8e8bb7d6-a9ad-49d0-8720-bd36c29de6dc/dawn-on-sapas/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="DAWN ON SAPAS — October 14, 2026 · Nha Trang" />
+    <meta property="og:description" content="Nha Trang, October 14, 2026. SUNRISE ON SUPS 🌅 Get ready for a morning SUP ride with beautiful views, the sea, and a complete reset ✨ ⚫️ SUP ride on the sea…" />
+    <meta property="og:url" content="https://mypins.site/en/event/8e8bb7d6-a9ad-49d0-8720-bd36c29de6dc/dawn-on-sapas/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/8e8bb7d6-a9ad-49d0-8720-bd36c29de6dc/dawn-on-sapas/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/8e8bb7d6-a9ad-49d0-8720-bd36c29de6dc/rassvet-na-sapakh/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"DAWN ON SAPAS","item":"https://mypins.site/en/event/8e8bb7d6-a9ad-49d0-8720-bd36c29de6dc/dawn-on-sapas/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>DAWN ON SAPAS</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-14">October 14, 2026</time></p>
+  <p><time datetime="2026-10-14T04:40:00">October 14, 2026, 4:40 AM</time></p>
+  <address>Nha Trang</address>
+  <p>500000 VND</p>
+  <p>SUNRISE ON SUPS 🌅
+
+Get ready for a morning SUP ride with beautiful views, the sea, and a complete reset ✨
+
+⚫️ SUP ride on the sea
+⚫️ Greeting the first rays of the sun
+⚫️ Photo shoot right on the sea
+⚫️ Landing and a walk around the island
+⚫️ Visit to a Buddhist temple
+⚫️ Tea with a panoramic view of Nha Trang
+
+📅 When - 14.10
+⏰ Start - 04:40
+📍 North Nha Trang, Oceanus area
+⏳ Duration - 3 hrs.
+💲Price - 500,000 vnd/person
+
+For details and booking: @anastasiiageller
+
+While Nha Trang sleeps, we are already greeting the sunrise in the middle of the sea. 🌊☀️💙
+
+#date: 14.10.2026
+Post by: 𝓖𝓮𝓵𝓵𝓮𝓻 𝓐𝓷𝓪𝓼𝓽𝓪𝓼𝓲𝔂𝓪 ✈️</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>DAWN ON SAPAS</span></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/dd0052d7-176f-4350-b66e-aae50ff91ef8/queenyen-10-11-october/">QUEENYEN 10 11 October! <time datetime="2026-10-11">October 11, 2026</time></a></li>
+    <li><a href="/en/event/088f68f6-5e40-424a-a2b0-eb14f576e79e/journey-to-the-mysterious-island-and-ai-lanh-lighthouse/">Journey to the mysterious island and Đại Lãnh Lighthouse <time datetime="2026-10-15">October 15, 2026</time></a></li>
+    <li><a href="/en/event/fa683fab-b44c-4599-8461-d4145b01bea7/journey-to-nui-chua-nature-reserve/">Journey to Núi Chúa Nature Reserve <time datetime="2026-10-17">October 17, 2026</time></a></li>
+    <li><a href="/en/event/34ed56e7-a193-46a2-805e-782447a378d4/where-to-go-this-weekend/">WHERE TO GO THIS WEEKEND? <time datetime="2026-10-17">October 17, 2026</time></a></li>
+    <li><a href="/en/event/5f4b1718-d170-46b2-8751-c4cefdb9f8d6/journey-to-hon-heo-peninsula/">Journey to Hòn Hèo Peninsula <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/dea0b1b0-c99a-4c97-b6cc-a879f53cd598/trip-to-the-southern-islands-of-nyachanga/">TRIP TO THE SOUTHERN ISLANDS OF NYACHANGA <time datetime="2026-11-07">November 7, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Nha Trang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/8c47f863-1e34-4ff8-b64f-5653c0ee2c03/master-class-breathing-and-posture/">MASTER CLASS &quot;BREATHING AND POSTURE&quot;</a> <time datetime="2026-10-14">October 14, 2026</time></li>
+    <li>Next: <a href="/en/event/b78a8b57-71dc-4083-9514-93e3756e5aac/healthy-back/">Healthy back</a> <time datetime="2026-10-14">October 14, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
+</div>
+
+  </body>
+</html>

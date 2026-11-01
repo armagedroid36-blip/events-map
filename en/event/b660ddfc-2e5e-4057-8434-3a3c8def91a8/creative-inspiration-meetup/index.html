@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Creative inspiration meetup — September 17, 2026 · Nha Trang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nha Trang, September 17, 2026. 🌷Creative meetup-inspiration🌷 💕&quot;Gently-Carefully&quot;💕 This time we&#39;re gathering for a master class &quot;Create, Make, Shine.&quot; We…" />
+    <link rel="canonical" href="https://mypins.site/en/event/b660ddfc-2e5e-4057-8434-3a3c8def91a8/creative-inspiration-meetup/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Creative inspiration meetup — September 17, 2026 · Nha Trang" />
+    <meta property="og:description" content="Nha Trang, September 17, 2026. 🌷Creative meetup-inspiration🌷 💕&quot;Gently-Carefully&quot;💕 This time we&#39;re gathering for a master class &quot;Create, Make, Shine.&quot; We…" />
+    <meta property="og:url" content="https://mypins.site/en/event/b660ddfc-2e5e-4057-8434-3a3c8def91a8/creative-inspiration-meetup/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/b660ddfc-2e5e-4057-8434-3a3c8def91a8/creative-inspiration-meetup/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/b660ddfc-2e5e-4057-8434-3a3c8def91a8/tvorcheskaya-vstrecha-vdokhnovenie/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"Creative inspiration meetup","item":"https://mypins.site/en/event/b660ddfc-2e5e-4057-8434-3a3c8def91a8/creative-inspiration-meetup/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Creative inspiration meetup</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-09-17">September 17, 2026</time></p>
+  <p><time datetime="2026-09-17T15:30:00">September 17, 2026, 3:30 PM</time></p>
+  <address>Nha Trang</address>
+  <p>250000 VND</p>
+  <p>🌷Creative meetup-inspiration🌷
+
+💕&quot;Gently-Carefully&quot;💕
+
+This time we&#39;re gathering for a master class &quot;Create, Make, Shine.&quot;
+
+We will make a beautiful collage about your inner light, energy, and courage to act.
+
+It&#39;s simply time for you, so you absolutely don&#39;t need to be an artist or consider yourself &quot;creative.&quot;
+We have no rules and no judgments.
+
+How it will go:
+
+🤩We&#39;ll meet at a beautiful coffee shop with a sea view.
+
+☕️We&#39;ll drink coffee and chat in heartfelt company, where you can relax, exhale, and take off the mask of the &quot;perfect woman.&quot;
+
+🦋With our own hands we&#39;ll make an inspiration collage from beautiful magazines, vintage postcards, and fabric scraps.
+
+❤️‍🔥This collage will remind you every day that you can boldly express yourself and shine brightly.
+
+Details of our meetup:
+
+🗓 When: Thursday, September 17,
+🕗Starts at 15:30
+📍 Coffee shop in North Nha Trang
+💸Participation fee - 250k VND (materials included) + a drink at the coffee shop
+
+✍️ Sign up in DMs: @alevtina_podolenchuk
+
+#date: 17.09.2026
+Post by: @alevtina_podolenchuk
+I&#39;ll send the exact location after confirming your sign-up.
+
+There are only a few spots in our circle, so that every guest feels cozy and comfortable.
+
+Just come to relax and be yourself!</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>Creative inspiration meetup</span></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a> · <a href="/en/nha-trang/workshop/">🎨 Workshops</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/567678c0-fca5-4d36-9fb3-e045b9eb0426/i-invite-girls-to-a-transformational-game-transitions/">I invite girls to a transformational game &quot;Transitions&quot; <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/f1fbf941-e7c4-482e-b1a5-b15d011b2479/master-class-vector-of-destiny/">MASTER CLASS VECTOR OF DESTINY <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/ff3a6829-2e1c-48fc-a2f7-a9516832125a/a-creative-meeting-on-collage-making/">A creative meeting on collage making <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/81eb44e8-cfda-4640-89d4-c54fcb924e2e/art-classes-for-adults/">ART CLASSES FOR ADULTS <time datetime="2026-11-02">November 2, 2026</time></a></li>
+    <li><a href="/en/event/1d220870-7848-49db-931c-563a89f8a0a0/game-workshop-in-search-of-treasure/">Game workshop &quot;In Search of Treasure&quot; <time datetime="2026-11-02">November 2, 2026</time></a></li>
+    <li><a href="/en/event/e1ca07aa-bb28-4c2f-b734-47983e6ae4cc/cozy-sketching/">COZY SKETCHING <time datetime="2026-11-02">November 2, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Nha Trang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/b1514727-3840-48d8-9ae0-5d25b9004036/thursday-playing-avalon/">Thursday: Playing AVALON</a> <time datetime="2026-09-17">September 17, 2026</time></li>
+    <li>Next: <a href="/en/event/b84c1069-53eb-4f1b-8820-ffb746b46965/morning-after-which-the-body-will-say-thank-you/">MORNING, AFTER WHICH THE BODY WILL SAY &quot;THANK YOU&quot;</a> <time datetime="2026-09-17">September 17, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
+</div>
+
+  </body>
+</html>

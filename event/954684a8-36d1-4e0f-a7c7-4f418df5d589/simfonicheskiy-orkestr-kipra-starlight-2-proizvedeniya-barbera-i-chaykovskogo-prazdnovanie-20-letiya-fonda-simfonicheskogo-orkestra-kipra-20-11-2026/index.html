@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>СИМФОНИЧЕСКИЙ ОРКЕСТР КИПРА… — 20 ноября 2026 · Лимасол, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Лимасол, Кипр, 20 ноября 2026. Празднование 20-летия Фонда Симфонического оркестра Кипра Лимасол: пятница, 20 ноября 2026 г. – Муниципальный театр Паттихио…" />
+    <link rel="canonical" href="https://mypins.site/event/954684a8-36d1-4e0f-a7c7-4f418df5d589/simfonicheskiy-orkestr-kipra-starlight-2-proizvedeniya-barbera-i-chaykovskogo-prazdnovanie-20-letiya-fonda-simfonicheskogo-orkestra-kipra-20-11-2026/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="СИМФОНИЧЕСКИЙ ОРКЕСТР КИПРА… — 20 ноября 2026 · Лимасол, Кипр" />
+    <meta property="og:description" content="Лимасол, Кипр, 20 ноября 2026. Празднование 20-летия Фонда Симфонического оркестра Кипра Лимасол: пятница, 20 ноября 2026 г. – Муниципальный театр Паттихио…" />
+    <meta property="og:url" content="https://mypins.site/event/954684a8-36d1-4e0f-a7c7-4f418df5d589/simfonicheskiy-orkestr-kipra-starlight-2-proizvedeniya-barbera-i-chaykovskogo-prazdnovanie-20-letiya-fonda-simfonicheskogo-orkestra-kipra-20-11-2026/" />
+    <meta property="og:image" content="https://www.visitcyprus.com/wp-content/uploads/2026/10/CYSO_19.11.2026.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/954684a8-36d1-4e0f-a7c7-4f418df5d589/simfonicheskiy-orkestr-kipra-starlight-2-proizvedeniya-barbera-i-chaykovskogo-prazdnovanie-20-letiya-fonda-simfonicheskogo-orkestra-kipra-20-11-2026/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/954684a8-36d1-4e0f-a7c7-4f418df5d589/cyprus-symphony-orchestra-starlight-2-works-by-barber-and-tchaikovsky-celebrating-20-years-of-cyprus-symphony-orchestra-foundation-20-11-2026/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"СИМФОНИЧЕСКИЙ ОРКЕСТР КИПРА – STARLIGHT 2 – Произведения Барбера и Чайковского – Празднование 20-летия Фонда Симфонического оркестра Кипра – 20.11.2026","url":"https://mypins.site/event/954684a8-36d1-4e0f-a7c7-4f418df5d589/simfonicheskiy-orkestr-kipra-starlight-2-proizvedeniya-barbera-i-chaykovskogo-prazdnovanie-20-letiya-fonda-simfonicheskogo-orkestra-kipra-20-11-2026/","startDate":"2026-11-20T20:30:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Pattihio Municipal Theatre, Agias Zonis 4, Limassol","address":{"@type":"PostalAddress","addressLocality":"Лимасол","streetAddress":"Pattihio Municipal Theatre, Agias Zonis 4, Limassol","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.6813906,"longitude":33.0440049}},"description":"Празднование 20-летия Фонда Симфонического оркестра Кипра Лимасол: пятница, 20 ноября 2026 г. – Муниципальный театр Паттихио, 20:30 Симфонический оркестр Кипра имеет честь приветствовать великолепную скрипачку Диану Тищенко, одну из самых ярких скрипачек своего поколения, под управлением художественного руководителя оркестра Мирона Михаилидиса. Диана Тищенко, которую хвалят за её подлинно самобытный, индивидуальный голос, лучезарный тембр и выразительную глубину, стала обладательницей 1-й Гран-при на легендарном Международном конкурсе Long-Thibaud-Crespin в Париже, а также кавалером ордена Искусств и литературы Министерства культуры Франции за выдающийся вклад в искусство. Немногие произведения передают глубину человеческих эмоций так мощно, как эта программа. «Адажио для струнных» Сэмюэла Барбера часто считается одной из самых печальных и трогательных пьес, когда-либо написанных. Разворачивая пронзительную дугу нарастания и спада, оно стало непреходящим символом коллективной памяти и утешения. Скрипичный концерт Барбера сочетает лирическую элегантность с ослепительной виртуозностью. Первые две части разворачиваются с теплотой, нежностью и задумчивой красотой, тогда как электризующий финал вырывается вперёд с неослабевающей энергией, помещая солиста в центр захватывающего музыкального триумфа. Симфония № 5 Чайковского — один из самых захватывающих и эмоционально насыщенных шедевров композитора. Объединённая повторяющимся мотивом «судьбы», симфония описывает драматический путь от тьмы к свету, превращая мрачную начальную идею в мощное и триумфальное завершение. ПРОГРАММА Сэмюэл БАРБЕР: Адажио для струнных Сэмюэл БАРБЕР: Скрипичный концерт, соч. 14 Пётр Ильич ЧАЙКОВСКИЙ: Симфония № 5 ми минор, соч. 64 Диана Тищенко, скрипка Мирон Михаилидис, дирижёр Золотой спонсор: Perestroika (Cyprus) Ltd Цены на билеты: Зона A: €25 / €18, Зона B: €20 / €15, Зона C: €17 / €12 Льготные билеты: Студенты, военнослужащие, пенсионеры, члены многодетных","endDate":"2026-11-20T22:00:00","image":"https://www.visitcyprus.com/wp-content/uploads/2026/10/CYSO_19.11.2026.jpg","organizer":{"@type":"Organization","name":"visitcyprus.com","url":"https://www.visitcyprus.com/event/cyprus-symphony-orchestra-starlight-2-works-by-barber-and-tchaikovsky-celebrating-20-years-of-cyprus-symphony-orchestra-foundation-20-11-2026/"},"inLanguage":"ru"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"СИМФОНИЧЕСКИЙ ОРКЕСТР КИПРА – STARLIGHT 2 – Произведения Барбера и Чайковского – Празднование 20-летия Фонда Симфонического оркестра Кипра – 20.11.2026","item":"https://mypins.site/event/954684a8-36d1-4e0f-a7c7-4f418df5d589/simfonicheskiy-orkestr-kipra-starlight-2-proizvedeniya-barbera-i-chaykovskogo-prazdnovanie-20-letiya-fonda-simfonicheskogo-orkestra-kipra-20-11-2026/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>СИМФОНИЧЕСКИЙ ОРКЕСТР КИПРА – STARLIGHT 2 – Произведения Барбера и Чайковского – Празднование 20-летия Фонда Симфонического оркестра Кипра – 20.11.2026</h1>
+  <p class="event-past"><strong>Событие снято с афиши</strong> — <time datetime="2026-11-20">20 ноября 2026</time></p>
+  <p><time datetime="2026-11-20T20:30:00">20 ноября 2026, 20:30</time></p>
+  <address>Pattihio Municipal Theatre, Agias Zonis 4, Limassol, Лимасол, Кипр</address>
+  <p>12 EUR</p>
+  <p>Празднование 20-летия Фонда Симфонического оркестра Кипра
+
+Лимасол: пятница, 20 ноября 2026 г. – Муниципальный театр Паттихио, 20:30
+
+Симфонический оркестр Кипра имеет честь приветствовать великолепную скрипачку Диану Тищенко, одну из самых ярких скрипачек своего поколения, под управлением художественного руководителя оркестра Мирона Михаилидиса.
+
+Диана Тищенко, которую хвалят за её подлинно самобытный, индивидуальный голос, лучезарный тембр и выразительную глубину, стала обладательницей 1-й Гран-при на легендарном Международном конкурсе Long-Thibaud-Crespin в Париже, а также кавалером ордена Искусств и литературы Министерства культуры Франции за выдающийся вклад в искусство.
+
+Немногие произведения передают глубину человеческих эмоций так мощно, как эта программа. «Адажио для струнных» Сэмюэла Барбера часто считается одной из самых печальных и трогательных пьес, когда-либо написанных. Разворачивая пронзительную дугу нарастания и спада, оно стало непреходящим символом коллективной памяти и утешения.
+
+Скрипичный концерт Барбера сочетает лирическую элегантность с ослепительной виртуозностью. Первые две части разворачиваются с теплотой, нежностью и задумчивой красотой, тогда как электризующий финал вырывается вперёд с неослабевающей энергией, помещая солиста в центр захватывающего музыкального триумфа.
+
+Симфония № 5 Чайковского — один из самых захватывающих и эмоционально насыщенных шедевров композитора. Объединённая повторяющимся мотивом «судьбы», симфония описывает драматический путь от тьмы к свету, превращая мрачную начальную идею в мощное и триумфальное завершение.
+
+ПРОГРАММА
+
+Сэмюэл БАРБЕР: Адажио для струнных
+
+Сэмюэл БАРБЕР: Скрипичный концерт, соч. 14
+
+Пётр Ильич ЧАЙКОВСКИЙ: Симфония № 5 ми минор, соч. 64
+
+Диана Тищенко, скрипка
+
+Мирон Михаилидис, дирижёр
+
+Золотой спонсор: Perestroika (Cyprus) Ltd
+
+
+
+Цены на билеты: Зона A: €25 / €18, Зона B: €20 / €15, Зона C: €17 / €12
+
+Льготные билеты:
+
+Студенты, военнослужащие, пенсионеры, члены многодетных</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>СИМФОНИЧЕСКИЙ ОРКЕСТР КИПРА – STARLIGHT 2 – Произведения Барбера и Чайковского – Празднование 20-летия Фонда Симфонического оркестра Кипра – 20.11.2026</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/concert/">🎤 Концерты</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/5f5371ea-3e8a-4bf4-801d-e16ba5afe05d/muzykalnyy-teatr-cracks-ot-pythia-trio-6-ruk-na-odnom-fortepiano/">Музыкальный театр CRACKS от Pythia Trio — 6 рук на одном фортепиано <time datetime="2026-11-19">19 ноября 2026</time></a></li>
+    <li><a href="/event/5ff85c51-b840-4390-aa27-9d10e460cc49/dmitriy-spirin-v-limasole-tarakany-35-let/">Дмитрий Спирин в Лимасоле: Тараканы! — 35 лет <time datetime="2026-11-19">19 ноября 2026</time></a></li>
+    <li><a href="/event/856afbf1-fef6-41fa-96ac-098c9743e3af/starlight-2-muzyka-barbera-i-chaykovskogo/">Starlight 2: музыка Барбера и Чайковского <time datetime="2026-11-20">20 ноября 2026</time></a></li>
+    <li><a href="/event/986af766-ec8f-4950-9428-9b108dd91fd3/rik-offen-ander-reys-ritmo-futuro-magnifik/">Рик Оффен / Андер Рейс (Ritmo Futuro / Magnifik) <time datetime="2026-11-20">20 ноября 2026</time></a></li>
+    <li><a href="/event/ba7d2854-fd51-4a49-ad3b-78e6f4cb68df/4-in-groop-mariya-papageorgiu/">4 in Groop - Мария Папагеоргиу <time datetime="2026-11-20">20 ноября 2026</time></a></li>
+    <li><a href="/event/d6bb27df-535e-4332-ac7e-f2b3db87a944/mohamad-iskandar-live-in-cyprus-mokhamad-iskandar-v-limassole-kipr/">Mohamad Iskandar Live In Cyprus / Мохамад Искандар в Лимассоле, Кипр <time datetime="2026-11-20">20 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/6ba65795-6d89-427a-8ee2-004694a17eba/champis-breaking-the-ice-stendap-komediya-v-nikosii/">Champis: Breaking the Ice - стендап-комедия в Никосии</a> <time datetime="2026-11-20">20 ноября 2026</time></li>
+    <li>Следующее: <a href="/event/9872e42f-9bac-453b-b499-bd633cb2d809/simfonicheskiy-orkestr-kipra-starlight-2-proizvedeniya-barbera-i-chaykovskogo-prazdnovanie-20-letiya-fonda-simfonicheskogo-orkestra-kipra/">СИМФОНИЧЕСКИЙ ОРКЕСТР КИПРА – STARLIGHT 2 – Произведения Барбера и Чайковского – Празднование 20-летия Фонда Симфонического оркестра Кипра</a> <time datetime="2026-11-20">20 ноября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>

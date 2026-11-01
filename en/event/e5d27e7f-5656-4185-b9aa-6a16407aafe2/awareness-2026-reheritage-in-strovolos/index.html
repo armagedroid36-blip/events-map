@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Awareness 2026: ReHeritAge in… — November 13, 2026 · Nicosia</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nicosia, Cyprus, November 13, 2026. The visual arts event Awareness 2026: ReHeritAge returns for its sixth year to Strovolos on 13–14 November 2026 with an art…" />
+    <link rel="canonical" href="https://mypins.site/en/event/e5d27e7f-5656-4185-b9aa-6a16407aafe2/awareness-2026-reheritage-in-strovolos/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Awareness 2026: ReHeritAge in… — November 13, 2026 · Nicosia" />
+    <meta property="og:description" content="Nicosia, Cyprus, November 13, 2026. The visual arts event Awareness 2026: ReHeritAge returns for its sixth year to Strovolos on 13–14 November 2026 with an art…" />
+    <meta property="og:url" content="https://mypins.site/en/event/e5d27e7f-5656-4185-b9aa-6a16407aafe2/awareness-2026-reheritage-in-strovolos/" />
+    <meta property="og:image" content="https://eventor-images-s3.s3.eu-west-2.amazonaws.com/high-res/69ebef13-cc71-4ec9-bf25-a3d34b447172.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/e5d27e7f-5656-4185-b9aa-6a16407aafe2/awareness-2026-reheritage-in-strovolos/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/e5d27e7f-5656-4185-b9aa-6a16407aafe2/osoznanie-2026-reheritage-v-strovolose/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Awareness 2026: ReHeritAge in Strovolos","url":"https://mypins.site/en/event/e5d27e7f-5656-4185-b9aa-6a16407aafe2/awareness-2026-reheritage-in-strovolos/","startDate":"2026-11-13T17:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Caves of Acropolis Park, Nicosia","address":{"@type":"PostalAddress","addressLocality":"Nicosia","streetAddress":"Caves of Acropolis Park, Nicosia","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":35.1464346,"longitude":33.3615795}},"description":"The visual arts event Awareness 2026: ReHeritAge returns for its sixth year to Strovolos on 13–14 November 2026 with an art exhibition, performances, workshops and music. --- Scroll down for English version 👇 --- For the sixth consecutive year, the After:noon / Project team brings to Akropoleos Park in Strovolos a distinctive visual arts event that explores our relationship with cultural heritage. The ReHeritAge exhibition treats cultural memory as a dynamic, evolving process — investigating how it is reconstructed through technological innovation, artistic experim","endDate":"2026-11-13","image":"https://eventor-images-s3.s3.eu-west-2.amazonaws.com/high-res/69ebef13-cc71-4ec9-bf25-a3d34b447172.jpg","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/awareness-2026-reheritage-in-strovolos-2026-11-13"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Awareness 2026: ReHeritAge in Strovolos","item":"https://mypins.site/en/event/e5d27e7f-5656-4185-b9aa-6a16407aafe2/awareness-2026-reheritage-in-strovolos/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Awareness 2026: ReHeritAge in Strovolos</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-11-13">November 13, 2026</time></p>
+  <p><time datetime="2026-11-13T17:00:00">November 13, 2026, 5:00 PM</time></p>
+  <address>Caves of Acropolis Park, Nicosia, Cyprus</address>
+  <p>The visual arts event Awareness 2026: ReHeritAge returns for its sixth year to Strovolos on 13–14 November 2026 with an art exhibition, performances, workshops and music.
+
+---
+
+Scroll down for English version 👇
+
+---
+
+For the sixth consecutive year, the After:noon / Project team brings to Akropoleos Park in Strovolos a distinctive visual arts event that explores our relationship with cultural heritage. The ReHeritAge exhibition treats cultural memory as a dynamic, evolving process — investigating how it is reconstructed through technological innovation, artistic experim</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Awareness 2026: ReHeritAge in Strovolos</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/exhibition/">🖼️ Exhibitions</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/03807c6a-0998-4d26-a535-9ad2f4f8d437/classic-car-exhibition-in-larnaca/">Classic Car Exhibition in Larnaca <time datetime="2026-11-08">November 8, 2026</time></a></li>
+    <li><a href="/en/event/0535524b-dac3-46f2-8d16-3bcaa37935ec/myths-of-cyprus/">Myths of Cyprus <time datetime="2026-11-08">November 8, 2026</time></a></li>
+    <li><a href="/en/event/96b52dde-aa74-4d27-8f46-a1d8e4e3a8c0/limassol-fashion-week-2026/">Limassol Fashion Week 2026 <time datetime="2026-11-11">November 11, 2026</time></a></li>
+    <li><a href="/en/event/e560959d-db3d-465f-abe6-7fa50c180320/limassol-fashion-week-2026/">Limassol Fashion Week 2026 <time datetime="2026-11-12">November 12, 2026</time></a></li>
+    <li><a href="/en/event/8e957b85-4d94-42fd-9f66-52555c65e4b0/playmobil-and-optical-illusions/">Playmobil and optical illusions <time datetime="2026-11-14">November 14, 2026</time></a></li>
+    <li><a href="/en/event/b9f74a84-f037-4311-9652-5dceea5a75e9/boyz-stuff-show-2026-cyprus-automotive-exhibition-in-nicosia/">Boyz Stuff Show 2026: Cyprus Automotive Exhibition in Nicosia <time datetime="2026-11-14">November 14, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Cyprus</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/9f16b1f5-c046-478f-8c9a-8739c821e953/5-day-wellness-retreat-luxury-detox-at-golden-coast-protaras/">5-day wellness retreat: Luxury Detox at Golden Coast Protaras</a> <time datetime="2026-11-13">November 13, 2026</time></li>
+    <li>Next: <a href="/en/event/63997b15-bee2-4153-89e1-1947bc728a79/the-mind-body-spirit-wellbeing-festival/">The Mind, Body &amp; Spirit Wellbeing Festival</a> <time datetime="2026-11-14">November 14, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/cyprus/">Upcoming events in Cyprus</a></p>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Фестиваль Deus Slidetoberfest… — 23 октября 2026 · Чангу, Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Чангу, Bali, 23 октября 2026. Slidetoberfest — ежегодный фестиваль серфинга, мотоциклов и музыки, который Deus Ex Machina…" />
+    <link rel="canonical" href="https://mypins.site/event/d18959b3-7f27-42c8-81e7-6cb24f3af70c/festival-deus-slidetoberfest-2026/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Фестиваль Deus Slidetoberfest… — 23 октября 2026 · Чангу, Bali" />
+    <meta property="og:description" content="Чангу, Bali, 23 октября 2026. Slidetoberfest — ежегодный фестиваль серфинга, мотоциклов и музыки, который Deus Ex Machina…" />
+    <meta property="og:url" content="https://mypins.site/event/d18959b3-7f27-42c8-81e7-6cb24f3af70c/festival-deus-slidetoberfest-2026/" />
+    <meta property="og:image" content="https://static.baliforum.ru/uploads/704360/conversions/deus-slidetoberfest-zanos-na-peske-preview.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/d18959b3-7f27-42c8-81e7-6cb24f3af70c/festival-deus-slidetoberfest-2026/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/d18959b3-7f27-42c8-81e7-6cb24f3af70c/deus-slidetoberfest-2026-festival/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Бали","item":"https://mypins.site/bali/"},{"@type":"ListItem","position":3,"name":"Фестиваль Deus Slidetoberfest 2026","item":"https://mypins.site/event/d18959b3-7f27-42c8-81e7-6cb24f3af70c/festival-deus-slidetoberfest-2026/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Фестиваль Deus Slidetoberfest 2026</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-25">25 октября 2026</time></p>
+  <p><time datetime="2026-10-23">23 октября 2026</time></p>
+  <address>Jl. Pantai Batu Mejan No.8, Canggu, Kec. Kuta Utara, Kabupaten Badung, Bali 80361, Чангу, Bali</address>
+  <p>Slidetoberfest — ежегодный фестиваль серфинга, мотоциклов и музыки, который Deus Ex Machina (https://baliforum.ru/places/deus-ex-machina) устраивает в Чангу и на пляжах недалеко от Танах-Лота. В 2026 году он проходит с 23 по 25 октября: днём идут соревнования, вечерами играют музыканты и диджеи.
+
+В пятницу, 23 октября, на пляже Переренан (https://baliforum.ru/places/surf-spot-pererenan) соревнуются серферы. Заплывы начинаются в семь утра, в каждом по четыре человека, на финал отводят 30 минут. С 16:00 программа переезжает в Deus, с 18:30 там жарят барбекю.
+
+В субботу, 24 октября, на чёрном песке пляжа Пасут (https://baliforum.ru/places/plyazh-pasut) (Pantai Pasut), примерно в получасе пути от Чангу, устраивают Dress Up Drag Race — заезды на скорость по прямой, на которые гонщики выходят в костюмах. Участников делят на классы по типу двигателя, а кастомы — байки, собранные в единственном экземпляре, — соревнуются отдельно. Вечером в Deus открывает свою выставку Андре Йога — художник, который оформил фестиваль этого года.
+
+В воскресенье, 25 октября, в девять утра на пляже Пангкунг-Тибах (Pantai Pangkung Tibah) у Кедунгу (https://baliforum.ru/places/plyazh-kedungu) стартует Swank Rally — ралли по песку для опытных гонщиков и новичков. В 16:00 в Deus закрывают фестиваль: объявляют победителей, вручают трофеи, а потом выступает индонезийская серф-рок-группа The Panturas.
+
+Онлайн-регистрация участников уже закрыта. Расписание и новости фестиваля Deus публикует в Instagram (https://www.instagram.com/deusexmachina.id/).</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/bali/">Бали</a> <span aria-hidden="true">›</span> <span>Фестиваль Deus Slidetoberfest 2026</span></p>
+    <p>Ещё события на Бали: <a href="/bali/">афиша</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/e19fcb11-6a0b-489c-ad7c-fd73a306a469/festival-elektronnoy-muzyki-zamna-bali-2026-v-savaya-bali/">Фестиваль электронной музыки ZAMNA Bali 2026 в Savaya Bali <time datetime="2026-10-18">18 октября 2026</time></a></li>
+    <li><a href="/event/684f7b44-d982-4355-9f48-5db4b870a932/literaturnyy-festival-ubud-writers-readers-festival-2026-v-ubude/">Литературный фестиваль Ubud Writers &amp; Readers Festival 2026 в Убуде <time datetime="2026-10-21">21 октября 2026</time></a></li>
+    <li><a href="/event/acbc8a6b-36d5-4488-b375-0bc967560a99/pangaea-festival-v-ubude/">Pangaea Festival в Убуде <time datetime="2026-10-24">24 октября 2026</time></a></li>
+    <li><a href="/event/fe24cad3-ad13-4ffc-af2f-66a1b90bd5d7/gk-fest-muzykalnyy-festival-v-denpasare/">GK Fest — музыкальный фестиваль в Денпасаре <time datetime="2026-10-24">24 октября 2026</time></a></li>
+    <li><a href="/event/bc9cae7c-fe41-45ba-87a8-b341d485cdfd/healix-the-fest-2026-festival-muzyki/">Healix The Fest 2026 — фестиваль музыки <time datetime="2026-11-28">28 ноября 2026</time></a></li>
+    <li><a href="/event/d89f1926-db30-407e-bbba-896a76edea72/connections-bali-2026-festival-urbankiz/">Connections Bali 2026: фестиваль UrbanKiz <time datetime="2026-12-04">4 декабря 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Бали</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/c55d71b9-85a9-4376-aef9-fa3c9e2a1c1e/zvukovaya-meditatsiya-v-polnolunie-v-adda-yoga-canggu/">Звуковая медитация в полнолуние в ADDA YOGA Canggu</a> <time datetime="2026-10-25">25 октября 2026</time></li>
+    <li>Следующее: <a href="/event/e00fd18d-2d32-4cc7-b182-bf78a710cd6f/poeticheskiy-vecher-otkrytyy-mikrofon-ubud/">Поэтический вечер. Открытый микрофон. Убуд</a> <time datetime="2026-10-25">25 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/bali/">Ближайшие события: Бали</a></p>
+</div>
+
+  </body>
+</html>

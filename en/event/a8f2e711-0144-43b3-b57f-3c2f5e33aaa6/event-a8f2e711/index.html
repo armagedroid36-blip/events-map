@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Olive products — November 21, 2026 · Nicosia</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nicosia, Cyprus, November 21, 2026. &quot;Learn a craft and leave it, and if you go hungry, take it up&quot; says this proverb that carries the wisdom of folk tradition…" />
+    <link rel="canonical" href="https://mypins.site/en/event/a8f2e711-0144-43b3-b57f-3c2f5e33aaa6/olive-products/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Olive products — November 21, 2026 · Nicosia" />
+    <meta property="og:description" content="Nicosia, Cyprus, November 21, 2026. &quot;Learn a craft and leave it, and if you go hungry, take it up&quot; says this proverb that carries the wisdom of folk tradition…" />
+    <meta property="og:url" content="https://mypins.site/en/event/a8f2e711-0144-43b3-b57f-3c2f5e33aaa6/olive-products/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/a8f2e711-0144-43b3-b57f-3c2f5e33aaa6/olive-products/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/a8f2e711-0144-43b3-b57f-3c2f5e33aaa6/produkty-iz-olivok/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"Olive products","url":"https://mypins.site/en/event/a8f2e711-0144-43b3-b57f-3c2f5e33aaa6/olive-products/","startDate":"2026-11-21T10:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Lythrodontas Village Square, Nicosia","address":{"@type":"PostalAddress","addressLocality":"Nicosia","streetAddress":"Lythrodontas Village Square, Nicosia","addressCountry":"CY"},"geo":{"@type":"GeoCoordinates","latitude":34.9399975,"longitude":33.2901556}},"offers":{"@type":"Offer","url":"https://mypins.site/en/event/a8f2e711-0144-43b3-b57f-3c2f5e33aaa6/olive-products/","price":0,"priceCurrency":"USD","availability":"https://schema.org/InStock","validFrom":"2026-10-17"},"description":"\"Learn a craft and leave it, and if you go hungry, take it up\" says this proverb that carries the wisdom of folk tradition. It urges us to learn a craft, to develop skills, to acquire a lifeline even if we don't need it right away. If at some point things don't turn out as we had planned, a craft might give us the solution and get us out of a difficult situation. The residents of the villages along the \"Heartland of Legends\" route were mainly farmers or shepherds, but they also knew a craft. They had to be creative and multi-talented in order to supplement their income","endDate":"2026-11-21","image":"https://mypins.site/logo.png","organizer":{"@type":"Organization","name":"cyprusnow.app","url":"https://cyprusnow.app/event/%CF%80%CF%81%CE%BF%CE%B9%CF%8C%CE%BD%CF%84%CE%B1-%CE%B5%CE%BB%CE%B9%CE%AC%CF%82-2026-11-21"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Cyprus","item":"https://mypins.site/en/cyprus/"},{"@type":"ListItem","position":3,"name":"Olive products","item":"https://mypins.site/en/event/a8f2e711-0144-43b3-b57f-3c2f5e33aaa6/olive-products/"}]}]}</script>
+    <script type="application/json" id="seo-alias-map">{"cloneId":"a8f2e711-0144-43b3-b57f-3c2f5e33aaa6","keptId":"a8f2e711-0144-43b3-b57f-3c2f5e33aaa6","ru":"https://mypins.site/event/a8f2e711-0144-43b3-b57f-3c2f5e33aaa6/produkty-iz-olivok/","en":"https://mypins.site/en/event/a8f2e711-0144-43b3-b57f-3c2f5e33aaa6/olive-products/"}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Olive products</h1>
+  <p><time datetime="2026-11-21T10:00:00">November 21, 2026, 10:00 AM</time></p>
+  <address>Lythrodontas Village Square, Nicosia, Cyprus</address>
+  <p>&quot;Learn a craft and leave it, and if you go hungry, take it up&quot; says this proverb that carries the wisdom of folk tradition. It urges us to learn a craft, to develop skills, to acquire a lifeline even if we don&#39;t need it right away. If at some point things don&#39;t turn out as we had planned, a craft might give us the solution and get us out of a difficult situation. The residents of the villages along the &quot;Heartland of Legends&quot; route were mainly farmers or shepherds, but they also knew a craft. They had to be creative and multi-talented in order to supplement their income</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/cyprus/">Cyprus</a> <span aria-hidden="true">›</span> <span>Olive products</span></p>
+    <p>More events in Cyprus: <a href="/en/cyprus/">what&#39;s on</a> · <a href="/en/cyprus/workshop/">🎨 Workshops</a></p>
+  </nav>
+  <p>Other dates in this series:</p>
+  <ul>
+    <li><a href="/en/event/4e082a51-2809-4a62-898d-e9cb05f4cb28/olive-products/"><time datetime="2026-11-07">November 7, 2026</time></a></li>
+    <li><a href="/en/event/10f770ea-8250-4f5a-ab58-951173421d99/olive-products/"><time datetime="2026-11-08">November 8, 2026</time></a></li>
+    <li><a href="/en/event/f295fb78-c962-44aa-908d-720e7d80c127/olive-products/"><time datetime="2026-11-14">November 14, 2026</time></a></li>
+    <li><a href="/en/event/bcafd88b-00bb-459f-894a-d0e8e7a8dc5a/olive-products/"><time datetime="2026-11-15">November 15, 2026</time></a></li>
+    <li><a href="/en/event/c05ff1df-c4eb-4b06-8a60-627d071584eb/olive-products/"><time datetime="2026-11-18">November 18, 2026</time></a></li>
+  </ul>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/f77dc78a-02e3-4382-abb8-bd10358239e3/ceramic-christmas-tree-making-workshop/">Ceramic Christmas Tree Making Workshop <time datetime="2026-11-20">November 20, 2026</time></a></li>
+    <li><a href="/en/event/4f45b51b-4698-4056-96b1-a0c3d8ae6b7c/makeup-workshop-for-beginners/">Makeup Workshop for Beginners <time datetime="2026-11-21">November 21, 2026</time></a></li>
+    <li><a href="/en/event/82543221-4a03-4f54-b8f7-a5da9caa54eb/commercial-dance-workshop-with-angeliki-ziaka-in-cyprus/">Commercial Dance Workshop with Angeliki Ziaka in Cyprus <time datetime="2026-11-21">November 21, 2026</time></a></li>
+    <li><a href="/en/event/8ecb44dc-5fff-4092-a794-a3778427b139/sketching-sundays-life-drawing-in-nicosia/">Sketching Sundays: Life Drawing in Nicosia <time datetime="2026-11-22">November 22, 2026</time></a></li>
+    <li><a href="/en/event/ad5fbb39-57e9-43df-9728-ceca4e7e7c3d/what-can-you-do-with-a-problem/">What can you do with a problem? <time datetime="2026-11-22">November 22, 2026</time></a></li>
+    <li><a href="/en/event/ce65b620-41ad-44e1-a0d9-4d1f6bce978e/life-drawing-evening/">Life drawing evening <time datetime="2026-11-22">November 22, 2026</time></a></li>
+  </ul>
+</div>
+
+  </body>
+</html>

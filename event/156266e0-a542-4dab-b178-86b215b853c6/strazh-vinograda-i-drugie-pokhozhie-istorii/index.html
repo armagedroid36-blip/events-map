@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Страж винограда и другие… — 30 октября 2026 · Никосия, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Никосия, Кипр, 30 октября 2026. Художественная галерея Apokalypsi приглашает вас на открытие выставки скульптуры и живописи Христоса Н. Христу «Страж винограда…" />
+    <link rel="canonical" href="https://mypins.site/event/156266e0-a542-4dab-b178-86b215b853c6/strazh-vinograda-i-drugie-pokhozhie-istorii/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Страж винограда и другие… — 30 октября 2026 · Никосия, Кипр" />
+    <meta property="og:description" content="Никосия, Кипр, 30 октября 2026. Художественная галерея Apokalypsi приглашает вас на открытие выставки скульптуры и живописи Христоса Н. Христу «Страж винограда…" />
+    <meta property="og:url" content="https://mypins.site/event/156266e0-a542-4dab-b178-86b215b853c6/strazh-vinograda-i-drugie-pokhozhie-istorii/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/089af1d7-aee7-4792-8e13-9b47027499a9/1793160061662.webp?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/156266e0-a542-4dab-b178-86b215b853c6/strazh-vinograda-i-drugie-pokhozhie-istorii/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/156266e0-a542-4dab-b178-86b215b853c6/guardian-of-the-grapes-and-other-similar-stories/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"Страж винограда и другие похожие истории","item":"https://mypins.site/event/156266e0-a542-4dab-b178-86b215b853c6/strazh-vinograda-i-drugie-pokhozhie-istorii/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Страж винограда и другие похожие истории</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-30">30 октября 2026</time></p>
+  <p><time datetime="2026-10-30T19:30:00">30 октября 2026, 19:30</time></p>
+  <address>Gkalery Apokalypsi, Никосия, Никосия, Кипр</address>
+  <p>Художественная галерея Apokalypsi приглашает вас на открытие выставки скульптуры и живописи Христоса Н. Христу «Страж винограда и другие похожие истории». Открытие: пятница, 30 октября 2026 в 19:30 Продолжительность выставки: 30/10 - 14/11/2026 Часы работы: - Ежедневно 11:00 - 13:00 и 16:00 -...</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>Страж винограда и другие похожие истории</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/exhibition/">🖼️ Выставки</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/753bface-9158-4a6b-85b9-41e2eb4992ca/prinadlezhnost/">Принадлежность <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/fb522d45-c084-4adb-8075-7c6d72abe990/mezhdunarodnaya-vystavka-skromnye-zemli-za-predelami-zapadnogo-konteksta-mezhkulturnye-modernizmy/">Международная выставка: Скромные земли: За пределами западного контекста — межкультурные модернизмы <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/8772dc05-001e-44eb-a048-8fd8f2c6848e/bloshinyy-rynok-nikosii-x-vsplyvayushchiy-rynok-el-khalili-v-nikosii/">Блошиный рынок Никосии x Всплывающий рынок Эль-Халили в Никосии <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/d64e33ea-bd11-48ff-9853-caf4c9666c22/cmc-select-v2-0-2026-v-nikosii/">CMC Select V2.0 2026 в Никосии <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/d208fee9-66ab-46ad-bee7-42cd7d721325/obekty-v-zerkale-mogut-byt-blizhe-chem-kazhutsya/">Объекты в зеркале могут быть ближе, чем кажутся <time datetime="2026-11-02">2 ноября 2026</time></a></li>
+    <li><a href="/event/0feb8e12-a23f-475a-86e6-a79bc18da44b/kristina-drakos-vyvodit-telo-v-tsentr-vnimaniya-na-personalnoy-vystavke-v-limasole/">Кристина Дракос выводит тело в центр внимания на персональной выставке в Лимасоле <time datetime="2026-11-05">5 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/130e45c8-de55-4c16-b562-21c46d8d55d8/razvratnaya-khellouinskaya-noch-v-noc-night-club/">Развратная хэллоуинская ночь в NOC Night Club</a> <time datetime="2026-10-30">30 октября 2026</time></li>
+    <li>Следующее: <a href="/event/15cbf0d5-b887-45ae-803f-f7b5f5abe1f9/khellouin-v-parko-paliatso/">Хэллоуин в Parko Paliatso</a> <time datetime="2026-10-30">30 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>

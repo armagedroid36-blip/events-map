@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>30 ОКТЯБРЯ - ПЕРВЫЙ ДЕНЬ… — 30 октября 2026 · Нячанг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Нячанг, 30 октября 2026. 🥂 30 ОКТЯБРЯ - ПЕРВЫЙ ДЕНЬ ПРАЗДНОВАНИЯ ГОДОВЩИНЫ ONEMORE! Нам исполняется один год, и первый праздничный вечер мы посвятим музыке…" />
+    <link rel="canonical" href="https://mypins.site/event/f6a71c7c-b585-4932-b5e7-5d235ac5ef4c/30-oktyabrya-pervyy-den-prazdnovaniya-godovshchiny-onemore/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="30 ОКТЯБРЯ - ПЕРВЫЙ ДЕНЬ… — 30 октября 2026 · Нячанг" />
+    <meta property="og:description" content="Нячанг, 30 октября 2026. 🥂 30 ОКТЯБРЯ - ПЕРВЫЙ ДЕНЬ ПРАЗДНОВАНИЯ ГОДОВЩИНЫ ONEMORE! Нам исполняется один год, и первый праздничный вечер мы посвятим музыке…" />
+    <meta property="og:url" content="https://mypins.site/event/f6a71c7c-b585-4932-b5e7-5d235ac5ef4c/30-oktyabrya-pervyy-den-prazdnovaniya-godovshchiny-onemore/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/6f2550fa0749ce5fddb6b75c696cd263.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/f6a71c7c-b585-4932-b5e7-5d235ac5ef4c/30-oktyabrya-pervyy-den-prazdnovaniya-godovshchiny-onemore/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/f6a71c7c-b585-4932-b5e7-5d235ac5ef4c/october-30-the-first-day-of-the-onemore-anniversary-celebration/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"30 ОКТЯБРЯ - ПЕРВЫЙ ДЕНЬ ПРАЗДНОВАНИЯ ГОДОВЩИНЫ ONEMORE!","item":"https://mypins.site/event/f6a71c7c-b585-4932-b5e7-5d235ac5ef4c/30-oktyabrya-pervyy-den-prazdnovaniya-godovshchiny-onemore/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>30 ОКТЯБРЯ - ПЕРВЫЙ ДЕНЬ ПРАЗДНОВАНИЯ ГОДОВЩИНЫ ONEMORE!</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-30">30 октября 2026</time></p>
+  <p><time datetime="2026-10-30T21:30:00">30 октября 2026, 21:30</time></p>
+  <address>OneMore Cocktail Bar, 36 Biệt Thự, Tân Tiến, Nha Trang, Khánh Hòa 650000, Нячанг</address>
+  <p>🥂 30 ОКТЯБРЯ - ПЕРВЫЙ ДЕНЬ ПРАЗДНОВАНИЯ ГОДОВЩИНЫ ONEMORE!
+
+Нам исполняется один год, и первый праздничный вечер мы посвятим музыке, эмоциям и вашим голосам.
+
+В программе:
+
+🎤 караоке-батл с денежными призами за первое, второе и третье места;
+
+🎁 розыгрыш подарков: шампанское, дисконтные карты ONEMORE, сертификаты и другие приятные сюрпризы.
+
+Участие в караоке-батле платное. Количество участников ограничено, поэтому зарегистрироваться лучше заранее.
+
+И это ещё не всё! По итогам двух праздничных вечеров - 30 и 31 октября - мы разыграем беспроводные наушники Apple среди гостей, выполнивших условия акции.
+
+Подробную механику розыгрыша объявим отдельно. Обязательно сохраняйте свои чеки за оба вечера - они могут стать вашим билетом к главному подарку и не только.
+
+Сбор гостей и регистрация заключительных участников (при наличии мест) - 19:00.
+Начало программы - 21:30.
+
+После завершения караоке-батла состоится розыгрыш подарков, а затем мы откроем свободное караоке и продолжим праздновать до самого утра.
+
+Первый день рождения бывает только один. Давайте отметим его вместе! 🥂
+
+Количество столов и участников ограничено - бронируйте и регистрируйтесь заранее!
+
+Резерв твоего стола: +84 36 999 62 35
+Instagram: onemore_vn
+💌 Telegram: ONEMORE Cocktail Bar 🍸
+📍 Мы здесь: Google
+
+#рекомендация</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/nha-trang/">Нячанг</a> <span aria-hidden="true">›</span> <span>30 ОКТЯБРЯ - ПЕРВЫЙ ДЕНЬ ПРАЗДНОВАНИЯ ГОДОВЩИНЫ ONEMORE!</span></p>
+    <p>Ещё события в Нячанге: <a href="/nha-trang/">афиша</a> · <a href="/nha-trang/party/">🪩 Вечеринки</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/6e2b8061-6d11-4da8-b9b3-907d19f969cc/bachata-sensual-party-pyatnitsa-30-oktyabrya/">BACHATA SENSUAL PARTY ПЯТНИЦА, 30 ОКТЯБРЯ! <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/13987af4-9aba-4a20-a447-e39170d4c365/31-oktyabrya-halloween-night-v-onemore/">31 ОКТЯБРЯ HALLOWEEN NIGHT В ONEMORE! <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/812b2fc9-08ae-4751-a4e8-2f940a71a393/subbotniy-halloween-glavnaya-vecherinka-etoy-nochi/">Субботний Halloween: Главная вечеринка этой ночи! <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/d8cb3a5f-d3eb-4097-9417-0d27272de8ee/latinskaya-vecherinka-rompe-halloween/">ЛАТИНСКАЯ ВЕЧЕРИНКА ROMPE HALLOWEEN <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/b41b6b44-4e33-46ba-be7f-4327de838ed9/dzhem-vsekh-stiley-prostranstvo/">ДЖЕМ ВСЕХ СТИЛЕЙ ПРОСТРАНСТВО <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/f9c9b4bd-2462-4ff3-bb55-1b8655eee94b/vecher-karaoke-1-noyabrya-vs/">ВЕЧЕР КАРАОКЕ 1 ноября (вс) <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Нячанг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/ef2a18dd-8b71-42b3-9fe3-7407dd2495b5/master-klass-po-sozdaniyu-ukrasheniy-ot-embrace-yourself/">МАСТЕР КЛАСС ПО СОЗДАНИЮ УКРАШЕНИЙ от Embrace yourself</a> <time datetime="2026-10-30">30 октября 2026</time></li>
+    <li>Следующее: <a href="/event/fb3cf89f-53eb-4893-8a46-35105510c918/khatkha-yoga-v-nyachange/">Хатха-йога в Нячанге</a> <time datetime="2026-10-30">30 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/nha-trang/">Ближайшие события: Нячанг</a></p>
+</div>
+
+  </body>
+</html>

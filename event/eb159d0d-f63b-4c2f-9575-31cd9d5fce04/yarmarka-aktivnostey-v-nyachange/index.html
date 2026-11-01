@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ярмарка активностей в Нячанге — 4 октября 2026 · Нячанг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Нячанг, 4 октября 2026. 🌍 Ярмарка активностей в Нячанге На спикинг-клаб чаще идут не ради учебника, а потому что вечера в телефоне надоели, а начать говорить…" />
+    <link rel="canonical" href="https://mypins.site/event/eb159d0d-f63b-4c2f-9575-31cd9d5fce04/yarmarka-aktivnostey-v-nyachange/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Ярмарка активностей в Нячанге — 4 октября 2026 · Нячанг" />
+    <meta property="og:description" content="Нячанг, 4 октября 2026. 🌍 Ярмарка активностей в Нячанге На спикинг-клаб чаще идут не ради учебника, а потому что вечера в телефоне надоели, а начать говорить…" />
+    <meta property="og:url" content="https://mypins.site/event/eb159d0d-f63b-4c2f-9575-31cd9d5fce04/yarmarka-aktivnostey-v-nyachange/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/eb159d0d-f63b-4c2f-9575-31cd9d5fce04/yarmarka-aktivnostey-v-nyachange/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/eb159d0d-f63b-4c2f-9575-31cd9d5fce04/activity-fair-in-nha-trang/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"Ярмарка активностей в Нячанге","item":"https://mypins.site/event/eb159d0d-f63b-4c2f-9575-31cd9d5fce04/yarmarka-aktivnostey-v-nyachange/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Ярмарка активностей в Нячанге</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-04">4 октября 2026</time></p>
+  <p><time datetime="2026-10-04T17:00:00">4 октября 2026, 17:00</time></p>
+  <address>Lila Coffee Show, Нячанг</address>
+  <p>Бесплатно</p>
+  <p>🌍 Ярмарка активностей в Нячанге
+
+На спикинг-клаб чаще идут не ради учебника, а потому что вечера в телефоне надоели, а начать говорить по-английски скучно в одиночку. Формат ниже как раз для этого.
+
+Парный speaking club + нетворкинг
+
+Разговоры один на один по 15 минут, потом смена собеседника, за вечер выходит несколько живых диалогов. Начинающие и уверенные сидят отдельными группами.
+
+В конце: квиз и розыгрыш призов и скидок от партнёров.
+
+🕒 17:00–18:30
+🎉 Бесплатно (неделя открытых дверей)
+📍 Lila Coffee Show, Нячанг
+📌 Для записи напиши слово &quot;SmallTalk&quot; в личные сообщения 👉 English Small Talk Нячанг 👈
+
+#дата: 04.10</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/nha-trang/">Нячанг</a> <span aria-hidden="true">›</span> <span>Ярмарка активностей в Нячанге</span></p>
+    <p>Ещё события в Нячанге: <a href="/nha-trang/">афиша</a> · <a href="/nha-trang/speaking/">💬 Разговорный клуб</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/2e8975d6-a51f-4b28-8a7d-59430f7ff4cb/spiking-klab-den-otkrytykh-dverey/">Спикинг клаб - день открытых дверей! <time datetime="2026-10-04">4 октября 2026</time></a></li>
+    <li><a href="/event/01dfd621-6bc8-4964-8537-72190eef8f5f/time-to-talk-vstrecha-razgovornogo-kluba-angliyskogo-v-nyachange/">TIME TO TALK встреча разговорного клуба английского в Нячанге! <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/a8f4c07c-3945-43dc-8b82-fac89447c4c4/english-speaking-club-igraem-v-nastolki-na-angliyskom-19-00-ponedelnik/">ENGLISH SPEAKING CLUB! Играем в настолки на английском! 19-00, понедельник <time datetime="2026-11-02">2 ноября 2026</time></a></li>
+    <li><a href="/event/c51b5d6f-252d-4bd5-ad78-88772982aa1a/vstrechu-kluba-razgovornogo-vetnamskogo-yazyka-s-nulya/">Встречу «Клуба разговорного вьетнамского языка с нуля» <time datetime="2026-11-03">3 ноября 2026</time></a></li>
+    <li><a href="/event/8b69b38a-3fba-45c2-9f2e-f01ca0dbf4a4/ispanskiy-yazyk-v-nyachange-dlya-vzroslykh/">ИСПАНСКИЙ ЯЗЫК В НЯЧАНГЕ ДЛЯ ВЗРОСЛЫХ! <time datetime="2026-11-04">4 ноября 2026</time></a></li>
+    <li><a href="/event/f92c447a-adae-477f-900e-3d8fa8963fc2/zanyatie-angliyskogo-razgovornogo-kluba-v-nyachange/">ЗАНЯТИЕ АНГЛИЙСКОГО РАЗГОВОРНОГО КЛУБА В НЯЧАНГЕ! <time datetime="2026-11-04">4 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Нячанг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/e4dee995-6226-49bb-929a-4893ef6ed92b/druzya-priglashaem-na-khudozhestvennuyu-vystavku-istina-dobrota-terpenie/">Друзья, приглашаем на художественную выставку «Истина Доброта Терпение»!</a> <time datetime="2026-10-04">4 октября 2026</time></li>
+    <li>Следующее: <a href="/event/0d77aab6-4766-481c-a7d8-20fd316b3d3d/english-speaking-club-igraem-v-nastolki-na-angliyskom-19-00-ponedelnik/">ENGLISH SPEAKING CLUB! Играем в настолки на английском! 19-00, понедельник</a> <time datetime="2026-10-05">5 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/nha-trang/">Ближайшие события: Нячанг</a></p>
+</div>
+
+  </body>
+</html>

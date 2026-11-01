@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas painting master class — October 10, 2026 · Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Bali, October 10, 2026. Canvas Painting Masterclass 🎨 You can choose any subject, and I&#39;ll help you bring it to life. And in 3 hours you&#39;ll be able to take…" />
+    <link rel="canonical" href="https://mypins.site/en/event/29ca6dd2-edf2-4fa6-b8f8-c2b3ec3c2bd2/canvas-painting-master-class/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Canvas painting master class — October 10, 2026 · Bali" />
+    <meta property="og:description" content="Bali, October 10, 2026. Canvas Painting Masterclass 🎨 You can choose any subject, and I&#39;ll help you bring it to life. And in 3 hours you&#39;ll be able to take…" />
+    <meta property="og:url" content="https://mypins.site/en/event/29ca6dd2-edf2-4fa6-b8f8-c2b3ec3c2bd2/canvas-painting-master-class/" />
+    <meta property="og:image" content="https://static.baliforum.ru/uploads/699930/conversions/photo_2026-10-09-10.31.19-preview.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/29ca6dd2-edf2-4fa6-b8f8-c2b3ec3c2bd2/canvas-painting-master-class/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/29ca6dd2-edf2-4fa6-b8f8-c2b3ec3c2bd2/master-klass-po-risovaniyu-kartiny-na-kholste/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Bali","item":"https://mypins.site/en/bali/"},{"@type":"ListItem","position":3,"name":"Canvas painting master class","item":"https://mypins.site/en/event/29ca6dd2-edf2-4fa6-b8f8-c2b3ec3c2bd2/canvas-painting-master-class/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Canvas painting master class</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-10">October 10, 2026</time></p>
+  <p><time datetime="2026-10-10T12:00:00">October 10, 2026, 12:00 PM</time></p>
+  <address>Jl. Raya Ubud No.35, Ubud, Kecamatan Ubud, Kabupaten Gianyar, Bali 80571, Indonesia</address>
+  <p>Canvas Painting Masterclass 🎨
+
+You can choose any subject, and I&#39;ll help you bring it to life. And in 3 hours you&#39;ll be able to take your finished artwork home!
+
+I&#39;ve been running art classes on the island for 3 years and I know that even without painting skills, it will turn out beautiful ✨
+
+It&#39;s also a chance to make friends and have an amazing time 🥰
+
+🌿 Ubud
+
+10.10 (Saturday) 12:00
+
+🌊 Canggu - on the oceanfront
+
+11.10 (Sunday) 15:30
+
+To sign up, message @Art_Team_Bali_adm</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/bali/">Bali</a> <span aria-hidden="true">›</span> <span>Canvas painting master class</span></p>
+    <p>More events in Bali: <a href="/en/bali/">what&#39;s on</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/b000aadc-2e40-4acb-b430-578e00c29ffb/self-love-cake-masterclass-at-cake-empire-on-october-10/">Self Love Cake: masterclass at Cake Empire on October 10 <time datetime="2026-10-10">October 10, 2026</time></a></li>
+    <li><a href="/en/event/76d40d4c-da57-4526-985f-12bd47cb6f22/robotics-master-class-for-children-from-4-years-old/">Robotics master class for children from 4 years old <time datetime="2026-10-10">October 10, 2026</time></a></li>
+    <li><a href="/en/event/089b549a-a2b0-4ac7-8917-ccb600782b7c/contact-improvisation-dissolve-play-at-paradiso-ubud-on-october-10/">Contact Improvisation Dissolve: Play at Paradiso Ubud on October 10 <time datetime="2026-10-10">October 10, 2026</time></a></li>
+    <li><a href="/en/event/f9e8b20b-6176-4806-ae59-88789ebc9f86/women-s-breakfast-and-neurographic-drawing/">Women&#39;s breakfast and neurographic drawing <time datetime="2026-10-10">October 10, 2026</time></a></li>
+    <li><a href="/en/event/9d416ede-c8d7-45e7-8cec-f499472d3da0/f-king-awesome-sketches-drawing-ubud/">F**king awesome sketches. Drawing. Ubud <time datetime="2026-11-06">November 6, 2026</time></a></li>
+    <li><a href="/en/event/ba420c05-aeaf-4568-a4f2-460e45395c20/vegan-chef-training-with-liza-at-sayuri-ubud/">Vegan Chef Training with Liza at Sayuri Ubud <time datetime="2026-12-31">December 31, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Bali</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/253d1b91-34d8-4460-8a5d-3dc2662e949e/zakes-bantwini-at-zumana-bali-on-october-10/">Zakes Bantwini at Zumana Bali on October 10</a> <time datetime="2026-10-10">October 10, 2026</time></li>
+    <li>Next: <a href="/en/event/34de459b-dfb3-4c37-bb2e-504973d3e6f1/live-music-at-edgy-chef-cafe-diner-on-october-10/">Live music at Edgy Chef Café &amp; Diner on October 10</a> <time datetime="2026-10-10">October 10, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/bali/">Upcoming events in Bali</a></p>
+</div>
+
+  </body>
+</html>

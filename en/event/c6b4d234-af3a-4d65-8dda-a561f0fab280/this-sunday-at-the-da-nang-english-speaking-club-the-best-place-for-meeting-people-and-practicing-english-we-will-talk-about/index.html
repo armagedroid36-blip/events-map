@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>This Sunday at the Da Nang English… — October 25, 2026 · Da Nang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Da Nang, October 25, 2026. Friends! ✌️ This Sunday at Da Nang English Speaking Club — the best place to meet people and practice English — we&#39;ll be talking…" />
+    <link rel="canonical" href="https://mypins.site/en/event/c6b4d234-af3a-4d65-8dda-a561f0fab280/this-sunday-at-the-da-nang-english-speaking-club-the-best-place-for-meeting-people-and-practicing-english-we-will-talk-about/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="This Sunday at the Da Nang English… — October 25, 2026 · Da Nang" />
+    <meta property="og:description" content="Da Nang, October 25, 2026. Friends! ✌️ This Sunday at Da Nang English Speaking Club — the best place to meet people and practice English — we&#39;ll be talking…" />
+    <meta property="og:url" content="https://mypins.site/en/event/c6b4d234-af3a-4d65-8dda-a561f0fab280/this-sunday-at-the-da-nang-english-speaking-club-the-best-place-for-meeting-people-and-practicing-english-we-will-talk-about/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/de0380acbf0e7e98016c2f899dfbfe88.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/c6b4d234-af3a-4d65-8dda-a561f0fab280/this-sunday-at-the-da-nang-english-speaking-club-the-best-place-for-meeting-people-and-practicing-english-we-will-talk-about/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/c6b4d234-af3a-4d65-8dda-a561f0fab280/v-eto-voskresene-v-da-nang-english-speaking-club-luchshem-meste-dlya-znakomstv-i-praktiki-angliyskogo-my-budem-govorit-o/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Da Nang","item":"https://mypins.site/en/da-nang/"},{"@type":"ListItem","position":3,"name":"This Sunday at the Da Nang English Speaking Club, the best place for meeting people and practicing English, we will talk about","item":"https://mypins.site/en/event/c6b4d234-af3a-4d65-8dda-a561f0fab280/this-sunday-at-the-da-nang-english-speaking-club-the-best-place-for-meeting-people-and-practicing-english-we-will-talk-about/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>This Sunday at the Da Nang English Speaking Club, the best place for meeting people and practicing English, we will talk about</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-25">October 25, 2026</time></p>
+  <p><time datetime="2026-10-25T19:00:00">October 25, 2026, 7:00 PM</time></p>
+  <address>ARROW Coffee and Foods, 51 D. Tụ Quán, Bắc Mỹ An, Ngũ Hành Sơn, Đà Nẵng 550000, Da Nang</address>
+  <p>Donation</p>
+  <p>Friends! ✌️
+
+This Sunday at Da Nang English Speaking Club — the best place to meet people and practice English — we&#39;ll be talking about travel: where we&#39;ve already been, where we dream of going, and what makes us ready to pack our bags again.
+What&#39;s more your style — a spontaneous trip with a backpack or a vacation planned down to the smallest detail? Popular attractions or places only locals know about? And what travel story still makes you smile?
+
+Come share your adventures, find ideas for your next trip, and meet people from all over the world. You don&#39;t have to cross half the planet for a great conversation — sometimes the most memorable story happens right nearby! 🌍✨
+
+We communicate in English, exchange impressions, and spend Sunday evening in good company.
+
+Come with friends or on your own — there&#39;ll be plenty of people to talk to! 💬
+
+❗️Participation: donation (recommended amount 50k VND)
+⏰ Time: Sunday, October 25, 19:00
+🏠 Venue: NU ARROWS Coffee and Foods
+📫 Address: 51 D. Tụ Quán, Bắc Mỹ An, Ngũ Hành Sơn, Đà Nẵng
+📡 Location: Open map
+
+📩 Contact: @infraredfade
+#date: 25.10</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/da-nang/">Da Nang</a> <span aria-hidden="true">›</span> <span>This Sunday at the Da Nang English Speaking Club, the best place for meeting people and practicing English, we will talk about</span></p>
+    <p>More events in Da Nang: <a href="/en/da-nang/">what&#39;s on</a> · <a href="/en/da-nang/speaking/">💬 Speaking Club</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/7dc22858-befd-434d-bcae-cb2d4d8333d6/svoi-english-club-presents/">SVOI English Club presents! <time datetime="2026-10-24">October 24, 2026</time></a></li>
+    <li><a href="/en/event/51674ed6-4ef0-44dc-b403-41fb265439b0/english-brunch-club-how-to-always-win-arguments-level-b1/">English Brunch Club: How to always win arguments? (level B1) <time datetime="2026-10-25">October 25, 2026</time></a></li>
+    <li><a href="/en/event/2d85ef33-64e0-453c-8ea2-c39648605a42/american-breakfast-speaking-english-with-pleasure/">American Breakfast – speaking English with pleasure! <time datetime="2026-10-28">October 28, 2026</time></a></li>
+    <li><a href="/en/event/20cbd077-8c2b-4f47-bdd5-b14e64bf0c54/english-speaking-club-da-nang/">ENGLISH SPEAKING CLUB Da Nang <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/2ba3018b-b4cb-4908-80c5-8fff7f9494d6/english-brunch-club-how-to-always-win-arguments-level-b1/">English Brunch Club: How to always win arguments? (level B1) <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/eacd074f-05ff-4d7a-b293-6d11d85c40fb/this-sunday-at-the-da-nang-english-speaking-club-the-best-place-for-meeting-people-and-practicing-english-we-will-talk-about/">This Sunday at the Da Nang English Speaking Club, the best place for meeting people and practicing English, we will talk about <time datetime="2026-11-01">November 1, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Da Nang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/7c4fd40b-9996-4f1c-b36c-71598024e0c5/sunday-breakfast-on-october-25-with-a-numerologist/">Sunday breakfast on October 25 with a numerologist</a> <time datetime="2026-10-25">October 25, 2026</time></li>
+    <li>Next: <a href="/en/event/dd46e80b-36aa-468b-8fa7-bfc7a72359e3/sunday-evening-tac-at-restaurant-369/">SUNDAY EVENING TAC at restaurant 369!</a> <time datetime="2026-10-25">October 25, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/da-nang/">Upcoming events in Da Nang</a></p>
+</div>
+
+  </body>
+</html>

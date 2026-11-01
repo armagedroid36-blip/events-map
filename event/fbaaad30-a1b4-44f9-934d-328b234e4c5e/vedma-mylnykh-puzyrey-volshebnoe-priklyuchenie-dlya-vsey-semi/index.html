@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>«Ведьма мыльных пузырей»… — 31 октября 2026 · Никосия, Кипр</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Никосия, Кипр, 31 октября 2026. 31 октября в Никосии состоится интерактивный детский спектакль «Ведьма мыльных пузырей» от Teatro Angelico - Invisible Stage…" />
+    <link rel="canonical" href="https://mypins.site/event/fbaaad30-a1b4-44f9-934d-328b234e4c5e/vedma-mylnykh-puzyrey-volshebnoe-priklyuchenie-dlya-vsey-semi/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="«Ведьма мыльных пузырей»… — 31 октября 2026 · Никосия, Кипр" />
+    <meta property="og:description" content="Никосия, Кипр, 31 октября 2026. 31 октября в Никосии состоится интерактивный детский спектакль «Ведьма мыльных пузырей» от Teatro Angelico - Invisible Stage…" />
+    <meta property="og:url" content="https://mypins.site/event/fbaaad30-a1b4-44f9-934d-328b234e4c5e/vedma-mylnykh-puzyrey-volshebnoe-priklyuchenie-dlya-vsey-semi/" />
+    <meta property="og:image" content="https://cyprus.bz/img/images/events/959a653e-44e8-48da-b4e8-c27e7bf4d0ad/1791428627825.png?w=516&amp;h=516&amp;q=80" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/fbaaad30-a1b4-44f9-934d-328b234e4c5e/vedma-mylnykh-puzyrey-volshebnoe-priklyuchenie-dlya-vsey-semi/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/fbaaad30-a1b4-44f9-934d-328b234e4c5e/the-bubble-witch-a-magical-adventure-for-the-whole-family/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Кипр","item":"https://mypins.site/cyprus/"},{"@type":"ListItem","position":3,"name":"«Ведьма мыльных пузырей»: волшебное приключение для всей семьи","item":"https://mypins.site/event/fbaaad30-a1b4-44f9-934d-328b234e4c5e/vedma-mylnykh-puzyrey-volshebnoe-priklyuchenie-dlya-vsey-semi/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>«Ведьма мыльных пузырей»: волшебное приключение для всей семьи</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-31">31 октября 2026</time></p>
+  <p><time datetime="2026-10-31T11:00:00">31 октября 2026, 11:00</time></p>
+  <address>Театр «Сатирико» Никосия, Никосия, Никосия, Кипр</address>
+  <p>31 октября в Никосии состоится интерактивный детский спектакль «Ведьма мыльных пузырей» от Teatro Angelico - Invisible Stage. Что происходит, когда волшебство начинает исчезать из мира? Ведьма и её друзья отправляются на поиски таинственного волшебного ключа. И сами дети помогут героям! Зрителей...</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/cyprus/">Кипр</a> <span aria-hidden="true">›</span> <span>«Ведьма мыльных пузырей»: волшебное приключение для всей семьи</span></p>
+    <p>Ещё события на Кипре: <a href="/cyprus/">афиша</a> · <a href="/cyprus/theatre/">🎭 Театры и шоу</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/38bdd6f3-8daa-48b9-8ca2-207b9a77a442/lysaya-pevitsa/">Лысая певица <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/ab66c8fe-52cb-411b-b858-172ba3e594ec/yenta-gabler-hedda-gabler/">Йента Габлер | Hedda Gabler <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/197573f5-011f-4e7c-8491-8c8acfc65054/semero-kozlyat-i-volk-v-pafose/">Семеро козлят и волк в Пафосе <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/1df23f19-0a54-411f-8dd0-c972a048c2bf/smurfiki-zelenaya-missiya/">Смурфики — Зелёная миссия <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/2d90e89a-cd7c-4ed4-bb5d-4db45042fe5e/stryumfiki-zelenaya-missiya-v-nikosii/">Стрюмфики - Зелёная миссия в Никосии <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/454e5616-76ce-428c-adab-877d85e8a435/snezhnaya-koroleva/">Снежная королева <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Кипр</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/fb99931f-aa5d-4c2f-9137-4a0cd5080597/rospis-i-ukrashenie-tykv-na-khellouin/">Роспись и украшение тыкв на Хэллоуин</a> <time datetime="2026-10-31">31 октября 2026</time></li>
+    <li>Следующее: <a href="/event/04f731ea-041b-44d8-854a-11a3505fe09c/zabeg-radi-istseleniya-na-kipre-blagotvoritelnyy-zabeg-v-podderzhku-borby-s-rakom-grudi-v-nikosii/">Забег ради исцеления на Кипре: благотворительный забег в поддержку борьбы с раком груди в Никосии</a> <time datetime="2026-11-01">1 ноября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/cyprus/">Ближайшие события: Кипр</a></p>
+</div>
+
+  </body>
+</html>

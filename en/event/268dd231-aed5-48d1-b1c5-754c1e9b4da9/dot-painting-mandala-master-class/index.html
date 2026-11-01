@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dot painting mandala master class — October 9, 2026 · Nha Trang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nha Trang, October 9, 2026. Dot mandala painting workshop 🕉️ ⭐️You will learn about the meaning of the mandala symbol 🌟You will try dot painting techniques…" />
+    <link rel="canonical" href="https://mypins.site/en/event/268dd231-aed5-48d1-b1c5-754c1e9b4da9/dot-painting-mandala-master-class/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Dot painting mandala master class — October 9, 2026 · Nha Trang" />
+    <meta property="og:description" content="Nha Trang, October 9, 2026. Dot mandala painting workshop 🕉️ ⭐️You will learn about the meaning of the mandala symbol 🌟You will try dot painting techniques…" />
+    <meta property="og:url" content="https://mypins.site/en/event/268dd231-aed5-48d1-b1c5-754c1e9b4da9/dot-painting-mandala-master-class/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/268dd231-aed5-48d1-b1c5-754c1e9b4da9/dot-painting-mandala-master-class/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/268dd231-aed5-48d1-b1c5-754c1e9b4da9/master-klass-po-tochechnoy-rospisi-mandal/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"Dot painting mandala master class","item":"https://mypins.site/en/event/268dd231-aed5-48d1-b1c5-754c1e9b4da9/dot-painting-mandala-master-class/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Dot painting mandala master class</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-09">October 9, 2026</time></p>
+  <p><time datetime="2026-10-09T10:30:00">October 9, 2026, 10:30 AM</time></p>
+  <address>SEASHELL CAFE &amp; RESTAURANT NHA TRANG, 58 Phạm Văn Đồng, Vĩnh Hải, Nha Trang, Khánh Hòa 650000</address>
+  <p>250 VND</p>
+  <p>Dot mandala painting workshop 🕉️
+
+⭐️You will learn about the meaning of the mandala symbol
+🌟You will try dot painting techniques
+⭐️You will create your own sacred object
+
+🪻October 9, Friday at 10.30
+🎁 250 VND, tools and materials provided, including the object for painting, of your choice
+📩 After the workshop you will receive an interpretation of your mandala.
+🎫 Can be given as a gift — gift certificates available.
+🏵 https://maps.app.goo.gl/uFwy1BB5hXXCdFLEA?g_st=ic
+📥 Registration required via direct message: @ronika2606
+
+#date: 09.10.2026
+Post by: Veronika</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>Dot painting mandala master class</span></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a> · <a href="/en/nha-trang/workshop/">🎨 Workshops</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/567678c0-fca5-4d36-9fb3-e045b9eb0426/i-invite-girls-to-a-transformational-game-transitions/">I invite girls to a transformational game &quot;Transitions&quot; <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/f1fbf941-e7c4-482e-b1a5-b15d011b2479/master-class-vector-of-destiny/">MASTER CLASS VECTOR OF DESTINY <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/ff3a6829-2e1c-48fc-a2f7-a9516832125a/a-creative-meeting-on-collage-making/">A creative meeting on collage making <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/81eb44e8-cfda-4640-89d4-c54fcb924e2e/art-classes-for-adults/">ART CLASSES FOR ADULTS <time datetime="2026-11-02">November 2, 2026</time></a></li>
+    <li><a href="/en/event/1d220870-7848-49db-931c-563a89f8a0a0/game-workshop-in-search-of-treasure/">Game workshop &quot;In Search of Treasure&quot; <time datetime="2026-11-02">November 2, 2026</time></a></li>
+    <li><a href="/en/event/e1ca07aa-bb28-4c2f-b734-47983e6ae4cc/cozy-sketching/">COZY SKETCHING <time datetime="2026-11-02">November 2, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Nha Trang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/24fe865a-4e10-4f93-83d3-681bfc3f3526/jam-session-at-kilo-bar/">Jam session at Kilo bar!</a> <time datetime="2026-10-09">October 9, 2026</time></li>
+    <li>Next: <a href="/en/event/4078ad78-78f7-4d1b-82e1-9d861b79792d/women-s-friday-dinner-delicious-food-soulful-conversations-and-wine/">WOMEN&#39;S FRIDAY DINNER: DELICIOUS FOOD, SOULFUL CONVERSATIONS AND WINE</a> <time datetime="2026-10-09">October 9, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
+</div>
+
+  </body>
+</html>

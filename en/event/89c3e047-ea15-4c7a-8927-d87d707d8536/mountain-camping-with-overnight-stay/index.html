@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MOUNTAIN CAMPING WITH OVERNIGHT… — October 31, 2026 · Nha Trang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Nha Trang, October 31, 2026. 🏕 MOUNTAIN CAMPING WITH AN OVERNIGHT STAY We invite you to spend the weekend in nature! Beautiful mountain views and the lights…" />
+    <link rel="canonical" href="https://mypins.site/en/event/89c3e047-ea15-4c7a-8927-d87d707d8536/mountain-camping-with-overnight-stay/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MOUNTAIN CAMPING WITH OVERNIGHT… — October 31, 2026 · Nha Trang" />
+    <meta property="og:description" content="Nha Trang, October 31, 2026. 🏕 MOUNTAIN CAMPING WITH AN OVERNIGHT STAY We invite you to spend the weekend in nature! Beautiful mountain views and the lights…" />
+    <meta property="og:url" content="https://mypins.site/en/event/89c3e047-ea15-4c7a-8927-d87d707d8536/mountain-camping-with-overnight-stay/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/11bc35e0c55ece03a514cbbad375c196.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/89c3e047-ea15-4c7a-8927-d87d707d8536/mountain-camping-with-overnight-stay/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/89c3e047-ea15-4c7a-8927-d87d707d8536/kemping-v-gorakh-s-nochevkoy/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Nha Trang","item":"https://mypins.site/en/nha-trang/"},{"@type":"ListItem","position":3,"name":"MOUNTAIN CAMPING WITH OVERNIGHT STAY","item":"https://mypins.site/en/event/89c3e047-ea15-4c7a-8927-d87d707d8536/mountain-camping-with-overnight-stay/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>MOUNTAIN CAMPING WITH OVERNIGHT STAY</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-31">October 31, 2026</time></p>
+  <p><time datetime="2026-10-31T13:00:00">October 31, 2026, 1:00 PM</time></p>
+  <address>8553 5R8 Khu tái định cư thôn Đắc Lộc, Unnamed, Road, Bắc Nha Trang, Khánh Hòa</address>
+  <p>500000 VND</p>
+  <p>🏕 MOUNTAIN CAMPING WITH AN OVERNIGHT STAY
+
+We invite you to spend the weekend in nature! Beautiful mountain views and the lights of Nha Trang await us, an overnight stay in tents, shashlik, games by the campfire, and socializing 🌄🔥
+
+
+#date: 31.10 Saturday
+
+🕐 Gathering at 13:00 at the foot of the mountain
+📍 Meeting point: https://maps.app.goo.gl/w74v86jMs7sAR57W8?g_st=ic
+
+💰 Cost:
+
+• 500,000 ₫ — without transport, with a self-guided hike up to the camp.
+• 800,000 ₫ — with transport from the meeting point to the camp in the mountains.
+
+Let&#39;s spend the weekend among the mountains, meet the evening by the campfire, and take a break from the city bustle! 🌿
+
+sign up @Aleksandr_Filai
+Post by: Valeriya_fitness_Erotraverse</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/nha-trang/">Nha Trang</a> <span aria-hidden="true">›</span> <span>MOUNTAIN CAMPING WITH OVERNIGHT STAY</span></p>
+    <p>More events in Nha Trang: <a href="/en/nha-trang/">what&#39;s on</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/ca25b5f2-ad1c-43c6-aed6-bb2298bc8c99/journey-to-nui-chua-nature-reserve/">Journey to Núi Chúa Nature Reserve <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/cb2ef934-6ad4-4bf2-8a99-d89ce550d8a6/yang-bay-nature-park/">Yang Bay Nature Park <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/6fc9aedb-1710-415e-9e2a-7de94978cef6/golf-spa-tour-at-vinpearl/">GOLF-SPA TOUR AT VINPEARL! <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/b8353f43-9422-4718-9d93-560aa60f5b6f/author-s-walk/">AUTHOR&#39;S WALK <time datetime="2026-10-31">October 31, 2026</time></a></li>
+    <li><a href="/en/event/5f4b1718-d170-46b2-8751-c4cefdb9f8d6/journey-to-hon-heo-peninsula/">Journey to Hòn Hèo Peninsula <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/dea0b1b0-c99a-4c97-b6cc-a879f53cd598/trip-to-the-southern-islands-of-nyachanga/">TRIP TO THE SOUTHERN ISLANDS OF NYACHANGA <time datetime="2026-11-07">November 7, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Nha Trang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/812b2fc9-08ae-4751-a4e8-2f940a71a393/saturday-halloween-the-main-party-of-the-night/">Saturday Halloween: The Main Party of the Night!</a> <time datetime="2026-10-31">October 31, 2026</time></li>
+    <li>Next: <a href="/en/event/9a1d38a1-8894-4358-a440-e1ee0f5ab020/yoga-in-nha-trang/">Yoga in Nha Trang</a> <time datetime="2026-10-31">October 31, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/nha-trang/">Upcoming events in Nha Trang</a></p>
+</div>
+
+  </body>
+</html>

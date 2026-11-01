@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pesta Boneka in Ubud: performances on… — October 18, 2026 · Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Bali, October 18, 2026. On October 18, the final day of the Pesta Boneka #10 puppet theatre festival will take place at Titik Dua Ubud. Thailand&#39;s Talentshow…" />
+    <link rel="canonical" href="https://mypins.site/en/event/05911566-390e-4abb-a9d7-623d19e3573b/pesta-boneka-in-ubud-performances-on-october-18/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Pesta Boneka in Ubud: performances on… — October 18, 2026 · Bali" />
+    <meta property="og:description" content="Bali, October 18, 2026. On October 18, the final day of the Pesta Boneka #10 puppet theatre festival will take place at Titik Dua Ubud. Thailand&#39;s Talentshow…" />
+    <meta property="og:url" content="https://mypins.site/en/event/05911566-390e-4abb-a9d7-623d19e3573b/pesta-boneka-in-ubud-performances-on-october-18/" />
+    <meta property="og:image" content="https://static.baliforum.ru/uploads/698417/conversions/pesta-boneka-cover-preview.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/05911566-390e-4abb-a9d7-623d19e3573b/pesta-boneka-in-ubud-performances-on-october-18/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/05911566-390e-4abb-a9d7-623d19e3573b/pesta-boneka-v-ubude-spektakli-18-oktyabrya/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Bali","item":"https://mypins.site/en/bali/"},{"@type":"ListItem","position":3,"name":"Pesta Boneka in Ubud: performances on October 18","item":"https://mypins.site/en/event/05911566-390e-4abb-a9d7-623d19e3573b/pesta-boneka-in-ubud-performances-on-october-18/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Pesta Boneka in Ubud: performances on October 18</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-18">October 18, 2026</time></p>
+  <p><time datetime="2026-10-18">October 18, 2026</time></p>
+  <address>Jl. Cok Rai Pudak No.48, Peliatan, Kecamatan Ubud, Kabupaten Gianyar, Bali 80571, Indonesia</address>
+  <p>80000 IDR</p>
+  <p>On October 18, the final day of the Pesta Boneka #10 puppet theatre festival will take place at Titik Dua Ubud. Thailand&#39;s Talentshow Theatre will present the non-verbal Ta Lent Show at the COCA Art Space venue. Finland&#39;s KO-KOO-MO will perform Block Theatre in the amphitheatre. Both stages are located within the Titik Dua space in Peliatan.
+
+The one-day pass for October 18 is sold out. A separate ticket for each of the two performances costs 80,000 IDR; a three-day pass for the festival on October 16–18 is 463,500 IDR. Children under six enter free.
+
+Tickets for the performances and the three-day pass: https://megatix.co.id/events/holding-hands-pesta-boneka-on-wheels-bali</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/bali/">Bali</a> <span aria-hidden="true">›</span> <span>Pesta Boneka in Ubud: performances on October 18</span></p>
+    <p>More events in Bali: <a href="/en/bali/">what&#39;s on</a> · <a href="/en/bali/theatre/">🎭 Theatres &amp; Shows</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/3ef4300d-9838-466e-9c2b-a321bab1fff7/kecak-dance-at-padang-tegal-kaja/">Kecak &amp; dance at Padang Tegal Kaja <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/905bb225-bc9c-46ea-9c5c-12da83fc1a11/traditional-dance-at-bale-banjar-ubud-kelod/">Traditional dance at Bale Banjar Ubud Kelod <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/a92f4b68-854e-4345-b3af-4cc5855a8012/kecak-fire-dance-at-uluwatu-temple/">Kecak Fire Dance at Uluwatu Temple <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/af63e539-e913-4ca3-a010-e7d3117a1975/traditional-dance-at-pura-saraswati/">Traditional dance at Pura Saraswati <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/e80e6f75-3afd-4173-828c-a05191a6708c/traditional-dance-at-ubud-palace/">Traditional dance at Ubud Palace <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/5cedeb4c-b109-4848-bedd-160690d80c27/arma-dance-performance/">ARMA Dance Performance <time datetime="2026-11-01">November 1, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Bali</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/ed42ea61-0ce5-4184-9c9c-a7d8311a137d/guitar-evening/">Guitar Evening</a> <time datetime="2026-10-17">October 17, 2026</time></li>
+    <li>Next: <a href="/en/event/28e1cf28-8a2d-4c95-884b-e7c12f97ba53/quiz-please/">Quiz, please!</a> <time datetime="2026-10-18">October 18, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/bali/">Upcoming events in Bali</a></p>
+</div>
+
+  </body>
+</html>

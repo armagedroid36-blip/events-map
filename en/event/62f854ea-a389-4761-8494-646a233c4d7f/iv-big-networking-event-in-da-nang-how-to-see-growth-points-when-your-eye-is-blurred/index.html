@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IV BIG NETWORKING EVENT IN DA… — November 5, 2026 · Da Nang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Da Nang, November 5, 2026. IV BIG NETWORKING EVENT IN DANANG: HOW TO SEE GROWTH OPPORTUNITIES WHEN YOU&#39;VE LOST PERSPECTIVE? When you&#39;re inside a business…" />
+    <link rel="canonical" href="https://mypins.site/en/event/62f854ea-a389-4761-8494-646a233c4d7f/iv-big-networking-event-in-da-nang-how-to-see-growth-points-when-your-eye-is-blurred/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="IV BIG NETWORKING EVENT IN DA… — November 5, 2026 · Da Nang" />
+    <meta property="og:description" content="Da Nang, November 5, 2026. IV BIG NETWORKING EVENT IN DANANG: HOW TO SEE GROWTH OPPORTUNITIES WHEN YOU&#39;VE LOST PERSPECTIVE? When you&#39;re inside a business…" />
+    <meta property="og:url" content="https://mypins.site/en/event/62f854ea-a389-4761-8494-646a233c4d7f/iv-big-networking-event-in-da-nang-how-to-see-growth-points-when-your-eye-is-blurred/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/4c3ad34feecfb5ec846885955704ba6d.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/62f854ea-a389-4761-8494-646a233c4d7f/iv-big-networking-event-in-da-nang-how-to-see-growth-points-when-your-eye-is-blurred/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/62f854ea-a389-4761-8494-646a233c4d7f/iv-bolshoy-netvorking-v-danange-kak-uvidet-tochki-rosta-kogda-glaz-zamylen/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Event","name":"IV BIG NETWORKING EVENT IN DA NANG: HOW TO SEE GROWTH POINTS WHEN YOUR EYE IS BLURRED?","url":"https://mypins.site/en/event/62f854ea-a389-4761-8494-646a233c4d7f/iv-big-networking-event-in-da-nang-how-to-see-growth-points-when-your-eye-is-blurred/","startDate":"2026-11-05T12:00:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Radisson RED, Da Nang","address":{"@type":"PostalAddress","addressLocality":"Da Nang","streetAddress":"Radisson RED, Da Nang"},"geo":{"@type":"GeoCoordinates","latitude":16.0808774,"longitude":108.246766}},"description":"IV BIG NETWORKING EVENT IN DANANG: HOW TO SEE GROWTH OPPORTUNITIES WHEN YOU'VE LOST PERSPECTIVE? When you're inside a business without breaks, your perspective inevitably becomes blurred. Familiar budget leaks seem normal, strategy gets postponed due to routine, and obvious growth opportunities remain in your blind spot. The fastest way to regain objectivity is to step offline and meet those who see the situation from the outside and can give honest feedback without sugarcoating. On November 5, we're hosting a meeting for entrepreneurs and experts ready to break out of operational blindness and recalibrate their bearings. What awaits you: • Honest feedback from founders: a fresh perspective on your products, hypotheses, and processes from practitioners across different industries. • 4 rounds of guided networking: a clear communication structure that allows everyone to make dozens of quality connections without awkward pauses. • 4 practitioner speakers: analysis of bottlenecks in management, scaling tools, and real business cases. • 100+ participants: a strong environment of entrepreneurs focused on growth and mutually beneficial partnerships. 📆November 5 🕦 Guest check-in: 11:30 | Start: 12:00 📍 Radisson RED, Danang 🎟 Price: 150,000 VND 👉 Reserve your spot: SIGN UP For all questions: @juliakroti #Date: 5.11","endDate":"2026-11-05","image":"https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/4c3ad34feecfb5ec846885955704ba6d.jpg","organizer":{"@type":"Organization","name":"Telegram @danang_afisha","url":"https://t.me/danang_afisha/6044"},"inLanguage":"en"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Da Nang","item":"https://mypins.site/en/da-nang/"},{"@type":"ListItem","position":3,"name":"IV BIG NETWORKING EVENT IN DA NANG: HOW TO SEE GROWTH POINTS WHEN YOUR EYE IS BLURRED?","item":"https://mypins.site/en/event/62f854ea-a389-4761-8494-646a233c4d7f/iv-big-networking-event-in-da-nang-how-to-see-growth-points-when-your-eye-is-blurred/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>IV BIG NETWORKING EVENT IN DA NANG: HOW TO SEE GROWTH POINTS WHEN YOUR EYE IS BLURRED?</h1>
+  <p class="event-past"><strong>Event removed from the lineup</strong> — <time datetime="2026-11-05">November 5, 2026</time></p>
+  <p><time datetime="2026-11-05T12:00:00">November 5, 2026, 12:00 PM</time></p>
+  <address>Radisson RED, Da Nang</address>
+  <p>150000 VND</p>
+  <p>IV BIG NETWORKING EVENT IN DANANG: HOW TO SEE GROWTH OPPORTUNITIES WHEN YOU&#39;VE LOST PERSPECTIVE?
+
+When you&#39;re inside a business without breaks, your perspective inevitably becomes blurred. Familiar budget leaks seem normal, strategy gets postponed due to routine, and obvious growth opportunities remain in your blind spot.
+
+The fastest way to regain objectivity is to step offline and meet those who see the situation from the outside and can give honest feedback without sugarcoating.
+
+On November 5, we&#39;re hosting a meeting for entrepreneurs and experts ready to break out of operational blindness and recalibrate their bearings.
+
+What awaits you:
+• Honest feedback from founders: a fresh perspective on your products, hypotheses, and processes from practitioners across different industries.
+• 4 rounds of guided networking: a clear communication structure that allows everyone to make dozens of quality connections without awkward pauses.
+• 4 practitioner speakers: analysis of bottlenecks in management, scaling tools, and real business cases.
+• 100+ participants: a strong environment of entrepreneurs focused on growth and mutually beneficial partnerships.
+
+📆November 5
+🕦 Guest check-in: 11:30 | Start: 12:00
+📍 Radisson RED, Danang
+🎟 Price: 150,000 VND
+
+👉 Reserve your spot: SIGN UP
+
+For all questions: @juliakroti
+
+#Date: 5.11</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/da-nang/">Da Nang</a> <span aria-hidden="true">›</span> <span>IV BIG NETWORKING EVENT IN DA NANG: HOW TO SEE GROWTH POINTS WHEN YOUR EYE IS BLURRED?</span></p>
+    <p>More events in Da Nang: <a href="/en/da-nang/">what&#39;s on</a> · <a href="/en/da-nang/meetup/">🤝 Meetups &amp; Networking</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/6a61dc1d-acb6-403a-9de0-5a05d2db44e5/how-to-blend-in-as-one-of-your-own-and-live-care-free-in-vietnam/">How to BLEND IN AS ONE OF YOUR OWN and LIVE CARE FREE in Vietnam <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/38e2bcab-9f00-4395-a51a-428b5b0cc951/big-networking-event-in-danang/">BIG NETWORKING EVENT IN DANANG <time datetime="2026-11-05">November 5, 2026</time></a></li>
+    <li><a href="/en/event/7f036642-89cd-4f00-aa96-ffa97df0c512/how-much-time-is-wasted-on-questions-that-could-be-resolved-in-a-15-minute-live-conversation/">How much time is wasted on questions that could be resolved in a 15-minute live conversation? <time datetime="2026-11-05">November 5, 2026</time></a></li>
+    <li><a href="/en/event/ebf810b2-b2bf-45d1-854e-66978eafc4ba/100-entrepreneurs-from-da-nang-on-one-platform/">100 entrepreneurs from Da Nang on one platform <time datetime="2026-11-05">November 5, 2026</time></a></li>
+    <li><a href="/en/event/50c8c712-07f1-4850-839a-98601294eece/iv-big-networking-event-in-danang-solving-business-tasks-in-one-day-instead-of-weeks-of-back-and-forth/">IV BIG NETWORKING EVENT IN DANANG: SOLVING BUSINESS TASKS IN ONE DAY INSTEAD OF WEEKS OF BACK-AND-FORTH <time datetime="2026-11-05">November 5, 2026</time></a></li>
+    <li><a href="/en/event/2738192a-7920-4965-8234-8993b6e2ac9c/therapeutic-book-club/">Therapeutic Book Club <time datetime="2026-11-26">November 26, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Da Nang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/50c8c712-07f1-4850-839a-98601294eece/iv-big-networking-event-in-danang-solving-business-tasks-in-one-day-instead-of-weeks-of-back-and-forth/">IV BIG NETWORKING EVENT IN DANANG: SOLVING BUSINESS TASKS IN ONE DAY INSTEAD OF WEEKS OF BACK-AND-FORTH</a> <time datetime="2026-11-05">November 5, 2026</time></li>
+    <li>Next: <a href="/en/event/e3224a5c-2753-4296-8cff-7b44d4ef7f22/where-in-da-nang-can-you-find-clients-reliable-partners-and-a-strong-network-in-one-day/">Where in Da Nang can you find clients, reliable partners, and a strong network in one day?</a> <time datetime="2026-11-05">November 5, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/da-nang/">Upcoming events in Da Nang</a></p>
+</div>
+
+  </body>
+</html>

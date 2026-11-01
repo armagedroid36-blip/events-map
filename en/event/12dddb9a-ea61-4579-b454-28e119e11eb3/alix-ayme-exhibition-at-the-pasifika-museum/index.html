@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alix Aymé Exhibition at the Pasifika… — October 23, 2026 · Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Bali, October 23, 2026. Meet Alix Aymé — one of the artists whose works are featured in the exhibition &quot;Women Artists of Asia-Pacific: Nostalgi = Transendensi&quot;…" />
+    <link rel="canonical" href="https://mypins.site/en/event/12dddb9a-ea61-4579-b454-28e119e11eb3/alix-ayme-exhibition-at-the-pasifika-museum/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Alix Aymé Exhibition at the Pasifika… — October 23, 2026 · Bali" />
+    <meta property="og:description" content="Bali, October 23, 2026. Meet Alix Aymé — one of the artists whose works are featured in the exhibition &quot;Women Artists of Asia-Pacific: Nostalgi = Transendensi&quot;…" />
+    <meta property="og:url" content="https://mypins.site/en/event/12dddb9a-ea61-4579-b454-28e119e11eb3/alix-ayme-exhibition-at-the-pasifika-museum/" />
+    <meta property="og:image" content="https://static.baliforum.ru/uploads/698940/conversions/97704581-68485922-preview.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/12dddb9a-ea61-4579-b454-28e119e11eb3/alix-ayme-exhibition-at-the-pasifika-museum/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/12dddb9a-ea61-4579-b454-28e119e11eb3/vystavka-aliks-eme-v-muzee-pasifika/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Bali","item":"https://mypins.site/en/bali/"},{"@type":"ListItem","position":3,"name":"Alix Aymé Exhibition at the Pasifika Museum","item":"https://mypins.site/en/event/12dddb9a-ea61-4579-b454-28e119e11eb3/alix-ayme-exhibition-at-the-pasifika-museum/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Alix Aymé Exhibition at the Pasifika Museum</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-23">October 23, 2026</time></p>
+  <p><time datetime="2026-10-23T09:00:00">October 23, 2026, 9:00 AM</time></p>
+  <address>Complex Bali Tourism Development Corporation (BTDC) Area Block P, Benoa, South Kuta, Badung Regency, Bali 80361, Indonesia</address>
+  <p>Meet Alix Aymé — one of the artists whose works are featured in the exhibition &quot;Women Artists of Asia-Pacific: Nostalgi = Transendensi&quot; at the Museum Pasifika.
+
+A French artist whose creative development was largely shaped by the years she spent in Asia. Her works became part of a broader artistic dialogue between Europe and Asia. Alix Aymé found inspiration in the landscapes, cultures, and everyday life she encountered during her travels.
+
+The Museum Pasifika presents one of her works — &quot;Les Jeunes Filles,&quot; painted in 1930.
+
+Discover Alix Aymé&#39;s work at the exhibition &quot;Women Artists of Asia-Pacific: Nostalgi = Transendensi.&quot;
+
+📍 Museum Pasifika, Nusa Dua, Bali📅 October 9 — December 9, 2026
+
+instagram (https://www.instagram.com/museumpasifika/)</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/bali/">Bali</a> <span aria-hidden="true">›</span> <span>Alix Aymé Exhibition at the Pasifika Museum</span></p>
+    <p>More events in Bali: <a href="/en/bali/">what&#39;s on</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/1ca1e13d-cb23-4710-bc82-17909ebe8285/what-the-body-remembers-exhibition-at-nuanu-until-november-29/">What The Body Remembers: exhibition at Nuanu until November 29 <time datetime="2026-10-10">October 10, 2026</time></a></li>
+    <li><a href="/en/event/ec834e61-5cfb-4116-b667-e30f092b3a6b/alix-ayme-exhibition-at-the-pasifika-museum/">Alix Ayme Exhibition at the Pasifika Museum <time datetime="2026-10-21">October 21, 2026</time></a></li>
+    <li><a href="/en/event/97998f0a-03ae-4fa1-aab9-b17e985d95f3/alix-ayme-exhibition-at-the-pasifika-museum/">Alix Aymé Exhibition at the Pasifika Museum <time datetime="2026-10-22">October 22, 2026</time></a></li>
+    <li><a href="/en/event/c287a70b-5afa-403c-be6b-fa82fdfce00c/design-exhibition-at-uma-seminyak/">Design exhibition at Uma Seminyak <time datetime="2026-10-23">October 23, 2026</time></a></li>
+    <li><a href="/en/event/b71aaf0c-e933-45b2-b3c2-1b92444356b4/alix-ayme-exhibition-at-the-pasifika-museum/">Alix Aymé Exhibition at the Pasifika Museum <time datetime="2026-10-24">October 24, 2026</time></a></li>
+    <li><a href="/en/event/0c463071-51db-47b6-a488-c56277ef6fa5/design-exhibition-at-uma-seminyak/">Design Exhibition at Uma Seminyak <time datetime="2026-10-24">October 24, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Bali</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/08ff9840-c05b-4587-91ef-cab22e61e8c1/einstein-party-quiz/">Einstein Party Quiz</a> <time datetime="2026-10-23">October 23, 2026</time></li>
+    <li>Next: <a href="/en/event/2c348ebd-248f-49d4-93f5-b2aaa81dac03/quiz-please/">Quiz, please!</a> <time datetime="2026-10-23">October 23, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/bali/">Upcoming events in Bali</a></p>
+</div>
+
+  </body>
+</html>

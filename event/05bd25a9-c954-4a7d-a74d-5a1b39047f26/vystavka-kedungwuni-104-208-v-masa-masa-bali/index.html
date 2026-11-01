@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Выставка KEDUNGWUNI 104/208… — 22 августа 2026 · Сукавати, Bali</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Сукавати, Bali, 22 августа 2026. Masa Masa совместно с Pithecanthropus представляют выставку KEDUNGWUNI 104/208, посвящённую наследию легендарного батик-дома…" />
+    <link rel="canonical" href="https://mypins.site/event/05bd25a9-c954-4a7d-a74d-5a1b39047f26/vystavka-kedungwuni-104-208-v-masa-masa-bali/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Выставка KEDUNGWUNI 104/208… — 22 августа 2026 · Сукавати, Bali" />
+    <meta property="og:description" content="Сукавати, Bali, 22 августа 2026. Masa Masa совместно с Pithecanthropus представляют выставку KEDUNGWUNI 104/208, посвящённую наследию легендарного батик-дома…" />
+    <meta property="og:url" content="https://mypins.site/event/05bd25a9-c954-4a7d-a74d-5a1b39047f26/vystavka-kedungwuni-104-208-v-masa-masa-bali/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Бали","item":"https://mypins.site/bali/"},{"@type":"ListItem","position":3,"name":"Выставка KEDUNGWUNI 104/208 в Masa Masa Bali","item":"https://mypins.site/event/05bd25a9-c954-4a7d-a74d-5a1b39047f26/vystavka-kedungwuni-104-208-v-masa-masa-bali/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Выставка KEDUNGWUNI 104/208 в Masa Masa Bali</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-08-22">22 августа 2026</time></p>
+  <p><time datetime="2026-08-22T10:00:00">22 августа 2026, 10:00</time></p>
+  <address>Jl. Subak Telaga I No.9, Ketewel, Kec. Sukawati, Kabupaten Gianyar, Bali 80582, Индонезия, Сукавати, Bali</address>
+  <p>Masa Masa совместно с Pithecanthropus представляют выставку KEDUNGWUNI 104/208, посвящённую наследию легендарного батик-дома Oey Soe Tjoen — одного из самых известных производителей традиционного индонезийского батика.
+
+Экспозиция исследует, как ремесленные традиции сохраняются и развиваются на протяжении более чем века. Посетители увидят архивные материалы, уникальные ткани и современные художественные интерпретации, вдохновлённые богатой историей батика и культурным наследием Индонезии.
+
+📅 11 июля – 30 августа 2026🕕 Открытие выставки: 11 июля, 18:00📍 Masa Masa Bali
+
+🧵 Искусство традиционного батика🖼️ Архивные материалы и текстиль🎨 Современные художественные интерпретации
+
+✨ Выставка, раскрывающая историю одного из самых известных батик-домов Индонезии и эволюцию этого уникального ремесла.
+
+instagram (https://www.instagram.com/masamasabali/?hl=fr)</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/bali/">Бали</a> <span aria-hidden="true">›</span> <span>Выставка KEDUNGWUNI 104/208 в Masa Masa Bali</span></p>
+    <p>Ещё события на Бали: <a href="/bali/">афиша</a> · <a href="/bali/exhibition/">🖼️ Выставки</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/d9363b79-0d55-4f0d-83a3-fb8f6fd2327d/vystavka-lucid-dreams-repetisi-memori/">Выставка Lucid Dreams &amp; Repetisi Memori <time datetime="2026-08-21">21 августа 2026</time></a></li>
+    <li><a href="/event/0c2e301f-21f0-4fb5-af52-e7f723504092/otkrytie-vystavki-sometimes-this-is-reality/">Открытие выставки Sometimes, This is Reality <time datetime="2026-08-22">22 августа 2026</time></a></li>
+    <li><a href="/event/75258dd8-9bb9-4d3a-a4df-4b79660e9c46/vystavka-lucid-dreams-repetisi-memori/">Выставка Lucid Dreams &amp; Repetisi Memori <time datetime="2026-08-22">22 августа 2026</time></a></li>
+    <li><a href="/event/b7a37739-8a99-4c68-b343-49e62a061cbe/vystavka-lucid-dreams-repetisi-memori/">Выставка Lucid Dreams &amp; Repetisi Memori <time datetime="2026-08-23">23 августа 2026</time></a></li>
+    <li><a href="/event/994b9a15-a48d-4c5c-87f7-7bf1d728cf1c/otkrytie-vystavki-sometimes-this-is-reality/">Открытие выставки Sometimes, This is Reality <time datetime="2026-08-23">23 августа 2026</time></a></li>
+    <li><a href="/event/1ca1e13d-cb23-4710-bc82-17909ebe8285/what-the-body-remembers-vystavka-v-nuanu-do-29-noyabrya/">What The Body Remembers: выставка в Nuanu до 29 ноября <time datetime="2026-10-10">10 октября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Бали</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/e50eee4a-3110-4834-b413-d3797ca46d6d/yoga-v-ubude/">Йога в Убуде</a> <time datetime="2026-08-21">21 августа 2026</time></li>
+    <li>Следующее: <a href="/event/0c2e301f-21f0-4fb5-af52-e7f723504092/otkrytie-vystavki-sometimes-this-is-reality/">Открытие выставки Sometimes, This is Reality</a> <time datetime="2026-08-22">22 августа 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/bali/">Ближайшие события: Бали</a></p>
+</div>
+
+  </body>
+</html>

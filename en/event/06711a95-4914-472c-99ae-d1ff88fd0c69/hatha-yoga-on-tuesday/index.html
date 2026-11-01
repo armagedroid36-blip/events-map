@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hatha yoga on TUESDAY — October 13, 2026 · Da Nang</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Da Nang, October 13, 2026. 🥰Hatha Yoga on TUESDAY 🧘Strength practice. In an hour we&#39;ll work on strength, mobility, balance and breathing. It will be intense…" />
+    <link rel="canonical" href="https://mypins.site/en/event/06711a95-4914-472c-99ae-d1ff88fd0c69/hatha-yoga-on-tuesday/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Hatha yoga on TUESDAY — October 13, 2026 · Da Nang" />
+    <meta property="og:description" content="Da Nang, October 13, 2026. 🥰Hatha Yoga on TUESDAY 🧘Strength practice. In an hour we&#39;ll work on strength, mobility, balance and breathing. It will be intense…" />
+    <meta property="og:url" content="https://mypins.site/en/event/06711a95-4914-472c-99ae-d1ff88fd0c69/hatha-yoga-on-tuesday/" />
+    <meta property="og:image" content="https://mypins.site/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/06711a95-4914-472c-99ae-d1ff88fd0c69/hatha-yoga-on-tuesday/" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/06711a95-4914-472c-99ae-d1ff88fd0c69/khatkha-yoga-vo-vtornik/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mypins.site/en/"},{"@type":"ListItem","position":2,"name":"Da Nang","item":"https://mypins.site/en/da-nang/"},{"@type":"ListItem","position":3,"name":"Hatha yoga on TUESDAY","item":"https://mypins.site/en/event/06711a95-4914-472c-99ae-d1ff88fd0c69/hatha-yoga-on-tuesday/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Hatha yoga on TUESDAY</h1>
+  <p class="event-past"><strong>Event has ended</strong> — <time datetime="2026-10-27">October 27, 2026</time></p>
+  <p><time datetime="2026-10-13T20:30:00">October 13, 2026, 8:30 PM</time></p>
+  <address>Da Nang</address>
+  <p>200000 VND</p>
+  <p>🥰Hatha Yoga on TUESDAY
+
+🧘Strength practice. In an hour we&#39;ll work on strength, mobility, balance and breathing. It will be intense enough to feel your body
+
+🗯 After the session - pleasant fatigue in the body, a clear head and a feeling of being centered.
+
+Tuesday 20:30
+📍Yoga Studio Mi An
+
+💰Trial price: 200,000 VND
+
+🗒Registration required, limited number of spots.
+✍@lGNomad
+
+#date: 13.10</p>
+  <nav aria-label="Breadcrumbs">
+    <p><a href="/en/">Home</a> <span aria-hidden="true">›</span> <a href="/en/da-nang/">Da Nang</a> <span aria-hidden="true">›</span> <span>Hatha yoga on TUESDAY</span></p>
+    <p>More events in Da Nang: <a href="/en/da-nang/">what&#39;s on</a> · <a href="/en/da-nang/wellness/">🧘 Yoga &amp; Wellness</a></p>
+  </nav>
+  <h2>Similar events</h2>
+  <ul>
+    <li><a href="/en/event/c6b8d018-7f3f-41a5-acef-c251c67e4010/meditation-immersion-into-the-sacred-field-of-the-heart/">Meditation: &quot;Immersion into the Sacred Field of the Heart&quot;. <time datetime="2026-10-13">October 13, 2026</time></a></li>
+    <li><a href="/en/event/2a3bafeb-c408-4a37-a514-5a18f3f28521/reiki-introduction-meetup/">Reiki Introduction Meetup <time datetime="2026-10-13">October 13, 2026</time></a></li>
+    <li><a href="/en/event/eaa83c41-cdc7-4237-940f-754ff890b248/yoga-in-da-nang/">YOGA in Da Nang <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/7d61a89a-0d42-4f04-a0a3-8dda0ff4ab94/stretching-in-danang/">STRETCHING IN DANANG <time datetime="2026-11-01">November 1, 2026</time></a></li>
+    <li><a href="/en/event/877895b5-5393-4099-8b81-e0325bbf6cda/qigong-on-the-beach/">QIGONG on the beach <time datetime="2026-11-02">November 2, 2026</time></a></li>
+    <li><a href="/en/event/9b43c15d-5232-4799-9403-9bcfcdc412c0/pilates-in-danang-group-training/">PILATES IN DANANG GROUP TRAINING <time datetime="2026-11-04">November 4, 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Archive chronology: Da Nang</h2>
+    <ul>
+    <li>Previous: <a href="/en/event/fa813e65-9917-4edf-8d0a-cae6529c7cab/recruiting-newcomers-for-d-d-campaigns-and-one-shots/">Recruiting newcomers for D&amp;D campaigns and one-shots</a> <time datetime="2026-10-26">October 26, 2026</time></li>
+    <li>Next: <a href="/en/event/17fb363b-2a45-4a8a-b882-bd7f2ce41957/today-mafia-at-restaurant-369-in-da-nang-easy-fun-together/">Today MAFIA at restaurant 369 in Da Nang — easy, fun, together!</a> <time datetime="2026-10-27">October 27, 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/en/da-nang/">Upcoming events in Da Nang</a></p>
+</div>
+
+  </body>
+</html>

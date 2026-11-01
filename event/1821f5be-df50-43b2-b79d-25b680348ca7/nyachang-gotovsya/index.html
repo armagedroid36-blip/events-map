@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>НЯЧАНГ, ГОТОВЬСЯ! — 31 октября 2026 · Нячанг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Нячанг, 31 октября 2026. Standup 🎃 НЯЧАНГ, ГОТОВЬСЯ! STANDUP HA-HA-HALLOWEEN УЖЕ В ЭТУ СУББОТУ! 💀🔥 Полтергей ты или нет – но ждём тебя на наш субботний…" />
+    <link rel="canonical" href="https://mypins.site/event/1821f5be-df50-43b2-b79d-25b680348ca7/nyachang-gotovsya/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="НЯЧАНГ, ГОТОВЬСЯ! — 31 октября 2026 · Нячанг" />
+    <meta property="og:description" content="Нячанг, 31 октября 2026. Standup 🎃 НЯЧАНГ, ГОТОВЬСЯ! STANDUP HA-HA-HALLOWEEN УЖЕ В ЭТУ СУББОТУ! 💀🔥 Полтергей ты или нет – но ждём тебя на наш субботний…" />
+    <meta property="og:url" content="https://mypins.site/event/1821f5be-df50-43b2-b79d-25b680348ca7/nyachang-gotovsya/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/25414525b5b66d99f55ca06378ae1030.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/1821f5be-df50-43b2-b79d-25b680348ca7/nyachang-gotovsya/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/1821f5be-df50-43b2-b79d-25b680348ca7/nyanchang-get-ready/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Нячанг","item":"https://mypins.site/nha-trang/"},{"@type":"ListItem","position":3,"name":"НЯЧАНГ, ГОТОВЬСЯ!","item":"https://mypins.site/event/1821f5be-df50-43b2-b79d-25b680348ca7/nyachang-gotovsya/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>НЯЧАНГ, ГОТОВЬСЯ!</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-31">31 октября 2026</time></p>
+  <p><time datetime="2026-10-31T19:00:00">31 октября 2026, 19:00</time></p>
+  <address>Terassa Restaurant &amp; Bar, Нячанг</address>
+  <p>150000 VND</p>
+  <p>Standup
+
+🎃 НЯЧАНГ, ГОТОВЬСЯ!
+
+STANDUP HA-HA-HALLOWEEN УЖЕ В ЭТУ СУББОТУ! 💀🔥
+
+Полтергей ты или нет – но ждём тебя на наш субботний юмористический концерт!
+Поговорим и про ведьм, и про чертей, и про туристов не забудем!
+В эту ночь даже мертвецки пьяные протрезвеют и встанут… чтобы занять места поближе к сцене! ⚰️🎤🤌
+
+📅 31.10 (суббота)
+🕕 18:00 — сбор гостей
+⏰ 19:00 — начало концерта
+📍 Terassa Restaurant &amp; Bar, Нячанг
+📌 https://maps.app.goo.gl/stD2r32kT4RMJaLx8
+💰 Вход: 150K донгов
+🔞 18+
+
+🎭 8 комиков готовы рассказать свои ужасно смешные шутки. А в честь дня Всех Святых, возможно, будут и просто ужасные! Всё-таки праздник… 🤷‍♂️ Но весело будет точно!!!😈😈
+
+В программе:
+🎤 Новые и проверенные шутки
+💥 Импровизация со зрителями
+🎃 Хеллоуинский вайб и нечистая сила юмора
+🤡 Тренируем дьявольский смех и вызываем святых угодников, ну, и угодниц
+
+Доставай скелет из шкафа и приходи поржать 31 октября в Terassa!
+
+🔥🔥🔥КОЛИЧЕСТВО МЕСТ ОГРАНИЧЕНО, УСПЕЙ ЗАБРОНИРОВАТЬ!🔥🔥🔥
+
+📩📩📩 Бронь: @Ok_Ok_No_Problem📩📩📩
+
+#дата: 31.10</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/nha-trang/">Нячанг</a> <span aria-hidden="true">›</span> <span>НЯЧАНГ, ГОТОВЬСЯ!</span></p>
+    <p>Ещё события в Нячанге: <a href="/nha-trang/">афиша</a> · <a href="/nha-trang/theatre/">🎭 Театры и шоу</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/cf34fd77-2390-4da0-b4c6-fdca968fd5fc/stendap-dlya-tekh-kto-vyzhil-v-nyachange/">СТЕНДАП - Для тех, кто выжил в Нячанге <time datetime="2026-10-25">25 октября 2026</time></a></li>
+    <li><a href="/event/37b399fa-0fd8-41a5-8697-79211b7b7819/teatr-studiya-shalyapinykh/">ТЕАТР-СТУДИЯ ШАЛЯПИНЫХ <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/7ef1341a-3bc0-476d-b393-7b93755d82e0/tata-show-v-vinwonders/">Tata Show в VinWonders <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/d87e2814-7362-4047-8ae6-0566ebe06320/life-puppets-kukolnoe-shou-v-o-theatre/">Life Puppets — кукольное шоу в Đó Theatre <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/4df7da34-c18c-48ef-962d-db2f7f041a07/shou-chama/">Шоу Чама <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+    <li><a href="/event/29206756-1a5f-473f-82f2-b5cce7e48767/once-show-v-vinwonders/">Once Show в VinWonders <time datetime="2026-11-01">1 ноября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Нячанг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/13987af4-9aba-4a20-a447-e39170d4c365/31-oktyabrya-halloween-night-v-onemore/">31 ОКТЯБРЯ HALLOWEEN NIGHT В ONEMORE!</a> <time datetime="2026-10-31">31 октября 2026</time></li>
+    <li>Следующее: <a href="/event/1ab41869-1139-4ce7-8c4a-5fc2c6d0357c/greshish-prikhodi-v-pytochnuyu/">Грешишь?! Приходи, в пыточную</a> <time datetime="2026-10-31">31 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/nha-trang/">Ближайшие события: Нячанг</a></p>
+</div>
+
+  </body>
+</html>

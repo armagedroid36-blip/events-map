@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Supabase (категории карточки + полный объект события): соединение
+         (DNS+TLS) поднимаем сразу при разборе HTML. Иначе первый RPC ждёт
+         хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
+         Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
+    <link rel="preconnect" href="https://xsbtejugutlpkgykiouw.supabase.co" crossorigin />
+    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
+         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
+         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
+         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
+         странице, где первые секунды он не нужен. Команды gtag() стоят в
+         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
+         грузим. -->
+    <script>
+      window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+      gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
+      (function(){var S='https://www.googletagmanager.com/gtag/js?id=G-BBL2VDP0WK',done=false;
+      function go(){if(done)return;done=true;var s=document.createElement('script');s.async=true;s.src=S;document.head.appendChild(s);}
+      if(navigator.connection&&navigator.connection.saveData===true)return;
+      var ev=['pointerdown','keydown','touchstart'];
+      for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
+      setTimeout(go,15000);})();
+    </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#E66343" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MyPins" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1284x2778.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2688.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1242x2208.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1170x2532.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/apple-splash/apple-splash-1125x2436.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-828x1792.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/apple-splash/apple-splash-750x1334.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Звуки Гоа — 25 октября 2026 · Дананг</title>
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "События на карте — Events on the Map",
+            "alternateName": "MyPins",
+            "url": "https://mypins.site/",
+            "inLanguage": ["ru", "en"]
+          },
+          {
+            "@type": "Organization",
+            "name": "MyPins",
+            "url": "https://mypins.site/",
+            "logo": "https://mypins.site/logo.png"
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BERtOa8L.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-DwaH_PmP.js">
+    <link rel="modulepreload" crossorigin href="/assets/config-D0EDZOD4.js">
+    <link rel="modulepreload" crossorigin href="/assets/api-P7IkN_MA.js">
+    <link rel="modulepreload" crossorigin href="/assets/auth-CgVGEOpe.js">
+    <link rel="modulepreload" crossorigin href="/assets/navigate-CmoK2UA6.js">
+    <link rel="modulepreload" crossorigin href="/assets/dates-DnUsQEmn.js">
+    <link rel="modulepreload" crossorigin href="/assets/seo-Cw6XaxSb.js">
+    <link rel="modulepreload" crossorigin href="/assets/mobileIntro-C5updc7Y.js">
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-Czpn1I53.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DG_Qc8ur.css" />
+      <meta name="description" content="Дананг, 25 октября 2026. 🌊 Sounds of Goa В это воскресенье у нас Retro Edition — возвращаемся к истокам Goa trance! Музыка 90-х и 2000-х, космические мелодии…" />
+    <link rel="canonical" href="https://mypins.site/event/08de78ad-1daa-48dd-937a-d33b064f3065/zvuki-goa/" />
+    <meta property="og:site_name" content="MyPins" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Звуки Гоа — 25 октября 2026 · Дананг" />
+    <meta property="og:description" content="Дананг, 25 октября 2026. 🌊 Sounds of Goa В это воскресенье у нас Retro Edition — возвращаемся к истокам Goa trance! Музыка 90-х и 2000-х, космические мелодии…" />
+    <meta property="og:url" content="https://mypins.site/event/08de78ad-1daa-48dd-937a-d33b064f3065/zvuki-goa/" />
+    <meta property="og:image" content="https://xsbtejugutlpkgykiouw.supabase.co/storage/v1/object/public/photos/tg/de0380acbf0e7e98016c2f899dfbfe88.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="ru" href="https://mypins.site/event/08de78ad-1daa-48dd-937a-d33b064f3065/zvuki-goa/" />
+    <link rel="alternate" hreflang="en" href="https://mypins.site/en/event/08de78ad-1daa-48dd-937a-d33b064f3065/sounds-of-goa/" />
+    <link rel="alternate" hreflang="x-default" href="https://mypins.site/en/" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://mypins.site/"},{"@type":"ListItem","position":2,"name":"Дананг","item":"https://mypins.site/da-nang/"},{"@type":"ListItem","position":3,"name":"Звуки Гоа","item":"https://mypins.site/event/08de78ad-1daa-48dd-937a-d33b064f3065/zvuki-goa/"}]}]}</script>
+  </head>
+  <body>
+    <div id="root"></div>
+<div id="seo-event-block">
+  <h1>Звуки Гоа</h1>
+  <p class="event-past"><strong>Событие прошло</strong> — <time datetime="2026-10-25">25 октября 2026</time></p>
+  <p><time datetime="2026-10-25T16:00:00">25 октября 2026, 16:00</time></p>
+  <address>Serene Dream Vegetarian Cafe &amp; Beach Bar, Turn Right To The End Of The Road ,An Bang Beach Cam an Hoi An ,Hoi An Da Nang 564070000, Hội An Tây, Đà Nẵng 564070, Дананг</address>
+  <p>Бесплатно</p>
+  <p>🌊 Sounds of Goa
+
+В это воскресенье у нас Retro Edition — возвращаемся к истокам Goa trance! Музыка 90-х и 2000-х, космические мелодии, олдскульное звучание и та самая психоделия ❤️‍🔥
+
+Встречаемся в Serene Dream на An Bang Beach — прямо у моря, с баром, кухней, бильярдом и крышей на случай дождя. Так что rain or shine — мы танцуем 😎🎶
+
+Как всегда, очень рады новым лицам. Если вы бывали в Гоа и скучаете по этой атмосфере или просто хотите познакомиться с нашим комьюнити — приходите ❤️
+
+Что будет:
+🎶 Old-school Goa trance
+🔥 Огненное шоу и трайбл-танцы от Alisha и Sveta Red
+✨ Декорации и Арт-пространство от TALLOM (Bozik &amp; Astral Portal)
+❤️ Музыка, танцы и новые знакомства
+
+📅 Когда: 18.10.2026 с 16:00
+
+📍 Где: Serene Dream, An Bang Beach, Hoi An
+
+Google maps: https://maps.app.goo.gl/QMRM9KWnNbivWiCZ6?g_st=ic
+
+Вход свободный.
+
+Организатор:
+@alenasmirnowwa
+
+#дата: 18.10</p>
+  <nav aria-label="Хлебные крошки">
+    <p><a href="/">Главная</a> <span aria-hidden="true">›</span> <a href="/da-nang/">Дананг</a> <span aria-hidden="true">›</span> <span>Звуки Гоа</span></p>
+    <p>Ещё события в Дананге: <a href="/da-nang/">афиша</a></p>
+  </nav>
+  <h2>Похожие события</h2>
+  <ul>
+    <li><a href="/event/604ec1d6-0653-41bf-8b3d-74bd02473760/pyatnitsa-v-danange-uchimsya-salse-i-tantsuem/">ПЯТНИЦА В ДАНАНГЕ: УЧИМСЯ САЛЬСЕ И ТАНЦУЕМ! <time datetime="2026-10-23">23 октября 2026</time></a></li>
+    <li><a href="/event/0f79ad3e-4efd-46bf-bb1d-362526ddcc8a/pyatnitsa-v-danange-uchimsya-salse-i-tantsuem/">ПЯТНИЦА В ДАНАНГЕ: УЧИМСЯ САЛЬСЕ И ТАНЦУЕМ! <time datetime="2026-10-30">30 октября 2026</time></a></li>
+    <li><a href="/event/d0b00887-96fb-4420-897d-15a1455ab333/esli-sezon-dozhdey-uzhe-vselilsya-v-tvoy-divan-v-etu-subbotu-my-provodim-latinskiy-seans-ekzortsizma/">ЕСЛИ СЕЗОН ДОЖДЕЙ УЖЕ ВСЕЛИЛСЯ В ТВОЙ ДИВАН, В ЭТУ СУББОТУ МЫ ПРОВОДИМ ЛАТИНСКИЙ СЕАНС ЭКЗОРЦИЗМА! <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/ea47b25a-e0b4-4a15-8391-bf57595945db/khellouin-9-krugov-ada-znakomstv/">ХЕЛЛОУИН: 9 КРУГОВ АДА ЗНАКОМСТВ <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/2477a4c0-1f9a-4c56-8c1f-de6708c0c1f0/priblizhaetsya-disko-khellouin/">ПРИБЛИЖАЕТСЯ ДИСКО-ХЭЛЛОУИН! <time datetime="2026-10-31">31 октября 2026</time></a></li>
+    <li><a href="/event/3505d5a0-cf69-458d-94d4-5b547053d0d0/my-ustroim-uyutnuyu-vecherinku-na-khellouin/">Мы устроим уютную вечеринку на ХЭЛЛОУИН <time datetime="2026-10-31">31 октября 2026</time></a></li>
+  </ul>
+  <nav class="event-past-chrono">
+    <h2>Хронология прошедших событий: Дананг</h2>
+    <ul>
+    <li>Предыдущее: <a href="/event/05c27bda-6b97-453b-bd43-a53b35a15144/chem-raznoobrazit-voskresnyy-den-v-danange-i-poluchit-novye-emotsii/">Чем разнообразить воскресный день в Дананге и получить новые эмоции?</a> <time datetime="2026-10-25">25 октября 2026</time></li>
+    <li>Следующее: <a href="/event/29382f49-9b2a-4f25-bd69-100079d69418/tochka-ustoychivosti-kak-snyat-strakh-otsenki-i-vyyti-iz-stupora-praktikum-v-danange/">Точка устойчивости: как снять страх оценки и выйти из ступора Практикум в Дананге</a> <time datetime="2026-10-25">25 октября 2026</time></li>
+    </ul>
+  </nav>
+  <p class="event-past-cta"><a href="/da-nang/">Ближайшие события: Дананг</a></p>
+</div>
+
+  </body>
+</html>
