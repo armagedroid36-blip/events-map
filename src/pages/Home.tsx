@@ -1204,7 +1204,11 @@ export default function Home({
     if (user) {
       getApi().addHistory(ev.id).catch(() => {});
     }
-    getApi().incrementCounter('card_views').catch(() => {});
+    // Счётчик просмотров карточки — после первого кадра (beta 1.20): его
+    // запрос и обработка ответа попадали в окно TBT.
+    const bumpViews = () => getApi().incrementCounter('card_views').catch(() => {});
+    if (window.requestIdleCallback) window.requestIdleCallback(bumpViews, { timeout: 3000 });
+    else window.setTimeout(bumpViews, 1200);
     // Облегчённый список (list_active_event_cards) не несёт описания, контактов,
     // сайта и фото — дозагружаем полный объект открытого события тем же RPC,
     // что и страницы прошедших (get_public_event). Карточка рисуется сразу по

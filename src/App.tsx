@@ -79,12 +79,26 @@ export default function App() {
   const [recovery, setRecovery] = useState(() => window.location.hash.includes('type=recovery'));
 
   // Счётчик посещений: одна загрузка страницы = одно посещение
-  // (+ трекинг по странам через Edge Function)
+  // (+ трекинг по странам через Edge Function).
+  // beta 1.20: запросы уходят ПОСЛЕ первого кадра (requestIdleCallback,
+  // timeout 3000): в Lighthouse их сеть и обработка ответов попадали в окно TBT,
+  // хотя к отрисовке страницы они отношения не имеют.
   useEffect(() => {
-    getApi()
-      .incrementCounter('visits')
-      .catch(() => {});
-    trackVisit();
+    const run = () => {
+      getApi()
+        .incrementCounter('visits')
+        .catch(() => {});
+      trackVisit();
+    };
+    const idle = window.requestIdleCallback as
+      | ((cb: () => void, opts?: { timeout: number }) => number)
+      | undefined;
+    const timeoutId = window.setTimeout(run, 3000);
+    const idleId = idle ? idle(run, { timeout: 3000 }) : 0;
+    return () => {
+      window.clearTimeout(timeoutId);
+      if (idleId && window.cancelIdleCallback) window.cancelIdleCallback(idleId);
+    };
   }, []);
 
   useEffect(() => {

@@ -402,7 +402,8 @@ body {
    не двигает вёрстку: слой position:fixed и ничего не толкает.
    Разметка внутри — сырая статика пре-рендера (без классов), оформление
    только здесь. */
-.seo-event-first {
+.seo-event-first,
+body > #seo-event-block {
   position: fixed;
   z-index: 1170;
   display: flex;
@@ -419,7 +420,8 @@ body {
 /* Мобильный лист: та же полоса, что у карточки (top: 45% ставит Home в
    selectEvent на ширине < 1024), плюс отступ под safe-area. */
 @media (max-width: 1023px) {
-  .seo-event-first {
+  .seo-event-first,
+body > #seo-event-block {
     left: 0;
     right: 0;
     bottom: 0;
@@ -430,7 +432,8 @@ body {
 }
 /* Десктоп: та же панель, что lg-классы карточки (380 px справа под шапкой) */
 @media (min-width: 1024px) {
-  .seo-event-first {
+  .seo-event-first,
+body > #seo-event-block {
     top: var(--header-bottom, 82px);
     right: 0.75rem;
     bottom: 0.75rem;
@@ -440,57 +443,67 @@ body {
     border-radius: 1rem;
   }
 }
-.seo-event-first h1 {
+.seo-event-first,
+body > #seo-event-block h1 {
   font-size: 1rem;
   line-height: 1.4;
   font-weight: 600;
   color: #111827;
 }
-.seo-event-first h2 {
+.seo-event-first,
+body > #seo-event-block h2 {
   margin-top: 0.75rem;
   font-size: 0.875rem;
   line-height: 1.4;
   font-weight: 600;
   color: #111827;
 }
-.seo-event-first p {
+.seo-event-first,
+body > #seo-event-block p {
   margin-top: 0.5rem;
   font-size: 0.875rem;
   line-height: 1.5;
   color: #4b5563;
 }
-.seo-event-first address {
+.seo-event-first,
+body > #seo-event-block address {
   margin-top: 0.5rem;
   font-size: 0.875rem;
   line-height: 1.5;
   font-style: normal;
   color: #4b5563;
 }
-.seo-event-first nav p {
+.seo-event-first,
+body > #seo-event-block nav p {
   margin-top: 0.25rem;
   font-size: 0.75rem;
   line-height: 1.4;
   color: #6b7280;
 }
-.seo-event-first ul {
+.seo-event-first,
+body > #seo-event-block ul {
   margin-top: 0.25rem;
   padding-left: 0;
   list-style: none;
 }
-.seo-event-first li {
+.seo-event-first,
+body > #seo-event-block li {
   margin-top: 0.25rem;
   font-size: 0.875rem;
   line-height: 1.5;
   color: #374151;
 }
-.seo-event-first li time {
+.seo-event-first,
+body > #seo-event-block li time {
   color: #6b7280;
   white-space: nowrap;
 }
-.seo-event-first a {
+.seo-event-first,
+body > #seo-event-block a {
   color: #0f766e;
 }
-.seo-event-first a:hover {
+.seo-event-first,
+body > #seo-event-block a:hover {
   text-decoration: underline;
 }
 
