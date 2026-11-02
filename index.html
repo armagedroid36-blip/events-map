@@ -7,13 +7,15 @@
          хендшейк, и карточка события рисуется на 0,3-0,5 с позже (LCP).
          Адрес подставляет Vite из VITE_SUPABASE_URL — тот же, что в config. -->
     <link rel="preconnect" href="%VITE_SUPABASE_URL%" crossorigin />
-    <!-- GA4: грузим ТОЛЬКО по реальному взаимодействию (pointerdown/keydown/
-         touchstart) либо аварийно через 15 с. Загрузка «по простою» (load →
-         requestIdleCallback → 8000 мс) удалена в beta 1.20: gtag.js (178 КБ,
-         eval 305 мс) приезжал ровно в окно TBT — 244-422 мс блокировки на
-         странице, где первые секунды он не нужен. Команды gtag() стоят в
-         очереди dataLayer и выполнятся при загрузке скрипта; при saveData не
-         грузим. -->
+    <!-- GA4: грузим ТОЛЬКО по взаимодействию/уходу со страницы. Аварийный
+         таймер удалён в beta 1.21: gtag.js (178 КБ, eval ~305 мс) приходил по
+         setTimeout(15000) — уже после загрузки, но Lantern относил его к окну
+         TBT, и он давал 340-661 мс из 446-838 мс TBT (76-79%).
+         Триггеры: pointerdown/keydown/touchstart/scroll (once, capture) и
+         visibilitychange=hidden (ушли со страницы). Ноль запросов к
+         googletagmanager/google-analytics, пока посетитель не взаимодействовал.
+         Команды gtag() стоят в очереди dataLayer и выполнятся при загрузке
+         скрипта; при saveData не грузим. -->
     <script>
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
       gtag('js',new Date());gtag('config','G-BBL2VDP0WK');
@@ -22,7 +24,8 @@
       if(navigator.connection&&navigator.connection.saveData===true)return;
       var ev=['pointerdown','keydown','touchstart'];
       for(var i=0;i<ev.length;i++)window.addEventListener(ev[i],go,{once:true,capture:true,passive:true});
-      setTimeout(go,15000);})();
+      window.addEventListener('scroll',go,{once:true,capture:true,passive:true});
+      document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')go();},{once:true});})();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />

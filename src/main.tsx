@@ -1,7 +1,9 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-// Языки подключаются до первого рендера — интерфейс сразу на нужном языке
-import './i18n';
+// Словарь языка страницы грузится лениво (beta 1.21): в бандл попадает только
+// ru.ts ИЛИ en.ts, а не оба. Монтируемся после инициализации i18next — первый
+// рендер по-прежнему сразу на нужном языке.
+import { loadI18n } from './i18n';
 import './index.css';
 import App from './App';
 import { AuthProvider } from './lib/auth';
@@ -62,13 +64,20 @@ if (eventWarmMatch) {
     .catch(() => {});
 }
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <AuthProvider>
-      <App />
-    </AuthProvider>
-  </StrictMode>,
-);
+void loadI18n()
+  .catch(() => {
+    // Словарь не загрузился (сеть/CDN) — монтируемся как есть: лучше показать
+    // интерфейс с ключами, чем пустой экран.
+  })
+  .then(() => {
+    createRoot(document.getElementById('root')!).render(
+      <StrictMode>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </StrictMode>,
+    );
+  });
 
 // Service worker (push-уведомления) — только production. Путь абсолютный от
 // корня: на вложенных чистых URL (/event/<id>/...) относительная регистрация
