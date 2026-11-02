@@ -704,6 +704,29 @@ export default function EventCard({
 
   // Рабочие фото: без битых ссылок (onError)
   const okPhotos = photos.filter((_, i) => !brokenPhotos.has(i));
+  // Превью грузим ПОСЛЕ первого кадра (beta 1.21): фото лежат на внешних
+  // хостax (cyprus.bz и подобные) и в замерах висят до 40 с — в симуляции
+  // Lighthouse они отнимают канал у LCP и раздувают Speed Index (разброс
+  // SI 3,5↔10,1 при одном и том же билде). Скелет той же высоты (h-32),
+  // поэтому появление фото не сдвигает вёрстку.
+  const [photosReady, setPhotosReady] = useState(false);
+  useEffect(() => {
+    if (event.photos === undefined) return;
+    let cancelled = false;
+    const run = () => {
+      if (!cancelled) setPhotosReady(true);
+    };
+    const idle = window.requestIdleCallback as
+      | ((cb: () => void, opts?: { timeout: number }) => number)
+      | undefined;
+    const timer = window.setTimeout(run, 1200);
+    const idleId = idle ? idle(run, { timeout: 1200 }) : 0;
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+      if (idleId && window.cancelIdleCallback) window.cancelIdleCallback(idleId);
+    };
+  }, [event.id, event.photos]);
 
   // Главная кнопка карточки (ТЗ фаза 2): «Записаться» — ссылка регистрации
   // события (events.website). Ссылки нет — «Связаться»: ведём в контакты
@@ -803,7 +826,7 @@ export default function EventCard({
           Облегчённый список SPA фото не несёт (photos === undefined) — пока
           дозагружается полный объект события, показываем скелет: заглушка
           «нет фото» на долю секунды была бы враньём. */}
-      {event.photos === undefined ? (
+      {event.photos === undefined || !photosReady ? (
         <div
           className="mb-3 h-32 w-full animate-pulse rounded-md border border-gray-200 bg-gray-100"
           aria-hidden="true"
