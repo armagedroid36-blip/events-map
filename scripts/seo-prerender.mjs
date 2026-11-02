@@ -5591,6 +5591,28 @@ async function main() {
 
   const pageEvents = [];
   let pageEnEvents = 0;
+  // Стили карты (assets/MapView-<hash>.css) едут вместе с ленивым чанком
+  // MapView. На десктопе карта монтируется сразу, и подпись карты
+  // (.maplibregl-ctrl-attrib) успевала сменить ширину 226 → 550 px уже после
+  // первого кадра — сдвиг 0,003 (beta 1.22). Прелоад ставит файл в кэш ДО
+  // монтирования карты; на мобильном карта грузится по тапу — те же стили
+  // приезжают мгновенно.
+  const mapCssPreload = (() => {
+    try {
+      for (const f of readdirSync(join(DIST, 'assets'))) {
+        if (f.startsWith('MapView-') && f.endsWith('.css')) {
+          return `    <link rel="preload" as="style" href="/assets/${f}" />
+`;
+        }
+      }
+    } catch {
+      /* каталога assets нет — прелоад не нужен */
+    }
+    return '';
+  })();
+  const activeBaseHtml = mapCssPreload
+    ? baseHtml.replace('</head>', `${mapCssPreload}  </head>`)
+    : baseHtml;
   // Мета активных страниц: нужна страницам-алиасам прежних URL (см. ниже) —
   // у алиаса та же мета, что у канонической страницы.
   const activePathMeta = new Map();
@@ -5652,7 +5674,7 @@ async function main() {
       ...(hasEn ? { hreflang: hreflangRu } : {}),
       bodySeo: eventSeoHtml(ev, url, 'ru', sibs, eventCategoryLink(ev, 'ru', cells), similarRu, false, null, factsRu),
     };
-    writePage(baseHtml, path, metaRu);
+    writePage(activeBaseHtml, path, metaRu);
     activePathMeta.set(path, metaRu);
     locs.push(url);
     // lastmod активного события = updated_at (см. activeLastmod), не дата сборки
@@ -5695,7 +5717,7 @@ async function main() {
         ],
         bodySeo: eventSeoHtml(ev, enUrl, 'en', sibs, eventCategoryLink(ev, 'en', cells), similarEn, false, null, factsEn),
       };
-      writePage(baseHtml, enPath, metaEn);
+      writePage(activeBaseHtml, enPath, metaEn);
       activePathMeta.set(enPath, metaEn);
       locs.push(enUrl);
       lastmods.set(enUrl, activeLastmod(ev));

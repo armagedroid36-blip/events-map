@@ -933,17 +933,14 @@ export default function Home({
   // ждёт ни React, ни RPC: LCP-элемент — статический заголовок. Как только
   // карточка готова, слой убирается одним удалением (без сдвига вёрстки), а
   // карточка печатает свой h1 — на странице всегда ровно один h1.
-  const [staticFirstScreen, setStaticFirstScreen] = useState<boolean>(() =>
-    isEventPage && hasEventFirstScreen(),
-  );
-  // Карточка события отрисована (или события нет) — статический первый экран
-  // больше не нужен.
-  useEffect(() => {
-    if (!staticFirstScreen) return;
-    if (selected || pastEvent || eventNotFound) setStaticFirstScreen(false);
-  }, [staticFirstScreen, selected, pastEvent, eventNotFound]);
-  // Снятие слоя — в том же коммите, что переключает заголовок карточки на h1
-  // (layout-эффект идёт до отрисовки кадра): двух h1 на странице не бывает.
+  // Состояние вычисляется из данных, а НЕ переключается эффектом после кадра
+  // (beta 1.22): эффект давал промежуточный кадр, где статический слой и
+  // React-карточка существуют одновременно, а на следующем кадре слой
+  // исчезал — видимые узлы «схлопывались» (CLS). Теперь снятие слоя и первый
+  // рендер карточки происходят в ОДНОМ коммите: useLayoutEffect прячет слой
+  // до отрисовки, а карточка сразу печатает h1 (двух h1 в кадре не бывает).
+  const staticFirstScreen =
+    isEventPage && hasEventFirstScreen() && !selected && !pastEvent && !eventNotFound;
   useLayoutEffect(() => {
     if (!staticFirstScreen) removeEventFirstScreen();
   }, [staticFirstScreen]);
@@ -1105,38 +1102,15 @@ export default function Home({
   // считаем по уже загруженному списку, без запросов (lib/similar — зеркало
   // логики scripts/seo-prerender.mjs, гейт MIN_SIMILAR внутри). Блок
   // выводится только на странице события (EventCard, detailMode).
-  const selectedSimilarAll = useMemo(
+  // «Похожие события» рендерятся В ТОМ ЖЕ коммите, что и карточка (beta 1.22).
+  // В beta 1.20 блок отдавался после первого кадра (rIC 1500) — карточка
+  // появлялась без него и вторым кадром сдвигалась (CLS 0,035 на каждой
+  // странице события, узлы CTA/описания уезжали за пределы видимой части).
+  // Блок обязан занимать своё место в первом кадре.
+  const selectedSimilar = useMemo(
     () => (selected ? similarEvents(selected, events, seoLang) : []),
     [selected, events, seoLang],
   );
-  // Блок «Похожие события» — ПОСЛЕ первого кадра (beta 1.20): LCP-элемент
-  // страницы события — статический заголовок, а список только добавлял работы
-  // в первый рендер карточки (Style & Layout в окне TBT). Отдаём его в
-  // requestIdleCallback (fallback — setTimeout 0), не позже 1500 мс после
-  // first paint: если браузер всё время занят, timeout заставит отрисовать.
-  const [similarReady, setSimilarReady] = useState(false);
-  useEffect(() => {
-    if (!selected) {
-      setSimilarReady(false);
-      return;
-    }
-    setSimilarReady(false);
-    let cancelled = false;
-    const run = () => {
-      if (!cancelled) setSimilarReady(true);
-    };
-    const idle = window.requestIdleCallback as
-      | ((cb: () => void, opts?: { timeout: number }) => number)
-      | undefined;
-    const timeout = window.setTimeout(run, 1500);
-    const idleId = idle ? idle(run, { timeout: 1500 }) : 0;
-    return () => {
-      cancelled = true;
-      window.clearTimeout(timeout);
-      if (idleId && window.cancelIdleCallback) window.cancelIdleCallback(idleId);
-    };
-  }, [selected?.id]);
-  const selectedSimilar = similarReady ? selectedSimilarAll : [];
 
   // События на видимом участке карты (bounds) + фильтры.
   // Без лимита: список и счётчик кнопки показывают ВСЕ события области.
