@@ -21,6 +21,11 @@ eq('адрес Batu Mejan называет Чангу', addressDistrict(mej), '�
 eq('реестр «Кута» не перебивает адрес', districtForBali(mej, 'Кута', 'Кута'), 'Чангу');
 eq('districtFor по тому же адресу = Чангу', districtFor(mej, 'Кута'), 'Чангу');
 eq('Seminyak сильнее реестра', districtForBali('Jl. Kayu Aya, Seminyak', 'Кута', 'Кута'), 'Семиньяк');
+// Петитингет лежит в келурахане Kerobokan Kelod, но метка у живых карточек — Семиньяк.
+const pet = 'Desa Potato Head, Jl. Petitenget No.51B, Kerobokan Kelod, Kec. Kuta Utara, Kabupaten Badung';
+eq('Петитингет = Семиньяк, а не Керобокан', districtForBali(pet, 'Керобокан', 'Семиньяк'), 'Семиньяк');
+eq('Петитингет сильнее реестра «Керобокан»', districtForBali(pet, 'Керобокан', 'Керобокан'), 'Семиньяк');
+eq('обычный Керобокан остаётся Керобоканом', districtForBali('Jl. Raya Kerobokan No.5, Kerobokan', 'Керобокан', null), 'Керобокан');
 eq('адрес без канона → реестр', districtForBali('Jl. Raya Sibang Kaja', 'Убуд', 'Керобокан'), 'Керобокан');
 eq('адрес без канона и без реестра → districtName', districtForBali('Jl. Raya Sibang Kaja', 'Убуд', null), 'Убуд');
 eq('реестр вне Бали (Джакарта) игнорируется', districtForBali('Jl. Sudirman', 'Убуд', 'Джакарта'), 'Убуд');
