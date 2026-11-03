@@ -1500,7 +1500,7 @@ function cyprusTown(rawCity) {
 function cityEnLabel(rawCity) {
   const crumb = cityCrumb(rawCity);
   if (!crumb) return '';
-  if (crumb.path === 'cyprus') return (cyprusTown(rawCity) || {}).en || 'Cyprus';
+  if (CYPRUS_PAGE_PATHS.has(crumb.path)) return (cyprusTown(rawCity) || {}).en || 'Cyprus';
   return CITY_NAME_EN[crumb.path] || crumb.name;
 }
 
@@ -1524,7 +1524,7 @@ function cityLabel(rawCity, lang) {
 function enCityPrefixParts(rawCity) {
   const crumb = cityCrumb(rawCity);
   if (!crumb) return [];
-  if (crumb.path === 'cyprus') {
+  if (CYPRUS_PAGE_PATHS.has(crumb.path)) {
     const town = cyprusTown(rawCity);
     return town ? [town.en, 'Cyprus'] : ['Cyprus'];
   }
@@ -1545,7 +1545,13 @@ function cityCrumbLink(rawCity, lang) {
   if (!crumb) return null;
   const en = lang === 'en';
   const name = en ? CITY_NAME_EN[crumb.path] || crumb.name : crumb.name;
-  return { name, path: crumb.path, href: `${en ? '/en' : ''}/${crumb.path}/` };
+  // Кипрские города со своей посадочной: в крошке между «Главная» и городом
+  // стоит страна — «Главная › Кипр › Лимасол › событие» (beta 1.23).
+  const parent =
+    crumb.path !== 'cyprus' && CYPRUS_PAGE_PATHS.has(crumb.path)
+      ? { name: en ? 'Cyprus' : 'Кипр', path: 'cyprus', href: `${en ? '/en' : ''}/cyprus/` }
+      : null;
+  return { name, path: crumb.path, href: `${en ? '/en' : ''}/${crumb.path}/`, parent };
 }
 
 /**
@@ -1694,7 +1700,7 @@ function placeLabel(address, ev, lang) {
   // Кипр: страна в данных идёт хвостом адреса («Axiou, Лимасол, Кипр») —
   // убираем её из свободного текста и приписываем ниже по-английски один раз.
   const crumb = cityCrumb(ev ? ev.city : '');
-  const isCyprus = !!crumb && crumb.path === 'cyprus';
+  const isCyprus = !!crumb && CYPRUS_PAGE_PATHS.has(crumb.path);
   if (isCyprus) place = stripCountryTail(place);
   place = stripRedundantCityTail(place, cityL);
   if (cityL && !hasWord(place, cityL)) {
@@ -1777,7 +1783,7 @@ function eventJsonLd(ev, url, lang = 'ru', image = null, mode = 'active') {
   // Кипр: город в addressLocality БЕЗ страны («Никосия», а не «Никосия, Кипр»),
   // страна — в addressCountry кодом ISO 3166-1 alpha-2 («CY», в данных
   // события «cyprus» строчными). Прочие города (Бали/Дананг/Нячанг) — как было.
-  const isCyprus = !!townCrumb && townCrumb.path === 'cyprus';
+  const isCyprus = !!townCrumb && CYPRUS_PAGE_PATHS.has(townCrumb.path);
   const city = isCyprus ? stripCountryTail(cityLd) || cityLd : cityLd;
   const address = typeof ev.address === 'string' ? ev.address.trim() : '';
   // Адрес для разметки: на EN-страницах — локализованный (placeLabel: страны
@@ -1936,7 +1942,7 @@ function eventJsonLd(ev, url, lang = 'ru', image = null, mode = 'active') {
   // противоречила странице. Прочие RU-страницы — как раньше (languages[0] ||
   // language || source_lang).
   if (en) doc.inLanguage = 'en';
-  else if (cityCrumb(ev.city)?.path === 'cyprus') doc.inLanguage = 'ru';
+  else if (CYPRUS_PAGE_PATHS.has(cityCrumb(ev.city)?.path)) doc.inLanguage = 'ru';
   else if (langField) doc.inLanguage = langField;
 
   // Хлебная крошка: Главная/Home > город (если распознан по ev.city) >
@@ -1950,9 +1956,18 @@ function eventJsonLd(ev, url, lang = 'ru', image = null, mode = 'active') {
   if (crumb) {
     // EN-имя города для крошки: Bali/Da Nang/Nha Trang (CITY_NAME_EN)
     const cityNameEn = CITY_NAME_EN[crumb.path] || crumb.name;
+    // Кипрские города — с уровнем страны (как в видимой крошке)
+    if (crumb.path !== 'cyprus' && CYPRUS_PAGE_PATHS.has(crumb.path)) {
+      items.push({
+        '@type': 'ListItem',
+        position: items.length + 1,
+        name: en ? 'Cyprus' : 'Кипр',
+        item: `${SITE_URL}${en ? '/en' : ''}/cyprus/`,
+      });
+    }
     items.push({
       '@type': 'ListItem',
-      position: 2,
+      position: items.length + 1,
       name: en ? cityNameEn : crumb.name,
       item: `${SITE_URL}${en ? '/en' : ''}/${crumb.path}/`,
     });
@@ -3663,7 +3678,8 @@ function eventBreadcrumbHtml(ev, lang = 'ru', name = '', catLink = null) {
   const txt = lang === 'en' ? CRUMB_TEXT.en : CRUMB_TEXT.ru;
   const home = { name: txt.home, href: lang === 'en' ? '/en/' : '/' };
   const city = cityCrumbLink(ev.city, lang);
-  const links = [home, ...(city ? [city] : [])]
+  const chain = [home, ...(city?.parent ? [city.parent] : []), ...(city ? [city] : [])];
+  const links = chain
     .map((i) => `<a href="${esc(i.href)}">${esc(i.name)}</a>`)
     .join(' <span aria-hidden="true">›</span> ');
   const title = String(name ?? '').trim();

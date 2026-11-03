@@ -199,6 +199,25 @@ export function cityNameEn(rawCity: string | null | undefined): string {
 }
 
 /**
+ * Родительская ступень хлебной крошки для кипрских городов со своей посадочной:
+ * между «Главная» и городом стоит страна — «Главная › Кипр › Лимасол › …»
+ * (зеркало cityCrumbLink.parent в scripts/seo-prerender.mjs). Для остальных
+ * городов и самой страны — null (крошка без лишнего уровня).
+ */
+export function cityParentCrumb(
+  rawCity: string | null | undefined,
+  lang: 'ru' | 'en',
+): { href: string; label: string } | null {
+  const path = cityPath(rawCity);
+  if (!path || path === 'cyprus') return null;
+  if (!isCyprusCity(rawCity)) return null;
+  return {
+    href: lang === 'en' ? '/en/cyprus/' : '/cyprus/',
+    label: lang === 'en' ? 'Cyprus' : 'Кипр',
+  };
+}
+
+/**
  * Имя города для меты события (title/description/JSON-LD) на языке страницы.
  * RU — строка из данных (мета RU не меняется); EN — кипрский город события
  * (fallback «Cyprus»), иначе cityNameEn (Нячанг→Nha Trang, Дананг→Da Nang,
@@ -211,7 +230,7 @@ export function placeCityLabel(
 ): string {
   const raw = String(rawCity ?? '').trim();
   if (lang === 'ru') return raw;
-  if (cityPath(raw) === 'cyprus') return cyprusTown(raw)?.en ?? 'Cyprus';
+  if (isCyprusCity(raw)) return cyprusTown(raw)?.en ?? 'Cyprus';
   return cityNameEn(raw);
 }
 
@@ -223,7 +242,7 @@ export function placeCityLabel(
 export function placeCityPrefix(
   rawCity: string | null | undefined,
 ): string[] {
-  if (cityPath(rawCity) === 'cyprus') {
+  if (isCyprusCity(rawCity)) {
     const town = cyprusTown(rawCity);
     return town ? [town.en, 'Cyprus'] : ['Cyprus'];
   }
@@ -348,7 +367,7 @@ export function placeLabel(
 ): string {
   const raw = String(address ?? '').trim();
   if (lang !== 'en') return raw;
-  const isCyprus = cityPath(city) === 'cyprus';
+  const isCyprus = isCyprusCity(city);
   const enCity = placeCityLabel(city, 'en');
   // Кипр: «, Кипр» в адресе переводится (localizeCountryNames), хвостовая
   // страна убирается — в конце адреса она стоит ровно один раз

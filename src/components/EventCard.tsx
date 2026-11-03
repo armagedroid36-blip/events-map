@@ -15,6 +15,7 @@ import { isValidCoords } from '../lib/coords';
 import {
   cityCrumbLabel,
   cityCrumbLabelLocative,
+  cityParentCrumb,
   cityPageHref,
   placeCityLabel,
   placeLabel,
@@ -644,6 +645,8 @@ export default function EventCard({
   // клик перехватывает document-обработчик App (SPA-переход). Город не
   // распознан → cityHref/cityCrumb пусты, крошка не выводится.
   const cityHref = cityPageHref(event.city, lang);
+  // Кипрские города: между «Главная» и городом — страна (как в статике и JSON-LD)
+  const cityParent = cityParentCrumb(event.city, lang);
   const cityCrumb = cityCrumbLabel(event.city, lang);
   // Город в предложном падеже для строки «Ещё события <город>: афиша» на RU
   // («в Нячанге», но «на Бали» — предлог хранится в метке целиком); EN-ветка
@@ -742,6 +745,16 @@ export default function EventCard({
               <span aria-hidden="true" className="text-gray-300">
                 ›
               </span>
+              {cityParent && (
+                <>
+                  <a href={cityParent.href} className="hover:text-gray-900 hover:underline">
+                    {cityParent.label}
+                  </a>
+                  <span aria-hidden="true" className="text-gray-300">
+                    ›
+                  </span>
+                </>
+              )}
               <a href={cityHref} className="hover:text-gray-900 hover:underline">
                 {cityCrumb}
               </a>
