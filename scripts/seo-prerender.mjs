@@ -2019,6 +2019,10 @@ function jsonForScript(value) {
 function cleanedBase(baseHtml) {
   if (cleanedBaseSrc === baseHtml && cleanedBaseOut !== null) return cleanedBaseOut;
   const out = baseHtml
+    // HTML-комментарии выкидываем: в них русские пояснения из index.html, и на
+    // EN-страницах получалась «кириллица» в исходнике (beta 1.24, проверка
+    // «на EN-страницах кириллицы 0»). На видимый текст и SEO не влияет.
+    .replace(/<!--[\s\S]*?-->/g, '')
     .replace(/<meta\s+name=["']description["'][^>]*>/gi, '')
     .replace(/<link\s+rel=["']canonical["'][^>]*\/?>/gi, '')
     .replace(/<link\s+rel=["']alternate["'][^>]*\/?>/gi, '')
