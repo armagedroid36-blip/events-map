@@ -411,8 +411,40 @@ function geoQueryParts(src, countryWords = ['cyprus', 'кипр', 'κύπρος'
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean);
-  const junkAddress = addrPieces.length > 0 && addrPieces.every((p) => countryOnly(p));
-  return { parts, streetHint, junkAddress };
+  // «Unknown» — тоже заглушка источника, а не адрес.
+  const junkWord = (p) => countryOnly(p) || ['unknown', 'n/a', '-', '—'].includes(p.toLowerCase());
+  const junkAddress = addrPieces.length > 0 && addrPieces.every(junkWord);
+  // Первое НАЗВАНИЕ места в запросе (площадка/деревня/улица) — не страна и не
+  // объявленный город. Нужно, чтобы отличить «геокодер нашёл названное место,
+  // просто оно далеко от центра города» (деревня Koilani) от «вернул произвольное
+  // поле страны» (класс 587): в первом случае фолбэк на центр города — ошибка.
+  const cityNames = new Set(
+    [src.city, src.cityEn].filter(Boolean).map((s) => String(s).trim().toLowerCase()),
+  );
+  const placeToken =
+    parts.find((p) => !countryOnly(p) && !cityNames.has(p.toLowerCase()) && p.length >= 4) || null;
+  return { parts, streetHint, junkAddress, placeToken };
+}
+
+/**
+ * Правило «точка-страна»: пин на центр объявленного города ставим ТОЛЬКО если
+ * адрес источника — заглушка (страна/«Unknown») И геокодер не нашёл названное
+ * место (или названия не было вовсе).
+ *
+ * Класс 03.11.2026: у карточки «Afamia Festival 2026 @ Koilani» адрес был
+ * «Cyprus, Cyprus», а площадкой — деревня Koilani (реальная точка 34.8390,32.8536,
+ * 22 км от центра Лимасола). Прежнее условие «junkAddress + >8 км» отбрасывало
+ * верную точку деревни и ставило центр Лимасола — тот же дефект «событие в деревне,
+ * а пин в городе», который лечили в данных (dot-cy-village-pin-fix.mjs), но теперь
+ * его воспроизводил сам сборщик.
+ */
+function countryFieldFallback({ junkAddress, placeToken, geoName, distKm, thresholdKm = 8 }) {
+  if (!junkAddress) return false;
+  if (!(distKm > thresholdKm)) return false;
+  const token = String(placeToken || '').toLowerCase();
+  const found = String(geoName || '').toLowerCase();
+  if (token.length >= 4 && found.includes(token)) return false;
+  return true;
 }
 
 async function geocode(query) {
@@ -433,7 +465,15 @@ async function geocode(query) {
     clearTimeout(timer);
     if (res.ok) {
       const data = await res.json();
-      if (data?.[0]) out = { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+      if (data?.[0]) {
+        out = {
+          lat: parseFloat(data[0].lat),
+          lng: parseFloat(data[0].lon),
+          // display_name нужен, чтобы отличить «нашёл названное место» от
+          // «вернул произвольную точку страны» (см. countryFieldFallback).
+          name: String(data[0].display_name || data[0].name || ''),
+        };
+      }
     }
   } catch {
     out = null;
@@ -530,17 +570,20 @@ async function buildRow(src) {
     '';
   let lat = src.lat;
   let lng = src.lng;
-  const { parts: geoParts, streetHint, junkAddress } = geoQueryParts(src);
+  const { parts: geoParts, streetHint, junkAddress, placeToken } = geoQueryParts(src);
+  let geoName = '';
   if ((lat == null || lng == null) && geoParts.length) {
     const geo = await geocode([...geoParts, 'Cyprus'].join(', '));
     if (geo) {
       lat = geo.lat;
       lng = geo.lng;
+      geoName = geo.name || '';
     } else {
       const second = await geocode([...(geoParts.slice(0, 1)), src.cityEn || src.city || '', 'Cyprus'].filter(Boolean).join(', '));
       if (second) {
         lat = second.lat;
         lng = second.lng;
+        geoName = second.name || '';
       }
     }
   }
@@ -553,7 +596,16 @@ async function buildRow(src) {
   // Важно: условие именно `junkAddress`, а не «нет улики улицы» — иначе события
   // деревень (Argaka, Askas, Klirou, Ливадия) теряли свою верную точку и ехали
   // в центр объявленного города (28 ложных срабатываний в прогоне 41092024829).
-  if (lat != null && lng != null && junkAddress && haversineKm(lat, lng, center.lat, center.lng) > 8) {
+  if (
+    lat != null &&
+    lng != null &&
+    countryFieldFallback({
+      junkAddress,
+      placeToken,
+      geoName,
+      distKm: haversineKm(lat, lng, center.lat, center.lng),
+    })
+  ) {
     console.log(`  [гео-страна] ${lat.toFixed(6)},${lng.toFixed(6)} -> центр «${city}»: ${String(src.title || '').slice(0, 40)}`);
     lat = center.lat;
     lng = center.lng;
@@ -1178,7 +1230,7 @@ async function main() {
   );
 }
 
-export { jsonLdEvents, canonBzPage, cnCoverBySlug, cnPhotosFor, geoQueryParts, haversineKm };
+export { jsonLdEvents, canonBzPage, cnCoverBySlug, cnPhotosFor, geoQueryParts, countryFieldFallback, haversineKm };
 
 // Модуль можно импортировать (скрипты проверки) — тогда сбор не запускается.
 const isDirectRun = /collect-cyprus\.mjs$/.test((process.argv[1] || '').replace(/\\/g, '/'));
