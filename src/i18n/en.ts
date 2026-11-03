@@ -727,6 +727,82 @@ export default {
         },
       ],
     },
+    nicosia: {
+      h1: 'Events and things to do in Nicosia',
+      intro:
+        'Nicosia is the last divided capital in Europe and the cultural heart of Cyprus: the season never stops here. Theatre premieres, symphony concerts, exhibitions and talks run all year — in the Old Town around Ledra Street and Laiki Geitonia, at the municipal theatre and in the cultural centres of Strovolos and Latsia. The MyPins map lists what is on in Nicosia: plays in Greek and English, jazz and classical music, stand-up, book markets and expat meetups. Organisers publish their own events, so dates and venues stay current. Filter by date, category and price, or zoom the map to your neighbourhood to see what is happening nearby.',
+      faq: [
+      {
+        q: 'What is on in Nicosia this weekend?',
+        a: 'The Nicosia listings usually include several plays and concerts at the weekend — filter by date or zoom into the Old Town to see events on nearby streets.',
+      },
+      {
+        q: 'Are there events in English in Nicosia?',
+        a: 'Yes. Many plays, lectures and expat meetups are held in English — the language is shown on each event card and can be filtered.',
+      },
+      {
+        q: 'When is the cultural season in Nicosia?',
+        a: 'The main season runs from October to May in indoor theatres and concert halls; in summer events move to courtyards, parks and open-air stages.',
+      },
+      ],
+    },
+    limassol: {
+      h1: 'Events and things to do in Limassol',
+      intro:
+        'Limassol is the second-largest city in Cyprus and the busiest event scene on the coast. A large international community lives here, so the calendar stays full even outside the tourist season: concerts on the Molos promenade, parties at the old port and marina, wine festivals, the February carnival and dozens of open-air events in summer. The MyPins map covers concerts and festivals, yoga and sport, business breakfasts and community meetups — from the historic centre to Germasogeia, Agios Athanasios and the beach clubs. Organisers publish their own events, so dates and venues stay current. Filter by date, category and price, or zoom the map to your area.',
+      faq: [
+      {
+        q: 'Where to go out in Limassol in the evening?',
+        a: 'Most often to concerts and parties at the old port and Molos, live-music dinners in Germasogeia and events at the beach clubs. Filter the listings by date and category.',
+      },
+      {
+        q: 'What happens in Limassol in summer?',
+        a: 'Almost everything moves outdoors: beach parties, open-air cinema, music festivals and sports events along the promenade.',
+      },
+      {
+        q: 'Are there family events in Limassol?',
+        a: 'Yes — children’s plays, workshops and family festivals appear regularly; pick the category in the filters.',
+      },
+      ],
+    },
+    larnaca: {
+      h1: 'Events and things to do in Larnaca',
+      intro:
+        'Larnaca is the city on the Finikoudes promenade, ten minutes from the airport and with the sea in sight almost everywhere. The scene is smaller than in Limassol but heavy on sport and everything water-related: kitesurfing and sailing regattas, runs along the coast, beach tournaments and family festivals. The MyPins map lists seaside concerts and parties, exhibitions at the cultural centres, yoga on the promenade and community meetups. Organisers publish their own events, so dates and venues stay current. Filter by date and category, or zoom the map to your area — from the centre to Mackenzie and Dhekelia.',
+      faq: [
+      {
+        q: 'What is there to do in Larnaca?',
+        a: 'The Larnaca listings include concerts on Finikoudes, seaside sport, exhibitions and family festivals. Open the map to see what is on this week.',
+      },
+      {
+        q: 'Where are concerts held in Larnaca?',
+        a: 'Most often on the Finikoudes promenade, at the cultural centre and on open-air stages by the sea; in summer beach stages and Mackenzie bars join in.',
+      },
+      {
+        q: 'Is Larnaca good for a family weekend?',
+        a: 'Yes — children’s plays, workshops and family events are listed regularly; filter by category and date.',
+      },
+      ],
+    },
+    paphos: {
+      h1: 'Events and things to do in Paphos',
+      intro:
+        'Paphos is the resort capital of western Cyprus, with an ancient open-air Odeon, a medieval harbour and the longest history on the island. In summer and the shoulder season opera and symphonic music are staged among the ruins, while the harbour and the resorts of Coral Bay, Peyia and Polis host festivals, parties and family events. The MyPins map covers what is on in Paphos: concerts and theatre, exhibitions, guided walks, sport and expat meetups. Organisers keep dates, venues and prices up to date. Filter by date and category, or zoom the map to your area.',
+      faq: [
+      {
+        q: 'What is on in Paphos in the evening?',
+        a: 'In summer — concerts and plays at the ancient Odeon and events at the harbour; at other times — exhibitions, live-music dinners and meetups in Kato Paphos bars.',
+      },
+      {
+        q: 'When is the concert season in Paphos?',
+        a: 'The peak runs from May to October when the open-air venues operate; in winter events move to indoor halls and cultural centres.',
+      },
+      {
+        q: 'Are there events in Coral Bay and Peyia?',
+        a: 'Yes, the western-coast resorts appear in the listings regularly — zoom the map to Coral Bay or Peyia to see what is coming up.',
+      },
+      ],
+    },
   },
   common: {
     cancel: 'Cancel',

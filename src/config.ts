@@ -22,7 +22,7 @@ export const config = {
   demoMode: false,
 
   // Версия сборки — показывается в шапке мелким текстом для сверки
-  buildVersion: 'beta 1.22',
+  buildVersion: 'beta 1.23',
 
   // Push-уведомления: ПУБЛИЧНЫЙ VAPID-ключ (приватный — в GitHub secrets,
   // VAPID_PRIVATE_KEY; рассылка — scripts/notify-push.mjs в GHA)
@@ -48,6 +48,13 @@ export const config = {
     { label: 'Дананг', labelEn: 'Da Nang', lat: 16.05, lng: 108.22, zoom: 11 },
     { label: 'Нячанг', labelEn: 'Nha Trang', lat: 12.24, lng: 109.19, zoom: 11 },
     { label: 'Кипр', labelEn: 'Cyprus', lat: 34.9, lng: 33.1, zoom: 9 },
+    // Кипрские города со своими посадочными (beta 1.23). zoom 12 — город
+    // целиком в экране телефона; страна (/cyprus/) остаётся fallback для
+    // городов без страницы (Фамагуста, Ая-Напа, Паралимни, Протарас, Полис).
+    { label: 'Никосия', labelEn: 'Nicosia', lat: 35.185, lng: 33.382, zoom: 12 },
+    { label: 'Лимасол', labelEn: 'Limassol', lat: 34.707, lng: 33.022, zoom: 12 },
+    { label: 'Ларнака', labelEn: 'Larnaca', lat: 34.918, lng: 33.622, zoom: 12 },
+    { label: 'Пафос', labelEn: 'Paphos', lat: 34.775, lng: 32.424, zoom: 12 },
   ],
 
   // --- Геокодинг (адрес -> координаты) ---

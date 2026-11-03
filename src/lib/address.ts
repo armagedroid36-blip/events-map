@@ -34,7 +34,17 @@ export function stripCountryTail(text: string): string {
 }
 
 /** Путь городской страницы события (как slugify(labelEn) в config.quickLocations) */
-export type CityPath = 'bali' | 'da-nang' | 'nha-trang' | 'cyprus';
+export type CityPath =
+  | 'bali'
+  | 'da-nang'
+  | 'nha-trang'
+  | 'cyprus'
+  // Кипрские города со своей посадочной (beta 1.23): страна остаётся
+  // fallback для городов без страницы (Фамагуста, Ая-Напа и др.).
+  | 'nicosia'
+  | 'limassol'
+  | 'larnaca'
+  | 'paphos';
 
 /** RU-имена городов по пути — как в JSON-LD BreadcrumbList (cityCrumb.name) */
 const CITY_NAME_RU: Record<CityPath, string> = {
@@ -42,6 +52,10 @@ const CITY_NAME_RU: Record<CityPath, string> = {
   'da-nang': 'Дананг',
   'nha-trang': 'Нячанг',
   cyprus: 'Кипр',
+  nicosia: 'Никосия',
+  limassol: 'Лимасол',
+  larnaca: 'Ларнака',
+  paphos: 'Пафос',
 };
 
 /** RU-имя города в ПРЕДЛОЖНОМ падеже для строки «Ещё события {{city}}: афиша»
@@ -53,6 +67,10 @@ const CITY_NAME_RU_LOCATIVE: Record<CityPath, string> = {
   'da-nang': 'в Дананге',
   'nha-trang': 'в Нячанге',
   cyprus: 'на Кипре',
+  nicosia: 'в Никосии',
+  limassol: 'в Лимасоле',
+  larnaca: 'в Ларнаке',
+  paphos: 'в Пафосе',
 };
 
 /** EN-имена городов по пути — как labelEn в config / CITY_NAME_EN пре-рендера */
@@ -61,6 +79,10 @@ const CITY_NAME_BY_PATH: Record<CityPath, string> = {
   'da-nang': 'Da Nang',
   'nha-trang': 'Nha Trang',
   cyprus: 'Cyprus',
+  nicosia: 'Nicosia',
+  limassol: 'Limassol',
+  larnaca: 'Larnaca',
+  paphos: 'Paphos',
 };
 
 /** Кипрские города для меты события (title/description/адрес): городская
@@ -130,8 +152,39 @@ export function cityPath(rawCity: string | null | undefined): CityPath | null {
     'паралимни', 'paralimni', 'протарас', 'protaras', 'дериния', 'deryneia',
     'полис', 'polis', 'latchi', 'sotira', 'geroskipou',
   ];
+  // Кипрские города со своей посадочной — проверяем ДО страны, иначе они
+  // останутся «Кипром». Порядок внутри блоков не важен: ключи не пересекаются.
+  if (city.includes('никосия') || city.includes('nicosia') ||
+      city.includes('lefkosia') || city.includes('lefkosa') ||
+      city.includes('strovolos') || city.includes('latsia')) {
+    return 'nicosia';
+  }
+  if (city.includes('лимасол') || city.includes('limassol') ||
+      city.includes('lemesos') || city.includes('lemessos')) {
+    return 'limassol';
+  }
+  if (city.includes('ларнака') || city.includes('larnaca') || city.includes('larnaka')) {
+    return 'larnaca';
+  }
+  if (city.includes('пафос') || city.includes('paphos') || city.includes('pafos') ||
+      city.includes('peyia') || city.includes('pegeia') || city.includes('kouklia')) {
+    return 'paphos';
+  }
   if (cyprusKeys.some((k) => city.includes(k))) return 'cyprus';
   return null;
+}
+
+/** Событие относится к Кипру (любой кипрский город, включая те, у кого своя
+ *  посадочная): нужно стране /cyprus/ — она показывает все кипрские события. */
+export function isCyprusCity(rawCity: string | null | undefined): boolean {
+  const path = cityPath(rawCity);
+  return (
+    path === 'cyprus' ||
+    path === 'nicosia' ||
+    path === 'limassol' ||
+    path === 'larnaca' ||
+    path === 'paphos'
+  );
 }
 
 /**

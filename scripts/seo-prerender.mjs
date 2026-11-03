@@ -122,6 +122,30 @@ const CITY_PAGES = [
     description:
       'Мероприятия на Кипре: фестивали, концерты, спорт и экскурсии в Лимасоле, Никосии, Ларнаке, Пафосе и Ая-Напе. Афиша с датами, местами и ценами.',
   },
+  {
+    path: 'nicosia',
+    title: 'Мероприятия в Никосии: афиша и куда сходить | Nicosia',
+    description:
+      'Афиша Никосии: театр, концерты, выставки и лекции в столице Кипра круглый год — в Старом городе, Строволосе и Лации. Даты, площадки и цены на карте MyPins.',
+  },
+  {
+    path: 'limassol',
+    title: 'Мероприятия в Лимасоле: афиша и куда сходить | Limassol',
+    description:
+      'Афиша Лимасола: концерты, фестивали, вечеринки и open-air события на набережной Молос и в старом порту. Даты, площадки и цены на карте MyPins.',
+  },
+  {
+    path: 'larnaca',
+    title: 'Мероприятия в Ларнаке: афиша и куда сходить | Larnaca',
+    description:
+      'Афиша Ларнаки: концерты на набережной Финикудес, спорт, яхтинг, выставки и семейные события у моря. Даты, площадки и цены — на карте MyPins.',
+  },
+  {
+    path: 'paphos',
+    title: 'Мероприятия в Пафосе: афиша и куда сходить | Paphos',
+    description:
+      'Афиша Пафоса: концерты в античном одеоне, фестивали у гавани и события курортов Корал-Бэй, Пейя и Полиса. Даты, площадки и цены на карте MyPins.',
+  },
 ];
 
 // --- Видимый SEO-текст городских страниц (h1 + интро + FAQ), RU. Эти же
@@ -202,6 +226,82 @@ const CITY_SEO = {
       {
         q: 'Есть ли на Кипре бесплатные события?',
         a: 'Да, много муниципальных фестивалей, ярмарок и праздников в деревнях проходят бесплатно. В фильтре цены выберите «Бесплатные» или «Донат»: в карточке события цена указана всегда — бесплатно, донат или сумма в евро.',
+      },
+    ],
+  },
+  nicosia: {
+    h1: 'Мероприятия и события в Никосии',
+    intro:
+      'Никосия — единственная столица в Европе, разделённая надвое, и главная культурная площадка Кипра. Сезон здесь не заканчивается с пляжным: театральные премьеры, симфонические концерты, выставки и лекции идут круглый год — в Старом городе вокруг улицы Ледра и квартала Лайки Йитония, в муниципальном театре и культурных центрах Строволоса и Лации. На карте MyPins собрана афиша Никосии: спектакли на греческом и английском, джаз и классика, стендап, книжные маркеты и встречи сообществ экспатов. События добавляют сами организаторы, поэтому даты и площадки актуальные. Выбирайте категорию и дату в фильтрах или приблизьте карту к своему району — и смотрите, что проходит рядом.',
+    faq: [
+      {
+        q: 'Что посмотреть в Никосии в выходные?',
+        a: 'В афише Никосии обычно есть несколько спектаклей и концертов на уикенд: проверьте фильтр по дате или откройте карту и приблизьте Старый город — события Лайки Йитонии и Ледры видны на ближайших улицах.',
+      },
+      {
+        q: 'Есть ли в Никосии мероприятия на английском?',
+        a: 'Да. Многие театральные постановки, лекции и встречи экспатов идут на английском — в карточке события указан язык, его можно отфильтровать.',
+      },
+      {
+        q: 'Когда в Никосии культурный сезон?',
+        a: 'Основной сезон — с октября по май: театры и концертные залы работают в закрытых площадках. Летом события чаще проходят во дворах, парках и на открытых сценах.',
+      },
+    ],
+  },
+  limassol: {
+    h1: 'Мероприятия и события в Лимасоле',
+    intro:
+      'Лимасол — второй по величине город Кипра и самый «событийный» на побережье. Здесь живёт большое русскоязычное и международное сообщество, поэтому афиша не пустует и вне турсезона: концерты на набережной Молос, вечеринки в старом порту и марине, винные фестивали, карнавал в феврале и десятки open-air событий летом. На карте MyPins собраны концерты и фестивали, йога и спорт, бизнес-завтраки и встречи сообществ — от исторического центра до Гермасойи, Агиос Афанасиоса и прибрежных клубов. События публикуют организаторы, поэтому даты и площадки актуальные. Фильтруйте по дате, категории и цене или приблизьте карту к своему району.',
+    faq: [
+      {
+        q: 'Куда сходить в Лимасоле вечером?',
+        a: 'Чаще всего — концерты и вечеринки в старом порту и на Молос, ужины с живой музыкой в Гермасойе и события в прибрежных клубах. Отфильтруйте афишу по дате и категории.',
+      },
+      {
+        q: 'Что происходит в Лимасоле летом?',
+        a: 'Летом почти всё проходит на открытом воздухе: пляжные вечеринки, кино под открытым небом, музыкальные фестивали и спортивные события на набережной.',
+      },
+      {
+        q: 'Есть ли в Лимасоле события для детей?',
+        a: 'Да, в афише регулярно появляются детские спектакли, мастер-классы и семейные фестивали — выберите соответствующую категорию в фильтрах.',
+      },
+    ],
+  },
+  larnaca: {
+    h1: 'Мероприятия и события в Ларнаке',
+    intro:
+      'Ларнака — город на набережной Финикудес, где аэропорт в десяти минутах, а море видно почти отовсюду. Сцена здесь компактнее, чем в Лимасоле, зато много спорта и всего, что связано с водой: кайтсёрфинг и парусные регаты, забеги вдоль берега, пляжные турниры и семейные фестивали. На карте MyPins — концерты и вечеринки у моря, выставки в культурных центрах, йога на набережной и встречи сообществ. События публикуют сами организаторы, поэтому даты и места актуальные. Выбирайте дату и категорию в фильтрах или приблизьте карту к своему району — от центра до Маккензи и Декелии.',
+    faq: [
+      {
+        q: 'Что интересного проходит в Ларнаке?',
+        a: 'Афиша Ларнаки — это концерты на Финикудес, спортивные события у моря, выставки и семейные фестивали. Откройте карту и посмотрите, что идёт на этой неделе.',
+      },
+      {
+        q: 'Где в Ларнаке смотреть концерты?',
+        a: 'Чаще всего на набережной Финикудес, в культурном центре и на открытых площадках у моря; летом добавляются пляжные сцены и бары Маккензи.',
+      },
+      {
+        q: 'Подходит ли Ларнака для семейных выходных?',
+        a: 'Да — в афише регулярно есть детские спектакли, мастер-классы и семейные события; удобно фильтровать по категории и дате.',
+      },
+    ],
+  },
+  paphos: {
+    h1: 'Мероприятия и события в Пафосе',
+    intro:
+      'Пафос — курортная столица западного Кипра с античным одеоном под открытым небом, средневековой гаванью и самой длинной в стране историей. Летом и в бархатный сезон здесь играют оперу и симфоническую музыку прямо среди руин, а в гавани и на курортах Корал-Бэй, Пейя и Полис идут фестивали, вечеринки и семейные события. На карте MyPins собрана афиша Пафоса: концерты и театральные постановки, выставки, экскурсии с гидом, спортивные события и встречи экспатов. Даты, площадки и цены обновляют сами организаторы. Фильтруйте по дате и категории или приблизьте карту к своему району.',
+    faq: [
+      {
+        q: 'Что посмотреть в Пафосе вечером?',
+        a: 'Летом — концерты и спектакли в античном одеоне и события в гавани; в остальное время — выставки, ужины с музыкой и встречи в барах Като Пафоса.',
+      },
+      {
+        q: 'Когда в Пафосе сезон концертов?',
+        a: 'Пик — с мая по октябрь, когда работают открытые площадки; зимой события чаще проходят в закрытых залах и культурных центрах.',
+      },
+      {
+        q: 'Есть ли события в Корал-Бэй и Пейе?',
+        a: 'Да, курорты западного побережья регулярно появляются в афише — приблизьте карту к Корал-Бэй или Пейе, чтобы увидеть ближайшие события.',
       },
     ],
   },
@@ -286,6 +386,82 @@ const CITY_SEO_EN = {
       },
     ],
   },
+  nicosia: {
+    h1: 'Events and things to do in Nicosia',
+    intro:
+      'Nicosia is the last divided capital in Europe and the cultural heart of Cyprus: the season never stops here. Theatre premieres, symphony concerts, exhibitions and talks run all year — in the Old Town around Ledra Street and Laiki Geitonia, at the municipal theatre and in the cultural centres of Strovolos and Latsia. The MyPins map lists what is on in Nicosia: plays in Greek and English, jazz and classical music, stand-up, book markets and expat meetups. Organisers publish their own events, so dates and venues stay current. Filter by date, category and price, or zoom the map to your neighbourhood to see what is happening nearby.',
+    faq: [
+      {
+        q: 'What is on in Nicosia this weekend?',
+        a: 'The Nicosia listings usually include several plays and concerts at the weekend — filter by date or zoom into the Old Town to see events on nearby streets.',
+      },
+      {
+        q: 'Are there events in English in Nicosia?',
+        a: 'Yes. Many plays, lectures and expat meetups are held in English — the language is shown on each event card and can be filtered.',
+      },
+      {
+        q: 'When is the cultural season in Nicosia?',
+        a: 'The main season runs from October to May in indoor theatres and concert halls; in summer events move to courtyards, parks and open-air stages.',
+      },
+    ],
+  },
+  limassol: {
+    h1: 'Events and things to do in Limassol',
+    intro:
+      'Limassol is the second-largest city in Cyprus and the busiest event scene on the coast. A large international community lives here, so the calendar stays full even outside the tourist season: concerts on the Molos promenade, parties at the old port and marina, wine festivals, the February carnival and dozens of open-air events in summer. The MyPins map covers concerts and festivals, yoga and sport, business breakfasts and community meetups — from the historic centre to Germasogeia, Agios Athanasios and the beach clubs. Organisers publish their own events, so dates and venues stay current. Filter by date, category and price, or zoom the map to your area.',
+    faq: [
+      {
+        q: 'Where to go out in Limassol in the evening?',
+        a: 'Most often to concerts and parties at the old port and Molos, live-music dinners in Germasogeia and events at the beach clubs. Filter the listings by date and category.',
+      },
+      {
+        q: 'What happens in Limassol in summer?',
+        a: 'Almost everything moves outdoors: beach parties, open-air cinema, music festivals and sports events along the promenade.',
+      },
+      {
+        q: 'Are there family events in Limassol?',
+        a: 'Yes — children’s plays, workshops and family festivals appear regularly; pick the category in the filters.',
+      },
+    ],
+  },
+  larnaca: {
+    h1: 'Events and things to do in Larnaca',
+    intro:
+      'Larnaca is the city on the Finikoudes promenade, ten minutes from the airport and with the sea in sight almost everywhere. The scene is smaller than in Limassol but heavy on sport and everything water-related: kitesurfing and sailing regattas, runs along the coast, beach tournaments and family festivals. The MyPins map lists seaside concerts and parties, exhibitions at the cultural centres, yoga on the promenade and community meetups. Organisers publish their own events, so dates and venues stay current. Filter by date and category, or zoom the map to your area — from the centre to Mackenzie and Dhekelia.',
+    faq: [
+      {
+        q: 'What is there to do in Larnaca?',
+        a: 'The Larnaca listings include concerts on Finikoudes, seaside sport, exhibitions and family festivals. Open the map to see what is on this week.',
+      },
+      {
+        q: 'Where are concerts held in Larnaca?',
+        a: 'Most often on the Finikoudes promenade, at the cultural centre and on open-air stages by the sea; in summer beach stages and Mackenzie bars join in.',
+      },
+      {
+        q: 'Is Larnaca good for a family weekend?',
+        a: 'Yes — children’s plays, workshops and family events are listed regularly; filter by category and date.',
+      },
+    ],
+  },
+  paphos: {
+    h1: 'Events and things to do in Paphos',
+    intro:
+      'Paphos is the resort capital of western Cyprus, with an ancient open-air Odeon, a medieval harbour and the longest history on the island. In summer and the shoulder season opera and symphonic music are staged among the ruins, while the harbour and the resorts of Coral Bay, Peyia and Polis host festivals, parties and family events. The MyPins map covers what is on in Paphos: concerts and theatre, exhibitions, guided walks, sport and expat meetups. Organisers keep dates, venues and prices up to date. Filter by date and category, or zoom the map to your area.',
+    faq: [
+      {
+        q: 'What is on in Paphos in the evening?',
+        a: 'In summer — concerts and plays at the ancient Odeon and events at the harbour; at other times — exhibitions, live-music dinners and meetups in Kato Paphos bars.',
+      },
+      {
+        q: 'When is the concert season in Paphos?',
+        a: 'The peak runs from May to October when the open-air venues operate; in winter events move to indoor halls and cultural centres.',
+      },
+      {
+        q: 'Are there events in Coral Bay and Peyia?',
+        a: 'Yes, the western-coast resorts appear in the listings regularly — zoom the map to Coral Bay or Peyia to see what is coming up.',
+      },
+    ],
+  },
 };
 
 // EN-версии title/description городских страниц (для /en/<city>/).
@@ -313,6 +489,30 @@ const CITY_PAGES_EN = [
     title: "Events in Cyprus: concerts, festivals and what's on | MyPins",
     description:
       'Cyprus events map for travellers and expats: festivals, concerts, sport and tours in Limassol, Nicosia, Larnaca, Paphos, Ayia Napa with dates and prices.',
+  },
+  {
+    path: 'nicosia',
+    title: 'Events in Nicosia: theatre, concerts and what to do | MyPins',
+    description:
+      'Nicosia events map: theatre, concerts, exhibitions and talks in the capital of Cyprus all year round — Old Town, Strovolos and Latsia. Dates and prices.',
+  },
+  {
+    path: 'limassol',
+    title: 'Events in Limassol: festivals, concerts and parties | MyPins',
+    description:
+      'Limassol events map: concerts, festivals, parties and open-air shows at the Molos promenade and the old port. Dates, venues and prices on MyPins.',
+  },
+  {
+    path: 'larnaca',
+    title: 'Events in Larnaca: seaside concerts and sport | MyPins',
+    description:
+      'Larnaca events map: concerts on Finikoudes, sailing, kitesurfing, exhibitions and family events by the sea. Dates, venues and prices on MyPins.',
+  },
+  {
+    path: 'paphos',
+    title: 'Events in Paphos: Odeon concerts and festivals | MyPins',
+    description:
+      'Paphos events map: concerts at the ancient Odeon, harbour festivals and events in Coral Bay, Peyia and Polis. Dates, venues and prices on MyPins.',
   },
 ];
 
@@ -1176,6 +1376,10 @@ function eventTitle(name, date, city, lang = 'ru') {
  * lowercase-строке. Районы Бали (Убуд, Чангу, Семиньяк, Кута, Денпасар,
  * Гианьяр) и «Bali»/«бали» → Бали. Не распознано → null (крошка из 2 звеньев).
  */
+/** Пути, входящие в кипрскую страну /cyprus/ (сама страна + города со своей
+ *  посадочной): страна показывает ВСЕ кипрские события, города — только свои. */
+const CYPRUS_PAGE_PATHS = new Set(['cyprus', 'nicosia', 'limassol', 'larnaca', 'paphos']);
+
 function cityCrumb(rawCity) {
   const city = String(rawCity ?? '').toLowerCase();
   if (!city) return null;
@@ -1207,6 +1411,23 @@ function cityCrumb(rawCity) {
     'паралимни', 'paralimni', 'протарас', 'protaras', 'дериния', 'deryneia',
     'полис', 'polis', 'latchi', 'sotira', 'geroskipou',
   ];
+  // Кипрские города со своей посадочной (beta 1.23) — проверяем ДО страны.
+  if (city.includes('никосия') || city.includes('nicosia') ||
+      city.includes('lefkosia') || city.includes('lefkosa') ||
+      city.includes('strovolos') || city.includes('latsia')) {
+    return { name: 'Никосия', path: 'nicosia' };
+  }
+  if (city.includes('лимасол') || city.includes('limassol') ||
+      city.includes('lemesos') || city.includes('lemessos')) {
+    return { name: 'Лимасол', path: 'limassol' };
+  }
+  if (city.includes('ларнака') || city.includes('larnaca') || city.includes('larnaka')) {
+    return { name: 'Ларнака', path: 'larnaca' };
+  }
+  if (city.includes('пафос') || city.includes('paphos') || city.includes('pafos') ||
+      city.includes('peyia') || city.includes('pegeia') || city.includes('kouklia')) {
+    return { name: 'Пафос', path: 'paphos' };
+  }
   if (cyprusKeys.some((k) => city.includes(k))) {
     return { name: 'Кипр', path: 'cyprus' };
   }
@@ -1220,6 +1441,10 @@ const CITY_NAME_EN = {
   'da-nang': 'Da Nang',
   'nha-trang': 'Nha Trang',
   cyprus: 'Cyprus',
+  nicosia: 'Nicosia',
+  limassol: 'Limassol',
+  larnaca: 'Larnaca',
+  paphos: 'Paphos',
 };
 
 /** RU-имя города в ПРЕДЛОЖНОМ падеже для строки «Ещё события <город>: афиша»
@@ -1231,6 +1456,10 @@ const CITY_NAME_RU_LOCATIVE = {
   'da-nang': 'в Дананге',
   'nha-trang': 'в Нячанге',
   cyprus: 'на Кипре',
+  nicosia: 'в Никосии',
+  limassol: 'в Лимасоле',
+  larnaca: 'в Ларнаке',
+  paphos: 'в Пафосе',
 };
 
 /** Кипрские города, которые выводим в мете события (RU/EN). Распознавание —
@@ -1921,6 +2150,25 @@ function writePage(baseHtml, path, meta) {
  * SPA удаляет его (main.tsx) и рисует свой локализованный блок. Контент
  * вопросов-ответов остаётся в DOM (details). evs — уже отфильтрованные и
  * отсортированные события города; пусто → секции событий нет. */
+
+/** Блок «Города Кипра» на /cyprus/ и /en/cyprus/ (beta 1.23): ссылки на
+ *  городские посадочные своего языка — чтобы новые страницы не остались
+ *  сиротами и краулер нашёл их с главной страницы страны. */
+function cyprusCitiesHtml(lang) {
+  const cities = [
+    ['nicosia', 'Никосия', 'Nicosia'],
+    ['limassol', 'Лимасол', 'Limassol'],
+    ['larnaca', 'Ларнака', 'Larnaca'],
+    ['paphos', 'Пафос', 'Paphos'],
+  ];
+  const prefix = lang === 'en' ? '/en' : '';
+  const items = cities
+    .map(([path, ru, en]) => `<li><a href="${prefix}/${path}/">${lang === 'en' ? en : ru}</a></li>`)
+    .join('');
+  const title = lang === 'en' ? 'Cities of Cyprus' : 'Города Кипра';
+  return `<h2>${title}</h2><ul>${items}</ul>`;
+}
+
 function citySeoHtml(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs = []) {
   const faq = seo.faq
     .map(
@@ -4058,11 +4306,11 @@ function assertMinCategoryEventsSync() {
 }
 
 /** RU/EN названия городов по пути (как в JSON-LD и городских страницах) */
-const CAT_CITY_NAME_EN = { bali: 'Bali', 'da-nang': 'Da Nang', 'nha-trang': 'Nha Trang', cyprus: 'Cyprus' };
+const CAT_CITY_NAME_EN = { bali: 'Bali', 'da-nang': 'Da Nang', 'nha-trang': 'Nha Trang', cyprus: 'Cyprus', nicosia: 'Nicosia', limassol: 'Limassol', larnaca: 'Larnaca', paphos: 'Paphos' };
 /** Предлог + город в предложном падеже (RU): «на Бали», «в Дананге» */
-const CAT_CITY_WHERE_RU = { bali: 'на Бали', 'da-nang': 'в Дананге', 'nha-trang': 'в Нячанге', cyprus: 'на Кипре' };
+const CAT_CITY_WHERE_RU = { bali: 'на Бали', 'da-nang': 'в Дананге', 'nha-trang': 'в Нячанге', cyprus: 'на Кипре', nicosia: 'в Никосии', limassol: 'в Лимасоле', larnaca: 'в Ларнаке', paphos: 'в Пафосе' };
 /** RU-имя города для крошки/ссылок (как CITY_PAGES) */
-const CAT_CITY_CRUMB_RU = { bali: 'Бали', 'da-nang': 'Дананг', 'nha-trang': 'Нячанг', cyprus: 'Кипр' };
+const CAT_CITY_CRUMB_RU = { bali: 'Бали', 'da-nang': 'Дананг', 'nha-trang': 'Нячанг', cyprus: 'Кипр', nicosia: 'Никосия', limassol: 'Лимасол', larnaca: 'Ларнака', paphos: 'Пафос' };
 
 /** «на Бали» / «в Дананге» (RU), «in Bali» (EN) */
 function catWhere(path, lang) {
@@ -4182,6 +4430,54 @@ const CAT_CITY_BLURB = {
       'Nha Trang is the resort capital of southern Vietnam.',
       'In Nha Trang events run along the promenade.',
       'Nha Trang lives by the sea: the promenade and the north.',
+    ],
+  },
+  nicosia: {
+    ru: [
+      'Никосия — столица Кипра: театр, концерты и выставки круглый год.',
+      'В Никосии события идут в Старом городе и районах Строволос и Лация.',
+      'Никосия живёт культурой: сцены, галереи и лекции весь сезон.',
+    ],
+    en: [
+      'Nicosia is the capital of Cyprus: theatre, concerts and exhibitions all year.',
+      'Nicosia events run in the Old Town and in Strovolos and Latsia.',
+      'Nicosia runs on culture: stages, galleries and talks all season.',
+    ],
+  },
+  limassol: {
+    ru: [
+      'Лимасол — самый событийный город кипрского побережья.',
+      'В Лимасоле афиша не пустует: Молос, старый порт и марина.',
+      'Лимасол живёт фестивалями: набережная, порт и Гермасойя.',
+    ],
+    en: [
+      'Limassol is the busiest events city on the Cyprus coast.',
+      'Limassol listings never stop: Molos, the old port and the marina.',
+      'Limassol runs on festivals: the promenade, the port and Germasogeia.',
+    ],
+  },
+  larnaca: {
+    ru: [
+      'Ларнака — город на набережной Финикудес у моря.',
+      'В Ларнаке события идут вдоль берега и в культурных центрах.',
+      'Ларнака живёт у моря: Финикудес, Маккензи и Декелия.',
+    ],
+    en: [
+      'Larnaca is the city on the Finikoudes promenade by the sea.',
+      'Larnaca events run along the coast and in the cultural centres.',
+      'Larnaca runs by the sea: Finikoudes, Mackenzie and Dhekelia.',
+    ],
+  },
+  paphos: {
+    ru: [
+      'Пафос — курортная столица западного Кипра с античным одеоном.',
+      'В Пафосе события идут у гавани и на курортах западного берега.',
+      'Пафос живёт историей и фестивалями: Като Пафос, Корал-Бэй, Пейя.',
+    ],
+    en: [
+      'Paphos is the resort capital of western Cyprus with an ancient Odeon.',
+      'Paphos events run at the harbour and along the western coast resorts.',
+      'Paphos runs on history and festivals: Kato Paphos, Coral Bay, Peyia.',
     ],
   },
   cyprus: {
@@ -5341,7 +5637,9 @@ async function main() {
           typeof ev.id === 'string' &&
           typeof ev.title === 'string' &&
           ev.title &&
-          cityCrumb(ev.city)?.path === c.path,
+          (c.path === 'cyprus'
+            ? CYPRUS_PAGE_PATHS.has(cityCrumb(ev.city)?.path)
+            : cityCrumb(ev.city)?.path === c.path),
       )
       .sort((a, b) =>
         String(nextOccurrenceDate(a, TODAY_ISO)).localeCompare(
@@ -5370,6 +5668,7 @@ async function main() {
       ],
       bodySeo: seo
         ? citySeoHtml(seo, cityEvs, cityCategoriesHtml(c.path, 'ru', cells).html, c.path, cityEvsRest) +
+          (c.path === 'cyprus' ? cyprusCitiesHtml('ru') : '') +
           cityArchiveBlockHtml(c.path, 'ru', archiveByCityRu.get(c.path) ?? [])
         : null,
       // Мобильное интро в статике: превью карты города (как в SPA
@@ -5396,7 +5695,9 @@ async function main() {
           typeof ev.id === 'string' &&
           typeof ev.title === 'string' &&
           ev.title &&
-          cityCrumb(ev.city)?.path === c.path &&
+          (c.path === 'cyprus'
+            ? CYPRUS_PAGE_PATHS.has(cityCrumb(ev.city)?.path)
+            : cityCrumb(ev.city)?.path === c.path) &&
           eventHasEn(ev),
       )
       .sort((a, b) =>
@@ -5424,6 +5725,7 @@ async function main() {
       ],
       bodySeo: seo
         ? citySeoHtmlEn(seo, cityEvs, cityCategoriesHtml(c.path, 'en', cells).html, c.path, cityEvsRest) +
+          (c.path === 'cyprus' ? cyprusCitiesHtml('en') : '') +
           cityArchiveBlockHtml(c.path, 'en', archiveByCityEn.get(c.path) ?? [])
         : null,
       // Мобильное интро (EN-версия текстов по lang='en'), то же превью карты
@@ -6598,6 +6900,6 @@ async function main() {
 }
 
 main().catch((e) => {
-  console.error(`seo-prerender: критическая ошибка: ${e.message}`);
+  console.error(`seo-prerender: критическая ошибка: ${e.stack || e.message}`);
   process.exit(1);
 });

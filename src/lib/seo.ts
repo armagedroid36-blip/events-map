@@ -89,6 +89,26 @@ const CITY_META: Record<string, { title: string; description: string }> = {
     description:
       'Мероприятия в Нячанге: вечеринки, концерты, шоу и встречи. Афиша с датами, местами и ценами для туристов и экспатов.',
   },
+  nicosia: {
+    title: 'Мероприятия в Никосии: афиша и куда сходить | Nicosia',
+    description:
+      'Афиша Никосии: театр, концерты, выставки и лекции в столице Кипра круглый год — в Старом городе, Строволосе и Лации. Даты, площадки и цены на карте MyPins.',
+  },
+  limassol: {
+    title: 'Мероприятия в Лимасоле: афиша и куда сходить | Limassol',
+    description:
+      'Афиша Лимасола: концерты, фестивали, вечеринки и open-air события на набережной Молос и в старом порту. Даты, площадки и цены на карте MyPins.',
+  },
+  larnaca: {
+    title: 'Мероприятия в Ларнаке: афиша и куда сходить | Larnaca',
+    description:
+      'Афиша Ларнаки: концерты на набережной Финикудес, спорт, яхтинг, выставки и семейные события у моря. Даты, площадки и цены — на карте MyPins.',
+  },
+  paphos: {
+    title: 'Мероприятия в Пафосе: афиша и куда сходить | Paphos',
+    description:
+      'Афиша Пафоса: концерты в античном одеоне, фестивали у гавани и события курортов Корал-Бэй, Пейя и Полиса. Даты, площадки и цены на карте MyPins.',
+  },
   cyprus: {
     title: 'Мероприятия на Кипре: афиша и куда сходить | Events in Cyprus',
     description:
@@ -112,6 +132,26 @@ const CITY_META_EN: Record<string, { title: string; description: string }> = {
     title: 'Events in Nha Trang: concerts, shows and parties | MyPins',
     description:
       'Nha Trang events map for travellers and expats: concerts, shows, parties and speaking clubs with dates, venues and prices.',
+  },
+  nicosia: {
+    title: 'Events in Nicosia: theatre, concerts and what to do | MyPins',
+    description:
+      'Nicosia events map: theatre, concerts, exhibitions and talks in the capital of Cyprus all year round — Old Town, Strovolos and Latsia. Dates and prices.',
+  },
+  limassol: {
+    title: 'Events in Limassol: festivals, concerts and parties | MyPins',
+    description:
+      'Limassol events map: concerts, festivals, parties and open-air shows at the Molos promenade and the old port. Dates, venues and prices on MyPins.',
+  },
+  larnaca: {
+    title: 'Events in Larnaca: seaside concerts and sport | MyPins',
+    description:
+      'Larnaca events map: concerts on Finikoudes, sailing, kitesurfing, exhibitions and family events by the sea. Dates, venues and prices on MyPins.',
+  },
+  paphos: {
+    title: 'Events in Paphos: Odeon concerts and festivals | MyPins',
+    description:
+      'Paphos events map: concerts at the ancient Odeon, harbour festivals and events in Coral Bay, Peyia and Polis. Dates, venues and prices on MyPins.',
   },
   cyprus: {
     title: "Events in Cyprus: concerts, festivals and what's on | MyPins",

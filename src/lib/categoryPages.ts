@@ -39,6 +39,10 @@ const CITY_NAME_RU: Record<CityPath, string> = {
   'da-nang': 'Дананг',
   'nha-trang': 'Нячанг',
   cyprus: 'Кипр',
+  nicosia: 'Никосия',
+  limassol: 'Лимасол',
+  larnaca: 'Ларнака',
+  paphos: 'Пафос',
 };
 
 const CITY_NAME_EN: Record<CityPath, string> = {
@@ -46,6 +50,10 @@ const CITY_NAME_EN: Record<CityPath, string> = {
   'da-nang': 'Da Nang',
   'nha-trang': 'Nha Trang',
   cyprus: 'Cyprus',
+  nicosia: 'Nicosia',
+  limassol: 'Limassol',
+  larnaca: 'Larnaca',
+  paphos: 'Paphos',
 };
 
 /** Предлог + город в предложном падеже (RU): «на Бали», «в Дананге» */
@@ -54,6 +62,10 @@ const CITY_WHERE_RU: Record<CityPath, string> = {
   'da-nang': 'в Дананге',
   'nha-trang': 'в Нячанге',
   cyprus: 'на Кипре',
+  nicosia: 'в Никосии',
+  limassol: 'в Лимасоле',
+  larnaca: 'в Ларнаке',
+  paphos: 'в Пафосе',
 };
 
 /** Локализованное имя города по пути */
@@ -275,6 +287,54 @@ const CITY_BLURB: Record<CityPath, { ru: string[]; en: string[] }> = {
       'Nha Trang is the resort capital of southern Vietnam.',
       'In Nha Trang events run along the promenade.',
       'Nha Trang lives by the sea: the promenade and the north.',
+    ],
+  },
+  nicosia: {
+    ru: [
+      'Никосия — столица Кипра: театр, концерты и выставки круглый год.',
+      'В Никосии события идут в Старом городе и районах Строволос и Лация.',
+      'Никосия живёт культурой: сцены, галереи и лекции весь сезон.',
+    ],
+    en: [
+      'Nicosia is the capital of Cyprus: theatre, concerts and exhibitions all year.',
+      'Nicosia events run in the Old Town and in Strovolos and Latsia.',
+      'Nicosia runs on culture: stages, galleries and talks all season.',
+    ],
+  },
+  limassol: {
+    ru: [
+      'Лимасол — самый событийный город кипрского побережья.',
+      'В Лимасоле афиша не пустует: Молос, старый порт и марина.',
+      'Лимасол живёт фестивалями: набережная, порт и Гермасойя.',
+    ],
+    en: [
+      'Limassol is the busiest events city on the Cyprus coast.',
+      'Limassol listings never stop: Molos, the old port and the marina.',
+      'Limassol runs on festivals: the promenade, the port and Germasogeia.',
+    ],
+  },
+  larnaca: {
+    ru: [
+      'Ларнака — город на набережной Финикудес у моря.',
+      'В Ларнаке события идут вдоль берега и в культурных центрах.',
+      'Ларнака живёт у моря: Финикудес, Маккензи и Декелия.',
+    ],
+    en: [
+      'Larnaca is the city on the Finikoudes promenade by the sea.',
+      'Larnaca events run along the coast and in the cultural centres.',
+      'Larnaca runs by the sea: Finikoudes, Mackenzie and Dhekelia.',
+    ],
+  },
+  paphos: {
+    ru: [
+      'Пафос — курортная столица западного Кипра с античным одеоном.',
+      'В Пафосе события идут у гавани и на курортах западного берега.',
+      'Пафос живёт историей и фестивалями: Като Пафос, Корал-Бэй, Пейя.',
+    ],
+    en: [
+      'Paphos is the resort capital of western Cyprus with an ancient Odeon.',
+      'Paphos events run at the harbour and along the western coast resorts.',
+      'Paphos runs on history and festivals: Kato Paphos, Coral Bay, Peyia.',
     ],
   },
   cyprus: {
