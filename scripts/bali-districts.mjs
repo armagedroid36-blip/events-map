@@ -116,14 +116,33 @@ export const DISTRICTS_RU = {
 
 export const OUT_OF_BALI = new Set(['Джакарта']);
 
-/** Район события: адрес → словарь districtName → как пришло. */
-export function districtFor(addressText, districtName) {
+/** Канон-район по адресу или null, если адрес района не называет. */
+export function addressDistrict(addressText) {
   const text = String(addressText || '').toLowerCase();
   for (const [needle, canon] of ADDRESS_DISTRICTS) {
     if (text.includes(needle)) return canon;
   }
+  return null;
+}
+
+/** Район события: адрес → словарь districtName → как пришло. */
+export function districtFor(addressText, districtName) {
+  const byAddr = addressDistrict(addressText);
+  if (byAddr) return byAddr;
   const raw = districtName || 'Bali';
   return DISTRICTS_RU[String(raw).trim().toLowerCase()] || raw;
+}
+
+/**
+ * Итоговая метка района. Приоритет: канон из САМОГО адреса → реестр площадок → districtName.
+ * Реестр «площадка → район» собран из БАЗЫ и накапливает исторические ошибки метки
+ * (улица Batu Mejan в базе была «Кута»), поэтому адрес с канон-районом он перебивать не должен.
+ */
+export function districtForBali(addressText, districtName, regDistrict = null) {
+  const byAddr = addressDistrict(addressText);
+  if (byAddr) return byAddr;
+  if (regDistrict && !OUT_OF_BALI.has(regDistrict)) return regDistrict;
+  return districtFor(addressText, districtName);
 }
 
 /** Центр района; неизвестный канон падает на центр острова. */

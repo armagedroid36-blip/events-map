@@ -7,7 +7,7 @@ import { extractPrice } from './price-llm.mjs';
 import { extractCategory } from './category-llm.mjs';
 import { isInternationalArtist } from './intl-llm.mjs';
 import { extractContacts as extractSharedContacts } from './contacts-regex.mjs';
-import { districtFor, districtCenter, OUT_OF_BALI } from './bali-districts.mjs';
+import { districtFor, districtForBali, districtCenter, OUT_OF_BALI } from './bali-districts.mjs';
 import { buildVenueDistrictRegistry, districtForVenue } from './venue-district.mjs';
 import { stripInvisible } from './text-safe.mjs';
 import { cleanEndTime } from './end-time-guard.mjs';
@@ -444,8 +444,10 @@ async function main() {
       // отдаёт разные адресные хвосты («…, Seminyak …» / «…, Kerobokan Kelod …»),
       // отчего площадка давала две метки в фильтре по городу (разбор — запуск 188).
       // Пин не трогаем: у площадки с реальными координатами он и так её собственный.
+      // Реестр применяем ТОЛЬКО если адрес сам не называет канон-район: иначе историческая
+      // ошибка метки в базе («Batu Mejan, Canggu» хранилась как «Кута») перебивает верный адрес.
       const regDistrict = districtForVenue({ address: rowAddress, lat, lng }, districtRegistry);
-      const cityDistrict = regDistrict && regDistrict !== district ? regDistrict : district;
+      const cityDistrict = districtForBali(rowAddress, place.districtName, regDistrict);
       if (cityDistrict !== district) {
         console.log(`  [район по площадке] «${district}» -> «${cityDistrict}» (${title.slice(0, 40)})`);
       }
