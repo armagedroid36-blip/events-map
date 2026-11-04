@@ -43,6 +43,7 @@ import {
   cellFacts,
   cellItems,
   isRestoredCell,
+  pageBreadcrumb,
 } from '../lib/categoryPages';
 import {
   applyCategoryMeta,
@@ -1548,13 +1549,20 @@ export default function Home({
         >
           <nav aria-label={seoLang === 'en' ? 'Breadcrumbs' : 'Хлебные крошки'}>
             <p className="mb-1 text-xs text-gray-500">
-              <a href={seoLang === 'en' ? '/en/' : '/'} className="text-[#0F766E] hover:underline">
-                {seoLang === 'en' ? 'Home' : 'Главная'}
-              </a>
-              <span aria-hidden="true"> › </span>
-              <span>{seoLang === 'en' ? cityCrumbLabel(city, 'en') : cityCrumbLabel(city, 'ru')}</span>
-              <span aria-hidden="true"> › </span>
-              <span>{seoLang === 'en' ? "What's on" : 'Афиша'}</span>
+              {pageBreadcrumb(pageCityPath, seoLang, seoLang === 'en' ? "What's on" : 'Афиша', {
+                cityIsLink: false,
+              }).map((c, i) => (
+                <span key={`${c.name}-${i}`}>
+                  {i > 0 && <span aria-hidden="true"> › </span>}
+                  {c.href ? (
+                    <a href={c.href} className="text-[#0F766E] hover:underline">
+                      {c.name}
+                    </a>
+                  ) : (
+                    <span>{c.name}</span>
+                  )}
+                </span>
+              ))}
             </p>
           </nav>
           <h1 className="text-lg font-extrabold tracking-tight text-gray-900">{citySeo.h1}</h1>
@@ -1663,18 +1671,22 @@ export default function Home({
         >
           <nav aria-label={seoLang === 'en' ? 'Breadcrumbs' : 'Хлебные крошки'}>
             <p className="mb-1 text-xs text-gray-500">
-              <a href={seoLang === 'en' ? '/en/' : '/'} className="text-[#0F766E] hover:underline">
-                {seoLang === 'en' ? 'Home' : 'Главная'}
-              </a>
-              <span aria-hidden="true"> › </span>
-              <a
-                href={`/${seoLang === 'en' ? 'en/' : ''}${pageCityPath}/`}
-                className="text-[#0F766E] hover:underline"
-              >
-                {categoryCityName(pageCityPath, seoLang)}
-              </a>
-              <span aria-hidden="true"> › </span>
-              <span>{seoLang === 'en' ? category.name_en : category.name_ru}</span>
+              {pageBreadcrumb(
+                pageCityPath,
+                seoLang,
+                seoLang === 'en' ? category.name_en : category.name_ru,
+              ).map((c, i) => (
+                <span key={`${c.name}-${i}`}>
+                  {i > 0 && <span aria-hidden="true"> › </span>}
+                  {c.href ? (
+                    <a href={c.href} className="text-[#0F766E] hover:underline">
+                      {c.name}
+                    </a>
+                  ) : (
+                    <span>{c.name}</span>
+                  )}
+                </span>
+              ))}
             </p>
           </nav>
           <h1 className="text-lg font-extrabold tracking-tight text-gray-900">{categorySeo.h1}</h1>

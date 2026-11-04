@@ -23,7 +23,7 @@
 // текст у страниц одного города сведён к минимуму (difflib < 60%, проверено на
 // реальном наборе; порядок вариантов должен совпадать со статикой).
 import type { Category, EventItem } from './types';
-import { cityPath, CYRILLIC_RE } from './address';
+import { cityPath, cityParentCrumb, CYRILLIC_RE } from './address';
 import type { CityPath } from './address';
 
 /** Порог качества: страница ячейки существует, только если в городе
@@ -76,6 +76,40 @@ export function categoryCityName(path: CityPath, lang: 'ru' | 'en'): string {
 /** «на Бали» / «в Дананге» (RU), «in Bali» (EN) */
 export function categoryWhere(path: CityPath, lang: 'ru' | 'en'): string {
   return lang === 'en' ? `in ${CITY_NAME_EN[path]}` : CITY_WHERE_RU[path];
+}
+
+/** Звено видимой хлебной крошки: href=null — звено без ссылки (последнее) */
+export interface CrumbItem {
+  name: string;
+  href: string | null;
+}
+
+/**
+ * Видимая крошка страницы «город» / «город × категория» — ЗЕРКАЛО
+ * pageCrumbChain в scripts/seo-prerender.mjs (там же JSON-LD BreadcrumbList
+ * из того же массива). У кипрских городов со своей посадочной
+ * (nicosia/limassol/larnaca/paphos) между «Главная» и городом стоит страна:
+ * «Главная › Кипр › Никосия › Афиша»; у Бали/Дананга/Нячанга уровня страны
+ * нет — три звена. cityIsLink=false — у хаба город без ссылки (как в статике).
+ */
+export function pageBreadcrumb(
+  path: CityPath,
+  lang: 'ru' | 'en',
+  last: string,
+  opts: { cityIsLink?: boolean } = {},
+): CrumbItem[] {
+  const en = lang === 'en';
+  const home = `${en ? '/en' : ''}/`;
+  const cityHref = `${en ? '/en' : ''}/${path}/`;
+  const items: CrumbItem[] = [{ name: en ? 'Home' : 'Главная', href: home }];
+  const parent = cityParentCrumb(path, lang);
+  if (parent) items.push({ name: parent.label, href: parent.href });
+  items.push({
+    name: en ? CITY_NAME_EN[path] : CITY_NAME_RU[path],
+    href: opts.cityIsLink === false ? null : cityHref,
+  });
+  items.push({ name: last, href: null });
+  return items;
 }
 
 /** Ключ ячейки «город × категория» */

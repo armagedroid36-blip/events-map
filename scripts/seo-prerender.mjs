@@ -2188,6 +2188,67 @@ function cyprusCitiesHtml(lang) {
   return `<h2>${title}</h2><ul>${items}</ul>`;
 }
 
+/** Уровень страны в крошке городской страницы/ячейки: у кипрских городов со
+ *  своей посадочной (nicosia/limassol/larnaca/paphos) между «Главная» и
+ *  городом стоит страна — «Главная › Кипр › Никосия › …». У /cyprus/ и городов
+ *  ЮВА (bali/da-nang/nha-trang) уровня страны нет — null.
+ *  ЗЕРКАЛО: cityParentCrumb в src/lib/address.ts — менять оба файла. */
+function cityParentCrumbOf(path, lang) {
+  const en = lang === 'en';
+  if (!path || path === 'cyprus' || !CYPRUS_PAGE_PATHS.has(path)) return null;
+  return { name: en ? 'Cyprus' : 'Кипр', href: `${en ? '/en' : ''}/cyprus/` };
+}
+
+/** Единая цепочка крошки страницы «город» / «город × категория»:
+ *  { name, href (относительный; null — звено без ссылки в видимом тексте),
+ *    item (абсолютный URL для BreadcrumbList) }.
+ *  Видимая крошка и JSON-LD строятся из ОДНОГО массива — число звеньев, имена
+ *  и ссылки не расходятся. cityIsLink=false — у хаба город в видимой крошке
+ *  без ссылки (как было до beta 1.27).
+ *  ЗЕРКАЛО (SPA): cityPageBreadcrumb в src/lib/categoryPages.ts. */
+function pageCrumbChain({ path, lang, last, lastItem, cityIsLink = true }) {
+  const en = lang === 'en';
+  const home = `${en ? '/en' : ''}/`;
+  const cityHref = `${en ? '/en' : ''}/${path}/`;
+  const chain = [
+    { name: en ? 'Home' : 'Главная', href: home, item: `${SITE_URL}${home}` },
+  ];
+  const parent = cityParentCrumbOf(path, lang);
+  if (parent) {
+    chain.push({ name: parent.name, href: parent.href, item: `${SITE_URL}${parent.href}` });
+  }
+  chain.push({
+    name: en ? CAT_CITY_NAME_EN[path] : CAT_CITY_CRUMB_RU[path],
+    href: cityIsLink ? cityHref : null,
+    item: `${SITE_URL}${cityHref}`,
+  });
+  chain.push({ name: last, href: null, item: lastItem });
+  return chain;
+}
+
+/** Видимая крошка из цепочки pageCrumbChain (ссылки относительные, как раньше) */
+function crumbNavHtml(chain, aria) {
+  const sep = ' <span aria-hidden="true">›</span> ';
+  const parts = chain.map((c) =>
+    c.href ? `<a href="${esc(c.href)}">${esc(c.name)}</a>` : `<span>${esc(c.name)}</span>`,
+  );
+  return [
+    `  <nav aria-label="${esc(aria)}">`,
+    `    <p>${parts.join(sep)}</p>`,
+    '  </nav>',
+  ].join('\n');
+}
+
+/** BreadcrumbList из той же цепочки: item — абсолютный URL звена */
+function crumbLdItems(chain) {
+  return chain.map((c, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: c.name,
+    item: c.item,
+  }));
+}
+
 function citySeoHtml(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs = []) {
   const faq = seo.faq
     .map(
@@ -2195,15 +2256,21 @@ function citySeoHtml(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs = 
         `    <details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`,
     )
     .join('\n');
-  const cityName = CAT_CITY_CRUMB_RU[cityPathKey] || '';
   const lines = [
     '<div id="seo-city-block">',
-    // Видимая крошка «Главная › Кипр › Афиша» — та же иерархия, что
-    // BreadcrumbList в JSON-LD страницы (cityJsonLd), как на посадках
-    // «город × категория» (categorySeoHtml).
-    `  <nav aria-label="${esc(CRUMB_TEXT.ru.aria)}">`,
-    `    <p><a href="/">${esc(CRUMB_TEXT.ru.home)}</a> <span aria-hidden="true">›</span> <span>${esc(cityName)}</span> <span aria-hidden="true">›</span> <span>Афиша</span></p>`,
-    '  </nav>',
+    // Видимая крошка «Главная › Кипр › Никосия › Афиша» (у городов ЮВА короче)
+    // — та же иерархия, что BreadcrumbList в JSON-LD страницы (cityJsonLd):
+    // оба строятся из одного pageCrumbChain.
+    crumbNavHtml(
+      pageCrumbChain({
+        path: cityPathKey,
+        lang: 'ru',
+        last: 'Афиша',
+        lastItem: `${SITE_URL}/${cityPathKey}/`,
+        cityIsLink: false,
+      }),
+      CRUMB_TEXT.ru.aria,
+    ),
     `  <h1>${esc(seo.h1)}</h1>`,
     `  <p>${esc(seo.intro)}</p>`,
     // Свежесть афиши (E-E-A-T): видимая дата обновления на дату сборки.
@@ -2484,14 +2551,20 @@ function citySeoHtmlEn(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs 
         `    <details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`,
     )
     .join('\n');
-  const cityName = CAT_CITY_NAME_EN[cityPathKey] || '';
   const lines = [
     '<div id="seo-city-block">',
-    // Видимая крошка «Home › Cyprus › What's on» — та же иерархия, что
-    // BreadcrumbList в JSON-LD страницы (cityJsonLd).
-    `  <nav aria-label="${esc(CRUMB_TEXT.en.aria)}">`,
-    `    <p><a href="/en/">${esc(CRUMB_TEXT.en.home)}</a> <span aria-hidden="true">›</span> <span>${esc(cityName)}</span> <span aria-hidden="true">›</span> <span>What's on</span></p>`,
-    '  </nav>',
+    // Видимая крошка «Home › Cyprus › Nicosia › What's on» — та же иерархия,
+    // что BreadcrumbList в JSON-LD страницы (cityJsonLd): общий pageCrumbChain.
+    crumbNavHtml(
+      pageCrumbChain({
+        path: cityPathKey,
+        lang: 'en',
+        last: "What's on",
+        lastItem: `${SITE_URL}/en/${cityPathKey}/`,
+        cityIsLink: false,
+      }),
+      CRUMB_TEXT.en.aria,
+    ),
     `  <h1>${esc(seo.h1)}</h1>`,
     `  <p>${esc(seo.intro)}</p>`,
     `  <p class="seo-updated">Updated: <time datetime="${TODAY_ISO}">${enDate(TODAY_ISO)}</time></p>`,
@@ -2623,16 +2696,15 @@ function cityJsonLd(seo, evs, path, lang) {
   }
   graph.push({
     '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: en ? 'Home' : 'Главная',
-        item: `${SITE_URL}${en ? '/en' : ''}/`,
-      },
-      { '@type': 'ListItem', position: 2, name: cityName, item: url },
-      { '@type': 'ListItem', position: 3, name: en ? "What's on" : 'Афиша', item: url },
-    ],
+    itemListElement: crumbLdItems(
+      pageCrumbChain({
+        path,
+        lang,
+        last: en ? "What's on" : 'Афиша',
+        lastItem: url,
+        cityIsLink: false,
+      }),
+    ),
   });
   if (seo?.faq?.length) {
     graph.push({
@@ -5146,18 +5218,24 @@ function categorySeoHtml(cell, lang, cells) {
   const { path, cat, items } = cell;
   const f = catCellFacts(items, lang);
   const txt = CRUMB_TEXT[en ? 'en' : 'ru'];
-  const cityName = en ? CAT_CITY_NAME_EN[path] : CAT_CITY_CRUMB_RU[path];
   const catName = en ? cat.name_en : cat.name_ru;
-  const homeHref = en ? '/en/' : '/';
-  const cityHref = `${en ? '/en' : ''}/${path}/`;
   const faq = categoryFaq(cat, path, lang, f)
     .map((q) => `    <details><summary>${esc(q.q)}</summary><p>${esc(q.a)}</p></details>`)
     .join('\n');
   const lines = [
     '<div id="seo-category-block">',
-    `  <nav aria-label="${esc(txt.aria)}">`,
-    `    <p><a href="${esc(homeHref)}">${esc(txt.home)}</a> <span aria-hidden="true">›</span> <a href="${esc(cityHref)}">${esc(cityName)}</a> <span aria-hidden="true">›</span> <span>${esc(catName)}</span></p>`,
-    '  </nav>',
+    // Видимая крошка «Главная › Кипр › Никосия › Киноклуб» (у городов ЮВА
+    // короче) — та же иерархия, что BreadcrumbList в JSON-LD (categoryJsonLd):
+    // оба строятся из одного pageCrumbChain.
+    crumbNavHtml(
+      pageCrumbChain({
+        path,
+        lang,
+        last: catName,
+        lastItem: `${SITE_URL}${en ? '/en' : ''}/${path}/${cat.id}/`,
+      }),
+      txt.aria,
+    ),
     `  <h1>${esc(categoryH1(cat, path, lang))}</h1>`,
     `  <p>${esc(categoryIntro(cat, path, lang, f))}</p>`,
     `  <p class="seo-updated">${
@@ -5269,9 +5347,7 @@ function categoryJsonLd(cell, lang) {
   const en = lang === 'en';
   const { path, cat, items } = cell;
   const url = `${SITE_URL}${en ? '/en' : ''}/${path}/${cat.id}/`;
-  const cityName = en ? CAT_CITY_NAME_EN[path] : CAT_CITY_CRUMB_RU[path];
   const catName = en ? cat.name_en : cat.name_ru;
-  const homeName = en ? 'Home' : 'Главная';
   return {
     '@context': 'https://schema.org',
     '@graph': [
@@ -5306,16 +5382,9 @@ function categoryJsonLd(cell, lang) {
       },
       {
         '@type': 'BreadcrumbList',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: homeName, item: `${SITE_URL}${en ? '/en' : ''}/` },
-          {
-            '@type': 'ListItem',
-            position: 2,
-            name: cityName,
-            item: `${SITE_URL}${en ? '/en' : ''}/${path}/`,
-          },
-          { '@type': 'ListItem', position: 3, name: catName, item: url },
-        ],
+        itemListElement: crumbLdItems(
+          pageCrumbChain({ path, lang, last: catName, lastItem: url }),
+        ),
       },
     ],
   };
