@@ -223,6 +223,17 @@ function detectLang(text) {
   return 'en';
 }
 
+// Точка-«СТРАНА»: Cyprus Now при `venue_city: "Cyprus"` отдаёт вместо площадки
+// центроид острова 35.126413,33.429859 — это поле в 15+ км от любого города, и
+// карточка получает пин в пустоте (класс 691–694: Meltemi/Clay & Wine, Sine Volos).
+// Такую точку источником площадки НЕ считаем: пин берём с адреса/площадки, а если
+// геокодер не нашёл — из центра объявленного города.
+const CY_COUNTRY_CENTROID = { lat: 35.126413, lng: 33.429859 };
+function isCountryCentroid(lat, lng, tolDeg = 0.01) {
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return false;
+  return Math.abs(lat - CY_COUNTRY_CENTROID.lat) <= tolDeg && Math.abs(lng - CY_COUNTRY_CENTROID.lng) <= tolDeg;
+}
+
 /** Ближайший крупный город по координатам — когда площадка названа незнакомо */
 function nearestCity(lat, lng) {
   let best = null;
@@ -570,6 +581,16 @@ async function buildRow(src) {
     '';
   let lat = src.lat;
   let lng = src.lng;
+  // Источник отдал центроид острова вместо площадки (CN при venue_city «Cyprus») —
+  // такой пин выбрасываем и ищем площадку по адресу; если не нашлась, ниже сработает
+  // фолбэк на центр объявленного города (класс 691–694, карточка не стоит в поле).
+  if (isCountryCentroid(lat, lng)) {
+    console.log(
+      `  [пин-страна] источник дал центроид острова ${lat.toFixed(6)},${lng.toFixed(6)} -> ищу площадку/город: ${String(src.title || '').slice(0, 40)}`,
+    );
+    lat = null;
+    lng = null;
+  }
   const { parts: geoParts, streetHint, junkAddress, placeToken } = geoQueryParts(src);
   let geoName = '';
   if ((lat == null || lng == null) && geoParts.length) {
@@ -1230,7 +1251,7 @@ async function main() {
   );
 }
 
-export { jsonLdEvents, canonBzPage, cnCoverBySlug, cnPhotosFor, geoQueryParts, countryFieldFallback, haversineKm };
+export { jsonLdEvents, canonBzPage, cnCoverBySlug, cnPhotosFor, geoQueryParts, countryFieldFallback, haversineKm, isCountryCentroid };
 
 // Модуль можно импортировать (скрипты проверки) — тогда сбор не запускается.
 const isDirectRun = /collect-cyprus\.mjs$/.test((process.argv[1] || '').replace(/\\/g, '/'));
