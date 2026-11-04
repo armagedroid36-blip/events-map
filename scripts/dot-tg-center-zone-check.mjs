@@ -67,6 +67,17 @@ t('точка La Villa = 12.2342796,109.1955115',
   lv1 ? `${lv1.lat},${lv1.lng}` : 'нет');
 t('«La Villa» без адреса тоже находит точку', !!lookup('La Villa, Нячанг'));
 
+// 6b. CCCP Cafe (Нячанг, Tô Hiến Thành): у сети два филиала, словарь обязан
+//     различать их — иначе пин клуба снова уедет на центровую константу/чужой филиал.
+const cc1 = lookup('CCCP Cafe, Нячанг');
+t('адрес «CCCP Cafe» находит точку клуба', !!cc1, JSON.stringify(cc1));
+t('точка CCCP Cafe = 12.23997,109.1922089',
+  cc1 && Math.abs(cc1.lat - 12.23997) < 1e-6 && Math.abs(cc1.lng - 109.1922089) < 1e-6,
+  cc1 ? `${cc1.lat},${cc1.lng}` : 'нет');
+const cc2 = lookup('CCCP COFFEE HỒNG BÀNG, 112 Đ. Hồng Bàng, Нячанг');
+t('филиал «CCCP COFFEE HỒNG BÀNG» НЕ попадает на точку клуба',
+  !cc2 || Math.abs(cc2.lat - 12.23997) > 1e-6, cc2 ? `${cc2.lat},${cc2.lng}` : 'нет');
+
 // 7. Порядок в geocode: словарь обязан проверяться ДО вариантов Nominatim,
 //    иначе геокодер перебивает подтверждённую точку (кейс 705).
 const gStart = src.indexOf('async function geocode(');
