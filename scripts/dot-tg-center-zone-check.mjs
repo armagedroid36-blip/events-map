@@ -58,5 +58,22 @@ t('«Prime Space» тоже находит точку', !!p2);
 t('«Prime and LULU, 23 Tháng 10» — отдельная площадка',
   !lookup('Prime and LULU, 23 Tháng 10, Нячанг'));
 
+// 6. La Villa (176/3 Hùng Vương, Нячанг): пин одной площадки не должен гулять —
+//    адрес обязан находиться в словаре (Nominatim по имени даёт []).
+const lv1 = lookup('La Villa Art hotel & restaurant, 176/3 Hùng Vương, Нячанг, Вьетнам');
+t('адрес La Villa находит точку дома 176/3 Hùng Vương', !!lv1, JSON.stringify(lv1));
+t('точка La Villa = 12.2342796,109.1955115',
+  lv1 && Math.abs(lv1.lat - 12.2342796) < 1e-6 && Math.abs(lv1.lng - 109.1955115) < 1e-6,
+  lv1 ? `${lv1.lat},${lv1.lng}` : 'нет');
+t('«La Villa» без адреса тоже находит точку', !!lookup('La Villa, Нячанг'));
+
+// 7. Порядок в geocode: словарь обязан проверяться ДО вариантов Nominatim,
+//    иначе геокодер перебивает подтверждённую точку (кейс 705).
+const gStart = src.indexOf('async function geocode(');
+const gBody = gStart >= 0 ? src.slice(gStart, gStart + 1500) : '';
+const iDict = gBody.indexOf('placeCoords(address)');
+const iNom = gBody.indexOf('await nominatim(');
+t('geocode зовёт словарь раньше Nominatim', iDict > 0 && iNom > iDict, `dict@${iDict} nom@${iNom}`);
+
 console.log(`\n${fail === 0 ? 'ВСЕ ОК' : 'ЕСТЬ ОШИБКИ'}: ${ok}/${ok + fail}`);
 process.exit(fail === 0 ? 0 : 1);

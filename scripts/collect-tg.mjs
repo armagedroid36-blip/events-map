@@ -461,6 +461,12 @@ async function geocode(address, city, country, rejectNear) {
   if (!address) return null;
   // Мусор из Google-ссылок («..., street, ...») ломает поиск Nominatim
   address = address.replace(/,?\s*street\s*,?/gi, ', ').trim();
+  // 0) Словарь подтверждённых вручную мест — ДО геокодера. Иначе Nominatim по
+  //    вариантам адреса («La Villa Art hotel & restaurant, 176/3 Hùng Vương»)
+  //    отдаёт произвольную улицу, и пин одной площадки гуляет по прогонам
+  //    (кейс 705: у La Villa в истории четыре разных точки).
+  const dictHit = placeCoords(address);
+  if (dictHit) return dictHit;
   const parts = address.split(',').map((s) => s.trim()).filter(Boolean);
   const variants = [address];
   if (parts.length > 2) {
@@ -478,11 +484,6 @@ async function geocode(address, city, country, rejectNear) {
       const r = await nominatim(qs, rejectNear);
       if (r) return r;
     }
-  }
-  // 1) Словарь известных мест (которых нет в OSM, координаты проверены вручную)
-  const low = address.toLowerCase();
-  for (const p of PLACE_COORDS) {
-    if (low.includes(p.key)) return { lat: p.lat, lng: p.lng };
   }
   // 2) Поиск по названию: «кафе рядом с Океанус (север)» → «Океанус Nha Trang»
   const nameWords = address
@@ -556,7 +557,25 @@ const PLACE_COORDS = [
   { key: 'm-bar sushi', lat: 12.2375614, lng: 109.1958739 },
   { key: '16 tôn đản', lat: 12.2375614, lng: 109.1958739 },
   { key: '16 ton dan', lat: 12.2375614, lng: 109.1958739 },
+  // La Villa Art hotel & restaurant, 176/3 Hùng Vương (Нячанг). Nominatim по имени
+  // точку не даёт (`[]`), а по вариантам адреса отдаёт чужие улицы (Song Hào,
+  // Lương Định Của) — в истории адреса четыре разных пина. Точка подтверждена
+  // геокодером по адресу: «176 Hung Vuong» → дом 176/15 Hùng Vương, reverse этой
+  // точки = «176/15, Hung Vuong Street», рядом 176/25.
+  { key: 'la villa', lat: 12.2342796, lng: 109.1955115 },
+  { key: '176/3 hùng vương', lat: 12.2342796, lng: 109.1955115 },
+  { key: '176/3 hung vuong', lat: 12.2342796, lng: 109.1955115 },
 ];
+
+/** Точка из словаря подтверждённых мест по подстроке адреса (или null). */
+export function placeCoords(address) {
+  if (!address) return null;
+  const low = String(address).toLowerCase();
+  for (const p of PLACE_COORDS) {
+    if (low.includes(p.key)) return { lat: p.lat, lng: p.lng };
+  }
+  return null;
+}
 
 /** t.me-ник → удобный формат для нашей базы */
 function normalizeTg(link) {
