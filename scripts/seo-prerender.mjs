@@ -4603,10 +4603,13 @@ const CAT_PLACE_SKIP = [
 /** Первое слово сегмента — признак улицы/адреса, а не названия места */
 const CAT_STREET_WORDS = /^(jl|jalan|gang|gg|duong|đường|street|str|st|улица|ул|проспект|пер)[.\s]/i;
 
-/** Название площадки одного события (та же фильтрация, что у catTopVenues) */
-function catVenueOf(ev) {
+/** Название площадки одного события (та же фильтрация, что у catTopVenues).
+ *  lang='en' — строка с кириллицей отбрасывается: русское название площадки
+ *  или района в видимый текст EN-страницы не попадает (как в SPA). */
+function catVenueOf(ev, lang) {
   const raw = String(ev.address ?? '').split(',')[0]?.trim() ?? '';
   if (!raw) return '';
+  if (lang === 'en' && CYRILLIC_RE.test(raw)) return '';
   if (raw.length < 4 || raw.length > 28) return '';
   if (/\d/.test(raw) || /[:()"°]/.test(raw) || raw.endsWith('.')) return '';
   if (!/[A-Za-z\u0400-\u04FF]/.test(raw)) return '';
@@ -4618,11 +4621,11 @@ function catVenueOf(ev) {
 }
 
 /** Названия площадок из адресов ячейки (до 3, порядок стабильный) */
-function catTopVenues(items) {
+function catTopVenues(items, lang) {
   const out = [];
   const seen = new Set();
   for (const { ev } of items) {
-    const raw = catVenueOf(ev);
+    const raw = catVenueOf(ev, lang);
     if (!raw) continue;
     const low = raw.toLowerCase();
     if (seen.has(low)) continue;
@@ -4677,7 +4680,7 @@ function catCellFacts(items, lang) {
   const upcoming = items.slice(0, 8).map((i) => ({
     name: catShortName(nameOf(i.ev)),
     date: i.date,
-    venue: catVenueOf(i.ev),
+    venue: catVenueOf(i.ev, lang),
   }));
   const lastItem = items[items.length - 1];
   const first = items[0];
@@ -4689,7 +4692,7 @@ function catCellFacts(items, lang) {
     priceFrom: prices.length ? Math.min(...prices) : null,
     priceTo: prices.length ? Math.max(...prices) : null,
     currency: currencies[0] ?? 'USD',
-    venues: catTopVenues(items),
+    venues: catTopVenues(items, lang),
     upcoming,
     lastName: lastItem ? catShortName(nameOf(lastItem.ev)) : '',
     nearestText: first ? catShortText(textOf(first.ev)) : '',

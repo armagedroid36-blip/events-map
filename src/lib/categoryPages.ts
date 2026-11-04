@@ -23,7 +23,7 @@
 // текст у страниц одного города сведён к минимуму (difflib < 60%, проверено на
 // реальном наборе; порядок вариантов должен совпадать со статикой).
 import type { Category, EventItem } from './types';
-import { cityPath } from './address';
+import { cityPath, CYRILLIC_RE } from './address';
 import type { CityPath } from './address';
 
 /** Порог качества: страница ячейки существует, только если в городе
@@ -445,10 +445,12 @@ const CYRILLIC_OR_LATIN = /[A-Za-z\u0400-\u04FF]/;
 /** Название площадки одного события (та же фильтрация, что у topVenues):
  * первый сегмент адреса, похожий на имя места — заглавная и строчная буквы,
  * 4–28 знаков, без цифр/координат/«:»/скобок и служебных слов. Пусто →
- * площадка не определяется. */
-function venueOf(ev: EventItem): string {
+ * площадка не определяется. На EN-странице строка с кириллицей не годится:
+ * русское название площадки/района в видимый текст EN-страницы не попадает. */
+function venueOf(ev: EventItem, lang: 'ru' | 'en'): string {
   const raw = String(ev.address ?? '').split(',')[0]?.trim() ?? '';
   if (!raw) return '';
+  if (lang === 'en' && CYRILLIC_RE.test(raw)) return '';
   if (raw.length < 4 || raw.length > 28) return '';
   if (/\d/.test(raw) || /[:()"°]/.test(raw) || raw.endsWith('.')) return '';
   if (!CYRILLIC_OR_LATIN.test(raw)) return '';
@@ -461,11 +463,11 @@ function venueOf(ev: EventItem): string {
 
 /** Названия площадок из адресов ячейки (до 3, порядок стабильный).
  * Пусто → площадки не упоминаем. */
-function topVenues(items: CellItem[]): string[] {
+function topVenues(items: CellItem[], lang: 'ru' | 'en'): string[] {
   const out: string[] = [];
   const seen = new Set<string>();
   for (const { ev } of items) {
-    const raw = venueOf(ev);
+    const raw = venueOf(ev, lang);
     if (!raw) continue;
     const low = raw.toLowerCase();
     if (seen.has(low)) continue;
@@ -561,7 +563,7 @@ export function cellFacts(items: CellItem[], lang: 'ru' | 'en'): CellFacts {
   const upcoming = items.slice(0, 8).map((i) => ({
     name: shortName(nameOf(i.ev)),
     date: i.date,
-    venue: venueOf(i.ev),
+    venue: venueOf(i.ev, lang),
   }));
   const lastItem = items[items.length - 1];
   const first = items[0];
@@ -573,7 +575,7 @@ export function cellFacts(items: CellItem[], lang: 'ru' | 'en'): CellFacts {
     priceFrom: prices.length ? Math.min(...prices) : null,
     priceTo: prices.length ? Math.max(...prices) : null,
     currency: currencies[0] ?? 'USD',
-    venues: topVenues(items),
+    venues: topVenues(items, lang),
     upcoming,
     lastName: lastItem ? shortName(nameOf(lastItem.ev)) : '',
     nearestText: first ? shortText(textOf(first.ev)) : '',
