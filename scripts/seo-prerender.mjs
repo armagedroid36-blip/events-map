@@ -2914,10 +2914,16 @@ const MIN_SIMILAR = 3;
 // чего они исчезали из пре-рендера и sitemap, а Google Search Console показывал
 // по ним «Не найдено (404)» (~1400 URL). Набор для СТРАНИЦ: активные + все
 // архивные (RPC list_past_events — security definer, читается анонимом, т.к.
-// RLS отдаёт анониму только active, а list_all_events закрыт). В SITEMAP
-// попадают только прошедшие не старше PAST_SITEMAP_MONTHS месяцев: более
-// старые отдают 200, но карту не засоряют.
-const PAST_SITEMAP_MONTHS = 12;
+// RLS отдаёт анониму только active, а list_all_events закрыт).
+//
+// ОКНО АРХИВА (решение владельца 05.11.2026, было 12 месяцев): прошедшие
+// события не старше ARCHIVE_WINDOW_DAYS дней попадают в sitemap И в видимые
+// блоки со ссылками на архив («Прошедшие события: <город>» на городских
+// страницах и добор в «Похожие события»). Более старые страницы по-прежнему
+// ОТДАЮТ 200 (иначе в GSC снова волна «Не найдено (404)»), но выпадают из
+// карты и из этих блоков — чтобы набор ссылок совпадал с набором sitemap.
+// Менять окно здесь — одна правка: другие места читают константу.
+const ARCHIVE_WINDOW_DAYS = 90;
 // Сколько прошедших событий тянем за один запрос (лимит PostgREST — 1000 строк)
 const PAST_PAGE_SIZE = 1000;
 // То же для АКТИВНЫХ: активных событий уже больше 1000, а PostgREST отдаёт
@@ -2937,13 +2943,20 @@ function isPastEvent(ev) {
   return Boolean(iso) && iso < TODAY_ISO;
 }
 
-/** Прошедшее событие старше окна sitemap (или без даты) — страница есть, в карте нет */
-function pastTooOld(ev) {
+/** Начало окна архива (ISO): события, закончившиеся раньше этой даты, в sitemap
+ *  и в видимых блоках со ссылками на архив не публикуются (страницы живут). */
+function archiveCutoffIso() {
+  const cutoff = new Date(`${TODAY_ISO}T00:00:00Z`);
+  cutoff.setUTCDate(cutoff.getUTCDate() - ARCHIVE_WINDOW_DAYS);
+  return cutoff.toISOString().slice(0, 10);
+}
+
+/** Прошедшее событие вне окна архива (старше ARCHIVE_WINDOW_DAYS дней или без
+ *  даты) — страница есть, но в sitemap и в блоках ссылок его нет */
+function pastOutsideArchiveWindow(ev) {
   const iso = eventLastDay(ev);
   if (!iso) return true;
-  const limit = new Date(`${TODAY_ISO}T00:00:00Z`);
-  limit.setUTCMonth(limit.getUTCMonth() - PAST_SITEMAP_MONTHS);
-  return iso < limit.toISOString().slice(0, 10);
+  return iso < archiveCutoffIso();
 }
 
 /**
@@ -5457,7 +5470,7 @@ async function main() {
   const legacyEvents = loadLegacyEvents();
   const allPastLoaded = [...pastEvents, ...legacyEvents];
   console.log(
-    `  прошедших событий: ${pastEvents.length} (+снимков удалённых: ${legacyEvents.length}), вне sitemap по возрасту (>${PAST_SITEMAP_MONTHS} мес): ${allPastLoaded.filter(pastTooOld).length}`,
+    `  прошедших событий: ${pastEvents.length} (+снимков удалённых: ${legacyEvents.length}), вне sitemap и блоков ссылок по возрасту (>${ARCHIVE_WINDOW_DAYS} дн): ${allPastLoaded.filter(pastOutsideArchiveWindow).length}`,
   );
 
   // --- Санитария архива (21.09.2026): тестовые записи и дубли-копии ---
@@ -5653,13 +5666,20 @@ async function main() {
   // и /blog/ перекрываются датой публикации статьи (lastmods.set ниже)
   const lastmods = new Map();
 
+  // Архив В ОКНЕ (ARCHIVE_WINDOW_DAYS) — единственный источник ВИДИМЫХ ссылок
+  // на архивные страницы. Страницы старше окна отдают 200, но ссылок на них в
+  // блоках нет: набор ссылок == набор sitemap (решение владельца 05.11.2026).
+  // Не путать с хронологией архива (chrono) и блоком архивов восстановленных
+  // ячеек: они держат входящие ссылки у старых страниц и работают по всему архиву.
+  const allPastInWindow = allPast.filter((ev) => !pastOutsideArchiveWindow(ev));
+
   // Архив по городам для блока «Прошедшие события» на городских страницах:
-  // 20 самых свежих ОПУБЛИКОВАННЫХ архивных страниц города (RU; для EN —
+  // 20 самых свежих ОПУБЛИКОВАННЫХ архивных страниц города в окне (RU; для EN —
   // только события с EN-версией). Это вход в архив для посетителя и краулера:
   // до 21.09.2026 архив был достижим лишь через sitemap.
   const archiveByCityRu = new Map();
   const archiveByCityEn = new Map();
-  for (const ev of [...allPast].sort((a, b) =>
+  for (const ev of [...allPastInWindow].sort((a, b) =>
     (eventLastDay(b) || '').localeCompare(eventLastDay(a) || ''),
   )) {
     const crumb = cityCrumb(ev.city);
@@ -6128,14 +6148,16 @@ async function main() {
 
   // --- Прошедшие (архивные) события: страница у КАЖДОГО архивного события
   // (иначе GSC снова покажет «Не найдено (404)»), в sitemap — только не старше
-  // PAST_SITEMAP_MONTHS месяцев (ТЗ: более старые отдают 200, но вне карты).
+  // ARCHIVE_WINDOW_DAYS дней (ТЗ: более старые отдают 200, но вне карты, и вне
+  // блоков со ссылками на архив).
   // «Похожие события» берутся из групп АКТИВНЫХ событий — блок ведёт на
   // актуальные страницы; меньше MIN_SIMILAR кандидатов → блока нет.
   mark('страницы активных событий');
   // Группы «город × категория» по АРХИВУ — добор для блока «похожие события»,
   // когда активных соседей меньше MIN_SIMILAR (иначе у архива нет входящих
-  // ссылок: до 21.09.2026 так было у 2626 страниц из 2629).
-  const archiveSimilarGroups = buildSimilarGroups(allPast);
+  // ссылок: до 21.09.2026 так было у 2626 страниц из 2629). Берём только архив
+  // в окне ARCHIVE_WINDOW_DAYS: ссылки из блока обязаны совпадать с sitemap.
+  const archiveSimilarGroups = buildSimilarGroups(allPastInWindow);
   // Хронология по городам и языкам: предыдущее/следующее прошедшее событие —
   // гарантия хотя бы одной входящей ссылки для каждой архивной страницы.
   const chronoRu = archiveChronoIndex(allPast, 'ru');
@@ -6183,7 +6205,8 @@ async function main() {
     pastPathMeta.set(path, metaRu);
     // Страница архивного события не меняется после его даты — это и есть lastmod
     lastmods.set(url, eventLastDay(ev) ?? TODAY_ISO);
-    const inSitemap = !pageOnlyIds.has(String(ev.id).toLowerCase()) && !pastTooOld(ev);
+    const inSitemap =
+      !pageOnlyIds.has(String(ev.id).toLowerCase()) && !pastOutsideArchiveWindow(ev);
     if (inSitemap) {
       locs.push(url);
       pastInSitemap += 1;
