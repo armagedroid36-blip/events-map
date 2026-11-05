@@ -22,9 +22,13 @@ import { cleanEndTime } from './end-time-guard.mjs';
 import { cnDuplicateOf } from './cy-duplicate-pages.mjs';
 import { normWebsite, eventWebsite } from './site-url.mjs';
 import { buildIntervalIndex, coveredByInterval } from './interval-cover.mjs';
+import { buildVillageAggregates, coveredByVillageSeries } from './village-series.mjs';
 // Индекс интервалов живущих карточек: «многодневная карточка накрывает дату
 // кандидата» ⇒ кандидат — копия (класс Leptos/Lefkara, запуск 331).
 let intervalIndex = [];
+// Живые сезонные агрегаты рождественских деревень (класс 687): недельные записи
+// CN «Χριστουγεννιάτικο Χωριό <деревня>» под ними не вставляются.
+let villageAggregates = [];
 
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -526,6 +530,7 @@ async function existingKeys() {
   const rows = data || [];
   const keys = new Set(rows.map((e) => normKey(e.title, e.start_date)));
   intervalIndex = buildIntervalIndex(rows);
+  villageAggregates = buildVillageAggregates(rows);
   // Ссылки на уже обработанные страницы источников: Cyprus.BZ отдаёт страницы
   // по 30+ секунд, поэтому повторно их не скачиваем — каждый запуск продвигается
   // глубже по карте сайта, а не топчется на первых страницах.
@@ -537,7 +542,7 @@ async function existingKeys() {
 }
 
 // ===== Запись события =====
-const stats = { visitcyprus: 0, cyprusnow: 0, cyprusbz: 0, cyprusbzCities: 0, skipped: 0, bzDup: 0, coverDup: 0, errors: 0 };
+const stats = { visitcyprus: 0, cyprusnow: 0, cyprusbz: 0, cyprusbzCities: 0, skipped: 0, bzDup: 0, coverDup: 0, villageDup: 0, errors: 0 };
 
 async function save(row, seen, opts = {}) {
   const key = normKey(row.title, row.start_date);
@@ -556,6 +561,16 @@ async function save(row, seen, opts = {}) {
   if (coveredByInterval(intervalIndex, row, opts)) {
     stats.skipped++;
     stats.coverDup++;
+    return false;
+  }
+  // Недельная запись рождественской деревни под живым сезонным агрегатом
+  // (класс 687, возвращался трижды): агрегат уже показывает сезон целиком,
+  // отдельный выходной — его день, а не новое событие. Сравнение по имени
+  // деревни через транслит, поэтому соседняя деревня того же округа не страдает.
+  if (coveredByVillageSeries(villageAggregates, row)) {
+    console.log(`  [деревня-серия] ${String(row.title).slice(0, 55)} (${row.start_date}) — день сезонного агрегата`);
+    stats.skipped++;
+    stats.villageDup++;
     return false;
   }
   const { error } = DRY_RUN || !db ? { error: null } : await db.from('events').insert(row);
@@ -1247,7 +1262,7 @@ async function main() {
     `Готово: добавлено ${stats.visitcyprus + stats.cyprusnow + stats.cyprusbz + stats.cyprusbzCities} `
     + `(VisitCyprus ${stats.visitcyprus}, Cyprus Now ${stats.cyprusnow}, `
     + `Cyprus.BZ города Востока ${stats.cyprusbzCities}, Cyprus.BZ sitemap ${stats.cyprusbz}), `
-    + `пропущено ${stats.skipped} (из них копий страниц Cyprus.BZ ${stats.bzDup}, копий внутри интервала ${stats.coverDup}), ошибок ${stats.errors}, ${mins} мин.`,
+    + `пропущено ${stats.skipped} (из них копий страниц Cyprus.BZ ${stats.bzDup}, копий внутри интервала ${stats.coverDup}, дней деревень ${stats.villageDup}), ошибок ${stats.errors}, ${mins} мин.`,
   );
 }
 
