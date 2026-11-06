@@ -713,7 +713,7 @@ async function buildRow(src) {
 }
 
 // ===== Источник 1: VisitCyprus (официальный календарь) =====
-async function collectVisitCyprus(seen, budget) {
+async function collectVisitCyprus(seen, budget, websites = new Set()) {
   const base = 'https://www.visitcyprus.com/wp-json/tribe/events/v1/events';
   const deadline = Date.now() + BUDGET.visitcyprus;
   let page = 1;
@@ -739,6 +739,14 @@ async function collectVisitCyprus(seen, budget) {
         stats.skipped++;
         continue;
       }
+      // Страховка по ССЫЛКЕ страницы: VisitCyprus держит старый слаг с годом («…-27-28-2-2026»)
+      // при датах 2027, а правка заголовка карточки (год в названии) ломает ключ title|start_date —
+      // без этой проверки тот же марафон вернулся бы второй карточкой (запуск 753).
+      const pageUrl = eventWebsite(ev.website, ev.url);
+      if (pageUrl && websites.has(String(pageUrl).trim())) {
+        stats.skipped++;
+        continue;
+      }
       const v = ev.venue || {};
       const catNames = (ev.categories || []).map((c) => decodeEntities(c.name || '').toLowerCase());
       const category = catNames.map((n) => VC_CAT[n]).find(Boolean) || 'festival';
@@ -756,7 +764,7 @@ async function collectVisitCyprus(seen, budget) {
         cityEn: v.city || '',
         venue: [v.venue, v.address, v.zip].filter(Boolean).join(', '),
         address: [v.venue, v.address, v.city].filter(Boolean).join(', '),
-        website: eventWebsite(ev.website, ev.url),
+        website: pageUrl,
         photos,
         price: cost.price ?? null,
         currency: cost.currency ?? null,
@@ -1248,7 +1256,7 @@ async function main() {
 
   // VisitCyprus отдаёт небольшой официальный календарь (~30 событий),
   // Cyprus Now — самый насыщенный источник, Cyprus.BZ добирает остаток бюджета.
-  if (want('visitcyprus')) await collectVisitCyprus(seen, Math.min(60, MAX_EVENTS));
+  if (want('visitcyprus')) await collectVisitCyprus(seen, Math.min(60, MAX_EVENTS), websites);
   if (want('cyprusnow')) await collectCyprusNow(seen, Math.min(120, MAX_EVENTS), websites, venues);
   if (want('cyprusbzCities')) {
     await collectCyprusBzCities(seen, Math.min(25, Math.max(0, MAX_EVENTS - stats.visitcyprus - stats.cyprusnow)), bzPages);
