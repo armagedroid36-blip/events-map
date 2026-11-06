@@ -1891,7 +1891,9 @@ function eventJsonLd(ev, url, lang = 'ru', image = null, mode = 'active') {
     name,
     url,
     startDate: ev.start_time ? `${sd}T${ev.start_time}` : sd,
-    eventStatus: 'https://schema.org/EventScheduled',
+    eventStatus: removed
+      ? 'https://schema.org/EventCancelled'
+      : 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
     location: {
       '@type': 'Place',
@@ -2075,9 +2077,18 @@ function renderPage(baseHtml, meta) {
   let out = cleanedBase(baseHtml)
     .replace(/<title>[\s\S]*?<\/title>/i, () => `<title>${esc(meta.title)}</title>`)
     .replace(/<html\s+lang=["'][^"']*["']/i, `<html lang="${lang}"`);
+  // <meta name="robots"> в базовом index.html нет. Чистим на всякий случай:
+  // ровно ОДИН тег robots на страницу (noindex ставим только архивным
+  // страницам вне окна индексируемости — см. archiveIndexable).
+  out = out.replace(/[ \t]*<meta\s+name=["']robots["'][^>]*>\s*/gi, '');
   const lines = [
     `    <meta name="description" content="${esc(meta.description)}" />`,
     `    <link rel="canonical" href="${esc(meta.canonical)}" />`,
+  ];
+  if (meta.noindex) {
+    lines.push(`    <meta name="robots" content="noindex, follow" />`);
+  }
+  lines.push(
     `    <meta property="og:site_name" content="MyPins" />`,
     `    <meta property="og:locale" content="${locale}" />`,
     `    <meta property="og:type" content="website" />`,
@@ -2086,7 +2097,7 @@ function renderPage(baseHtml, meta) {
     `    <meta property="og:url" content="${esc(meta.ogUrl)}" />`,
     `    <meta property="og:image" content="${esc(meta.ogImage)}" />`,
     `    <meta name="twitter:card" content="summary_large_image" />`,
-  ];
+  );
   // Парные страницы: <link rel="alternate" hreflang="ru|en|..."> (взаимные
   // ссылки на версии языка) — перед canonical-тегом, как рекомендует Google.
   for (const h of meta.hreflang ?? []) {
@@ -2924,6 +2935,17 @@ const MIN_SIMILAR = 3;
 // карты и из этих блоков — чтобы набор ссылок совпадал с набором sitemap.
 // Менять окно здесь — одна правка: другие места читают константу.
 const ARCHIVE_WINDOW_DAYS = 90;
+
+// Окно ИНДЕКСИРУЕМОСТИ архива (решение 06.11.2026): прошедшее событие остаётся
+// в индексе и в sitemap, пока с его последнего дня прошло не больше N дней.
+// Более старые страницы ОТДАЮТ 200 (иначе в GSC снова «Не найдено (404)»), но
+// получают noindex,follow и выпадают из карты: тонкий архив (~1 000 знаков,
+// ~10 КБ) не должен составлять 80% карты сайта.
+// 0 — индексируется только активное. Окно меняется здесь, другие места читают
+// константу. ЗЕРКАЛО: ARCHIVE_INDEX_WINDOW_DAYS в src/lib/dates.ts (SPA) —
+// менять оба значения одинаково.
+const ARCHIVE_INDEX_WINDOW_DAYS = 14;
+
 // Сколько прошедших событий тянем за один запрос (лимит PostgREST — 1000 строк)
 const PAST_PAGE_SIZE = 1000;
 // То же для АКТИВНЫХ: активных событий уже больше 1000, а PostgREST отдаёт
@@ -2951,12 +2973,29 @@ function archiveCutoffIso() {
   return cutoff.toISOString().slice(0, 10);
 }
 
-/** Прошедшее событие вне окна архива (старше ARCHIVE_WINDOW_DAYS дней или без
- *  даты) — страница есть, но в sitemap и в блоках ссылок его нет */
+/** Прошедшее событие вне окна индексируемости архива: страница 200 + noindex,
+ *  вне sitemap. Оставлено как читаемое имя для логов сборки. */
 function pastOutsideArchiveWindow(ev) {
+  return !archiveIndexable(ev);
+}
+
+/** Начало окна ИНДЕКСИРУЕМОСТИ архива (ISO): последний день события раньше
+ *  этой даты → страница отдаёт 200 с noindex,follow и вне sitemap. */
+function archiveIndexCutoffIso() {
+  const cutoff = new Date(`${TODAY_ISO}T00:00:00Z`);
+  cutoff.setUTCDate(cutoff.getUTCDate() - ARCHIVE_INDEX_WINDOW_DAYS);
+  return cutoff.toISOString().slice(0, 10);
+}
+
+/** Архивная страница остаётся в индексе и в sitemap: событие прошедшее (не
+ *  «снято с афиши» — там дата в будущем, событие не состоится) и его последний
+ *  день не старше ARCHIVE_INDEX_WINDOW_DAYS. Единственное правило отбора для
+ *  sitemap, видимых архивных блоков и noindex — расхождений быть не должно. */
+function archiveIndexable(ev) {
   const iso = eventLastDay(ev);
-  if (!iso) return true;
-  return iso < archiveCutoffIso();
+  if (!iso) return false;
+  if (!isPastEvent(ev)) return false; // «снято с афиши»: дата в будущем
+  return iso >= archiveIndexCutoffIso();
 }
 
 /**
@@ -2975,19 +3014,36 @@ function activeLastmod(ev) {
  * Все архивные события постранично (PostgREST отдаёт максимум 1000 строк).
  * Пустой ответ — не ошибка: архив может быть пуст, но молча терять страницы
  * нельзя, поэтому о размере набора пишем в лог сборки.
+ *
+ * ПОРЯДОК ОБЯЗАТЕЛЕН, иначе сборка «плывёт»: RPC сортирует по
+ * coalesce(end_date, start_date) desc без tie-breaker, а у сотен событий одна
+ * дата — при пагинации строки «прыгают» между страницами (дубли и пропуски).
+ * Дубль id, попавший в rows дважды, dedupeCopies считал группой дублей
+ * (list.length = 2 у ОДНОГО события) и снимал саму запись с публикации:
+ * 06.11.2026 между двумя сборками так «исчезли» 234 архивные страницы.
+ * Поэтому: стабильный порядок + схлопывание повторных id после загрузки.
  */
 async function loadPastEvents(db) {
   const all = [];
+  const seen = new Set();
   for (let from = 0; ; from += PAST_PAGE_SIZE) {
     const { data, error } = await db
       .rpc('list_past_events')
+      .order('end_date', { ascending: false, nullsFirst: false })
+      .order('start_date', { ascending: false })
+      .order('id')
       .range(from, from + PAST_PAGE_SIZE - 1);
     if (error) {
       console.error(`seo-prerender: ошибка list_past_events: ${error.message}`);
       process.exit(1);
     }
     const rows = data ?? [];
-    all.push(...rows);
+    for (const row of rows) {
+      const id = String(row?.id ?? '').toLowerCase();
+      if (!id || seen.has(id)) continue; // повторный id — не «дубль-копия»
+      seen.add(id);
+      all.push(row);
+    }
     if (rows.length < PAST_PAGE_SIZE) break;
   }
   return all;
@@ -4222,6 +4278,9 @@ function eventPageMetaFor(ev, lang, opts) {
   const sibs = [];
   // JSON-LD архивной страницы: прошедшая дата — узла Event нет, архивная с
   // будущей датой («снято с афиши») — Event без offers (см. eventJsonLd mode).
+  // «Снято с афиши» (архивная запись с будущей датой) и архив старше окна
+  // индексируемости: страница отдаёт 200, но noindex,follow (решение 06.11.2026).
+  const noindex = Boolean(past) && !archiveIndexable(ev);
   const mode = past ? (isPastEvent(ev) ? 'past' : 'removed') : 'active';
   if (en) {
     const nameEn = ev.title_en || ev.title || '';
@@ -4248,6 +4307,7 @@ function eventPageMetaFor(ev, lang, opts) {
       ogUrl: url,
       ogImage: image,
       jsonLd: eventJsonLd(ev, url, 'en', image, mode),
+      noindex,
       hreflang: [
         { hreflang: 'en', href: url },
         { hreflang: 'ru', href: enUrl },
@@ -4275,6 +4335,7 @@ function eventPageMetaFor(ev, lang, opts) {
     ogUrl: url,
     ogImage: image,
     jsonLd: eventJsonLd(ev, url, 'ru', image, mode),
+    noindex,
     ...(hasEn
       ? {
           hreflang: [
@@ -5470,7 +5531,7 @@ async function main() {
   const legacyEvents = loadLegacyEvents();
   const allPastLoaded = [...pastEvents, ...legacyEvents];
   console.log(
-    `  прошедших событий: ${pastEvents.length} (+снимков удалённых: ${legacyEvents.length}), вне sitemap и блоков ссылок по возрасту (>${ARCHIVE_WINDOW_DAYS} дн): ${allPastLoaded.filter(pastOutsideArchiveWindow).length}`,
+    `  прошедших событий: ${pastEvents.length} (+снимков удалённых: ${legacyEvents.length}), вне sitemap и блоков ссылок (noindex, >${ARCHIVE_INDEX_WINDOW_DAYS} дн от последнего дня): ${allPastLoaded.filter(pastOutsideArchiveWindow).length}`,
   );
 
   // --- Санитария архива (21.09.2026): тестовые записи и дубли-копии ---
@@ -5516,8 +5577,9 @@ async function main() {
   // отдавать 200. В этот список попадают записи, снятые санитарией с
   // публикации: копии, отброшенные dedupeCopies, и тестовые записи. Их
   // страницы несут плашку «Событие прошло»/«Снято с афиши», self-canonical,
-  // hreflang-пару и не имеют noindex — НО их нет ни в sitemap, ни в видимых
-  // блоках (похожие, хронология, городской архив, профиль организатора):
+  // hreflang-пару; robots — по общему правилу архива (noindex, follow, если
+  // последний день старше ARCHIVE_INDEX_WINDOW_DAYS). Их НЕТ ни в sitemap, ни в
+  // видимых блоках (похожие, хронология, городской архив, профиль организатора):
   // продвигать дубли нельзя, страница существует только ради старого URL.
   const pageOnlyCandidates = [
     ...pastClean.filter((ev) => dupDropped.has(ev.id)),
@@ -5666,12 +5728,13 @@ async function main() {
   // и /blog/ перекрываются датой публикации статьи (lastmods.set ниже)
   const lastmods = new Map();
 
-  // Архив В ОКНЕ (ARCHIVE_WINDOW_DAYS) — единственный источник ВИДИМЫХ ссылок
-  // на архивные страницы. Страницы старше окна отдают 200, но ссылок на них в
-  // блоках нет: набор ссылок == набор sitemap (решение владельца 05.11.2026).
-  // Не путать с хронологией архива (chrono) и блоком архивов восстановленных
-  // ячеек: они держат входящие ссылки у старых страниц и работают по всему архиву.
-  const allPastInWindow = allPast.filter((ev) => !pastOutsideArchiveWindow(ev));
+  // Архив В ОКНЕ ИНДЕКСИРУЕМОСТИ (ARCHIVE_INDEX_WINDOW_DAYS) — единственный
+  // источник ВИДИМЫХ ссылок на архивные страницы (решение 06.11.2026: тонкий
+  // архив не индексируем). Страницы старше окна отдают 200 с noindex,follow, но
+  // ссылок на них в блоках нет: набор ссылок == набор sitemap.
+  // Не путать с хронологией архива (chrono): она держит входящие ссылки у
+  // старых страниц и работает по всему архиву.
+  const allPastInWindow = allPast.filter(archiveIndexable);
 
   // Архив по городам для блока «Прошедшие события» на городских страницах:
   // 20 самых свежих ОПУБЛИКОВАННЫХ архивных страниц города в окне (RU; для EN —
@@ -5702,6 +5765,10 @@ async function main() {
   for (const ev of [...allPast].sort((a, b) =>
     (eventLastDay(b) || '').localeCompare(eventLastDay(a) || ''),
   )) {
+    // Только архив в окне индексируемости: ссылки из видимого блока обязаны
+    // вести на адреса из sitemap (вне окна страницы отдают noindex) — правило
+    // одно с #seo-city-archive и «Похожими событиями».
+    if (!archiveIndexable(ev)) continue;
     const crumb = cityCrumb(ev.city);
     if (!crumb || typeof ev.category_id !== 'string' || !ev.category_id) continue;
     const k = cellKey(crumb.path, ev.category_id);
@@ -5896,6 +5963,11 @@ async function main() {
     }
     const ruTitle = categoryTitle(cell.cat, cell.path, 'ru');
     const ruDescription = categoryDescription(cell.cat, cell.path, 'ru', catCellFacts(cell.items, 'ru'));
+    // Восстановленная ячейка может остаться без событий (активных нет, архив в
+    // окне индексируемости пуст) — страница всё равно публикуется (200 +
+    // sitemap) ради URL из GSC: её держит текстовый SEO-блок категории.
+    // noindex тут НЕ ставим: SPA-гидратация (applyCategoryMeta) robots не
+    // передаёт и сняла бы статический тег — статика и SPA разошлись бы.
     // ItemList = все видимые ссылки страницы: активные события ячейки + (для
     // восстановленной) прошедшие из блока архива — иначе разметка расходится
     // с видимым списком.
@@ -6206,7 +6278,7 @@ async function main() {
     // Страница архивного события не меняется после его даты — это и есть lastmod
     lastmods.set(url, eventLastDay(ev) ?? TODAY_ISO);
     const inSitemap =
-      !pageOnlyIds.has(String(ev.id).toLowerCase()) && !pastOutsideArchiveWindow(ev);
+      !pageOnlyIds.has(String(ev.id).toLowerCase()) && archiveIndexable(ev);
     if (inSitemap) {
       locs.push(url);
       pastInSitemap += 1;

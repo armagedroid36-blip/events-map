@@ -25,7 +25,7 @@
 //                           их в index.html нет)
 import { config } from '../config';
 import { photoUrl } from './api';
-import { todayIso } from './dates';
+import { todayIso, isArchiveIndexable } from './dates';
 import { eventHasEn, eventSlug } from './slug';
 import { nextOccurrenceDate } from './recurrence';
 import { placeCityLabel, placeCityPrefix, placeLabel, cityLocativeRu } from './address';
@@ -261,6 +261,13 @@ interface HeadMeta {
    * en+x-default, а здесь SPA выставляет тот же набор для обеих.
    */
   hreflang: { hreflang: string; href: string }[] | null;
+  /**
+   * Содержимое <meta name="robots">. undefined/null — тега нет (обычные
+   * страницы). Архивная страница вне окна индексируемости получает
+   * 'noindex, follow': статический тег уже стоит в HTML и при гидратации
+   * обновляется, а не удаляется (см. setRobots).
+   */
+  robots?: string | null;
 }
 
 const OG_PROPS = ['og:title', 'og:description', 'og:url', 'og:image'] as const;
@@ -300,6 +307,31 @@ function setMetaDescription(content: string): void {
     document.head.appendChild(el);
   }
   el.content = content;
+}
+
+/**
+ * <meta name="robots"> — ровно один тег на страницу. null/undefined — тег
+ * удаляется (в базовом index.html его нет). На архивной странице вне окна
+ * индексируемости статический тег уже стоит в HTML: при гидратации он не
+ * удаляется, а обновляется тем же значением — noindex переживает SPA-рендер.
+ */
+function setRobots(content: string | null | undefined): void {
+  const els = document.head.querySelectorAll<HTMLMetaElement>('meta[name="robots"]');
+  if (!content) {
+    els.forEach((el) => el.remove());
+    return;
+  }
+  if (els.length > 0) {
+    els.forEach((el, i) => {
+      if (i === 0) el.content = content;
+      else el.remove();
+    });
+    return;
+  }
+  const meta = document.createElement('meta');
+  meta.name = 'robots';
+  meta.content = content;
+  document.head.appendChild(meta);
 }
 
 function setCanonical(href: string | null): void {
@@ -346,6 +378,7 @@ function apply(meta: HeadMeta): void {
   setCanonical(meta.canonical);
   setOgTags(meta.og);
   setHreflang(meta.hreflang ?? null);
+  setRobots(meta.robots ?? null);
 }
 
 /** hreflang-пары пары (главная/город/статья/…): полный набор для обеих версий */
@@ -939,11 +972,18 @@ export function applyEventMeta(ev: EventItem, categories?: Category[]): void {
   // (resolveEventImages: он ДОПОЛНИТЕЛЬНО пробит остальные фото при сборке).
   const image =
     !absolute || isDeadImageHost(absolute) ? `${SITE_URL}/logo.png` : absolute;
+  // Архивная страница вне окна индексируемости (и «снято с афиши» — архивная
+  // запись с будущей датой) — noindex,follow. Правило одно со статикой
+  // (archiveIndexable в seo-prerender.mjs): окно ARCHIVE_INDEX_WINDOW_DAYS.
+  const lastDay = ev.end_date || ev.start_date;
+  const robots =
+    ev.status === 'archived' && !isArchiveIndexable(lastDay) ? 'noindex, follow' : null;
   apply({
     title,
     description: eventDescription,
     lang: useEn ? 'en' : 'ru',
     canonical,
+    robots,
     og: {
       'og:title': title,
       'og:description': eventDescription,

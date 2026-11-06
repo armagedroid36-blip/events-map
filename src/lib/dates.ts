@@ -44,6 +44,38 @@ export function nowHHMM(): string {
 }
 
 /**
+ * Окно индексируемости архива событий (дней): прошедшее событие остаётся в
+ * sitemap и БЕЗ noindex, пока с его последнего дня прошло не больше N дней.
+ * Более старые архивные страницы отдают 200, но получают noindex,follow.
+ * ЗЕРКАЛО: ARCHIVE_INDEX_WINDOW_DAYS в scripts/seo-prerender.mjs (статика) —
+ * менять оба значения одинаково.
+ */
+export const ARCHIVE_INDEX_WINDOW_DAYS = 14;
+
+/** ISO-дата (YYYY-MM-DD) ± N дней */
+export function shiftIsoDays(iso: string, days: number): string {
+  const d = new Date(`${iso.slice(0, 10)}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+/**
+ * Архивная страница ещё индексируется: последний день события в прошлом, но не
+ * старше окна ARCHIVE_INDEX_WINDOW_DAYS. Событие с будущей датой («снято с
+ * афиши») не индексируется никогда. Правило — то же, что archiveIndexable в
+ * scripts/seo-prerender.mjs: статика и SPA обязаны совпадать.
+ */
+export function isArchiveIndexable(
+  lastDay: string | null | undefined,
+  today: string = todayIso(),
+): boolean {
+  const iso = (lastDay ?? '').slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return false;
+  if (iso >= today) return false; // не прошедшее (в т.ч. «снято с афиши»)
+  return iso >= shiftIsoDays(today, -ARCHIVE_INDEX_WINDOW_DAYS);
+}
+
+/**
  * Событие ещё не закончилось (предстоящее).
  * Учитывает время: сегодняшнее событие скрывается, как только прошло
  * (end_time ?? start_time); без времени — событие на весь день.
