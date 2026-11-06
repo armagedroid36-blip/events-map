@@ -580,13 +580,20 @@ const PLACE_COORDS = [
   // 16.0513715,108.247703; та же серия организатора (архивная aac37277, 16.10) стоит на ней.
   { key: 'an thuong by night', lat: 16.0513715, lng: 108.247703 },
   { key: 'lã xuân oai', lat: 16.0513715, lng: 108.247703 },
-  { key: 'la xuan oai', lat: 16.0513715, lng: 108.247703 },
+  // VICE Diner Club (Нячанг, 29 D. Hiến Quyền, Ba Làng). У части постов адрес — просто
+  // «VICE» без улицы: Nominatim по такому имени молчит, и пин падал на центровую константу
+  // Нячанга (12.2388,109.1967) в 5.7 км от клуба. Точка — 17 архивных карточек того же
+  // адреса «VICE Diner Club, 29 D. Hiến Quyền»: 12.2899454,109.2060539. Подстрока `vice`
+  // не годится (матчит «service»), поэтому полное имя + точное совпадение адреса в placeCoords.
+  { key: 'vice diner club', lat: 12.2899454, lng: 109.2060539 },
 ];
 
 /** Точка из словаря подтверждённых мест по подстроке адреса (или null). */
 export function placeCoords(address) {
   if (!address) return null;
-  const low = String(address).toLowerCase();
+  const low = String(address).toLowerCase().trim();
+  // адрес-огрызок «VICE» (без улицы) — точное совпадение, чтобы не ловить «service»
+  if (low === 'vice') return { lat: 12.2899454, lng: 109.2060539 };
   for (const p of PLACE_COORDS) {
     if (low.includes(p.key)) return { lat: p.lat, lng: p.lng };
   }
