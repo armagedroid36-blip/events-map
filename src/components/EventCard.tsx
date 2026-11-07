@@ -24,6 +24,7 @@ import { eventFactsFallback } from '../lib/seo';
 import { nextZ } from '../lib/zindex';
 import { navigate } from '../lib/navigate';
 import { eventHasEn, eventSlug } from '../lib/slug';
+import { previewSrc } from '../lib/previewSrc';
 import { occurrenceDate } from '../lib/series';
 import FavoriteButton from './FavoriteButton';
 import { useOrgProfilePublished } from '../lib/orgProfiles';
@@ -192,6 +193,96 @@ interface Props {
 /** Полный URL фото: загруженные файлы хранятся как пути в хранилище */
 function fullUrl(src: string): string {
   return src.startsWith('http') ? src : photoUrl(src);
+}
+
+/** Сколько ждём превью, прежде чем снять запрос (мс) */
+const PREVIEW_TIMEOUT_MS = 3000;
+
+/** Превью фото в карточке события со сторожем по времени.
+ *
+ *  Внешние CDN (cyprus.bz) умеют отдавать запрос десятками секунд с
+ *  transferSize 0 — такой запрос держит сеть и портит Speed Index/FCP
+ *  страницы события. Если картинка не пришла за PREVIEW_TIMEOUT_MS, src
+ *  снимается (запрос обрывается, а не «висит в фоне»), на его месте
+ *  остаётся рамка тех же 80×112 — макет не прыгает (CLS).
+ *
+ *  Таймер включается не на монтаже, а когда превью реально попало в
+ *  экран: у lazy-картинки ниже первого экрана запрос ещё не начат, и
+ *  сторож на монтаже съел бы её без вины хоста.
+ *
+ *  Позднего onLoad после обрыва быть не может — браузер запрос отменил;
+ *  если картинка успела догрузиться до таймера, состояние остаётся «ок». */
+function PhotoPreview({
+  src,
+  onClick,
+  onError,
+}: {
+  src: string;
+  onClick: () => void;
+  onError: () => void;
+}) {
+  const [phase, setPhase] = useState<'waiting' | 'loading' | 'ok' | 'timeout'>('waiting');
+  const imgRef = useRef<HTMLImageElement | null>(null);
+
+  useEffect(() => {
+    setPhase('waiting');
+    const el = imgRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      setPhase('loading');
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setPhase('loading');
+          io.disconnect();
+        }
+      },
+      { rootMargin: '200px' },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [src]);
+
+  useEffect(() => {
+    if (phase !== 'loading') return;
+    const timer = window.setTimeout(() => {
+      const el = imgRef.current;
+      if (el && el.complete && el.naturalWidth > 0) {
+        setPhase('ok');
+        return;
+      }
+      el?.removeAttribute('src');
+      setPhase('timeout');
+    }, PREVIEW_TIMEOUT_MS);
+    return () => window.clearTimeout(timer);
+  }, [phase]);
+
+  if (phase === 'timeout') {
+    return (
+      <div
+        className="h-20 w-28 shrink-0 rounded-md border border-gray-200 bg-gray-100"
+        aria-hidden="true"
+      />
+    );
+  }
+
+  return (
+    <img
+      ref={imgRef}
+      src={src}
+      alt=""
+      // Грузим ПОСЛЕ первого экрана (lazy + low): полоса превью не должна
+      // конкурировать с LCP-картинкой самой страницы события.
+      loading="lazy"
+      decoding="async"
+      fetchPriority="low"
+      className="h-20 w-28 shrink-0 cursor-pointer rounded-md object-cover hover:opacity-90"
+      onClick={onClick}
+      onLoad={() => setPhase('ok')}
+      onError={onError}
+    />
+  );
 }
 
 /** Карусель на весь экран: галерея со слайдом, пинч-зум */
@@ -833,18 +924,12 @@ export default function EventCard({
         // прыгал вверх на 44 px (CLS 0,055 на странице события).
         <div className="mb-3 flex h-32 items-center gap-1.5 overflow-x-auto pb-1">
           {okPhotos.map((src, i) => (
-            <img
-              key={i}
-              src={fullUrl(src)}
-              alt=""
-              // Превью события с внешних хостов (cyprus.bz и подобные) бывают
-              // ватными и тянутся десятками секунд: грузим их ПОСЛЕ первого
-              // экрана (lazy + low), иначе они держат сеть и портят Speed Index
-              // страницы события (замер: запрос висел 40 с).
-              loading="lazy"
-              decoding="async"
-              fetchPriority="low"
-              className="h-20 w-28 shrink-0 cursor-pointer rounded-md object-cover hover:opacity-90"
+            <PhotoPreview
+              key={`${i}:${src}`}
+              // Превью — не больше 224×224 (см. lib/previewSrc): исходный
+              // URL с w=516/688/800 весит в разы больше слота 112 px, а у
+              // внешних CDN такие запросы висят десятками секунд.
+              src={previewSrc(fullUrl(src))}
               onClick={() => setLightbox(i)}
               onError={() =>
                 setBrokenPhotos((prev) => {

@@ -22,7 +22,22 @@ export const config = {
   demoMode: false,
 
   // Версия сборки — показывается в шапке мелким текстом для сверки
-  buildVersion: 'beta 1.28',
+  buildVersion: 'beta 1.29',
+
+  // Префикс «превью» карточки события. Превью рисуется в слоте 80×112 CSS-px,
+  // но src берётся из БД как есть: у внешних CDN (cyprus.bz и подобные) там
+  // стоит ?w=516/688/800 — то есть одно и то же фото грузится три раза в
+  // полный размер, а resize-сервис на нестандартных размерах висит десятками
+  // секунд (замер: 38–40 с, transferSize 0) и рушит Speed Index/FCP страницы
+  // события. Для хостов из previewResizeHosts превью запрашивается квадратом
+  // previewThumbSize (224 = 112 CSS-px × DPR 2) с сохранением прочих
+  // параметров. Хост без параметра w не переписывается; signed-URL, где w
+  // входит в подпись, в список не добавлять.
+  previewResizeHosts: String(import.meta.env.VITE_PREVIEW_RESIZE_HOSTS ?? 'cyprus.bz')
+    .split(',')
+    .map((h: string) => h.trim().toLowerCase())
+    .filter(Boolean),
+  previewThumbSize: 224,
 
   // Push-уведомления: ПУБЛИЧНЫЙ VAPID-ключ (приватный — в GitHub secrets,
   // VAPID_PRIVATE_KEY; рассылка — scripts/notify-push.mjs в GHA)
