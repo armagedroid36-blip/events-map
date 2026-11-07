@@ -81,12 +81,36 @@ export const CN_DUPLICATE_SLUGS = new Map([
         'JSON-LD той же даты 19:30+02:00, но venue «Eleftheria Square» (фолбэк)',
     },
   ],
+  [
+    // Класс «две страницы bz на одно событие» (07.11.2026): 5-я Международная
+    // книжная выставка Лимассола 20–22.11.2026 09:00 площадки Carob Mills
+    // (Χαρουπόμυλος Λανίτη, 34.6722241,33.040837). Английская страница /event/3440
+    // уже собрана карточкой 70d66ba6; русская /ru/event/3c2f — то же событие под
+    // переводным названием, пин в 5 км от площадки (собранная по ней карточка
+    // 04117c52 архивирована как дубль).
+    '5i-diethnis-ekthesi-vivliou-lemesou-2026',
+    {
+      keep: 'https://cyprus.bz/event/3440/international-book-fair-2026',
+      why:
+        'одна 5-я Международная книжная выставка Лимассола: обе страницы bz дают ' +
+        '20–22.11.2026 с 09:00 и площадку Carob Mills Cultural Centre (Лимасол); ' +
+        'русская /ru/event/3c2f — перевод названия, пин 34.7100,33.0006 в 5 км от ' +
+        'точки площадки канона 34.6722241,33.040837',
+    },
+  ],
 ]);
 
 // Принимает ссылку страницы или слаг, возвращает запись о дубле либо null.
 export function cnDuplicateOf(pageUrlOrSlug) {
   const raw = String(pageUrlOrSlug || '').trim();
   if (!raw) return null;
-  const slug = raw.replace(/^https?:\/\/[^/]+\/event\//, '').replace(/[/?#].*$/, '');
+  // Префикс языка (`/ru/`, `/en/`) — часть адресов cyprus.bz, а у bz в пути два
+  // сегмента (`/event/<id>/<слаг>`): без среза префикса и без взятия ПОСЛЕДНЕГО
+  // сегмента список дублей молча не срабатывал на bz-страницах.
+  const rest = raw
+    .replace(/^https?:\/\/[^/]+\/(?:ru\/|en\/)?event\//, '')
+    .replace(/[?#].*$/, '');
+  const parts = rest.split('/').filter(Boolean);
+  const slug = parts.length ? parts[parts.length - 1] : '';
   return CN_DUPLICATE_SLUGS.get(slug) || null;
 }
