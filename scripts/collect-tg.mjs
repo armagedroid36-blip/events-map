@@ -586,6 +586,13 @@ const PLACE_COORDS = [
   // адреса «VICE Diner Club, 29 D. Hiến Quyền»: 12.2899454,109.2060539. Подстрока `vice`
   // не годится (матчит «service»), поэтому полное имя + точное совпадение адреса в placeCoords.
   { key: 'vice diner club', lat: 12.2899454, lng: 109.2060539 },
+  // Samurai Sushi and BBQ (Нячанг). В адресе поста только имя и «N28 Doan 26», Nominatim
+  // по имени с боксом города даёт ресторан «Sushi Samurai», Nguyễn Thiện Thuật, Phước Hòa
+  // 12.2380954,109.1937513 — иначе пин падает на центровую константу Нячанга.
+  { key: 'samurai sushi', lat: 12.2380954, lng: 109.1937513 },
+  // Nha Trang Center (Нячанг, Trần Phú) — торговый центр как адрес встречи; OSM-объект
+  // «Nha Trang Center», Trần Phú, Phước Hòa 12.247757,109.1963298 (остановка у входа).
+  { key: 'nha trang center', lat: 12.247757, lng: 109.1963298 },
 ];
 
 /** Точка из словаря подтверждённых мест по подстроке адреса (или null). */
