@@ -117,3 +117,27 @@ export function eventSlug(
   const s = slugifyRaw(title);
   return slugHasLatin(title) ? s : `event-${String(ev?.id ?? '').slice(0, 8)}`;
 }
+
+/** Внутренний адрес страницы события на языке контента — ОДНО правило на
+ *  статику (scripts/seo-prerender.mjs) и SPA (src/pages/Blog.tsx):
+ *
+ *   - RU → /event/<id>/<slug_ru>/;
+ *   - EN, когда у события есть английская версия (eventHasEn) →
+ *     /en/event/<id>/<slug_en>/;
+ *   - EN, а английской версии нет → null: вызывающий оставляет исходный
+ *     (RU) адрес. Страницы /en/event/… для такого события не существует,
+ *     и ссылку ломать нельзя.
+ *
+ *  Слэш на конце обязателен: canonical, sitemap и hreflang страниц событий
+ *  со слэшем, а без него GitHub Pages отдаёт 301. */
+export function eventPageHref(
+  ev: EventSlugSource | null | undefined,
+  lang: PageLang,
+): string | null {
+  const id = String(ev?.id ?? '').trim().toLowerCase();
+  if (!id) return null;
+  if (lang === 'en') {
+    return eventHasEn(ev) ? `/en/event/${id}/${eventSlug(ev, 'en')}/` : null;
+  }
+  return `/event/${id}/${eventSlug(ev, 'ru')}/`;
+}

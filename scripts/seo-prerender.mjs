@@ -92,7 +92,7 @@ if (!SUPABASE_URL || !ANON_KEY) {
 // оригинала (греческий и т.п.) в URL не попадает; самодельный греческий
 // транслит не нужен — таких URL не бывает. Пустой слаг (греческий оригинал
 // без перевода, одни цифры) → `event-<первые 8 символов id>`.
-import { eventHasEn, eventSlug } from '../src/lib/slug.ts';
+import { eventHasEn, eventPageHref, eventSlug } from '../src/lib/slug.ts';
 
 // --- Города: те же три, что в config.quickLocations (src/config.ts:46-50),
 // путь = slugify(labelEn) из src/lib/slug.ts: Bali→bali, Da Nang→da-nang,
@@ -563,6 +563,9 @@ function loadAbout() {
  */
 const deadEventLinks = [];
 
+/** Переписанные ссылки контента на события (было → стало) — для лога сборки */
+const articleLinkRewrites = [];
+
 /** id события из внутренней ссылки /event/<uuid>/… (или /en/event/…); иначе null */
 const EVENT_HREF_RE = /^(?:\/en)?\/event\/([0-9a-f-]{36})\//i;
 
@@ -577,13 +580,16 @@ function eventIdFromHref(href) {
  * пути внутренние (в SPA их перехватывает App.tsx, в статике GitHub Pages
  * отдаёт физическую страницу).
  *
- * ctx = { activeIds, context }: ссылка на событие, id которого нет в активном
- * наборе, рендерится обычным текстом (без <a> — иначе 404 в статике) и
- * попадает в deadEventLinks. Ссылки на города/блог/внешние не проверяются.
+ * ctx = { activeIds, eventsById, lang, context }: ссылка на событие, id
+ * которого нет в активном наборе (list_active_events), рендерится обычным
+ * текстом (без <a>) и попадает в deadEventLinks. Ссылка на ЖИВОЕ событие
+ * переписывается под язык контента (RU → /event/…, EN → /en/event/…, если у
+ * события есть EN-версия) — правило одно со слоем SPA (src/pages/Blog.tsx).
+ * Ссылки на города/блог/внешние не проверяются.
  * Без ctx (activeIds не передан) поведение прежнее — все ссылки как <a>.
  */
 function mdLinksToHtml(text, ctx = {}) {
-  const { activeIds, context } = ctx;
+  const { activeIds, eventsById, context, lang = 'ru' } = ctx;
   const parts = String(text).split(/\[([^\]]+)\]\(([^)]+)\)/);
   let out = esc(parts[0] ?? '');
   // split c захватывающими группами отдаёт [до, label, href, rest, label2, href2, rest2, …] —
@@ -599,7 +605,19 @@ function mdLinksToHtml(text, ctx = {}) {
       out += esc(label) + esc(rest);
       continue;
     }
-    out += `<a href="${esc(href)}">${esc(label)}</a>${esc(rest)}`;
+    // Живое событие: адрес под язык контента (EN-контент без EN-версии
+    // события оставляем на RU-адресе — это рабочий URL, а не 404)
+    let target = href;
+    const ev = evId ? eventsById?.get(evId) : null;
+    if (ev) {
+      // Правило адреса — одно на статику и SPA (src/lib/slug.ts)
+      const rewritten = eventPageHref(ev, lang);
+      if (rewritten && rewritten !== href) {
+        articleLinkRewrites.push({ context: context ?? '-', from: href, to: rewritten });
+        target = rewritten;
+      }
+    }
+    out += `<a href="${esc(target)}">${esc(label)}</a>${esc(rest)}`;
   }
   return out;
 }
@@ -699,7 +717,7 @@ function articleSeoHtml(article, lang = 'ru', ctx = {}) {
       en ? enDate(article.datePublished) : ruDate(article.datePublished),
     )}</time></p>`,
     mapCtaHtml(lang),
-    articleSectionsHtml(sections, ctx),
+    articleSectionsHtml(sections, { ...ctx, lang }),
     mapCtaHtml(lang),
     articleBylineHtml(lang),
     '</div>',
@@ -718,11 +736,12 @@ function articleSeoHtml(article, lang = 'ru', ctx = {}) {
  */
 function forOrganizersSeoHtml(c, lang = 'ru', ctx = {}) {
   const en = lang === 'en';
+  const lctx = { ...ctx, lang };
   const pick = (field, fieldEn) => (en ? c[fieldEn] || c[field] : c[field]);
   const faq = (en ? c.faq_en || c.faq : c.faq ?? [])
     .map(
       (f) =>
-        `  <details><summary>${mdLinksToHtml(f.q, ctx)}</summary><p>${mdLinksToHtml(f.a, ctx)}</p></details>`,
+        `  <details><summary>${mdLinksToHtml(f.q, lctx)}</summary><p>${mdLinksToHtml(f.a, lctx)}</p></details>`,
     )
     .join('\n');
   const finalH2 = pick('final', 'final_en')?.h2 ?? '';
@@ -731,13 +750,13 @@ function forOrganizersSeoHtml(c, lang = 'ru', ctx = {}) {
   const lines = [
     '<div id="seo-b2b-block">',
     `  <h1>${esc(pick('h1', 'h1_en'))}</h1>`,
-    `  <p>${mdLinksToHtml(pick('intro', 'intro_en') ?? '', ctx)}</p>`,
+    `  <p>${mdLinksToHtml(pick('intro', 'intro_en') ?? '', lctx)}</p>`,
     mapCtaHtml(lang),
-    articleSectionsHtml(en ? c.sections_en || c.sections : c.sections, ctx),
+    articleSectionsHtml(en ? c.sections_en || c.sections : c.sections, lctx),
   ];
   if (faq) lines.push(faq);
   lines.push(`  <h2>${esc(finalH2)}</h2>`);
-  lines.push(`  <p>${mdLinksToHtml(finalP, ctx)}</p>`);
+  lines.push(`  <p>${mdLinksToHtml(finalP, lctx)}</p>`);
   lines.push(`  <p><a href="${en ? SITE_URL + '/en/' : '/'}">${cta}</a></p>`);
   // Хаб организаторов: входящие ссылки на /org/<id>/ (пусто — блок не печатается)
   const orgHub = orgHubHtml(lang);
@@ -826,7 +845,7 @@ function aboutSeoHtml(c, lang = 'ru', ctx = {}) {
     '<div id="seo-about-block">',
     `  <h1>${esc(en ? c.h1_en || c.h1 : c.h1)}</h1>`,
     mapCtaHtml(lang),
-    articleSectionsHtml(en ? c.sections_en || c.sections : c.sections, ctx),
+    articleSectionsHtml(en ? c.sections_en || c.sections : c.sections, { ...ctx, lang }),
     '</div>',
     '',
   ].join('\n');
@@ -5691,11 +5710,15 @@ async function main() {
   );
   console.log(`  dist/published-orgs.json: ${PUBLISHED_ORG_IDS.size} профилей`);
 
-  // id событий, у которых ЕСТЬ страница (активные + прошедшие + снимки):
-  // mdLinksToHtml снимает ссылки только на события, которых нет вовсе — ссылка
-  // на архивное событие больше не считается мёртвой (страница у него есть).
-  const activeIds = new Set([...events, ...allPastPages].map((e) => String(e.id).toLowerCase()));
-  const linkCtx = (context) => ({ activeIds, context });
+  // «Живой» набор ссылок из контента (статьи, /about/, /for-organizers/):
+  // РОВНО активные события list_active_events — тот же набор, что грузит SPA
+  // (src/pages/Blog.tsx, api.listEvents). Архивные страницы существуют, но
+  // вести на них из статей нельзя: слои расходились (статика отдавала 5
+  // ссылок, SPA — 2), а deиндексированный архив в тексте выглядит как живое
+  // событие. Ссылка на событие вне набора рендерится текстом (deadEventLinks).
+  const liveEventsById = new Map(events.map((e) => [String(e.id).toLowerCase(), e]));
+  const activeIds = new Set(liveEventsById.keys());
+  const linkCtx = (context) => ({ activeIds, eventsById: liveEventsById, context });
 
   // Картинки событий: og:image и JSON-LD image должны указывать на ЖИВОЕ
   // изображение (мёртвая ссылка = пустое превью при шаринге и Event без
@@ -7084,6 +7107,12 @@ async function main() {
     console.log(`SEO: мёртвая ссылка ${d.href} на странице ${d.context}`);
   }
   console.log(`SEO: битых ссылок на события в контенте: ${deadEventLinks.length}`);
+  // Переписанные ссылки (RU-текст → RU-адрес, EN-текст → EN-адрес события):
+  // печатаем каждую и итог, чтобы расхождение слоёв было видно в логе сборки.
+  for (const r of articleLinkRewrites) {
+    console.log(`SEO: article-link: ${r.context} ${r.from} → ${r.to}`);
+  }
+  console.log(`SEO: article-link: переписано ссылок на события: ${articleLinkRewrites.length}`);
 }
 
 main().catch((e) => {

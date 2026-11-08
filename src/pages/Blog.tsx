@@ -1,8 +1,9 @@
 // Блог MyPins: /blog (BlogIndex) и /blog/<slug> (ArticlePage).
 // Статьи — единый источник src/content/articles.json (его же читает
 // пре-рендер scripts/seo-prerender.mjs — тексты не дублируются). Статьи
-// публикуются на русском (lang ru); интерфейсные подписи страниц — также
-// русские hardcoded-строки (блог RU-only, решение по EN — позже).
+// публикуются на русском (lang ru) и имеют EN-версии (/en/blog/<slug>/:
+// поля *_en в articles.json); интерфейсные подписи страниц — русские
+// hardcoded-строки с EN-ветками по i18n.
 // Мета-теги head ставит сама страница (как Home): при клиентском переходе
 // App-эффект не перебивает — блог-маршруты исключены из applyGenericMeta.
 import { useEffect, useState } from 'react';
@@ -13,7 +14,8 @@ import MapCta from '../components/MapCta';
 import { navigate } from '../lib/navigate';
 import { getApi } from '../lib/api';
 import { applyArticleMeta, applyBlogMeta, applyGenericMeta, enDate, ruDate } from '../lib/seo';
-import type { Article, ArticleSection } from '../lib/types';
+import { eventPageHref } from '../lib/slug';
+import type { Article, ArticleSection, EventItem } from '../lib/types';
 // Каст через unknown: resolveJsonModule выводит точный литеральный тип,
 // прямой as Article[] несовместим (readonly-поля).
 import articlesRaw from '../content/articles.json';
@@ -67,12 +69,21 @@ function eventIdsInSections(sections: ArticleSection[]): Set<string> {
  * document-обработчик App.tsx (navigate, без перезагрузки); внешних ссылок
  * в статьях нет.
  *
- * activeIds: набор активных id событий. Если он передан и id из ссылки
- * /event/<uuid>/… в нём отсутствует (событие заархивировано/удалено в БД) —
- * фраза рендерится обычным текстом без <a>, чтобы не вести на 404.
- * null/undefined (данные ещё не пришли или запрос упал) — прежнее поведение.
+ * eventsById: карта АКТИВНЫХ событий (api.listEvents — тот же набор
+ * list_active_events, что у статики). Если она передана и id из ссылки
+ * /event/<uuid>/… в ней отсутствует (событие архивное/удалено) — фраза
+ * рендерится текстом без <a>: слой SPA не должен вести туда, куда не ведёт
+ * статика. Адрес живого события переписывается под язык статьи тем же
+ * правилом, что в scripts/seo-prerender.mjs (src/lib/slug.ts, eventPageHref):
+ * RU → /event/…, EN с английской версией → /en/event/…, EN без неё —
+ * исходный RU-адрес.
+ * undefined (данные ещё не пришли или запрос упал) — прежнее поведение.
  */
-function renderMd(text: string, activeIds?: Set<string> | null): ReactNode[] {
+function renderMd(
+  text: string,
+  eventsById?: Map<string, EventItem> | null,
+  lang: 'ru' | 'en' = 'ru',
+): ReactNode[] {
   const nodes: ReactNode[] = [];
   let last = 0;
   let key = 0;
@@ -80,14 +91,17 @@ function renderMd(text: string, activeIds?: Set<string> | null): ReactNode[] {
   let m: RegExpExecArray | null;
   while ((m = MD_LINK_RE.exec(text))) {
     if (m.index > last) nodes.push(text.slice(last, m.index));
-    const evId = activeIds ? (EVENT_HREF_RE.exec(m[2])?.[1]?.toLowerCase() ?? null) : null;
-    if (activeIds && evId && !activeIds.has(evId)) {
+    const evId = eventsById ? (EVENT_HREF_RE.exec(m[2])?.[1]?.toLowerCase() ?? null) : null;
+    if (eventsById && evId && !eventsById.has(evId)) {
       nodes.push(m[1]);
     } else {
+      let href = m[2];
+      const ev = evId ? eventsById?.get(evId) : null;
+      if (ev) href = eventPageHref(ev, lang) ?? href;
       nodes.push(
         <a
           key={key++}
-          href={m[2]}
+          href={href}
           className="font-medium text-[#E66343] underline decoration-[#E66343]/40 underline-offset-2 hover:decoration-[#E66343]"
         >
           {m[1]}
@@ -103,10 +117,12 @@ function renderMd(text: string, activeIds?: Set<string> | null): ReactNode[] {
 /** Секции статьи: абзацы/заголовки/списки (тексты дословно из articles.json) */
 function Sections({
   sections,
-  activeIds,
+  eventsById,
+  lang,
 }: {
   sections: ArticleSection[];
-  activeIds?: Set<string> | null;
+  eventsById?: Map<string, EventItem> | null;
+  lang?: 'ru' | 'en';
 }) {
   return (
     <>
@@ -122,14 +138,14 @@ function Sections({
           return (
             <ul key={i} className="mt-3 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-gray-700">
               {s.items.map((item, j) => (
-                <li key={j}>{renderMd(item, activeIds)}</li>
+                <li key={j}>{renderMd(item, eventsById, lang)}</li>
               ))}
             </ul>
           );
         }
         return (
           <p key={i} className="mt-3 text-sm leading-relaxed text-gray-700">
-            {renderMd(s.text, activeIds)}
+            {renderMd(s.text, eventsById, lang)}
           </p>
         );
       })}
@@ -210,10 +226,12 @@ export function ArticlePage({ slug }: { slug: string }) {
       }
     : null;
   // Гард от «мёртвых» ссылок на события: если в секциях есть /event/-ссылки,
-  // один раз берём активные id (api.listEvents, у него кэш 30 с) и передаём
-  // набор в renderMd. Пока данные не пришли или запрос упал — activeIds=null,
-  // ссылки рендерятся как прежде (деградация без регрессий).
-  const [activeIds, setActiveIds] = useState<Set<string> | null>(null);
+  // один раз берём АКТИВНЫЕ события (api.listEvents — тот же набор
+  // list_active_events, что у статики, кэш 30 с) и отдаём карту в renderMd:
+  // ссылка на событие вне набора рендерится текстом, адрес живого события
+  // переписывается под язык статьи. Пока данные не пришли или запрос упал —
+  // eventsById=null, ссылки рендерятся как прежде (деградация без регрессий).
+  const [eventsById, setEventsById] = useState<Map<string, EventItem> | null>(null);
   useEffect(() => {
     const sections = article
       ? en
@@ -226,7 +244,7 @@ export function ArticlePage({ slug }: { slug: string }) {
     getApi()
       .listEvents()
       .then((events) => {
-        if (alive) setActiveIds(new Set(events.map((e) => String(e.id).toLowerCase())));
+        if (alive) setEventsById(new Map(events.map((e) => [String(e.id).toLowerCase(), e])));
       })
       .catch(() => {
         // Список событий недоступен — оставляем ссылки как есть
@@ -266,7 +284,7 @@ export function ArticlePage({ slug }: { slug: string }) {
             событиям на первом экране, не дочитывая статью */}
         <MapCta />
         <div className="mt-4">
-          <Sections sections={view!.sections} activeIds={activeIds} />
+          <Sections sections={view!.sections} eventsById={eventsById} lang={en ? 'en' : 'ru'} />
         </div>
         {/* Повтор кнопки в конце статьи: тот, кто дочитал, тоже уходит на карту */}
         <MapCta className="mt-6" />
