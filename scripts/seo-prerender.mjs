@@ -3054,6 +3054,12 @@ async function loadPastEvents(db) {
       .range(from, from + PAST_PAGE_SIZE - 1);
     if (error) {
       console.error(`seo-prerender: ошибка list_past_events: ${error.message}`);
+      // Тот же аварийный путь: страницы прошедших событий при недоступной БД не
+      // генерируются (пустой набор), но сборка и деплой проходят.
+      if (String(process.env.SEO_SNAPSHOT_FALLBACK || '') === '1') {
+        console.warn('seo-prerender: БД недоступна — страницы прошедших событий пропущены (фолбэк снапшота).');
+        return all;
+      }
       process.exit(1);
     }
     const rows = data ?? [];
@@ -3066,6 +3072,44 @@ async function loadPastEvents(db) {
     if (rows.length < PAST_PAGE_SIZE) break;
   }
   return all;
+}
+
+/**
+ * Аварийный источник активного набора при недоступной БД (402 exceed_egress_quota):
+ * карточки из public/data/events.json. Файл кладёт build-events-snapshot.mjs
+ * (при сбое БД — качает снапшот с https://mypins.site). Включается только
+ * SEO_SNAPSHOT_FALLBACK=1: страницы получаются БЕДНЕЕ живых (в снапшоте нет
+ * description/photos — их дозагрузка ниже просто не сработает), поэтому это
+ * осознанная деградация ради того, чтобы сборка и деплой во время блока
+ * проходили, а карта не опустела.
+ */
+function snapshotFallbackEvents(reason) {
+  if (String(process.env.SEO_SNAPSHOT_FALLBACK || '') !== '1') return null;
+  const file = join(ROOT, 'public/data/events.json');
+  let cards = null;
+  try {
+    const raw = JSON.parse(readFileSync(file, 'utf8'));
+    cards = Array.isArray(raw) ? raw : raw?.cards;
+  } catch {
+    console.error(`seo-prerender: фолбэк снапшота недоступен (${file} не читается) — падаю как раньше.`);
+    return null;
+  }
+  if (!Array.isArray(cards) || cards.length < 50) {
+    console.error(`seo-prerender: фолбэк снапшота отклонён (карточек ${cards?.length ?? 0} < 50).`);
+    return null;
+  }
+  const rows = cards
+    .filter((c) => c && c.id && c.start_date)
+    .map((c) => ({
+      ...c,
+      description: c.description ?? '',
+      description_ru: c.description_ru ?? '',
+      description_en: c.description_en ?? '',
+    }));
+  console.warn(
+    `seo-prerender: БД недоступна (${reason}) — активный набор взят из снапшота: ${rows.length} карточек, английский/описания могут быть пустыми.`
+  );
+  return rows;
 }
 
 /**
@@ -3092,6 +3136,12 @@ async function loadActiveEvents(db) {
       .range(from, from + ACTIVE_PAGE_SIZE - 1);
     if (error) {
       console.error(`seo-prerender: ошибка list_active_events: ${error.message}`);
+      // Аварийный путь (квота egress / недоступная БД): сборка не падает, а берёт
+      // активный набор из снапшота public/data/events.json (его положил
+      // build-events-snapshot.mjs, при сбое БД — прямо с прода). Включается только
+      // явно (SEO_SNAPSHOT_FALLBACK=1), иначе поведение прежнее.
+      const fallback = snapshotFallbackEvents(error.message);
+      if (fallback) return fallback;
       process.exit(1);
     }
     const rows = data ?? [];
