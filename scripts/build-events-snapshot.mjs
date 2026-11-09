@@ -222,7 +222,8 @@ async function main() {
 const PROD_SNAPSHOT_URL = 'https://mypins.site/data/events.json';
 
 async function adoptProdSnapshot(reason) {
-  console.warn(`[snapshot] БД недоступна (${reason}) — беру текущий снапшот с прода`);
+  const why = isQuotaError(reason) ? 'База недоступна по квоте, пропуск' : reason;
+  console.warn(`[snapshot] БД недоступна (${why}) — беру текущий снапшот с прода`);
   const res = await fetch(PROD_SNAPSHOT_URL, {
     headers: { 'User-Agent': 'hermes-dot-events/1.0' },
     signal: AbortSignal.timeout(45_000),
