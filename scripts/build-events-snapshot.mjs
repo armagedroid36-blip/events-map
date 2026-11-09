@@ -209,10 +209,44 @@ async function main() {
   writeCitySnapshots(cards, categories, payload.generated_at);
 }
 
-main().catch((err) => {
-  // Сборку не валим: SPA умеет читать живой RPC, а прошлый снапшот (если есть)
-  // остаётся на месте — публикуем как было лучше, чем не публиковать вовсе.
+/** Аварийный источник снапшота, когда БД недоступна (квота/402/сеть):
+ *  текущий файл с прода. Он отдаётся GitHub Pages (мягкий лимит), проверен
+ *  временем и содержит реальные карточки — это НЕ выдуманные данные. Без него
+ *  деплой статики во время блока квоты публиковал бы сайт без data/events.json
+ *  (файл в .gitignore, в Actions его нет) и карта пустела бы досрочно. */
+const PROD_SNAPSHOT_URL = 'https://mypins.site/data/events.json';
+
+async function adoptProdSnapshot(reason) {
+  console.warn(`[snapshot] БД недоступна (${reason}) — беру текущий снапшот с прода`);
+  const res = await fetch(PROD_SNAPSHOT_URL, {
+    headers: { 'User-Agent': 'hermes-dot-events/1.0' },
+    signal: AbortSignal.timeout(45_000),
+  });
+  if (!res.ok) throw new Error(`прод-снапшот HTTP ${res.status}`);
+  const payload = await res.json();
+  if (!payload || !Array.isArray(payload.cards) || payload.cards.length < 50) {
+    throw new Error(`прод-снапшот подозрителен: карточек ${payload?.cards?.length ?? 'нет'}`);
+  }
+  fs.mkdirSync(OUT_DIR, { recursive: true });
+  fs.writeFileSync(OUT_FILE, JSON.stringify(payload));
+  writeCitySnapshots(payload.cards, Array.isArray(payload.categories) ? payload.categories : [], payload.generated_at);
+  console.log(
+    `[snapshot] взят снапшот прода: ${payload.cards.length} карточек, generated_at ${payload.generated_at} (данные не свежие, но настоящие)`,
+  );
+}
+
+main().catch(async (err) => {
+  // Сборку не валим: прошлый снапшот (если есть) остаётся на месте. Если его
+  // нет (чистый чекаут в Actions) — подкладываем прод-снапшот, иначе деплой
+  // опубликует сайт без данных.
   const had = fs.existsSync(OUT_FILE);
-  console.warn(`[snapshot] ошибка: ${err.message}. ${had ? 'Оставляю прошлый снапшот.' : 'Снапшота нет — сайт пойдёт в живой RPC.'}`);
+  console.warn(`[snapshot] ошибка: ${err.message}. ${had ? 'Оставляю прошлый снапшот.' : 'Снапшота нет.'}`);
+  if (!had) {
+    try {
+      await adoptProdSnapshot(err.message);
+    } catch (fallbackErr) {
+      console.warn(`[snapshot] прод-снапшот не взят: ${fallbackErr.message}. Сайт пойдёт в живой RPC.`);
+    }
+  }
   process.exit(0);
 });
