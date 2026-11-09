@@ -1,4 +1,4 @@
-import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
+import { isQuotaError, isQuotaText, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
 // SEO-пререндер (beta 0.14): после `vite build` генерирует в dist/ физические
 // index.html для /bali, /da-nang, /nha-trang, каждого активного
 // /event/<id>/<slug>, публичных профилей /org/<id>, блога /blog и статей
@@ -1009,6 +1009,13 @@ function absPhoto(p) {
   const local = PHOTO_MAP[s];
   if (local) return `${SITE_URL}/${local}`;
   return /^https?:\/\//i.test(s) ? s : `${SUPABASE_URL}/storage/v1/object/public/photos/${s}`;
+}
+
+/** Текст ошибки для лога сборки: блокировка по квоте — одной строкой, без
+ *  тела ответа PostgREST (иначе в логе появляется простыня про 402). */
+function logErr(err) {
+  const text = String(err?.message ?? err ?? '');
+  return isQuotaError(err) || isQuotaText(text) ? 'База недоступна по квоте, пропуск' : text;
 }
 
 // --- Картинки событий: только ЖИВЫЕ URL в og:image и JSON-LD image ---
@@ -3074,7 +3081,7 @@ async function loadPastEvents(db) {
       .order('id')
       .range(from, from + PAST_PAGE_SIZE - 1);
     if (error) {
-      console.error(`seo-prerender: ошибка list_past_events: ${error.message}`);
+      console.error(`seo-prerender: ошибка list_past_events: ${logErr(error)}`);
       // Тот же аварийный путь: страницы прошедших событий при недоступной БД не
       // генерируются (пустой набор), но сборка и деплой проходят.
       if (String(process.env.SEO_SNAPSHOT_FALLBACK || '') === '1') {
@@ -3128,7 +3135,7 @@ function snapshotFallbackEvents(reason) {
       description_en: c.description_en ?? '',
     }));
   console.warn(
-    `seo-prerender: БД недоступна (${reason}) — активный набор взят из снапшота: ${rows.length} карточек, английский/описания могут быть пустыми.`
+    `seo-prerender: БД недоступна (${logErr(reason)}) — активный набор взят из снапшота: ${rows.length} карточек, английский/описания могут быть пустыми.`
   );
   return rows;
 }
@@ -3156,7 +3163,7 @@ async function loadActiveEvents(db) {
       .order('id', { ascending: true })
       .range(from, from + ACTIVE_PAGE_SIZE - 1);
     if (error) {
-      console.error(`seo-prerender: ошибка list_active_events: ${error.message}`);
+      console.error(`seo-prerender: ошибка list_active_events: ${logErr(error)}`);
       // Аварийный путь (квота egress / недоступная БД): сборка не падает, а берёт
       // активный набор из снапшота public/data/events.json (его положил
       // build-events-snapshot.mjs, при сбое БД — прямо с прода). Включается только
@@ -5308,13 +5315,33 @@ function categoriesBlockTitle(path, lang) {
 
 /** Категории из БД тем же anon-ключом, что RPC. Ошибка сети/прав — страницы
  * категорий просто не генерируются (сборка НЕ падает, как с превью картинок) */
+/** Категории из того же снапшота, что и карточки (public/data/events.json,
+ *  его пишет build-events-snapshot.mjs). Аварийный источник: при блокировке
+ *  базы по квоте страницы «город × категория» не должны пропадать. */
+function snapshotCategories() {
+  try {
+    const raw = JSON.parse(readFileSync(join(ROOT, 'public/data/events.json'), 'utf8'));
+    const cats = Array.isArray(raw?.categories) ? raw.categories : [];
+    return cats.filter((c) => c && typeof c.id === 'string');
+  } catch {
+    return [];
+  }
+}
+
 async function loadCategories(db) {
   try {
     const { data, error } = await db.from('categories').select('*').order('id');
     if (error) throw new Error(error.message);
     return Array.isArray(data) ? data : [];
   } catch (e) {
-    console.warn(`seo-prerender: категории недоступны (${e.message}) — страницы категорий пропущены.`);
+    const fromSnapshot = snapshotCategories();
+    if (fromSnapshot.length) {
+      console.warn(
+        `seo-prerender: категории взяты из снапшота (${fromSnapshot.length}) — база недоступна по квоте.`,
+      );
+      return fromSnapshot;
+    }
+    console.warn(`seo-prerender: категории недоступны (${logErr(e)}) — страницы категорий пропущены.`);
     return [];
   }
 }
@@ -5610,7 +5637,7 @@ async function main() {
       }
     }
     if (fullErr) {
-      console.error(`seo-prerender: дозагрузка полных описаний: ${fullErr.message}`);
+      console.error(`seo-prerender: дозагрузка полных описаний: ${logErr(fullErr)}`);
     }
   }
 
@@ -5716,7 +5743,7 @@ async function main() {
     const { data, error } = await db.rpc('list_public_orgs');
     if (error) {
       console.log(
-        `  list_public_orgs недоступен (${error.message}) — кандидаты только владельцы событий.`,
+        `  list_public_orgs недоступен (${logErr(error)}) — кандидаты только владельцы событий.`,
       );
     } else {
       for (const row of data ?? []) {
@@ -5741,7 +5768,7 @@ async function main() {
       .rpc('get_org_profile', { p_org_id: id })
       .maybeSingle();
     if (error) {
-      console.log(`  /org/${id}: пропущен (${error.message})`);
+      console.log(`  /org/${id}: пропущен (${logErr(error)})`);
       continue;
     }
     const profile = data ?? null;
