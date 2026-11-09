@@ -5947,6 +5947,9 @@ async function main() {
   let pageCategories = 0;
   let pageCategoriesEn = 0;
   let restoredPages = 0;
+  let restoredThin = 0;   // восстановленные thin: noindex, вне sitemap
+  let ruOnlyRestored = 0; // восстановленные RU-only (EN-страницы нет) — 2 self-аннотации
+  let ruOnlyOther = 0;    // прочие RU-only ячейки (EN-событий меньше порога) — 2 self-аннотации
   // EN-адреса RU-only ячеек: у ячейки есть RU-страница, а EN не публикуется
   // (EN-событий меньше MIN_CATEGORY_EVENTS). Такой адрес не попадает ни в
   // sitemap, ни в источники алиасов — ему пишется страница-алиас автоматически.
@@ -5974,10 +5977,14 @@ async function main() {
     const pastItems = restoredOnly
       ? (pastByCell.get(cellKey(cell.path, cell.cat.id)) ?? [])
       : [];
-    if (!hasEnPage && !restoredOnly) {
-      console.warn(
-        `seo-prerender: EN-страница /en/${cell.path}/${cell.cat.id}/ пропущена (EN-событий ${itemsEn.length} < ${MIN_CATEGORY_EVENTS}) — RU-страница без hreflang.`,
-      );
+    // ТОНКАЯ страница: активных + прошедших в блоке меньше порога. Такую
+    // восстановленную ячейку оставляем 200 (адрес пришёл из выдачи — не теряем),
+    // но закрываем от индекса и не кладём в sitemap: контента в ней меньше,
+    // чем требует гейт MIN_CATEGORY_EVENTS.
+    const thin = cell.items.length + pastItems.length < MIN_CATEGORY_EVENTS;
+    if (!hasEnPage) {
+      if (cell.restored) ruOnlyRestored += 1;
+      else ruOnlyOther += 1;
     }
     if (restoredOnly && !cell.items.length && !pastItems.length) {
       console.warn(
@@ -5986,11 +5993,10 @@ async function main() {
     }
     const ruTitle = categoryTitle(cell.cat, cell.path, 'ru');
     const ruDescription = categoryDescription(cell.cat, cell.path, 'ru', catCellFacts(cell.items, 'ru'));
-    // Восстановленная ячейка может остаться без событий (активных нет, архив в
-    // окне индексируемости пуст) — страница всё равно публикуется (200 +
-    // sitemap) ради URL из GSC: её держит текстовый SEO-блок категории.
-    // noindex тут НЕ ставим: SPA-гидратация (applyCategoryMeta) robots не
-    // передаёт и сняла бы статический тег — статика и SPA разошлись бы.
+    // Восстановленная ячейка может остаться тонкой (активных нет, архив в окне
+    // индексируемости пуст) — страницу всё равно пишем и отдаём 200 ради URL из
+    // GSC, но с noindex, follow и БЕЗ sitemap (п. 3 ТЗ beta 1.31). SPA передаёт
+    // то же значение robots в applyCategoryMeta — статика и SPA не расходятся.
     // ItemList = все видимые ссылки страницы: активные события ячейки + (для
     // восстановленной) прошедшие из блока архива — иначе разметка расходится
     // с видимым списком.
@@ -6007,20 +6013,25 @@ async function main() {
       ogUrl: ruUrl,
       ogImage: LOGO_URL,
       jsonLd: categoryJsonLd(ruJsonLdCell, 'ru'),
-      ...(hasEnPage
-        ? {
-            hreflang: [
-              { hreflang: 'ru', href: ruUrl },
-              { hreflang: 'en', href: enUrl },
-              { hreflang: 'x-default', href: enRoot },
-            ],
-          }
-        : {}),
+      // hreflang есть ВСЕГДА: у непарной RU-страницы — две self-аннотации
+      // (ru + x-default на собственный canonical). Индексируемый URL без
+      // аннотаций рядом с парными соседями — дыра в карте языков.
+      hreflang: hasEnPage
+        ? [
+            { hreflang: 'ru', href: ruUrl },
+            { hreflang: 'en', href: enUrl },
+            { hreflang: 'x-default', href: enRoot },
+          ]
+        : [
+            { hreflang: 'ru', href: ruUrl },
+            { hreflang: 'x-default', href: ruUrl },
+          ],
+      noindex: thin,
       bodySeo:
         categorySeoHtml(cell, 'ru', cells) +
         (pastItems.length ? categoryArchiveBlockHtml(cell, 'ru', pastItems) : ''),
     });
-    locs.push(ruUrl);
+    if (!thin) locs.push(ruUrl);
     if (hasEnPage) hreflangPairs.set(ruUrl, enUrl);
     if (restoredOnly) {
       // <lastmod> восстановленной страницы — дата самого свежего события пары
@@ -6032,8 +6043,9 @@ async function main() {
         .at(-1);
       if (newest && newest < TODAY_ISO) lastmods.set(ruUrl, newest);
       restoredPages += 1;
+      if (thin) restoredThin += 1;
       console.log(
-        `  /${cell.path}/${cell.cat.id}/index.html (ВОССТАНОВЛЕНА: активных ${cell.items.length}, прошедших в блоке ${pastItems.length}, lastmod ${lastmods.get(ruUrl) ?? TODAY_ISO})`,
+        `  /${cell.path}/${cell.cat.id}/index.html (ВОССТАНОВЛЕНА${thin ? ', THIN: noindex, вне sitemap' : ''}: активных ${cell.items.length}, прошедших в блоке ${pastItems.length}, lastmod ${lastmods.get(ruUrl) ?? TODAY_ISO})`,
       );
     } else {
       pageCategories += 1;
@@ -6077,6 +6089,9 @@ async function main() {
   }
   console.log(
     `  посадочных «город × категория» (MIN_CATEGORY_EVENTS=${MIN_CATEGORY_EVENTS}): ${pageCategories} RU + ${pageCategoriesEn} EN, восстановленных ${restoredPages} RU, страниц всего: ${locs.length}`,
+  );
+  console.log(
+    `  RU-only восстановленных: ${ruOnlyRestored} (2 аннотации), прочих RU-only: ${ruOnlyOther} (2 аннотации); восстановленных thin (noindex, вне sitemap): ${restoredThin}`,
   );
 
   // События: URL должен совпадать с тем, что строит SPA, —
@@ -7012,9 +7027,16 @@ async function main() {
     if (isEn) {
       ruUrl = [...hreflangPairs.entries()].find(([, v]) => v === u)?.[0] ?? null;
     } else if (!hreflangPairs.has(u)) {
-      return ''; // непарная страница (событие без перевода, org и т.п.)
+      ruUrl = null;
     }
-    if (!ruUrl) return '';
+    if (!ruUrl) {
+      // НЕПАРНАЯ страница (RU-only ячейка, событие без перевода, org и т.п.):
+      // две self-аннотации — язык страницы + x-default на тот же адрес.
+      // Раньше таких <url> в карте было 10 без единой аннотации; инвариант:
+      // у каждого <url> ровно 3 (парные) или ровно 2 (непарные) xhtml:link.
+      const ownLang = isEn ? 'en' : 'ru';
+      return `\n    <xhtml:link rel="alternate" hreflang="${ownLang}" href="${esc(u)}" />\n    <xhtml:link rel="alternate" hreflang="x-default" href="${esc(u)}" />`;
+    }
     const enUrl = isEn ? u : hreflangPairs.get(u);
     const selfRu = `    <xhtml:link rel="alternate" hreflang="ru" href="${esc(ruUrl)}" />\n`;
     const selfEn = `    <xhtml:link rel="alternate" hreflang="en" href="${esc(enUrl)}" />\n`;

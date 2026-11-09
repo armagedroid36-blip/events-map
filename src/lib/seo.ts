@@ -463,6 +463,12 @@ export function applyCategoryMeta(
   category: Category,
   facts: CellFacts,
   hasEn = true,
+  /** 'noindex, follow' — тонкая восстановленная страница (активных + прошедших
+   *  меньше MIN_CATEGORY_EVENTS): статика уже несёт этот тег, SPA обязана его
+   *  сохранить, иначе гидратация снимет noindex. null — обычная страница (тег
+   *  снимается). undefined — решение ещё не принято (архив грузится): оставляем
+   *  статический тег как есть, чтобы noindex не мигал при гидратации. */
+  robots?: string | null,
 ): void {
   const en = isEnPath(window.location.pathname);
   const lang = en ? 'en' : 'ru';
@@ -488,10 +494,12 @@ export function applyCategoryMeta(
       'og:url': canonical,
       'og:image': `${SITE_URL}/logo.png`,
     },
-    // Аннотации только у ПАРНЫХ страниц: EN-версии нет, если EN-событий в
-    // ячейке меньше порога MIN_CATEGORY_EVENTS (в т.ч. у восстановленных
-    // RU-URL, RESTORED_CELLS) — иначе hreflang вёл бы на несуществующий URL.
-    // У алиаса аннотаций нет вовсе.
+    // Аннотации: у парной страницы — полный набор (ru + en + x-default=/en/),
+    // у НЕпарной (EN-версии нет: EN-событий меньше порога, в т.ч. восстановленные
+    // RU-URL из RESTORED_CELLS) — две self-аннотации на собственный canonical
+    // (ru/en + x-default). Индексируемый URL без hreflang рядом с парными
+    // соседями — дыра в языковой карте; статика пишет то же самое.
+    // У алиаса аннотаций нет вовсе (canonical ведёт на чужую страницу).
     hreflang: aliasCanonical
       ? null
       : hasEn
@@ -499,7 +507,17 @@ export function applyCategoryMeta(
             `${SITE_URL}${categoryPageHref(path, category.id, 'ru')}`,
             `${SITE_URL}${categoryPageHref(path, category.id, 'en')}`,
           )
-        : null,
+        : [
+            { hreflang: lang, href: canonical },
+            { hreflang: 'x-default', href: canonical },
+          ],
+    // undefined — архив ячейки ещё грузится: оставляем тег из статики как есть
+    // (иначе noindex мигал бы: сняли при монтировании, вернули после ответа).
+    robots: aliasCanonical
+      ? null
+      : robots === undefined
+        ? (document.head.querySelector<HTMLMetaElement>('meta[name="robots"]')?.content ?? null)
+        : robots,
   });
 }
 

@@ -24,7 +24,7 @@ import { eventHasEn, eventSlug } from '../lib/slug';
 import { seriesSiblings } from '../lib/series';
 import { similarEvents } from '../lib/similar';
 import { addDaysIso, nextOccurrenceDate } from '../lib/recurrence';
-import { formatDate, todayIso } from '../lib/dates';
+import { formatDate, isArchiveIndexable, todayIso } from '../lib/dates';
 import { cityCrumbLabel, cityCrumbLabelLocative, cityPageHref, cityPath } from '../lib/address';
 import type { CityPath } from '../lib/address';
 import { MAP_INTRO_KEY, MOBILE_INTRO_QUERY, HOME_PANEL_QUERY, dropIntroSeoBlocks, hasEventFirstScreen, isMobileIntroActive, removeEventFirstScreen, setHomePanelHidden, wasCategoryPublished } from '../lib/mobileIntro';
@@ -548,21 +548,33 @@ export default function Home({
   /** Прошедшие события ячейки (RPC list_past_cell_events: фильтр по городу и
    *  категории + лимит делает БД — весь архив на страницу не грузим). */
   const [categoryArchive, setCategoryArchive] = useState<EventItem[]>([]);
+  /** Архив ячейки загружен (ответ RPC пришёл, пусть и пустой) — до этого
+   *  момента признак тонкой страницы неизвестен: noindex не ставим, чтобы не
+   *  разойтись со статикой на время ответа. */
+  const [categoryArchiveLoaded, setCategoryArchiveLoaded] = useState(false);
   useEffect(() => {
     if (!restoredOnly || !pageCityPath || !categoryId) {
       setCategoryArchive([]);
+      setCategoryArchiveLoaded(false);
       return;
     }
     let alive = true;
+    setCategoryArchiveLoaded(false);
     getApi()
       .listPastCellEvents(pageCityPath, categoryId)
       .then((rows) => {
-        if (alive) setCategoryArchive(rows);
+        if (alive) {
+          setCategoryArchive(rows);
+          setCategoryArchiveLoaded(true);
+        }
       })
       .catch(() => {
         // Сеть/прав нет — блока прошедших не будет (страница остаётся с h1,
         // интро и FAQ: тексты при count === 0 от данных не зависят)
-        if (alive) setCategoryArchive([]);
+        if (alive) {
+          setCategoryArchive([]);
+          setCategoryArchiveLoaded(true);
+        }
       });
     return () => {
       alive = false;
@@ -577,6 +589,19 @@ export default function Home({
         date: String(ev.end_date || ev.start_date || '').slice(0, 10),
       })),
     [categoryArchive],
+  );
+  /** ТОНКАЯ восстановленная страница (тот же признак, что в пре-рендере):
+   *  активных + прошедших В ОКНЕ ИНДЕКСИРУЕМОСТИ меньше MIN_CATEGORY_EVENTS →
+   *  noindex, follow. Страница остаётся 200 (адрес из выдачи не теряем), но
+   *  ищется только по ссылкам. RPC архива окно не фильтрует — считаем сами
+   *  (isArchiveIndexable), иначе SPA и статика разойдутся на пороге.
+   *  Считаем после ответа архива: до него признак неизвестен. */
+  const categoryThin = Boolean(
+    restoredOnly &&
+      categoryArchiveLoaded &&
+      categoryCellItems.length +
+        categoryArchive.filter((ev) => isArchiveIndexable(ev.end_date || ev.start_date)).length <
+        MIN_CATEGORY_EVENTS,
   );
   /** Категории города, у которых страница РЕАЛЬНО есть (перелинковка hub/spoke:
    *  город → категории): прошла порог MIN_CATEGORY_EVENTS или ячейка
@@ -676,6 +701,11 @@ export default function Home({
           category,
           categoryFacts,
           categoryEnCount >= MIN_CATEGORY_EVENTS,
+          categoryThin
+            ? 'noindex, follow'
+            : restoredOnly && !categoryArchiveLoaded
+              ? undefined // архив грузится — не трогаем статический robots
+              : null,
         );
       } else if (!loading) {
         applyGenericMeta();
@@ -883,7 +913,7 @@ export default function Home({
   useEffect(() => {
     applyCurrentMeta();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [city, eventId, categoryId, category, categoryFacts, categoryPageOk, categoryEnCount, loading]);
+  }, [city, eventId, categoryId, category, categoryFacts, categoryPageOk, categoryEnCount, categoryThin, loading]);
 
   // При размонтировании (смена маршрута) снимаем мету события/города — head
   // доедет до верного состояния эффектами нового маршрута (новый Home/App)
