@@ -79,7 +79,7 @@ export default function HistoryPage() {
               <div key={row.id} className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-3">
                 {firstPhoto ? (
                   <img
-                    src={firstPhoto.startsWith('http') ? firstPhoto : photoUrl(firstPhoto)}
+                    src={photoUrl(firstPhoto)}
                     alt=""
                     className="h-12 w-12 shrink-0 rounded-md object-cover"
                   />

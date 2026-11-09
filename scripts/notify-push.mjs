@@ -1,3 +1,4 @@
+import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
 // Push-уведомления (браузерные подписки). Ежедневно, шаг в notify-subscribers.yml
 // (cron 04:00 UTC), два прохода:
 //   A. НОВЫЕ СОБЫТИЯ: события status='active' за последние 24 часа → всем
@@ -191,6 +192,7 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (isQuotaError(err)) quotaSkip();
   console.error('Ошибка прогона notify-push:', err);
   process.exit(1);
 });

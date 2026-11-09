@@ -1,3 +1,4 @@
+import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
 // Сборщик событий Бали: Балифорум (baliforum.ru) → база Supabase (статус «на модерации»).
 // Запускается по расписанию в GitHub Actions (или вручную).
 // API Балифорума открытый, без ключа. Переменные окружения: SUPABASE_URL, SUPABASE_SERVICE_ROLE.
@@ -509,6 +510,7 @@ async function main() {
 const isDirectRun = process.argv[1] && import.meta.url === `file://${process.argv[1].replace(/\\/g, '/')}`;
 if (isDirectRun && !process.env.COLLECT_BALI_NO_RUN) {
   main().catch((e) => {
+  if (isQuotaError(e)) quotaSkip();
     console.error('Критическая ошибка:', e.message);
     process.exit(1);
   });

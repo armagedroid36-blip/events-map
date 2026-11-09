@@ -1,3 +1,4 @@
+import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
 // Уведомления админу о новых событиях на модерации: Telegram + email.
 // Первый запуск (нет moderation_last_sent) — все события на модерации (до 10),
 // далее — только новые после последней успешной отправки.
@@ -223,6 +224,7 @@ async function main() {
 }
 
 main().catch((e) => {
+  if (isQuotaError(e)) quotaSkip();
   console.error('Критическая ошибка:', e.message);
   process.exit(1);
 });

@@ -1,3 +1,4 @@
+import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
 // SEO-пререндер (beta 0.14): после `vite build` генерирует в dist/ физические
 // index.html для /bali, /da-nang, /nha-trang, каждого активного
 // /event/<id>/<slug>, публичных профилей /org/<id>, блога /blog и статей
@@ -986,10 +987,27 @@ function ldJson(obj) {
   return JSON.stringify(obj).replace(/</g, '\\u003c');
 }
 
-/** photos[i] события: полный http(s)-URL — как есть; путь в bucket → storage-URL */
+/**
+ * Локальные копии фото (Фаза 2): ключ — исходный URL/путь в Storage,
+ * значение — путь от корня сайта. Генерирует scripts/photos-local.mjs.
+ * Свои фото отдаём статикой рядом с сайтом — без egress Supabase.
+ */
+const PHOTO_MAP = (() => {
+  try {
+    return JSON.parse(readFileSync(join(ROOT, 'src/data/photo-map.json'), 'utf8'));
+  } catch {
+    return {};
+  }
+})();
+const LOCAL_PHOTO_PREFIX = `${SITE_URL}/data/photos/`;
+
+/** photos[i] события: полный http(s)-URL — как есть; путь в bucket →
+ *  storage-URL; при наличии локальной копии — статика сайта. */
 function absPhoto(p) {
   const s = String(p ?? '').trim();
   if (!s) return '';
+  const local = PHOTO_MAP[s];
+  if (local) return `${SITE_URL}/${local}`;
   return /^https?:\/\//i.test(s) ? s : `${SUPABASE_URL}/storage/v1/object/public/photos/${s}`;
 }
 
@@ -1086,7 +1104,10 @@ async function resolveEventImages(events) {
   const deadHost = [];
   const toProbe = [];
   for (const url of urls) {
-    if (isDeadImageHost(url)) deadHost.push(url);
+    // Локальная статика сайта: файл уже в сборке, проба не нужна (и не тратит
+    // сеть сборки). Это путь Фазы 2 — основная масса фото.
+    if (url.startsWith(LOCAL_PHOTO_PREFIX)) map.set(url, url);
+    else if (isDeadImageHost(url)) deadHost.push(url);
     else toProbe.push(url);
   }
   for (const url of deadHost) map.set(url, LOGO_URL);
@@ -7188,6 +7209,7 @@ async function main() {
 }
 
 main().catch((e) => {
+  if (isQuotaError(e)) quotaSkip();
   console.error(`seo-prerender: критическая ошибка: ${e.stack || e.message}`);
   process.exit(1);
 });

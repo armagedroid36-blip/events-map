@@ -1,3 +1,4 @@
+import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
 // Сборщик событий Кипра: три источника → база Supabase (статус «на модерации»).
 //   1) VisitCyprus — официальный календарь туристического ведомства (REST API
 //      The Events Calendar: /wp-json/tribe/events/v1/events). Структурированные
@@ -1280,6 +1281,7 @@ export { jsonLdEvents, canonBzPage, cnCoverBySlug, cnPhotosFor, geoQueryParts, c
 const isDirectRun = /collect-cyprus\.mjs$/.test((process.argv[1] || '').replace(/\\/g, '/'));
 if (isDirectRun) {
   main().catch((e) => {
+  if (isQuotaError(e)) quotaSkip();
     console.error('Критическая ошибка:', e.message);
     process.exit(1);
   });

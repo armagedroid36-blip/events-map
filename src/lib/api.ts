@@ -23,6 +23,7 @@ import type {
   EventClickCount,
   GalleryPhoto,
 } from './types';
+import photoMapJson from '../data/photo-map.json';
 import { config } from '../config';
 import type { CityPath } from './address';
 import { DemoApi } from './demo';
@@ -274,9 +275,49 @@ export interface DataApi {
   importEvents(rows: ImportRow[]): Promise<number>;
 }
 
-/** Публичный URL файла в хранилище Supabase */
+/** Карта локальных копий фото: ключ — исходный URL/путь в Storage,
+ *  значение — путь от корня сайта (data/photos/<slug>/cover-800.webp).
+ *  Файл генерирует scripts/photos-local.mjs (Фаза 2: уходим от egress Supabase). */
+const PHOTO_MAP: Record<string, string> = photoMapJson as Record<string, string>;
+const SITE_ORIGIN = (typeof config.siteUrl === 'string' ? config.siteUrl : '').replace(/\/+$/, '');
+
+/** Публичный URL фото.
+ *  Свои фото (bucket `photos`) отдаём статикой рядом с сайтом, если для них
+ *  есть локальная копия; внешние URL (другие хосты) не трогаем — только
+ *  возвращаем как есть. */
 export function photoUrl(path: string): string {
-  return `${config.supabaseUrl}/storage/v1/object/public/photos/${path}`;
+  const src = String(path ?? '').trim();
+  if (!src) return '';
+  // blob:/data: — локальные превью формы, отдаём без изменений
+  if (/^(blob:|data:)/i.test(src)) return src;
+  const local = PHOTO_MAP[src];
+  if (local) return SITE_ORIGIN ? `${SITE_ORIGIN}/${local}` : `/${local}`;
+  if (/^https?:/i.test(src)) return src;
+  return `${config.supabaseUrl}/storage/v1/object/public/photos/${src}`;
+}
+
+/**
+ * Признак «база закрыта по квоте» (HTTP 402, exceed_egress_quota) — это не
+ * ошибка кода, а внешнее ограничение: показываем пустое состояние
+ * «Данные временно недоступны», а не белый экран с исключением.
+ */
+export function isQuotaError(err: unknown): boolean {
+  const e = err as { message?: string; details?: string; code?: string | number } | null;
+  const text = `${e?.message ?? ''} ${e?.details ?? ''} ${e?.code ?? ''} ${String(err ?? '')}`.toLowerCase();
+  return (
+    text.includes('402') ||
+    text.includes('exceed_egress_quota') ||
+    text.includes('egress') ||
+    text.includes('restricted') ||
+    text.includes('quota')
+  );
+}
+
+/** Флаг «живая база недоступна и снапшота нет» — читает Home для пустого
+ *  состояния. Ставится один раз за загрузку страницы. */
+let liveDataUnavailable = false;
+export function isLiveDataUnavailable(): boolean {
+  return liveDataUnavailable;
 }
 
 /**
@@ -296,10 +337,11 @@ class SupabaseApi implements DataApi {
    *  молча терял события с поздними датами (декабрь+): их не было ни в списке,
    *  ни на карте. Пагинация идёт query-параметрами limit/offset (.range()). */
   private static EVENTS_PAGE_SIZE = 1000;
-  /** Снапшот старше этого возраста считаем протухшим и идём в живой RPC:
-   *  CI пересобирает data/events.json дважды в сутки, запас в 36 часов
-   *  перекрывает ночной прогон и даёт страховку от сбоя пайплайна. */
-  private static SNAPSHOT_MAX_AGE_MS = 36 * 60 * 60 * 1000;
+  /** Снапшот старше этого возраста считается старым — но всё равно
+   *  отдаётся: сайт не должен опустеть из-за блокировки базы (402
+   *  exceed_egress_quota). CI пересобирает data/events.json дважды в сутки;
+   *  14 суток — порог предупреждения в консоли, а не отказ от данных. */
+  private static SNAPSHOT_MAX_AGE_MS = 14 * 24 * 60 * 60 * 1000;
   /** Кэш наборов событий по городу ('' — общий список). Страница события
    *  берёт снимок своего города (~50 КБ gzip вместо 187 КБ общего). */
   private eventsCache = new Map<string, { at: number; data: EventItem[] }>();
@@ -353,12 +395,28 @@ class SupabaseApi implements DataApi {
     try {
       events = await this.fetchActiveEvents('list_active_event_cards');
     } catch (err) {
+      // Квота egress (402): данных не будет ни из базы, ни из снапшота —
+      // отдаём пустой набор и флаг для пустого состояния, а не исключение.
+      if (isQuotaError(err)) return this.quotaFallback(cacheKey);
       // Функции ещё нет в базе (миграция не применена) — читаем полный набор
       if (!isMissingFunction(err)) throw err;
-      events = await this.fetchActiveEvents('list_active_events');
+      try {
+        events = await this.fetchActiveEvents('list_active_events');
+      } catch (err2) {
+        if (isQuotaError(err2)) return this.quotaFallback(cacheKey);
+        throw err2;
+      }
     }
     this.eventsCache.set(cacheKey, { at: Date.now(), data: events });
     return events;
+  }
+
+  /** База закрыта по квоте и снапшота нет: пустой список + флаг.
+   *  Кэшируем на 60 с, чтобы карта/лента не долбили 402-эндпоинт. */
+  private quotaFallback(cacheKey: string): EventItem[] {
+    liveDataUnavailable = true;
+    this.eventsCache.set(cacheKey, { at: Date.now() - SupabaseApi.EVENTS_TTL_MS + 60_000, data: [] });
+    return [];
   }
 
   /** Обёртка над fetchSnapshot: одна загрузка на всех, кто её ждёт
@@ -402,7 +460,15 @@ class SupabaseApi implements DataApi {
         categories?: Category[];
       };
       const at = Date.parse(body?.generated_at ?? '');
-      if (!Number.isFinite(at) || Date.now() - at > SupabaseApi.SNAPSHOT_MAX_AGE_MS) return null;
+      // Возраст снапшота больше НЕ отказ: при заблокированной по квоте базе
+      // единственная альтернатива пустому сайту — этот файл с реальными
+      // карточками. Старый снимок отдаём, но предупреждаем в консоли.
+      if (!Number.isFinite(at)) return null;
+      if (Date.now() - at > SupabaseApi.SNAPSHOT_MAX_AGE_MS) {
+        console.warn(
+          `[api] снапшот ${relative} старше 14 суток (${body?.generated_at}) — отдаю как есть, чтобы сайт не опустел`,
+        );
+      }
       // Категории приходят тем же файлом (beta 1.18): раньше это был отдельный
       // запрос к Supabase, и первый рендер карточки события ждал его ~1 с.
       const cats = Array.isArray(body?.categories)
@@ -473,7 +539,12 @@ class SupabaseApi implements DataApi {
     if (pending) return pending;
     const promise = (async () => {
       const { data, error } = await this.db.rpc('get_public_event', { p_id: id });
-      if (error) throw error;
+      if (error) {
+        // Квота egress: без полного объекта карточка соберётся из снапшота
+        // (если событие там есть), страница не падает белым экраном.
+        if (isQuotaError(error)) return null;
+        throw error;
+      }
       const rows = (data ?? []) as EventItem[];
       return rows.length > 0 ? rows[0] : null;
     })();
@@ -556,7 +627,15 @@ class SupabaseApi implements DataApi {
         return this.categoriesFromSnapshot;
       }
       const { data, error } = await this.db.from('categories').select('*').order('id');
-      if (error) throw error;
+      if (error) {
+        // Квота egress: категорий нет — карточки рисуются без подписей,
+        // страница не падает. Категории обычно приходят снапшотом.
+        if (isQuotaError(error)) {
+          liveDataUnavailable = true;
+          return [];
+        }
+        throw error;
+      }
       const cats = (data ?? []) as Category[];
       this.categoriesCache = { at: Date.now(), data: cats };
       return cats;

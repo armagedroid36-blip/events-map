@@ -32,7 +32,7 @@ function igLink(v: string) {
 /** Полный URL аватарки: http-ссылки как есть, пути хранилища через photoUrl */
 function avatarSrc(url: string | null): string | null {
   if (!url) return null;
-  return url.startsWith('http') ? url : photoUrl(url);
+  return photoUrl(url);
 }
 
 /** Иконка человека (заглушка без аватарки и в карточке события) */

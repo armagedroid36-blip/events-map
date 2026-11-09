@@ -1,3 +1,4 @@
+import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
 // IndexNow: оповещает Яндекс и Bing о страницах из dist/sitemap.xml.
 // Запуск после сборки: node scripts/indexnow.mjs
 // Ключ не зашит в код: берём файл <32hex>.txt из dist (он публикуется на сайте,

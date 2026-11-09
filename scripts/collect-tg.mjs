@@ -1,3 +1,4 @@
+import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
 // Сборщик событий из русскоязычных Telegram-каналов афиш (Нячанг, Дананг).
 // Каналы публичные: t.me/s/<username> отдаёт HTML без аккаунта.
 // Поля: название, дата, время, место, адрес, координаты (из goo.gl/maps или геокодом),
@@ -980,6 +981,7 @@ async function main() {
 
 if (process.env.COLLECT_TG_NO_RUN !== '1') {
   main().catch((e) => {
+  if (isQuotaError(e)) quotaSkip();
     console.error('Критическая ошибка:', e.message);
     process.exit(1);
   });

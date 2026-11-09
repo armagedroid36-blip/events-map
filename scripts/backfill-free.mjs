@@ -1,3 +1,4 @@
+import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
 // Backfill «Бесплатно»: у событий с маркерами бесплатности в описании
 // («бесплатн», «вход свободн», «free entry», «свободный») LLM подтверждает
 // free=true → ставим price=0 (карточка показывает «Бесплатно», фильтр
@@ -57,6 +58,7 @@ async function main() {
 }
 
 main().catch((e) => {
+  if (isQuotaError(e)) quotaSkip();
   console.error('Критическая ошибка:', e.message);
   process.exit(1);
 });

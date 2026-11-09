@@ -1,3 +1,4 @@
+import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
 // Самонаполняющийся сборщик театральных событий: обход страниц-источников,
 // разбор через LLM (scripts/theatre-llm.mjs), дозаполнение существующих карточек
 // и вставка новых. Статус новых — «на модерации», source_type='theatre',
@@ -866,6 +867,7 @@ async function main() {
 }
 
 main().catch((e) => {
+  if (isQuotaError(e)) quotaSkip();
   console.error('Критическая ошибка:', e.message);
   process.exit(1);
 });

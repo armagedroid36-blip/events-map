@@ -1,3 +1,4 @@
+import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
 // Проверка целостности dist перед публикацией в gh-pages.
 //
 // Зачем: 28.09.2026 запуск Actions завершился success, но в ветке gh-pages не

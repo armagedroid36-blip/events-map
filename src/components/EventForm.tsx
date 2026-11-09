@@ -335,7 +335,7 @@ export default function EventForm({ categories, onClose, event: eventProp, editE
   const [customLang, setCustomLang] = useState('');
   // Полные http/https-ссылки (из парсера, напр. telegram-cdn) рендерим как есть,
   // относительные пути хранилища — через photoUrl() (supabase-префикс)
-  const fullUrl = (src: string) => (src.startsWith('http') ? src : photoUrl(src));
+  const fullUrl = (src: string) => photoUrl(src);
   // Цена и валюта (price = null → «уточнить у организатора»); донат,
   // бесплатно и «уточнить» — взаимоисключающие
   const [free, setFree] = useState(event ? event.price === 0 : false);

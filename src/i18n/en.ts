@@ -235,6 +235,8 @@ export default {
     showMore: 'Show more',
     empty: 'Nothing found for your request',
     emptyHint: 'Try changing the filters or picking another destination.',
+    unavailable: 'Data is temporarily unavailable',
+    unavailableHint: 'The service is not responding. Try refreshing the page later.',
   },
   card: {
     details: 'Source / Details',

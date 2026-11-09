@@ -1,3 +1,4 @@
+import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
 // Разовая (идемпотентная) дедупликация карточек событий.
 //
 // Дубли появились из-за дефекта existingKeys(): PostgREST отдаёт максимум 1000
@@ -533,6 +534,7 @@ async function main() {
 }
 
 main().catch((e) => {
+  if (isQuotaError(e)) quotaSkip();
   console.error('Ошибка дедупликации:', e.message);
   process.exit(1);
 });

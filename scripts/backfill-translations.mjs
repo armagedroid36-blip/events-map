@@ -1,3 +1,4 @@
+import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
 // Backfill переводов событий (промпт R, п. 2.2): находит события активные и
 // ждущие публикации (moderation, needs_changes), которым нужна вторая языковая
 // версия, и заполняет её через service role. Возобновляемый: повторный запуск
@@ -567,6 +568,7 @@ async function main() {
 const isMain = process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) {
   main().catch((e) => {
+  if (isQuotaError(e)) quotaSkip();
     console.error('Критическая ошибка:', e.message);
     process.exit(1);
   });

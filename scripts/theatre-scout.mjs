@@ -1,3 +1,4 @@
+import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
 // Недельный разведчик новых площадок и афиш для театрального сбора.
 // 1) OSM Overpass: театры, арт-центры, культурные центры в радиусе 25 км от
 //    центров Убуда, Улувату/Нуса-Дуа, Денпасара, Чангу, Дананга, Нячанга.
@@ -621,6 +622,7 @@ export { rejectReason, marketplaceSignals, htmlText };
 
 if (!IMPORT_ONLY) {
   main().catch((e) => {
+  if (isQuotaError(e)) quotaSkip();
     console.error('Критическая ошибка:', e.message);
     process.exit(1);
   });

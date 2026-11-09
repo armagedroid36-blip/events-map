@@ -1,3 +1,4 @@
+import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
 /**
  * Снапшот УДАЛЁННЫХ событий рядом с сайтом: public/data/legacy-events.json
  *

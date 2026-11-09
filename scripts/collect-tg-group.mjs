@@ -1,3 +1,4 @@
+import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
 // Сборщик анонсов из Telegram-ГРУПП (не каналов) через бота Bot API.
 //
 // Зачем отдельный файл: t.me/s/<username> отдаёт ленту только для КАНАЛОВ. У групп
@@ -702,6 +703,7 @@ async function main() {
 }
 
 main().catch((e) => {
+  if (isQuotaError(e)) quotaSkip();
   console.error('Критическая ошибка:', e.message);
   process.exit(1);
 });

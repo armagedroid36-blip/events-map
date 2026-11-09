@@ -192,7 +192,9 @@ interface Props {
 
 /** Полный URL фото: загруженные файлы хранятся как пути в хранилище */
 function fullUrl(src: string): string {
-  return src.startsWith('http') ? src : photoUrl(src);
+  // photoUrl сам пропускает внешние URL как есть и берёт локальную копию,
+  // если фото своё (Фаза 2: без egress Supabase)
+  return photoUrl(src);
 }
 
 /** Сколько ждём превью, прежде чем снять запрос (мс) */

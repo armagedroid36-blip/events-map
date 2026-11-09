@@ -979,11 +979,8 @@ export function applyEventMeta(ev: EventItem, categories?: Category[]): void {
   const eventDescription = facts ? snippet(facts, FACTS_MAX_LEN) : description;
   const canonical = alias ? (useEn && alias.en ? alias.en : alias.ru) : eventUrl(ev, useEn);
   const photo = ev.photos?.[0];
-  const absolute = photo
-    ? photo.startsWith('http')
-      ? photo
-      : photoUrl(photo)
-    : '';
+  // photoUrl: внешние URL как есть, свои фото — локальная статика (если есть копия)
+  const absolute = photo ? photoUrl(photo) : '';
   // og:image события — только живой URL: пустое фото или ссылка мёртвого хоста
   // (DEAD_IMAGE_HOSTS — telesco.pe, ubudcenter.com) → логотип сайта. Остальные
   // фото — как есть (без сетевых проб в браузере); синхронно с пре-рендером
@@ -1125,11 +1122,7 @@ export function applyOrgMeta(profile: OrgProfile): void {
   const enUrl = `${SITE_URL}/en/org/${encodeURIComponent(profile.id)}/`;
   const canonical = en ? enUrl : ruUrl;
   const avatar = (profile.avatar_url ?? '').trim();
-  const image = avatar
-    ? avatar.startsWith('http')
-      ? avatar
-      : photoUrl(avatar)
-    : `${SITE_URL}/logo.png`;
+  const image = avatar ? photoUrl(avatar) : `${SITE_URL}/logo.png`;
   apply({
     title,
     description,

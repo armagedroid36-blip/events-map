@@ -1,3 +1,4 @@
+import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
 // Рассылка подписчикам организаторов о новых событиях (email).
 // Ежедневно (workflow notify-subscribers.yml, cron 04:00 UTC):
 // для каждой подписки ищем активные события организатора, созданные
@@ -126,6 +127,7 @@ async function main() {
 }
 
 main().catch((e) => {
+  if (isQuotaError(e)) quotaSkip();
   console.error('Критическая ошибка:', e.message);
   process.exit(1);
 });

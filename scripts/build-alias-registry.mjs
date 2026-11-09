@@ -1,3 +1,4 @@
+import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
 /**
  * Постоянный реестр страниц-алиасов: public/data/alias-urls.json
  *

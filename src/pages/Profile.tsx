@@ -15,7 +15,7 @@ import type { GalleryPhoto } from '../lib/types';
 /** Полный URL аватарки: http/blob-ссылки как есть, пути хранилища через photoUrl */
 function avatarDisplay(url: string | null): string | null {
   if (!url) return null;
-  return url.startsWith('http') || url.startsWith('blob:') ? url : photoUrl(url);
+  return photoUrl(url);
 }
 
 export default function ProfilePage() {

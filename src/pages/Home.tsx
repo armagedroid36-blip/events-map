@@ -14,7 +14,7 @@ import QuickLocations from '../components/QuickLocations';
 import MobileMapIntro from '../components/MobileMapIntro';
 const EventForm = lazy(() => import('../components/EventForm'));
 import AuthModal from '../components/AuthModal';
-import { getApi } from '../lib/api';
+import { getApi, isLiveDataUnavailable } from '../lib/api';
 import { enablePush, pushSupported, subscriptionData } from '../lib/push';
 import { ruToEn } from '../lib/cities';
 import { eventCountry } from '../lib/countries';
@@ -178,6 +178,9 @@ export default function Home({
   // пуст — берём список из ref (нужен для фактового описания: имя категории).
   const categoriesRef = useRef<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  /** База закрыта по квоте (402) и снапшота нет: пустой набор — не «ничего не
+   *  найдено по фильтрам», а «данные временно недоступны». */
+  const [dataUnavailable, setDataUnavailable] = useState(false);
   // Прямая ссылка /event/<id>/... на событие, которого нет (удалено/скрыто):
   // вместо карты показываем блок «не найдено»
   const [eventNotFound, setEventNotFound] = useState(false);
@@ -407,6 +410,7 @@ export default function Home({
     const api = getApi();
     const [evs, cats] = await Promise.all([api.listEvents(), api.getCategories()]);
     setEvents(evs);
+    setDataUnavailable(isLiveDataUnavailable());
     categoriesRef.current = cats;
     setCategories(cats);
     setLoading(false);
@@ -739,6 +743,7 @@ export default function Home({
       const [evs, cats] = await Promise.all([api.listEvents(citySnap), api.getCategories()]);
       if (!alive) return;
       setEvents(evs);
+      setDataUnavailable(isLiveDataUnavailable());
       categoriesRef.current = cats;
       setCategories(cats);
       setLoading(false);
@@ -1827,6 +1832,18 @@ export default function Home({
         </div>
       )}
 
+      {/* База закрыта по квоте (402) и снапшота нет: пустая карта — это не
+          «ничего не найдено», а временная недоступность данных. Плашка поверх
+          карты, карта и переключатели остаются рабочими. */}
+      {!loading && dataUnavailable && events.length === 0 && (
+        <div className="pointer-events-none absolute inset-x-0 top-1/3 z-[1165] flex -translate-y-1/2 justify-center px-4">
+          <div className="glass max-w-sm rounded-xl px-4 py-3 text-center shadow">
+            <p className="text-sm font-medium text-gray-900">{t('list.unavailable')}</p>
+            <p className="mt-1 text-xs text-gray-500">{t('list.unavailableHint')}</p>
+          </div>
+        </div>
+      )}
+
       {/* Обратная связь поиска: плашка, если по активным фильтрам ничего
           не найдено (лоадера «searching» больше нет — фильтры мгновенные) */}
       {!isDefaultFilters(filters) && visible.length === 0 && (
@@ -1886,7 +1903,9 @@ export default function Home({
           ) : (
             <>
               {onMapEvents.length === 0 && (
-                <p className="py-4 text-center text-sm text-gray-500">{t('list.empty')}</p>
+                <p className="py-4 text-center text-sm text-gray-500">
+                  {dataUnavailable ? t('list.unavailable') : t('list.empty')}
+                </p>
               )}
               <EventsList
                 events={onMapEvents}

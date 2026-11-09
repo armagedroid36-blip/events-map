@@ -1,3 +1,4 @@
+import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
 // Добор фото для active-карточек без фото: берём og:image / twitter:image / JSON-LD image
 // со страницы источника (website карточки). Проверенные данные со страницы источника.
 // Запуск: node --env-file=.env scripts/dot-photos-fill.mjs            (сухой прогон)

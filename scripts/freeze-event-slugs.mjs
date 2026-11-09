@@ -1,3 +1,4 @@
+import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
 #!/usr/bin/env node
 /**
  * Заморозка хвоста URL события (slug_ru / slug_en).
@@ -209,6 +210,7 @@ async function main() {
 }
 
 main().catch((e) => {
+  if (isQuotaError(e)) quotaSkip();
   console.error('freeze-event-slugs: ' + explainSchemaError(e?.message || e));
   process.exit(1);
 });

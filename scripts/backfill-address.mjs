@@ -1,3 +1,4 @@
+import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
 // Backfill адресов: у событий на модерации с address = null вычленяем место
 // из описания (LLM с retry, при сбое — regex-fallback). Запускается в
 // GitHub Actions после сбора Telegram; лимит 50 событий за запуск.
@@ -51,6 +52,7 @@ async function main() {
 }
 
 main().catch((e) => {
+  if (isQuotaError(e)) quotaSkip();
   console.error('Критическая ошибка:', e.message);
   process.exit(1);
 });

@@ -1,3 +1,4 @@
+import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
 /**
  * Статический снапшот публичного списка событий: public/data/events.json
  *
@@ -167,7 +168,11 @@ function writeCitySnapshots(cards, categories, generatedAt) {
 async function main() {
   // Категории тянем параллельно с карточками: ошибка по ним снапшот не валит.
   const catsPromise = fetchCategories().catch((err) => {
-    console.warn(`[snapshot] категории не получены (${err.message}) — SPA прочитает живой REST`);
+    console.warn(
+      isQuotaError(err)
+        ? 'База недоступна по квоте, пропуск'
+        : `[snapshot] категории не получены (${err.message}) — SPA прочитает живой REST`,
+    );
     return [];
   });
   const cards = [];
@@ -240,7 +245,11 @@ main().catch(async (err) => {
   // нет (чистый чекаут в Actions) — подкладываем прод-снапшот, иначе деплой
   // опубликует сайт без данных.
   const had = fs.existsSync(OUT_FILE);
-  console.warn(`[snapshot] ошибка: ${err.message}. ${had ? 'Оставляю прошлый снапшот.' : 'Снапшота нет.'}`);
+  console.log(
+    isQuotaError(err)
+      ? 'База недоступна по квоте, пропуск'
+      : `[snapshot] ошибка: ${err.message}. ${had ? 'Оставляю прошлый снапшот.' : 'Снапшота нет.'}`,
+  );
   if (!had) {
     try {
       await adoptProdSnapshot(err.message);

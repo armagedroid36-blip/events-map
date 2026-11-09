@@ -1,3 +1,4 @@
+import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
 // Архивация прошедших событий: active И записи в очереди модерации
 // (needs_changes/rejected/moderation), у которых событие уже закончилось → archived.
 // Условие: (end_date < сегодня) ИЛИ (end_date пусто И start_date < сегодня).
@@ -92,6 +93,7 @@ async function main() {
 }
 
 main().catch((e) => {
+  if (isQuotaError(e)) quotaSkip();
   console.error('Критическая ошибка:', e.message);
   process.exit(1);
 });

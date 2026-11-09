@@ -1,3 +1,4 @@
+import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
 /**
  * Гейт «карта ↔ резолв SPA» для mypins.site (прод): 0 URL из sitemap, которые
  * SPA не умеет отрисовать.
