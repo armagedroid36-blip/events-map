@@ -13,6 +13,14 @@ const FIX = [
     title: 'Official Nicosia Christmas Market 2026 (Eleftheria Square, окно 28–29.11)',
     arbiter: 'CN ?q=christmas market nicosia: 2026-11-28T09:00Z→2026-11-28T18:00Z = 11:00→20:00 местного',
   },
+  {
+    // 841: у серии «Εργαστήριο Μνήμης στην Παλώδια» (6 занятий, CN series 08→28.11) последняя запись
+    // несёт end_at 2026-11-29T18:00Z — конец СЕРИИ, а не занятия: sessions идут 2 ч (14:00Z→16:00Z = 16:00→18:00).
+    id: '989974f0', date: '2026-11-28', startTime: '16:00:00', old: '20:00:00', next: '18:00:00',
+    nextEndDate: '2026-11-28',
+    title: 'Εργαστήριο Μνήμης στην Παλώδια (занятие 28.11, серия из 6)',
+    arbiter: 'CN ?q=παλώδια: 28.11 14:00Z→16:00Z = 16:00→18:00 (у записи end_at 2026-11-29T18:00Z = конец серии); соседние занятия 13/20/21.11 той же серии стоят 2 ч',
+  },
 ];
 
 const H = { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json' };
@@ -38,7 +46,7 @@ for (const f of FIX) {
     if (!APPLY) { done++; continue; }
     const res = await fetch(`${URL}/rest/v1/events?id=eq.${row.id}&status=eq.active`, {
       method: 'PATCH', headers: { ...H, Prefer: 'return=representation' },
-      body: JSON.stringify({ end_time: f.next }),
+      body: JSON.stringify(f.nextEndDate ? { end_time: f.next, end_date: f.nextEndDate } : { end_time: f.next }),
     });
     const body = await res.json().catch(() => null);
     if (!res.ok || !Array.isArray(body) || body.length !== 1) { console.log(`  ОШИБКА PATCH ${res.status} ${JSON.stringify(body).slice(0, 120)}`); skipped++; continue; }
