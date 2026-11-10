@@ -48,7 +48,7 @@ jobs:
     timeout-minutes: 40
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url || steps.deployment_retry.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -181,9 +181,32 @@ jobs:
         with:
           path: dist
 
+      # Публикация с повтором (10.11.2026). actions/deploy-pages@v4 при сбое
+      # сервиса Pages висит 10 минут на «Getting Pages deployment status…» и
+      # падает по таймауту, который изменить нельзя. Один такой сбой стоил
+      # суток простоя (прогоны 242–246): сборка, проверки и артефакт — success,
+      # а прод остался на прежней версии. Поэтому две попытки с паузой:
+      # штатная и резервная. Второй заход запускается, только если первый упал.
       - name: Публикация в Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        continue-on-error: true
+
+      - name: Пауза перед повторной публикацией
+        if: steps.deployment.outcome == 'failure'
+        run: sleep 60
+
+      - name: Публикация в Pages (повтор)
+        id: deployment_retry
+        if: steps.deployment.outcome == 'failure'
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+
+      - name: Публикация не удалась
+        if: steps.deployment.outcome == 'failure' && steps.deployment_retry.outcome == 'failure'
+        run: |
+          echo "deploy-pages упал дважды — прод остаётся на прежней сборке"
+          exit 1
 
       # GitHub Pages отдаёт свежие файлы не мгновенно (CDN/кэш ~минута): без
       # паузы гейты ниже проверяли бы прежнюю публикацию и падали бы «на
