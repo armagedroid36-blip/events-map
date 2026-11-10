@@ -54,7 +54,7 @@ import {
   isEnPath,
 } from '../lib/seo';
 import { config } from '../config';
-import { loadArchiveEvents, loadLegacyEvents } from '../lib/legacyEvents';
+import { loadArchiveEvent, loadLegacyEvents } from '../lib/legacyEvents';
 import { useAuth } from '../lib/auth';
 import NotFound from '../components/NotFound';
 import type { Category, EventItem, Filters } from '../lib/types';
@@ -816,9 +816,8 @@ export default function Home({
               // Архив прошедших событий (public/data/archive-lite.json): при
               // недоступной базе статика уже отдала страницу, а SPA без этого
               // рисовала заглушку поверх неё (Soft 404 для Google).
-              const archive = await loadArchiveEvents();
+              snapshot = await loadArchiveEvent(eventId);
               if (!alive) return;
-              snapshot = archive[eventId];
             }
             if (!alive) return;
             if (snapshot) {

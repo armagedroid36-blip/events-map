@@ -15,7 +15,16 @@
 import type { EventItem } from './types';
 
 let inflight: Promise<Record<string, EventItem>> | null = null;
-let archiveInflight: Promise<Record<string, EventItem>> | null = null;
+const ARCHIVE_SHARDS = 8;
+const archiveShards = new Map<number, Promise<Record<string, EventItem>>>();
+
+/** Хэш шарда — тот же алгоритм, что в scripts/build-events-snapshot.mjs. */
+function archiveShardOf(id: string): number {
+  const s = String(id || '').toLowerCase();
+  let h = 0;
+  for (let i = 0; i < s.length; i += 1) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return h % ARCHIVE_SHARDS;
+}
 
 function normalize(raw: unknown): EventItem | null {
   if (!raw || typeof raw !== 'object') return null;
@@ -29,37 +38,41 @@ function normalize(raw: unknown): EventItem | null {
 
 /** Промис загрузки набора снимков (кэшируется на время жизни страницы). */
 /**
- * Архив прошедших событий (public/data/archive-lite.json — облегчённая копия
- * серверного archive.json, описания обрезаны). Нужен, когда база недоступна по
- * квоте, а страница события уже отдана статикой: без него React рисует
- * «Событие не найдено или уже завершено» поверх готового SEO-блока (Soft 404).
- * Грузим один раз и только на странице события, которой нет в живых данных.
+ * Архив прошедших событий, шард на 1/8 (public/data/archive-lite-<n>.json).
+ * Нужен, когда база недоступна по квоте, а страница события уже отдана
+ * статикой: без него React рисует «Событие не найдено или уже завершено»
+ * поверх готового SEO-блока (Soft 404). Один шард ~1,2 МБ вместо общего файла
+ * на 9 МБ; грузим только на странице события, которого нет в живых данных.
  */
-export function loadArchiveEvents(): Promise<Record<string, EventItem>> {
-  if (archiveInflight) return archiveInflight;
-  archiveInflight = (async () => {
-    const map: Record<string, EventItem> = {};
-    try {
-      const res = await fetch(`${import.meta.env.BASE_URL}data/archive-lite.json`, {
-        cache: 'no-cache',
-      });
-      if (!res.ok) return map;
-      const body: unknown = await res.json();
-      const list = Array.isArray(body)
-        ? body
-        : Array.isArray((body as { events?: unknown })?.events)
-          ? ((body as { events: unknown[] }).events as unknown[])
-          : [];
-      for (const raw of list) {
-        const ev = normalize(raw);
-        if (ev) map[ev.id] = ev;
+export function loadArchiveEvent(id: string): Promise<EventItem | undefined> {
+  const shard = archiveShardOf(id);
+  let pending = archiveShards.get(shard);
+  if (!pending) {
+    pending = (async () => {
+      const map: Record<string, EventItem> = {};
+      try {
+        const res = await fetch(`${import.meta.env.BASE_URL}data/archive-lite-${shard}.json`, {
+          cache: 'no-cache',
+        });
+        if (!res.ok) return map;
+        const body: unknown = await res.json();
+        const list = Array.isArray(body)
+          ? body
+          : Array.isArray((body as { events?: unknown })?.events)
+            ? ((body as { events: unknown[] }).events as unknown[])
+            : [];
+        for (const raw of list) {
+          const ev = normalize(raw);
+          if (ev) map[ev.id] = ev;
+        }
+      } catch {
+        // Файла нет (старая сборка) — поведение прежнее
       }
-    } catch {
-      // Файла нет (старая сборка) — поведение прежнее
-    }
-    return map;
-  })();
-  return archiveInflight;
+      return map;
+    })();
+    archiveShards.set(shard, pending);
+  }
+  return pending.then((map) => map[id]);
 }
 
 export function loadLegacyEvents(): Promise<Record<string, EventItem>> {

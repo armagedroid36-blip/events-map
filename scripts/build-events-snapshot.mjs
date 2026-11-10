@@ -267,19 +267,32 @@ const ARCHIVE_LITE_FIELDS = [
   'owner_id', 'slug_ru', 'slug_en', 'status', 'recurrence',
 ];
 
+// Хэш шарда: тот же алгоритм, что в src/lib/legacyEvents.ts — браузер тянет
+// один шард (~1,2 МБ) вместо общего файла на 9 МБ.
+const ARCHIVE_SHARDS = 8;
+function archiveShardOf(id) {
+  const s = String(id || '').toLowerCase();
+  let h = 0;
+  for (let i = 0; i < s.length; i += 1) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return h % ARCHIVE_SHARDS;
+}
+
 function writeArchiveLite(payload) {
-  const events = (payload.events || []).map((e) => {
+  const buckets = Array.from({ length: ARCHIVE_SHARDS }, () => []);
+  for (const e of payload.events || []) {
     const o = {};
     for (const k of ARCHIVE_LITE_FIELDS) {
       if (e[k] === undefined || e[k] === null) continue;
       o[k] = /^description/.test(k) ? String(e[k]).slice(0, 300) : e[k];
     }
     if (Array.isArray(o.photos)) o.photos = o.photos.slice(0, 1);
-    return o;
-  });
-  const lite = { generated_at: payload.generated_at, count: events.length, events };
-  fs.writeFileSync(ARCHIVE_LITE_FILE, JSON.stringify(lite));
-  return lite;
+    buckets[archiveShardOf(e.id)].push(o);
+  }
+  for (let i = 0; i < ARCHIVE_SHARDS; i += 1) {
+    const file = ARCHIVE_LITE_FILE.replace('.json', `-${i}.json`);
+    fs.writeFileSync(file, JSON.stringify({ generated_at: payload.generated_at, shard: i, count: buckets[i].length, events: buckets[i] }));
+  }
+  return buckets.reduce((n, b) => n + b.length, 0);
 }
 const ORGS_FILE = path.join(OUT_DIR, 'orgs.json');
 const ARCHIVE_SEED = path.resolve('scripts/data/archive-seed.json.gz');

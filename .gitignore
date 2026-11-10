@@ -68,3 +68,4 @@ public/data/legacy-events.json
 public/data/archive.json
 public/data/orgs.json
 public/data/archive-lite.json
+public/data/archive-lite-*.json
