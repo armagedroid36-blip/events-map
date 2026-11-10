@@ -5734,7 +5734,15 @@ async function main() {
     if (reason) skippedTest.push({ ev, reason });
     else pastClean.push(ev);
   }
-  const { dropped: dupDropped, groups: dupGroups } = dedupeCopies([...events, ...pastClean]);
+  // Прошедшие активные карточки (событие закончилось, а база недоступна и в
+  // архив не перевела) в дедуп НЕ отдаём: их URL уже в индексе Google, и
+  // снятие такой карточки ради архивного двойника даёт 404 (10.11.2026 так
+  // пропали 89 id). Живые активные — дедуплицируем как раньше.
+  const isExpiredCard = (ev) => (ev.status ?? 'active') === 'active' && pastOutsideArchiveWindow(ev);
+  const { dropped: dupDropped, groups: dupGroups } = dedupeCopies([
+    ...events.filter((ev) => !isExpiredCard(ev)),
+    ...pastClean,
+  ]);
   const allPast = pastClean.filter((ev) => !dupDropped.has(ev.id));
   console.log(
     `  санитария: тестовых записей исключено ${skippedTest.length}, групп дублей ${dupGroups}, копий снято ${dupDropped.size}`,
@@ -5753,10 +5761,10 @@ async function main() {
   // Активные дубли (сегодня их нет) убираем из набора НА МЕСТЕ: иначе их id
   // остались бы в городских блоках, «похожих событиях» и категорийных ячейках —
   // то есть внутренние ссылки вели бы на 404.
-  const droppedActive = events.filter((ev) => dupDropped.has(ev.id)).length;
+  const droppedActive = events.filter((ev) => dupDropped.has(ev.id) && !isExpiredCard(ev)).length;
   if (droppedActive) {
     for (let i = events.length - 1; i >= 0; i -= 1) {
-      if (dupDropped.has(events[i].id)) events.splice(i, 1);
+      if (dupDropped.has(events[i].id) && !isExpiredCard(events[i])) events.splice(i, 1);
     }
     console.log(`  внимание: среди активных событий снято дублей ${droppedActive} — из наборов выдачи тоже убраны`);
   }
