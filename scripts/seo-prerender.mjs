@@ -3085,7 +3085,8 @@ async function loadPastEvents(db) {
       // Тот же аварийный путь: страницы прошедших событий при недоступной БД не
       // генерируются (пустой набор), но сборка и деплой проходят.
       if (String(process.env.SEO_SNAPSHOT_FALLBACK || '') === '1') {
-        console.warn('seo-prerender: БД недоступна — страницы прошедших событий пропущены (фолбэк снапшота).');
+        const snap = archiveSnapshotEvents();
+        if (snap) return snap;
         return all;
       }
       process.exit(1);
@@ -3111,6 +3112,30 @@ async function loadPastEvents(db) {
  * осознанная деградация ради того, чтобы сборка и деплой во время блока
  * проходили, а карта не опустела.
  */
+/**
+ * Архив прошедших событий из снапшота (scripts/build-events-snapshot.mjs →
+ * public/data/archive.json). Аварийный источник, когда RPC list_past_events
+ * недоступен: без него аварийная сборка снимала с прода все архивные страницы
+ * (09.11.2026 sitemap 5830 → 2790 loc, 3 028 URL отдавали 404).
+ */
+function archiveSnapshotEvents() {
+  const file = join(ROOT, 'public/data/archive.json');
+  try {
+    const raw = JSON.parse(readFileSync(file, 'utf8'));
+    const events = Array.isArray(raw) ? raw : raw?.events;
+    const gen = Array.isArray(raw) ? '(массив без generated_at)' : raw?.generated_at;
+    if (Array.isArray(events) && events.length >= 50) {
+      console.warn(`seo-prerender: архив из снапшота: ${events.length} записей, generated_at ${gen}`);
+      return events;
+    }
+    console.warn(`seo-prerender: archive-snapshot пуст (${Array.isArray(events) ? events.length : 'нет массива'}) — архивные страницы будут сняты`);
+    return null;
+  } catch {
+    console.warn('seo-prerender: archive-snapshot отсутствует — архивные страницы будут сняты');
+    return null;
+  }
+}
+
 function snapshotFallbackEvents(reason) {
   if (String(process.env.SEO_SNAPSHOT_FALLBACK || '') !== '1') return null;
   const file = join(ROOT, 'public/data/events.json');
@@ -3645,6 +3670,33 @@ function orgProfilePublished(ownerId) {
 }
 
 /** Почему профиль не публикуется (для лога сборки); null — публикуется */
+/**
+ * Профили организаторов из снапшота (public/data/orgs.json, пишет
+ * build-events-snapshot.mjs). Аварийный источник при недоступной БД: без него
+ * в аварийной сборке страницы /org/<id>/ не писались и уходили в 404.
+ */
+function loadOrgsSnapshot() {
+  const map = new Map();
+  try {
+    const raw = JSON.parse(readFileSync(join(ROOT, 'public/data/orgs.json'), 'utf8'));
+    const list = Array.isArray(raw) ? raw : raw?.orgs;
+    for (const o of Array.isArray(list) ? list : []) {
+      const id = typeof o?.owner_id === 'string' ? o.owner_id : '';
+      if (!id) continue;
+      map.set(id, {
+        id,
+        display_name: o.display_name ?? null,
+        bio: o.bio ?? null,
+        avatar_url: o.avatar_url ?? null,
+        contacts_public: o.contacts_public ?? false,
+      });
+    }
+  } catch {
+    /* снапшота нет — работаем как раньше */
+  }
+  return map;
+}
+
 function orgSkipReason(profile, hasEvents) {
   const name = typeof profile?.display_name === 'string' ? profile.display_name.trim() : '';
   const bio = typeof profile?.bio === 'string' ? profile.bio.trim() : '';
@@ -5738,6 +5790,7 @@ async function main() {
         .filter((id) => id.length > 0),
     ),
   ];
+  const orgsSnapshot = loadOrgsSnapshot();
   let publicOrgsExtra = 0;
   {
     const { data, error } = await db.rpc('list_public_orgs');
@@ -5757,6 +5810,17 @@ async function main() {
       );
     }
   }
+  // Аварийный режим: профили из снапшота — и как кандидаты, и как источник
+  // данных. Без этого при заблокированной БД страницы организаторов снимались.
+  if (orgsSnapshot.size) {
+    for (const id of orgsSnapshot.keys()) {
+      if (!orgOwnerIds.includes(id)) {
+        orgOwnerIds.push(id);
+        publicOrgsExtra += 1;
+      }
+    }
+    console.log(`  профилей организаторов в снапшоте: ${orgsSnapshot.size}`);
+  }
   const orgEventCount = new Map();
   for (const ev of [...events, ...allPastPages]) {
     if (typeof ev.owner_id !== 'string' || !ev.owner_id) continue;
@@ -5764,14 +5828,21 @@ async function main() {
   }
   const orgProfiles = new Map();
   for (const id of orgOwnerIds) {
+    // Сначала живая БД; если она недоступна — профиль из снапшота orgs.json.
+    let profile = null;
     const { data, error } = await db
       .rpc('get_org_profile', { p_org_id: id })
       .maybeSingle();
     if (error) {
-      console.log(`  /org/${id}: пропущен (${logErr(error)})`);
-      continue;
+      profile = orgsSnapshot.get(id) ?? null;
+      if (!profile) {
+        console.log(`  /org/${id}: пропущен (${logErr(error)})`);
+        continue;
+      }
+      console.log(`  /org/${id}: из снапшота (${logErr(error)})`);
+    } else {
+      profile = data ?? null;
     }
-    const profile = data ?? null;
     const reason = orgSkipReason(profile, (orgEventCount.get(id) ?? 0) > 0);
     if (reason) {
       console.log(`  /org/${id}: не публикуется — ${reason}`);

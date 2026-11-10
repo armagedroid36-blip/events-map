@@ -63,3 +63,7 @@ public/data/alias-urls.json
 # снапшот удалённых событий — генерируется сборкой (scripts/build-legacy-snapshot.mjs),
 # источник истины в репозитории — scripts/data/legacy-events.json
 public/data/legacy-events.json
+
+# снапшот архива и профилей организаторов — генерируется сборкой (scripts/build-events-snapshot.mjs)
+public/data/archive.json
+public/data/orgs.json

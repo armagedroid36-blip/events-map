@@ -173,6 +173,16 @@ jobs:
       - name: Настройка Pages
         uses: actions/configure-pages@v5
 
+      # Гейт «sitemap не сжимается»: сравниваем с снимком предыдущей публикации.
+      # 09.11.2026 аварийная сборка срезала sitemap вдвое (5 830 → 2 790 loc) и
+      # 3 028 URL стали 404 — ни один шаг этого не заметил. Порог: падение
+      # больше 5 % валит сборку, осознанная чистка — ALLOW_SITEMAP_SHRINK=1.
+      - name: Гейт «sitemap не сжимается»
+        shell: bash
+        run: node scripts/verify-sitemap-shrink.mjs
+        env:
+          PREV_SITEMAP: ${{ runner.temp }}/prev-sitemap.xml
+
       # Публикация из артефакта (beta 1.20): ветка gh-pages больше не нужна.
       # keep_files-логика peaceiris заменена: артефакт всегда содержит ровно
       # тот dist, что собрали, поэтому снятые страницы исчезают и отдают 404.

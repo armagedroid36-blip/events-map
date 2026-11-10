@@ -19,6 +19,7 @@ import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квот�
 import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
+import zlib from 'node:zlib';
 
 const PAGE = 1000;
 const OUT_DIR = path.resolve('public/data');
@@ -241,22 +242,227 @@ async function adoptProdSnapshot(reason) {
   );
 }
 
-main().catch(async (err) => {
-  // Сборку не валим: прошлый снапшот (если есть) остаётся на месте. Если его
-  // нет (чистый чекаут в Actions) — подкладываем прод-снапшот, иначе деплой
-  // опубликует сайт без данных.
-  const had = fs.existsSync(OUT_FILE);
-  console.log(
-    isQuotaError(err)
-      ? 'База недоступна по квоте, пропуск'
-      : `[snapshot] ошибка: ${err.message}. ${had ? 'Оставляю прошлый снапшот.' : 'Снапшота нет.'}`,
-  );
-  if (!had) {
+/**
+ * Архив прошедших событий → public/data/archive.json.
+ *
+ * Зачем отдельный файл: при недоступной БД пре-рендер раньше просто не писал
+ * архивные страницы, и прод терял их пачкой (09.11.2026 sitemap упал с 5830
+ * до 2790 loc, 3 028 URL стали 404). Теперь архив едет вместе со статикой.
+ *
+ * Источники по убыванию достоверности:
+ *   1) RPC list_past_events (живая БД);
+ *   2) public/data/archive.json на проде (GitHub Pages, реальные данные);
+ *   3) scripts/data/archive-seed.json.gz — резервная копия базы от 09.11.2026.
+ * generated_at никогда не подменяем: у источников 2–3 он свой.
+ */
+const ARCHIVE_FILE = path.join(OUT_DIR, 'archive.json');
+const ORGS_FILE = path.join(OUT_DIR, 'orgs.json');
+const ARCHIVE_SEED = path.resolve('scripts/data/archive-seed.json.gz');
+const ORGS_SEED = path.resolve('scripts/data/orgs.json');
+const PROD_ARCHIVE_URL = 'https://mypins.site/data/archive.json';
+const PROD_ORGS_URL = 'https://mypins.site/data/orgs.json';
+const ARCHIVE_LIMIT = 6000;
+const PAST_PAGE = 1000;
+
+function archiveOrder(a, b) {
+  const da = (a.end_date || a.start_date || '').slice(0, 10);
+  const db = (b.end_date || b.start_date || '').slice(0, 10);
+  if (da !== db) return da < db ? 1 : -1;
+  const sa = (a.start_date || '').slice(0, 10);
+  const sb = (b.start_date || '').slice(0, 10);
+  if (sa !== sb) return sa < sb ? 1 : -1;
+  return String(a.id).localeCompare(String(b.id));
+}
+
+async function fetchArchiveFromDb() {
+  const all = [];
+  const seen = new Set();
+  for (let from = 0; ; from += PAST_PAGE) {
+    const res = await fetch(`${url}/rest/v1/rpc/list_past_events?limit=${PAST_PAGE}&offset=${from}`, {
+      method: 'POST',
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        'Content-Type': 'application/json',
+        Prefer: 'count=none',
+      },
+      body: '{}',
+      signal: AbortSignal.timeout(60_000),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
+    const rows = await res.json();
+    if (!Array.isArray(rows)) throw new Error('ожидался массив строк');
+    let fresh = 0;
+    for (const row of rows) {
+      const id = String(row?.id ?? '').toLowerCase();
+      if (!id || seen.has(id)) continue;
+      seen.add(id);
+      all.push(row);
+      fresh += 1;
+    }
+    if (rows.length < PAST_PAGE || fresh === 0) break;
+  }
+  return all;
+}
+
+function readJsonGz(file) {
+  try {
+    return JSON.parse(zlib.gunzipSync(fs.readFileSync(file)).toString('utf8'));
+  } catch {
+    return null;
+  }
+}
+
+async function fetchJson(urlOrNull, minCount) {
+  if (!urlOrNull) return null;
+  const res = await fetch(urlOrNull, {
+    headers: { 'User-Agent': 'hermes-dot-events/1.0' },
+    signal: AbortSignal.timeout(45_000),
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const payload = await res.json();
+  const list = Array.isArray(payload) ? payload : payload?.events;
+  if (!Array.isArray(list) || list.length < minCount) {
+    throw new Error(`подозрительно мало записей: ${Array.isArray(list) ? list.length : 'нет'}`);
+  }
+  return payload;
+}
+
+async function buildArchive() {
+  let payload = null;
+  let source = '';
+  try {
+    const rows = await fetchArchiveFromDb();
+    if (rows.length > 0) {
+      const prev = fs.existsSync(ARCHIVE_FILE)
+        ? JSON.parse(fs.readFileSync(ARCHIVE_FILE, 'utf8'))
+        : null;
+      const merged = new Map();
+      for (const r of Array.isArray(prev?.events) ? prev.events : []) merged.set(String(r.id).toLowerCase(), r);
+      for (const r of rows) merged.set(String(r.id).toLowerCase(), r);
+      const events = [...merged.values()].sort(archiveOrder).slice(0, ARCHIVE_LIMIT);
+      payload = { generated_at: new Date().toISOString(), count: events.length, events };
+      source = 'list_past_events';
+    }
+  } catch (err) {
+    console.warn(
+      isQuotaError(err) || /HTTP 40[0-9]/.test(err.message)
+        ? `[snapshot] архив: база недоступна — ${isQuotaError(err) ? 'квота' : err.message}`
+        : `[snapshot] архив: ошибка ${err.message}`,
+    );
+  }
+  if (!payload) {
     try {
-      await adoptProdSnapshot(err.message);
-    } catch (fallbackErr) {
-      console.warn(`[snapshot] прод-снапшот не взят: ${fallbackErr.message}. Сайт пойдёт в живой RPC.`);
+      payload = await fetchJson(PROD_ARCHIVE_URL, 50);
+      source = 'прод';
+    } catch (err) {
+      console.warn(`[snapshot] архив с прода не взят: ${err.message}`);
     }
   }
-  process.exit(0);
-});
+  if (!payload) {
+    payload = readJsonGz(ARCHIVE_SEED);
+    source = 'затравка резервной копии';
+    if (!payload) {
+      console.warn('[snapshot] archive-snapshot отсутствует — архивные страницы будут сняты');
+      return;
+    }
+  }
+  fs.writeFileSync(ARCHIVE_FILE, JSON.stringify(payload));
+  const kb = (fs.statSync(ARCHIVE_FILE).size / 1024).toFixed(0);
+  console.log(
+    `[snapshot] архив (${source}): ${(payload.events || []).length} записей, ${kb} КБ, generated_at ${payload.generated_at} → public/data/archive.json`,
+  );
+}
+
+async function buildOrgs() {
+  let payload = null;
+  let source = '';
+  try {
+    const res = await fetch(`${url}/rest/v1/rpc/list_public_orgs`, {
+      method: 'POST',
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        'Content-Type': 'application/json',
+        Prefer: 'count=none',
+      },
+      body: '{}',
+      signal: AbortSignal.timeout(45_000),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
+    const rows = await res.json();
+    if (Array.isArray(rows)) {
+      payload = {
+        generated_at: new Date().toISOString(),
+        count: rows.length,
+        orgs: rows.map((r) => ({
+          owner_id: r.id,
+          display_name: r.display_name,
+          bio: r.bio,
+          avatar_url: r.avatar_url,
+          contacts_public: r.contacts_public ?? false,
+        })),
+      };
+      source = 'list_public_orgs';
+    }
+  } catch (err) {
+    console.warn(`[snapshot] организаторы: база недоступна (${isQuotaError(err) ? 'квота' : err.message})`);
+  }
+  if (!payload) {
+    try {
+      payload = await fetchJson(PROD_ORGS_URL, 1);
+      source = 'прод';
+    } catch (err) {
+      console.warn(`[snapshot] orgs.json с прода не взят: ${err.message}`);
+    }
+  }
+  if (!payload) {
+    try {
+      const seed = JSON.parse(fs.readFileSync(ORGS_SEED, 'utf8'));
+      const orgs = Array.isArray(seed) ? seed : seed?.orgs;
+      if (Array.isArray(orgs)) {
+        payload = { generated_at: seed.generated_at ?? null, count: orgs.length, orgs };
+        source = 'затравка резервной копии';
+      }
+    } catch {
+      /* затравки нет — просто пропускаем */
+    }
+  }
+  if (!payload) {
+    console.warn('[snapshot] orgs-snapshot отсутствует — страницы организаторов будут сняты');
+    return;
+  }
+  fs.writeFileSync(ORGS_FILE, JSON.stringify(payload));
+  console.log(
+    `[snapshot] организаторы (${source}): ${(payload.orgs || []).length} профилей → public/data/orgs.json`,
+  );
+}
+
+main()
+  .catch(async (err) => {
+    // Сборку не валим: прошлый снапшот (если есть) остаётся на месте. Если его
+    // нет (чистый чекаут в Actions) — подкладываем прод-снапшот, иначе деплой
+    // опубликует сайт без данных.
+    const had = fs.existsSync(OUT_FILE);
+    console.log(
+      isQuotaError(err)
+        ? 'База недоступна по квоте, пропуск'
+        : `[snapshot] ошибка: ${err.message}. ${had ? 'Оставляю прошлый снапшот.' : 'Снапшота нет.'}`,
+    );
+    if (!had) {
+      try {
+        await adoptProdSnapshot(err.message);
+      } catch (fallbackErr) {
+        console.warn(`[snapshot] прод-снапшот не взят: ${fallbackErr.message}. Сайт пойдёт в живой RPC.`);
+      }
+    }
+  })
+  // Архив и профили организаторов собираем В ЛЮБОМ СЛУЧАЕ: даже когда основной
+  // снапшот взят с прода, страницы прошедших событий и организаторов должны
+  // остаться на проде (иначе sitemap сжимается вдвое).
+  .then(async () => {
+    await buildArchive();
+    await buildOrgs();
+  })
+  .catch((e) => console.warn(`[snapshot] архив/организаторы не записаны: ${e.message}`))
+  .finally(() => process.exit(0));
