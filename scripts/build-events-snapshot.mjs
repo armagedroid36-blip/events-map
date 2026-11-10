@@ -256,6 +256,31 @@ async function adoptProdSnapshot(reason) {
  * generated_at никогда не подменяем: у источников 2–3 он свой.
  */
 const ARCHIVE_FILE = path.join(OUT_DIR, 'archive.json');
+// Облегчённая копия для SPA: полный archive.json (17 МБ) браузеру не нужен,
+// а страница архивного события иначе рисует «Событие не найдено» — для Google
+// это Soft 404, для человека тупик. Поля те же, описания обрезаны до 300 симв.
+const ARCHIVE_LITE_FILE = path.join(OUT_DIR, 'archive-lite.json');
+const ARCHIVE_LITE_FIELDS = [
+  'id', 'title', 'title_ru', 'title_en', 'description', 'description_ru', 'description_en',
+  'city', 'country', 'address', 'lat', 'lng', 'start_date', 'end_date', 'start_time',
+  'end_time', 'price', 'currency', 'donation', 'category_id', 'source_lang', 'photos',
+  'owner_id', 'slug_ru', 'slug_en', 'status', 'recurrence',
+];
+
+function writeArchiveLite(payload) {
+  const events = (payload.events || []).map((e) => {
+    const o = {};
+    for (const k of ARCHIVE_LITE_FIELDS) {
+      if (e[k] === undefined || e[k] === null) continue;
+      o[k] = /^description/.test(k) ? String(e[k]).slice(0, 300) : e[k];
+    }
+    if (Array.isArray(o.photos)) o.photos = o.photos.slice(0, 1);
+    return o;
+  });
+  const lite = { generated_at: payload.generated_at, count: events.length, events };
+  fs.writeFileSync(ARCHIVE_LITE_FILE, JSON.stringify(lite));
+  return lite;
+}
 const ORGS_FILE = path.join(OUT_DIR, 'orgs.json');
 const ARCHIVE_SEED = path.resolve('scripts/data/archive-seed.json.gz');
 const ORGS_SEED = path.resolve('scripts/data/orgs.json');
@@ -368,6 +393,7 @@ async function buildArchive() {
     }
   }
   fs.writeFileSync(ARCHIVE_FILE, JSON.stringify(payload));
+  writeArchiveLite(payload);
   const kb = (fs.statSync(ARCHIVE_FILE).size / 1024).toFixed(0);
   console.log(
     `[snapshot] архив (${source}): ${(payload.events || []).length} записей, ${kb} КБ, generated_at ${payload.generated_at} → public/data/archive.json`,

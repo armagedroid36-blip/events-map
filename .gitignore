@@ -67,3 +67,4 @@ public/data/legacy-events.json
 # снапшот архива и профилей организаторов — генерируется сборкой (scripts/build-events-snapshot.mjs)
 public/data/archive.json
 public/data/orgs.json
+public/data/archive-lite.json

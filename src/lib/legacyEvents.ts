@@ -15,6 +15,7 @@
 import type { EventItem } from './types';
 
 let inflight: Promise<Record<string, EventItem>> | null = null;
+let archiveInflight: Promise<Record<string, EventItem>> | null = null;
 
 function normalize(raw: unknown): EventItem | null {
   if (!raw || typeof raw !== 'object') return null;
@@ -27,6 +28,40 @@ function normalize(raw: unknown): EventItem | null {
 }
 
 /** Промис загрузки набора снимков (кэшируется на время жизни страницы). */
+/**
+ * Архив прошедших событий (public/data/archive-lite.json — облегчённая копия
+ * серверного archive.json, описания обрезаны). Нужен, когда база недоступна по
+ * квоте, а страница события уже отдана статикой: без него React рисует
+ * «Событие не найдено или уже завершено» поверх готового SEO-блока (Soft 404).
+ * Грузим один раз и только на странице события, которой нет в живых данных.
+ */
+export function loadArchiveEvents(): Promise<Record<string, EventItem>> {
+  if (archiveInflight) return archiveInflight;
+  archiveInflight = (async () => {
+    const map: Record<string, EventItem> = {};
+    try {
+      const res = await fetch(`${import.meta.env.BASE_URL}data/archive-lite.json`, {
+        cache: 'no-cache',
+      });
+      if (!res.ok) return map;
+      const body: unknown = await res.json();
+      const list = Array.isArray(body)
+        ? body
+        : Array.isArray((body as { events?: unknown })?.events)
+          ? ((body as { events: unknown[] }).events as unknown[])
+          : [];
+      for (const raw of list) {
+        const ev = normalize(raw);
+        if (ev) map[ev.id] = ev;
+      }
+    } catch {
+      // Файла нет (старая сборка) — поведение прежнее
+    }
+    return map;
+  })();
+  return archiveInflight;
+}
+
 export function loadLegacyEvents(): Promise<Record<string, EventItem>> {
   if (inflight) return inflight;
   inflight = (async () => {

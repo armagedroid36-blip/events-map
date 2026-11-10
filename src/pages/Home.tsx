@@ -54,7 +54,7 @@ import {
   isEnPath,
 } from '../lib/seo';
 import { config } from '../config';
-import { loadLegacyEvents } from '../lib/legacyEvents';
+import { loadArchiveEvents, loadLegacyEvents } from '../lib/legacyEvents';
 import { useAuth } from '../lib/auth';
 import NotFound from '../components/NotFound';
 import type { Category, EventItem, Filters } from '../lib/types';
@@ -811,7 +811,15 @@ export default function Home({
             // пре-рендер по нему пишет страницу 200 с h1, датой, адресом и
             // JSON-LD, а SPA показывала заглушку — для Google это Soft 404,
             // ровно та причина в GSC. Рисуем ТУ ЖЕ карточку, что статика.
-            const snapshot = legacyPromise ? (await legacyPromise)[eventId] : undefined;
+            let snapshot = legacyPromise ? (await legacyPromise)[eventId] : undefined;
+            if (!snapshot) {
+              // Архив прошедших событий (public/data/archive-lite.json): при
+              // недоступной базе статика уже отдала страницу, а SPA без этого
+              // рисовала заглушку поверх неё (Soft 404 для Google).
+              const archive = await loadArchiveEvents();
+              if (!alive) return;
+              snapshot = archive[eventId];
+            }
             if (!alive) return;
             if (snapshot) {
               setPastEvent(snapshot);
