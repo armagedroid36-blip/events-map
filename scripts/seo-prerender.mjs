@@ -5791,8 +5791,11 @@ async function main() {
       .filter(Boolean)
       .map((id) => id.toLowerCase()),
   );
-  const pageOnlyPast = pageOnlyCandidates.filter((ev) =>
-    gscEventIds.has(String(ev.id).toLowerCase()),
+  // Копии, снятые дедупом, публикуем ВСЕГДА (noindex, без ссылок и sitemap):
+  // их id могли быть в старом sitemap 09.11 (5 830 loc), и 404 на таком URL —
+  // потеря индекса. Тестовые записи — только если URL уже в списке GSC.
+  const pageOnlyPast = pageOnlyCandidates.filter(
+    (ev) => dupDropped.has(ev.id) || gscEventIds.has(String(ev.id).toLowerCase()),
   );
   const allPastPages = [...allPast, ...pageOnlyPast];
   const pageOnlyIds = new Set(pageOnlyPast.map((ev) => String(ev.id).toLowerCase()));
