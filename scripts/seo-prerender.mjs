@@ -3155,6 +3155,10 @@ function snapshotFallbackEvents(reason) {
     .filter((c) => c && c.id && c.start_date)
     .map((c) => ({
       ...c,
+      // Карточки облегчённого RPC не несут status: без него dedupeCopies не
+      // считал их активными и снимал с публикации в пользу архивной копии —
+      // 109 событий исчезали из sitemap (10.11.2026).
+      status: c.status ?? 'active',
       description: c.description ?? '',
       description_ru: c.description_ru ?? '',
       description_en: c.description_en ?? '',
@@ -3563,7 +3567,7 @@ function dedupeCopies(rows) {
       // и группа оставалась без единой живой страницы — 109 id выпадали из
       // sitemap при сборке на аварийном снапшоте. Главной берём копию, которая
       // пойдёт в публикацию.
-      const isLiveActive = (ev) => ev.status === 'active' && !pastOutsideArchiveWindow(ev);
+      const isLiveActive = (ev) => (ev.status ?? 'active') === 'active' && !pastOutsideArchiveWindow(ev);
       const actA = isLiveActive(a) ? 1 : 0;
       const actB = isLiveActive(b) ? 1 : 0;
       if (actA !== actB) return actB - actA;
