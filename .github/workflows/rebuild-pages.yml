@@ -237,14 +237,22 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
-      # Гейт 2: рендер настоящим браузером (headless Chrome на раннере) — оба
-      # URL снимков удалённых событий и 5 случайных страниц из sitemap. В
-      # отрендеренном DOM не должно быть заглушек «Событие не найдено или уже
-      # завершено» / «404 — страница не найдена», а у страниц снимков должны
-      # быть h1 с названием, canonical на сам URL и hreflang-пара.
+      # Гейт 2: рендер настоящим браузером (headless Chrome на раннере).
+      # Проверяем СОБРАННЫЙ dist, а не прод: иначе любая сборка, которая
+      # добавляет страницы (восстановление архива, новые события), падает —
+      # проверяемые URL на проде ещё не опубликованы и отдают заглушку
+      # (10.11.2026 так упал прогон 252). Статику раздаём локально.
       - name: Гейт «рендер страниц событий»
         shell: bash
-        run: node scripts/check-render-soft404.mjs
+        run: |
+          python3 -m http.server 8123 --bind 127.0.0.1 --directory dist >/dev/null 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
+          for i in $(seq 1 20); do
+            if curl -sf -o /dev/null "http://127.0.0.1:8123/"; then break; fi
+            sleep 1
+          done
+          node scripts/check-render-soft404.mjs --base http://127.0.0.1:8123
         env:
           # Раннеры GitHub держат Chrome в /usr/bin/google-chrome; путь можно
           # переопределить через RENDER_BROWSER (Edge на Windows, chromium).
