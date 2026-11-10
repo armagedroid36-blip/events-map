@@ -3558,8 +3558,14 @@ function dedupeCopies(rows) {
       // без этой проверки снимало бы с публикации действующую карточку
       // (проверено 21.09.2026: так пропадали 192 активных события, 6 ячеек
       // категорий и страницы организаторов).
-      const actA = a.status === 'active' ? 1 : 0;
-      const actB = b.status === 'active' ? 1 : 0;
+      // «Активная» карточка, у которой событие уже прошло, главной быть не
+      // может: её страница всё равно не публикуется (pastOutsideArchiveWindow),
+      // и группа оставалась без единой живой страницы — 109 id выпадали из
+      // sitemap при сборке на аварийном снапшоте. Главной берём копию, которая
+      // пойдёт в публикацию.
+      const isLiveActive = (ev) => ev.status === 'active' && !pastOutsideArchiveWindow(ev);
+      const actA = isLiveActive(a) ? 1 : 0;
+      const actB = isLiveActive(b) ? 1 : 0;
       if (actA !== actB) return actB - actA;
       const fa = freshness(a);
       const fb = freshness(b);
@@ -5696,7 +5702,17 @@ async function main() {
   // Прошедшие (архивные) события: страницы обязаны отдавать 200, иначе GSC
   // показывает «Не найдено (404)» по ссылкам, которые сам же и проиндексировал.
   // Плюс снимки событий, которых в базе уже нет (scripts/data/legacy-events.json).
-  const pastEvents = await loadPastEvents(db);
+  const pastEventsRaw = await loadPastEvents(db);
+  // Одна запись не может быть одновременно активной и архивной. При аварийном
+  // снапшоте (archive-seed) id пересекаются с активным набором, а dedupeCopies
+  // на двух строках с ОДНИМ id снимает обе копии — страница исчезала совсем
+  // (проверено 10.11.2026: 294 id выпали из sitemap). Главной остаётся
+  // активная карточка, дубль из архива отбрасываем до санитарии.
+  const activeIdSet = new Set(events.map((ev) => String(ev.id).toLowerCase()));
+  const pastEvents = pastEventsRaw.filter((ev) => !activeIdSet.has(String(ev.id).toLowerCase()));
+  if (pastEvents.length !== pastEventsRaw.length) {
+    console.log(`  архив: убрано пересечение с активным набором — ${pastEventsRaw.length - pastEvents.length}`);
+  }
   const legacyEvents = loadLegacyEvents();
   const allPastLoaded = [...pastEvents, ...legacyEvents];
   console.log(
