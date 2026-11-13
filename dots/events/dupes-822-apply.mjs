@@ -65,6 +65,15 @@ const PAIRS = [
   // --- запуск 848: зонд «одна точка площадки + тема + ПЕРЕСЕЧЕНИЕ дат» (прошлые зонды требовали одной start_date) ---
   { canon: '12ed4c0d-a7bc-4c04-bac1-a8b117f9025b', copy: '403e243d-7523-4e8b-9d93-acc28927fc05',
     why: 'Tommy Four Seven @S//IP Club (Sllip Club, Никосия): два экземпляра одной ночи — канон 22.11 00:00 без интервала, копия 21.11 22:00 с ложным интервалом до 22.11. Арбитр — лента CN ?q=tommy four seven: ЕДИНСТВЕННАЯ запись slug tommy-four-seven-s-ip-club-2026-11-21, start_at 2026-11-21T22:00:00Z, end_at null, venue S//IP Slip Nightclub ⇒ 22:00Z = 00:00 местного 22.11 (UTC+2), т.е. время копии — UTC-поле, подставленное как локальное; пару title|start_date не видит' },
+  // --- запуск 853: зонд «одна точка + одна дата + РОВНО ОДНО общее слово» (прошлые зонды требовали >=2 слов) ---
+  { canon: '245d4f84-23c9-4bcd-8af3-9c9a61a25c71', copy: 'c3e18bbb-db12-4324-a773-6db166d208c0',
+    why: 'ELEMENT X в NYX Hotel (Лимасол) 15.11: «ELEMENT X × NYX ROOFTOP» 20:00 и «Element X at NYX Hotel: Black & Red Night» 18:00, один адрес и пин 0 м; арбитр — лента CN ?q=element: ОДНА запись ELEMENT X × NYX ROOFTOP, start_at 2026-11-15T18:00:00Z (=20:00 местного), venue NYX Hotel, Limassol; «BLACK & RED NIGHT / DRESS CODE» — подзаголовок той же записи, т.е. у копии UTC-время подставлено как локальное' },
+  { canon: 'a5848da3-31b3-4d8c-8428-64657a4677e2', copy: '69ef9b9e-64c4-4a58-8d99-981a842bac14',
+    why: '«Ligo Akoma» (A Little More), Маркидеио, Пафос, 15.11 20:00: EN-карточка и RU-перевод «Ещё чуть-чуть (A Little More)» — одно событие, один адрес и пин 0 м; арбитр — лента CN ?q=akoma: ЕДИНСТВЕННАЯ запись slug ligo-akoma-a-little-more-2026-11-15, start_at 2026-11-15T18:00:00Z (=20:00 местного), venue Markideio Municipal Theatre, Paphos' },
+  { canon: 'fdcee3e6-91b8-4594-9af4-3c0fe4b9190d', copy: '920ff9b5-017d-41db-b260-ed9737e49ecf',
+    why: 'Мастерская «Από το Αρχαίο αντικείμενο στη Σύγχρονη Δημουργία» / «Глина и древняя печь», Bank of Cyprus Cultural Foundation (Никосия) 15.11 11:00, один адрес и пин 0 м; арбитр — лента CN ?q=αρχαίο: ЕДИНСТВЕННАЯ запись 2026-11-15T09:00:00Z (=11:00 местного), venue Bank of Cyprus Cultural Foundation, Nicosia, серия «Moments at The Museum 26» — RU-карточка перевод той же мастерской' },
+  { canon: '22da2eeb-5701-47c0-b8e0-0fab9d5faf3f', copy: '413d88a7-10bc-4c7a-8f4a-9b9a005e09d1',
+    why: 'Kreator, Monte Caputo (Лимасол) 22.11: «Kreator» 19:00 и «KREATOR with special guests OVERKILL» 18:30, один адрес, пин 101 м; арбитр — лента CN ?q=kreator И ?q=overkill отдают ОДНУ И ТУ ЖЕ запись slug kreator-2026-11-22, start_at 2026-11-22T17:00:00Z (=19:00 местного), venue Monte Caputo ⇒ отдельного концерта Overkill нет, копия со временем дверей' },
 ];
 
 const q = (id) => `${URL_}/rest/v1/events?id=eq.${id}&select=id,title,status,start_date,start_time,city,lat,lng,address`;
