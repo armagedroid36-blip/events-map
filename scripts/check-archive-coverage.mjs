@@ -34,12 +34,25 @@ function idsFromSitemap(file) {
   return ids;
 }
 
+// Структура dist: dist/event/<id>/<slug>/index.html (два уровня) и
+// dist/en/event/<id>/<slug>/index.html.
 function idsFromDir(dir) {
   const ids = new Set();
   if (!fs.existsSync(dir)) return ids;
   for (const name of fs.readdirSync(dir)) {
     if (!/^[0-9a-fA-F-]{36}$/.test(name)) continue;
-    if (fs.existsSync(path.join(dir, name, 'index.html'))) ids.add(name.toLowerCase());
+    const idDir = path.join(dir, name);
+    if (!fs.statSync(idDir).isDirectory()) continue;
+    if (fs.existsSync(path.join(idDir, 'index.html'))) {
+      ids.add(name.toLowerCase());
+      continue;
+    }
+    for (const slug of fs.readdirSync(idDir)) {
+      if (fs.existsSync(path.join(idDir, slug, 'index.html'))) {
+        ids.add(name.toLowerCase());
+        break;
+      }
+    }
   }
   return ids;
 }
