@@ -74,6 +74,21 @@ const PAIRS = [
     why: 'Мастерская «Από το Αρχαίο αντικείμενο στη Σύγχρονη Δημουργία» / «Глина и древняя печь», Bank of Cyprus Cultural Foundation (Никосия) 15.11 11:00, один адрес и пин 0 м; арбитр — лента CN ?q=αρχαίο: ЕДИНСТВЕННАЯ запись 2026-11-15T09:00:00Z (=11:00 местного), venue Bank of Cyprus Cultural Foundation, Nicosia, серия «Moments at The Museum 26» — RU-карточка перевод той же мастерской' },
   { canon: '22da2eeb-5701-47c0-b8e0-0fab9d5faf3f', copy: '413d88a7-10bc-4c7a-8f4a-9b9a005e09d1',
     why: 'Kreator, Monte Caputo (Лимасол) 22.11: «Kreator» 19:00 и «KREATOR with special guests OVERKILL» 18:30, один адрес, пин 101 м; арбитр — лента CN ?q=kreator И ?q=overkill отдают ОДНУ И ТУ ЖЕ запись slug kreator-2026-11-22, start_at 2026-11-22T17:00:00Z (=19:00 местного), venue Monte Caputo ⇒ отдельного концерта Overkill нет, копия со временем дверей' },
+  // --- запуск 855: зонд «одна точка + одна дата + НОЛЬ общих слов» (перевод/транслит имени, все прошлые зонды требовали >=1 слова) ---
+  { canon: '3d5f0073-4135-4acb-9b5a-f4d60a19a83e', copy: '0a1cabd7-5fc3-47c2-9c0b-3f0e020be6dc',
+    why: 'Поход в Махеру, 08.11 09:00: «Пешая прогулка в Махайре» и «Hiking in Machaira» — одно событие (RU и EN название, общих слов нет); адрес у обеих называет ЭКДРОМИКОС ХОРОС КИОНИЯ («Ekdromikos Choros Kionia» / «Εκδρομικός Χώρος Κιόνια»), время 09:00 совпадает, пины в 0.4 м (34.9207463,33.197732 / 34.9204157,33.1976528)' },
+  { canon: 'c518a42a-97f9-47c3-99f9-c30fba30da60', copy: 'c0fd295e-71b3-4318-aca6-e57b8ca30bfc',
+    why: 'The One MOM Show, Vinylio Wine Etc (Лимасол) 08.11 19:00: «The One MOM Show» и «The One MOM Show in Limassol» — одна карточка с добавкой города в названии; одинаковые адрес, время 19:00 и пин 34.6728745,33.0412447 (0 м)' },
+  { canon: '9fcd506d-27ed-4c31-ba0c-ab6eb0d8763d', copy: '5e19f356-800a-410f-a721-8641f77f2ace',
+    why: 'Pattihio Municipal Theatre (Лимасол) 09.11 20:00: «The Nonets feat. Eleonora Roussou» и «The Nonnets» — один вечер, во втором названии опечатка (Nonnets); один зал (Pattihio/Patticheion), время 20:00, пины в 10 м' },
+  { canon: 'ca7c6d2b-e41f-48db-89c2-eeabe11b3631', copy: '45ecbda2-4dab-4ee9-b8bd-9c776d2b54e3',
+    why: 'Dusty Munky (Лимасол) 21.11 20:00: «PHASE909 Ep14 Ft / Tzuvre / KELER / pesha / Spicy Gipsy» и «PHASE9Ø9 Ep14 at Dusty Munky» — одна вечеринка, во втором названии Ø вместо O; один адрес, время 20:00, пин совпадает (0 м)' },
+  { canon: 'f43d56ae-0bb7-40ec-b10c-149d6e511f69', copy: 'bf0658a2-7b83-4842-9b12-71bdaa6fdb10',
+    why: 'СБПЧ в Лимасоле 21.11 20:00: «Samoye Bolshoye Prostoye Chislo» (ru-название «Самое большое простое число») и «Группа СБПЧ в Лимасоле» — СБПЧ и есть аббревиатура этого названия; время 20:00 и пин 34.6748699,33.0379258 у обеих, у канона адрес площадки Opus Events Venue, у копии адрес-заглушка «Лимасол, Кипр»' },
+  { canon: 'd6238af7-9e42-491d-a6a4-5e7423f99c9c', copy: '50ff5339-9d7f-442b-8c6c-a25724b7058f',
+    why: 'Кино в Муниципальном театре Ларнаки 23.11 20:00: карточка с безымянным заголовком «Показ фильма» и канон «Movie Mondays: The dinner / La cena»; арбитр — лента CN ?q=movie mondays: на каждый понедельник ОДНА запись (23.11 «The dinner / La cena» 18:00Z = 20:00 местного, venue Δημοτικό Θέατρο Γ. Λυκούργος), т.е. в этот вечер идёт один фильм, а «Показ фильма» — та же карточка из другого канала' },
+  { canon: '6247b513-a767-44c5-b28e-8442013c4dd1', copy: 'c5a85ef1-d93b-4a87-8baa-bb3be7faf703',
+    why: 'Кино в Муниципальном театре Ларнаки 30.11 20:00: «Показ фильма» и «Movie Mondays: We believe you» — один сеанс; лента CN ?q=movie mondays держит именно «We believe you» 30.11 18:00Z (=20:00) в том же зале, одна запись на понедельник' },
 ];
 
 const q = (id) => `${URL_}/rest/v1/events?id=eq.${id}&select=id,title,status,start_date,start_time,city,lat,lng,address`;
