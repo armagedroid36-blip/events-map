@@ -138,6 +138,16 @@ jobs:
           # пустого сайта. Снять флаг, когда квота восстановится.
           SEO_SNAPSHOT_FALLBACK: "1"
 
+      # Гейт «архив покрывает прошлый sitemap»: каждый event-id из sitemap
+      # предыдущей публикации обязан получить страницу в dist. 13.11.2026
+      # slice(0,6000) выбросил 428 архивных событий — 858 URL отдавали 404.
+      # Падает только если данные есть, а страницы нет; «нет данных вовсе»
+      # (удалённые из БД) — только список в отчёте.
+      - name: Гейт «архив покрывает прошлый sitemap»
+        run: node scripts/check-archive-coverage.mjs
+        env:
+          PREV_SITEMAP: ${{ runner.temp }}/prev-sitemap.xml
+
       # Лог сборки сохраняем ВСЕГДА (даже когда шаг упал): логи Actions по API
       # отдают 403, поэтому без артефакта причину сбоя 28.09 установить было нечем.
       - name: Артефакт лога сборки
@@ -145,7 +155,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-log
-          path: build.log
+          path: |
+            build.log
+            seo-missing-from-build.json
           if-no-files-found: ignore
 
       - name: Итоги сборки (счётчики)

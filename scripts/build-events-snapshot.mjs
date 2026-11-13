@@ -299,7 +299,10 @@ const ARCHIVE_SEED = path.resolve('scripts/data/archive-seed.json.gz');
 const ORGS_SEED = path.resolve('scripts/data/orgs.json');
 const PROD_ARCHIVE_URL = 'https://mypins.site/data/archive.json';
 const PROD_ORGS_URL = 'https://mypins.site/data/orgs.json';
-const ARCHIVE_LIMIT = 6000;
+// Ограничение только как страховка от бесконечного набора: режем НЕ по 6000.
+// 13.11.2026 выяснилось, что slice(0,6000) выбрасывал 428 архивных событий,
+// чьи URL были в sitemap 06–09.11 → 404 и потеря индекса.
+const ARCHIVE_SAFETY_LIMIT = 20000;
 const PAST_PAGE = 1000;
 
 function archiveOrder(a, b) {
@@ -378,8 +381,9 @@ async function buildArchive() {
       const merged = new Map();
       for (const r of Array.isArray(prev?.events) ? prev.events : []) merged.set(String(r.id).toLowerCase(), r);
       for (const r of rows) merged.set(String(r.id).toLowerCase(), r);
-      const events = [...merged.values()].sort(archiveOrder).slice(0, ARCHIVE_LIMIT);
-      payload = { generated_at: new Date().toISOString(), count: events.length, events };
+      const mergedAll = [...merged.values()].sort(archiveOrder);
+      const events = mergedAll.slice(0, ARCHIVE_SAFETY_LIMIT);
+      payload = { generated_at: new Date().toISOString(), count: events.length, events, total_all: mergedAll.length };
       source = 'list_past_events';
     }
   } catch (err) {
@@ -390,26 +394,51 @@ async function buildArchive() {
     );
   }
   if (!payload) {
+    // Прод-файл может быть усечён прошлыми сборками (6000), а затравка —
+    // полная: объединяем по id, свежие записи прода перекрывают затравку.
+    let prod = null;
     try {
-      payload = await fetchJson(PROD_ARCHIVE_URL, 50);
+      prod = await fetchJson(PROD_ARCHIVE_URL, 50);
       source = 'прод';
     } catch (err) {
       console.warn(`[snapshot] архив с прода не взят: ${err.message}`);
     }
-  }
-  if (!payload) {
-    payload = readJsonGz(ARCHIVE_SEED);
-    source = 'затравка резервной копии';
-    if (!payload) {
+    const seed = readJsonGz(ARCHIVE_SEED);
+    if (prod && seed) {
+      const merged = new Map();
+      for (const r of seed.events || []) merged.set(String(r.id).toLowerCase(), r);
+      for (const r of prod.events || []) merged.set(String(r.id).toLowerCase(), r);
+      const mergedAll = [...merged.values()].sort(archiveOrder);
+      const events = mergedAll.slice(0, ARCHIVE_SAFETY_LIMIT);
+      payload = { generated_at: prod.generated_at, count: events.length, events, total_all: mergedAll.length };
+      source = 'прод + затравка';
+    } else if (prod) {
+      payload = prod;
+      payload.total_all = (prod.events || []).length;
+    } else if (seed) {
+      payload = seed;
+      payload.total_all = (seed.events || []).length;
+      source = 'затравка резервной копии';
+    } else {
       console.warn('[snapshot] archive-snapshot отсутствует — архивные страницы будут сняты');
       return;
     }
   }
+  const allEvents = payload.events || [];
+  const totalAll = Number.isFinite(payload.total_all) ? payload.total_all : allEvents.length;
+  const lastKept = allEvents[allEvents.length - 1];
+  const oldestCut =
+    totalAll > allEvents.length && lastKept ? lastKept.end_date || lastKept.start_date || '—' : '—';
+  // Обязательная строка отчёта — всегда, даже когда усечения нет.
+  console.log(
+    `[snapshot] архив: всего ${totalAll}, опубликовано ${allEvents.length}, обрезано ${totalAll - allEvents.length} (старейшее ${oldestCut})`,
+  );
+  delete payload.total_all;
   fs.writeFileSync(ARCHIVE_FILE, JSON.stringify(payload));
   writeArchiveLite(payload);
   const kb = (fs.statSync(ARCHIVE_FILE).size / 1024).toFixed(0);
   console.log(
-    `[snapshot] архив (${source}): ${(payload.events || []).length} записей, ${kb} КБ, generated_at ${payload.generated_at} → public/data/archive.json`,
+    `[snapshot] архив (${source}): ${allEvents.length} записей, ${kb} КБ, generated_at ${payload.generated_at} → public/data/archive.json`,
   );
 }
 
