@@ -86,6 +86,21 @@ if [ -f "$HOME/projects/events-map/dots/events/bubble-866-apply.mjs" ]; then
   APPLY=1 node "$REPO_NATIVE/dots/events/bubble-866-apply.mjs" || echo "Bubble: скрипт вернул ошибку, смотри вывод выше"
 fi
 
+if [ -f "$HOME/projects/events-map/dots/events/pinfix-873-apply.mjs" ]; then
+  echo "--- пин площадки: Ktima Camelot / Ella Jazz Bar (pinfix-873-apply.mjs)"
+  APPLY=1 node "$REPO_NATIVE/dots/events/pinfix-873-apply.mjs" || echo "пинфикс-873: скрипт вернул ошибку, смотри вывод выше"
+fi
+
+if [ -f "$HOME/projects/events-map/dots/events/satiriko-pin-874-apply.mjs" ]; then
+  echo "--- пин Сатирико (satiriko-pin-874-apply.mjs)"
+  APPLY=1 node "$REPO_NATIVE/dots/events/satiriko-pin-874-apply.mjs" || echo "Сатирико: скрипт вернул ошибку, смотри вывод выше"
+fi
+
+if [ -f "$HOME/projects/events-map/dots/events/ammo-876-apply.mjs" ]; then
+  echo "--- пин Ammochostos Cultural Centre, Дериния (ammo-876-apply.mjs)"
+  APPLY=1 node "$REPO_NATIVE/dots/events/ammo-876-apply.mjs" || echo "Аммохостос: скрипт вернул ошибку, смотри вывод выше"
+fi
+
 PAT=$(printf "protocol=https\nhost=github.com\n\n" | git credential fill | grep '^password=' | cut -d= -f2-)
 api="https://api.github.com/repos/armagedroid36-blip/events-map"
 for wf in collect-events.yml rebuild-pages.yml; do
