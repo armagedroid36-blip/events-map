@@ -69,3 +69,4 @@ public/data/archive.json
 public/data/orgs.json
 public/data/archive-lite.json
 public/data/archive-lite-*.json
+public/data/article-link-map.json

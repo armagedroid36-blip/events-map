@@ -41,6 +41,29 @@ function ArticleNotFound() {
   );
 }
 
+/** Карта переписанных ссылок статей: путь из статьи → куда вести (null — снять).
+ *  Пишется пре-рендером (scripts/seo-prerender.mjs, fixArticleLinks) по
+ *  фактическим файлам сборки, чтобы SPA не вела туда, чего нет в статике. */
+type ArticleLinkMap = Record<string, string | null>;
+let articleLinkMapPromise: Promise<ArticleLinkMap> | null = null;
+function loadArticleLinkMap(): Promise<ArticleLinkMap> {
+  if (articleLinkMapPromise) return articleLinkMapPromise;
+  articleLinkMapPromise = (async () => {
+    try {
+      const res = await fetch(`${import.meta.env.BASE_URL}data/article-link-map.json`, {
+        cache: 'no-cache',
+      });
+      if (!res.ok) return {};
+      const body: unknown = await res.json();
+      const links = (body as { links?: unknown })?.links;
+      return links && typeof links === 'object' ? (links as ArticleLinkMap) : {};
+    } catch {
+      return {};
+    }
+  })();
+  return articleLinkMapPromise;
+}
+
 const MD_LINK_RE = /\[([^\]]+)\]\(([^)]+)\)/g;
 /** То же, но для сканирования текста (matchAll клонирует regexp — lastIndex
  *  общего MD_LINK_RE не портится). */
@@ -83,6 +106,7 @@ function renderMd(
   text: string,
   eventsById?: Map<string, EventItem> | null,
   lang: 'ru' | 'en' = 'ru',
+  linkMap?: ArticleLinkMap | null,
 ): ReactNode[] {
   const nodes: ReactNode[] = [];
   let last = 0;
@@ -98,15 +122,27 @@ function renderMd(
       let href = m[2];
       const ev = evId ? eventsById?.get(evId) : null;
       if (ev) href = eventPageHref(ev, lang) ?? href;
-      nodes.push(
-        <a
-          key={key++}
-          href={href}
-          className="font-medium text-[#E66343] underline decoration-[#E66343]/40 underline-offset-2 hover:decoration-[#E66343]"
-        >
-          {m[1]}
-        </a>,
-      );
+      // Ссылка на путь, которого нет в текущей сборке: карта из пре-рендера
+      // уводит её на живой адрес (городской хаб) или снимает ссылку целиком.
+      let drop = false;
+      if (linkMap && href.startsWith('/') && Object.prototype.hasOwnProperty.call(linkMap, href)) {
+        const target = linkMap[href];
+        if (target) href = target;
+        else drop = true;
+      }
+      if (drop) {
+        nodes.push(m[1]);
+      } else {
+        nodes.push(
+          <a
+            key={key++}
+            href={href}
+            className="font-medium text-[#E66343] underline decoration-[#E66343]/40 underline-offset-2 hover:decoration-[#E66343]"
+          >
+            {m[1]}
+          </a>,
+        );
+      }
     }
     last = m.index + m[0].length;
   }
@@ -119,10 +155,12 @@ function Sections({
   sections,
   eventsById,
   lang,
+  linkMap,
 }: {
   sections: ArticleSection[];
   eventsById?: Map<string, EventItem> | null;
   lang?: 'ru' | 'en';
+  linkMap?: ArticleLinkMap | null;
 }) {
   return (
     <>
@@ -138,14 +176,14 @@ function Sections({
           return (
             <ul key={i} className="mt-3 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-gray-700">
               {s.items.map((item, j) => (
-                <li key={j}>{renderMd(item, eventsById, lang)}</li>
+                <li key={j}>{renderMd(item, eventsById, lang, linkMap)}</li>
               ))}
             </ul>
           );
         }
         return (
           <p key={i} className="mt-3 text-sm leading-relaxed text-gray-700">
-            {renderMd(s.text, eventsById, lang)}
+            {renderMd(s.text, eventsById, lang, linkMap)}
           </p>
         );
       })}
@@ -232,6 +270,18 @@ export function ArticlePage({ slug }: { slug: string }) {
   // переписывается под язык статьи. Пока данные не пришли или запрос упал —
   // eventsById=null, ссылки рендерятся как прежде (деградация без регрессий).
   const [eventsById, setEventsById] = useState<Map<string, EventItem> | null>(null);
+  // Карта ссылок статьи из пре-рендера: путь, которого нет в сборке, ведёт на
+  // городской хаб или снимается — ровно как в статике (паритет слоёв).
+  const [linkMap, setLinkMap] = useState<ArticleLinkMap | null>(null);
+  useEffect(() => {
+    let alive = true;
+    loadArticleLinkMap().then((map) => {
+      if (alive) setLinkMap(map);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
   useEffect(() => {
     const sections = article
       ? en
@@ -284,7 +334,12 @@ export function ArticlePage({ slug }: { slug: string }) {
             событиям на первом экране, не дочитывая статью */}
         <MapCta />
         <div className="mt-4">
-          <Sections sections={view!.sections} eventsById={eventsById} lang={en ? 'en' : 'ru'} />
+          <Sections
+            sections={view!.sections}
+            eventsById={eventsById}
+            lang={en ? 'en' : 'ru'}
+            linkMap={linkMap}
+          />
         </div>
         {/* Повтор кнопки в конце статьи: тот, кто дочитал, тоже уходит на карту */}
         <MapCta className="mt-6" />

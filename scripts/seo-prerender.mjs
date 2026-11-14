@@ -31,7 +31,14 @@ import { isQuotaError, isQuotaText, quotaSkip } from './lib/quota.mjs'; // 402 �
 // слэш сам.
 
 import { createClient } from '@supabase/supabase-js';
-import { readFileSync, writeFileSync, mkdirSync, readdirSync, promises as fsp } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  writeFileSync,
+  promises as fsp,
+} from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -5645,6 +5652,81 @@ function categoryJsonLd(cell, lang) {
 
 // --- Главный ход ---
 
+
+/**
+ * Гард внутренних ссылок статей блога.
+ *
+ * 14.11.2026 статья «События на Кипре» держала 8 ссылок на посадочные
+ * /cyprus/party/, /cyprus/sport/, /cyprus/tour/, /cyprus/exhibition/ — гейт
+ * MIN_CATEGORY_EVENTS=3 их не публикует, ссылки отдавали 404 (то же в EN).
+ *
+ * Правило: при сборке ссылка на внутренний путь, которого в этой сборке нет,
+ * уводится на городской хаб того же языка (/cyprus/ → /en/cyprus/). Если и
+ * хаба нет — ссылка снимается, текст остаётся. Работает по фактическим файлам
+ * dist, поэтому покрывает любые статьи и любые внутренние ссылки, а не только
+ * кипрские. Внешние ссылки и якоря не трогаем.
+ *
+ * Карта переписываний уходит в dist/data/article-link-map.json — её читает SPA
+ * (src/pages/Blog.tsx), иначе рендер в браузере разошёлся бы со статикой.
+ */
+function fixArticleLinks() {
+  const map = new Map();
+  const pageExists = (href) => {
+    let rel = String(href).replace(/^https?:\/\/[^/]+/, '').split(/[?#]/)[0];
+    if (!rel.startsWith('/')) return true;
+    if (rel.endsWith('/')) rel += 'index.html';
+    else if (!/\.[a-z0-9]+$/i.test(rel)) rel += '/index.html';
+    return existsSync(join(DIST, rel));
+  };
+  const resolve = (href, lang) => {
+    if (!href.startsWith('/')) return href; // внешние и якоря
+    if (pageExists(href)) return href;
+    const seg = href.split(/[?#]/)[0].split('/').filter(Boolean);
+    const en = lang === 'en';
+    const city = en ? seg[1] : seg[0];
+    if (city) {
+      const hub = en ? `/en/${city}/` : `/${city}/`;
+      if (pageExists(hub)) return hub;
+    }
+    return null;
+  };
+  const files = [];
+  for (const dir of ['blog', 'en/blog']) {
+    const root = join(DIST, dir);
+    if (!existsSync(root)) continue;
+    for (const name of readdirSync(root)) {
+      const file = name === 'index.html' ? join(root, name) : join(root, name, 'index.html');
+      if (existsSync(file)) files.push(file);
+    }
+  }
+  let rewritten = 0;
+  let removed = 0;
+  for (const file of files) {
+    const lang = file.split(/[\\/]/).includes('en') ? 'en' : 'ru';
+    const html = readFileSync(file, 'utf8');
+    const next = html.replace(/<a href="([^"]+)"([^>]*)>([\s\S]*?)<\/a>/g, (whole, href, attrs, label) => {
+      const target = resolve(href, lang);
+      if (target === href) return whole;
+      map.set(href, target);
+      if (target) {
+        rewritten += 1;
+        return `<a href="${target}"${attrs}>${label}</a>`;
+      }
+      removed += 1;
+      return label;
+    });
+    if (next !== html) writeFileSync(file, next);
+  }
+  const payload = { generated_at: new Date().toISOString(), links: Object.fromEntries(map) };
+  writeFileSync(join(DIST, 'data/article-link-map.json'), JSON.stringify(payload));
+  try {
+    writeFileSync(join(ROOT, 'public/data/article-link-map.json'), JSON.stringify(payload));
+  } catch {
+    /* public/data нет — не критично */
+  }
+  console.log(`  ссылки статей: переписано ${rewritten}, снято ${removed}`);
+}
+
 async function main() {
   // Отметки времени сборки: страниц стало ~3250 (активные + прошедшие), и
   // «стало медленнее» надо видеть с точностью до этапа — данные, пробы
@@ -7259,6 +7341,8 @@ async function main() {
   mark('ИТОГО');
   writeFileSync(join(DIST, 'sitemap.xml'), xml);
   console.log(`  dist/sitemap.xml: ${locs.length} URL`);
+  // Ссылки статей — по фактическим файлам dist (все страницы уже записаны)
+  fixArticleLinks();
 
   // Главная — в САМУЮ ПОСЛЕДНЮЮ очередь и из того же baseHtml (он не
   // менялся: renderPage возвращает новую строку, а dist/index.html
