@@ -37,6 +37,9 @@ const IDS = [
   { id: '1e3a9b12', expectCity: 'Никосия', expect: 'Ресторан Loft, Никосия, Никосия', to: 'Ресторан Loft, Никосия' },
   { id: 'a1afd70f', expectCity: 'Пафос', expect: 'Мультикультурное пространство Attikon, Пафос, Пафос', to: 'Мультикультурное пространство Attikon, Пафос' },
   { id: 'd26c7381', expectCity: 'Никосия', expect: 'Village square, Pedoulas, Cyprus', to: 'Village square, Pedoulas' },
+  // Запуск 890: 18-я цель — пустой address в базе, а сборщик (buildRow, 887/889) положит фолбэк-канон города.
+  // Гейт expectNull: правим ТОЛЬКО пока адрес реально пуст; значение = city карточки (как у остальных целей).
+  { id: '978dbee2', expectCity: 'Никосия', expectNull: true },
 ];
 
 const isStub = (a) => {
@@ -72,6 +75,9 @@ async function patch(id, body) {
     if (it.to) {                                // цель из 885: адрес нормализуется санитайзером, гейт — старый адрес
       if (String(ev.address || '').trim() !== it.expect) { console.log(`SKIP ${it.id}: адрес «${ev.address}» ≠ «${it.expect}»`); skip++; continue; }
       next = it.to;
+    } else if (it.expectNull) {                 // цель 890: адрес в базе пуст, сборщик положит канон города
+      if (ev.address != null && String(ev.address).trim() !== '') { console.log(`SKIP ${it.id}: адрес уже «${ev.address}»`); skip++; continue; }
+      next = ev.city;
     } else {
       if (!isStub(ev.address)) { console.log(`SKIP ${it.id}: адрес уже «${ev.address}»`); skip++; continue; }
       next = ev.city;                           // ровно то, что положит сборщик (фолбэк = канон города)
