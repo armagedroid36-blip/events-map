@@ -27,6 +27,12 @@ for (const m of applySrc.matchAll(/\{\s*id:\s*'([0-9a-f]{8})'([^}]*)\}/g)) {
 }
 console.log(`целей cy-addr-884-apply: ${targets.size}`);
 
+// Исключение 891: карточка-цель, которая в dupes-822 стоит как `copy`, архивируется ПЕРВЫМ шагом цепочки —
+// её адрес править бессмысленно (гейт «живая» пропустит). Такие id не считаем расхождением, но печатаем числом.
+const dupesSrc = fs.readFileSync(new URL('./dupes-822-apply.mjs', import.meta.url), 'utf8');
+const dupeCopies = new Set([...dupesSrc.matchAll(/copy:\s*'([0-9a-f]{8})/g)].map((m) => m[1]));
+console.log(`копий в dupes-822 (архивируются шагом 1): ${dupeCopies.size}`);
+
 const regions = [
   ['КИПР', (c) => /кипр|cyprus/i.test(String(c.city || '')), (a, city) => cardAddress([a], city), true],
   ['БАЛИ', (c) => String(c.city || '').includes('Bali'), (a, city) => cardAddressBali(a, city), false],
@@ -48,10 +54,11 @@ for (const [name, sel, fn, isCy] of regions) {
   for (const [id, a, out] of changed.slice(0, 20)) console.log(`    ${id}  ${JSON.stringify(a)} -> ${JSON.stringify(out)}`);
   if (isCy) {
     const changedCy = new Set(changed.map((r) => r[0]));
-    const notTarget = changed.filter((r) => !targets.has(r[0])).length;
+    const dupChanged = changed.filter((r) => !targets.has(r[0]) && dupeCopies.has(r[0])).length;
+    const notTarget = changed.filter((r) => !targets.has(r[0]) && !dupeCopies.has(r[0])).length;
     const missing = [...targets.keys()].filter((t) => !changedCy.has(t)).length;
     const badValue = changed.filter((r) => targets.has(r[0]) && targets.get(r[0]) !== r[2]).length;
-    console.log(`  сверка с миграцией 884: изменившихся вне списка ${notTarget}, целей без изменения ${missing}, расхождение ЗНАЧЕНИЯ ${badValue}`);
+    console.log(`  сверка с миграцией 884: изменившихся вне списка ${notTarget} (из них копий dupes-822 ${dupChanged}), целей без изменения ${missing}, расхождение ЗНАЧЕНИЯ ${badValue}`);
     for (const [id, a, out] of changed) {
       if (targets.has(id) && targets.get(id) !== out) console.log(`      VALUE ${id}: ждём ${JSON.stringify(targets.get(id))}, функция даёт ${JSON.stringify(out)}`);
     }
