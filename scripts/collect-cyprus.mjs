@@ -463,6 +463,42 @@ function countryFieldFallback({ junkAddress, placeToken, geoName, distKm, thresh
   return true;
 }
 
+/**
+ * Адрес карточки из полей источника: страна вместо улицы — не адрес.
+ *
+ * Класс 14.11.2026: у cyprus.bz `location.name` и `addressLocality` приходят
+ * строкой «Cyprus», и карточка печатала адрес «Cyprus, Cyprus» (живых таких
+ * 9). Геокодер такую заглушку уже не получает (`geoQueryParts`), но в поле
+ * `address` она уезжала в базу и на витрину. Правило: страну, служебные
+ * «Unknown» и повторы выбрасываем; что осталось — адрес; ничего не осталось —
+ * фолбэк (город) либо null, но НЕ строка страны.
+ */
+const ADDR_COUNTRY_WORDS = ['cyprus', 'кипр', 'κύπρος', 'κυπρος', 'kypros', 'unknown', 'n/a', '-', '—'];
+function cardAddress(parts, fallback = null) {
+  const out = [];
+  for (const raw of Array.isArray(parts) ? parts : [parts]) {
+    for (const piece of String(raw || '').split(',')) {
+      const p = piece.trim();
+      if (!p) continue;
+      if (ADDR_COUNTRY_WORDS.includes(p.toLowerCase())) continue;
+      if (out.some((x) => x.toLowerCase() === p.toLowerCase())) continue;
+      out.push(p);
+    }
+  }
+  if (!out.length) {
+    // Фолбэк — обычно канон города («Лимасол, Кипр»); его не режем, но если он
+    // сам целиком заглушка («Cyprus») — адреса нет вовсе.
+    if (!fallback) return null;
+    const hasReal = String(fallback)
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .some((p) => !ADDR_COUNTRY_WORDS.includes(p.toLowerCase()));
+    return hasReal ? String(fallback) : null;
+  }
+  return out.join(', ');
+}
+
 async function geocode(query) {
   const key = String(query || '').trim().toLowerCase();
   if (!key) return null;
@@ -764,7 +800,7 @@ async function collectVisitCyprus(seen, budget, websites = new Set()) {
         city: cityRu(v.city || '') || cityRu(`${v.venue || ''} ${v.address || ''}`) || '',
         cityEn: v.city || '',
         venue: [v.venue, v.address, v.zip].filter(Boolean).join(', '),
-        address: [v.venue, v.address, v.city].filter(Boolean).join(', '),
+        address: cardAddress([v.venue, v.address, v.city]),
         website: pageUrl,
         photos,
         price: cost.price ?? null,
@@ -919,7 +955,7 @@ async function collectCyprusNow(seen, budget, websites = new Set(), venueCities 
         city: cityOut,
         cityEn: ev.city || citySlug,
         venue: venueName,
-        address: ev.venue_address || ev.address || venueName || `${cityOut}, Кипр`,
+        address: cardAddress([ev.venue_address || ev.address || venueName], `${cityOut}, Кипр`),
         lat: Number.isFinite(lat) && Math.abs(lat) > 1 ? lat : null,
         lng: Number.isFinite(lng) && Math.abs(lng) > 1 ? lng : null,
         website: pageUrl,
@@ -1131,7 +1167,7 @@ async function collectCyprusBz(seen, budget, websites = new Set(), bzPages = new
       venue: place,
       lat: placeGeo ? placeGeo.lat : undefined,
       lng: placeGeo ? placeGeo.lng : undefined,
-      address: [place, addrLoc].filter(Boolean).join(', ') || bzCity,
+      address: cardAddress([place, addrLoc], bzCity),
       website: ev.url || pageUrl,
       photos,
       category: 'festival',
@@ -1275,7 +1311,7 @@ async function main() {
   );
 }
 
-export { jsonLdEvents, canonBzPage, cnCoverBySlug, cnPhotosFor, geoQueryParts, countryFieldFallback, haversineKm, isCountryCentroid };
+export { jsonLdEvents, canonBzPage, cnCoverBySlug, cnPhotosFor, geoQueryParts, countryFieldFallback, haversineKm, isCountryCentroid, cardAddress };
 
 // Модуль можно импортировать (скрипты проверки) — тогда сбор не запускается.
 const isDirectRun = /collect-cyprus\.mjs$/.test((process.argv[1] || '').replace(/\\/g, '/'));
