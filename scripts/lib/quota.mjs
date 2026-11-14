@@ -29,20 +29,27 @@ export function isQuotaText(text) {
   return typeof text === 'string' && QUOTA_RE.test(text);
 }
 
+/** Все строковые поля объекта, включая вложенный dbError и цепочку cause. */
+function collectText(err, depth = 0, out = []) {
+  if (!err || depth > 3) return out;
+  if (typeof err === 'string') {
+    out.push(err);
+    return out;
+  }
+  for (const key of ['message', 'details', 'hint', 'code', 'status', 'statusCode', 'probe']) {
+    const v = err[key];
+    if (v !== undefined && v !== null && typeof v !== 'object') out.push(String(v));
+  }
+  if (err.dbError) collectText(err.dbError, depth + 1, out);
+  if (err.error) collectText(err.error, depth + 1, out);
+  if (err.cause) collectText(err.cause, depth + 1, out);
+  return out;
+}
+
 /** Ошибка supabase-js / fetch / Error — «это блокировка по квоте?» */
 export function isQuotaError(err) {
   if (!err) return false;
-  if (typeof err === 'string') return isQuotaText(err);
-  const parts = [
-    err.message,
-    err.details,
-    err.hint,
-    err.code,
-    err.cause?.message,
-    err.status,
-    err.statusCode,
-  ];
-  return parts.some((p) => isQuotaText(String(p ?? '')));
+  return collectText(err).some((t) => isQuotaText(t));
 }
 
 export const QUOTA_SKIP_MESSAGE = 'База недоступна по квоте, пропуск';

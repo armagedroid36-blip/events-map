@@ -1,4 +1,5 @@
 import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
+import { dbFailure } from './db-rows.mjs'; // ошибка БД с текстом причины даже при пустом message (402 head-count)
 // Автопроверка собранных событий перед публикацией.
 //
 // Что делает: берёт события сборщиков, которые лежат на модерации
@@ -125,7 +126,7 @@ async function queueCount() {
     .select('id', { count: 'exact', head: true })
     .eq('status', 'moderation')
     .in('source_type', ['collector', 'theatre']);
-  if (error) throw new Error(error.message);
+  if (error) throw await dbFailure(db, 'events', error);
   return count || 0;
 }
 
@@ -163,7 +164,7 @@ async function fetchBatch(cursor) {
     req = req.or(`created_at.gt.${ts},and(created_at.eq.${ts},id.gt.${cursor.id})`);
   }
   const { data, error } = await req;
-  if (error) throw new Error(error.message);
+  if (error) throw await dbFailure(db, 'events', error);
   return data || [];
 }
 
