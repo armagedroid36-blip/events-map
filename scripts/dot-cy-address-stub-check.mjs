@@ -14,7 +14,8 @@ const cases = [
   [['Markideio Theatre', '28 Oktovriou, Paphos'], null, 'Markideio Theatre, 28 Oktovriou, Paphos', 'настоящий адрес не режется'],
   [['Ayia Napa, Famagusta 5330', 'Cyprus'], null, 'Ayia Napa, Famagusta 5330', 'хвост-страна снимается'],
   [['Nicosia', 'Nicosia'], null, 'Nicosia', 'повтор снимается, название остаётся'],
-  [['Пафос, Кипр'], null, 'Пафос', 'в части страна снимается'],
+  [['Пафос, Кипр'], null, 'Пафос, Кипр', 'канон города: страна сохраняется (ключ дедупа)'],
+  [['28 Oktovriou 12, Лимасол', 'Кипр'], null, '28 Oktovriou 12, Лимасол', 'у улицы страна снимается'],
   [null, null, null, 'пусто → null'],
   [['Cyprus'], 'Cyprus', null, 'фолбэк-заглушка тоже не адрес'],
 ];

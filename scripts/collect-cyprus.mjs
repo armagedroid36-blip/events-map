@@ -474,14 +474,18 @@ function countryFieldFallback({ junkAddress, placeToken, geoName, distKm, thresh
  * фолбэк (город) либо null, но НЕ строка страны.
  */
 const ADDR_COUNTRY_WORDS = ['cyprus', 'кипр', 'κύπρος', 'κυπρος', 'kypros', 'unknown', 'n/a', '-', '—'];
+const ADDR_COUNTRY_LABELS = ['cyprus', 'кипр', 'κύπρος', 'κυπρος', 'kypros'];
 function cardAddress(parts, fallback = null) {
   const out = [];
+  let countryWord = null;
   for (const raw of Array.isArray(parts) ? parts : [parts]) {
     for (const piece of String(raw || '').split(',')) {
       const p = piece.trim();
       if (!p) continue;
-      if (ADDR_COUNTRY_WORDS.includes(p.toLowerCase())) continue;
-      if (out.some((x) => x.toLowerCase() === p.toLowerCase())) continue;
+      const low = p.toLowerCase();
+      if (ADDR_COUNTRY_LABELS.includes(low)) countryWord = countryWord || p;
+      if (ADDR_COUNTRY_WORDS.includes(low)) continue;
+      if (out.some((x) => x.toLowerCase() === low)) continue;
       out.push(p);
     }
   }
@@ -496,6 +500,10 @@ function cardAddress(parts, fallback = null) {
       .some((p) => !ADDR_COUNTRY_WORDS.includes(p.toLowerCase()));
     return hasReal ? String(fallback) : null;
   }
+  // Один содержательный элемент — это город или площадка, а не улица: страну
+  // сохраняем, иначе канон «Ларнака, Кипр» превращался в «Ларнака» и ключ
+  // дедупа city|title+address расходился с уже собранными карточками (885).
+  if (out.length === 1 && countryWord) return `${out[0]}, ${countryWord}`;
   return out.join(', ');
 }
 
