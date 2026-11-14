@@ -14,6 +14,7 @@ import { stripInvisible } from './text-safe.mjs';
 import { cleanEndTime } from './end-time-guard.mjs';
 import { cleanStartTime } from './start-time-stub.mjs';
 import { recurrenceOf } from './bali-recurrence.mjs';
+import { cardAddressBali } from './bali-address.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -439,7 +440,10 @@ async function main() {
       const center = districtCenter(district);
       const lat = loc && loc.lat != null ? loc.lat : center.lat;
       const lng = loc && loc.lng != null ? loc.lng : center.lng;
-      const rowAddress = (loc && loc.address) || place.title || null;
+      // Адрес идёт в ключ дедупа `city|title+address`: заглушка («Bali, Indonesia»)
+      // не должна попадать в базу ни из одного поля источника.
+      const cityLabel = OUT_OF_BALI.has(cityDistrict) ? cityDistrict : `${cityDistrict}, Bali`;
+      const rowAddress = cardAddressBali((loc && loc.address) || place.title || null, cityLabel);
 
       // Метку района арбитрит реестр «площадка -> район»: Балифорум одной площадке
       // отдаёт разные адресные хвосты («…, Seminyak …» / «…, Kerobokan Kelod …»),
@@ -464,7 +468,7 @@ async function main() {
         end_date: endDate || null,
         start_time: startTime,
         end_time: cleanEndTime({ start_date: startDate, start_time: startTime, end_date: endDate, end_time: endTime }),
-        city: OUT_OF_BALI.has(cityDistrict) ? cityDistrict : `${cityDistrict}, Bali`,
+        city: cityLabel,
         address: rowAddress,
         lat,
         lng,
