@@ -1,5 +1,4 @@
 import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
-#!/usr/bin/env node
 /**
  * Заморозка хвоста URL события (slug_ru / slug_en).
  *
