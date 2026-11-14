@@ -743,7 +743,11 @@ async function buildRow(src) {
       end_time: src.end_time,
     }),
     city: `${city}, Кипр`,
-    address: cleanCardText(src.address || src.venue || '') || null,
+    // Санитайзер стоит В ТОЧКЕ СБОРКИ СТРОКИ (887): buildRow — единственный путь,
+    // через который адрес попадает в базу из ЛЮБОГО источника Кипра. До этого он
+    // применялся лишь в 3 местах-вызовах, а два пути (bz-афиши городов, сборщик
+    // из полей src) писали «Cyprus, Cyprus» в обход. Здесь заглушка не пройдёт.
+    address: cleanCardText(cardAddress([src.address || src.venue || ''], `${city}, Кипр`) || '') || null,
     lat,
     lng,
     category_id: cat,
