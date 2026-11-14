@@ -440,10 +440,8 @@ async function main() {
       const center = districtCenter(district);
       const lat = loc && loc.lat != null ? loc.lat : center.lat;
       const lng = loc && loc.lng != null ? loc.lng : center.lng;
-      // Адрес идёт в ключ дедупа `city|title+address`: заглушка («Bali, Indonesia»)
-      // не должна попадать в базу ни из одного поля источника.
-      const cityLabel = OUT_OF_BALI.has(cityDistrict) ? cityDistrict : `${cityDistrict}, Bali`;
-      const rowAddress = cardAddressBali((loc && loc.address) || place.title || null, cityLabel);
+      // Сырой адрес источника — вход и для реестра площадок, и для санитайзера адреса.
+      const rawAddress = (loc && loc.address) || place.title || null;
 
       // Метку района арбитрит реестр «площадка -> район»: Балифорум одной площадке
       // отдаёт разные адресные хвосты («…, Seminyak …» / «…, Kerobokan Kelod …»),
@@ -451,11 +449,17 @@ async function main() {
       // Пин не трогаем: у площадки с реальными координатами он и так её собственный.
       // Реестр применяем ТОЛЬКО если адрес сам не называет канон-район: иначе историческая
       // ошибка метки в базе («Batu Mejan, Canggu» хранилась как «Кута») перебивает верный адрес.
-      const regDistrict = districtForVenue({ address: rowAddress, lat, lng }, districtRegistry);
-      const cityDistrict = districtForBali(rowAddress, place.districtName, regDistrict);
+      // Порядок обязателен: cityDistrict считается ДО cityLabel/rowAddress (был TDZ-баг 895).
+      const regDistrict = districtForVenue({ address: rawAddress, lat, lng }, districtRegistry);
+      const cityDistrict = districtForBali(rawAddress, place.districtName, regDistrict);
       if (cityDistrict !== district) {
         console.log(`  [район по площадке] «${district}» -> «${cityDistrict}» (${title.slice(0, 40)})`);
       }
+
+      // Адрес идёт в ключ дедупа `city|title+address`: заглушка («Bali, Indonesia»)
+      // не должна попадать в базу ни из одного поля источника.
+      const cityLabel = OUT_OF_BALI.has(cityDistrict) ? cityDistrict : `${cityDistrict}, Bali`;
+      const rowAddress = cardAddressBali(rawAddress, cityLabel);
 
       const row = {
         title,
