@@ -27,6 +27,11 @@ SCRIPTS = [
     ('tour-enddate-857-apply.mjs', REPO),
     ('spartacus30-pin-858-apply.mjs', REPO),
     ('nutcracker-859-apply.mjs', REPO),
+    # добавлено 878: четыре шага цепочки, которых в зонде не было
+    ('bubble-866-apply.mjs', REPO),
+    ('pinfix-873-apply.mjs', REPO),
+    ('satiriko-pin-874-apply.mjs', REPO),
+    ('ammo-876-apply.mjs', REPO),
 ]
 
 DATE_RE = re.compile(r'^\d{4}-\d{2}-\d{2}$')
@@ -75,6 +80,10 @@ def blocks(text):
                 if depth <= 0:
                     out.append(cur)
                     cur = None
+            elif s.endswith('[{') and 'Bearer' not in s:
+                # формат `const ITEMS = [{` — массив открывается в той же строке (мутация 878)
+                cur = s[s.rindex('{'):]
+                depth = 1
             continue
         cur += '\n' + line
         depth += s.count('{') - s.count('}')
@@ -88,6 +97,7 @@ def blocks(text):
 
 summary = []
 problems = []
+blind = []
 for name, d in SCRIPTS:
     p = os.path.join(d, name)
     if not os.path.exists(p):
@@ -100,8 +110,12 @@ for name, d in SCRIPTS:
     for b in bl:
         kv = dict(KV.findall(b))
         ids = [v for k, v in kv.items() if k in ('id', 'canon', 'copy', 'agg') and ID_RE.match(v)]
-        # id-массивы (aggregate keep / ids)
-        ids += [m for m in re.findall(r"'([0-9a-f]{8}-[0-9a-f-]{27})'", b) if m not in ids]
+        # у части скриптов id — заглушка uuid, а поиск идёт по префиксу: верить prefix (мутация 878)
+        if kv.get('prefix') and re.match(r'^[0-9a-f]{8}$', kv['prefix']):
+            ids = [kv['prefix']]
+        # id-массивы (aggregate keep / ids); заглушки «xxxx-0000-…» не в счёт
+        ids += [m for m in re.findall(r"'([0-9a-f]{8}-[0-9a-f-]{27})'", b)
+                if m not in ids and not m.endswith('-0000-0000-0000-000000000000')]
         if not ids:
             continue
         base = None
@@ -158,7 +172,10 @@ for name, d in SCRIPTS:
                 hard += 1
                 problems.append(f'{name} {base["id"][:8]}: гейт пина {la},{ln} ≠ снапшот {base.get("lat")},{base.get("lng")}')
     summary.append((name, len(bl), n_ids, n_ok, n_miss, hard, soft, n_gates))
-
+    if n_ids == 0:
+        problems.append(f'{name}: id 0 — формат зондом НЕ разобран (слепое пятно, не «ок»)')
+    elif n_gates == 0:
+        blind.append(f'{name}: {n_ids} id проверено, полевых гейтов 0 (сверка только по наличию id)')
 print(f'снапшот: {snap.get("count")} карточек, gen {snap.get("generated_at")}')
 print(f'{"скрипт":34} {"блоков":>6} {"id":>4} {"есть":>5} {"нет":>4} {"гейтов":>7} {"гейт!":>6} {"soft":>5}')
 tot = [0, 0, 0, 0, 0, 0]
@@ -168,6 +185,10 @@ for name, nb, ni, ok, miss, hard, soft, ng in summary:
         tot[i] += x
 print(f'{"ИТОГО":34} {"":6} {tot[0]:4} {tot[1]:5} {tot[2]:4} {tot[3]:7} {tot[4]:6} {tot[5]:5}')
 print()
+if blind:
+    print('БЕЗ ПОЛЕВЫХ ГЕЙТОВ (сверка только по наличию id):')
+    for b in blind:
+        print(' -', b)
 if problems:
     print('РАСХОЖДЕНИЯ:')
     for p in problems:
