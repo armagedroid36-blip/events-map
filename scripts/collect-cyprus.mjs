@@ -1271,7 +1271,7 @@ async function collectCyprusBzCities(seen, budget, bzPages = new Set()) {
         city: cityRu(locality) || cityRu(`${place} ${title}`) || cityRuName,
         cityEn: locality || slug,
         venue: place,
-        address: [place, locality].filter(Boolean).join(', '),
+        address: cardAddress([place, locality], `${cityRuName}, Кипр`),
         website: ev.url || `https://cyprus.bz/events/${slug}`,
         photos,
         price: Number.isFinite(priceNum) ? priceNum : null,
