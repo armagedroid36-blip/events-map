@@ -25,6 +25,18 @@ const IDS = [
   { id: 'aed3b1df', expectCity: 'Никосия' },
   { id: 'd49ed492', expectCity: 'Лимасол' },
   { id: '89e345be', expectCity: 'Никосия' },
+  // Запуск 885: те же 8 карточек, чей адрес санитайзер 883/885 теперь нормализует иначе, чем он лежит
+  // в базе. Значение `to` снято ЖИВОЙ cardAddress (probe-885-addr.mjs), не придумано: у улицы/площадки
+  // страна снимается, повторы схлопываются. Без этой миграции ключ дедупа `city|title+address`
+  // разошёлся бы с базой и следующий сбор родил бы дубль.
+  { id: '0863b0c6', expectCity: 'Лимасол', expect: 'Axiou, Agia Fylaxis, Лимасол, Кипр', to: 'Axiou, Agia Fylaxis, Лимасол' },
+  { id: '123cf6a2', expectCity: 'Лимасол', expect: 'Axiou, Agia Fylaxis, Лимасол, Кипр', to: 'Axiou, Agia Fylaxis, Лимасол' },
+  { id: '0fc79fd4', expectCity: 'Лимасол', expect: 'Axiou, Agia Fylaxis, Лимасол, Кипр', to: 'Axiou, Agia Fylaxis, Лимасол' },
+  { id: 'a61bb6a8', expectCity: 'Лимасол', expect: 'Лимассол, Лимассол', to: 'Лимассол' },
+  { id: '94b7f23c', expectCity: 'Лимасол', expect: 'Лимассол, Лимассол', to: 'Лимассол' },
+  { id: '1e3a9b12', expectCity: 'Никосия', expect: 'Ресторан Loft, Никосия, Никосия', to: 'Ресторан Loft, Никосия' },
+  { id: 'a1afd70f', expectCity: 'Пафос', expect: 'Мультикультурное пространство Attikon, Пафос, Пафос', to: 'Мультикультурное пространство Attikon, Пафос' },
+  { id: 'd26c7381', expectCity: 'Никосия', expect: 'Village square, Pedoulas, Cyprus', to: 'Village square, Pedoulas' },
 ];
 
 const isStub = (a) => {
@@ -56,8 +68,14 @@ async function patch(id, body) {
     try { ev = await get(it.id); } catch (e) { console.log(`СТОП: ${it.id} ${e.message}`); process.exit(3); }
     if (!ev) { console.log(`SKIP ${it.id}: нет живой карточки`); skip++; continue; }
     if (!String(ev.city || '').startsWith(it.expectCity)) { console.log(`SKIP ${it.id}: city «${ev.city}» ≠ ${it.expectCity}`); skip++; continue; }
-    if (!isStub(ev.address)) { console.log(`SKIP ${it.id}: адрес уже «${ev.address}»`); skip++; continue; }
-    const next = ev.city;                       // ровно то, что положит сборщик (фолбэк = канон города)
+    let next;
+    if (it.to) {                                // цель из 885: адрес нормализуется санитайзером, гейт — старый адрес
+      if (String(ev.address || '').trim() !== it.expect) { console.log(`SKIP ${it.id}: адрес «${ev.address}» ≠ «${it.expect}»`); skip++; continue; }
+      next = it.to;
+    } else {
+      if (!isStub(ev.address)) { console.log(`SKIP ${it.id}: адрес уже «${ev.address}»`); skip++; continue; }
+      next = ev.city;                           // ровно то, что положит сборщик (фолбэк = канон города)
+    }
     if (!next || isStub(next)) { console.log(`SKIP ${it.id}: city как адрес не годится («${next}»)`); skip++; continue; }
     plan++;
     console.log(`  ${it.id} «${(ev.title || '').slice(0, 44)}» ${ev.start_date}: «${ev.address}» → «${next}»`);

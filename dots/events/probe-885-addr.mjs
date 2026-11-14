@@ -39,7 +39,7 @@ console.log(`кипрских карточек с адресом: ${withAddr}, �
 const bad = changed.filter((x) => x.contentLost);
 console.log(`содержательных потерь: ${bad.length}`);
 for (const x of bad.slice(0, 15)) console.log(`  БЕДА ${x.id}: «${x.from}» -> «${x.to}»`);
-for (const x of changed.slice(0, 12)) console.log(`  ${x.id}: «${x.from}» -> «${x.to}»`);
+for (const x of changed) console.log(`  ${x.id}: «${x.from}» -> «${x.to}»`);
 
 console.log(`КОНТРОЛЬ заглушки: «Cyprus, Cyprus» -> «${cardAddress(['Cyprus', 'Cyprus'], 'Никосия, Кипр')}»`);
 console.log(`КОНТРОЛЬ улицы: «28 Oktovriou 12, Limassol, Cyprus» -> «${cardAddress(['28 Oktovriou 12, Limassol', 'Cyprus'])}»`);
