@@ -27,7 +27,12 @@ on:
   schedule:
     - cron: '10 5 * * *'
     - cron: '50 17 * * *'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      allow_sitemap_shrink:
+        description: 'Разрешить публикацию при сжатии sitemap >5% (осознанная чистка)'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -200,6 +205,9 @@ jobs:
         run: node scripts/verify-sitemap-shrink.mjs
         env:
           PREV_SITEMAP: ${{ runner.temp }}/prev-sitemap.xml
+          # Гейт остаётся включённым по умолчанию: снятие требует явного
+          # ручного запуска с allow_sitemap_shrink=true.
+          ALLOW_SITEMAP_SHRINK: ${{ inputs.allow_sitemap_shrink && '1' || '' }}
 
       # Публикация из артефакта (beta 1.20): ветка gh-pages больше не нужна.
       # keep_files-логика peaceiris заменена: артефакт всегда содержит ровно
