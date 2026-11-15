@@ -3143,6 +3143,15 @@ function archiveSnapshotEvents() {
   }
 }
 
+/**
+ * Карточки снимка, у которых нет будущего вхождения (событие закончилось, а
+ * база недоступна и в архив его не перевела). Заполняется в аварийном пути
+ * loadActiveEvents(); главный поток добавляет их к архиву, чтобы они получали
+ * архивную страницу (плашка «Событие прошло», noindex по окну), а не висели в
+ * карте и sitemap как предстоящие. 15.11.2026 так было 370 карточек — 740 URL.
+ */
+const SNAPSHOT_FINISHED_PAST = [];
+
 function snapshotFallbackEvents(reason) {
   if (String(process.env.SEO_SNAPSHOT_FALLBACK || '') !== '1') return null;
   const file = join(ROOT, 'public/data/events.json');
@@ -3170,10 +3179,23 @@ function snapshotFallbackEvents(reason) {
       description_ru: c.description_ru ?? '',
       description_en: c.description_en ?? '',
     }));
+  // Разбор по будущему вхождению: закончившиеся карточки не должны публиковаться
+  // как активные (startDate в прошлом, плашки «Событие прошло» нет, noindex нет).
+  const finished = rows.filter((c) => {
+    const next = nextOccurrenceDate(c, TODAY_ISO);
+    return Boolean(next) && next < TODAY_ISO;
+  });
+  const finishedIds = new Set(finished.map((c) => String(c.id).toLowerCase()));
+  const active = rows.filter((c) => !finishedIds.has(String(c.id).toLowerCase()));
+  SNAPSHOT_FINISHED_PAST.length = 0;
+  // В архивном наборе статус архивный: он же решает, что Event-узел в JSON-LD
+  // не выводится, а страница идёт по режиму 'past'.
+  SNAPSHOT_FINISHED_PAST.push(...finished.map((c) => ({ ...c, status: 'archived' })));
   console.warn(
-    `seo-prerender: БД недоступна (${logErr(reason)}) — активный набор взят из снапшота: ${rows.length} карточек, английский/описания могут быть пустыми.`
+    `seo-prerender: БД недоступна (${logErr(reason)}) — активный набор взят из снимка: ${active.length} карточек ` +
+      `(снимок: переведено в архив ${finished.length}), английский/описания могут быть пустыми.`,
   );
-  return rows;
+  return active;
 }
 
 /**
@@ -5788,7 +5810,9 @@ async function main() {
   // Прошедшие (архивные) события: страницы обязаны отдавать 200, иначе GSC
   // показывает «Не найдено (404)» по ссылкам, которые сам же и проиндексировал.
   // Плюс снимки событий, которых в базе уже нет (scripts/data/legacy-events.json).
-  const pastEventsRaw = await loadPastEvents(db);
+  // К архиву добавляем карточки снимка без будущего вхождения (их перевёл
+  // snapshotFallbackEvents): фильтр по activeIdSet ниже пересечения снимает.
+  const pastEventsRaw = [...(await loadPastEvents(db)), ...SNAPSHOT_FINISHED_PAST];
   // Одна запись не может быть одновременно активной и архивной. При аварийном
   // снапшоте (archive-seed) id пересекаются с активным набором, а dedupeCopies
   // на двух строках с ОДНИМ id снимает обе копии — страница исчезала совсем
