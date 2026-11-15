@@ -16,8 +16,13 @@
  *       которого в dist есть страница (любой слаг), страница содержит
  *       <meta name="robots" content="noindex, follow">, и id НЕ значится среди
  *       активных в dist/data/events.json;
- *   (B) необъяснимое сокращение — всё остальное (города, категории, блог,
- *       посадочные; события без страницы, страница без noindex; активные id).
+ *   (A) алиас канона — исторический URL события, чья страница в dist отдаёт
+ *       canonical на ДРУГУЮ страницу события, и та осталась в новом sitemap
+ *       (URL консолидирован, контент не потерян);
+ *   (A) тонкая посадочная — не-событийный URL (город/категория/блог), страница
+ *       в dist есть и помечена noindex (у категории не осталось живых событий);
+ *   (B) необъяснимое сокращение — всё остальное (посадочные без страницы или
+ *       без noindex; события без страницы; canonical вне нового sitemap).
  *
  * Вердикт: (B) пусто → сборка проходит независимо от процента. Иначе — прежнее
  * правило: до 5 % проходим с предупреждением, больше — падаем. В отчёте обе
@@ -46,6 +51,7 @@ const locs = (file) => {
 };
 
 const pathOf = (url) => url.replace(/^https?:\/\/[^/]+/, '');
+const isSamePath = (a, b) => pathOf(a) === pathOf(b);
 
 const typeOf = (url) => {
   const p = pathOf(url);
@@ -94,6 +100,31 @@ const isNoindexFollow = (file) => {
   }
 };
 
+/** canonical страницы (для распознавания алиасов исторических URL). */
+const canonicalOf = (file) => {
+  try {
+    const html = fs.readFileSync(file, 'utf8');
+    const m =
+      html.match(/<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)["']/i) ||
+      html.match(/<link[^>]+href=["']([^"']+)["'][^>]+rel=["']canonical["']/i);
+    return m ? m[1] : null;
+  } catch {
+    return null;
+  }
+};
+
+/** Файл страницы по URL (для не-событийных адресов: город/категория, блог). */
+const pageByPath = (url) => {
+  let p = pathOf(url).split(/[?#]/)[0];
+  try {
+    p = decodeURIComponent(p);
+  } catch {
+    /* оставляем как есть */
+  }
+  const file = path.join(DIST, p.replace(/^\/+/, ''), 'index.html');
+  return fs.existsSync(file) ? file : null;
+};
+
 if (!fs.existsSync(NEW)) {
   console.error('verify-sitemap-shrink: dist/sitemap.xml не найден');
   process.exit(1);
@@ -119,20 +150,43 @@ const share = Math.round(dropRatio * 1000) / 10;
 const activeIds = loadActiveIds();
 
 const driftA = [];
+const aliasA = [];
+const thinA = [];
 const brokenB = [];
 for (const url of lost) {
   const id = eventId(url);
+  if (!id) {
+    // не событие: город/категория/блог — сокращение объяснимо, если страница
+    // осталась в сборке и помечена noindex (тонкая посадочная без живых событий)
+    const page = pageByPath(url);
+    if (page && isNoindexFollow(page)) {
+      thinA.push(url);
+    } else {
+      brokenB.push(url);
+    }
+    continue;
+  }
   let archival = false;
-  if (id && activeIds) {
+  if (activeIds) {
     const page = findEventPage(id);
     archival = Boolean(page) && isNoindexFollow(page) && !activeIds.has(id);
+    if (!archival && page) {
+      // исторический URL, чья canonical ведёт на ДРУГУЮ страницу события,
+      // которая осталась в новом sitemap ⇒ это алиас, а не потеря контента
+      const canon = canonicalOf(page);
+      const targetPage = canon && canon !== url ? findEventPage(String(canon).match(/\/event\/([0-9a-f-]{36})\//i)?.[1] || '') : null;
+      if (canon && canon !== url && nextSet.has(canon) && targetPage && !isSamePath(canon, url)) {
+        aliasA.push(url);
+        continue;
+      }
+    }
   }
   (archival ? driftA : brokenB).push(url);
 }
 
 console.log(
   `verify-sitemap-shrink: было ${prev.length}, стало ${next.length} loc, выпало ${lost.length} ` +
-    `(${driftA.length} архивный дрейф / ${brokenB.length} необъяснимых), −${share}%`,
+    `(${driftA.length} архивный дрейф / ${aliasA.length} алиас канона / ${thinA.length} тонкая посадочная / ${brokenB.length} необъяснимых), −${share}%`,
 );
 
 const printGroups = (stream) => {
@@ -145,6 +199,13 @@ const printGroups = (stream) => {
     }
     for (const u of brokenB.slice(0, 20)) stream.error(`    ${u}`);
     if (brokenB.length > 20) stream.error(`    … ещё ${brokenB.length - 20}`);
+  }
+  if (aliasA.length || thinA.length) {
+    stream.log(
+      `  (A) объяснено иначе: алиас канона ${aliasA.length}, тонкая посадочная ${thinA.length}` +
+        (aliasA.length ? ` — напр. ${aliasA[0]}` : '') +
+        (thinA.length ? ` — напр. ${thinA[0]}` : ''),
+    );
   }
   if (driftA.length) {
     stream.log(`  (A) архивный дрейф (страницы живы, noindex): ${driftA.length}`);
@@ -160,7 +221,7 @@ if (lost.length === 0) {
 
 if (brokenB.length === 0) {
   console.log(
-    `verify-sitemap-shrink: архивный дрейф ${driftA.length} URL — сокращение объяснено, 0 необъяснимых`,
+    `verify-sitemap-shrink: сокращение объяснено (архив ${driftA.length}, алиас ${aliasA.length}, тонких ${thinA.length}), 0 необъяснимых`,
   );
   process.exit(0);
 }
