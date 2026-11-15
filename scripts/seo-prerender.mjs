@@ -3181,10 +3181,20 @@ function snapshotFallbackEvents(reason) {
     }));
   // Разбор по будущему вхождению: закончившиеся карточки не должны публиковаться
   // как активные (startDate в прошлом, плашки «Событие прошло» нет, noindex нет).
-  const finished = rows.filter((c) => {
-    const next = nextOccurrenceDate(c, TODAY_ISO);
-    return Boolean(next) && next < TODAY_ISO;
-  });
+  // «Закончилось» = последний день в прошлом. У серий с recurrence — по
+  // следующему вхождению (бессрочная серия остаётся активной). Многодневное
+  // событие, идущее сейчас, активным и остаётся: nextOccurrenceDate для
+  // не-серийных возвращает start_date и такие события ошибочно уходили в архив.
+  const isFinished = (c) => {
+    const recur = c.recurrence && typeof c.recurrence === 'object';
+    if (recur) {
+      const next = nextOccurrenceDate(c, TODAY_ISO);
+      return Boolean(next) && next < TODAY_ISO;
+    }
+    const last = String(c.end_date || c.start_date || '').slice(0, 10);
+    return Boolean(last) && last < TODAY_ISO;
+  };
+  const finished = rows.filter(isFinished);
   const finishedIds = new Set(finished.map((c) => String(c.id).toLowerCase()));
   const active = rows.filter((c) => !finishedIds.has(String(c.id).toLowerCase()));
   SNAPSHOT_FINISHED_PAST.length = 0;

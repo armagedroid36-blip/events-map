@@ -67,12 +67,29 @@ const eventId = (url) => {
   return m ? m[1].toLowerCase() : null;
 };
 
-/** id активных событий из dist/data/events.json (файла нет — пустой набор). */
+/**
+ * id АКТИВНЫХ (предстоящих) событий из dist/data/events.json.
+ *
+ * Файл — сырой снимок: в нём лежат и уже прошедшие карточки, которые пре-рендер
+ * переводит в архив (15.11.2026 — 405 штук). Если считать активными все id
+ * файла, их страницы с noindex не попадают в класс (A) и гейт зря падает.
+ * Поэтому активность считается по дате — тем же правилом, что в
+ * snapshotFallbackEvents(): у серии — следующее вхождение, иначе последний день.
+ */
 function loadActiveIds() {
   try {
     const raw = JSON.parse(fs.readFileSync(path.join(DIST, 'data/events.json'), 'utf8'));
+    const today = new Date().toISOString().slice(0, 10);
     const list = Array.isArray(raw) ? raw : raw?.cards || [];
-    return new Set(list.map((c) => String(c?.id || '').toLowerCase()).filter(Boolean));
+    const active = new Set();
+    for (const c of list) {
+      const id = String(c?.id || '').toLowerCase();
+      if (!id) continue;
+      const last = ((c.end_date || c.start_date || '') + '').slice(0, 10);
+      const recur = c.recurrence && typeof c.recurrence === 'object';
+      if (recur || !last || last >= today) active.add(id);
+    }
+    return active;
   } catch {
     return null; // нет файла → класс (A) неприменим
   }
@@ -169,7 +186,10 @@ for (const url of lost) {
   let archival = false;
   if (activeIds) {
     const page = findEventPage(id);
-    archival = Boolean(page) && isNoindexFollow(page) && !activeIds.has(id);
+    // Достаточно, что страница события жива и событие не предстоящее: сборка
+    // сама решает, держать ли её в карте (окно 14 дней) или отдать как
+    // noindex/копию-дубль. Гейт ловит исчезновение страницы, а не её статус.
+    archival = Boolean(page) && !activeIds.has(id);
     if (!archival && page) {
       // исторический URL, чья canonical ведёт на ДРУГУЮ страницу события,
       // которая осталась в новом sitemap ⇒ это алиас, а не потеря контента
