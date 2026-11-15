@@ -18,6 +18,7 @@ import { cleanCardText } from './text-safe.mjs';
 import { extractContacts } from './contacts-regex.mjs';
 import { extractDateLLM } from './date-llm.mjs';
 import { findEventZone } from './city-zones.mjs';
+import { cleanCurrency } from './currency.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -932,7 +933,7 @@ async function main() {
           photos: await persistTgPhotos(post.photos ? post.photos.slice(0, 3) : []),
           // free=true → price=0 («Бесплатно» на карточке); donation — отдельно (price остаётся null)
           price: p?.free ? 0 : (p?.price ?? null),
-          currency: p?.currency ?? null,
+          currency: cleanCurrency(p?.currency),
           donation: !!p?.donation,
           status: 'moderation',
           source_type: 'collector',

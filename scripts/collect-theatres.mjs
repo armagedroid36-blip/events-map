@@ -12,6 +12,7 @@ import { createClient } from '@supabase/supabase-js';
 import { selectAll } from './db-rows.mjs';
 import { extractTheatreEvents } from './theatre-llm.mjs';
 import { SOURCES } from './theatre-sources.mjs';
+import { cleanCurrency } from './currency.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -846,7 +847,7 @@ async function main() {
       contact: null,
       photos,
       price: s.price ?? null,
-      currency: s.currency ?? null,
+      currency: cleanCurrency(s.currency),
       donation: false,
       recurrence: s.days.length === 7 ? { freq: 'daily' } : { freq: 'weekly', days: s.days },
       status: 'moderation',

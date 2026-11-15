@@ -15,6 +15,7 @@ import { cleanEndTime } from './end-time-guard.mjs';
 import { cleanStartTime } from './start-time-stub.mjs';
 import { recurrenceOf } from './bali-recurrence.mjs';
 import { cardAddressBali } from './bali-address.mjs';
+import { cleanCurrency } from './currency.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -487,7 +488,7 @@ async function main() {
         photos,
         // free=true → price=0 («Бесплатно» на карточке); donation — отдельно (price остаётся null)
         price: p?.free ? 0 : (p?.price ?? null),
-        currency: p?.currency ?? null,
+        currency: cleanCurrency(p?.currency),
         donation: !!p?.donation,
         is_international: isInternational,
         // Серия дат в ленте (клубы, курсы, выставки) → правило повтора, иначе карточку

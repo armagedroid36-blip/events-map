@@ -24,6 +24,7 @@ import { cnDuplicateOf } from './cy-duplicate-pages.mjs';
 import { normWebsite, eventWebsite } from './site-url.mjs';
 import { buildIntervalIndex, coveredByInterval } from './interval-cover.mjs';
 import { buildVillageAggregates, coveredByVillageSeries } from './village-series.mjs';
+import { cleanCurrency } from './currency.mjs';
 // Индекс интервалов живущих карточек: «многодневная карточка накрывает дату
 // кандидата» ⇒ кандидат — копия (класс Leptos/Lefkara, запуск 331).
 let intervalIndex = [];
@@ -754,7 +755,7 @@ async function buildRow(src) {
     website: normWebsite(src.website),
     photos: src.photos || [],
     price: src.price ?? null,
-    currency: src.currency ?? null,
+    currency: cleanCurrency(src.currency),
     donation: false,
     country: 'cyprus',
     status: 'moderation',
@@ -816,7 +817,7 @@ async function collectVisitCyprus(seen, budget, websites = new Set()) {
         website: pageUrl,
         photos,
         price: cost.price ?? null,
-        currency: cost.currency ?? null,
+        currency: cleanCurrency(cost.currency),
         category,
         catHint: `Источник: официальный календарь VisitCyprus. Категории источника: ${catNames.join(', ') || 'нет'}`,
       });
@@ -1275,7 +1276,7 @@ async function collectCyprusBzCities(seen, budget, bzPages = new Set()) {
         website: ev.url || `https://cyprus.bz/events/${slug}`,
         photos,
         price: Number.isFinite(priceNum) ? priceNum : null,
-        currency: Number.isFinite(priceNum) ? (ev.offers?.priceCurrency || 'eur').toLowerCase() : null,
+        currency: Number.isFinite(priceNum) ? cleanCurrency(ev.offers?.priceCurrency || 'eur') : null,
         category: 'festival',
         catHint: `Источник: афиша Cyprus.BZ по городу ${cityRuName} (Восточный Кипр), место: ${place}, ${locality}`,
       });

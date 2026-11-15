@@ -28,6 +28,7 @@ import { cleanCardText } from './text-safe.mjs';
 import { extractContacts } from './contacts-regex.mjs';
 import { findCityZone } from './city-zones.mjs';
 import { cleanEndTime } from './end-time-guard.mjs';
+import { cleanCurrency } from './currency.mjs';
 import { cityForPoint } from './cy-districts.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -216,10 +217,10 @@ function parsePriceRegex(text) {
   if (!Number.isFinite(n)) return null;
   const unit = m[2].toLowerCase();
   if (unit === 'k' || unit === 'тыс' || unit === 'тыс.') n *= 1000;
-  const currency = unit === '$' || unit === 'usd' ? 'USD'
-    : unit === '€' || unit === 'eur' ? 'EUR'
-      : unit === 'руб' ? 'RUB'
-        : unit === '₫' || unit === 'đ' || unit === 'vnd' ? 'VND' : null;
+  const currency = unit === '$' || unit === 'usd' ? cleanCurrency('usd')
+    : unit === '€' || unit === 'eur' ? cleanCurrency('eur')
+      : unit === 'руб' ? cleanCurrency('rub')
+        : unit === '₫' || unit === 'đ' || unit === 'vnd' ? cleanCurrency('vnd') : null;
   return { price: n, currency, free: false, donation: false };
 }
 
@@ -611,7 +612,7 @@ async function handleMessage(msg, group, state, stats) {
     contact_instagram: contacts.instagram || null,
     photos,
     price: price?.free ? 0 : (price?.price ?? null),
-    currency: price?.currency ?? null,
+    currency: cleanCurrency(price?.currency),
     donation: !!price?.donation,
     status: 'moderation',
     source_type: 'collector',

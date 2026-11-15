@@ -73,7 +73,10 @@ export function eventMatchesFilters(ev: EventItem, filters: Filters): boolean {
     if (filters.priceMax != null && usd > filters.priceMax) return false;
   }
   // Валюта, язык и страна
-  if (filters.currency && ev.currency !== filters.currency) return false;
+  // Коды валют в базе бывают и в ВЕРХНЕМ регистре ('IDR', 'USD' — старые сборщики),
+  // а список фильтра в нижнем (i18n form.currencies) → сравниваем без регистра,
+  // иначе фильтр «Индонезийская рупия» не находит реальные события.
+  if (filters.currency && (ev.currency ?? '').toLowerCase() !== filters.currency.toLowerCase()) return false;
   if (filters.language && ev.language !== filters.language) return false;
   if (filters.country) {
     const ec = eventCountry(ev);

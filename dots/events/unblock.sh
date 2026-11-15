@@ -111,6 +111,11 @@ if [ -f "$HOME/projects/events-map/dots/events/endtime-899-apply.mjs" ]; then
   APPLY=1 node "$REPO_NATIVE/dots/events/endtime-899-apply.mjs" || echo "end_time-899: скрипт вернул ошибку, смотри вывод выше"
 fi
 
+if [ -f "$HOME/projects/events-map/dots/events/currency-901-apply.mjs" ]; then
+  echo "--- регистр кода валюты 'IDR'/'USD'/'VND' -> нижний (currency-901-apply.mjs)"
+  APPLY=1 node "$REPO_NATIVE/dots/events/currency-901-apply.mjs" || echo "currency-901: скрипт вернул ошибку, смотри вывод выше"
+fi
+
 PAT=$(printf "protocol=https\nhost=github.com\n\n" | git credential fill | grep '^password=' | cut -d= -f2-)
 api="https://api.github.com/repos/armagedroid36-blip/events-map"
 for wf in collect-events.yml rebuild-pages.yml; do
