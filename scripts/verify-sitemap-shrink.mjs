@@ -169,15 +169,23 @@ const activeIds = loadActiveIds();
 const driftA = [];
 const aliasA = [];
 const thinA = [];
+const canonA = [];
 const brokenB = [];
 for (const url of lost) {
   const id = eventId(url);
   if (!id) {
-    // не событие: город/категория/блог — сокращение объяснимо, если страница
-    // осталась в сборке и помечена noindex (тонкая посадочная без живых событий)
+    // не событие: город/категория/блог. Сокращение объяснимо в двух случаях:
+    //  1) страница осталась в сборке и помечена noindex (тонкая посадочная);
+    //  2) страница — посадочная-АЛИАС: её canonical ведёт на другую страницу,
+    //     которая есть в новом sitemap (сборка сознательно консолидирует такие
+    //     адреса на город/ячейку и не кладёт алиас в карту). Без этого правила
+    //     каждый прогон рапортовал «42 необъяснимых» и требовал ALLOW.
     const page = pageByPath(url);
+    const canon = page ? canonicalOf(page) : null;
     if (page && isNoindexFollow(page)) {
       thinA.push(url);
+    } else if (canon && canon !== url && nextSet.has(canon) && !isSamePath(canon, url)) {
+      canonA.push(url);
     } else {
       brokenB.push(url);
     }
@@ -206,7 +214,7 @@ for (const url of lost) {
 
 console.log(
   `verify-sitemap-shrink: было ${prev.length}, стало ${next.length} loc, выпало ${lost.length} ` +
-    `(${driftA.length} архивный дрейф / ${aliasA.length} алиас канона / ${thinA.length} тонкая посадочная / ${brokenB.length} необъяснимых), −${share}%`,
+    `(${driftA.length} архивный дрейф / ${aliasA.length} алиас события / ${canonA.length} посадочная-алиас канона / ${thinA.length} тонкая посадочная / ${brokenB.length} необъяснимых), −${share}%`,
 );
 
 const printGroups = (stream) => {
@@ -220,12 +228,18 @@ const printGroups = (stream) => {
     for (const u of brokenB.slice(0, 20)) stream.error(`    ${u}`);
     if (brokenB.length > 20) stream.error(`    … ещё ${brokenB.length - 20}`);
   }
-  if (aliasA.length || thinA.length) {
+  if (aliasA.length || thinA.length || canonA.length) {
     stream.log(
-      `  (A) объяснено иначе: алиас канона ${aliasA.length}, тонкая посадочная ${thinA.length}` +
+      `  (A) объяснено иначе: алиас события ${aliasA.length}, посадочная-алиас канона ${canonA.length}, тонкая посадочная ${thinA.length}` +
         (aliasA.length ? ` — напр. ${aliasA[0]}` : '') +
+        (canonA.length ? ` — напр. ${canonA[0]}` : '') +
         (thinA.length ? ` — напр. ${thinA[0]}` : ''),
     );
+  }
+  if (canonA.length) {
+    stream.log(`  (A) посадочная-алиас (canonical ведёт в sitemap): ${canonA.length}`);
+    for (const u of canonA.slice(0, 10)) stream.log(`    ${u}`);
+    if (canonA.length > 10) stream.log(`    … ещё ${canonA.length - 10}`);
   }
   if (driftA.length) {
     stream.log(`  (A) архивный дрейф (страницы живы, noindex): ${driftA.length}`);
@@ -241,7 +255,7 @@ if (lost.length === 0) {
 
 if (brokenB.length === 0) {
   console.log(
-    `verify-sitemap-shrink: сокращение объяснено (архив ${driftA.length}, алиас ${aliasA.length}, тонких ${thinA.length}), 0 необъяснимых`,
+    `verify-sitemap-shrink: сокращение объяснено (архив ${driftA.length}, алиас события ${aliasA.length}, посадочная-алиас ${canonA.length}, тонких ${thinA.length}), 0 необъяснимых`,
   );
   process.exit(0);
 }
