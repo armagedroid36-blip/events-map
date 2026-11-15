@@ -347,13 +347,27 @@ async function main() {
       inconclusive.push({ url: t.url, reason: res.err });
       continue;
     }
-    const { problems, notes, canonical } = inspect(res.dom, t.url, t.legacy ? names : null, Boolean(t.alias));
+    let problems = [];
+    let notes = [];
+    let canonical = '';
+    try {
+      ({ problems, notes, canonical } = inspect(res.dom, t.url, t.legacy ? names : null, Boolean(t.alias)));
+    } catch (err) {
+      // Разбор DOM не должен валить весь гейт: помечаем URL непроверенным.
+      console.log(`  [${i + 1}/${targets.length}] НЕ ПРОВЕРЕНО ${t.url} — разбор DOM: ${err.message}`);
+      inconclusive.push({ url: t.url, reason: `разбор DOM: ${err.message}` });
+      continue;
+    }
     // Цель canonical алиаса обязана отдавать 200: иначе страница-алиас ведёт
     // Google на несуществующий адрес — хуже, чем 404 у самого алиаса.
     if (t.alias && canonical) {
       try {
         const target = onBase(canonical);
-        const res2 = await fetch(target, { headers: GBOT, redirect: 'follow' });
+        const res2 = await fetch(target, { headers: { ...GBOT, 'accept-encoding': 'identity' }, redirect: 'follow' });
+        // Тело ОБЯЗАТЕЛЬНО дочитываем: непрочитанный поток ответа в CI давал
+        // необработанный assert(!this.paused) и валил гейт вместо отчёта
+        // (прогон 43672278639, 15.11.2026).
+        await res2.text().catch(() => '');
         if (!res2.ok) problems.push(`canonical-цель отдаёт HTTP ${res2.status}: ${target}`);
       } catch (err) {
         problems.push(`canonical-цель не проверена (${err.message}): ${canonical}`);
