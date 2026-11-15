@@ -106,6 +106,11 @@ if [ -f "$HOME/projects/events-map/dots/events/cy-addr-884-apply.mjs" ]; then
   APPLY=1 node "$REPO_NATIVE/dots/events/cy-addr-884-apply.mjs" || echo "адрес-заглушка: скрипт вернул ошибку, смотри вывод выше"
 fi
 
+if [ -f "$HOME/projects/events-map/dots/events/endtime-899-apply.mjs" ]; then
+  echo "--- end_time раньше start_time (endtime-899-apply.mjs)"
+  APPLY=1 node "$REPO_NATIVE/dots/events/endtime-899-apply.mjs" || echo "end_time-899: скрипт вернул ошибку, смотри вывод выше"
+fi
+
 PAT=$(printf "protocol=https\nhost=github.com\n\n" | git credential fill | grep '^password=' | cut -d= -f2-)
 api="https://api.github.com/repos/armagedroid36-blip/events-map"
 for wf in collect-events.yml rebuild-pages.yml; do
