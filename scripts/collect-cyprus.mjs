@@ -25,6 +25,7 @@ import { normWebsite, eventWebsite } from './site-url.mjs';
 import { buildIntervalIndex, coveredByInterval } from './interval-cover.mjs';
 import { buildVillageAggregates, coveredByVillageSeries } from './village-series.mjs';
 import { cleanCurrency } from './currency.mjs';
+import { cityQuota } from './city-quota.mjs';
 // Индекс интервалов живущих карточек: «многодневная карточка накрывает дату
 // кандидата» ⇒ кандидат — копия (класс Leptos/Lefkara, запуск 331).
 let intervalIndex = [];
@@ -842,42 +843,61 @@ const CYPRUSNOW_CITIES = ['famagusta', 'protaras', 'paralimni', 'larnaca', 'paph
 // offset=200/300/400 отдают записи, offset=600 — пусто).
 const CYPRUSNOW_MAX_OFFSET = 600;
 
+// Лента города целиком (limit=200 + хвост по offset).
+async function loadCyprusNowFeed(citySlug, deadline) {
+  let data;
+  try {
+    // limit=200: по умолчанию API отдаёт только 40 событий на город
+    data = await fetchJson(`https://cyprusnow.app/api/events?city=${citySlug}&limit=200`, 90000);
+  } catch (e) {
+    console.error(`  Cyprus Now ${citySlug}: ${e.message}`);
+    return [];
+  }
+  const events = data?.events || [];
+  // Хвост ленты за первыми 200 записями города (пагинация по offset; проверено
+  // 15.10.2026: offset=200/300/400 отдают записи, offset=600 — пусто). Без этого
+  // события 27.10 … 27.12 в сбор не попадают вообще, и прогон рапортует «0 новых»,
+  // хотя лента не исчерпана.
+  for (let offset = 200; offset <= CYPRUSNOW_MAX_OFFSET && Date.now() < deadline; offset += 200) {
+    let more;
+    try {
+      more = await fetchJson(`https://cyprusnow.app/api/events?city=${citySlug}&limit=200&offset=${offset}`, 90000);
+    } catch (e) {
+      console.error(`  Cyprus Now ${citySlug} (offset ${offset}): ${e.message}`);
+      break;
+    }
+    const page = more?.events || [];
+    events.push(...page);
+    if (page.length < 200) break;
+  }
+  return events;
+}
+
 async function collectCyprusNow(seen, budget, websites = new Set(), venueCities = new Map()) {
   const deadline = Date.now() + BUDGET.cyprusnow;
-  // Квота на город: не меньше 15, но так, чтобы всем городам хватило общего бюджета
-  const perCity = Math.max(15, Math.ceil(budget / CYPRUSNOW_CITIES.length));
   let added = 0;
-  console.log(`Собираю: Cyprus Now (агрегатор с координатами), квота на город ${perCity}...`);
-  for (const citySlug of CYPRUSNOW_CITIES) {
-    if (added >= budget || Date.now() > deadline) break;
-    let data;
-    try {
-      // limit=200: по умолчанию API отдаёт только 40 событий на город
-      data = await fetchJson(`https://cyprusnow.app/api/events?city=${citySlug}&limit=200`, 90000);
-    } catch (e) {
-      console.error(`  Cyprus Now ${citySlug}: ${e.message}`);
-      continue;
-    }
-    const events = data?.events || [];
-    // Хвост ленты за первыми 200 записями города (пагинация по offset; проверено
-    // 15.10.2026: offset=200/300/400 отдают записи, offset=600 — пусто). Без этого
-    // события 27.10 … 27.12 в сбор не попадают вообще, и прогон рапортует «0 новых»,
-    // хотя лента не исчерпана.
-    for (let offset = 200; offset <= CYPRUSNOW_MAX_OFFSET && Date.now() < deadline; offset += 200) {
-      let more;
-      try {
-        more = await fetchJson(`https://cyprusnow.app/api/events?city=${citySlug}&limit=200&offset=${offset}`, 90000);
-      } catch (e) {
-        console.error(`  Cyprus Now ${citySlug} (offset ${offset}): ${e.message}`);
-        break;
-      }
-      const page = more?.events || [];
-      events.push(...page);
-      if (page.length < 200) break;
+  const feeds = new Map();
+  const cursors = new Map();
+  console.log('Собираю: Cyprus Now (агрегатор с координатами), квота на город адаптивная...');
+  // Два прохода. Первый — гарантированная доля каждому городу (cityQuota), второй —
+  // остаток бюджета тем городам, у кого лента не исчерпана. Один проход с фиксированной
+  // долей 18 на город держал прогон на 59 карточках при backlog 134 (замер 916).
+  outer: for (let pass = 0; pass < 2; pass++) {
+  for (let idx = 0; idx < CYPRUSNOW_CITIES.length; idx++) {
+    const citySlug = CYPRUSNOW_CITIES[idx];
+    if (added >= budget || Date.now() > deadline) break outer;
+    const quota = pass === 0 ? cityQuota(budget, added, CYPRUSNOW_CITIES.length - idx) : budget - added;
+    if (quota <= 0) continue;
+    let events = feeds.get(citySlug);
+    if (!events) {
+      events = await loadCyprusNowFeed(citySlug, deadline);
+      feeds.set(citySlug, events);
     }
     let cityAdded = 0;
-    for (const ev of events) {
-      if (added >= budget || cityAdded >= perCity) break;
+    let cursor = cursors.get(citySlug) || 0;
+    for (; cursor < events.length; cursor++) {
+      const ev = events[cursor];
+      if (added >= budget || cityAdded >= quota || Date.now() > deadline) break;
       const title = decodeEntities(ev.title || ev.name || '').trim();
       const start = cyDate(ev.start_at || ev.start_date);
       if (!title || !start) continue;
@@ -983,7 +1003,11 @@ async function collectCyprusNow(seen, budget, websites = new Set(), venueCities 
         cityAdded++;
       }
     }
-    console.log(`  ${citySlug}: в ленте ${events.length}, добавлено ${cityAdded}`);
+    cursors.set(citySlug, cursor);
+    if (pass === 0 || cityAdded > 0) {
+      console.log(`  ${citySlug}: в ленте ${events.length}, квота ${quota}, добавлено ${cityAdded}`);
+    }
+  }
   }
   stats.cyprusnow = added;
   return added;
