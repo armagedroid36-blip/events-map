@@ -83,7 +83,10 @@ for city in CITIES:
         seen[slug] = city
         fut.append((d, e.get("title") or "", e.get("venue_name"), slug))
         t = e.get("title") or ""
-        if not any(matches(c.get("title") or "", t) for c in cy):
+        # карточка могла быть переведена (title_ru): сверять ВСЕ псевдонимы названия,
+        # иначе «Christmas on the Sea - Зажжение…» читается как новое событие (питфол замера)
+        if not any(matches(c.get(f) or "", t) for c in cy
+                   for f in ("title", "title_ru", "title_en")):
             new.append((d, t, e.get("venue_name"), slug))
     print(f"\n== {city}: записей {len(evs)}, будущих {len(fut)}, НОВЫХ (нет на карте) {len(new)}")
     for d, t, v, s in sorted(new)[:12]:
