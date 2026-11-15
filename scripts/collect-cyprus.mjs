@@ -1001,6 +1001,11 @@ async function collectCyprusNow(seen, budget, websites = new Set(), venueCities 
       if (await save(row, seen, { seriesCount: Number(ev.series_count) || 0 })) {
         added++;
         cityAdded++;
+        // Страница только что собранного события помечается разобранной СРАЗУ: без этого
+        // вторая запись ленты с тем же url, но ДРУГИМ названием (агрегатор держит такие пары,
+        // напр. «3 Years Birthday» ↔ «Picnic – 3 Years Celebration») проходит мимо проверки
+        // websites и вставляет вторую карточку в том же прогоне.
+        websites.add(String(pageUrl).trim());
       }
     }
     cursors.set(citySlug, cursor);
