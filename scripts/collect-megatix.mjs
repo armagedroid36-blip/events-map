@@ -266,7 +266,12 @@ async function main() {
     if (seen.has(key)) { skipped++; scanned++; continue; }
 
     const place = ldPlace(ev);
-    const addressText = [place.street, place.locality, place.name].filter(Boolean).join(', ');
+    // Поля адреса тоже несут HTML-сущности («Samadi Yoga &amp; Wellness Center»): без декода
+    // они уезжают в `events.address` и печатаются на карточке (класс 938, но по адресу).
+    const addressText = [place.street, place.locality, place.name]
+      .filter(Boolean)
+      .map((s) => decodeEntities(String(s)))
+      .join(', ');
     const district = districtForBali(addressText, null);
     if (OUT_OF_BALI.has(district)) { scanned++; continue; }
     // Район не распознан ⇒ пин упал бы на центр ОСТРОВА (до 40 км мимо). Такую
