@@ -281,7 +281,10 @@ async function main() {
       title,
       title_en: title,
       title_ru: null,
-      description: desc,
+      // Мегатикс описания не отдаёт, а колонка events.description — NOT NULL:
+      // с null вставка падала на КАЖДОЙ карточке (прогон 43882819683: 36 отказов, «добавлено 0»).
+      description: desc || '',
+
       description_ru: null,
       source_lang: 'en',
       language: 'en',
