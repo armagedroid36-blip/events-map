@@ -1151,10 +1151,19 @@ async function collectCyprusBz(seen, budget, websites = new Set(), bzPages = new
   if (bzSkip > 0) console.log(`  Cyprus.BZ: обход с позиции ${bzSkip % Math.max(fresh.length - HEAD, 1)} (хвост свежей секции)`);
   let fails = 0;
   let scanned = 0;
+  // Страховка от нулевой отдачи: 05.11 прочитано 253 страницы за 8 мин и добавлено 0,
+  // 08.11 — 201 страница и 0 (после фаз Cyprus Now и афиш городов в sitemap-хвосте
+  // не остаётся ничего нового). Продолжать обход — чистые минуты в пустоту, поэтому
+  // после ZERO_YIELD_STOP прочитанных страниц без единого добавления проход
+  // обрывается; позиция обхода и так ходит по кругу (bzSkip по дню), так что
+  // глубокие страницы достаются следующим прогонам.
+  const ZERO_YIELD_STOP = Number(process.env.BZ_ZERO_YIELD_STOP || 80);
+  let zeroYieldStop = false;
   let venueLookups = 0; // запросов страниц площадок за прогон (каждая ~1-3 с)
   const MAX_VENUE_LOOKUPS = 30;
   for (const url of queue) {
     if (added >= budget || Date.now() > deadline || fails >= 8) break;
+    if (scanned >= ZERO_YIELD_STOP && added === 0) { zeroYieldStop = true; break; }
     if (websites.has(url) || (canonBzPage(url) && bzPages.has(canonBzPage(url)))) {
       stats.skipped++;
       if (canonBzPage(url) && bzPages.has(canonBzPage(url))) stats.bzDup++;
@@ -1245,6 +1254,7 @@ async function collectCyprusBz(seen, budget, websites = new Set(), bzPages = new
   console.log(
     `  Cyprus.BZ: просмотрено страниц ${scanned}, добавлено ${added}`
     + (Date.now() > deadline ? ' (бюджет времени источника исчерпан)' : '')
+    + (zeroYieldStop ? ` (обрыв: ${scanned} страниц подряд без единого добавления)` : '')
     + (fails >= 8 ? ' (сервер перестал отвечать)' : ''),
   );
   stats.cyprusbz = added;
