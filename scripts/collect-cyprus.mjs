@@ -1151,6 +1151,9 @@ async function collectCyprusBz(seen, budget, websites = new Set(), bzPages = new
   if (bzSkip > 0) console.log(`  Cyprus.BZ: обход с позиции ${bzSkip % Math.max(fresh.length - HEAD, 1)} (хвост свежей секции)`);
   let fails = 0;
   let scanned = 0;
+  // scanned на момент последнего добавления: обрыв считаем по СЕРИИ страниц без
+  // добавлений (-1 = добавлений ещё не было, серия считается от начала прохода).
+  let lastAddScanned = -1;
   // Страховка от нулевой отдачи: 05.11 прочитано 253 страницы за 8 мин и добавлено 0,
   // 08.11 — 201 страница и 0 (после фаз Cyprus Now и афиш городов в sitemap-хвосте
   // не остаётся ничего нового). Продолжать обход — чистые минуты в пустоту, поэтому
@@ -1163,7 +1166,8 @@ async function collectCyprusBz(seen, budget, websites = new Set(), bzPages = new
   const MAX_VENUE_LOOKUPS = 30;
   for (const url of queue) {
     if (added >= budget || Date.now() > deadline || fails >= 8) break;
-    if (scanned >= ZERO_YIELD_STOP && added === 0) { zeroYieldStop = true; break; }
+    const sinceAdd = lastAddScanned < 0 ? scanned : scanned - lastAddScanned;
+    if (sinceAdd >= ZERO_YIELD_STOP) { zeroYieldStop = true; break; }
     if (websites.has(url) || (canonBzPage(url) && bzPages.has(canonBzPage(url)))) {
       stats.skipped++;
       if (canonBzPage(url) && bzPages.has(canonBzPage(url))) stats.bzDup++;
@@ -1247,6 +1251,7 @@ async function collectCyprusBz(seen, budget, websites = new Set(), bzPages = new
     }
     if (await save(row, seen)) {
       added++;
+      lastAddScanned = scanned;
       const pg = canonBzPage(row.website);
       if (pg) bzPages.add(pg);
     }
