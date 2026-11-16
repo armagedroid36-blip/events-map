@@ -28,7 +28,14 @@ import { photoUrl } from './api';
 import { todayIso, isArchiveIndexable } from './dates';
 import { eventHasEn, eventSlug } from './slug';
 import { nextOccurrenceDate } from './recurrence';
-import { placeCityLabel, placeCityPrefix, placeLabel, cityLocativeRu } from './address';
+import {
+  CITY_NAME_BY_PATH,
+  CITY_NAME_RU_LOCATIVE,
+  cityLocativeRu,
+  placeCityLabel,
+  placeCityPrefix,
+  placeLabel,
+} from './address';
 import type { CityPath } from './address';
 import { categoryDescription, categoryPageHref, categoryTitle } from './categoryPages';
 import type { CellFacts } from './categoryPages';
@@ -518,6 +525,77 @@ export function applyCategoryMeta(
       : robots === undefined
         ? (document.head.querySelector<HTMLMetaElement>('meta[name="robots"]')?.content ?? null)
         : robots,
+  });
+}
+
+// --- «Город × на этой неделе» (§4.1.7) — мета для SPA -------------------
+const WEEK_MONTHS_RU_GEN = [
+  'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+  'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря',
+];
+const WEEK_MONTHS_EN = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+
+/** «16–22 ноября 2026» / «November 16–22, 2026» — зеркало статики. */
+function weekRangeText(startIso: string, endIso: string, lang: 'ru' | 'en'): string {
+  const [ys, ms, ds] = startIso.split('-').map(Number);
+  const [ye, me, de] = endIso.split('-').map(Number);
+  const ru = lang === 'ru';
+  if (ys === ye && ms === me) {
+    return ru
+      ? `${ds}–${de} ${WEEK_MONTHS_RU_GEN[ms - 1]} ${ys}`
+      : `${WEEK_MONTHS_EN[ms - 1]} ${ds}–${de}, ${ys}`;
+  }
+  return ru
+    ? `${ds} ${WEEK_MONTHS_RU_GEN[ms - 1]} – ${de} ${WEEK_MONTHS_RU_GEN[me - 1]} ${ye}`
+    : `${WEEK_MONTHS_EN[ms - 1]} ${ds} – ${WEEK_MONTHS_EN[me - 1]} ${de}, ${ye}`;
+}
+
+/**
+ * Мета страницы «город × на этой неделе»: title/description из фактов окна,
+ * canonical self со слэшем, hreflang как у статики (пара ru/en/x-default=/en/;
+ * у RU-only — две self-аннотации). noindex снимается — страница индексируемая.
+ */
+export function applyWeekMeta(
+  path: CityPath,
+  lang: 'ru' | 'en',
+  count: number,
+  startIso: string,
+  endIso: string,
+  hasEn: boolean,
+): void {
+  const en = lang === 'en';
+  const loc = en ? CITY_NAME_BY_PATH[path] : CITY_NAME_RU_LOCATIVE[path];
+  const range = weekRangeText(startIso, endIso, lang);
+  const title = en
+    ? `Events in ${loc} this week: ${range} | MyPins`
+    : `События ${loc} на этой неделе: ${range} | MyPins`;
+  const description = en
+    ? `${count} events in ${loc} from ${range}: concerts, meetups and workshops with dates, venues and prices.`
+    : `${count} событий ${loc} с ${range}: концерты, встречи и мастер-классы с датами, площадками и ценами.`;
+  const ruUrl = `${SITE_URL}/${path}/this-week/`;
+  const enUrl = `${SITE_URL}/en/${path}/this-week/`;
+  const canonical = en ? enUrl : ruUrl;
+  apply({
+    title,
+    description,
+    lang,
+    canonical,
+    og: {
+      'og:title': title,
+      'og:description': description,
+      'og:url': canonical,
+      'og:image': `${SITE_URL}/logo.png`,
+    },
+    hreflang: hasEn
+      ? hreflangPairsFor(ruUrl, enUrl)
+      : [
+          { hreflang: lang, href: canonical },
+          { hreflang: 'x-default', href: canonical },
+        ],
+    robots: null,
   });
 }
 

@@ -23,10 +23,13 @@ import { config } from './config';
 import { navigate, slugify } from './lib/navigate';
 import { applyGenericMeta, isEnPath, stripLangPrefix } from './lib/seo';
 import NotFound from './components/NotFound';
+import { cityPath } from './lib/address';
+import type { CityPath } from './lib/address';
 
 // Страницы грузятся по требованию (code-split): тяжёлые зависимости
 // (карта, админка) уходят в отдельные чанки, основной чанк меньше.
 const Home = lazy(() => import('./pages/Home'));
+const CityWeek = lazy(() => import('./pages/CityWeek'));
 const Admin = lazy(() => import('./pages/Admin'));
 const MyEvents = lazy(() => import('./pages/MyEvents'));
 const HistoryPage = lazy(() => import('./pages/History'));
@@ -65,8 +68,25 @@ function normPath(p: string): string {
 function categoryRoute(pub: string): { city: string; categoryId: string } | null {
   const m = /^\/([a-z0-9-]+)\/([a-z0-9-]+)$/.exec(pub);
   if (!m) return null;
+  // «this-week» — зарезервированный слаг недельной посадочной, не категория
+  if (m[2] === 'this-week') return null;
   const label = CITY_ROUTES.get(`/${m[1]}`);
   return label ? { city: label, categoryId: m[2] } : null;
+}
+
+/**
+ * /<city>/this-week — посадочная «город × на этой неделе» (§4.1.7).
+ * Страницу пишет только статика, и только при гейте ≥3 событий в окне недели;
+ * SPA проверяет тот же гейт по загруженному набору и при недоборе показывает
+ * прежнюю 404-заглушку.
+ */
+function weekRoute(pub: string): { path: CityPath; city: string } | null {
+  const m = /^\/([a-z0-9-]+)\/this-week$/.exec(pub);
+  if (!m) return null;
+  const label = CITY_ROUTES.get(`/${m[1]}`);
+  if (!label) return null;
+  const path = cityPath(label);
+  return path ? { path, city: label } : null;
 }
 
 export default function App() {
@@ -138,6 +158,7 @@ export default function App() {
         pub.startsWith('/org/') ||
         CITY_ROUTES.has(pub) ||
         categoryRoute(pub) !== null ||
+        weekRoute(pub) !== null ||
         pub === '/blog' ||
         pub.startsWith('/blog/') ||
         pub === '/for-organizers' ||
@@ -258,8 +279,11 @@ export default function App() {
         } else {
           const cityLabel = CITY_ROUTES.get(pub);
           const cat = categoryRoute(pub);
+          const wk = weekRoute(pub);
           page = cityLabel ? (
             <Home key={`${en ? 'en:' : ''}city:${cityLabel}`} city={cityLabel} />
+          ) : wk ? (
+            <CityWeek key={`${en ? 'en:' : ''}week:${wk.path}`} path={wk.path} />
           ) : cat ? (
             <Home
               key={`${en ? 'en:' : ''}city:${cat.city}:${cat.categoryId}`}

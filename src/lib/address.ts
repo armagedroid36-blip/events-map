@@ -64,7 +64,7 @@ const CITY_NAME_RU: Record<CityPath, string> = {
  * (предлог хранится в самой метке целиком — у «Бали» он «на», а не «в»).
  * Зеркало CITY_NAME_RU_LOCATIVE в scripts/seo-prerender.mjs — менять синхронно.
  * Новый город добавлять сюда же; нераспознанный → пустой локатив (блока нет). */
-const CITY_NAME_RU_LOCATIVE: Record<CityPath, string> = {
+export const CITY_NAME_RU_LOCATIVE: Record<CityPath, string> = {
   bali: 'на Бали',
   'da-nang': 'в Дананге',
   'nha-trang': 'в Нячанге',
@@ -76,7 +76,7 @@ const CITY_NAME_RU_LOCATIVE: Record<CityPath, string> = {
 };
 
 /** EN-имена городов по пути — как labelEn в config / CITY_NAME_EN пре-рендера */
-const CITY_NAME_BY_PATH: Record<CityPath, string> = {
+export const CITY_NAME_BY_PATH: Record<CityPath, string> = {
   bali: 'Bali',
   'da-nang': 'Da Nang',
   'nha-trang': 'Nha Trang',

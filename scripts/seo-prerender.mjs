@@ -2341,6 +2341,9 @@ function citySeoHtml(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs = 
     // Свежесть афиши (E-E-A-T): видимая дата обновления на дату сборки.
     // Только статика — живое SPA приложение обновляется само.
     `  <p class="seo-updated">Афиша обновлена: <time datetime="${TODAY_ISO}">${ruDate(TODAY_ISO)}</time></p>`,
+    ...(cityPathKey && WEEK_READY_PATHS.has(cityPathKey)
+      ? [`  <p><a href="/${cityPathKey}/this-week/">События на этой неделе →</a></p>`]
+      : []),
   ];
   if (Array.isArray(evs) && evs.length) {
     // «Мероприятия и события на Бали» / «События на Бали» → «Ближайшие события
@@ -2633,6 +2636,9 @@ function citySeoHtmlEn(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs 
     `  <h1>${esc(seo.h1)}</h1>`,
     `  <p>${esc(seo.intro)}</p>`,
     `  <p class="seo-updated">Updated: <time datetime="${TODAY_ISO}">${enDate(TODAY_ISO)}</time></p>`,
+    ...(cityPathKey && WEEK_READY_PATHS.has(cityPathKey)
+      ? [`  <p><a href="/en/${cityPathKey}/this-week/">Events this week →</a></p>`]
+      : []),
   ];
   if (Array.isArray(evs) && evs.length) {
     // «Events in Bali» / «Events and things to do in Cyprus» → «Upcoming events
@@ -5759,6 +5765,291 @@ function fixArticleLinks() {
   console.log(`  ссылки статей: переписано ${rewritten}, снято ${removed}`);
 }
 
+// --- Посадочные «город × на этой неделе» (§4.1.7 плана SEO) --------------
+// Окно — [TODAY_ISO; TODAY_ISO+6] по UTC, тот же TODAY_ISO, что у пре-рендера.
+// Гейт: ≥3 активных события города с ближайшим вхождением в окно; иначе страница
+// не пишется вообще (тонких страниц не плодим). EN-версия — только если в окне
+// ≥3 события с английской версией, иначе RU-only с двумя self-аннотациями.
+const WEEK_MIN_EVENTS = 3;
+const WEEK_LIST_LIMIT = 50;
+const WEEK_READY_PATHS = new Set();
+const RU_MONTHS_GEN = [
+  'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+  'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря',
+];
+const EN_MONTHS_FULL = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+
+function weekEndIso() {
+  return addDaysIso(TODAY_ISO, 6);
+}
+
+/** «16–22 ноября 2026»; на границе месяцев — «30 ноября – 6 декабря 2026». */
+function weekRangeRu(start, end) {
+  const [ys, ms, ds] = start.split('-').map(Number);
+  const [ye, me, de] = end.split('-').map(Number);
+  if (ys === ye && ms === me) return `${ds}–${de} ${RU_MONTHS_GEN[ms - 1]} ${ys}`;
+  if (ys === ye) return `${ds} ${RU_MONTHS_GEN[ms - 1]} – ${de} ${RU_MONTHS_GEN[me - 1]} ${ye}`;
+  return `${ds} ${RU_MONTHS_GEN[ms - 1]} ${ys} – ${de} ${RU_MONTHS_GEN[me - 1]} ${ye}`;
+}
+
+/** «November 16–22, 2026». */
+function weekRangeEn(start, end) {
+  const [ys, ms, ds] = start.split('-').map(Number);
+  const [ye, me, de] = end.split('-').map(Number);
+  if (ys === ye && ms === me) return `${EN_MONTHS_FULL[ms - 1]} ${ds}–${de}, ${ys}`;
+  if (ys === ye) return `${EN_MONTHS_FULL[ms - 1]} ${ds} – ${EN_MONTHS_FULL[me - 1]} ${de}, ${ye}`;
+  return `${EN_MONTHS_FULL[ms - 1]} ${ds}, ${ys} – ${EN_MONTHS_FULL[me - 1]} ${de}, ${ye}`;
+}
+
+/** События города в окне недели (для EN — только с английской версией). */
+function weekCityEvents(allEvents, cityPath, lang = 'ru') {
+  const start = TODAY_ISO;
+  const end = weekEndIso();
+  const en = lang === 'en';
+  return (allEvents || [])
+    .filter((ev) => {
+      if (!ev || typeof ev.id !== 'string' || typeof ev.title !== 'string' || !ev.title) return false;
+      const crumb = cityCrumb(ev.city);
+      const sameCity =
+        cityPath === 'cyprus' ? CYPRUS_PAGE_PATHS.has(crumb?.path) : crumb?.path === cityPath;
+      if (!sameCity) return false;
+      const next = nextOccurrenceDate(ev, TODAY_ISO);
+      if (!next || next < start || next > end) return false;
+      if (en && !eventHasEn(ev)) return false;
+      return true;
+    })
+    .sort((a, b) => {
+      const da = String(nextOccurrenceDate(a, TODAY_ISO));
+      const db = String(nextOccurrenceDate(b, TODAY_ISO));
+      return da.localeCompare(db) || String(a.id).localeCompare(String(b.id));
+    });
+}
+
+/** Цена для списка недели: те же правила, что в блоке города. */
+function weekPriceText(ev, lang) {
+  const en = lang === 'en';
+  const price = ev.price != null ? Number(ev.price) : null;
+  const currency = (typeof ev.currency === 'string' && ev.currency ? ev.currency : 'usd').toUpperCase();
+  if (price != null && price > 0) return `${price} ${currency}`;
+  if (Boolean(ev.donation)) return en ? 'Donation' : 'Донат';
+  if (price === 0) return en ? 'Free' : 'Бесплатно';
+  return '';
+}
+
+/** Факты недели: число событий, площадки, бесплатные, категории. */
+function weekFacts(list, lang, cells, cityPath, catById) {
+  const en = lang === 'en';
+  const venues = [];
+  for (const ev of list) {
+    const label = placeLabel(ev.address, ev, lang);
+    const short = String(label || '').split(',')[0].trim();
+    if (short && !venues.includes(short)) venues.push(short);
+    if (venues.length >= 4) break;
+  }
+  const free = list.filter((ev) => {
+    const price = ev.price != null ? Number(ev.price) : null;
+    return price === 0;
+  }).length;
+  const catIds = [...new Set(list.map((ev) => ev.category_id).filter(Boolean))];
+  const catNames = catIds
+    .map((id) => {
+      const cat = catById?.get?.(id);
+      return cat ? (en ? cat.name_en || cat.name_ru : cat.name_ru) : null;
+    })
+    .filter(Boolean)
+    .slice(0, 4);
+  const cellLinks = [...(cells?.values?.() ?? [])]
+    .filter((cell) => cell.path === cityPath && catIds.includes(cell.cat.id) && (!en || cellHasEnPage(cell)))
+    .slice(0, 6);
+  return { venues, free, catNames, cellLinks };
+}
+
+/** Видимый блок #seo-week-block + микроразметка Items. */
+function weekPageHtml({ cityPath, lang, list, cells, catById }) {
+  const en = lang === 'en';
+  const start = TODAY_ISO;
+  const end = weekEndIso();
+  const loc = en ? CAT_CITY_NAME_EN[cityPath] || cityPath : CITY_NAME_RU_LOCATIVE[cityPath];
+  const range = en ? weekRangeEn(start, end) : weekRangeRu(start, end);
+  const { venues, free, catNames, cellLinks } = weekFacts(list, lang, cells, cityPath, catById);
+  const hubHref = `${en ? '/en' : ''}/${cityPath}/`;
+  const hubUrl = `${SITE_URL}${hubHref}`;
+  const crumbChain = pageCrumbChain({
+    path: cityPath,
+    lang,
+    last: en ? 'This week' : 'На этой неделе',
+    lastItem: `${SITE_URL}${en ? '/en' : ''}/${cityPath}/this-week/`,
+    cityIsLink: true,
+  });
+  const introParts = [];
+  introParts.push(
+    en
+      ? `${list.length} events are on in ${loc} from ${range}: concerts, meetups, workshops and parties with dates, venues and prices.`
+      : `${list.length} событий проходит ${loc} с ${range}: концерты, встречи, мастер-классы и вечеринки с датами, площадками и ценами.`,
+  );
+  if (venues.length) {
+    introParts.push(
+      en
+        ? `Venues include ${venues.join(', ')}.`
+        : `Площадки недели: ${venues.join(', ')}.`,
+    );
+  }
+  introParts.push(
+    free > 0
+      ? en
+        ? `There are ${free} free events this week.`
+        : `Бесплатных событий на этой неделе: ${free}.`
+      : en
+        ? 'Most events are ticketed — check the price on each card.'
+        : 'Большинство событий по билетам — цена указана в карточке.',
+  );
+  if (catNames.length) {
+    introParts.push(
+      en
+        ? `By category: ${catNames.join(', ')}.`
+        : `По категориям: ${catNames.join(', ')}.`,
+    );
+  }
+  introParts.push(
+    en
+      ? 'The list updates every day: open the map to see what is happening today and filter by date.'
+      : 'Список обновляется каждый день: откройте карту, чтобы увидеть, что происходит сегодня, и отфильтровать по дате.',
+  );
+  const rows = list.map((ev) => {
+    const date = nextOccurrenceDate(ev, TODAY_ISO);
+    const url = `${en ? '/en' : ''}/event/${ev.id}/${eventSlug(ev, en ? 'en' : 'ru')}/`;
+    const name = en
+      ? ev.title_en || ev.title || ev.title_ru || ''
+      : ev.title_ru || ev.title || ev.title_en || '';
+    const place = placeLabel(ev.address, ev, lang);
+    const price = weekPriceText(ev, lang);
+    const parts = [
+      `<time datetime="${esc(date)}">${esc(en ? enDate(date) : ruDate(date))}</time>`,
+      `<a href="${esc(url)}">${esc(name)}</a>`,
+    ];
+    if (place) parts.push(`<span>${esc(place)}</span>`);
+    if (price) parts.push(`<span>${esc(price)}</span>`);
+    return `    <li>${parts.join(' — ')}</li>`;
+  });
+  const faq = en
+    ? [
+        [
+          `What is there to do in ${loc} this week?`,
+          `${list.length} events from ${range}: ${catNames.join(', ') || 'concerts, meetups and workshops'}. The full list with dates and venues is on this page.`,
+        ],
+        [
+          'Are there free events?',
+          free > 0
+            ? `Yes, ${free} of ${list.length} events are free to attend.`
+            : 'All events on this week’s list are ticketed; prices are shown on each card.',
+        ],
+        [
+          'How do I find events on a specific date?',
+          'Open the map and use the date filter — the same list is available on the city page and on event cards.',
+        ],
+      ]
+    : [
+        [
+          `Что интересного ${loc} на этой неделе?`,
+          `${list.length} событий с ${range}: ${catNames.join(', ') || 'концерты, встречи и мастер-классы'}. Полный список с датами и площадками — на этой странице.`,
+        ],
+        [
+          'Есть ли бесплатные события?',
+          free > 0
+            ? `Да, ${free} из ${list.length} событий — бесплатные.`
+            : 'Все события недели по билетам; цена указана в карточке.',
+        ],
+        [
+          'Как найти событие на конкретную дату?',
+          'Откройте карту и воспользуйтесь фильтром по дате — тот же список есть на странице города и в карточках событий.',
+        ],
+      ];
+  const lines = [
+    '<div id="seo-week-block">',
+    crumbNavHtml(crumbChain, en ? 'Breadcrumbs' : 'Хлебные крошки'),
+    `  <h1>${esc(en ? `Events in ${loc} this week` : `События ${loc} на этой неделе`)}</h1>`,
+    `  <p>${esc(introParts.join(' '))}</p>`,
+    `  <p class="seo-updated">${en ? 'Updated' : 'Афиша обновлена'}: <time datetime="${TODAY_ISO}">${esc(
+      en ? enDate(TODAY_ISO) : ruDate(TODAY_ISO),
+    )}</time></p>`,
+    `  <h2>${esc(en ? `Events ${range}` : `События ${range}`)}</h2>`,
+    '  <ul>',
+    ...rows,
+    '  </ul>',
+  ];
+  if (cellLinks.length) {
+    lines.push(
+      `  <h2>${esc(en ? 'Categories this week' : 'Категории недели')}</h2>`,
+      `  <p>${cellLinks
+        .map((cell) => {
+          const label = `${typeof cell.cat.emoji === 'string' ? cell.cat.emoji : ''} ${
+            en ? cell.cat.name_en || cell.cat.name_ru : cell.cat.name_ru
+          }`.trim();
+          return `<a href="${esc(`${en ? '/en' : ''}/${cityPath}/${cell.cat.id}/`)}">${esc(label)}</a>`;
+        })
+        .join(' · ')}</p>`,
+    );
+  }
+  lines.push(
+    `  <p><a href="${esc(hubHref)}">${esc(en ? `All events in ${loc}` : `Все события ${loc}`)}</a></p>`,
+    '  <section class="seo-week-faq">',
+    ...faq.map(([q, a]) => `    <details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`),
+    '  </section>',
+    '</div>',
+  );
+  return { html: lines.join('\n'), intro: introParts.join(' '), faq };
+}
+
+/** JSON-LD недели: CollectionPage + ItemList + BreadcrumbList (Event-узлов нет). */
+function weekJsonLd({ cityPath, lang, list, url, name, description }) {
+  const en = lang === 'en';
+  const loc = en ? CAT_CITY_NAME_EN[cityPath] || cityPath : CITY_NAME_RU_LOCATIVE[cityPath];
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'CollectionPage',
+        url,
+        name,
+        description,
+        inLanguage: en ? 'en' : 'ru',
+        isPartOf: {
+          '@type': 'WebSite',
+          name: 'MyPins',
+          url: `${SITE_URL}${en ? '/en' : ''}/`,
+        },
+      },
+      {
+        '@type': 'ItemList',
+        numberOfItems: list.length,
+        itemListOrder: 'https://schema.org/ItemListOrderAscending',
+        itemListElement: list.map((ev, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: en ? ev.title_en || ev.title || '' : ev.title_ru || ev.title || ev.title_en || '',
+          url: `${SITE_URL}${en ? '/en' : ''}/event/${ev.id}/${eventSlug(ev, en ? 'en' : 'ru')}/`,
+        })),
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: crumbLdItems(
+          pageCrumbChain({
+            path: cityPath,
+            lang,
+            last: en ? 'This week' : 'На этой неделе',
+            lastItem: url,
+            cityIsLink: true,
+          }),
+        ),
+      },
+    ],
+  };
+}
+
+
 async function main() {
   // Отметки времени сборки: страниц стало ~3250 (активные + прошедшие), и
   // «стало медленнее» надо видеть с точностью до этапа — данные, пробы
@@ -6059,6 +6350,18 @@ async function main() {
   // категорию со страницы события, и для фактового описания (eventFactsText)
   const catById = new Map(categories.map((c) => [c.id, c]));
   const cells = buildCategoryCells(events, categories);
+
+  // «Город × на этой неделе»: гейт считаем ДО городских страниц — на хабе
+  // нужна ссылка только на существующую страницу (тот же гейт).
+  for (const c of CITY_PAGES) {
+    if (weekCityEvents(events, c.path, 'ru').length >= WEEK_MIN_EVENTS) {
+      WEEK_READY_PATHS.add(c.path);
+    }
+  }
+  console.log(
+    `  «на этой неделе»: гейт пройден у ${WEEK_READY_PATHS.size} городов` +
+      (WEEK_READY_PATHS.size ? ` (${[...WEEK_READY_PATHS].join(', ')})` : ''),
+  );
   console.log(
     `  категорий: ${categories.length}, ячеек «город × категория» (>=${MIN_CATEGORY_EVENTS}): ${cells.size}`,
   );
@@ -6270,6 +6573,112 @@ async function main() {
   // (EN-событий меньше MIN_CATEGORY_EVENTS). Такой адрес не попадает ни в
   // sitemap, ни в источники алиасов — ему пишется страница-алиас автоматически.
   const autoEnCellAliases = [];
+  // --- «Город × на этой неделе» (§4.1.7 плана SEO) -----------------------
+  // Окно [TODAY_ISO; +6 дней] по UTC. Гейт ≥3 событий в окне (EN — ≥3 с
+  // английской версией), иначе страница не пишется и URL отдаёт 404.
+  let weekPagesRu = 0;
+  let weekPagesEn = 0;
+  const weekBuilt = [];
+  for (const c of CITY_PAGES) {
+    if (!WEEK_READY_PATHS.has(c.path)) continue;
+    const listRu = weekCityEvents(events, c.path, 'ru').slice(0, WEEK_LIST_LIMIT);
+    if (listRu.length < WEEK_MIN_EVENTS) continue;
+    const locRu = CITY_NAME_RU_LOCATIVE[c.path];
+    const rangeRu = weekRangeRu(TODAY_ISO, weekEndIso());
+    const url = `${SITE_URL}/${c.path}/this-week/`;
+    const enUrl = `${SITE_URL}/en/${c.path}/this-week/`;
+    const blockRu = weekPageHtml({ cityPath: c.path, lang: 'ru', list: listRu, cells, catById });
+    const factsRu = weekFacts(listRu, 'ru', cells, c.path, catById);
+    const descRu = snippet(
+      `${listRu.length} событий ${locRu} ${rangeRu}: ${factsRu.catNames.join(', ') || 'концерты, встречи, мастер-классы'}. ` +
+        (factsRu.venues.length ? `Площадки: ${factsRu.venues.join(', ')}. ` : '') +
+        (factsRu.free ? `Бесплатных: ${factsRu.free}.` : 'Цены в карточках.'),
+      160,
+    );
+    const titleRu = snippet(`События ${locRu} на этой неделе: ${rangeRu} | MyPins`, 65);
+    const listEn = weekCityEvents(events, c.path, 'en').slice(0, WEEK_LIST_LIMIT);
+    const hasEn = listEn.length >= WEEK_MIN_EVENTS;
+    writePage(baseHtml, `${c.path}/this-week`, {
+      lang: 'ru',
+      title: titleRu,
+      description: descRu,
+      canonical: url,
+      ogTitle: titleRu,
+      ogDescription: descRu,
+      ogUrl: url,
+      ogImage: LOGO_URL,
+      jsonLd: weekJsonLd({
+        cityPath: c.path,
+        lang: 'ru',
+        list: listRu,
+        url,
+        name: titleRu,
+        description: descRu,
+      }),
+      hreflang: hasEn
+        ? [
+            { hreflang: 'ru', href: url },
+            { hreflang: 'en', href: enUrl },
+            { hreflang: 'x-default', href: enRoot },
+          ]
+        : [
+            { hreflang: 'ru', href: url },
+            { hreflang: 'x-default', href: url },
+          ],
+      bodySeo: blockRu.html,
+    });
+    locs.push(url);
+    if (hasEn) hreflangPairs.set(url, enUrl);
+    lastmods.set(url, TODAY_ISO);
+    weekPagesRu += 1;
+    weekBuilt.push(`${c.path} RU ${listRu.length}${hasEn ? ' +EN' : ''}`);
+
+    if (hasEn) {
+      const locEn = CAT_CITY_NAME_EN[c.path] || c.path;
+      const rangeEn = weekRangeEn(TODAY_ISO, weekEndIso());
+      const blockEn = weekPageHtml({ cityPath: c.path, lang: 'en', list: listEn, cells, catById });
+      const factsEn = weekFacts(listEn, 'en', cells, c.path, catById);
+      const descEn = snippet(
+        `${listEn.length} events in ${locEn} from ${rangeEn}: ${factsEn.catNames.join(', ') || 'concerts, meetups, workshops'}. ` +
+          (factsEn.venues.length ? `Venues: ${factsEn.venues.join(', ')}. ` : '') +
+          (factsEn.free ? `${factsEn.free} free events.` : 'Prices on each card.'),
+        160,
+      );
+      const titleEn = snippet(`Events in ${locEn} this week: ${rangeEn} | MyPins`, 65);
+      writePage(baseHtml, `en/${c.path}/this-week`, {
+        lang: 'en',
+        title: titleEn,
+        description: descEn,
+        canonical: enUrl,
+        ogTitle: titleEn,
+        ogDescription: descEn,
+        ogUrl: enUrl,
+        ogImage: LOGO_URL,
+        jsonLd: weekJsonLd({
+          cityPath: c.path,
+          lang: 'en',
+          list: listEn,
+          url: enUrl,
+          name: titleEn,
+          description: descEn,
+        }),
+        hreflang: [
+          { hreflang: 'en', href: enUrl },
+          { hreflang: 'ru', href: url },
+          { hreflang: 'x-default', href: enRoot },
+        ],
+        bodySeo: blockEn.html,
+      });
+      locs.push(enUrl);
+      lastmods.set(enUrl, TODAY_ISO);
+      weekPagesEn += 1;
+    }
+  }
+  console.log(
+    `  «на этой неделе»: страниц RU ${weekPagesRu}, EN ${weekPagesEn}` +
+      (weekBuilt.length ? ` (${weekBuilt.join('; ')})` : ''),
+  );
+
   const cellList = [...cells.values()].sort((a, b) =>
     `${a.path}/${a.cat.id}`.localeCompare(`${b.path}/${b.cat.id}`),
   );
