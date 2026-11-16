@@ -25,6 +25,7 @@ import { cleanCurrency } from './currency.mjs';
 import { cleanStartTime } from './start-time-stub.mjs';
 import { cleanEndTime } from './end-time-guard.mjs';
 import { stripInvisible } from './text-safe.mjs';
+import { megatixPinForAddress } from './megatix-venue-pins.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -239,6 +240,7 @@ async function main() {
   let scanned = 0;
   let past = 0;
   let noDistrict = 0;
+  let venuePinned = 0;
   let lastYield = 0;
 
   for (const url of urls) {
@@ -282,7 +284,11 @@ async function main() {
       continue;
     }
     const cityLabel = `${district}, Bali`;
-    const center = districtCenter(district);
+    // Гео в JSON-LD нет, поэтому по умолчанию пин — центр района (все события квартала в одной
+    // точке). Проверенные пины площадок (геокодинг 941) лежат в словаре: сначала он, потом центр.
+    const knownPin = megatixPinForAddress(addressText || place.name || '');
+    if (knownPin) venuePinned++;
+    const center = knownPin || districtCenter(district);
 
     // endDate = окно серии у большинства записей: интервал оставляем только на 1 день.
     const endRaw = splitLocal(ev.endDate);
@@ -345,7 +351,7 @@ async function main() {
   }
 
   const mins = ((Date.now() - started) / 60000).toFixed(1);
-  console.log(`Готово: добавлено ${inserted}, пропущено дублей ${skipped}, страниц прочитано ${scanned}, прошедших ${past}, без района ${noDistrict} (${mins} мин)`);
+  console.log(`Готово: добавлено ${inserted}, пропущено дублей ${skipped}, страниц прочитано ${scanned}, прошедших ${past}, без района ${noDistrict}, пин по площадке ${venuePinned} (${mins} мин)`);
 }
 
 const isDirectRun = /collect-megatix\.mjs$/.test((process.argv[1] || '').replace(/\\/g, '/'));
