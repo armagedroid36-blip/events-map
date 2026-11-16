@@ -15,7 +15,11 @@
  *   (A) архивный дрейф — URL события (/event/<id>/ и /en/event/<id>/), для id
  *       которого в dist есть страница (любой слаг), страница содержит
  *       <meta name="robots" content="noindex, follow">, и id НЕ значится среди
- *       активных в dist/data/events.json;
+ *       активных в dist/data/events.json. С 16.11.2026 сюда же относится
+ *       событие, чьей страницы в сборке уже НЕТ, но id есть в
+ *       dist/data/archive.json: пре-рендер не пишет страницы для всего архива
+ *       (после массовой архивации 9-суточного простоя так выпало 371 пара
+ *       RU+EN), и требование «страница жива» красило такие сборки в (B);
  *   (A) алиас канона — исторический URL события, чья страница в dist отдаёт
  *       canonical на ДРУГУЮ страницу события, и та осталась в новом sitemap
  *       (URL консолидирован, контент не потерян);
@@ -95,6 +99,25 @@ function loadActiveIds() {
   }
 }
 
+/**
+ * id событий из dist/data/archive.json (прошедшие).
+ *
+ * Нужен, чтобы «страницы события в сборке нет» не считалось потерей, если
+ * событие в архиве: пре-рендер пишет страницы архива не все. Читаем регэкспом
+ * по uuid, а не JSON.parse: файл 26 МБ на 6.9 тыс. событий.
+ * null — файла нет, правило неприменимо (прежнее поведение).
+ */
+function loadArchiveIds() {
+  try {
+    const raw = fs.readFileSync(path.join(DIST, 'data/archive.json'), 'utf8');
+    const ids = new Set();
+    for (const m of raw.matchAll(/"id"\s*:\s*"([0-9a-f-]{36})"/gi)) ids.add(m[1].toLowerCase());
+    return ids.size ? ids : null;
+  } catch {
+    return null;
+  }
+}
+
 /** Путь к index.html события по id (любой слаг, RU или EN). */
 function findEventPage(id) {
   for (const base of ['event', path.join('en', 'event')]) {
@@ -165,6 +188,7 @@ const dropRatio = lost.length / prev.length;
 const share = Math.round(dropRatio * 1000) / 10;
 
 const activeIds = loadActiveIds();
+const archivedIds = loadArchiveIds();
 
 const driftA = [];
 const aliasA = [];
@@ -198,6 +222,12 @@ for (const url of lost) {
     // сама решает, держать ли её в карте (окно 14 дней) или отдать как
     // noindex/копию-дубль. Гейт ловит исчезновение страницы, а не её статус.
     archival = Boolean(page) && !activeIds.has(id);
+    if (!archival && !page && archivedIds && archivedIds.has(id) && !activeIds.has(id)) {
+      // страницы в сборке нет, но событие в архиве сборки ⇒ пре-рендер снял
+      // его страницу вместе с публикацией, контент не потерян (архив по дизайну)
+      driftA.push(url);
+      continue;
+    }
     if (!archival && page) {
       // исторический URL, чья canonical ведёт на ДРУГУЮ страницу события,
       // которая осталась в новом sitemap ⇒ это алиас, а не потеря контента
