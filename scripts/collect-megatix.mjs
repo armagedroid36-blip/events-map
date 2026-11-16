@@ -61,6 +61,21 @@ const CAT_RULES = [
   [/kids|children|family|daycare/i, 'festival'],
 ];
 
+/** HTML-сущности в JSON-LD (`&amp;`, `&#39;`, `&quot;`) — норма у части страниц Megatix:
+ *  прогон 43893899929 принёс «Creative Pottery &amp; Drawing Experience». Декодируем в точке
+ *  чтения, иначе такие названия попадают на карту и в ключ дублей как есть. */
+function decodeEntities(s) {
+  return String(s || '')
+    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;|&#39;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&');
+}
+
 function pickCategory(title) {
   const t = String(title || '');
   for (const [re, id] of CAT_RULES) if (re.test(t)) return id;
@@ -244,7 +259,7 @@ async function main() {
     if (start.date < today) { past++; scanned++; continue; } // устаревшая страница в sitemap
     if (start.date > horizon) { scanned++; continue; }
 
-    const title = stripInvisible(String(ev.name || '')).trim().slice(0, 200);
+    const title = decodeEntities(stripInvisible(String(ev.name || ''))).trim().slice(0, 200);
     if (!title) { scanned++; continue; }
 
     const key = `${title.toLowerCase()}|${start.date}`;
@@ -275,7 +290,7 @@ async function main() {
     const startTime = cleanStartTime(start.time);
     const price = ldPrice(ev);
     const photo = ldImage(ev);
-    const desc = ev.description ? stripInvisible(String(ev.description)).trim().slice(0, 3000) : null;
+    const desc = ev.description ? decodeEntities(stripInvisible(String(ev.description))).trim().slice(0, 3000) : null;
 
     const row = {
       title,
