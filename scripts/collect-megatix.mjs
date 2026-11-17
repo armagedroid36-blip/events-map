@@ -77,6 +77,15 @@ function decodeEntities(s) {
     .replace(/&amp;/g, '&');
 }
 
+/** Коммерческое предложение, а не событие: распродажи, пакеты услуг, прокат, промо-акции.
+ *  Прогон 17.11: в базе 9 таких карточек Megatix — 7 висят в очереди модерации («Promo 8.8»,
+ *  «Pay Day Sale», «Ride and Rental Packages»), 2 уже ЖИВЫЕ на карте («All Game Package»,
+ *  «Kids Day Promo»), т.е. один класс собирался то в очередь, то на витрину. Такие страницы
+ *  не являются событиями и в базу не идут вовсе. */
+function isCommercialOffer(title) {
+  return /\b(promo|promotion|sale|pay\s*day|discount|voucher|gift\s*card|membership|packages?|rentals?|unlimited\s+\d+\s+hours?)\b/i.test(String(title || ''));
+}
+
 function pickCategory(title) {
   const t = String(title || '');
   for (const [re, id] of CAT_RULES) if (re.test(t)) return id;
@@ -241,6 +250,7 @@ async function main() {
   let past = 0;
   let noDistrict = 0;
   let venuePinned = 0;
+  let offers = 0;
   let lastYield = 0;
 
   for (const url of urls) {
@@ -266,6 +276,7 @@ async function main() {
 
     const key = `${title.toLowerCase()}|${start.date}`;
     if (seen.has(key)) { skipped++; scanned++; continue; }
+    if (isCommercialOffer(title)) { offers++; scanned++; continue; }
 
     const place = ldPlace(ev);
     // Поля адреса тоже несут HTML-сущности («Samadi Yoga &amp; Wellness Center»): без декода
@@ -368,7 +379,7 @@ async function main() {
   }
 
   const mins = ((Date.now() - started) / 60000).toFixed(1);
-  console.log(`Готово: добавлено ${inserted}, пропущено дублей ${skipped}, страниц прочитано ${scanned}, прошедших ${past}, без района ${noDistrict}, пин по площадке ${venuePinned} (${mins} мин)`);
+  console.log(`Готово: добавлено ${inserted}, пропущено дублей ${skipped}, страниц прочитано ${scanned}, прошедших ${past}, без района ${noDistrict}, не-события ${offers}, пин по площадке ${venuePinned} (${mins} мин)`);
 }
 
 const isDirectRun = /collect-megatix\.mjs$/.test((process.argv[1] || '').replace(/\\/g, '/'));
