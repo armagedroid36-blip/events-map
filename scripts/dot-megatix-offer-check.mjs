@@ -13,6 +13,8 @@ const OFFERS = [
   'Promo 8.8',
   'Pay Day Sale',
   'Ride and Rental Packages',
+  'Halloween Family Deal',
+  'November Deal 2026',
   'Gift Card 500K',
   'Monthly Membership',
   'Abonement 10 zanyatiy',
@@ -28,6 +30,7 @@ const EVENTS = [
   'Sunday Ecstatic Dance',
   'Kundalini Activation',
   'Passing Through: Art Exhibition',
+  'Dealing with Grief: Support Circle',
 ];
 
 let ok = 0;

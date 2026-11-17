@@ -86,7 +86,9 @@ export function isCommercialOffer(title) {
   // Класс «билет-абонемент вместо события» (962): «10-VISIT PASS», «Trial Pass», «Standard Hour»
   // фильтр 960 не ловил, и такие страницы уходили на карту живыми. «Happy Hour at ORYn»
   // при этом законное событие — поэтому «hour» сам по себе не стоп-слово, только «standard hour».
-  return /\b(promo|promotion|sale|pay\s*day|discount|voucher|gift\s*card|membership|packages?|rentals?|unlimited\s+\d+\s+hours?|pass(es)?|abonnement|abonement|subscription|standard\s+hour)\b/i.test(String(title || ''));
+  // 964: слово «deal» тоже цена-оффер, а не событие («Halloween Family Deal» в Zone Out Bali жил на
+  // карте рядом с уже снятыми All Game Package / Kids Day Promo; «November Deal 2026» висел в очереди).
+  return /\b(promo|promotion|sale|deals?|pay\s*day|discount|voucher|gift\s*card|membership|packages?|rentals?|unlimited\s+\d+\s+hours?|pass(es)?|abonnement|abonement|subscription|standard\s+hour)\b/i.test(String(title || ''));
 }
 
 function pickCategory(title) {
