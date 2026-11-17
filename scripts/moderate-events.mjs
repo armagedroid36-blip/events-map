@@ -287,7 +287,7 @@ async function main() {
   );
 
   const budget = { used: 0, max: MAX_LLM, fails: 0, down: false, errors: [], stop: null };
-  const totals = { publish: 0, review: 0, reject: 0, failed: 0 };
+  const totals = { publish: 0, review: 0, reject: 0, failed: 0, unchanged: 0 };
   const items = [];
   let cursor = null;
   let batches = 0;
@@ -330,6 +330,23 @@ async function main() {
       // (кэш тут же инвалидируется и модель дёргается каждый прогон), а запись нового
       // auto_reviewed_at не даёт истечь RECHECK_HOURS — смена промпта не доходит до очереди.
       if (decision.cached) {
+        items.push({ id: ev.id, title, source: ev.source_type, ...review });
+        continue;
+      }
+
+      // Вердикт «review» совпал с прежним ⇒ писать нечего: карточка и так в moderation.
+      // Иначе ПРАВИЛА (мат, 18+) переписывали вердикт каждый прогон и двигали updated_at
+      // (через триггер) — тот же класс дефекта, что кэш-хит из 948, только по ветке правил.
+      const prevReview = ev.auto_review || null;
+      if (
+        decision.verdict === 'review' &&
+        prevReview &&
+        String(prevReview.verdict || '') === 'review' &&
+        String(prevReview.reason || '') === review.reason &&
+        JSON.stringify(prevReview.flags || []) === JSON.stringify(review.flags)
+      ) {
+        review.at = String(ev.auto_reviewed_at || review.at);
+        totals.unchanged++;
         items.push({ id: ev.id, title, source: ev.source_type, ...review });
         continue;
       }
@@ -404,7 +421,7 @@ async function main() {
 
   console.log(
     `Проверено ${checked}: опубликовано ${totals.publish}, на проверку ${totals.review}, ` +
-      `отклонено ${totals.reject}, ошибок ${totals.failed}`,
+      `отклонено ${totals.reject}, ошибок ${totals.failed}, без изменений ${totals.unchanged}`,
   );
   console.log(
     `Готово: опубликовано ${totals.publish}, на проверку ${totals.review}, ` +
