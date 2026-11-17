@@ -88,7 +88,10 @@ export function isCommercialOffer(title) {
   // при этом законное событие — поэтому «hour» сам по себе не стоп-слово, только «standard hour».
   // 964: слово «deal» тоже цена-оффер, а не событие («Halloween Family Deal» в Zone Out Bali жил на
   // карте рядом с уже снятыми All Game Package / Kids Day Promo; «November Deal 2026» висел в очереди).
-  return /\b(promo|promotion|sale|deals?|pay\s*day|discount|voucher|gift\s*card|membership|packages?|rentals?|unlimited\s+\d+\s+hours?|pass(es)?|abonnement|abonement|subscription|standard\s+hour)\b/i.test(String(title || ''));
+  // 965: страница-награда «Claim Your Free Cocktail at Kuta Social Club» — промо-окно 18.11→31.12
+  // (LD: endDate 2026-12-31, price 0, описания нет), а отсечка endDate-окна делала из него «событие 18.11».
+  // Берём только «claim your»: «FREE ENTRY 11PM-1AM» у Red Ruby — настоящее клубное событие, слово free не стоп.
+  return /\b(promo|promotion|sale|deals?|pay\s*day|discount|voucher|gift\s*card|membership|packages?|rentals?|unlimited\s+\d+\s+hours?|pass(es)?|abonnement|abonement|subscription|standard\s+hour|claim\s+your)\b/i.test(String(title || ''));
 }
 
 function pickCategory(title) {

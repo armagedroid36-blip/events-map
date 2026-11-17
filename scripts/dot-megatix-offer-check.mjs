@@ -18,6 +18,7 @@ const OFFERS = [
   'Gift Card 500K',
   'Monthly Membership',
   'Abonement 10 zanyatiy',
+  'Claim Your Free Cocktail at Kuta Social Club',
 ];
 
 const EVENTS = [
