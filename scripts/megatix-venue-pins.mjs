@@ -61,11 +61,15 @@ export function megatixPinForAddress(addressText) {
   const hit = MEGATIX_VENUE_PINS.get(full);
   if (hit) return { lat: hit.lat, lng: hit.lng };
 
-  const street = full.split(',')[0].trim();
+  // ПИТФОЛ 950: normAddr() заменяет запятые пробелами, поэтому `full.split(',')[0]` возвращал
+  // ВЕСЬ адрес и вторичный матч по улице был мёртвым (5 карточек ORYn на «Jl. Monkey Forest, Ubud»
+  // стояли на центре Убуда при живой записи словаря). Улицу берём из СЫРОЙ строки до нормализации,
+  // а записи словаря (они уже нормализованы, без запятых) матчим по префиксу — улица стоит в начале ключа.
+  const street = normAddr(String(addressText).split(',')[0]);
   if (street.length < 6) return null;
   const byStreet = [];
   for (const [addr, pin] of MEGATIX_VENUE_PINS) {
-    if (addr.split(',')[0].trim() === street) byStreet.push(pin);
+    if (addr === street || addr.startsWith(`${street} `)) byStreet.push(pin);
   }
   // Улица с несколькими разными пинами — неоднозначно (разные дома), пин не выдумываем.
   const uniq = new Set(byStreet.map((p) => `${p.lat},${p.lng}`));
