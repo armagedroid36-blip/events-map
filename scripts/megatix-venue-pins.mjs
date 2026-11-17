@@ -34,6 +34,9 @@ export const MEGATIX_VENUE_PINS = new Map([
   ["jl cemara sanur kauh denpasar selatan kota denpasar bali 80228 south denpasar rip curl school of surf sanur bali", { lat: -8.710933, lng: 115.255895 }],
   ["jl dermaga ii jl raya pelabuhan benoa pedungan denpasar selatan kota denpasar bali denpasar beat boat bali - boat party", { lat: -8.742428, lng: 115.212535 }],
   ["jl bisma no 85 ubud sacred smoke incense studio", { lat: -8.516913, lng: 115.25938 }],
+  // 950: добраны двумя геокодированными адресами (Nominatim, село/площадка совпали с адресом источника)
+  ["dragonfly village ubud dragonfly village ubud", { lat: -8.4995506, lng: 115.2584172 }],
+  ["jalan katik lantang singakerta juggan sky", { lat: -8.5244078, lng: 115.248722 }],
 ]);
 
 /** Нормализация адреса: регистр, пунктуация, повторы пробелов. */
