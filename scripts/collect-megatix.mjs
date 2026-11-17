@@ -302,6 +302,23 @@ async function main() {
     const price = ldPrice(ev);
     const photo = ldImage(ev);
     const desc = ev.description ? decodeEntities(stripInvisible(String(ev.description))).trim().slice(0, 3000) : null;
+    // Своё описание Мегатикс почти никогда не отдаёт (у 149 живых карточек текст пустой), но в
+    // JSON-LD есть площадка, адрес, организатор и время. Собираем из них служебную строку —
+    // это НЕ выдумка (все поля со страницы источника), но она даёт судье и читателю контекст:
+    // без неё карточка с названием-брендом («KYO», «WDNSD») не говорит ничего.
+    const descFromFields = (() => {
+      const bits = [];
+      const vname = place.name ? decodeEntities(String(place.name)) : null;
+      if (vname) bits.push(`Venue: ${vname}`);
+      const addrParts = [place.street, place.locality].filter(Boolean).map((s) => decodeEntities(String(s)));
+      const addrClean = [...new Set(addrParts)].filter((s) => s.toLowerCase() !== String(vname || '').toLowerCase()).join(', ');
+      if (addrClean) bits.push(`Address: ${addrClean}`);
+      const org = ev.organizer && (ev.organizer.name || (Array.isArray(ev.organizer) && ev.organizer[0] && ev.organizer[0].name));
+      const orgName = org ? decodeEntities(String(org)) : null;
+      if (orgName && orgName.toLowerCase() !== String(vname || '').toLowerCase()) bits.push(`Organizer: ${orgName}`);
+      if (startTime) bits.push(`Start: ${String(startTime).slice(0, 5)}`);
+      return bits.join('. ');
+    })();
 
     const row = {
       title,
@@ -309,7 +326,7 @@ async function main() {
       title_ru: null,
       // Мегатикс описания не отдаёт, а колонка events.description — NOT NULL:
       // с null вставка падала на КАЖДОЙ карточке (прогон 43882819683: 36 отказов, «добавлено 0»).
-      description: desc || '',
+      description: desc || descFromFields,
 
       description_ru: null,
       source_lang: 'en',
