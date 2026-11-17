@@ -153,9 +153,9 @@ export const HOME_PANEL_BODY_ID = 'seo-home-panel-body';
 /** Все статические SEO-блоки пре-рендера (главная, города, категории,
  *  организаторы, события, блог/статьи, B2B, «О проекте») */
 export const SEO_BLOCK_SELECTOR =
-  '#seo-home-block, #seo-city-block, #seo-category-block, #seo-org-block, ' +
-  '#seo-event-block, #seo-article-block, #seo-b2b-block, #seo-about-block, ' +
-  '#seo-city-archive, #seo-category-archive';
+  '#seo-home-block, #seo-city-block, #seo-category-block, #seo-week-block, ' +
+  '#seo-org-block, #seo-event-block, #seo-article-block, #seo-b2b-block, ' +
+  '#seo-about-block, #seo-city-archive, #seo-category-archive';
 
 /** Блоки, которые остаются в DOM при активном мобильном интро-экране
  *  (страницы, где интро вообще показывается: главная и города) */
