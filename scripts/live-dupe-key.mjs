@@ -37,7 +37,13 @@ export const STOP = new Set(['festival', 'фестиваль', 'day', 'night', '
   // гончарные мастерские названы «… – One Off Experience» и склеились по общим
   // one/off/experience + адресу, хотя идут в 10:30 и 15:30 (прогон 39003436064,
   // «Fruit Bowl Hand-Building and Paint» ↔ «Breakfast Set of 2»).
-  'one', 'off', 'experience', 'workshops']);
+  'one', 'off', 'experience', 'workshops',
+  // «workshop» (единственное число) — тип занятия, а не признак одного события:
+  // у Pangolin (Улувату) в один день идут РАЗНЫЕ мастерские с общим «Pangolin Creative
+  // Workshop» в названии («Plaster Painting» 16:30 ↔ «Slime» 16:30), и дедуп склеивал их
+  // по pangolin/creative/workshop + общему адресу. Plaster Painting 17–18.11 ушёл в архив
+  // без единого живого близнеца (прогон 44171736504, разбор 17.11.2026).
+  'workshop', 'master', 'class', 'classes']);
 
 // Слова-шаблоны: сами по себе не доказывают, что это одно событие
 // (иначе «Деревня Рождества Фикарду» склеится с «Деревней Рождества Какопетрия»).
