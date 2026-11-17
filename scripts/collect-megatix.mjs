@@ -82,8 +82,11 @@ function decodeEntities(s) {
  *  «Pay Day Sale», «Ride and Rental Packages»), 2 уже ЖИВЫЕ на карте («All Game Package»,
  *  «Kids Day Promo»), т.е. один класс собирался то в очередь, то на витрину. Такие страницы
  *  не являются событиями и в базу не идут вовсе. */
-function isCommercialOffer(title) {
-  return /\b(promo|promotion|sale|pay\s*day|discount|voucher|gift\s*card|membership|packages?|rentals?|unlimited\s+\d+\s+hours?)\b/i.test(String(title || ''));
+export function isCommercialOffer(title) {
+  // Класс «билет-абонемент вместо события» (962): «10-VISIT PASS», «Trial Pass», «Standard Hour»
+  // фильтр 960 не ловил, и такие страницы уходили на карту живыми. «Happy Hour at ORYn»
+  // при этом законное событие — поэтому «hour» сам по себе не стоп-слово, только «standard hour».
+  return /\b(promo|promotion|sale|pay\s*day|discount|voucher|gift\s*card|membership|packages?|rentals?|unlimited\s+\d+\s+hours?|pass(es)?|abonnement|abonement|subscription|standard\s+hour)\b/i.test(String(title || ''));
 }
 
 function pickCategory(title) {
