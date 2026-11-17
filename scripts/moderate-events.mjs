@@ -209,6 +209,7 @@ async function decide(ev, budget) {
       flags: Array.isArray(prev.flags) ? prev.flags : [],
       reason: prev.reason || '',
       engine: 'cached',
+      cached: true,
     };
   }
   if (NO_LLM || budget.down) {
@@ -316,11 +317,22 @@ async function main() {
         flags: decision.flags || [],
         reason: decision.reason || '',
         engine: decision.engine || 'rules',
-        at: new Date().toISOString(),
+        // Кэш-хит: вердикт не пересматривался, поэтому время проверки остаётся прежним.
+        at: decision.cached && ev.auto_reviewed_at
+          ? String(ev.auto_reviewed_at)
+          : new Date().toISOString(),
       };
 
       totals[decision.verdict === 'publish' ? 'publish' : decision.verdict === 'reject' ? 'reject' : 'review']++;
       checked++;
+
+      // Кэш-хит — карточку НЕ трогаем вовсе. Иначе триггер базы двигает updated_at
+      // (кэш тут же инвалидируется и модель дёргается каждый прогон), а запись нового
+      // auto_reviewed_at не даёт истечь RECHECK_HOURS — смена промпта не доходит до очереди.
+      if (decision.cached) {
+        items.push({ id: ev.id, title, source: ev.source_type, ...review });
+        continue;
+      }
 
       const patch = { auto_review: review, auto_reviewed_at: review.at };
       if (decision.verdict === 'publish') {
