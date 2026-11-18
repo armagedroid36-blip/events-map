@@ -5840,12 +5840,16 @@ function monthWindow(monthKey) {
 }
 
 /** Подпись месяца: RU «ноябрь 2026» / «Ноябрь 2026», EN «November 2026». */
-function monthLabel(monthKey, lang = 'ru', cap = false) {
+function monthLabel(monthKey, lang = 'ru', mode = 'plain') {
   const w = monthWindow(monthKey);
   if (!w) return monthKey;
   if (lang === 'en') return `${EN_MONTHS_FULL[w.idx0]} ${w.year}`;
-  const name = cap ? RU_MONTHS_NOM[w.idx0] : RU_MONTHS_NOM[w.idx0].toLowerCase();
-  return `${name} ${w.year}`;
+  // mode: 'plain' — «ноябрь 2026», 'prep' — «ноябре 2026» (после «в»),
+  // 'cap'/true — «Ноябрь 2026» (крошка). Раньше третий аргумент был boolean
+  // cap, и monthLabel(..., 'prep') возвращал «Ноябрь».
+  if (mode === 'prep') return `${RU_MONTHS_PREP[w.idx0]} ${w.year}`;
+  if (mode === 'cap' || mode === true) return `${RU_MONTHS_NOM[w.idx0]} ${w.year}`;
+  return `${RU_MONTHS_NOM[w.idx0].toLowerCase()} ${w.year}`;
 }
 
 /** События города, у которых ближайшее вхождение попадает в месяц. */
