@@ -2344,6 +2344,17 @@ function citySeoHtml(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs = 
     ...(cityPathKey && WEEK_READY_PATHS.has(cityPathKey)
       ? [`  <p><a href="/${cityPathKey}/this-week/">События на этой неделе →</a></p>`]
       : []),
+    ...(cityPathKey && (MONTH_READY.get(cityPathKey) || []).length
+      ? [
+          `  <p>${(MONTH_READY.get(cityPathKey) || [])
+            .slice(0, 3)
+            .map(
+              (key) =>
+                `<a href="/${cityPathKey}/${key}/">События в ${monthLabel(key, 'ru')} →</a>`,
+            )
+            .join(' · ')}</p>`,
+        ]
+      : []),
   ];
   if (Array.isArray(evs) && evs.length) {
     // «Мероприятия и события на Бали» / «События на Бали» → «Ближайшие события
@@ -2638,6 +2649,17 @@ function citySeoHtmlEn(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs 
     `  <p class="seo-updated">Updated: <time datetime="${TODAY_ISO}">${enDate(TODAY_ISO)}</time></p>`,
     ...(cityPathKey && WEEK_READY_PATHS.has(cityPathKey)
       ? [`  <p><a href="/en/${cityPathKey}/this-week/">Events this week →</a></p>`]
+      : []),
+    ...(cityPathKey && (MONTH_READY.get(cityPathKey) || []).length
+      ? [
+          `  <p>${(MONTH_READY.get(cityPathKey) || [])
+            .slice(0, 3)
+            .map(
+              (key) =>
+                `<a href="/en/${cityPathKey}/${key}/">Events in ${monthLabel(key, 'en')} →</a>`,
+            )
+            .join(' · ')}</p>`,
+        ]
       : []),
   ];
   if (Array.isArray(evs) && evs.length) {
@@ -5765,6 +5787,334 @@ function fixArticleLinks() {
   console.log(`  ссылки статей: переписано ${rewritten}, снято ${removed}`);
 }
 
+// --- Посадочные «город × месяц» (Фаза 4, батч 2; §4.1.7/§4.2) ------------
+// Слаг месяца английский и одинаковый для RU/EN (november-2026), заголовок и
+// текст — на языке страницы. Горизонт публикации: текущий месяц и два
+// следующих; гейт ≥3 события города с ближайшим вхождением в этом месяце.
+// Прошедшие месяцы и ячейки <3 не публикуются вовсе (URL отдаёт 404).
+const MONTH_MIN_EVENTS = 3;
+const MONTH_LIST_LIMIT = 50;
+const MONTH_HORIZON = 3;
+const MONTHS_EN_LOWER = [
+  'january', 'february', 'march', 'april', 'may', 'june',
+  'july', 'august', 'september', 'october', 'november', 'december',
+];
+const RU_MONTHS_NOM = [
+  'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+  'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь',
+];
+// «в ноябре 2026»
+const RU_MONTHS_PREP = [
+  'январе', 'феврале', 'марте', 'апреле', 'мае', 'июне',
+  'июле', 'августе', 'сентябре', 'октябре', 'ноябре', 'декабре',
+];
+/** Города → опубликованные месячные слаг-ключи (для перелинковки с хаба). */
+const MONTH_READY = new Map();
+
+function monthKeyOf(year, monthIdx0) {
+  return `${MONTHS_EN_LOWER[monthIdx0]}-${year}`;
+}
+
+/** Список месяцев горизонта: текущий и два следующих (UTC). */
+function monthHorizonKeys() {
+  const [y, m] = TODAY_ISO.split('-').map(Number);
+  const out = [];
+  for (let i = 0; i < MONTH_HORIZON; i += 1) {
+    const d = new Date(Date.UTC(y, m - 1 + i, 1));
+    out.push(monthKeyOf(d.getUTCFullYear(), d.getUTCMonth()));
+  }
+  return out;
+}
+
+/** Границы месяца по ключу: { year, idx0, start: 'YYYY-MM-01', end: 'YYYY-MM-DD' }. */
+function monthWindow(monthKey) {
+  const m = /^([a-z]+)-(\d{4})$/.exec(String(monthKey));
+  if (!m) return null;
+  const idx0 = MONTHS_EN_LOWER.indexOf(m[1]);
+  if (idx0 < 0) return null;
+  const year = Number(m[2]);
+  const start = `${year}-${String(idx0 + 1).padStart(2, '0')}-01`;
+  const lastDay = new Date(Date.UTC(year, idx0 + 1, 0)).getUTCDate();
+  const end = `${year}-${String(idx0 + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
+  return { year, idx0, start, end };
+}
+
+/** Подпись месяца: RU «ноябрь 2026» / «Ноябрь 2026», EN «November 2026». */
+function monthLabel(monthKey, lang = 'ru', cap = false) {
+  const w = monthWindow(monthKey);
+  if (!w) return monthKey;
+  if (lang === 'en') return `${EN_MONTHS_FULL[w.idx0]} ${w.year}`;
+  const name = cap ? RU_MONTHS_NOM[w.idx0] : RU_MONTHS_NOM[w.idx0].toLowerCase();
+  return `${name} ${w.year}`;
+}
+
+/** События города, у которых ближайшее вхождение попадает в месяц. */
+function monthCityEvents(allEvents, cityPath, monthKey, lang = 'ru') {
+  const w = monthWindow(monthKey);
+  if (!w) return [];
+  const en = lang === 'en';
+  return (allEvents || [])
+    .filter((ev) => {
+      if (!ev || typeof ev.id !== 'string' || typeof ev.title !== 'string' || !ev.title) return false;
+      const crumb = cityCrumb(ev.city);
+      const sameCity =
+        cityPath === 'cyprus' ? CYPRUS_PAGE_PATHS.has(crumb?.path) : crumb?.path === cityPath;
+      if (!sameCity) return false;
+      const next = nextOccurrenceDate(ev, TODAY_ISO);
+      if (!next || next < w.start || next > w.end) return false;
+      if (en && !eventHasEn(ev)) return false;
+      return true;
+    })
+    .sort((a, b) => {
+      const da = String(nextOccurrenceDate(a, TODAY_ISO));
+      const db = String(nextOccurrenceDate(b, TODAY_ISO));
+      return da.localeCompare(db) || String(a.id).localeCompare(String(b.id));
+    });
+}
+
+/** Факты месяца для интро/описания: события, площадки, бесплатные, категории. */
+function monthFacts(list, lang, cells, cityPath, catById) {
+  const en = lang === 'en';
+  const venues = [];
+  for (const ev of list) {
+    const short = String(placeLabel(ev.address, ev, lang) || '').split(',')[0].trim();
+    if (short && !venues.includes(short)) venues.push(short);
+    if (venues.length >= 4) break;
+  }
+  const free = list.filter((ev) => ev.price != null && Number(ev.price) === 0).length;
+  const catIds = [...new Set(list.map((ev) => ev.category_id).filter(Boolean))];
+  const catNames = catIds
+    .map((id) => {
+      const cat = catById?.get?.(id);
+      return cat ? (en ? cat.name_en || cat.name_ru : cat.name_ru) : null;
+    })
+    .filter(Boolean)
+    .slice(0, 3);
+  const cellLinks = [...(cells?.values?.() ?? [])]
+    .filter((cell) => cell.path === cityPath && catIds.includes(cell.cat.id) && (!en || cellHasEnPage(cell)))
+    .slice(0, 6);
+  return { venues, free, catNames, cellLinks };
+}
+
+/**
+ * Интро месяца — только факты ячейки: сколько событий, какие даты (первое и
+ * последнее), площадки, бесплатные, категории, сколько в первую неделю.
+ * Фразы выбираются детерминированно по hash(город+месяц), поэтому соседние
+ * ячейки не повторяют друг друга дословно (гайдлайн: уникальность ≥40%).
+ */
+function monthIntro(facts, list, monthKey, cityPath, lang) {
+  const en = lang === 'en';
+  const label = monthLabel(monthKey, lang);
+  const labelPrep = monthLabel(monthKey, lang, 'prep');
+  const loc = en ? CAT_CITY_NAME_EN[cityPath] || cityPath : CITY_NAME_RU_LOCATIVE[cityPath];
+  const n = list.length;
+  const dates = list.map((ev) => nextOccurrenceDate(ev, TODAY_ISO)).filter(Boolean).sort();
+  const first = dates[0] || '';
+  const last = dates[dates.length - 1] || '';
+  const w = monthWindow(monthKey);
+  const weekEnd = w ? addDaysIso(w.start, 6) : '';
+  const firstWeek = dates.filter((d) => d <= weekEnd).length;
+  const venues = facts.venues.join(', ');
+  const cats = facts.catNames.join(', ');
+  let hash = 0;
+  for (const ch of `${cityPath}|${monthKey}`) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
+  const variant = hash % 3;
+  if (en) {
+    const heads = [
+      `${n} events are scheduled in ${loc} in ${label}.`,
+      `The ${label} programme for ${loc} lists ${n} events.`,
+      `${n} events are already announced in ${loc} for ${label}.`,
+    ];
+    const parts = [heads[variant]];
+    if (first && last) parts.push(`The season runs from ${enDate(first)} to ${enDate(last)}.`);
+    if (firstWeek) parts.push(`${firstWeek} of them happen in the first week.`);
+    if (venues) parts.push(`Venues include ${venues}.`);
+    if (cats) parts.push(`Most often: ${cats}.`);
+    parts.push(
+      facts.free > 0
+        ? `${facts.free} events are free to attend.`
+        : 'All events are ticketed; prices are shown on each card.',
+    );
+    parts.push('The list is rebuilt daily from the live event feed — new events appear here and on the city map.');
+    return parts.join(' ');
+  }
+  const heads = [
+    `В ${loc} в ${labelPrep} запланировано ${n} событий.`,
+    `Афиша ${loc} на ${labelPrep} — ${n} событий.`,
+    `На ${labelPrep} ${loc} уже объявлено ${n} событий.`,
+  ];
+  const parts = [heads[variant]];
+  if (first && last) parts.push(`Период — с ${ruDate(first)} по ${ruDate(last)}.`);
+  if (firstWeek) parts.push(`В первую неделю месяца проходит ${firstWeek} из них.`);
+  if (venues) parts.push(`Площадки: ${venues}.`);
+  if (cats) parts.push(`Чаще всего встречаются категории: ${cats}.`);
+  parts.push(
+    facts.free > 0
+      ? `Бесплатно можно попасть на ${facts.free} событий.`
+      : 'Все события по билетам, цена указана в карточке.',
+  );
+  parts.push('Список пересобирается каждый день из живой афиши: новые события сразу появляются здесь и на карте города.');
+  return parts.join(' ');
+}
+
+/** Видимый блок #seo-month-block: крошка, h1, интро, список, FAQ, ссылки. */
+function monthPageHtml({ cityPath, monthKey, lang, list, cells, catById }) {
+  const en = lang === 'en';
+  const loc = en ? CAT_CITY_NAME_EN[cityPath] || cityPath : CITY_NAME_RU_LOCATIVE[cityPath];
+  const label = monthLabel(monthKey, lang);
+  const labelCap = monthLabel(monthKey, lang, true);
+  const facts = monthFacts(list, lang, cells, cityPath, catById);
+  const intro = monthIntro(facts, list, monthKey, cityPath, lang);
+  const hubHref = `${en ? '/en' : ''}/${cityPath}/`;
+  const weekHref = `${en ? '/en' : ''}/${cityPath}/this-week/`;
+  const base = `${SITE_URL}${en ? '/en' : ''}/${cityPath}/${monthKey}/`;
+  const crumbChain = pageCrumbChain({
+    path: cityPath,
+    lang,
+    last: labelCap,
+    lastItem: base,
+    cityIsLink: true,
+  });
+  const rows = list.map((ev) => {
+    const date = nextOccurrenceDate(ev, TODAY_ISO);
+    const url = `${en ? '/en' : ''}/event/${ev.id}/${eventSlug(ev, en ? 'en' : 'ru')}/`;
+    const name = en
+      ? ev.title_en || ev.title || ev.title_ru || ''
+      : ev.title_ru || ev.title || ev.title_en || '';
+    const place = placeLabel(ev.address, ev, lang);
+    const price = weekPriceText(ev, lang);
+    const parts = [
+      `<time datetime="${esc(date)}">${esc(en ? enDate(date) : ruDate(date))}</time>`,
+      `<a href="${esc(url)}">${esc(name)}</a>`,
+    ];
+    if (place) parts.push(`<span>${esc(place)}</span>`);
+    if (price) parts.push(`<span>${esc(price)}</span>`);
+    return `    <li>${parts.join(' — ')}</li>`;
+  });
+  const faq = en
+    ? [
+        [
+          `How many events are there in ${loc} in ${label}?`,
+          `${list.length} events are announced${facts.catNames.length ? `: ${facts.catNames.join(', ')}` : ''}. The full list with dates is on this page.`,
+        ],
+        [
+          'Are there free events this month?',
+          facts.free > 0
+            ? `Yes, ${facts.free} of ${list.length} events are free to attend.`
+            : 'All events this month are ticketed; prices are shown on each card.',
+        ],
+        [
+          'What changes closer to the date?',
+          'The list is rebuilt every day from the live event feed — new events appear on this page and on the city map.',
+        ],
+      ]
+    : [
+        [
+          `Сколько событий ${loc} в ${label}?`,
+          `${list.length} событий${facts.catNames.length ? `: ${facts.catNames.join(', ')}` : ''}. Полный список с датами и площадками — на этой странице.`,
+        ],
+        [
+          'Есть ли бесплатные события в этом месяце?',
+          facts.free > 0
+            ? `Да, ${facts.free} из ${list.length} событий — бесплатные.`
+            : 'Все события месяца по билетам; цена указана в карточке.',
+        ],
+        [
+          'Что меняется ближе к дате?',
+          'Список пересобирается каждый день из живой афиши: новые события сразу появляются здесь и на карте города.',
+        ],
+      ];
+  const lines = [
+    '<div id="seo-month-block">',
+    crumbNavHtml(crumbChain, en ? 'Breadcrumbs' : 'Хлебные крошки'),
+    `  <h1>${esc(en ? `Events in ${loc} in ${label}` : `События ${loc} в ${label}`)}</h1>`,
+    `  <p>${esc(intro)}</p>`,
+    `  <p class="seo-updated">${en ? 'Updated' : 'Афиша обновлена'}: <time datetime="${TODAY_ISO}">${esc(
+      en ? enDate(TODAY_ISO) : ruDate(TODAY_ISO),
+    )}</time></p>`,
+    `  <h2>${esc(en ? `Events in ${label}` : `События в ${label}`)}</h2>`,
+    '  <ul>',
+    ...rows,
+    '  </ul>',
+  ];
+  if (facts.cellLinks.length) {
+    lines.push(
+      `  <h2>${esc(en ? 'Categories this month' : 'Категории месяца')}</h2>`,
+      `  <p>${facts.cellLinks
+        .map((cell) => {
+          const label2 = `${typeof cell.cat.emoji === 'string' ? cell.cat.emoji : ''} ${
+            en ? cell.cat.name_en || cell.cat.name_ru : cell.cat.name_ru
+          }`.trim();
+          return `<a href="${esc(`${en ? '/en' : ''}/${cityPath}/${cell.cat.id}/`)}">${esc(label2)}</a>`;
+        })
+        .join(' · ')}</p>`,
+    );
+  }
+  const links = [
+    `<a href="${esc(hubHref)}">${esc(en ? `All events in ${loc}` : `Все события ${loc}`)}</a>`,
+  ];
+  if (WEEK_READY_PATHS.has(cityPath)) {
+    links.push(
+      `<a href="${esc(weekHref)}">${esc(en ? 'Events this week' : 'События на этой неделе')}</a>`,
+    );
+  }
+  lines.push(
+    `  <p>${links.join(' · ')}</p>`,
+    '  <section class="seo-month-faq">',
+    ...faq.map(([q, a]) => `    <details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`),
+    '  </section>',
+    '</div>',
+  );
+  return { html: lines.join('\n'), intro, faq };
+}
+
+/** JSON-LD месяца: CollectionPage + ItemList + BreadcrumbList (Event-узлов нет). */
+function monthJsonLd({ cityPath, monthKey, lang, list, url, name, description }) {
+  const en = lang === 'en';
+  const loc = en ? CAT_CITY_NAME_EN[cityPath] || cityPath : CITY_NAME_RU_LOCATIVE[cityPath];
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'CollectionPage',
+        url,
+        name,
+        description,
+        inLanguage: en ? 'en' : 'ru',
+        isPartOf: {
+          '@type': 'WebSite',
+          name: 'MyPins',
+          url: `${SITE_URL}${en ? '/en' : ''}/`,
+        },
+      },
+      {
+        '@type': 'ItemList',
+        numberOfItems: list.length,
+        itemListOrder: 'https://schema.org/ItemListOrderAscending',
+        itemListElement: list.map((ev, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: en ? ev.title_en || ev.title || '' : ev.title_ru || ev.title || ev.title_en || '',
+          url: `${SITE_URL}${en ? '/en' : ''}/event/${ev.id}/${eventSlug(ev, en ? 'en' : 'ru')}/`,
+        })),
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: crumbLdItems(
+          pageCrumbChain({
+            path: cityPath,
+            lang,
+            last: monthLabel(monthKey, lang, true),
+            lastItem: url,
+            cityIsLink: true,
+          }),
+        ),
+      },
+    ],
+  };
+}
+
+
 // --- Посадочные «город × на этой неделе» (§4.1.7 плана SEO) --------------
 // Окно — [TODAY_ISO; TODAY_ISO+6] по UTC, тот же TODAY_ISO, что у пре-рендера.
 // Гейт: ≥3 активных события города с ближайшим вхождением в окно; иначе страница
@@ -6362,6 +6712,22 @@ async function main() {
     `  «на этой неделе»: гейт пройден у ${WEEK_READY_PATHS.size} городов` +
       (WEEK_READY_PATHS.size ? ` (${[...WEEK_READY_PATHS].join(', ')})` : ''),
   );
+  // План месячных посадочных: горизонт — текущий месяц и два следующих.
+  // Считаем ДО городских страниц: на хабе нужны ссылки только на реальные
+  // страницы («до 3 опубликованных месяцев»).
+  const MONTH_PLAN = new Map();
+  for (const c of CITY_PAGES) {
+    const keys = monthHorizonKeys().filter(
+      (key) => monthCityEvents(events, c.path, key, 'ru').length >= MONTH_MIN_EVENTS,
+    );
+    if (keys.length) {
+      MONTH_PLAN.set(c.path, keys);
+      MONTH_READY.set(c.path, keys);
+    }
+  }
+  console.log(
+    `  «город × месяц»: ${[...MONTH_PLAN.values()].reduce((n, a) => n + a.length, 0)} ячеек у ${MONTH_PLAN.size} городов`,
+  );
   console.log(
     `  категорий: ${categories.length}, ячеек «город × категория» (>=${MIN_CATEGORY_EVENTS}): ${cells.size}`,
   );
@@ -6677,6 +7043,117 @@ async function main() {
   console.log(
     `  «на этой неделе»: страниц RU ${weekPagesRu}, EN ${weekPagesEn}` +
       (weekBuilt.length ? ` (${weekBuilt.join('; ')})` : ''),
+  );
+
+  // --- «Город × месяц»: страницы (горизонт — текущий + 2 следующих) -------
+  let monthPagesRu = 0;
+  let monthPagesEn = 0;
+  const monthBuilt = [];
+  for (const c of CITY_PAGES) {
+    const keys = MONTH_PLAN.get(c.path) || [];
+    for (const monthKey of keys) {
+      const listRu = monthCityEvents(events, c.path, monthKey, 'ru').slice(0, MONTH_LIST_LIMIT);
+      if (listRu.length < MONTH_MIN_EVENTS) continue;
+      const locRu = CITY_NAME_RU_LOCATIVE[c.path];
+      const labelRu = monthLabel(monthKey, 'ru');
+      const locEn = CAT_CITY_NAME_EN[c.path] || c.path;
+      const labelEn = monthLabel(monthKey, 'en');
+      const url = `${SITE_URL}/${c.path}/${monthKey}/`;
+      const enUrl = `${SITE_URL}/en/${c.path}/${monthKey}/`;
+      const blockRu = monthPageHtml({ cityPath: c.path, monthKey, lang: 'ru', list: listRu, cells, catById });
+      const factsRu = monthFacts(listRu, 'ru', cells, c.path, catById);
+      const titleRu = snippet(`События ${locRu} в ${labelRu}: афиша и куда сходить | MyPins`, 65);
+      let descRu = `${listRu.length} событий ${locRu} в ${labelRu}: ${
+        factsRu.catNames.join(', ') || 'концерты, встречи, мастер-классы'
+      }. `;
+      if (factsRu.venues.length) descRu += `Площадки: ${factsRu.venues.join(', ')}. `;
+      descRu += factsRu.free ? `Бесплатных: ${factsRu.free}. ` : 'Цены и билеты в карточках. ';
+      if (descRu.length < 145) descRu += 'Даты, места и цены — на карте MyPins.';
+      descRu = snippet(descRu, 160);
+
+      const listEn = monthCityEvents(events, c.path, monthKey, 'en').slice(0, MONTH_LIST_LIMIT);
+      const hasEn = listEn.length >= MONTH_MIN_EVENTS;
+      writePage(baseHtml, `${c.path}/${monthKey}`, {
+        lang: 'ru',
+        title: titleRu,
+        description: descRu,
+        canonical: url,
+        ogTitle: titleRu,
+        ogDescription: descRu,
+        ogUrl: url,
+        ogImage: LOGO_URL,
+        jsonLd: monthJsonLd({
+          cityPath: c.path,
+          monthKey,
+          lang: 'ru',
+          list: listRu,
+          url,
+          name: titleRu,
+          description: descRu,
+        }),
+        hreflang: hasEn
+          ? [
+              { hreflang: 'ru', href: url },
+              { hreflang: 'en', href: enUrl },
+              { hreflang: 'x-default', href: enRoot },
+            ]
+          : [
+              { hreflang: 'ru', href: url },
+              { hreflang: 'x-default', href: url },
+            ],
+        bodySeo: blockRu.html,
+      });
+      locs.push(url);
+      if (hasEn) hreflangPairs.set(url, enUrl);
+      lastmods.set(url, TODAY_ISO);
+      monthPagesRu += 1;
+
+      if (hasEn) {
+        const blockEn = monthPageHtml({ cityPath: c.path, monthKey, lang: 'en', list: listEn, cells, catById });
+        const factsEn = monthFacts(listEn, 'en', cells, c.path, catById);
+        const titleEn = snippet(`Events in ${locEn} in ${labelEn}: what's on | MyPins`, 65);
+        let descEn = `${listEn.length} events in ${locEn} in ${labelEn}: ${
+          factsEn.catNames.join(', ') || 'concerts, meetups and workshops'
+        }. `;
+        if (factsEn.venues.length) descEn += `Venues: ${factsEn.venues.join(', ')}. `;
+        descEn += factsEn.free ? `${factsEn.free} events are free. ` : 'Prices are shown on each card. ';
+        if (descEn.length < 145) descEn += 'Dates, venues and prices are on the MyPins map.';
+        descEn = snippet(descEn, 160);
+        writePage(baseHtml, `en/${c.path}/${monthKey}`, {
+          lang: 'en',
+          title: titleEn,
+          description: descEn,
+          canonical: enUrl,
+          ogTitle: titleEn,
+          ogDescription: descEn,
+          ogUrl: enUrl,
+          ogImage: LOGO_URL,
+          jsonLd: monthJsonLd({
+            cityPath: c.path,
+            monthKey,
+            lang: 'en',
+            list: listEn,
+            url: enUrl,
+            name: titleEn,
+            description: descEn,
+          }),
+          hreflang: [
+            { hreflang: 'en', href: enUrl },
+            { hreflang: 'ru', href: url },
+            { hreflang: 'x-default', href: enRoot },
+          ],
+          bodySeo: blockEn.html,
+        });
+        locs.push(enUrl);
+        lastmods.set(enUrl, TODAY_ISO);
+        monthPagesEn += 1;
+      }
+      monthBuilt.push(`${c.path} ${monthKey} RU ${listRu.length}${hasEn ? ' +EN' : ''}`);
+    }
+  }
+  console.log(
+    `  «город × месяц»: страниц RU ${monthPagesRu}, EN ${monthPagesEn}` +
+      (monthBuilt.length ? ` (${monthBuilt.join('; ')})` : ''),
   );
 
   const cellList = [...cells.values()].sort((a, b) =>

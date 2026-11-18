@@ -30,6 +30,7 @@ import type { CityPath } from './lib/address';
 // (карта, админка) уходят в отдельные чанки, основной чанк меньше.
 const Home = lazy(() => import('./pages/Home'));
 const CityWeek = lazy(() => import('./pages/CityWeek'));
+const CityMonth = lazy(() => import('./pages/CityMonth'));
 const Admin = lazy(() => import('./pages/Admin'));
 const MyEvents = lazy(() => import('./pages/MyEvents'));
 const HistoryPage = lazy(() => import('./pages/History'));
@@ -68,8 +69,9 @@ function normPath(p: string): string {
 function categoryRoute(pub: string): { city: string; categoryId: string } | null {
   const m = /^\/([a-z0-9-]+)\/([a-z0-9-]+)$/.exec(pub);
   if (!m) return null;
-  // «this-week» — зарезервированный слаг недельной посадочной, не категория
-  if (m[2] === 'this-week') return null;
+  // «this-week» — слаг недельной посадочной, «november-2026» — месячной:
+  // оба зарезервированы и категориями не считаются
+  if (m[2] === 'this-week' || /^[a-z]+-\d{4}$/.test(m[2])) return null;
   const label = CITY_ROUTES.get(`/${m[1]}`);
   return label ? { city: label, categoryId: m[2] } : null;
 }
@@ -80,6 +82,20 @@ function categoryRoute(pub: string): { city: string; categoryId: string } | null
  * SPA проверяет тот же гейт по загруженному набору и при недоборе показывает
  * прежнюю 404-заглушку.
  */
+/**
+ * /<city>/<month>-<year> — посадочная «город × месяц» (Фаза 4, батч 2).
+ * Публикуются только текущий месяц и два следующих при гейте ≥3 событий;
+ * прошедшие месяцы отдают 404 (статика такую страницу не пишет).
+ */
+function monthRoute(pub: string): { path: CityPath; monthKey: string } | null {
+  const m = /^\/([a-z0-9-]+)\/([a-z]+-\d{4})$/.exec(pub);
+  if (!m) return null;
+  const label = CITY_ROUTES.get(`/${m[1]}`);
+  if (!label) return null;
+  const path = cityPath(label);
+  return path ? { path, monthKey: m[2] } : null;
+}
+
 function weekRoute(pub: string): { path: CityPath; city: string } | null {
   const m = /^\/([a-z0-9-]+)\/this-week$/.exec(pub);
   if (!m) return null;
@@ -159,6 +175,7 @@ export default function App() {
         CITY_ROUTES.has(pub) ||
         categoryRoute(pub) !== null ||
         weekRoute(pub) !== null ||
+        monthRoute(pub) !== null ||
         pub === '/blog' ||
         pub.startsWith('/blog/') ||
         pub === '/for-organizers' ||
@@ -280,10 +297,17 @@ export default function App() {
           const cityLabel = CITY_ROUTES.get(pub);
           const cat = categoryRoute(pub);
           const wk = weekRoute(pub);
+          const mo = monthRoute(pub);
           page = cityLabel ? (
             <Home key={`${en ? 'en:' : ''}city:${cityLabel}`} city={cityLabel} />
           ) : wk ? (
             <CityWeek key={`${en ? 'en:' : ''}week:${wk.path}`} path={wk.path} />
+          ) : mo ? (
+            <CityMonth
+              key={`${en ? 'en:' : ''}month:${mo.path}:${mo.monthKey}`}
+              path={mo.path}
+              monthKey={mo.monthKey}
+            />
           ) : cat ? (
             <Home
               key={`${en ? 'en:' : ''}city:${cat.city}:${cat.categoryId}`}

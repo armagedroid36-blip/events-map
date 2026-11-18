@@ -154,6 +154,7 @@ export const HOME_PANEL_BODY_ID = 'seo-home-panel-body';
  *  организаторы, события, блог/статьи, B2B, «О проекте») */
 export const SEO_BLOCK_SELECTOR =
   '#seo-home-block, #seo-city-block, #seo-category-block, #seo-week-block, ' +
+  '#seo-month-block, ' +
   '#seo-org-block, #seo-event-block, #seo-article-block, #seo-b2b-block, ' +
   '#seo-about-block, #seo-city-archive, #seo-category-archive';
 

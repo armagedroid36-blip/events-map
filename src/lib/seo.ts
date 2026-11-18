@@ -599,6 +599,104 @@ export function applyWeekMeta(
   });
 }
 
+// --- «Город × месяц» (Фаза 4, батч 2) — мета для SPA ---------------------
+const MONTHS_EN_LOWER = [
+  'january', 'february', 'march', 'april', 'may', 'june',
+  'july', 'august', 'september', 'october', 'november', 'december',
+];
+const RU_MONTHS_NOM = [
+  'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+  'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь',
+];
+const RU_MONTHS_PREP = [
+  'январе', 'феврале', 'марте', 'апреле', 'мае', 'июне',
+  'июле', 'августе', 'сентябре', 'октябре', 'ноябре', 'декабре',
+];
+
+/** 'november-2026' → { idx0, year } (или null, если ключ не месяц). */
+function parseMonthKey(monthKey: string): { idx0: number; year: number } | null {
+  const m = /^([a-z]+)-(\d{4})$/.exec(String(monthKey));
+  if (!m) return null;
+  const idx0 = MONTHS_EN_LOWER.indexOf(m[1]);
+  return idx0 < 0 ? null : { idx0, year: Number(m[2]) };
+}
+
+/** Подпись месяца: EN «November 2026», RU «ноябрь 2026» / «в ноябре 2026». */
+function monthLabelText(monthKey: string, lang: 'ru' | 'en', mode: 'plain' | 'prep' | 'cap' = 'plain'): string {
+  const p = parseMonthKey(monthKey);
+  if (!p) return monthKey;
+  if (lang === 'en') return `${WEEK_MONTHS_EN[p.idx0]} ${p.year}`;
+  if (mode === 'prep') return `${RU_MONTHS_PREP[p.idx0]} ${p.year}`;
+  if (mode === 'cap') return `${RU_MONTHS_NOM[p.idx0]} ${p.year}`;
+  return `${RU_MONTHS_NOM[p.idx0].toLowerCase()} ${p.year}`;
+}
+
+/** Обрезка по границе слова до max символов — как snippet() в статике. */
+function trimText(text: string, max: number): string {
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max);
+  const space = cut.lastIndexOf(' ');
+  return (space > max * 0.6 ? cut.slice(0, space) : cut).trim();
+}
+
+/**
+ * Мета страницы «город × месяц»: title ≤65, description 145–160, canonical self,
+ * hreflang как у статики (пара либо две self-аннотации у RU-only).
+ */
+export function applyMonthMeta(
+  path: CityPath,
+  lang: 'ru' | 'en',
+  count: number,
+  monthKey: string,
+  hasEn: boolean,
+): void {
+  const en = lang === 'en';
+  const loc = en ? CITY_NAME_BY_PATH[path] : CITY_NAME_RU_LOCATIVE[path];
+  const label = monthLabelText(monthKey, lang);
+  const labelPrep = monthLabelText(monthKey, lang, 'prep');
+  const title = trimText(
+    en
+      ? `Events in ${loc} in ${label}: what's on | MyPins`
+      : `События ${loc} в ${labelPrep}: афиша и куда сходить | MyPins`,
+    65,
+  );
+  const base = en
+    ? `${count} events in ${loc} in ${label}: concerts, meetups and workshops. `
+    : `${count} событий ${loc} в ${labelPrep}: концерты, встречи и мастер-классы. `;
+  const tail = en
+    ? 'Dates, venues and prices are on the MyPins map.'
+    : 'Даты, места и цены — на карте MyPins.';
+  let description = `${base}${tail}`;
+  if (description.length < 145) {
+    description = en
+      ? `${base}Concerts, meetups, workshops and parties with dates and venues. ${tail}`
+      : `${base}Концерты, встречи, мастер-классы и вечеринки с датами и площадками. ${tail}`;
+  }
+  description = trimText(description, 160);
+  const ruUrl = `${SITE_URL}/${path}/${monthKey}/`;
+  const enUrl = `${SITE_URL}/en/${path}/${monthKey}/`;
+  const canonical = en ? enUrl : ruUrl;
+  apply({
+    title,
+    description,
+    lang,
+    canonical,
+    og: {
+      'og:title': title,
+      'og:description': description,
+      'og:url': canonical,
+      'og:image': `${SITE_URL}/logo.png`,
+    },
+    hreflang: hasEn
+      ? hreflangPairsFor(ruUrl, enUrl)
+      : [
+          { hreflang: lang, href: canonical },
+          { hreflang: 'x-default', href: canonical },
+        ],
+    robots: null,
+  });
+}
+
 /**
  * Хосты картинок, ссылки которых ВСЕГДА мёртвые в мете: Telegram CDN
  * (cdn4/cdn5.telesco.pe и др.) — ссылки подписанные и истекают (отдают 404
