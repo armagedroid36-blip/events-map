@@ -1,4 +1,5 @@
 import { isQuotaError, quotaSkip } from './lib/quota.mjs'; // 402 по квоте — не красный прогон
+import { finalCode } from './lib/gate-exit.mjs'; // решение «красный прогон или предупреждение»
 /**
  * Гейт «карта ↔ резолв SPA» для mypins.site (прод): 0 URL из sitemap, которые
  * SPA не умеет отрисовать.
@@ -153,21 +154,40 @@ async function activeIds(db) {
   return { ids, error: null };
 }
 
+/** Один вызов RPC с повторами на транзиентные сбои. `statement timeout` у
+ *  list_past_events приходит разово (18.11.2026: страница архива не отдалась,
+ *  прогон 44213154316 упал на шаге 21 при 0 мягких 404) — второй-третий заход
+ *  обычно отвечает, поэтому повторы с паузой, а не сразу красный прогон. */
+async function rpcRetry(fn, attempts = 3, delayMs = 5000) {
+  let last;
+  for (let i = 1; i <= attempts; i += 1) {
+    last = await fn();
+    if (!last.error) return last;
+    if (i < attempts) await sleep(delayMs);
+  }
+  return last;
+}
+
 /** Архивный набор: list_past_events постранично (.range() — заголовок Range
  *  у POST /rest/v1/rpc применяется только вместе с Range-Unit: items, который
- *  ставит supabase-js). Порядок без .order() стабилен, дубли гасим по id. */
+ *  ставит supabase-js). Порядок без .order() стабилен, дубли гасим по id.
+ *  Ошибка на странице НЕ обнуляет уже собранные id: частичный архив лучше
+ *  пустого (иначе весь остаток sitemap уходит в поштучную проверку). */
 async function pastIds(db) {
   const ids = new Set();
   for (let page = 0; page < MAX_PAGES; page += 1) {
     const from = page * PAGE;
-    const { data, error } = await db.rpc('list_past_events').range(from, from + PAGE - 1);
-    if (error) return { ids, error: error.message };
-    const rows = data ?? [];
+    const res = await rpcRetry(() => db.rpc('list_past_events').range(from, from + PAGE - 1));
+    if (res.error) return { ids, error: res.error.message };
+    const rows = res.data ?? [];
     for (const r of rows) if (r && typeof r.id === 'string') ids.add(r.id);
     if (rows.length < PAGE) break;
   }
   return { ids, error: null };
 }
+
+/** Код выхода гейта — общая таблица решений (`scripts/lib/gate-exit.mjs`):
+ *  разовый отказ архивного RPC не валит сборку, дефект данных валит. */
 
 async function inBatches(items, size, fn) {
   const out = [];
@@ -253,7 +273,7 @@ async function main() {
 
   const checked = await inBatches(rest, CONCURRENCY, async (id) => {
     try {
-      const { data, error } = await db.rpc('get_public_event', { p_id: id });
+      const { data, error } = await rpcRetry(() => db.rpc('get_public_event', { p_id: id }), 2, 1500);
       if (error) throw new Error(error.message);
       const rows = Array.isArray(data) ? data : data ? [data] : [];
       return { id, ok: rows.length > 0, err: null };
@@ -303,9 +323,22 @@ async function main() {
     console.log('  внимание: /data/legacy-events.json на проде недоступен — SPA такие URL не отрисует');
   }
 
-  if (unresolved.length || badStatus.length) return 1;
-  if (netErrors.length || errors.length || !legacy.prod) return 2;
-  return 0;
+  if (netErrors.length) {
+    console.log(`  внимание: ${netErrors.length} id не проверены из-за сетевых сбоев — вывод неполный`);
+  }
+  if (pst.error && !unresolved.length) {
+    console.log(
+      `  внимание: архивный набор получить не удалось (${pst.error}); остаток проверен поштучно, ` +
+        'мягких 404 нет — сборку не валю',
+    );
+  }
+
+  return finalCode({
+    unresolvedCount: unresolved.length,
+    badStatusCount: badStatus.length,
+    netErrorsCount: netErrors.length,
+    legacyProd: legacy.prod,
+  });
 }
 
 main()
