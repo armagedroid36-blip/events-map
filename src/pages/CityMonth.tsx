@@ -233,7 +233,7 @@ export default function CityMonth({ path, monthKey }: { path: CityPath; monthKey
         </h1>
         <p className="mt-3 text-sm leading-relaxed text-gray-700">{intro}</p>
         <h2 className="mt-5 text-base font-semibold text-gray-900">
-          {en ? `Events in ${label}` : `События в ${label}`}
+          {en ? `Events in ${label}` : `События в ${labelPrep}`}
         </h2>
         <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-gray-700">
           {list.map((ev) => {

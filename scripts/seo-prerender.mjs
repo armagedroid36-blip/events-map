@@ -2350,7 +2350,7 @@ function citySeoHtml(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs = 
             .slice(0, 3)
             .map(
               (key) =>
-                `<a href="/${cityPathKey}/${key}/">События в ${monthLabel(key, 'ru')} →</a>`,
+                `<a href="/${cityPathKey}/${key}/">События в ${monthLabel(key, 'ru', 'prep')} →</a>`,
             )
             .join(' · ')}</p>`,
         ]
@@ -5940,8 +5940,8 @@ function monthIntro(facts, list, monthKey, cityPath, lang) {
   }
   const heads = [
     `В ${loc} в ${labelPrep} запланировано ${n} событий.`,
-    `Афиша ${loc} на ${labelPrep} — ${n} событий.`,
-    `На ${labelPrep} ${loc} уже объявлено ${n} событий.`,
+    `Афиша ${loc}: ${label} — ${n} событий.`,
+    `В ${labelPrep} ${loc} уже объявлено ${n} событий.`,
   ];
   const parts = [heads[variant]];
   if (first && last) parts.push(`Период — с ${ruDate(first)} по ${ruDate(last)}.`);
@@ -5962,6 +5962,8 @@ function monthPageHtml({ cityPath, monthKey, lang, list, cells, catById }) {
   const en = lang === 'en';
   const loc = en ? CAT_CITY_NAME_EN[cityPath] || cityPath : CITY_NAME_RU_LOCATIVE[cityPath];
   const label = monthLabel(monthKey, lang);
+  // «в ноябре 2026» — предложный падеж для RU (EN не меняется)
+  const labelIn = en ? label : monthLabel(monthKey, lang, 'prep');
   const labelCap = monthLabel(monthKey, lang, true);
   const facts = monthFacts(list, lang, cells, cityPath, catById);
   const intro = monthIntro(facts, list, monthKey, cityPath, lang);
@@ -6027,12 +6029,12 @@ function monthPageHtml({ cityPath, monthKey, lang, list, cells, catById }) {
   const lines = [
     '<div id="seo-month-block">',
     crumbNavHtml(crumbChain, en ? 'Breadcrumbs' : 'Хлебные крошки'),
-    `  <h1>${esc(en ? `Events in ${loc} in ${label}` : `События ${loc} в ${label}`)}</h1>`,
+    `  <h1>${esc(en ? `Events in ${loc} in ${label}` : `События ${loc} в ${labelIn}`)}</h1>`,
     `  <p>${esc(intro)}</p>`,
     `  <p class="seo-updated">${en ? 'Updated' : 'Афиша обновлена'}: <time datetime="${TODAY_ISO}">${esc(
       en ? enDate(TODAY_ISO) : ruDate(TODAY_ISO),
     )}</time></p>`,
-    `  <h2>${esc(en ? `Events in ${label}` : `События в ${label}`)}</h2>`,
+    `  <h2>${esc(en ? `Events in ${label}` : `События в ${labelIn}`)}</h2>`,
     '  <ul>',
     ...rows,
     '  </ul>',
@@ -7062,8 +7064,9 @@ async function main() {
       const enUrl = `${SITE_URL}/en/${c.path}/${monthKey}/`;
       const blockRu = monthPageHtml({ cityPath: c.path, monthKey, lang: 'ru', list: listRu, cells, catById });
       const factsRu = monthFacts(listRu, 'ru', cells, c.path, catById);
-      const titleRu = snippet(`События ${locRu} в ${labelRu}: афиша и куда сходить | MyPins`, 65);
-      let descRu = `${listRu.length} событий ${locRu} в ${labelRu}: ${
+      const labelRuPrep = monthLabel(monthKey, 'ru', 'prep');
+      const titleRu = snippet(`События ${locRu} в ${labelRuPrep}: афиша и куда сходить | MyPins`, 65);
+      let descRu = `${listRu.length} событий ${locRu} в ${labelRuPrep}: ${
         factsRu.catNames.join(', ') || 'концерты, встречи, мастер-классы'
       }. `;
       if (factsRu.venues.length) descRu += `Площадки: ${factsRu.venues.join(', ')}. `;
