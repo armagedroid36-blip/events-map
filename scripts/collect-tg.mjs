@@ -796,10 +796,13 @@ async function main() {
               : { freq: 'weekly', days: [] };
           if (!rec.days.includes(curDow)) rec.days.push(curDow);
           if (!rec.days.includes(newDow)) rec.days.push(newDow);
-          const end = twin.end_date && twin.end_date >= when.date ? twin.end_date : when.date;
+          // end_date для серии НЕ ставим: дата последнего анонса — не конец серии.
+          // Раньше здесь писалось `end_date = when.date`, из-за чего у регулярки
+          // оставался прошедший конец, карточка становилась active-но-невидимой
+          // (класс «зомби», запуск 982; горизонт поиска даты = end_date).
           const { error: uErr } = DRY_RUN
             ? { error: null }
-            : await db.from('events').update({ recurrence: rec, end_date: end }).eq('id', twin.id);
+            : await db.from('events').update({ recurrence: rec, end_date: null }).eq('id', twin.id);
           if (uErr) {
             console.error(`  Ошибка продления расписания «${title.slice(0, 40)}»: ${uErr.message}`);
           } else {

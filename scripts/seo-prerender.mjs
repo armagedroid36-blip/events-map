@@ -1275,7 +1275,10 @@ function nextOccurrenceDate(ev, todayIso) {
   if (!r || !first) return first || todayIso;
   const from = first > todayIso ? first : todayIso;
   const hasEnd = typeof ev.end_date === 'string' && ev.end_date.length > 0;
-  const horizon = hasEnd ? ev.end_date : addDaysIso(todayIso, 90);
+  // Прошедший end_date у регулярки — это ОКНО ОБЪЯВЛЕНИЯ источника, а не конец
+  // серии (класс «зомби», запуск 982): карточка была active, но невидима на
+  // карте. Такой серии горизонт = +90 дней, как у бессрочной.
+  const horizon = hasEnd && ev.end_date >= todayIso ? ev.end_date : addDaysIso(todayIso, 90);
   let d = from;
   let guard = 0;
   while (d <= horizon && guard < 10000) {

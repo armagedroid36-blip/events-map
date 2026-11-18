@@ -5,12 +5,25 @@
 // start_date = первое вхождение, end_date = последнее (пусто = бессрочно).
 import type { TFunction } from 'i18next';
 import type { Recurrence } from './types';
-import { formatDate } from './dates';
+import { formatDate, todayIso } from './dates';
 
 /** ISO-дата (YYYY-MM-DD) -> день недели по ISO: 1=Пн … 7=Вс */
 export function isoDayOfWeek(iso: string): number {
   const js = new Date(iso + 'T00:00:00').getDay();
   return js === 0 ? 7 : js;
+}
+
+/**
+ * Горизонт серии: end_date учитывается только пока он в будущем.
+ *
+ * Питфол (класс «зомби», запуск 982): у регулярки end_date часто приходит из
+ * ОКНА ОБЪЯВЛЕНИЯ источника (сборщик ставил дату последнего анонса), а не из
+ * конца серии. Раньше поиск следующей даты останавливался на прошедшем
+ * end_date и карточка была active в базе, но НЕ на карте — выглядела как
+ * потерянная. Прошедший end_date у регулярки считаем «серия без окончания».
+ */
+export function seriesHorizon(endDate: string | null | undefined, todayIsoDate: string): string {
+  return endDate && endDate >= todayIsoDate ? endDate : addDaysIso(todayIsoDate, 90);
 }
 
 /** Проходит ли регулярное событие в конкретную дату (ISO). Только для событий с recurrence. */
@@ -21,7 +34,7 @@ export function recurrenceMatchesDate(
   const r = ev.recurrence;
   if (!r) return false;
   if (isoDate < ev.start_date) return false;
-  if (ev.end_date && isoDate > ev.end_date) return false;
+  if (ev.end_date && isoDate > ev.end_date && ev.end_date >= todayIso()) return false;
   if (r.freq === 'daily') return true;
   return (r.days ?? []).includes(isoDayOfWeek(isoDate));
 }
@@ -48,7 +61,7 @@ export function nextOccurrenceDate(
   const first = ev.start_date;
   if (!r || !first) return first || todayIsoDate;
   const from = first > todayIsoDate ? first : todayIsoDate;
-  const horizon = ev.end_date ?? addDaysIso(todayIsoDate, 90);
+  const horizon = seriesHorizon(ev.end_date, todayIsoDate);
   let d = from;
   let guard = 0;
   while (d <= horizon && guard < 10000) {
