@@ -91,7 +91,10 @@ export function isCommercialOffer(title) {
   // 965: страница-награда «Claim Your Free Cocktail at Kuta Social Club» — промо-окно 18.11→31.12
   // (LD: endDate 2026-12-31, price 0, описания нет), а отсечка endDate-окна делала из него «событие 18.11».
   // Берём только «claim your»: «FREE ENTRY 11PM-1AM» у Red Ruby — настоящее клубное событие, слово free не стоп.
-  return /\b(promo|promotion|sale|deals?|pay\s*day|discount|voucher|gift\s*card|membership|packages?|rentals?|unlimited\s+\d+\s+hours?|pass(es)?|abonnement|abonement|subscription|standard\s+hour|claim\s+your)\b/i.test(String(title || ''));
+  // 988: «SOL Studio Drop-in Ticket» (megatix) стояла ЖИВОЙ карточкой на 19.11, а страница — товар
+  // «Event Tickets, Tickets» без startDate: дату подставлял сам прогон, и каждая волна рожала новую копию
+  // (в базе уже две строки одного url: 17.11 и 19.11). Слово «ticket» — цена входа, а не событие.
+  return /\b(promo|promotion|sale|deals?|pay\s*day|discount|voucher|gift\s*card|membership|packages?|rentals?|unlimited\s+\d+\s+hours?|pass(es)?|tickets?|abonnement|abonement|subscription|standard\s+hour|claim\s+your)\b/i.test(String(title || ''));
 }
 
 function pickCategory(title) {
