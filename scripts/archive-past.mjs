@@ -33,16 +33,23 @@ async function main() {
   // id → почему архивируем (для DRY_RUN-лога)
   const reasons = new Map();
 
-  // 1) Есть end_date и он в прошлом
+  // 1) Есть end_date и он в прошлом — КРОМЕ регулярных: у ежедневных/недельных
+  //    активностей end_date = дата самого занятия, поэтому ветка без проверки повтора
+  //    архивировала ЖИВУЮ регулярку на следующий день после каждого показа (замер 18.11.2026:
+  //    «Мафия (спортивная)» daily и «Колейбол» weekly лежали в архиве копией на каждую дату,
+  //    живых близнецов 0 — класс «регулярка исчезает с карты»). Фронт сам считает
+  //    ближайшую дату по recurrence, такие карточки архивировать нельзя.
   const { data: byEnd, error: e1 } = await db
     .from('events')
-    .select('id, title, status')
+    .select('id, title, status, recurrence')
     .in('status', PAST_STATUSES)
     .lt('end_date', today);
   if (e1) {
     console.error('Ошибка выборки по end_date:', e1.message);
   }
-  (byEnd || []).forEach((r) => reasons.set(r.id, `end_date < ${today} [${r.status}]`));
+  (byEnd || [])
+    .filter((r) => !hasRecurrence(r.recurrence))
+    .forEach((r) => reasons.set(r.id, `end_date < ${today} [${r.status}]`));
 
   // 2) end_date нет, start_date в прошлом (бессрочные регулярные НЕ архивируются).
   //    ПИТФОЛ: recurrence мог содержать jsonb 'null' (JSON-null, а не SQL NULL) —
