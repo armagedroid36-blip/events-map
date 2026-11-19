@@ -39,7 +39,21 @@ const JUNK = [
   /^на\s+берегу(?=[\s,(]|$)/i,
   // служебная заметка поста вместо адреса: «Важно: формат встречи не является личной психотерапией…», «Внимание: …»
   /^(?:важно|внимание|примечание|note|nb|обратите\s+внимание)\s*[:.—-]/i,
+  // ссылка (карта/пост) вместо адреса: «https://maps.app.goo.gl/…», «t.me/…» — это не улица (кейс 999, fa208f0c)
+  /^(?:https?:\/\/|www\.|t\.me\/)/i,
 ];
+
+/** Абзац текста поста вместо адреса: длинно, без цифр (номера дома/индекса), много слов.
+ *  Кейс 999 (8506a6b0): «Большинство иностранных предпринимателей во Вьетнаме идут по пути…».
+ *  Легитимные длинные адреса Bali/Кипра всегда несут цифры (номер дома или индекс). */
+function isProseAddress(s) {
+  if (s.length < 100 || /\d/.test(s)) return false;
+  const words = s.split(/\s+/).filter(Boolean).length;
+  if (words < 12) return false;
+  // у адресов-склеек (площадка + улица + город) много запятых; у абзаца текста — тире/мало запятых
+  const commas = (s.match(/,/g) || []).length;
+  return /\s—\s/.test(s) || commas === 0;
+}
 
 /** true — «адрес» это просто название города («Нячанг», «Дананг, Вьетнам»): улицы в нём нет. */
 export function isCityAddress(raw, city) {
@@ -61,6 +75,7 @@ function normCity(raw) {
 export function isJunkAddress(raw) {
   const s = stripAddressLabel(raw);
   if (!s || s.length < 3) return true;
+  if (isProseAddress(s)) return true;
   return JUNK.some((re) => re.test(s));
 }
 
