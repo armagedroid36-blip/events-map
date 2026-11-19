@@ -649,6 +649,8 @@ export function applyMonthMeta(
   count: number,
   monthKey: string,
   hasEn: boolean,
+  /** Месяц уже прошёл: страница-алиас, canonical на хаб, без hreflang. */
+  past = false,
 ): void {
   const en = lang === 'en';
   const loc = en ? CITY_NAME_BY_PATH[path] : CITY_NAME_RU_LOCATIVE[path];
@@ -675,10 +677,26 @@ export function applyMonthMeta(
   description = trimText(description, 160);
   const ruUrl = `${SITE_URL}/${path}/${monthKey}/`;
   const enUrl = `${SITE_URL}/en/${path}/${monthKey}/`;
-  const canonical = en ? enUrl : ruUrl;
+  const hubUrl = `${SITE_URL}${en ? '/en' : ''}/${path}/`;
+  const canonical = past ? hubUrl : en ? enUrl : ruUrl;
   apply({
-    title,
-    description,
+    title: past
+      ? en
+        ? trimText(`Events in ${loc} in ${label}: past month | MyPins`, 65)
+        : trimText(`События ${loc} в ${labelPrep}: архив месяца | MyPins`, 65)
+      : title,
+    description: past
+      ? trimText(
+          count > 0
+            ? en
+              ? `${count} events took place in ${loc} in ${label}. Archive of the listing with dates and venues.`
+              : `Прошло ${count} событий ${loc} в ${labelPrep}. Архив афиши: что было — даты и площадки.`
+            : en
+              ? `Past month in ${loc}: archive of the ${label} listing with dates and venues.`
+              : `Завершившийся месяц ${loc} в ${labelPrep}: архив афиши с датами и площадками.`,
+          160,
+        )
+      : description,
     lang,
     canonical,
     og: {
@@ -687,12 +705,14 @@ export function applyMonthMeta(
       'og:url': canonical,
       'og:image': `${SITE_URL}/logo.png`,
     },
-    hreflang: hasEn
-      ? hreflangPairsFor(ruUrl, enUrl)
-      : [
-          { hreflang: lang, href: canonical },
-          { hreflang: 'x-default', href: canonical },
-        ],
+    hreflang: past
+      ? null
+      : hasEn
+        ? hreflangPairsFor(ruUrl, enUrl)
+        : [
+            { hreflang: lang, href: canonical },
+            { hreflang: 'x-default', href: canonical },
+          ],
     robots: null,
   });
 }

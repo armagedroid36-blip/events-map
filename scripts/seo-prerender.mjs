@@ -5798,6 +5798,13 @@ function fixArticleLinks() {
 const MONTH_MIN_EVENTS = 3;
 const MONTH_LIST_LIMIT = 50;
 const MONTH_HORIZON = 3;
+// Окно алиасов для завершившихся месяцев: страница месяца, который уже
+// прошёл, отдаёт 200 с canonical на хаб, а не 404 — иначе Google получит 404
+// на URL, которые сам же получил в индекс (и IndexNow их рассылает).
+// Окно — ровно один предыдущий месяц: так с 1 декабря ноябрьские адреса
+// остаются живыми, а более старые (сентябрь и раньше, они никогда не
+// публиковались) по-прежнему отдают 404 — это и проверяет приёмка.
+const PAST_MONTH_ALIAS_WINDOW = 1;
 const MONTHS_EN_LOWER = [
   'january', 'february', 'march', 'april', 'may', 'june',
   'july', 'august', 'september', 'october', 'november', 'december',
@@ -5824,6 +5831,17 @@ function monthHorizonKeys() {
   const out = [];
   for (let i = 0; i < MONTH_HORIZON; i += 1) {
     const d = new Date(Date.UTC(y, m - 1 + i, 1));
+    out.push(monthKeyOf(d.getUTCFullYear(), d.getUTCMonth()));
+  }
+  return out;
+}
+
+/** Ключи завершившихся месяцев в окне алиасов (3 назад, от старого к новому). */
+function monthPastKeys() {
+  const [y, m] = TODAY_ISO.split('-').map(Number);
+  const out = [];
+  for (let i = PAST_MONTH_ALIAS_WINDOW; i >= 1; i -= 1) {
+    const d = new Date(Date.UTC(y, m - 1 - i, 1));
     out.push(monthKeyOf(d.getUTCFullYear(), d.getUTCMonth()));
   }
   return out;
@@ -5909,12 +5927,15 @@ function monthFacts(list, lang, cells, cityPath, catById) {
  * Фразы выбираются детерминированно по hash(город+месяц), поэтому соседние
  * ячейки не повторяют друг друга дословно (гайдлайн: уникальность ≥40%).
  */
-function monthIntro(facts, list, monthKey, cityPath, lang) {
+function monthIntro(facts, list, monthKey, cityPath, lang, total) {
   const en = lang === 'en';
+  // n — РЕАЛЬНОЕ число событий месяца (до среза до MONTH_LIST_LIMIT); список
+  // на странице может быть короче — тогда ниже добавляем фразу о выборке.
+  const totalCount = Number.isFinite(total) ? total : list.length;
   const label = monthLabel(monthKey, lang);
   const labelPrep = monthLabel(monthKey, lang, 'prep');
   const loc = en ? CAT_CITY_NAME_EN[cityPath] || cityPath : CITY_NAME_RU_LOCATIVE[cityPath];
-  const n = list.length;
+  const n = totalCount;
   const dates = list.map((ev) => nextOccurrenceDate(ev, TODAY_ISO)).filter(Boolean).sort();
   const first = dates[0] || '';
   const last = dates[dates.length - 1] || '';
@@ -5942,6 +5963,9 @@ function monthIntro(facts, list, monthKey, cityPath, lang) {
         ? `${facts.free} events are free to attend.`
         : 'All events are ticketed; prices are shown on each card.',
     );
+    if (totalCount > list.length) {
+      parts.push(`Showing the ${list.length} nearest of ${totalCount} events this month.`);
+    }
     parts.push('The list is rebuilt daily from the live event feed — new events appear here and on the city map.');
     return parts.join(' ');
   }
@@ -5960,20 +5984,24 @@ function monthIntro(facts, list, monthKey, cityPath, lang) {
       ? `Бесплатно можно попасть на ${facts.free} событий.`
       : 'Все события по билетам, цена указана в карточке.',
   );
+  if (totalCount > list.length) {
+    parts.push(`Показаны ${list.length} ближайших из ${totalCount} событий месяца.`);
+  }
   parts.push('Список пересобирается каждый день из живой афиши: новые события сразу появляются здесь и на карте города.');
   return parts.join(' ');
 }
 
 /** Видимый блок #seo-month-block: крошка, h1, интро, список, FAQ, ссылки. */
-function monthPageHtml({ cityPath, monthKey, lang, list, cells, catById }) {
+function monthPageHtml({ cityPath, monthKey, lang, list, cells, catById, total, past = false }) {
   const en = lang === 'en';
+  const totalCount = Number.isFinite(total) ? total : list.length;
   const loc = en ? CAT_CITY_NAME_EN[cityPath] || cityPath : CITY_NAME_RU_LOCATIVE[cityPath];
   const label = monthLabel(monthKey, lang);
   // «в ноябре 2026» — предложный падеж для RU (EN не меняется)
   const labelIn = en ? label : monthLabel(monthKey, lang, 'prep');
   const labelCap = monthLabel(monthKey, lang, true);
   const facts = monthFacts(list, lang, cells, cityPath, catById);
-  const intro = monthIntro(facts, list, monthKey, cityPath, lang);
+  const intro = monthIntro(facts, list, monthKey, cityPath, lang, totalCount);
   const hubHref = `${en ? '/en' : ''}/${cityPath}/`;
   const weekHref = `${en ? '/en' : ''}/${cityPath}/this-week/`;
   const base = `${SITE_URL}${en ? '/en' : ''}/${cityPath}/${monthKey}/`;
@@ -6037,6 +6065,13 @@ function monthPageHtml({ cityPath, monthKey, lang, list, cells, catById }) {
     '<div id="seo-month-block">',
     crumbNavHtml(crumbChain, en ? 'Breadcrumbs' : 'Хлебные крошки'),
     `  <h1>${esc(en ? `Events in ${loc} in ${label}` : `События ${loc} в ${labelIn}`)}</h1>`,
+    ...(past
+      ? [
+          `  <p class="seo-month-ended"><strong>${en ? 'This month has ended' : 'Этот месяц завершился'}</strong> — ${
+            en ? `${totalCount} events took place` : `прошло ${totalCount} событий`
+          }.</p>`,
+        ]
+      : []),
     `  <p>${esc(intro)}</p>`,
     `  <p class="seo-updated">${en ? 'Updated' : 'Афиша обновлена'}: <time datetime="${TODAY_ISO}">${esc(
       en ? enDate(TODAY_ISO) : ruDate(TODAY_ISO),
@@ -6066,6 +6101,16 @@ function monthPageHtml({ cityPath, monthKey, lang, list, cells, catById }) {
     links.push(
       `<a href="${esc(weekHref)}">${esc(en ? 'Events this week' : 'События на этой неделе')}</a>`,
     );
+  }
+  if (past) {
+    const currentKey = monthHorizonKeys()[0];
+    if ((MONTH_READY.get(cityPath) || []).includes(currentKey)) {
+      links.push(
+        `<a href="${esc(`${en ? '/en' : ''}/${cityPath}/${currentKey}/`)}">${esc(
+          en ? `Events in ${monthLabel(currentKey, 'en')}` : `События в ${monthLabel(currentKey, 'ru', 'prep')}`,
+        )}</a>`,
+      );
+    }
   }
   lines.push(
     `  <p>${links.join(' · ')}</p>`,
@@ -7061,7 +7106,9 @@ async function main() {
   for (const c of CITY_PAGES) {
     const keys = MONTH_PLAN.get(c.path) || [];
     for (const monthKey of keys) {
-      const listRu = monthCityEvents(events, c.path, monthKey, 'ru').slice(0, MONTH_LIST_LIMIT);
+      const fullRu = monthCityEvents(events, c.path, monthKey, 'ru');
+      const totalRu = fullRu.length;
+      const listRu = fullRu.slice(0, MONTH_LIST_LIMIT);
       if (listRu.length < MONTH_MIN_EVENTS) continue;
       const locRu = CITY_NAME_RU_LOCATIVE[c.path];
       const labelRu = monthLabel(monthKey, 'ru');
@@ -7069,11 +7116,19 @@ async function main() {
       const labelEn = monthLabel(monthKey, 'en');
       const url = `${SITE_URL}/${c.path}/${monthKey}/`;
       const enUrl = `${SITE_URL}/en/${c.path}/${monthKey}/`;
-      const blockRu = monthPageHtml({ cityPath: c.path, monthKey, lang: 'ru', list: listRu, cells, catById });
+      const blockRu = monthPageHtml({
+        cityPath: c.path,
+        monthKey,
+        lang: 'ru',
+        list: listRu,
+        cells,
+        catById,
+        total: totalRu,
+      });
       const factsRu = monthFacts(listRu, 'ru', cells, c.path, catById);
       const labelRuPrep = monthLabel(monthKey, 'ru', 'prep');
       const titleRu = snippet(`События ${locRu} в ${labelRuPrep}: афиша и куда сходить | MyPins`, 65);
-      let descRu = `${listRu.length} событий ${locRu} в ${labelRuPrep}: ${
+      let descRu = `${totalRu} событий ${locRu} в ${labelRuPrep}: ${
         factsRu.catNames.join(', ') || 'концерты, встречи, мастер-классы'
       }. `;
       if (factsRu.venues.length) descRu += `Площадки: ${factsRu.venues.join(', ')}. `;
@@ -7081,7 +7136,9 @@ async function main() {
       if (descRu.length < 145) descRu += 'Даты, места и цены — на карте MyPins.';
       descRu = snippet(descRu, 160);
 
-      const listEn = monthCityEvents(events, c.path, monthKey, 'en').slice(0, MONTH_LIST_LIMIT);
+      const fullEn = monthCityEvents(events, c.path, monthKey, 'en');
+      const totalEn = fullEn.length;
+      const listEn = fullEn.slice(0, MONTH_LIST_LIMIT);
       const hasEn = listEn.length >= MONTH_MIN_EVENTS;
       writePage(baseHtml, `${c.path}/${monthKey}`, {
         lang: 'ru',
@@ -7119,10 +7176,18 @@ async function main() {
       monthPagesRu += 1;
 
       if (hasEn) {
-        const blockEn = monthPageHtml({ cityPath: c.path, monthKey, lang: 'en', list: listEn, cells, catById });
+        const blockEn = monthPageHtml({
+          cityPath: c.path,
+          monthKey,
+          lang: 'en',
+          list: listEn,
+          cells,
+          catById,
+          total: totalEn,
+        });
         const factsEn = monthFacts(listEn, 'en', cells, c.path, catById);
         const titleEn = snippet(`Events in ${locEn} in ${labelEn}: what's on | MyPins`, 65);
-        let descEn = `${listEn.length} events in ${locEn} in ${labelEn}: ${
+        let descEn = `${totalEn} events in ${locEn} in ${labelEn}: ${
           factsEn.catNames.join(', ') || 'concerts, meetups and workshops'
         }. `;
         if (factsEn.venues.length) descEn += `Venues: ${factsEn.venues.join(', ')}. `;
@@ -7165,6 +7230,99 @@ async function main() {
     `  «город × месяц»: страниц RU ${monthPagesRu}, EN ${monthPagesEn}` +
       (monthBuilt.length ? ` (${monthBuilt.join('; ')})` : ''),
   );
+
+  // --- Завершившиеся месяцы: 200-алиас с canonical на городской хаб -------
+  // Месяц уже прошёл, но его URL мог попасть в индекс (и IndexNow рассылает
+  // все <loc> каждой сборкой). 404 на такой адрес — потеря; пишем страницу-
+  // алиас: h1 как у обычной месячной, плашка «Этот месяц завершился», список
+  // прошедших, canonical = хаб, hreflang нет, в sitemap не включаем.
+  const pastMonthPool = [...events, ...allPast];
+  let pastMonthAliasesRu = 0;
+  let pastMonthAliasesEn = 0;
+  const pastAliasBuilt = [];
+  for (const c of CITY_PAGES) {
+    for (const monthKey of monthPastKeys()) {
+      const fullRu = monthCityEvents(pastMonthPool, c.path, monthKey, 'ru');
+      const totalRu = fullRu.length;
+      if (totalRu < MONTH_MIN_EVENTS) continue;
+      const listRu = fullRu.slice(0, MONTH_LIST_LIMIT);
+      const locRu = CITY_NAME_RU_LOCATIVE[c.path];
+      const locEn = CAT_CITY_NAME_EN[c.path] || c.path;
+      const labelRuPrep = monthLabel(monthKey, 'ru', 'prep');
+      const labelEn = monthLabel(monthKey, 'en');
+      const hubUrl = `${SITE_URL}/${c.path}/`;
+      const hubUrlEn = `${SITE_URL}/en/${c.path}/`;
+      const blockRu = monthPageHtml({
+        cityPath: c.path,
+        monthKey,
+        lang: 'ru',
+        list: listRu,
+        cells,
+        catById,
+        total: totalRu,
+        past: true,
+      });
+      const titleRu = snippet(
+        `События ${locRu} в ${labelRuPrep}: архив месяца | MyPins`,
+        65,
+      );
+      let descRu = `Прошло ${totalRu} событий ${locRu} в ${labelRuPrep}. Архив афиши: что было — даты и площадки. `;
+      if (descRu.length < 145) descRu += 'Ближайшие события города — на карте MyPins.';
+      descRu = snippet(descRu, 160);
+      writePage(baseHtml, `${c.path}/${monthKey}`, {
+        lang: 'ru',
+        title: titleRu,
+        description: descRu,
+        canonical: hubUrl,
+        ogTitle: titleRu,
+        ogDescription: descRu,
+        ogUrl: hubUrl,
+        ogImage: LOGO_URL,
+        hreflang: [],
+        bodySeo: blockRu.html,
+      });
+      pastMonthAliasesRu += 1;
+
+      const fullEn = monthCityEvents(pastMonthPool, c.path, monthKey, 'en');
+      const totalEn = fullEn.length;
+      if (totalEn >= MONTH_MIN_EVENTS) {
+        const listEn = fullEn.slice(0, MONTH_LIST_LIMIT);
+        const blockEn = monthPageHtml({
+          cityPath: c.path,
+          monthKey,
+          lang: 'en',
+          list: listEn,
+          cells,
+          catById,
+          total: totalEn,
+          past: true,
+        });
+        const titleEn = snippet(`Events in ${locEn} in ${labelEn}: past month | MyPins`, 65);
+        let descEn = `${totalEn} events took place in ${locEn} in ${labelEn}. Archive of the listing with dates and venues. `;
+        if (descEn.length < 145) descEn += 'Upcoming events in the city are on the MyPins map.';
+        descEn = snippet(descEn, 160);
+        writePage(baseHtml, `en/${c.path}/${monthKey}`, {
+          lang: 'en',
+          title: titleEn,
+          description: descEn,
+          canonical: hubUrlEn,
+          ogTitle: titleEn,
+          ogDescription: descEn,
+          ogUrl: hubUrlEn,
+          ogImage: LOGO_URL,
+          hreflang: [],
+          bodySeo: blockEn.html,
+        });
+        pastMonthAliasesEn += 1;
+      }
+      pastAliasBuilt.push(`${c.path} ${monthKey} ${totalRu}${totalEn >= MONTH_MIN_EVENTS ? ` +EN ${totalEn}` : ''}`);
+    }
+  }
+  console.log(
+    `  завершившиеся месяцы (алиасы, canonical на хаб): RU ${pastMonthAliasesRu}, EN ${pastMonthAliasesEn}` +
+      (pastAliasBuilt.length ? ` (${pastAliasBuilt.join('; ')})` : ''),
+  );
+
 
   const cellList = [...cells.values()].sort((a, b) =>
     `${a.path}/${a.cat.id}`.localeCompare(`${b.path}/${b.cat.id}`),

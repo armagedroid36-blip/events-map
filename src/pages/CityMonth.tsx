@@ -99,10 +99,10 @@ export default function CityMonth({ path, monthKey }: { path: CityPath; monthKey
     };
   }, []);
 
-  const list = useMemo(() => {
-    if (!events || !window_) return [];
+  const { list, total } = useMemo(() => {
+    if (!events || !window_) return { list: [] as EventItem[], total: 0 };
     const start = todayIso();
-    return events
+    const full = events
       .filter((ev) => {
         const inCity = path === 'cyprus' ? isCyprusCity(ev.city) : cityPath(ev.city) === path;
         if (!inCity) return false;
@@ -115,9 +115,12 @@ export default function CityMonth({ path, monthKey }: { path: CityPath; monthKey
         const da = String(nextOccurrenceDate(a, start));
         const db = String(nextOccurrenceDate(b, start));
         return da.localeCompare(db) || String(a.id).localeCompare(String(b.id));
-      })
-      .slice(0, MONTH_LIST_LIMIT);
+      });
+    return { list: full.slice(0, MONTH_LIST_LIMIT), total: full.length };
   }, [events, path, en, window_]);
+
+  // Месяц уже прошёл: страница-алиас (200, canonical на хаб), а не 404.
+  const past = Boolean(window_ && window_.end < todayIso());
 
   const hasEn = useMemo(() => {
     if (!events || !window_) return false;
@@ -139,8 +142,8 @@ export default function CityMonth({ path, monthKey }: { path: CityPath; monthKey
 
   const applyMeta = useCallback(() => {
     if (!events) return;
-    applyMonthMeta(path, en ? 'en' : 'ru', list.length, monthKey, hasEn);
-  }, [events, list.length, path, en, monthKey, hasEn]);
+    applyMonthMeta(path, en ? 'en' : 'ru', total, monthKey, hasEn, past);
+  }, [events, total, path, en, monthKey, hasEn, past]);
 
   useEffect(() => {
     applyMeta();
@@ -154,7 +157,11 @@ export default function CityMonth({ path, monthKey }: { path: CityPath; monthKey
       </div>
     );
   }
-  if (!window_ || list.length < MONTH_MIN_EVENTS) return <NotFound />;
+  // Прошедший месяц: статика отдаёт 200-алиас с canonical на хаб — SPA
+  // показывает ту же панель. В наборе только предстоящие события, поэтому
+  // список может быть пустым — это нормально.
+  if (!window_) return <NotFound />;
+  if (!past && total < MONTH_MIN_EVENTS) return <NotFound />;
 
   const loc = en ? CITY_NAME_BY_PATH[path] : CITY_NAME_RU_LOCATIVE[path];
   const locRu = cityLocativeRu(path === 'cyprus' ? 'Кипр' : path);
@@ -170,13 +177,22 @@ export default function CityMonth({ path, monthKey }: { path: CityPath; monthKey
     if (venues.length >= 4) break;
   }
   const free = list.filter((ev) => ev.price != null && Number(ev.price) === 0).length;
-  const intro = en
-    ? `${list.length} events are scheduled in ${loc} in ${label}: concerts, meetups, workshops and parties.` +
+  const intro = past && total === 0
+    ? en
+      ? `The ${label} programme in ${loc} has ended. This page keeps the archive of that month and links to the live listings.`
+      : `Афиша ${locRu || loc} на ${label} завершилась. Здесь остаётся архив месяца и ссылки на действующие афиши.`
+    : en
+    ? `${total} events are scheduled in ${loc} in ${label}: concerts, meetups, workshops and parties.` +
       (venues.length ? ` Venues include ${venues.join(', ')}.` : '') +
       (free > 0 ? ` ${free} of them are free.` : ' Prices and booking details are on each card.')
-    : `В ${locRu || loc} в ${labelPrep} запланировано ${list.length} событий: концерты, встречи, мастер-классы и вечеринки.` +
+    : `В ${locRu || loc} в ${labelPrep} запланировано ${total} событий: концерты, встречи, мастер-классы и вечеринки.` +
       (venues.length ? ` Площадки: ${venues.join(', ')}.` : '') +
-      (free > 0 ? ` Бесплатных: ${free}.` : ' Цены и билеты — в карточках событий.');
+      (free > 0 ? ` Бесплатных: ${free}.` : ' Цены и билеты — в карточках событий.') +
+      (total > list.length
+        ? en
+          ? ` Showing the ${list.length} nearest of ${total} events this month.`
+          : ` Показаны ${list.length} ближайших из ${total} событий месяца.`
+        : '');
   const faq: [string, string][] = en
     ? [
         [
@@ -231,10 +247,18 @@ export default function CityMonth({ path, monthKey }: { path: CityPath; monthKey
         <h1 className="mt-4 text-2xl font-semibold text-gray-900">
           {en ? `Events in ${loc} in ${label}` : `События ${locRu || loc} в ${labelPrep}`}
         </h1>
+        {past && (
+          <p className="mt-3 rounded bg-gray-100 p-3 text-sm text-gray-800">
+            <strong>{en ? 'This month has ended' : 'Этот месяц завершился'}</strong>
+            {total > 0 ? (en ? ` — ${total} events took place` : ` — прошло ${total} событий`) : ''}.
+          </p>
+        )}
         <p className="mt-3 text-sm leading-relaxed text-gray-700">{intro}</p>
-        <h2 className="mt-5 text-base font-semibold text-gray-900">
-          {en ? `Events in ${label}` : `События в ${labelPrep}`}
-        </h2>
+        {list.length > 0 && (
+          <h2 className="mt-5 text-base font-semibold text-gray-900">
+            {en ? `Events in ${label}` : `События в ${labelPrep}`}
+          </h2>
+        )}
         <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-gray-700">
           {list.map((ev) => {
             const date = String(nextOccurrenceDate(ev, todayIso()));
