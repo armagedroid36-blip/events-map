@@ -297,10 +297,17 @@ async function pruneArchivedCopies() {
   const liveRows = await selectAll(db, 'events',
     'id, title, title_ru, start_date, start_time, address, status, created_at',
     { filter: (q) => q.in('status', STATUSES) });
+  // Питфол (19.11.2026, прогон 44568813589): первые 3 слова названия БЕЗ фильтра
+  // значимости склеивали разные мастерские одной студии — «Творческая мастерская
+  // Pangolin: Magic Paper Canvas…» ↔ «…: Bracelet Making…» (одна дата/время/адрес,
+  // первые 3 слова одинаковые) — карточка уходила в архив вопреки правке 996,
+  // которая чистила тот же класс в live-dupe-key. Берём слова через words()
+  // (там STOP/FUNC: творческая/мастерская/workshop/pangolin…) и требуем ДВА
+  // значимых слова: у разных мастерских они различаются (magic/paper ↔ bracelet).
   const prefixKey = (e) => {
-    const words = norm(e.title_ru || e.title).replace(/[^\p{L}\p{N}]+/gu, ' ').trim().split(/\s+/).slice(0, 3).join(' ');
+    const words = liveDupe.words(e.title_ru || e.title).slice(0, 2).join(' ');
     const addr = norm(e.address);
-    if (!words || !addr || !e.start_time) return null;
+    if (!words || words.split(' ').length < 2 || !addr || !e.start_time) return null;
     return [e.start_date, e.start_time, addr, words].join('|');
   };
   const liveGroups = new Map();

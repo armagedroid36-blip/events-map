@@ -57,7 +57,15 @@ export const STOP = new Set(['festival', 'фестиваль', 'day', 'night', '
   // Название самой студии в заголовке — тоже не признак одного события
   // (Pangolin/Панголин: «Клуб панголинов для детей» 08:00 ↔ «КЛУБ ДЛЯ ДЕТЕЙ
   // PANGOLIN: УСЛУГИ НЯНИ» 09:00 склеивались ветвью «2 слова + адрес~»).
-  'pangolin', 'панголин', 'панголинов']);
+  'pangolin', 'панголин', 'панголинов',
+  // Пункт назначения и тип активности тура, а не его название (19.11.2026, прогон
+  // 44568813589): у одного оператора Мегатикса в Сануре на 20.11 07:00 стоят два РАЗНЫХ
+  // тура — «Poseidon Voyage - Sport Fishing + 4 Spots Snorkeling at Nusa Penida» и
+  // «Azure Odyssey - Land Tour Nusa Penida + Snorkeling at Manta Point». Общие
+  // nusa/penida/snorkeling давали 3 слова + тот же пирс отправления ⇒ «живой дубль»,
+  // тур-рыбалка уходил в архив. Различающее слово (Poseidon/Azure, fishing/land tour)
+  // в названии есть — значит склейка ложная.
+  'snorkeling', 'nusa', 'penida', 'tour']);
 
 
 
@@ -106,6 +114,18 @@ export const cityKey = (r) => norm(r.city).replace(/,\s*(кипр|bali|бали|
 export const dayKey = (r) => `${String(r.start_date || '').slice(0, 10)}|${cityKey(r)}`;
 
 export const hasCoords = (r) => typeof r.lat === 'number' && typeof r.lng === 'number';
+/** Разница времени начала в минутах (null, если у одной из карточек время не задано). */
+export function timeDiffMin(a, b) {
+  const parse = (t) => {
+    const m = String(t || '').match(/^(\d{1,2}):(\d{2})/);
+    return m ? Number(m[1]) * 60 + Number(m[2]) : null;
+  };
+  const ta = parse(a.start_time), tb = parse(b.start_time);
+  if (ta === null || tb === null) return null;
+  let d = Math.abs(ta - tb);
+  if (d > 720) d = 1440 - d;   // полночь: 23:30 и 00:30 — 60 минут, а не 23 часа
+  return d;
+}
 export function distanceM(a, b) {
   const R = 6371000, rad = (d) => (d * Math.PI) / 180;
   const dLat = rad(b.lat - a.lat), dLng = rad(b.lng - a.lng);
@@ -336,6 +356,14 @@ export function liveAbbrevMatch(a, b) {
       : (ab && (common || (near !== null && near <= 300))) ? `общая аббревиатура ${ab}`
         : null;
   if (!why) return null;
+  // Время начала решает, дубль это или разные сеансы (19.11.2026, прогон 44568813589):
+  // «Handstand Workshop - Vivienne Zeng» 11:15 ↔ «Vinyasa Flow - Vivienne Zeng» 09:30
+  // (Чангу, один адрес) склеились по 2 общим словам — это ИМЯ ПРЕПОДАВАТЕЛЯ, а занятия
+  // разные; разница времени 105 мин. Если у обеих карточек время задано и расходится
+  // больше часа — это не дубль (у переводов/копий одного события время совпадает или
+  // отличается на часовой пояс/округление, но не на два часа).
+  const tdiff = timeDiffMin(a, b);
+  if (tdiff !== null && tdiff > 60) return null;
   const near1k = !stubBoth && near !== null && near <= 1000;
   if (!common && !near1k) return null;
   if (ov < 3 && common && /^\d+$/.test(common)) return null;       // почтовый индекс/номер дома
