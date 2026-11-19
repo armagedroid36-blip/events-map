@@ -42,6 +42,9 @@ const SITEMAP = `${BASE}/sitemap.xml`;
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36';
 
 const MAX_EVENTS = Number(process.env.MAX_EVENTS || 40); // новых карточек за прогон
+// Сколько уже собранных страниц за прогон перечитывать на «уехавшую» дату (роллинг-серия).
+const MAX_RESCANS = Number(process.env.MEGATIX_MAX_RESCANS || 20);
+
 const BUDGET_MIN = Number(process.env.MEGATIX_BUDGET_MIN || 8); // бюджет времени источника
 const PAGES_MAX = Number(process.env.ONLY_LIMIT || 150); // предохранитель: страниц за прогон
 const ZERO_YIELD_STOP = Number(process.env.MEGATIX_ZERO_YIELD || 60); // страниц подряд без добавлений
@@ -224,28 +227,54 @@ function ldPrice(ev) {
 }
 
 // ===== Дубли: ключ title|start_date + множество уже собранных страниц =====
+// Мегатикс моделирует роллинг-серию одной страницей: JSON-LD отдаёт БЛИЖАЙШИЙ сеанс и после
+// прошедшего уезжает вперёд (проверено 19.11.2026: 13 из 24 живых карточек стояли на дате
+// сбора 19.11, а страница уже показывала 20.11 / 23.11 / 26.11 / 03.12; у vinyasa-flow-ricardo
+// и meditation-sound-healing-lala та же страница даёт одну дату 26.11 с тем же временем).
+// Поэтому прошедшую карточку того же URL надо НЕ пропускать навсегда, а обновлять на новую дату.
 async function existingKeys() {
-  const rows = await selectAll(db, 'events', 'title, title_ru, title_en, start_date, website, status', {
+  const rows = await selectAll(db, 'events', 'id, title, title_ru, title_en, start_date, website, status', {
     filter: (q) => q.in('status', ['active', 'moderation']),
   });
   const seen = new Set();
   const sites = new Set();
+  const siteRows = new Map(); // url -> { id, start_date } живой карточки этой страницы
   for (const r of rows) {
     const date = String(r.start_date || '').slice(0, 10);
     for (const t of [r.title, r.title_ru, r.title_en]) {
       if (t) seen.add(`${String(t).trim().toLowerCase()}|${date}`);
     }
-    if (r.website) sites.add(String(r.website).trim());
+    if (r.website) {
+      const u = String(r.website).trim();
+      sites.add(u);
+      siteRows.set(u, { id: r.id, start_date: date });
+    }
   }
-  return { seen, sites, total: rows.length };
+  return { seen, sites, siteRows, total: rows.length };
 }
+
+// Решение по странице, у которой карточка уже есть. Чистая функция — юнит
+// dot-megatix-rollover-check.mjs. 'new' — страницы в базе нет; 'skip' — трогать нечего;
+// 'update' — карточка протухла, а страница уже показывает будущий сеанс.
+export function siteAction({ existing, pageDate, today, horizon }) {
+  if (!existing) return 'new';
+  const was = String(existing.start_date || '');
+  if (!was) return 'skip';
+  if (was > today) return 'skip'; // актуальная карточка (дата в будущем) — страницу не читаем вовсе
+  if (!pageDate) return 'skip';
+  if (pageDate < today) return 'skip'; // и страница устарела (серия закончилась)
+  if (pageDate > horizon) return 'skip';
+  if (pageDate === was) return 'skip';
+  return 'update';
+}
+
 
 async function main() {
   const started = Date.now();
   const deadline = started + BUDGET_MIN * 60 * 1000;
   console.log(`Собираю: Megatix (sitemap ${BASE}/sitemap.xml, бюджет ${BUDGET_MIN} мин, лимит ${MAX_EVENTS})`);
 
-  const { seen, sites, total } = await existingKeys();
+  const { seen, sites, siteRows, total } = await existingKeys();
   console.log(`Ключи дублей: ${seen.size}, страниц уже собрано: ${sites.size} (живых строк ${total})`);
 
   const xml = await fetchText(SITEMAP);
@@ -259,6 +288,8 @@ async function main() {
   let skipped = 0;
   let scanned = 0;
   let past = 0;
+  let rescanned = 0;
+  let updated = 0;
   let noDistrict = 0;
   let venuePinned = 0;
   let offers = 0;
@@ -270,7 +301,11 @@ async function main() {
     if (Date.now() > deadline) { console.log('[дедлайн] бюджет времени источника исчерпан'); break; }
     if (scanned - lastYield >= ZERO_YIELD_STOP) { console.log(`[обрыв] ${ZERO_YIELD_STOP} страниц подряд без добавлений`); break; }
     const pageUrl = url.trim();
-    if (sites.has(pageUrl)) { skipped++; continue; }
+    const existing = siteRows.get(pageUrl);
+    // Собранную страницу пропускаем БЕЗ чтения, пока её карточка актуальна; протухшую —
+    // перечитываем, чтобы поймать новый сеанс роллинг-серии (MAX_RESCANS за прогон).
+    if (existing && String(existing.start_date || '') > today) { skipped++; continue; }
+    if (existing && rescanned >= MAX_RESCANS) { skipped++; continue; }
 
     const html = await fetchText(pageUrl);
     if (!html) { scanned++; continue; }
@@ -281,6 +316,9 @@ async function main() {
     if (!start) { scanned++; continue; }
     if (start.date < today) { past++; scanned++; continue; } // устаревшая страница в sitemap
     if (start.date > horizon) { scanned++; continue; }
+    if (existing) rescanned++; // бюджет перечитываний уже собранных страниц
+    const action = siteAction({ existing, pageDate: start.date, today, horizon });
+    if (action === 'skip') { skipped++; scanned++; continue; }
 
     const title = decodeEntities(stripInvisible(String(ev.name || ''))).trim().slice(0, 200);
     if (!title) { scanned++; continue; }
@@ -374,6 +412,31 @@ async function main() {
       source_type: 'collector',
     };
 
+    // Роллинг-серия: карточка протухла, страница показывает новый сеанс — обновляем ту же строку
+    // (не вставляем вторую: иначе каждые 12 ч на карте появлялся бы новый дубль одного события).
+    if (action === 'update') {
+      if (!DRY_RUN) {
+        const patch = {
+          start_date: row.start_date,
+          end_date: row.end_date,
+          start_time: row.start_time,
+          end_time: row.end_time,
+        };
+        const { error } = await db.from('events').update(patch).eq('id', existing.id);
+        if (error) {
+          console.error(`  Ошибка обновления «${title.slice(0, 40)}»: ${error.message}`);
+          scanned++;
+          continue;
+        }
+      }
+      updated++;
+      lastYield = scanned;
+      siteRows.set(pageUrl, { id: existing.id, start_date: row.start_date });
+      seen.add(key);
+      console.log(`  ${DRY_RUN ? '[dry] ' : ''}↻ ${title.slice(0, 45)} (${existing.start_date} → ${row.start_date} ${row.start_time || ''})`);
+      continue;
+    }
+
     if (!DRY_RUN) {
       const { error } = await db.from('events').insert(row);
       if (error) {
@@ -390,7 +453,7 @@ async function main() {
   }
 
   const mins = ((Date.now() - started) / 60000).toFixed(1);
-  console.log(`Готово: добавлено ${inserted}, пропущено дублей ${skipped}, страниц прочитано ${scanned}, прошедших ${past}, без района ${noDistrict}, не-события ${offers}, пин по площадке ${venuePinned} (${mins} мин)`);
+  console.log(`Готово: добавлено ${inserted}, обновлено ${updated}, пропущено дублей ${skipped}, страниц прочитано ${scanned}, прошедших ${past}, без района ${noDistrict}, не-события ${offers}, пин по площадке ${venuePinned} (${mins} мин)`);
 }
 
 const isDirectRun = /collect-megatix\.mjs$/.test((process.argv[1] || '').replace(/\\/g, '/'));
