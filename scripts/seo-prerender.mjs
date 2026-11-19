@@ -5969,8 +5969,9 @@ function monthIntro(facts, list, monthKey, cityPath, lang, total) {
     parts.push('The list is rebuilt daily from the live event feed — new events appear here and on the city map.');
     return parts.join(' ');
   }
+  const capFirst = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
   const heads = [
-    `В ${loc} в ${labelPrep} запланировано ${n} событий.`,
+    `${capFirst(loc)} в ${labelPrep} запланировано ${n} событий.`,
     `Афиша ${loc}: ${label} — ${n} событий.`,
     `В ${labelPrep} ${loc} уже объявлено ${n} событий.`,
   ];

@@ -185,7 +185,7 @@ export default function CityMonth({ path, monthKey }: { path: CityPath; monthKey
     ? `${total} events are scheduled in ${loc} in ${label}: concerts, meetups, workshops and parties.` +
       (venues.length ? ` Venues include ${venues.join(', ')}.` : '') +
       (free > 0 ? ` ${free} of them are free.` : ' Prices and booking details are on each card.')
-    : `В ${locRu || loc} в ${labelPrep} запланировано ${total} событий: концерты, встречи, мастер-классы и вечеринки.` +
+    : `${(locRu || loc).charAt(0).toUpperCase() + (locRu || loc).slice(1)} в ${labelPrep} запланировано ${total} событий: концерты, встречи, мастер-классы и вечеринки.` +
       (venues.length ? ` Площадки: ${venues.join(', ')}.` : '') +
       (free > 0 ? ` Бесплатных: ${free}.` : ' Цены и билеты — в карточках событий.') +
       (total > list.length
