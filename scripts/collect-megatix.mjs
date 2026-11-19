@@ -43,7 +43,7 @@ const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 
 const MAX_EVENTS = Number(process.env.MAX_EVENTS || 40); // новых карточек за прогон
 // Сколько уже собранных страниц за прогон перечитывать на «уехавшую» дату (роллинг-серия).
-const MAX_RESCANS = Number(process.env.MEGATIX_MAX_RESCANS || 20);
+const MAX_RESCANS = Number(process.env.MEGATIX_MAX_RESCANS || 40);
 
 const BUDGET_MIN = Number(process.env.MEGATIX_BUDGET_MIN || 8); // бюджет времени источника
 const PAGES_MAX = Number(process.env.ONLY_LIMIT || 150); // предохранитель: страниц за прогон
@@ -268,6 +268,23 @@ export function siteAction({ existing, pageDate, today, horizon }) {
   return 'update';
 }
 
+// Порядок обхода sitemap: страницы, чья карточка ПРОТУХЛА (start_date ≤ сегодня), идут
+// первыми. Без этого бюджет перечитываний (MAX_RESCANS) расходовался в порядке sitemap и
+// 4 роллинг-серии (vinyasa-flow, meditation-sound-healing, shadow-of-addiction, the-lumen-club)
+// не получали его никогда — класс 1003. Чистая функция — юнит dot-megatix-rollover-check.mjs.
+export function prioritizePages(urls, siteRows, today) {
+  const list = urls.map((u) => String(u).trim()).filter(Boolean);
+  const stale = [];
+  const fresh = [];
+  for (const u of list) {
+    const row = siteRows && siteRows.get ? siteRows.get(u) : null;
+    const was = row ? String(row.start_date || '') : '';
+    if (row && was && was <= today) stale.push(u);
+    else fresh.push(u);
+  }
+  return { stale, fresh, order: [...stale, ...fresh] };
+}
+
 
 async function main() {
   const started = Date.now();
@@ -280,8 +297,8 @@ async function main() {
   const xml = await fetchText(SITEMAP);
   if (!xml) throw new Error('sitemap недоступен');
   const urls = sitemapEventUrls(xml);
-  console.log(`Страниц событий в sitemap: ${urls.length}`);
-
+  const order = prioritizePages(urls, siteRows, todayLocalBali());
+  console.log(`Страниц событий в sitemap: ${urls.length} (протухших карточек ${order.stale.length} — они первыми)`);
   const today = todayLocalBali();
   const horizon = addDays(today, DAYS_AHEAD);
   let inserted = 0;
@@ -295,7 +312,7 @@ async function main() {
   let offers = 0;
   let lastYield = 0;
 
-  for (const url of urls) {
+  for (const url of order.order) {
     if (inserted >= MAX_EVENTS) { console.log(`[лимит] ${MAX_EVENTS} новых — стоп`); break; }
     if (scanned >= PAGES_MAX) { console.log(`[лимит] ${PAGES_MAX} страниц — стоп`); break; }
     if (Date.now() > deadline) { console.log('[дедлайн] бюджет времени источника исчерпан'); break; }
