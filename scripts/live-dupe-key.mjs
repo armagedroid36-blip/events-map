@@ -203,7 +203,18 @@ export const collapseAbbrev = (s) => String(s || '').replace(/(\p{L})\./gu, '$1'
 const TRANSLIT = { а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ж: 'zh', з: 'z', и: 'i', й: 'i', к: 'k', л: 'l',
   м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u', ф: 'f', х: 'h', ц: 'ts', ч: 'ch', ш: 'sh',
   щ: 'sch', ы: 'y', э: 'e', ю: 'yu', я: 'ya', ь: '', ъ: '' };
-export const translit = (s) => [...norm(s)].map((c) => (TRANSLIT[c] !== undefined ? TRANSLIT[c] : c)).join('');
+// Греческий алфавит: без него «Σατιρικό» и «Сатирико» (→ satiriko) не совпадали,
+// и кросс-источниковые дубли одного события (греческий источник + RU-агрегатор)
+// жили в БД двумя карточками. Диакритика снимается через NFD до замены.
+const TRANSLIT_GR = {
+  'ς': 's', σ: 's', α: 'a', β: 'v', γ: 'g', δ: 'd', ε: 'e', ζ: 'z', η: 'i', θ: 'th',
+  ι: 'i', κ: 'k', λ: 'l', μ: 'm', ν: 'n', ξ: 'x', ο: 'o', π: 'p', ρ: 'r', τ: 't',
+  υ: 'y', φ: 'f', χ: 'ch', ψ: 'ps', ω: 'o',
+};
+export const translit = (s) =>
+  [...norm(String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, ''))]
+    .map((c) => (TRANSLIT[c] !== undefined ? TRANSLIT[c] : TRANSLIT_GR[c] !== undefined ? TRANSLIT_GR[c] : c))
+    .join('');
 
 /** Каноничные аббревиатуры названия: последовательности «буква+точка» (2+ подряд),
  *  схлопнутые и приведённые к латинице: «С.В.Е.Т.» → свет → svet. */
@@ -291,16 +302,181 @@ export function langPlaceTokens(a, b) {
   return out;
 }
 
+/** Время «00:00» (и пустое) — это НЕ значение, а «источник не дал время». */
+export const isUnknownTime = (t) => {
+  const s = String(t || '').slice(0, 5);
+  return !s || s === '00:00';
+};
+
 /** Проверка пары «одно место в двух языках»: причина склейки или null. */
 export function liveLangPlaceMatch(a, b) {
   if (dayKey(a) !== dayKey(b)) return null;
-  if (isCityLevelAddr(a) || isCityLevelAddr(b)) return null;
   const ta = String(a.start_time || '').slice(0, 5), tb = String(b.start_time || '').slice(0, 5);
-  if (!ta || !tb || ta !== tb) return null;
+  // Одно неизвестное время (пусто/00:00) не мешает паре; оба известных и
+  // разные — это разные сеансы.
+  if (!isUnknownTime(ta) && !isUnknownTime(tb) && ta !== tb) return null;
   if (overlap(a, b) < 3) return null;
   const t = [...langPlaceTokens(a, b)];
+  // Адрес-заглушка уровня города у ОДНОЙ карточки не блокирует пару, если у
+  // второй есть отличительный топоним площадки: место доказывает вторая.
+  const bothStub = isCityLevelAddr(a) && isCityLevelAddr(b);
+  if (bothStub) return null;
   if (!t.length) return null;
   return `одно место в двух языках (${t.slice(0, 2).join(', ')})`;
+}
+
+// ===== Класс «одно событие из двух источников, разные алфавиты» =====
+// Греческий источник + RU/EN-агрегатор дают ДВЕ карточки одного события:
+// названия на разных языках, адреса «Κεντρική Πλατεία Αχερίτου» ↔ «Фамагуста,
+// Кипр» (заглушка уровня города), у одной время-заглушка 00:00. После
+// транслитерации (translit знает греческий) сравниваем токены названий и
+// топонимы; склейка — только при доказанном месте.
+
+/** Алфавит строки: greek / cyrillic / latin / other. */
+export function scriptOf(s) {
+  const str = String(s || '');
+  if (/[\u0370-\u03ff\u1f00-\u1fff]/.test(str)) return 'greek';
+  if (/[\u0400-\u04ff]/.test(str)) return 'cyrillic';
+  if (/[a-z]/i.test(str)) return 'latin';
+  return 'other';
+}
+
+const FOLD_STOP = new Set([...STOP, ...FUNC, ...GENERIC, ...PLACE_STOP]);
+
+/** Значимые токены названия после транслитерации (STOP/GENERIC/служебные — мимо). */
+export function foldedTitleTokens(r) {
+  const out = new Set();
+  for (const t of [r.title, r.title_ru, r.title_en]) {
+    if (!t) continue;
+    for (const w of translit(collapseAbbrev(t)).split(' ')) {
+      if (w.length > 2 && !FOLD_STOP.has(w)) out.add(w);
+    }
+  }
+  return out;
+}
+
+/** Токены адреса после транслитерации (площадные: без «воды» и служебных). */
+export function foldedPlaceTokens(address) {
+  const out = new Set();
+  for (const w of translit(address).split(' ')) {
+    if (w.length >= 4 && !FOLD_STOP.has(w) && !ADDR_STOP.has(w) && !EXTRA_STOP.has(w)) out.add(w);
+  }
+  return out;
+}
+
+const sameToken = (x, y) => {
+  if (!x || !y) return false;
+  if (x === y) return true;
+  if (x.length >= 5 && y.length >= 5 && (x.startsWith(y) || y.startsWith(x))) return true;
+  return commonPrefix(x, y) >= 5;
+};
+
+/**
+ * Кросс-источниковый дубль (греческий ↔ RU/EN): тот же день, та же категория,
+ * тот же город, 2+ общих значимых токена названия после транслитерации и
+ * доказанное место — общий топоним адреса/названия, координаты ≤300 м или
+ * (разные алфавиты адресов + ≤2 км). Разное известное время (>60 мин) —
+ * разные сеансы, не дубль.
+ */
+/**
+ * Кросс-источниковый дубль (греческий источник ↔ RU/EN агрегатор).
+ *
+ * Высокая точность важнее полноты: такие пары склеиваются только при
+ * ДОКАЗАННОМ совпадении названия, а не по общим словам «город/фестиваль».
+ * Условия (все обязательны): тот же день, та же категория, тот же город, и
+ *   (A) нормализованные названия РАВНЫ (после транслитерации, «theatre»=
+ *       «theater», без пунктуации) при длине >= 12 символов; либо
+ *   (B) вложение названий: 3+ общих значимых токена у одной пары псевдонимов
+ *       и общие/меньшее >= 0.7; либо
+ *   (C) (B) + редкий топоним площадки: токен из АДРЕСА одной карточки есть в
+ *       адресе или названии другой.
+ * Плюс доказанное место: общий токен адреса, координаты <=300 м или разные
+ * алфавиты адресов при <=2 км. Разное известное время (>60 мин) — разные
+ * сеансы, не дубль. Время 00:00/пусто = «неизвестно».
+ */
+export function liveCrossSourceMatch(a, b) {
+  if (dayKey(a) !== dayKey(b)) return null;
+  if (!a.category_id || !b.category_id || a.category_id !== b.category_id) return null;
+  // Класс именно кросс-источниковый: одна из карточек пришла с греческого
+  // источника. Без этого ограничения правило начинало склеивать обычные
+  // пары одного языка (разные события одной площадки в один день).
+  const hasScript = (r, s) =>
+    scriptOf(r.title) === s || scriptOf(r.title_ru) === s || scriptOf(r.title_en) === s ||
+    scriptOf(r.address) === s;
+  if (!hasScript(a, 'greek') && !hasScript(b, 'greek')) return null;
+
+  // Токены названий без города карточки: «nicosia/leykosia» совпадают у всех
+  // событий города и ничего не доказывают.
+  const cityTokens = (r) => foldedPlaceTokens(cityKey(r));
+  const ta = foldedTitleTokens(a);
+  const tb = foldedTitleTokens(b);
+  for (const t of cityTokens(a)) ta.delete(t);
+  for (const t of cityTokens(b)) tb.delete(t);
+
+  const common = [];
+  for (const x of ta) for (const y of tb) if (sameToken(x, y)) { common.push(x); break; }
+  const smaller = Math.min(ta.size, tb.size) || 1;
+  const ratio = common.length / smaller;
+
+  const foldTitle = (s) => translit(collapseAbbrev(s)).replace(/\btheatre\b/g, 'theater').replace(/\s+/g, ' ').trim();
+  const titlesA = [a.title, a.title_ru, a.title_en].filter(Boolean).map(foldTitle).filter((s) => s.length >= 12);
+  const titlesB = [b.title, b.title_ru, b.title_en].filter(Boolean).map(foldTitle).filter((s) => s.length >= 12);
+  const equalTitle = titlesA.some((x) => titlesB.includes(x));
+
+  const addrA = foldedPlaceTokens(a.address);
+  const addrB = foldedPlaceTokens(b.address);
+
+  // «Ядро» названия — общие токены, которых НЕТ в адресах: имена, топонимы
+  // события. Без него пара «Christmas Villages … Troodos» ↔ «Kiperunta
+  // Christmas Village» склеивалась по словам, которые уже есть в адресе.
+  const inAddr = (t) => {
+    for (const x of addrA) if (sameToken(x, t)) return true;
+    for (const x of addrB) if (sameToken(x, t)) return true;
+    return false;
+  };
+  const commonCore = common.filter((t) => !inAddr(t));
+
+  const nameWhy = equalTitle
+    ? 'названия совпали'
+    : common.length >= 3 && ratio >= 0.7 && commonCore.length >= 2
+      ? `названия ${common.length}сл (${Math.round(ratio * 100)}%), ядро ${commonCore.length}`
+      : null;
+  if (!nameWhy) return null;
+  let placeWhy = null;
+  for (const x of addrA) {
+    if (placeWhy) break;
+    for (const y of addrB) if (sameToken(x, y)) { placeWhy = `адрес~${x}`; break; }
+  }
+  if (!placeWhy) {
+    for (const x of addrA) {
+      if (placeWhy) break;
+      for (const y of tb) if (sameToken(x, y) && x.length >= 5) { placeWhy = `топоним ${x}`; break; }
+    }
+  }
+  if (!placeWhy) {
+    for (const x of addrB) {
+      if (placeWhy) break;
+      for (const y of ta) if (sameToken(x, y) && x.length >= 5) { placeWhy = `топоним ${x}`; break; }
+    }
+  }
+  const dist = hasCoords(a) && hasCoords(b) ? distanceM(a, b) : null;
+  if (!placeWhy && dist !== null && dist <= 300) placeWhy = 'коорд≤300м';
+  if (!placeWhy && dist !== null && dist <= 2000) {
+    const sa = scriptOf(a.address);
+    const sb = scriptOf(b.address);
+    if (sa !== sb && (sa === 'greek' || sb === 'greek')) {
+      placeWhy = `разные алфавиты + ${Math.round(dist)}м`;
+    }
+  }
+  if (!placeWhy) return null;
+
+  const knownA = !isUnknownTime(a.start_time);
+  const knownB = !isUnknownTime(b.start_time);
+  if (knownA && knownB) {
+    const d = timeDiffMin(a, b);
+    if (d !== null && d > 60) return null;
+  }
+  return `кросс-источник (${nameWhy}; ${placeWhy})`;
 }
 
 /** Проверка пары с аббревиатурой в названии: причина склейки или null.

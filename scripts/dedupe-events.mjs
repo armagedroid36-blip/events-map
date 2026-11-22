@@ -238,7 +238,10 @@ function buildGroups(rows) {
       for (let j = i + 1; j < list.length; j++) {
         const reason = liveDupe.liveDupeMatch(list[i], list[j])
           || liveDupe.liveAbbrevMatch(list[i], list[j])
-          || liveDupe.liveLangPlaceMatch(list[i], list[j]);
+          || liveDupe.liveLangPlaceMatch(list[i], list[j])
+          // кросс-источниковые дубли (греческий ↔ RU/EN агрегатор): разные
+          // алфавиты названий/адресов, транслитерация в live-dupe-key
+          || liveDupe.liveCrossSourceMatch(list[i], list[j]);
         if (reason && union(list[i], list[j], reason)) liveEdges.push({ a: list[i], b: list[j], rule: reason });
       }
     }
