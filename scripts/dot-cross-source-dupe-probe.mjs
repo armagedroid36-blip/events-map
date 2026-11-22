@@ -106,3 +106,67 @@ if (multi.length) {
     fmt(s);
   }
 }
+
+// --- Секция «одно название + дата, РАЗНЫЕ города» (долг 1014/1016) ---
+// Основная секция группирует по `start_date|city`, поэтому пара одного события, у копии которого
+// ЛОЖНЫЙ city, в неё не попадает по построению (да ещё пины разъезжаются на десятки км).
+// Кейс 1014: у 5 живых пар совпал ключ `title|start_date`, а города разошлись (Лимасол/Ларнака,
+// Никосия/Лимасол) — ошибался city копии-агрегатора, свой адрес копии называл верный город.
+// Здесь два уровня: (A) точное совпадение любого псевдонима названия + та же дата;
+// (B) та же дата + >=3 содержательных общих слов (смотреть глазами: у разных городов
+// «Рождественский концерт» — тип события, а не доказательство; арбитр — адрес/площадка).
+const byAlias = new Map();
+for (const r of live) {
+  const d = (r.start_date || '').slice(0, 10);
+  for (const al of aliases(r)) {
+    const n = norm(al);
+    if (n.length < 8) continue; // «йога», «квиз» — не название
+    const k = `${n}|${d}`;
+    if (!byAlias.has(k)) byAlias.set(k, []);
+    byAlias.get(k).push(r);
+  }
+}
+const crossA = [];
+const seenA = new Set();
+for (const [k, g] of byAlias) {
+  for (let i = 0; i < g.length; i++) for (let j = i + 1; j < g.length; j++) {
+    const a = g[i], b = g[j];
+    if (a.id === b.id || norm(a.city) === norm(b.city)) continue;
+    const pairKey = [a.id, b.id].sort().join('|');
+    if (seenA.has(pairKey)) continue;
+    seenA.add(pairKey);
+    crossA.push({ a, b, d: Math.round(dist(a, b)) });
+  }
+}
+const byDate = new Map();
+for (const r of live) {
+  const d = (r.start_date || '').slice(0, 10);
+  if (!byDate.has(d)) byDate.set(d, []);
+  byDate.get(d).push(r);
+}
+const crossB = [];
+for (const [d, g] of byDate) {
+  for (let i = 0; i < g.length; i++) for (let j = i + 1; j < g.length; j++) {
+    const a = g[i], b = g[j];
+    if (a.id === b.id || norm(a.city) === norm(b.city)) continue;
+    const pairKey = [a.id, b.id].sort().join('|');
+    if (seenA.has(pairKey)) continue;
+    const sa = new Set(), sb = new Set();
+    for (const al of aliases(a)) for (const t of words(al)) sa.add(t);
+    for (const al of aliases(b)) for (const t of words(al)) sb.add(t);
+    const addrTokens = new Set([...norm(a.address).split(' '), ...norm(b.address).split(' ')]);
+    const common = [];
+    for (const w of sa) if (sb.has(w) && !addrTokens.has(w)) common.push(w);
+    if (common.length < 3) continue;
+    crossB.push({ d, a, b, common, km: Math.round(dist(a, b) / 1000) });
+  }
+}
+console.log(`-- ОДНО НАЗВАНИЕ+ДАТА, РАЗНЫЕ ГОРОДА: точных пар ${crossA.length}, по 3 словам ${crossB.length} (арбитр — адрес/площадка копии, а не название) --`);
+for (const s of crossA.slice(0, LIMIT)) {
+  console.log(`  A ${s.a.start_date} | ${s.a.city} ↔ ${s.b.city} | ${s.d} км`);
+  fmt(s);
+}
+for (const s of crossB.slice(0, LIMIT)) {
+  console.log(`  B ${s.d} | ${s.a.city} ↔ ${s.b.city} | ${s.km} км | общие: ${s.common.join(', ')}`);
+  fmt(s);
+}
