@@ -101,6 +101,7 @@ if (!SUPABASE_URL || !ANON_KEY) {
 // транслит не нужен — таких URL не бывает. Пустой слаг (греческий оригинал
 // без перевода, одни цифры) → `event-<первые 8 символов id>`.
 import { eventHasEn, eventPageHref, eventSlug } from '../src/lib/slug.ts';
+import * as liveDupe from './live-dupe-key.mjs';
 
 // --- Города: те же три, что в config.quickLocations (src/config.ts:46-50),
 // путь = slugify(labelEn) из src/lib/slug.ts: Bali→bali, Da Nang→da-nang,
@@ -7649,6 +7650,38 @@ async function main() {
   // Архивные страницы собираются из базы с CSS-ссылкой (см. baseWithCssLink):
   // их ~2500, встроенный CSS утроил бы и вес dist, и время сборки.
   const pastBaseHtml = baseWithCssLink(baseHtml);
+
+  // Консолидация архивных дублей: если карточка в архиве — копия ЖИВОГО
+  // события (те же правила, что у scripts/dedupe-events.mjs), canonical
+  // ведёт на keeper, а hreflang не выводится: два одинаковых события в
+  // индексе не нужны. Сравниваем только внутри одного дня+города.
+  const liveByDay = new Map();
+  for (const ev of events) {
+    const k = liveDupe.dayKey(ev);
+    if (!liveByDay.has(k)) liveByDay.set(k, []);
+    liveByDay.get(k).push(ev);
+  }
+  const keeperCache = new Map();
+  const dedupeKeeperOf = (ev) => {
+    const id = String(ev.id).toLowerCase();
+    if (keeperCache.has(id)) return keeperCache.get(id);
+    let found = null;
+    for (const cand of liveByDay.get(liveDupe.dayKey(ev)) || []) {
+      if (String(cand.id).toLowerCase() === id) continue;
+      const r =
+        liveDupe.liveCrossSourceMatch(ev, cand) ||
+        liveDupe.liveDupeMatch(ev, cand) ||
+        liveDupe.liveAbbrevMatch(ev, cand) ||
+        liveDupe.liveLangPlaceMatch(ev, cand);
+      if (r) {
+        found = cand;
+        break;
+      }
+    }
+    keeperCache.set(id, found);
+    return found;
+  };
+
   let pastRuPages = 0;
   let pastEnPages = 0;
   let pastInSitemap = 0;
@@ -7682,6 +7715,12 @@ async function main() {
       chrono: chronoOneRu,
       category: catPastRu ? catPastRu.name_ru : '',
     });
+    // Архивный дубль живого события: canonical на keeper (консолидация).
+    const dedupeKeeper = dedupeKeeperOf(ev);
+    if (dedupeKeeper) {
+      metaRu.canonical = `${SITE_URL}/event/${dedupeKeeper.id}/${eventSlug(dedupeKeeper, 'ru')}/`;
+      metaRu.hreflang = [];
+    }
     pastPagesBuffer.push({ path, html: renderPage(pastBaseHtml, metaRu) });
     pastPathMeta.set(path, metaRu);
     // Страница архивного события не меняется после его даты — это и есть lastmod
@@ -7705,6 +7744,14 @@ async function main() {
         chrono: chronoForEvent(chronoEn, ev, 'en'),
         category: catPastRu ? catPastRu.name_en : '',
       });
+      if (dedupeKeeper) {
+        // EN-версия архивного дубля: canonical на EN-страницу keeper, если у
+        // него есть английская версия, иначе на его RU-адрес.
+        metaEn.canonical = eventHasEn(dedupeKeeper)
+          ? `${SITE_URL}/en/event/${dedupeKeeper.id}/${eventSlug(dedupeKeeper, 'en')}/`
+          : `${SITE_URL}/event/${dedupeKeeper.id}/${eventSlug(dedupeKeeper, 'ru')}/`;
+        metaEn.hreflang = [];
+      }
       pastPagesBuffer.push({ path: enPath, html: renderPage(pastBaseHtml, metaEn) });
       pastPathMeta.set(enPath, metaEn);
       lastmods.set(enUrl, eventLastDay(ev) ?? TODAY_ISO);
