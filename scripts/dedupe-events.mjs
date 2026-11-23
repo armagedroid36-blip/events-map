@@ -464,9 +464,21 @@ async function main() {
   const idsToArchive = [];
   const extraGroups = [];
   const enriched = [];
+  const deadGroups = [];
   let archivedFrom = {};
+  // Страховка «у события не остаётся живой карточки» (запуск 1023): группу, где НЕТ
+  // ни одной карточки, видимой публике (active/moderation), дедуп не трогает.
+  // Кейс-эталон: «Рождественская деревня в марине Ая-Напа» (28.11–06.01), запуск 1021 —
+  // обе копии пары лежали в archived, и шаг дедупа, дожимая группу, лишь перекладывал
+  // архивное в архивное: событие на карту не возвращалось. Такие группы печатаем —
+  // решение (восстановить канон) принимает свип/человек, а не дедуп.
+  const LIVE_STATUSES = new Set(['active', 'moderation']);
   for (const g of groups) {
     const keeper = pickKeeper(g);
+    if (!g.some((e) => LIVE_STATUSES.has(e.status))) {
+      deadGroups.push({ g, keeper });
+      continue;
+    }
     const rest = g.filter((e) => e.id !== keeper.id);
     const patch = await enrich(keeper, rest);
     if (patch) enriched.push({ id: keeper.id, title: keeper.title, fields: Object.keys(patch) });
@@ -487,6 +499,8 @@ async function main() {
   for (const e of coordsEdges) console.log(`    место ~${e.d} м: ${short(e.a)} ↔ ${short(e.b)}`);
   for (const e of seriesEdges) console.log(`    расписание ${e.overlap.join(',')}: ${short(e.a)} ↔ ${short(e.b)}`);
   for (const e of liveEdges) console.log(`    живой дубль (${e.rule}): ${short(e.a)} ↔ ${short(e.b)}`);
+  console.log(`  Групп БЕЗ живой карточки (не трогаем, нужен свип/восстановление): ${deadGroups.length}`);
+  for (const d of deadGroups) for (const e of d.g) console.log(`    мёртвая группа: ${short(e)}`);
 
   const archived = await archive(idsToArchive);
   console.log('');

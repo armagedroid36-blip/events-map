@@ -175,6 +175,12 @@ export function overlap(a, b) {
 export function liveDupeMatch(a, b) {
   if (dayKey(a) !== dayKey(b)) return null;
   if (overlap(a, b) < 3) return null;
+  // Время начала решает, дубль это или разные сеансы на одной площадке (кейс 23.11.2026:
+  // «Christmas Films at Ayia Napa Marina» 17:00 ↔ «Рождественская деревня …» 11:00 —
+  // одно и то же место и общие слова, но разные события; без этой ветки шаг дедупа
+  // архивировал кинопоказ). Та же логика, что в liveAbbrevMatch (правка 1007).
+  const td = timeDiffMin(a, b);
+  if (td !== null && td > 60) return null;
   const place = samePlace(a, b);
   return place ? `живой дубль (${place})` : null;
 }
