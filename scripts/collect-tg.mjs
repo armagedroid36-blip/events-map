@@ -331,6 +331,32 @@ function titleFromInvite(s) {
 }
 
 
+/** Маркер ПОВТОРА в тексте поста: «каждый вторник», «по субботам»,
+ *  «еженедельно», «расписание занятий на неделю», «every Saturday», «weekly».
+ *  Нужен ветке «продление серии»: без маркера повторный пост того же занятия на
+ *  другую дату — РАЗОВОЕ событие на новую дату, а не повод сделать карточку
+ *  вечной регуляркой (класс 1030/1031: «завтра в 11:00» и «🗓 8 ноября суббота»
+ *  получали weekly и не снимались archive-past никогда). */
+const DOW_RU = 'понедельник|вторник|сред[уа]|четверг|пятниц[уа]|суббот[уа]|воскресень[ея]';
+const DOW_RU_PL = 'понедельникам|вторникам|средам|четвергам|пятницам|субботам|воскресеньям';
+const DOW_EN = 'monday|tuesday|wednesday|thursday|friday|saturday|sunday';
+const RECUR_MARKERS = [
+  new RegExp(`кажд\\S*\\s+(?:${DOW_RU})`, 'iu'), // каждый вторник / каждую субботу
+  /кажд\S*\s+недел/iu, // каждую неделю / каждые выходные недели
+  /еженедельн/iu,
+  new RegExp(`по\\s+(?:${DOW_RU_PL})`, 'iu'), // по субботам
+  /раз\s+в\s+неделю/iu,
+  /расписани[ея]\s+(?:занятий|практик|тренировок|мероприятий|на\s+недел)/iu,
+  /повторя\S*\s+(?:кажд|по\s)/iu,
+  new RegExp(`\\bevery\\s+(?:${DOW_EN}|week)\\b`, 'iu'),
+  /\bweekly\b/iu,
+];
+export function hasRecurrenceMarker(text) {
+  const t = String(text || '');
+  if (!t) return false;
+  return RECUR_MARKERS.some((re) => re.test(t));
+}
+
 /** Название: первая содержательная строка без эмодзи и служебных слов.
  *  Пост афиши часто начинается с приветствия («Всем привет!», «Друзья!») —
  *  брать приветствие заголовком нельзя, ищем первую строку-название. */
@@ -839,6 +865,13 @@ async function main() {
           return diff > 0 && diff <= 14;
         });
         if (twin) {
+          // Продлеваем серию ТОЛЬКО при маркере повтора в тексте нового поста.
+          // Без маркера это разовый анонс на другую дату: раньше он превращал
+          // карточку в вечный weekly, и прошедшее разовое событие не снималось
+          // archive-past (кейсы a2c80b74 «завтра в 11:00», 2ed82c7f «8 ноября»).
+          if (!hasRecurrenceMarker(post.text)) {
+            console.log(`  ~ серия не продлена (нет маркера повтора): ${title.slice(0, 45)} | ${when.date} (${ch.city})`);
+          } else {
           const isoDow = (s) => new Date(`${s}T00:00:00`).getDay() || 7; // 1=Пн..7=Вс
           const newDow = isoDow(when.date);
           const curDow = isoDow(twin.start_date);
@@ -862,6 +895,7 @@ async function main() {
             console.log(`  ~ расписание продлено: ${title.slice(0, 45)} | +${when.date} (${ch.city})`);
           }
           continue;
+          }
         }
 
         const { mapLinks, tgLinks } = pickLinks(post.links, ch.username);
