@@ -6617,6 +6617,132 @@ async function main() {
       ' (страницы будут 200 впервые/снова, вне sitemap и вне блоков)',
   );
 
+  // --- Консолидация архивных дублей: кластеры по ЖИВЫМ и АРХИВНЫМ карточкам ---
+  // Прежний поиск keeper'а шёл только по liveByDay (живые карточки). Частый
+  // кипрский случай — обе копии события (греческий агрегатор ↔ RU/EN) уже в
+  // архиве: keeper не находился, обе страницы оставались self-canonical и обе
+  // стояли в sitemap (прод 23.11.2026: 20 таких URL, 64 группы дублей title).
+  // Теперь индексируем [...events, ...allPastPages] по liveDupe.dayKey, внутри
+  // группы дня+города прогоняем пары теми же матчерами и объединяем в кластеры
+  // union-find — 3+ копии дают ОДНОГО keeper'а (canonical за один шаг, без
+  // цепочек лузер → лузер).
+  // Keeper: живая карточка > меньший created_at > меньший id.
+  // Живые карточки НЕ консолидируются (их дубли — работа дедупа): все активные
+  // остаются self-canonical и в sitemap, лузерами могут быть только архивы.
+  const liveIdSet = new Set(events.map((ev) => String(ev.id).toLowerCase()));
+  const dupeIndex = new Map(); // dayKey → карточки (живые + архивные)
+  const dupeById = new Map(); // id (lower) → карточка
+  for (const ev of [...events, ...allPastPages]) {
+    if (!ev || typeof ev.id !== 'string') continue;
+    const k = liveDupe.dayKey(ev);
+    if (!dupeIndex.has(k)) dupeIndex.set(k, []);
+    dupeIndex.get(k).push(ev);
+    dupeById.set(String(ev.id).toLowerCase(), ev);
+  }
+  const ufParent = new Map();
+  const ufFind = (start) => {
+    let root = start;
+    while (ufParent.get(root) !== root) root = ufParent.get(root);
+    let cur = start;
+    while (ufParent.get(cur) !== root) {
+      const next = ufParent.get(cur);
+      ufParent.set(cur, root);
+      cur = next;
+    }
+    return root;
+  };
+  const ufUnion = (a, b) => {
+    const ra = ufFind(a);
+    const rb = ufFind(b);
+    if (ra !== rb) ufParent.set(rb, ra);
+  };
+  // Порядок матчеров зафиксирован ТЗ; вызов в обе стороны — матчеры местами
+  // несимметричны (порядок аргументов влияет на токены адреса).
+  const dupeMatchers = [
+    liveDupe.liveCrossSourceMatch,
+    liveDupe.liveDupeMatch,
+    liveDupe.liveAbbrevMatch,
+    liveDupe.liveLangPlaceMatch,
+  ];
+  for (const group of dupeIndex.values()) {
+    const uniq = [];
+    for (const ev of group) {
+      const id = String(ev.id).toLowerCase();
+      if (ufParent.has(id)) continue;
+      ufParent.set(id, id);
+      uniq.push(ev);
+    }
+    for (let i = 0; i < uniq.length; i += 1) {
+      for (let j = i + 1; j < uniq.length; j += 1) {
+        const a = uniq[i];
+        const b = uniq[j];
+        let hit = null;
+        for (const m of dupeMatchers) {
+          hit = m(a, b) || m(b, a);
+          if (hit) break;
+        }
+        if (hit) ufUnion(String(a.id).toLowerCase(), String(b.id).toLowerCase());
+      }
+    }
+  }
+  const dupeClusters = new Map(); // root → карточки кластера
+  for (const id of ufParent.keys()) {
+    const root = ufFind(id);
+    if (!dupeClusters.has(root)) dupeClusters.set(root, []);
+    dupeClusters.get(root).push(dupeById.get(id));
+  }
+  const keeperOfCluster = (members) => {
+    const live = members.filter((ev) => liveIdSet.has(String(ev.id).toLowerCase()));
+    const pool = live.length ? live : members;
+    return [...pool].sort((a, b) => {
+      const ca = String(a.created_at || '~');
+      const cb = String(b.created_at || '~');
+      if (ca !== cb) return ca.localeCompare(cb);
+      return String(a.id).localeCompare(String(b.id));
+    })[0];
+  };
+  const keeperByLoserId = new Map(); // id лузера (lower) → keeper-карточка
+  const consolidatedIds = new Set(); // архивные карточки с canonical на другую страницу
+  const consolidatedClusters = []; // для лога сборки
+  let keeperLiveClusters = 0;
+  let keeperArchiveClusters = 0;
+  for (const members of dupeClusters.values()) {
+    if (members.length < 2) continue;
+    const keeper = keeperOfCluster(members);
+    const keeperId = String(keeper.id).toLowerCase();
+    const keeperIsLive = liveIdSet.has(keeperId);
+    const losers = members.filter((ev) => {
+      const id = String(ev.id).toLowerCase();
+      if (id === keeperId) return false;
+      if (liveIdSet.has(id)) return false; // живые не консолидируем
+      return true;
+    });
+    if (!losers.length) continue;
+    if (keeperIsLive) keeperLiveClusters += 1;
+    else keeperArchiveClusters += 1;
+    consolidatedClusters.push({ keeper, keeperIsLive, losers });
+    for (const ev of losers) {
+      const id = String(ev.id).toLowerCase();
+      keeperByLoserId.set(id, keeper);
+      consolidatedIds.add(id);
+    }
+  }
+  // Архивные карточки, которые остаются обычными (self-canonical) — только они
+  // могут попадать во внутренние блоки ссылок (похожие, хронология, городской
+  // архив, профиль организатора): на консолидированный URL не ведёт ни одна
+  // внутренняя ссылка (ТЗ, п. E). Сами страницы остаются 200, без редиректа и
+  // noindex — как и раньше.
+  const pastForLinks = allPast.filter(
+    (ev) => !consolidatedIds.has(String(ev.id).toLowerCase()),
+  );
+  // Keeper-страница своего языка: EN-версия лузера ведёт на EN-страницу
+  // keeper'а, если у него есть title_en, иначе на его RU-адрес.
+  const keeperCanonical = (keeper, lang) => {
+    if (lang === 'en' && eventHasEn(keeper)) {
+      return `${SITE_URL}/en/event/${keeper.id}/${eventSlug(keeper, 'en')}/`;
+    }
+    return `${SITE_URL}/event/${keeper.id}/${eventSlug(keeper, 'ru')}/`;
+  };
 
   // Публичные профили организаторов считаем ДО сборки страниц событий: ссылку
   // «Организатор» печатает eventSeoHtml, а страницы профилей пишутся позже —
@@ -6798,7 +6924,7 @@ async function main() {
   // ссылок на них в блоках нет: набор ссылок == набор sitemap.
   // Не путать с хронологией архива (chrono): она держит входящие ссылки у
   // старых страниц и работает по всему архиву.
-  const allPastInWindow = allPast.filter(archiveIndexable);
+  const allPastInWindow = pastForLinks.filter(archiveIndexable);
 
   // Архив по городам для блока «Прошедшие события» на городских страницах:
   // 20 самых свежих ОПУБЛИКОВАННЫХ архивных страниц города в окне (RU; для EN —
@@ -6826,7 +6952,7 @@ async function main() {
   // очищенного архива (тестовые записи и дубли-копии исключены санитарией:
   // их страниц нет, ссылка вела бы в 404).
   const pastByCell = new Map();
-  for (const ev of [...allPast].sort((a, b) =>
+  for (const ev of [...pastForLinks].sort((a, b) =>
     (eventLastDay(b) || '').localeCompare(eventLastDay(a) || ''),
   )) {
     // Только архив в окне индексируемости: ссылки из видимого блока обязаны
@@ -7238,7 +7364,7 @@ async function main() {
   // все <loc> каждой сборкой). 404 на такой адрес — потеря; пишем страницу-
   // алиас: h1 как у обычной месячной, плашка «Этот месяц завершился», список
   // прошедших, canonical = хаб, hreflang нет, в sitemap не включаем.
-  const pastMonthPool = [...events, ...allPast];
+  const pastMonthPool = [...events, ...pastForLinks];
   let pastMonthAliasesRu = 0;
   let pastMonthAliasesEn = 0;
   const pastAliasBuilt = [];
@@ -7642,8 +7768,8 @@ async function main() {
   const archiveSimilarGroups = buildSimilarGroups(allPastInWindow);
   // Хронология по городам и языкам: предыдущее/следующее прошедшее событие —
   // гарантия хотя бы одной входящей ссылки для каждой архивной страницы.
-  const chronoRu = archiveChronoIndex(allPast, 'ru');
-  const chronoEn = archiveChronoIndex(allPast, 'en');
+  const chronoRu = archiveChronoIndex(pastForLinks, 'ru');
+  const chronoEn = archiveChronoIndex(pastForLinks, 'en');
   let pastNoChrono = 0;
   const pastPathMeta = new Map(); // canonical path → meta (для алиасов)
   const pastPagesBuffer = []; // {path, html} — запись одной пачкой (см. writePagesParallel)
@@ -7651,40 +7777,13 @@ async function main() {
   // их ~2500, встроенный CSS утроил бы и вес dist, и время сборки.
   const pastBaseHtml = baseWithCssLink(baseHtml);
 
-  // Консолидация архивных дублей: если карточка в архиве — копия ЖИВОГО
-  // события (те же правила, что у scripts/dedupe-events.mjs), canonical
-  // ведёт на keeper, а hreflang не выводится: два одинаковых события в
-  // индексе не нужны. Сравниваем только внутри одного дня+города.
-  const liveByDay = new Map();
-  for (const ev of events) {
-    const k = liveDupe.dayKey(ev);
-    if (!liveByDay.has(k)) liveByDay.set(k, []);
-    liveByDay.get(k).push(ev);
-  }
-  const keeperCache = new Map();
-  const dedupeKeeperOf = (ev) => {
-    const id = String(ev.id).toLowerCase();
-    if (keeperCache.has(id)) return keeperCache.get(id);
-    let found = null;
-    for (const cand of liveByDay.get(liveDupe.dayKey(ev)) || []) {
-      if (String(cand.id).toLowerCase() === id) continue;
-      const r =
-        liveDupe.liveCrossSourceMatch(ev, cand) ||
-        liveDupe.liveDupeMatch(ev, cand) ||
-        liveDupe.liveAbbrevMatch(ev, cand) ||
-        liveDupe.liveLangPlaceMatch(ev, cand);
-      if (r) {
-        found = cand;
-        break;
-      }
-    }
-    keeperCache.set(id, found);
-    return found;
-  };
+  // Консолидация архивных дублей посчитана выше (keeperByLoserId /
+  // consolidatedIds) — по живым И архивным карточкам, кластерами union-find.
 
   let pastRuPages = 0;
   let pastEnPages = 0;
   let pastInSitemap = 0;
+  let consolidatedOutOfSitemap = 0;
   for (const ev of allPastPages) {
     if (!ev || typeof ev.id !== 'string' || typeof ev.title !== 'string') continue;
     const hasEn = eventHasEn(ev);
@@ -7694,11 +7793,15 @@ async function main() {
     const enUrl = `${SITE_URL}/${enPath}/`;
     const evImage = eventImage(ev, imageMap);
     const chronoOneRu = chronoForEvent(chronoRu, ev, 'ru');
+    const evIdLower = String(ev.id).toLowerCase();
+    const duplicateKeeper = keeperByLoserId.get(evIdLower) || null;
     // Счётчик входящих ссылок ведём только по страницам, которые стоят в
-    // видимых блоках: у «страниц ради URL из индекса» соседей в хронологии нет
-    // по замыслу (дубли не продвигаем), это не повод для предупреждения.
+    // видимых блоках: у «страниц ради URL из индекса» и у консолидированных
+    // дублей соседей в хронологии нет по замыслу (дубли не продвигаем), это не
+    // повод для предупреждения.
     if (
-      !pageOnlyIds.has(String(ev.id).toLowerCase()) &&
+      !duplicateKeeper &&
+      !pageOnlyIds.has(evIdLower) &&
       (!chronoOneRu || (!chronoOneRu.prev && !chronoOneRu.next))
     ) {
       pastNoChrono += 1;
@@ -7715,18 +7818,24 @@ async function main() {
       chrono: chronoOneRu,
       category: catPastRu ? catPastRu.name_ru : '',
     });
-    // Архивный дубль живого события: canonical на keeper (консолидация).
-    const dedupeKeeper = dedupeKeeperOf(ev);
-    if (dedupeKeeper) {
-      metaRu.canonical = `${SITE_URL}/event/${dedupeKeeper.id}/${eventSlug(dedupeKeeper, 'ru')}/`;
+    // Архивный дубль (кластер по живым+архивным): canonical на keeper за ОДИН
+    // шаг, hreflang пуст — двух одинаковых событий в индексе не нужно.
+    if (duplicateKeeper) {
+      metaRu.canonical = keeperCanonical(duplicateKeeper, 'ru');
       metaRu.hreflang = [];
     }
     pastPagesBuffer.push({ path, html: renderPage(pastBaseHtml, metaRu) });
     pastPathMeta.set(path, metaRu);
     // Страница архивного события не меняется после его даты — это и есть lastmod
     lastmods.set(url, eventLastDay(ev) ?? TODAY_ISO);
+    // Консолидированная страница (canonical ведёт на другую) в sitemap не
+    // попадает вовсе: иначе <loc> отдаёт canonical на чужой URL и получает
+    // xhtml:link, которых в HTML нет (дефект 23.11.2026, 20 URL).
     const inSitemap =
-      !pageOnlyIds.has(String(ev.id).toLowerCase()) && archiveIndexable(ev);
+      !duplicateKeeper && !pageOnlyIds.has(evIdLower) && archiveIndexable(ev);
+    if (duplicateKeeper && !pageOnlyIds.has(evIdLower) && archiveIndexable(ev)) {
+      consolidatedOutOfSitemap += hasEn ? 2 : 1;
+    }
     if (inSitemap) {
       locs.push(url);
       pastInSitemap += 1;
@@ -7744,12 +7853,10 @@ async function main() {
         chrono: chronoForEvent(chronoEn, ev, 'en'),
         category: catPastRu ? catPastRu.name_en : '',
       });
-      if (dedupeKeeper) {
+      if (duplicateKeeper) {
         // EN-версия архивного дубля: canonical на EN-страницу keeper, если у
         // него есть английская версия, иначе на его RU-адрес.
-        metaEn.canonical = eventHasEn(dedupeKeeper)
-          ? `${SITE_URL}/en/event/${dedupeKeeper.id}/${eventSlug(dedupeKeeper, 'en')}/`
-          : `${SITE_URL}/event/${dedupeKeeper.id}/${eventSlug(dedupeKeeper, 'ru')}/`;
+        metaEn.canonical = keeperCanonical(duplicateKeeper, 'en');
         metaEn.hreflang = [];
       }
       pastPagesBuffer.push({ path: enPath, html: renderPage(pastBaseHtml, metaEn) });
@@ -7769,6 +7876,22 @@ async function main() {
   console.log(
     `  прошедших событий: страниц RU ${pastRuPages}, EN ${pastEnPages} (в sitemap ${pastInSitemap} пар), страниц всего: ${locs.length}`,
   );
+  // Дефект должен быть виден в логе сборки, а не только на проде: сумма,
+  // разбивка keeper'ов и первые 50 кластеров с id.
+  console.log(
+    `  архивных дублей консолидировано: ${consolidatedIds.size} (keeper: live ${keeperLiveClusters}, archive ${keeperArchiveClusters}), вне sitemap ${consolidatedOutOfSitemap}`,
+  );
+  console.log(`  кластеров с консолидацией: ${consolidatedClusters.length}`);
+  for (const { keeper, keeperIsLive, losers } of consolidatedClusters.slice(0, 50)) {
+    console.log(
+      `    keeper ${keeperIsLive ? 'live' : 'archive'} ${keeper.id} ← ${losers
+        .map((x) => String(x.id))
+        .join(', ')}`,
+    );
+  }
+  if (consolidatedClusters.length > 50) {
+    console.log(`    … ещё кластеров: ${consolidatedClusters.length - 50}`);
+  }
 
   // --- Алиасы исторических URL: (1) список Google Search Console (слаг менялся
   // вместе с заголовком), (2) список прежних URL после смены формулы слага
@@ -8079,7 +8202,7 @@ async function main() {
     if (typeof ev?.owner_id !== 'string' || !ev.owner_id) continue;
     orgBucket(ev.owner_id).active.push({ ev, date: String(nextOccurrenceDate(ev, TODAY_ISO) ?? '') });
   }
-  for (const { ev, date } of [...allPast]
+  for (const { ev, date } of [...pastForLinks]
     .sort((a, b) => (eventLastDay(b) || '').localeCompare(eventLastDay(a) || ''))
     .map((ev) => ({ ev, date: String(eventLastDay(ev) ?? '') }))) {
     if (typeof ev?.owner_id !== 'string' || !ev.owner_id) continue;
