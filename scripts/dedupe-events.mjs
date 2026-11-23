@@ -236,6 +236,9 @@ function buildGroups(rows) {
     if (list.length < 2) continue;
     for (let i = 0; i < list.length; i++) {
       for (let j = i + 1; j < list.length; j++) {
+        // Абонемент на весь день/фестиваль («General Admission Ticket», «единый билет») —
+        // отдельная карточка: с программами того же дня его не склеиваем (кейс 1038).
+        if (liveDupe.isUmbrellaTicket(list[i]) !== liveDupe.isUmbrellaTicket(list[j])) continue;
         const reason = liveDupe.liveDupeMatch(list[i], list[j])
           || liveDupe.liveAbbrevMatch(list[i], list[j])
           || liveDupe.liveLangPlaceMatch(list[i], list[j])

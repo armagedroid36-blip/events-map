@@ -23,6 +23,11 @@ export const STOP = new Set(['festival', 'фестиваль', 'day', 'night', '
   // но различающее слово (робототехнике/рисованию) разное → ложный архив.
   'занятие', 'занятия', 'занятий', 'класс', 'class', 'classes', 'урок', 'уроки',
   'lesson', 'lessons', 'workshop', 'воркшоп', 'мастер',
+  // Бренд ФЕСТИВАЛЯ: программы одного фестиваля различаются только названием программы
+  // (кейс 23.11.2026, запуск 1038: «BEYOND DISDANCE — KOKONA» 20:30 ↔ «… — IN-BETWEEN» 21:00 ↔
+  // «… — Jamie Hale» 19:30, одна площадка Synergeio, Лимасол — три РАЗНЫХ спектакля уходили в архив,
+  // общими были только beyond/disdance). Бренд не доказывает, что событие ОДНО.
+  'beyond', 'disdance',
   'января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября',
   'октября', 'ноября', 'декабря',
   'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september',
@@ -170,9 +175,18 @@ export function overlap(a, b) {
   return best;
 }
 
+/** «Билет на весь день/фестиваль» (umbrella) — не событие, а абонемент на программы дня.
+ *  Кейс 23.11.2026 (запуск 1038): «BEYOND DISDANCE - PERFORMING ARTS DAY 3: General Admission Ticket»
+ *  (06.12 19:00, Synergeio, Лимасол) склеивался с отдельными спектаклями того же дня
+ *  («Everest» 20:00, «Lampyris Noctiluca» 19:00) — общие слова beyond/disdance + та же площадка,
+ *  и два РАЗНЫХ спектакля уходили в архив. Абонемент и программа одного дня — разные карточки. */
+const UMBRELLA = /general admission|ενιαίο εισιτ|единый билет|day pass|full festival pass/i;
+export const isUmbrellaTicket = (e) => UMBRELLA.test(`${e.title || ''} ${e.title_ru || ''}`);
+
 /** Строгая проверка пары: причина склейки или null.
  *  Требуется тот же день и тот же город — вызывающий может группировать по dayKey(). */
 export function liveDupeMatch(a, b) {
+  if (isUmbrellaTicket(a) !== isUmbrellaTicket(b)) return null;
   if (dayKey(a) !== dayKey(b)) return null;
   if (overlap(a, b) < 3) return null;
   // Время начала решает, дубль это или разные сеансы на одной площадке (кейс 23.11.2026:
