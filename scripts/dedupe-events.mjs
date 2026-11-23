@@ -307,8 +307,13 @@ async function pruneArchivedCopies() {
   // которая чистила тот же класс в live-dupe-key. Берём слова через words()
   // (там STOP/FUNC: творческая/мастерская/workshop/pangolin…) и требуем ДВА
   // значимых слова: у разных мастерских они различаются (magic/paper ↔ bracelet).
+  // 23.11.2026 (запуск 1036→1037): ДВА слова мало, когда у площадки/фестиваля общий бренд
+  // в начале названия: «BEYOND DISDANCE — IN-BETWEEN» ↔ «… — We Centric» (Synergeio,
+  // Лимасол, 04.12 21:00) склеивались по «beyond disdance» + дата/время/адрес, и 7 РАЗНЫХ
+  // спектаклей фестиваля уходили в архив (снималось дважды, в 15:12Z и 16:40Z прогонах).
+  // Третье значимое слово различает программы (between/centric/everest/sprt).
   const prefixKey = (e) => {
-    const words = liveDupe.words(e.title_ru || e.title).slice(0, 2).join(' ');
+    const words = liveDupe.words(e.title_ru || e.title).slice(0, 3).join(' ');
     const addr = norm(e.address);
     if (!words || words.split(' ').length < 2 || !addr || !e.start_time) return null;
     return [e.start_date, e.start_time, addr, words].join('|');
