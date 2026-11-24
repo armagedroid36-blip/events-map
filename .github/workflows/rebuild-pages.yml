@@ -287,9 +287,31 @@ jobs:
       # Оповещаем Яндекс и Bing о свежих страницах (IndexNow): новые события,
       # карточки и посадочные попадают в очередь обхода в тот же день.
       # Ключ — публичный файл из dist, ничего секретного.
+      # Карта прошлой ОТПРАВКИ IndexNow (loc → lastmod). Прод-sitemap как база
+      # для диффа не годится: публикация в Pages идёт раньше этого шага, и к
+      # моменту запуска https://mypins.site/sitemap.xml уже равен ТЕКУЩЕЙ
+      # сборке (прогон 45332107842: prod=4993, dist=4993, новых 0 при реальном
+      # приросте карты 4971 → 4993). Кэш переживает прогоны; промах кэша —
+      # bootstrap через прод-карту, затем состояние догоняет текущую сборку.
+      - name: IndexNow — состояние (restore)
+        uses: actions/cache/restore@v4
+        with:
+          path: .indexnow-state.json
+          key: indexnow-state-${{ github.run_id }}
+          restore-keys: |
+            indexnow-state-
+
       - name: IndexNow — оповестить поисковики
         run: node scripts/indexnow.mjs
         env:
           # оповещаем ВСЕ URL (RU + EN); INDEXNOW_RU_ONLY=1 — опт-ин «только RU»
           INDEXNOW_RU_ONLY: "0"
         continue-on-error: true
+
+      - name: IndexNow — состояние (save)
+        if: always()
+        uses: actions/cache/save@v4
+        continue-on-error: true
+        with:
+          path: .indexnow-state.json
+          key: indexnow-state-${{ github.run_id }}
