@@ -23,5 +23,15 @@ export function cleanEndTime({ start_date, start_time, end_date, end_time } = {}
   // карточки Бали с пустым start_time и end_time 23:59). Без начала окончание бессмысленно.
   if (!st && et === '23:59') return null;
   if (sameDay && st && et <= st) return null;
+  // Окончание раньше начала при РАЗНЫХ датах (24.11.2026, 41 живая карточка): у гастрольных
+  // записей endDate несёт время ЧУЖОГО дня/сессии («Hedda Gabler» 20:30 → 19:00), и карточка
+  // печатает интервал наоборот. Ночной переход законен: конец до 06:00 либо вечер 22:00+ с концом
+  // до полудня («Lustra by RESØNARK» 23:00 → 07:00). Всё прочее — брак источника.
+  if (st && et < st) {
+    const sh = Number(st.slice(0, 2));
+    const eh = Number(et.slice(0, 2));
+    const overnight = eh <= 6 || (sh >= 22 && eh <= 12);
+    if (!overnight) return null;
+  }
   return end_time;
 }
