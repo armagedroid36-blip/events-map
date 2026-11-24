@@ -462,18 +462,25 @@ let tgPhotoTries = 0;
 async function persistTgPhoto(url) {
   if (!/telesco\.pe|telegram-cdn/i.test(url)) return url;
   if (tgPhotoCache.has(url)) return tgPhotoCache.get(url);
-  if (DRY_RUN || tgPhotoTries >= TG_PHOTO_MAX_TRIES) return url;
+  // Ссылка telesco.pe живёт недели и потом отдаёт 404 — хранить её в карточке нельзя
+  // (25.11.2026: 21 живая карточка с битым первым фото). Не удалось сделать свою
+  // копию — фото не сохраняем вовсе, карта покажет плейсхолдер вместо битой картинки.
+  if (DRY_RUN) return url;
+  if (tgPhotoTries >= TG_PHOTO_MAX_TRIES) {
+    console.warn('  [фото] лимит загрузок исчерпан, ссылка CDN не сохраняется');
+    return null;
+  }
   tgPhotoTries++;
   const ac = new AbortController();
   const timer = setTimeout(() => ac.abort(), 15000);
   try {
     const res = await fetch(url, { headers: { 'user-agent': 'Mozilla/5.0 (compatible; events-map/1.0)' }, signal: ac.signal });
-    if (!res.ok) return url;
+    if (!res.ok) return null;
     const buf = Buffer.from(await res.arrayBuffer());
-    if (!buf.length || buf.length > TG_PHOTO_MAX_BYTES) return url;
+    if (!buf.length || buf.length > TG_PHOTO_MAX_BYTES) return null;
     const mime = String(res.headers.get('content-type') || '').split(';')[0].trim();
     const ext = TG_PHOTO_EXT[mime];
-    if (!ext) return url;
+    if (!ext) return null;
     const path = `tg/${createHash('md5').update(buf).digest('hex')}.${ext}`;
     const up = await fetch(`${SUPABASE_URL}/storage/v1/object/${TG_PHOTO_BUCKET}/${path}`, {
       method: 'POST',
@@ -482,13 +489,13 @@ async function persistTgPhoto(url) {
     });
     if (!up.ok) {
       console.warn(`  [фото] копия не залилась: ${up.status}`);
-      return url;
+      return null;
     }
     const pub = `${SUPABASE_URL}/storage/v1/object/public/${TG_PHOTO_BUCKET}/${path}`;
     tgPhotoCache.set(url, pub);
     return pub;
   } catch {
-    return url;
+    return null;
   } finally {
     clearTimeout(timer);
   }
