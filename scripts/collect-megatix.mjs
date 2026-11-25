@@ -233,9 +233,11 @@ function ldPrice(ev) {
 // и meditation-sound-healing-lala та же страница даёт одну дату 26.11 с тем же временем).
 // Поэтому прошедшую карточку того же URL надо НЕ пропускать навсегда, а обновлять на новую дату.
 async function existingKeys() {
-  const rows = await selectAll(db, 'events', 'id, title, title_ru, title_en, start_date, website, status', {
-    filter: (q) => q.in('status', ['active', 'moderation']),
-  });
+  // Все статусы: архивированная копия (reject/duplicate) не должна вставляться
+  // заново со следующего прогона — страница мегатикса живёт в sitemap годами,
+  // и без архивных ключей дубль возвращается на карту через один сбор (кейс
+  // Ocean Odyssey: архив 1063 -> повторная вставка 25.11). Тот же приём в collect-bali.
+  const rows = await selectAll(db, 'events', 'id, title, title_ru, title_en, start_date, website, status');
   const seen = new Set();
   const sites = new Set();
   const siteRows = new Map(); // url -> { id, start_date } живой карточки этой страницы
@@ -244,7 +246,7 @@ async function existingKeys() {
     for (const t of [r.title, r.title_ru, r.title_en]) {
       if (t) seen.add(`${String(t).trim().toLowerCase()}|${date}`);
     }
-    if (r.website) {
+    if (r.website && (r.status === 'active' || r.status === 'moderation')) {
       const u = String(r.website).trim();
       sites.add(u);
       siteRows.set(u, { id: r.id, start_date: date });
