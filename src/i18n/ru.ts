@@ -650,6 +650,20 @@ export default {
     email: 'Написать на почту',
     telegram: 'Написать в Telegram',
   },
+  // Страница «город × сегодня» (/bali/today/, /en/bali/today/ — SPA-панель).
+  // Мета (title/description) — в lib/seo.ts applyTodayMeta, зеркало статики
+  // scripts/seo-prerender.mjs (todayTitle/todayDescription).
+  todayPage: {
+    crumb: 'Сегодня',
+    h1: 'События сегодня: {{city}}',
+    dateLabel: 'Дата',
+    eventsHeading: 'События {{date}}',
+    empty: 'Сегодня событий нет',
+    upcoming: 'Ближайшие 7 дней',
+    weekLink: 'Все события на этой неделе',
+    categories: 'Категории города',
+    hubLink: 'Все события {{city}}',
+  },
   // Городские SEO-страницы: видимый текст для /bali, /da-nang, /nha-trang.
   // RU-тексты (h1/intro/faq) ДУБЛИРУЮТ CITY_SEO в scripts/seo-prerender.mjs —
   // держать синхронно! EN-переводы — только для SPA-интерфейса.

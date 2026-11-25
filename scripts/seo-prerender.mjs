@@ -2348,6 +2348,12 @@ function citySeoHtml(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs = 
     ...(cityPathKey && WEEK_READY_PATHS.has(cityPathKey)
       ? [`  <p><a href="/${cityPathKey}/this-week/">События на этой неделе →</a></p>`]
       : []),
+    // Посадочная «сегодня» существует ВСЕГДА (200), поэтому ссылка на неё
+    // ставится без гейта — в отличие от недели/месяца, которые при недоборе
+    // событий не публикуются вовсе.
+    ...(cityPathKey && TODAY_PATHS.has(cityPathKey)
+      ? [`  <p><a href="/${cityPathKey}/today/">События сегодня →</a></p>`]
+      : []),
     ...(cityPathKey && (MONTH_READY.get(cityPathKey) || []).length
       ? [
           `  <p>${(MONTH_READY.get(cityPathKey) || [])
@@ -2653,6 +2659,10 @@ function citySeoHtmlEn(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs 
     `  <p class="seo-updated">Updated: <time datetime="${TODAY_ISO}">${enDate(TODAY_ISO)}</time></p>`,
     ...(cityPathKey && WEEK_READY_PATHS.has(cityPathKey)
       ? [`  <p><a href="/en/${cityPathKey}/this-week/">Events this week →</a></p>`]
+      : []),
+    // «Today» существует всегда (200) — ссылка без гейта (см. RU-версию).
+    ...(cityPathKey && TODAY_PATHS.has(cityPathKey)
+      ? [`  <p><a href="/en/${cityPathKey}/today/">Events today →</a></p>`]
       : []),
     ...(cityPathKey && (MONTH_READY.get(cityPathKey) || []).length
       ? [
@@ -6400,6 +6410,7 @@ function weekPageHtml({ cityPath, lang, list, cells, catById }) {
     );
   }
   lines.push(
+    `  <p><a href="${esc(en ? `/en/${cityPath}/today/` : `/${cityPath}/today/`)}">${esc(en ? 'Events today' : 'События сегодня')} →</a></p>`,
     `  <p><a href="${esc(hubHref)}">${esc(en ? `All events in ${loc}` : `Все события ${loc}`)}</a></p>`,
     '  <section class="seo-week-faq">',
     ...faq.map(([q, a]) => `    <details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`),
@@ -6453,6 +6464,338 @@ function weekJsonLd({ cityPath, lang, list, url, name, description }) {
       },
     ],
   };
+}
+
+
+// --- Посадочные «город × сегодня» (интент «events today …») ----------------
+// /<city>/today/ и /en/<city>/today/ существуют ВСЕГДА: 200 при любом дне.
+// Гейт решает не публикацию, а ИНДЕКСИРУЕМОСТЬ: >= TODAY_MIN_EVENTS активных
+// событий города с вхождением ровно на дату сборки (TODAY_ISO, UTC) —
+// страница в sitemap, canonical self, 3 hreflang. Иначе — 200, но
+// noindex/follow, вне sitemap, xhtml:link пары на такой URL не ставится, а
+// вместо списка «Сегодня событий нет» и блок «Ближайшие события»: пустого
+// шаблона не бывает ни в одном из состояний.
+const TODAY_MIN_EVENTS = 3;
+const TODAY_UPCOMING_LIMIT = 6;
+/** Города с собственным хабом: только у них есть посадочная «сегодня». */
+const TODAY_PATHS = new Set([
+  'bali', 'da-nang', 'nha-trang', 'cyprus', 'nicosia', 'limassol', 'larnaca', 'paphos',
+]);
+
+function todayCityName(cityPath, lang) {
+  return lang === 'en'
+    ? CAT_CITY_NAME_EN[cityPath] || cityPath
+    : CAT_CITY_CRUMB_RU[cityPath] || cityPath;
+}
+
+/** События города ровно на TODAY_ISO (EN — только с английской версией). */
+function todayCityEvents(allEvents, cityPath, lang = 'ru') {
+  const en = lang === 'en';
+  return (allEvents || [])
+    .filter((ev) => {
+      if (!ev || typeof ev.id !== 'string' || typeof ev.title !== 'string' || !ev.title) return false;
+      const crumb = cityCrumb(ev.city);
+      const sameCity =
+        cityPath === 'cyprus' ? CYPRUS_PAGE_PATHS.has(crumb?.path) : crumb?.path === cityPath;
+      if (!sameCity) return false;
+      if (nextOccurrenceDate(ev, TODAY_ISO) !== TODAY_ISO) return false;
+      if (en && !eventHasEn(ev)) return false;
+      return true;
+    })
+    .sort(
+      (a, b) =>
+        String(a.start_time || '').localeCompare(String(b.start_time || '')) ||
+        String(a.id).localeCompare(String(b.id)),
+    );
+}
+
+/** События города в следующие 7 дней (без сегодняшнего) — «Ближайшие события». */
+function todayUpcomingEvents(allEvents, cityPath, lang = 'ru') {
+  const en = lang === 'en';
+  const end = addDaysIso(TODAY_ISO, 7);
+  return (allEvents || [])
+    .filter((ev) => {
+      if (!ev || typeof ev.id !== 'string' || typeof ev.title !== 'string' || !ev.title) return false;
+      const crumb = cityCrumb(ev.city);
+      const sameCity =
+        cityPath === 'cyprus' ? CYPRUS_PAGE_PATHS.has(crumb?.path) : crumb?.path === cityPath;
+      if (!sameCity) return false;
+      const next = nextOccurrenceDate(ev, TODAY_ISO);
+      if (!next || next <= TODAY_ISO || next > end) return false;
+      if (en && !eventHasEn(ev)) return false;
+      return true;
+    })
+    .sort(
+      (a, b) =>
+        String(nextOccurrenceDate(a, TODAY_ISO)).localeCompare(
+          String(nextOccurrenceDate(b, TODAY_ISO)),
+        ) || String(a.id).localeCompare(String(b.id)),
+    )
+    .slice(0, TODAY_UPCOMING_LIMIT);
+}
+
+/** «1 событие» / «2 события» / «5 событий» */
+function todayPlural(n) {
+  const abs = Math.abs(Number(n) || 0);
+  const tail100 = abs % 100;
+  const tail10 = abs % 10;
+  if (tail100 > 10 && tail100 < 20) return 'событий';
+  if (tail10 === 1) return 'событие';
+  if (tail10 >= 2 && tail10 <= 4) return 'события';
+  return 'событий';
+}
+
+/** До 3 площадок дня (короткое имя, как в блоке города). */
+function todayVenues(list, lang, limit = 3) {
+  const out = [];
+  for (const ev of list) {
+    const short = String(placeLabel(ev.address, ev, lang) || '').split(',')[0].trim();
+    if (short && !out.includes(short)) out.push(short);
+    if (out.length >= limit) break;
+  }
+  return out;
+}
+
+/** Title страницы: «События сегодня: Никосия — 25 ноября 2026» (<= 70 знаков). */
+function todayTitle(cityPath, lang) {
+  const en = lang === 'en';
+  const name = todayCityName(cityPath, lang);
+  return en
+    ? `Events today in ${name} — ${enDate(TODAY_ISO)}`
+    : `События сегодня: ${name} — ${ruDate(TODAY_ISO)}`;
+}
+
+/** Description 140–160 знаков: дата, число событий, площадки, где смотреть. */
+function todayDescription(cityPath, lang, count, venues) {
+  const en = lang === 'en';
+  const date = en ? enDate(TODAY_ISO) : ruDate(TODAY_ISO);
+  const name = todayCityName(cityPath, lang);
+  const where = en ? `in ${name}` : CITY_NAME_RU_LOCATIVE[cityPath] || name;
+  const head = en
+    ? `${count} ${count === 1 ? 'event' : 'events'} ${where} on ${date}: concerts, meetups and workshops.`
+    : `${count} ${todayPlural(count)} ${where} ${date}: концерты, встречи и мастер-классы.`;
+  const venueText = venues.length
+    ? en
+      ? ` Venues: ${venues.join(', ')}.`
+      : ` Площадки: ${venues.join(', ')}.`
+    : '';
+  const tail = en ? ' Dates and prices on the MyPins map.' : ' Даты и цены — на карте MyPins.';
+  let text = `${head}${venueText}${tail}`;
+  if (text.length <= 140) {
+    text += en ? ' The list is updated every day.' : ' Афиша обновляется каждый день.';
+  }
+  if (text.length > 160) text = snippet(text, 160);
+  if (text.length < 140) {
+    text = `${text}${en ? ' Full list on the map.' : ' Полный список — на карте.'}`.slice(0, 160);
+  }
+  return text;
+}
+
+/** Крошка «Главная → Город → Сегодня» (3 звена, как в JSON-LD). */
+function todayCrumbChain({ cityPath, lang, url }) {
+  const en = lang === 'en';
+  const home = `${en ? '/en' : ''}/`;
+  const cityHref = `${en ? '/en' : ''}/${cityPath}/`;
+  return [
+    { name: en ? 'Home' : 'Главная', href: home, item: `${SITE_URL}${home}` },
+    {
+      name: todayCityName(cityPath, lang),
+      href: cityHref,
+      item: `${SITE_URL}${cityHref}`,
+    },
+    { name: en ? 'Today' : 'Сегодня', href: null, item: url },
+  ];
+}
+
+/** Строка списка дня: time[datetime] — время — ссылка своего языка — место — цена */
+function todayListRow(ev, lang) {
+  const en = lang === 'en';
+  const date = nextOccurrenceDate(ev, TODAY_ISO);
+  const url = `${en ? '/en' : ''}/event/${ev.id}/${eventSlug(ev, en ? 'en' : 'ru')}/`;
+  const name = en
+    ? ev.title_en || ev.title || ev.title_ru || ''
+    : ev.title_ru || ev.title || ev.title_en || '';
+  const place = placeLabel(ev.address, ev, lang);
+  const price = weekPriceText(ev, lang);
+  const parts = [
+    `<time datetime="${esc(date)}">${esc(en ? enDate(date) : ruDate(date))}</time>`,
+  ];
+  const time = String(ev.start_time || '').slice(0, 5);
+  if (/^\d{2}:\d{2}$/.test(time)) parts.push(`<span>${esc(time)}</span>`);
+  parts.push(`<a href="${esc(url)}">${esc(name)}</a>`);
+  if (place) parts.push(`<span>${esc(place)}</span>`);
+  if (price) parts.push(`<span>${esc(price)}</span>`);
+  return `    <li>${parts.join(' — ')}</li>`;
+}
+
+/** Видимый блок #seo-today-block: крошка, h1, дата, список дня, ближайшие, FAQ. */
+function todayPageHtml({ cityPath, lang, list, upcoming, cells }) {
+  const en = lang === 'en';
+  const name = todayCityName(cityPath, lang);
+  const loc = en ? name : CITY_NAME_RU_LOCATIVE[cityPath] || name;
+  const date = en ? enDate(TODAY_ISO) : ruDate(TODAY_ISO);
+  const url = `${SITE_URL}${en ? '/en' : ''}/${cityPath}/today/`;
+  const hubHref = `${en ? '/en' : ''}/${cityPath}/`;
+  const weekHref = `${en ? '/en' : ''}/${cityPath}/this-week/`;
+  const venues = todayVenues(list, lang);
+  const free = list.filter((ev) => ev.price != null && Number(ev.price) === 0).length;
+  const crumbChain = todayCrumbChain({ cityPath, lang, url });
+  const introParts = [];
+  if (list.length) {
+    introParts.push(
+      en
+        ? `${list.length} ${list.length === 1 ? 'event' : 'events'} are on ${loc === name ? `in ${name}` : loc} on ${date}: concerts, meetups, workshops and parties with venues and prices.`
+        : `${list.length} ${todayPlural(list.length)} ${loc} на ${date}: концерты, встречи, мастер-классы и вечеринки с площадками и ценами.`,
+    );
+    if (venues.length) {
+      introParts.push(en ? `Venues: ${venues.join(', ')}.` : `Площадки дня: ${venues.join(', ')}.`);
+    }
+    introParts.push(
+      free > 0
+        ? en
+          ? `There are ${free} free events today.`
+          : `Бесплатных событий сегодня: ${free}.`
+        : en
+          ? 'Most events are ticketed — the price is shown in each card.'
+          : 'Большинство событий по билетам — цена указана в каждой карточке.',
+    );
+  } else {
+    introParts.push(
+      en
+        ? `There are no events in ${name} today. The nearest dates are below — the list is updated every day.`
+        : `Сегодня ${loc} событий нет. Ниже — ближайшие даты; афиша обновляется каждый день.`,
+    );
+  }
+  const rows = list.map((ev) => todayListRow(ev, lang));
+  const upcomingRows = upcoming.map((ev) => todayListRow(ev, lang));
+  const faq = en
+    ? [
+        [
+          `What is happening in ${name} today?`,
+          list.length
+            ? `${list.length} ${list.length === 1 ? 'event' : 'events'} on ${date}: ${venues.join(', ') || 'concerts, meetups and workshops'}. The full list with venues and prices is on this page.`
+            : `There are no events in ${name} today. The nearest dates are in the “Next 7 days” block and on the weekly page.`,
+        ],
+        [
+          'How much do the events cost?',
+          free > 0
+            ? `Prices are shown in each card; ${free} ${free === 1 ? 'event is' : 'events are'} free today.`
+            : 'All events are ticketed — the price and the booking link are shown in each card.',
+        ],
+        [
+          'How do I find events on another date?',
+          `Open the map and use the date filter, or see the “Next 7 days” block — the weekly page for ${name} lists everything for the coming week.`,
+        ],
+      ]
+    : [
+        [
+          `Что происходит ${loc} сегодня?`,
+          list.length
+            ? `${list.length} ${todayPlural(list.length)} ${loc} на ${date}: ${venues.join(', ') || 'концерты, встречи и мастер-классы'}. Полный список с площадками и ценами — на этой странице.`
+            : `Сегодня ${loc} событий нет. Ближайшие даты — в блоке «Ближайшие 7 дней» и на странице недели.`,
+        ],
+        [
+          'Сколько стоят события?',
+          free > 0
+            ? `Цена указана в каждой карточке; бесплатных событий сегодня: ${free}.`
+            : 'Все события по билетам — цена и запись указаны в карточке события.',
+        ],
+        [
+          'Как найти события на другую дату?',
+          `Откройте карту и фильтр по дате — или блок «Ближайшие 7 дней»: на странице недели собраны все события ${loc} на неделю вперёд.`,
+        ],
+      ];
+  const lines = [
+    '<div id="seo-today-block">',
+    crumbNavHtml(crumbChain, en ? 'Breadcrumbs' : 'Хлебные крошки'),
+    `  <h1>${esc(en ? `Events today in ${name}` : `События сегодня: ${name}`)}</h1>`,
+    `  <p class="seo-today-date">${en ? 'Date' : 'Дата'}: <time datetime="${TODAY_ISO}">${esc(date)}</time></p>`,
+    `  <p>${esc(introParts.join(' '))}</p>`,
+  ];
+  if (list.length) {
+    lines.push(
+      `  <h2>${esc(en ? `Events on ${date}` : `События ${date}`)}</h2>`,
+      '  <ul>',
+      ...rows,
+      '  </ul>',
+    );
+  } else {
+    lines.push(`  <h2>${esc(en ? 'No events today' : 'Сегодня событий нет')}</h2>`);
+  }
+  if (upcomingRows.length) {
+    lines.push(
+      `  <h2>${esc(en ? 'Next 7 days' : 'Ближайшие 7 дней')}</h2>`,
+      '  <ul>',
+      ...upcomingRows,
+      '  </ul>',
+    );
+  }
+  lines.push(
+    `  <p><a href="${esc(weekHref)}">${esc(en ? `All events in ${name} this week` : `Все события ${loc} на этой неделе`)}</a></p>`,
+  );
+  const cats = cityCategoriesHtml(cityPath, lang, cells);
+  if (cats.html) lines.push(cats.html);
+  lines.push(
+    `  <p><a href="${esc(hubHref)}">${esc(en ? `All events in ${name}` : `Все события ${loc}`)}</a></p>`,
+    '  <section class="seo-today-faq">',
+    ...faq.map(([q, a]) => `    <details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`),
+    '  </section>',
+    '</div>',
+  );
+  return { html: lines.join('\n'), faq };
+}
+
+/** JSON-LD «сегодня»: CollectionPage + ItemList + BreadcrumbList (3 звена). */
+function todayJsonLd({ cityPath, lang, list, url, name, description }) {
+  const en = lang === 'en';
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'CollectionPage',
+        url,
+        name,
+        description,
+        inLanguage: en ? 'en' : 'ru',
+        dateModified: TODAY_ISO,
+        isPartOf: {
+          '@type': 'WebSite',
+          name: 'MyPins',
+          url: `${SITE_URL}${en ? '/en' : ''}/`,
+        },
+      },
+      {
+        '@type': 'ItemList',
+        numberOfItems: list.length,
+        itemListOrder: 'https://schema.org/ItemListOrderAscending',
+        itemListElement: list.map((ev, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: en ? ev.title_en || ev.title || '' : ev.title_ru || ev.title || ev.title_en || '',
+          url: `${SITE_URL}${en ? '/en' : ''}/event/${ev.id}/${eventSlug(ev, en ? 'en' : 'ru')}/`,
+        })),
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: crumbLdItems(todayCrumbChain({ cityPath, lang, url })),
+      },
+    ],
+  };
+}
+
+/**
+ * hreflang посадочной «сегодня». Пара — только когда ОБЕ версии индексируемые:
+ * иначе xhtml:link/alternate вёл бы на noindex-страницу (критерий «у пары нет
+ * xhtml:link на неиндексируемый URL»). x-default — всегда главная /en/.
+ */
+function todayHreflang(lang, selfUrl, pairUrl, paired) {
+  const other = lang === 'en' ? 'ru' : 'en';
+  // enRoot объявлен локально в main() (строка ниже по коду) — здесь нужен свой.
+  const enRootUrl = `${SITE_URL}/en/`;
+  const out = [{ hreflang: lang, href: selfUrl }];
+  if (paired) out.push({ hreflang: other, href: pairUrl });
+  out.push({ hreflang: 'x-default', href: enRootUrl });
+  return out;
 }
 
 
@@ -7225,6 +7568,112 @@ async function main() {
   console.log(
     `  «на этой неделе»: страниц RU ${weekPagesRu}, EN ${weekPagesEn}` +
       (weekBuilt.length ? ` (${weekBuilt.join('; ')})` : ''),
+  );
+
+  // --- «Город × сегодня»: страницы пишутся ВСЕГДА (200 при любом дне) ------
+  // Гейт решает индексируемость: >= TODAY_MIN_EVENTS событий города ровно на
+  // TODAY_ISO → URL в sitemap + 3 hreflang; иначе noindex/follow, вне sitemap,
+  // без xhtml:link пары. Счётчики в лог — иначе «почему страница выпала из
+  // карты» приходится выяснять раскопками по dist.
+  let todayPagesRu = 0;
+  let todayPagesEn = 0;
+  let todayIndexRu = 0;
+  let todayIndexEn = 0;
+  const todayBuilt = [];
+  for (const c of CITY_PAGES) {
+    if (!TODAY_PATHS.has(c.path)) continue;
+    const url = `${SITE_URL}/${c.path}/today/`;
+    const enUrl = `${SITE_URL}/en/${c.path}/today/`;
+    const listRu = todayCityEvents(events, c.path, 'ru');
+    const listEn = todayCityEvents(events, c.path, 'en');
+    const upcomingRu = todayUpcomingEvents(events, c.path, 'ru');
+    const upcomingEn = todayUpcomingEvents(events, c.path, 'en');
+    const indexRu = listRu.length >= TODAY_MIN_EVENTS;
+    const indexEn = listEn.length >= TODAY_MIN_EVENTS;
+    const paired = indexRu && indexEn;
+
+    const titleRu = todayTitle(c.path, 'ru');
+    const descRu = todayDescription(c.path, 'ru', listRu.length, todayVenues(listRu, 'ru'));
+    const blockRu = todayPageHtml({
+      cityPath: c.path,
+      lang: 'ru',
+      list: listRu,
+      upcoming: upcomingRu,
+      cells,
+    });
+    writePage(baseHtml, `${c.path}/today`, {
+      lang: 'ru',
+      title: titleRu,
+      description: descRu,
+      canonical: url,
+      ogTitle: titleRu,
+      ogDescription: descRu,
+      ogUrl: url,
+      ogImage: LOGO_URL,
+      jsonLd: todayJsonLd({
+        cityPath: c.path,
+        lang: 'ru',
+        list: listRu,
+        url,
+        name: titleRu,
+        description: descRu,
+      }),
+      hreflang: todayHreflang('ru', url, enUrl, paired),
+      noindex: !indexRu,
+      bodySeo: blockRu.html,
+    });
+    lastmods.set(url, TODAY_ISO);
+    todayPagesRu += 1;
+    if (indexRu) {
+      locs.push(url);
+      todayIndexRu += 1;
+    }
+
+    const titleEn = todayTitle(c.path, 'en');
+    const descEn = todayDescription(c.path, 'en', listEn.length, todayVenues(listEn, 'en'));
+    const blockEn = todayPageHtml({
+      cityPath: c.path,
+      lang: 'en',
+      list: listEn,
+      upcoming: upcomingEn,
+      cells,
+    });
+    writePage(baseHtml, `en/${c.path}/today`, {
+      lang: 'en',
+      title: titleEn,
+      description: descEn,
+      canonical: enUrl,
+      ogTitle: titleEn,
+      ogDescription: descEn,
+      ogUrl: enUrl,
+      ogImage: LOGO_URL,
+      jsonLd: todayJsonLd({
+        cityPath: c.path,
+        lang: 'en',
+        list: listEn,
+        url: enUrl,
+        name: titleEn,
+        description: descEn,
+      }),
+      hreflang: todayHreflang('en', enUrl, url, paired),
+      noindex: !indexEn,
+      bodySeo: blockEn.html,
+    });
+    lastmods.set(enUrl, TODAY_ISO);
+    todayPagesEn += 1;
+    if (indexEn) {
+      locs.push(enUrl);
+      todayIndexEn += 1;
+    }
+    if (paired) hreflangPairs.set(url, enUrl);
+
+    todayBuilt.push(
+      `${c.path} RU ${listRu.length}${indexRu ? '' : '(noindex)'} / EN ${listEn.length}${indexEn ? '' : '(noindex)'}`,
+    );
+  }
+  console.log(
+    `  «сегодня»: страниц RU ${todayPagesRu} (в sitemap ${todayIndexRu}), EN ${todayPagesEn} (в sitemap ${todayIndexEn})` +
+      (todayBuilt.length ? ` (${todayBuilt.join('; ')})` : ''),
   );
 
   // --- «Город × месяц»: страницы (горизонт — текущий + 2 следующих) -------

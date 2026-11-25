@@ -49,7 +49,7 @@ export type CityPath =
   | 'paphos';
 
 /** RU-имена городов по пути — как в JSON-LD BreadcrumbList (cityCrumb.name) */
-const CITY_NAME_RU: Record<CityPath, string> = {
+export const CITY_NAME_RU: Record<CityPath, string> = {
   bali: 'Бали',
   'da-nang': 'Дананг',
   'nha-trang': 'Нячанг',

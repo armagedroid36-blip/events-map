@@ -648,6 +648,19 @@ export default {
     email: 'Email us',
     telegram: 'Message us on Telegram',
   },
+  // «City × today» page (/bali/today/, /en/bali/today/ — SPA panel).
+  // Meta is set by lib/seo.ts applyTodayMeta (mirror of the static page).
+  todayPage: {
+    crumb: 'Today',
+    h1: 'Events today in {{city}}',
+    dateLabel: 'Date',
+    eventsHeading: 'Events on {{date}}',
+    empty: 'No events today',
+    upcoming: 'Next 7 days',
+    weekLink: 'All events this week',
+    categories: 'City categories',
+    hubLink: 'All events in {{city}}',
+  },
   // City SEO pages: visible text for /bali, /da-nang, /nha-trang (SPA only;
   // RU source of truth: ru.ts citySeo.* + CITY_SEO in scripts/seo-prerender.mjs)
   citySeo: {

@@ -30,6 +30,7 @@ import { eventHasEn, eventSlug } from './slug';
 import { nextOccurrenceDate } from './recurrence';
 import {
   CITY_NAME_BY_PATH,
+  CITY_NAME_RU,
   CITY_NAME_RU_LOCATIVE,
   cityLocativeRu,
   placeCityLabel,
@@ -596,6 +597,81 @@ export function applyWeekMeta(
           { hreflang: 'x-default', href: canonical },
         ],
     robots: null,
+  });
+}
+
+// --- «Город × сегодня» — мета для SPA -------------------------------------
+/** «1 событие» / «2 события» / «5 событий» — зеркало todayPlural в пре-рендере */
+function todayPluralRu(n: number): string {
+  const abs = Math.abs(Number(n) || 0);
+  const tail100 = abs % 100;
+  const tail10 = abs % 10;
+  if (tail100 > 10 && tail100 < 20) return 'событий';
+  if (tail10 === 1) return 'событие';
+  if (tail10 >= 2 && tail10 <= 4) return 'события';
+  return 'событий';
+}
+
+/**
+ * Мета страницы «город × сегодня» — ЗЕРКАЛО статики (todayTitle /
+ * todayDescription в scripts/seo-prerender.mjs): title без суффикса, описание
+ * 140–160 знаков, canonical self со слэшем. Пара hreflang — только когда обе
+ * версии индексируемые (hasEn); x-default = https://mypins.site/en/.
+ * Индексируемость: >= 3 событий дня → robots снимается; иначе noindex, follow —
+ * ровно как в статике, иначе SPA «оживляет» пустую страницу для краулера.
+ */
+export function applyTodayMeta(
+  path: CityPath,
+  lang: 'ru' | 'en',
+  count: number,
+  dateIso: string,
+  hasEn: boolean,
+  venues: string[] = [],
+): void {
+  const en = lang === 'en';
+  const name = en ? CITY_NAME_BY_PATH[path] : CITY_NAME_RU_LOCATIVE[path];
+  const date = en ? enDate(dateIso) : ruDate(dateIso);
+  const title = en
+    ? `Events today in ${CITY_NAME_BY_PATH[path]} — ${date}`
+    : `События сегодня: ${CITY_NAME_RU[path]} — ${date}`;
+  const head = en
+    ? `${count} ${count === 1 ? 'event' : 'events'} ${name} on ${date}: concerts, meetups and workshops.`
+    : `${count} ${todayPluralRu(count)} ${name} ${date}: концерты, встречи и мастер-классы.`;
+  const venueText = venues.length
+    ? en
+      ? ` Venues: ${venues.join(', ')}.`
+      : ` Площадки: ${venues.join(', ')}.`
+    : '';
+  const tail = en ? ' Dates and prices on the MyPins map.' : ' Даты и цены — на карте MyPins.';
+  let description = `${head}${venueText}${tail}`;
+  if (description.length <= 140) {
+    description += en ? ' The list is updated every day.' : ' Афиша обновляется каждый день.';
+  }
+  if (description.length > 160) description = trimText(description, 160);
+  if (description.length < 140) {
+    description = `${description}${en ? ' Full list on the map.' : ' Полный список — на карте.'}`.slice(0, 160);
+  }
+  const ruUrl = `${SITE_URL}/${path}/today/`;
+  const enUrl = `${SITE_URL}/en/${path}/today/`;
+  const canonical = en ? enUrl : ruUrl;
+  apply({
+    title,
+    description,
+    lang,
+    canonical,
+    og: {
+      'og:title': title,
+      'og:description': description,
+      'og:url': canonical,
+      'og:image': `${SITE_URL}/logo.png`,
+    },
+    hreflang: hasEn
+      ? hreflangPairsFor(ruUrl, enUrl)
+      : [
+          { hreflang: lang, href: canonical },
+          { hreflang: 'x-default', href: `${SITE_URL}/en/` },
+        ],
+    robots: count >= 3 ? null : 'noindex, follow',
   });
 }
 

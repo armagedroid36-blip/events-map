@@ -30,6 +30,7 @@ import type { CityPath } from './lib/address';
 // (карта, админка) уходят в отдельные чанки, основной чанк меньше.
 const Home = lazy(() => import('./pages/Home'));
 const CityWeek = lazy(() => import('./pages/CityWeek'));
+const CityToday = lazy(() => import('./pages/CityToday'));
 const CityMonth = lazy(() => import('./pages/CityMonth'));
 const Admin = lazy(() => import('./pages/Admin'));
 const MyEvents = lazy(() => import('./pages/MyEvents'));
@@ -69,9 +70,9 @@ function normPath(p: string): string {
 function categoryRoute(pub: string): { city: string; categoryId: string } | null {
   const m = /^\/([a-z0-9-]+)\/([a-z0-9-]+)$/.exec(pub);
   if (!m) return null;
-  // «this-week» — слаг недельной посадочной, «november-2026» — месячной:
-  // оба зарезервированы и категориями не считаются
-  if (m[2] === 'this-week' || /^[a-z]+-\d{4}$/.test(m[2])) return null;
+  // «this-week» — слаг недельной посадочной, «today» — дневной («сегодня»),
+  // «november-2026» — месячной: все зарезервированы и категориями не считаются
+  if (m[2] === 'this-week' || m[2] === 'today' || /^[a-z]+-\d{4}$/.test(m[2])) return null;
   const label = CITY_ROUTES.get(`/${m[1]}`);
   return label ? { city: label, categoryId: m[2] } : null;
 }
@@ -98,6 +99,21 @@ function monthRoute(pub: string): { path: CityPath; monthKey: string } | null {
 
 function weekRoute(pub: string): { path: CityPath; city: string } | null {
   const m = /^\/([a-z0-9-]+)\/this-week$/.exec(pub);
+  if (!m) return null;
+  const label = CITY_ROUTES.get(`/${m[1]}`);
+  if (!label) return null;
+  const path = cityPath(label);
+  return path ? { path, city: label } : null;
+}
+
+/**
+ * /<city>/today — посадочная «город × сегодня» (интент «events today …»).
+ * В отличие от недельной/месячной страница существует ВСЕГДА: статика пишет
+ * её при любом числе событий (при < 3 — noindex, follow), SPA рисует панель с
+ * тем же составом и тем же robots, без 404-заглушки.
+ */
+function todayRoute(pub: string): { path: CityPath; city: string } | null {
+  const m = /^\/([a-z0-9-]+)\/today$/.exec(pub);
   if (!m) return null;
   const label = CITY_ROUTES.get(`/${m[1]}`);
   if (!label) return null;
@@ -175,6 +191,7 @@ export default function App() {
         CITY_ROUTES.has(pub) ||
         categoryRoute(pub) !== null ||
         weekRoute(pub) !== null ||
+        todayRoute(pub) !== null ||
         monthRoute(pub) !== null ||
         pub === '/blog' ||
         pub.startsWith('/blog/') ||
@@ -297,11 +314,14 @@ export default function App() {
           const cityLabel = CITY_ROUTES.get(pub);
           const cat = categoryRoute(pub);
           const wk = weekRoute(pub);
+          const td = todayRoute(pub);
           const mo = monthRoute(pub);
           page = cityLabel ? (
             <Home key={`${en ? 'en:' : ''}city:${cityLabel}`} city={cityLabel} />
           ) : wk ? (
             <CityWeek key={`${en ? 'en:' : ''}week:${wk.path}`} path={wk.path} />
+          ) : td ? (
+            <CityToday key={`${en ? 'en:' : ''}today:${td.path}`} path={td.path} />
           ) : mo ? (
             <CityMonth
               key={`${en ? 'en:' : ''}month:${mo.path}:${mo.monthKey}`}
