@@ -13,6 +13,7 @@ import { selectAll } from './db-rows.mjs';
 import { extractTheatreEvents } from './theatre-llm.mjs';
 import { SOURCES } from './theatre-sources.mjs';
 import { cleanCurrency } from './currency.mjs';
+import { cleanEndTime } from './end-time-guard.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
@@ -530,7 +531,7 @@ function buildPatch(row, ev) {
   const patch = {};
   const isEmpty = (v) => v == null || v === '' || (Array.isArray(v) && v.length === 0);
   if (isEmpty(row.start_time) && ev.start_time) patch.start_time = ev.start_time;
-  if (isEmpty(row.end_time) && ev.end_time) patch.end_time = ev.end_time;
+  if (isEmpty(row.end_time) && ev.end_time) patch.end_time = cleanEndTime({ start_date: row.start_date, start_time: ev.start_time ?? row.start_time, end_date: row.end_date, end_time: ev.end_time });
   if (isEmpty(row.price) && ev.price != null) patch.price = ev.price;
   if (isEmpty(row.currency) && ev.currency) patch.currency = ev.currency;
   const evAddr = ev.address || ev.venue;
@@ -605,7 +606,7 @@ async function prepareInsert(ev, src, index) {
     start_date,
     end_date,
     start_time: ev.start_time,
-    end_time: ev.end_time,
+    end_time: cleanEndTime({ start_date, start_time: ev.start_time, end_date, end_time: ev.end_time }),
     city: src.city,
     address,
     lat,
