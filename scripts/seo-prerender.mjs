@@ -6488,6 +6488,29 @@ function todayCityName(cityPath, lang) {
     : CAT_CITY_CRUMB_RU[cityPath] || cityPath;
 }
 
+/**
+ * Событие идёт в дату isoDate — ЗЕРКАЛО eventOccursOn из src/lib/calendar.ts
+ * (то же правило, что у карты и календаря): разовое — isoDate в интервале
+ * [start_date .. (end_date || start_date)]; повторяющееся — по правилу повтора
+ * в окне start_date..end_date, где ПРОШЕДШИЙ end_date считается «без
+ * окончания» (класс «зомби», см. seriesHorizon). «Сегодня» для правила
+ * окончания серии — TODAY_ISO снимка: сборка детерминирована и не зависит от
+ * часа прогона.
+ * ЗЕРКАЛО: src/lib/calendar.ts eventOccursOn — менять оба файла.
+ */
+function todayOccursOn(ev, isoDate) {
+  if (!ev || typeof ev.start_date !== 'string' || !ev.start_date) return false;
+  const r = ev.recurrence && typeof ev.recurrence === 'object' ? ev.recurrence : null;
+  if (r) {
+    if (isoDate < ev.start_date) return false;
+    if (ev.end_date && isoDate > ev.end_date && ev.end_date >= TODAY_ISO) return false;
+    if (r.freq === 'daily') return true;
+    return (r.days ?? []).includes(isoDayOfWeek(isoDate));
+  }
+  const last = ev.end_date && ev.end_date > ev.start_date ? ev.end_date : ev.start_date;
+  return isoDate >= ev.start_date && isoDate <= last;
+}
+
 /** События города ровно на TODAY_ISO (EN — только с английской версией). */
 function todayCityEvents(allEvents, cityPath, lang = 'ru') {
   const en = lang === 'en';
@@ -6498,7 +6521,7 @@ function todayCityEvents(allEvents, cityPath, lang = 'ru') {
       const sameCity =
         cityPath === 'cyprus' ? CYPRUS_PAGE_PATHS.has(crumb?.path) : crumb?.path === cityPath;
       if (!sameCity) return false;
-      if (nextOccurrenceDate(ev, TODAY_ISO) !== TODAY_ISO) return false;
+      if (!todayOccursOn(ev, TODAY_ISO)) return false;
       if (en && !eventHasEn(ev)) return false;
       return true;
     })
@@ -6509,13 +6532,16 @@ function todayCityEvents(allEvents, cityPath, lang = 'ru') {
     );
 }
 
-/** События города в следующие 7 дней (без сегодняшнего) — «Ближайшие события». */
-function todayUpcomingEvents(allEvents, cityPath, lang = 'ru') {
+/** События города в следующие 7 дней (без сегодняшнего) — «Ближайшие события».
+ *  excludeIds — события, уже показанные в списке дня: одна карточка не должна
+ *  стоять одновременно в «сегодня» и в «ближайших» (дубль на странице). */
+function todayUpcomingEvents(allEvents, cityPath, lang = 'ru', excludeIds = new Set()) {
   const en = lang === 'en';
   const end = addDaysIso(TODAY_ISO, 7);
   return (allEvents || [])
     .filter((ev) => {
       if (!ev || typeof ev.id !== 'string' || typeof ev.title !== 'string' || !ev.title) return false;
+      if (excludeIds.has(ev.id)) return false;
       const crumb = cityCrumb(ev.city);
       const sameCity =
         cityPath === 'cyprus' ? CYPRUS_PAGE_PATHS.has(crumb?.path) : crumb?.path === cityPath;
@@ -6607,19 +6633,30 @@ function todayCrumbChain({ cityPath, lang, url }) {
   ];
 }
 
-/** Строка списка дня: time[datetime] — время — ссылка своего языка — место — цена */
+/** Строка списка дня: time[datetime] — время — ссылка своего языка — место — цена.
+ *  Многодневное событие (разовое, началось раньше и идёт сейчас) показываем
+ *  ДИАПАЗОНОМ дат, а не датой старта: подпись «21 ноября – 6 декабря», при этом
+ *  <time datetime> = start_date (машиночитаемая дата начала серии). */
 function todayListRow(ev, lang) {
   const en = lang === 'en';
-  const date = nextOccurrenceDate(ev, TODAY_ISO);
+  const multiDay =
+    !ev.recurrence &&
+    typeof ev.end_date === 'string' &&
+    ev.end_date > ev.start_date &&
+    ev.start_date < TODAY_ISO;
+  const date = multiDay ? ev.start_date : nextOccurrenceDate(ev, TODAY_ISO);
+  const dateLabel = multiDay
+    ? `${en ? enDate(ev.start_date) : ruDate(ev.start_date)} – ${en ? enDate(ev.end_date) : ruDate(ev.end_date)}`
+    : en
+      ? enDate(date)
+      : ruDate(date);
   const url = `${en ? '/en' : ''}/event/${ev.id}/${eventSlug(ev, en ? 'en' : 'ru')}/`;
   const name = en
     ? ev.title_en || ev.title || ev.title_ru || ''
     : ev.title_ru || ev.title || ev.title_en || '';
   const place = placeLabel(ev.address, ev, lang);
   const price = weekPriceText(ev, lang);
-  const parts = [
-    `<time datetime="${esc(date)}">${esc(en ? enDate(date) : ruDate(date))}</time>`,
-  ];
+  const parts = [`<time datetime="${esc(date)}">${esc(dateLabel)}</time>`];
   const time = String(ev.start_time || '').slice(0, 5);
   if (/^\d{2}:\d{2}$/.test(time)) parts.push(`<span>${esc(time)}</span>`);
   parts.push(`<a href="${esc(url)}">${esc(name)}</a>`);
@@ -7586,8 +7623,9 @@ async function main() {
     const enUrl = `${SITE_URL}/en/${c.path}/today/`;
     const listRu = todayCityEvents(events, c.path, 'ru');
     const listEn = todayCityEvents(events, c.path, 'en');
-    const upcomingRu = todayUpcomingEvents(events, c.path, 'ru');
-    const upcomingEn = todayUpcomingEvents(events, c.path, 'en');
+    // «Ближайшие 7 дней» не дублирует события из списка дня.
+    const upcomingRu = todayUpcomingEvents(events, c.path, 'ru', new Set(listRu.map((ev) => ev.id)));
+    const upcomingEn = todayUpcomingEvents(events, c.path, 'en', new Set(listEn.map((ev) => ev.id)));
     const indexRu = listRu.length >= TODAY_MIN_EVENTS;
     const indexEn = listEn.length >= TODAY_MIN_EVENTS;
     const paired = indexRu && indexEn;

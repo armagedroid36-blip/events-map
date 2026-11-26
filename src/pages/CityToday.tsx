@@ -24,6 +24,7 @@ import {
   categoryPageHref,
   categoryPagePublished,
 } from '../lib/categoryPages';
+import { eventOccursOn } from '../lib/calendar';
 import { nextOccurrenceDate } from '../lib/recurrence';
 import { eventHasEn, eventPageHref } from '../lib/slug';
 import { applyTodayMeta, enDate, ruDate } from '../lib/seo';
@@ -103,14 +104,15 @@ export default function CityToday({ path }: { path: CityPath }) {
 
   const today = todayIso();
 
-  // События ровно на сегодня — тот же отбор, что в пре-рендере
-  // (todayCityEvents): вхождение == сегодня, на EN — только с EN-версией.
+  // События, которые ИДУТ сегодня, — правило eventOccursOn из lib/calendar.ts
+  // (то же, что у карты и календаря): многодневное событие, начавшееся раньше
+  // и идущее сейчас, тоже в списке. На EN — только с EN-версией.
   const list = useMemo(() => {
     if (!events) return [];
     return events
       .filter((ev) => {
         if (!inCity(ev)) return false;
-        if (nextOccurrenceDate(ev, today) !== today) return false;
+        if (!eventOccursOn(ev, today)) return false;
         if (en && !eventHasEn(ev)) return false;
         return true;
       })
@@ -121,12 +123,16 @@ export default function CityToday({ path }: { path: CityPath }) {
       );
   }, [events, en, inCity, today]);
 
+  // «Ближайшие 7 дней» — те же правила, что в статике: события дня сюда не
+  // дублируются (одна карточка = одна строка на странице).
+  const todayIds = useMemo(() => new Set(list.map((ev) => ev.id)), [list]);
   const upcoming = useMemo(() => {
     if (!events) return [];
     const end = addDaysIso(today, 7);
     return events
       .filter((ev) => {
         if (!inCity(ev)) return false;
+        if (todayIds.has(ev.id)) return false;
         const next = nextOccurrenceDate(ev, today);
         if (!next || next <= today || next > end) return false;
         if (en && !eventHasEn(ev)) return false;
@@ -139,13 +145,13 @@ export default function CityToday({ path }: { path: CityPath }) {
           ) || String(a.id).localeCompare(String(b.id)),
       )
       .slice(0, UPCOMING_LIMIT);
-  }, [events, en, inCity, today]);
+  }, [events, en, inCity, today, todayIds]);
 
   // Сколько событий дня с EN-версией — гейт пары для hreflang (как в статике).
   const enTodayCount = useMemo(() => {
     if (!events) return 0;
     return events.filter(
-      (ev) => inCity(ev) && nextOccurrenceDate(ev, today) === today && eventHasEn(ev),
+      (ev) => inCity(ev) && eventOccursOn(ev, today) && eventHasEn(ev),
     ).length;
   }, [events, inCity, today]);
 
@@ -207,7 +213,19 @@ export default function CityToday({ path }: { path: CityPath }) {
       : `Сегодня ${cityNameRu} событий нет. Ниже — ближайшие даты; афиша обновляется каждый день.`;
 
   const row = (ev: EventItem) => {
-    const occ = String(nextOccurrenceDate(ev, today));
+    // Многодневное разовое событие, начавшееся раньше: диапазон дат в подписи,
+    // datetime — дата старта (как в статике).
+    const multiDay =
+      !ev.recurrence &&
+      typeof ev.end_date === 'string' &&
+      ev.end_date > ev.start_date &&
+      ev.start_date < today;
+    const occ = multiDay ? ev.start_date : String(nextOccurrenceDate(ev, today));
+    const dateLabel = multiDay
+      ? `${en ? enDate(ev.start_date) : ruDate(ev.start_date)} – ${en ? enDate(ev.end_date!) : ruDate(ev.end_date!)}`
+      : en
+        ? enDate(occ)
+        : ruDate(occ);
     const href = eventPageHref(ev, en ? 'en' : 'ru') || '#';
     const title = en
       ? ev.title_en || ev.title || ev.title_ru || ''
@@ -217,7 +235,7 @@ export default function CityToday({ path }: { path: CityPath }) {
     const time = String(ev.start_time || '').slice(0, 5);
     return (
       <li key={ev.id}>
-        <time dateTime={occ}>{en ? enDate(occ) : ruDate(occ)}</time>
+        <time dateTime={occ}>{dateLabel}</time>
         {/^\d{2}:\d{2}$/.test(time) ? ` — ${time}` : ''}
         {' — '}
         <a href={href} className="underline">
