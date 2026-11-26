@@ -232,10 +232,16 @@ export function parseDate(text) {
   let time = null;
   const tmColon = text.match(/(\d{1,2}):(\d{2})/);
   const tmDash = text.match(/(?<![\d.,])(\d{1,2})-(\d{2})(?![\d.,])/);
+  // 4) Точка как разделитель времени: «9.00-10.30» (питфол dot 1083: пост t.me/nyachang_ru/26529
+  // дал карточку «Йога в Нячанге» без времени). Принимаем ТОЛЬКО парный диапазон с «круглыми»
+  // минутами и часом ≤ 12 — иначе диапазон дат «21.11-22.11» снова станет временем 21:11.
+  const tmDot = text.match(/(?<![\d.,])(\d{1,2})\.(00|15|30|45)\s*[-–—]\s*(\d{1,2})\.(00|15|30|45)(?![\d.])/);
   if (tmColon && +tmColon[1] >= 0 && +tmColon[1] <= 23 && +tmColon[2] <= 59) {
     time = `${String(+tmColon[1]).padStart(2, '0')}:${tmColon[2]}`;
   } else if (tmDash && +tmDash[1] >= 0 && +tmDash[1] <= 23 && +tmDash[2] <= 59) {
     time = `${String(+tmDash[1]).padStart(2, '0')}:${tmDash[2]}`;
+  } else if (tmDot && +tmDot[1] <= 12 && +tmDot[3] <= 23) {
+    time = `${String(+tmDot[1]).padStart(2, '0')}:${tmDot[2]}`;
   }
 
   return {
