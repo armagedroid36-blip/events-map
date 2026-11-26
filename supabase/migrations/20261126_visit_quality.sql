@@ -66,7 +66,7 @@ as $$
 declare
   v_country text := coalesce(nullif(upper(left(trim(p_country), 2)), ''), 'UNKNOWN');
   v_tz text := coalesce(nullif(left(trim(p_tz), 64), ''), 'unknown');
-  v_lang text := coalesce(nullif(lower(left(trim(p_lang), 5)), ''), 'unknown');
+  v_lang text := coalesce(nullif(lower(left(trim(p_lang), 8)), ''), 'unknown');
   v_asn integer := coalesce(p_asn, 0);
   v_provider text := coalesce(nullif(lower(left(trim(p_provider), 60)), ''), 'unknown');
   v_verdict text := case
