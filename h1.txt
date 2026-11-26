@@ -1,0 +1,24 @@
+HTTP/1.1 200 OK
+Date: Tue, 03 Nov 2026 09:49:28 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 2
+Connection: keep-alive
+Content-Range: */0
+CF-Ray: a54a781669b4e318-DME
+CF-Cache-Status: DYNAMIC
+Content-Location: /events?end_date=is.null&recurrence=is.null&select=id%2Ctitle%2Ccity%2Cstart_date&start_date=lt.2026-11-03&status=eq.active
+Server: cloudflare
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+X-Content-Type-Options: nosniff
+content-profile: public
+preference-applied: count=exact
+sb-gateway-version: 1
+sb-jwt-alg: HS256
+sb-jwt-iss: supabase
+sb-project-ref: xsbtejugutlpkgykiouw
+sb-request-id: 01a1a0d0-4a13-739c-b4f3-bc6d8e10dd6c
+x-envoy-attempt-count: 1
+x-envoy-upstream-service-time: 266
+set-cookie: __cf_bm=XTEhMlJcKIxBHM.CcVjUl3vQ1826nLgL60RaQYAj4oo-1793699367.4268796-1.0.1.1-EsVP7XiAK3b_PDGIq4RcoSkbCmcYg6tbZNKcylIFlR1vGR9vthvf2cGCdeYctNBjTN75ro2uC4vjnIs0lfXi8ucgXEnubLQb7VtuFh_2PEJI0v8lh6gwpUS6y7M1y75q; HttpOnly; SameSite=None; Secure; Path=/; Domain=supabase.co; Expires=Tue, 03 Nov 2026 10:19:28 GMT
+alt-svc: h3=":443"; ma=86400
+

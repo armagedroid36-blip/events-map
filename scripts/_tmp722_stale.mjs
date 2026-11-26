@@ -1,0 +1,10 @@
+import { createClient } from '@supabase/supabase-js';
+import { selectAll } from './db-rows.mjs';
+const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+const db = createClient(url, process.env.SUPABASE_SERVICE_ROLE, { auth: { persistSession: false } });
+const rows = await selectAll(db, 'events', 'id,title,city,address,website,start_date,end_date,start_time,recurrence,source_type,created_at', { filter: q => q.eq('status', 'active') });
+const today = new Date().toISOString().slice(0,10);
+const hasRec = r => r.recurrence && typeof r.recurrence === 'object' && Object.keys(r.recurrence).length > 0;
+const stale = rows.filter(r => !hasRec(r) && ((r.end_date && r.end_date < today) || (!r.end_date && r.start_date && r.start_date < today)));
+console.log('STALE (прошли, живые):', stale.length);
+for (const r of stale) console.log(`${r.id.slice(0,8)} ${r.start_date}->${r.end_date} ${r.city} | ${r.title.slice(0,55)} | ${r.source_type} | ${r.created_at.slice(0,10)}`);

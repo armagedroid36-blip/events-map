@@ -819,7 +819,7 @@ async function collectVisitCyprus(seen, budget, websites = new Set()) {
         start_date: start,
         end_date: ev.end_date ? String(ev.end_date).slice(0, 10) : null,
         start_time: ev.all_day ? null : cyHM(ev.start_date),
-        end_time: ev.all_day ? null : cyHM(ev.end_date),
+        end_time: ev.all_day ? null : cleanEndTime({ start_date: start, start_time: cyHM(ev.start_date), end_date: ev.end_date ? String(ev.end_date).slice(0, 10) : null, end_time: cyHM(ev.end_date) }),
         city: cityRu(v.city || '') || cityRu(`${v.venue || ''} ${v.address || ''}`) || '',
         cityEn: v.city || '',
         venue: [v.venue, v.address, v.zip].filter(Boolean).join(', '),
@@ -983,9 +983,8 @@ async function collectCyprusNow(seen, budget, websites = new Set(), venueCities 
       const cyStart = cyHM(ev.start_at);
       const cyEnd = cyHM(ev.end_at);
       const cyEndDate = ev.end_at ? cyDate(ev.end_at) : null;
-      // Окончание раньше начала В ТОТ ЖЕ ДЕНЬ — противоречивые данные ленты (end_at из другой
-      // сессии/дня): такое окончание не пишем, иначе карточка печатает «20:30–19:00».
-      const badEnd = Boolean(cyStart && cyEnd && (!cyEndDate || cyEndDate === start) && cyEnd < cyStart);
+      // Окончание-брак (раньше начала в тот же день ИЛИ равно началу — нулевая длительность ленты)
+      // снимает cleanEndTime ниже: иначе карточка печатает «20:30–19:00» / «20:00–20:00».
       const row = await buildRow({
         title,
         description: stripHtml(ev.description || ev.excerpt || ''),
@@ -993,7 +992,9 @@ async function collectCyprusNow(seen, budget, websites = new Set(), venueCities 
         start_date: start,
         end_date: cyEndDate,
         start_time: cyStart,
-        end_time: badEnd ? null : cyEnd,
+        // Равенство времён (start_at == end_at у нулевой длительности ленты) — тоже брак:
+        // карточка печатала «20:00–20:00». cleanEndTime покрывает и это, и badEnd, и ночной переход.
+        end_time: cleanEndTime({ start_date: start, start_time: cyStart, end_date: cyEndDate, end_time: cyEnd }),
         city: cityOut,
         cityEn: ev.city || citySlug,
         venue: venueName,

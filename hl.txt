@@ -1,0 +1,25 @@
+HTTP/1.1 200 OK
+Date: Wed, 28 Oct 2026 04:39:14 GMT
+Content-Type: application/json; charset=utf-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Content-Range: 0-1/2
+CF-Ray: a51741690cf2e919-DME
+CF-Cache-Status: DYNAMIC
+set-cookie: __cf_bm=dNLyxyC_FJLC2nQzd8tR4Keri3HT60Qnro0hUS0ToKU-1793162354.0917926-1.0.1.1-GGnMY0LUmzn5hiwc.R8iCqyp5Ey0J0Nz7YsIWE8HtnlBUZXbfBIVxBUEAmV_ZyyP9fqKIZbe.rm6SHN0hZxNIyNCRxO1VyjmrrBCAy.9UQEvANYCIVFaWQbgnx3XmxIn; HttpOnly; SameSite=None; Secure; Path=/; Domain=supabase.co; Expires=Wed, 28 Oct 2026 05:09:14 GMT
+Content-Location: /events?end_date=is.null&limit=60&select=id%2Ctitle%2Ccity%2Cstart_date%2Cend_date%2Cstart_time%2Cwebsite&status=eq.active&title=ilike.%2Afestival%2A
+Server: cloudflare
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+Vary: Accept-Encoding
+X-Content-Type-Options: nosniff
+content-profile: public
+preference-applied: count=exact
+sb-gateway-version: 1
+sb-jwt-alg: HS256
+sb-jwt-iss: supabase
+sb-project-ref: xsbtejugutlpkgykiouw
+sb-request-id: 01a180ce-1db4-778f-80ba-9225a194d993
+x-envoy-attempt-count: 1
+x-envoy-upstream-service-time: 109
+alt-svc: h3=":443"; ma=86400
+
