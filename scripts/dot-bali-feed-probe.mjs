@@ -5,7 +5,7 @@ import { createClient } from '@supabase/supabase-js';
 import { selectAll } from './db-rows.mjs';
 
 const db = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE, { auth: { persistSession: false } });
-const rows = await selectAll(db, 'events', 'id,title,title_ru,city,start_date,status,website');
+const rows = await selectAll(db, 'events', 'id,title,title_ru,city,start_date,status,website,recurrence');
 
 const today = new Date().toISOString().slice(0, 10);
 const horizon = new Date(Date.now() + 120 * 86400e3).toISOString().slice(0, 10);
@@ -13,9 +13,11 @@ const horizon = new Date(Date.now() + 120 * 86400e3).toISOString().slice(0, 10);
 const norm = (s) => String(s || '').toLowerCase().replace(/[^a-zа-я0-9]+/gi, ' ').trim();
 const keys = new Set();
 const sites = new Map();
+const recurring = new Set(); // website живой регулярной карточки: серия на карте уже есть, дата не важна
 for (const r of rows) {
   for (const t of [r.title, r.title_ru]) if (t) keys.add(`${norm(t)}|${r.start_date}`);
   if (r.website) sites.set(r.website, r.start_date);
+  if (r.website && r.status === 'active' && r.recurrence && Object.keys(r.recurrence).length) recurring.add(r.website);
 }
 
 const ADDRESS_DISTRICTS = [
@@ -71,7 +73,7 @@ for (let page = 1; page <= 25; page++) {
     s.future++;
     const title = String(ev.title || '').replace(/&amp;/g, '&');
     const website = `https://baliforum.ru/events/${ev.slug}`;
-    const isKnown = keys.has(`${norm(title)}|${startDate}`) || (sites.has(website) && Math.abs((new Date(startDate) - new Date(sites.get(website))) / 86400e3) <= 60);
+    const isKnown = recurring.has(website) || keys.has(`${norm(title)}|${startDate}`) || (sites.has(website) && Math.abs((new Date(startDate) - new Date(sites.get(website))) / 86400e3) <= 60);
     if (isKnown) s.known++;
     else if (s.fresh.length < 5) s.fresh.push(`${startDate} ${title.slice(0, 46)} | ${(loc.address || place.districtName || '').slice(0, 40)}`);
   }
