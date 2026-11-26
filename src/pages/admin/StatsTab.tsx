@@ -14,6 +14,9 @@ import type {
   VisitCountryDay,
   VisitCountryRow,
   VisitSourceRow,
+  VisitQualityRow,
+  VisitQualitySummaryRow,
+  VisitVerdict,
   EventClickRow,
 } from '../../lib/types';
 
@@ -152,6 +155,10 @@ export default function StatsTab({ version }: Props) {
   const [sourcePeriod, setSourcePeriod] = useState<7 | 30 | 90>(30);
   const [sourceRows, setSourceRows] = useState<VisitSourceRow[] | null>(null);
   const [clickRows, setClickRows] = useState<EventClickRow[] | null>(null);
+  // --- Качество трафика: реальные / подозрение на VPN / боты ---
+  const [qualityPeriod, setQualityPeriod] = useState<7 | 30 | 90>(30);
+  const [qualitySummary, setQualitySummary] = useState<VisitQualitySummaryRow[] | null>(null);
+  const [qualityRows, setQualityRows] = useState<VisitQualityRow[] | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [countrySeries, setCountrySeries] = useState<VisitCountryDay[] | null>(null);
 
@@ -217,6 +224,27 @@ export default function StatsTab({ version }: Props) {
     };
   }, [sourcePeriod, version]);
 
+  // Качество трафика за период (RPC admin_visits_quality +
+  // admin_visits_quality_rows): сводка по вердиктам и детализация
+  // страна/пояс/язык/провайдер. Данные — суточные агрегаты с 26.11.2026.
+  useEffect(() => {
+    let alive = true;
+    setQualitySummary(null);
+    setQualityRows(null);
+    const api = getApi();
+    Promise.all([
+      api.getVisitsQuality(qualityPeriod).catch(() => []),
+      api.getVisitsQualityRows(qualityPeriod, 40).catch(() => []),
+    ]).then(([summary, rows]) => {
+      if (!alive) return;
+      setQualitySummary(summary);
+      setQualityRows(rows);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [qualityPeriod, version]);
+
   // График выбранной страны по дням
   useEffect(() => {
     if (!selectedCountry) {
@@ -274,6 +302,25 @@ export default function StatsTab({ version }: Props) {
     visits: d.count,
     cardViews: 0,
   }));
+
+  // --- Качество трафика: сводка по вердиктам + детализация ---
+  const verdictColor: Record<VisitVerdict, string> = {
+    user: '#10b981',
+    suspect_vpn: '#f59e0b',
+    bot: '#9ca3af',
+  };
+  const verdictLabel = (v: VisitVerdict) => t(`admin.stats.verdict_${v}`);
+  const qualityTotal = (qualitySummary ?? []).reduce((s, r) => s + r.visits, 0);
+  const qualityCount = (v: VisitVerdict) =>
+    (qualitySummary ?? []).find((r) => r.verdict === v)?.visits ?? 0;
+  const qualityCards = (['user', 'suspect_vpn', 'bot'] as VisitVerdict[]).map((v) => {
+    const count = qualityCount(v);
+    return {
+      verdict: v,
+      count,
+      share: qualityTotal > 0 ? Math.round((count / qualityTotal) * 100) : 0,
+    };
+  });
 
   return (
     <div>
@@ -413,6 +460,83 @@ export default function StatsTab({ version }: Props) {
                 ) : (
                   <BarChart points={seriesPoints} />
                 )}
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      <div className="mt-6">
+        <h3 className="mb-1 text-sm font-semibold text-gray-900">{t('admin.stats.qualityTitle')}</h3>
+        <p className="mb-3 text-xs text-gray-500">{t('admin.stats.qualityHint')}</p>
+        <div className="mb-3 inline-flex rounded-lg border border-gray-200 bg-white p-0.5">
+          {([7, 30, 90] as const).map((p) => (
+            <button
+              key={p}
+              type="button"
+              onClick={() => setQualityPeriod(p)}
+              className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
+                qualityPeriod === p ? 'bg-gray-900 text-white' : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              {t(`admin.stats.period${p}`)}
+            </button>
+          ))}
+        </div>
+
+        {qualitySummary === null ? (
+          <p className="text-sm text-gray-500">…</p>
+        ) : qualityTotal === 0 ? (
+          <p className="text-sm text-gray-500">{t('admin.stats.qualityEmpty')}</p>
+        ) : (
+          <>
+            <div className="grid grid-cols-3 gap-3">
+              {qualityCards.map((c) => (
+                <div
+                  key={c.verdict}
+                  className="rounded-xl border border-gray-200 bg-white p-3 text-center"
+                >
+                  <p className="text-lg font-bold" style={{ color: verdictColor[c.verdict] }}>
+                    {c.count}
+                  </p>
+                  <p className="mt-0.5 text-xs text-gray-500">
+                    {verdictLabel(c.verdict)} · {c.share}%
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {(qualityRows ?? []).length > 0 && (
+              <div className="mt-3 overflow-hidden rounded-xl border border-gray-200 bg-white">
+                {(qualityRows ?? []).map((r, idx) => (
+                  <div
+                    key={`${r.country}-${r.tz}-${r.lang}-${r.asn}-${r.verdict}-${idx}`}
+                    className="flex items-center gap-2 border-b border-gray-100 px-3 py-2 last:border-b-0"
+                  >
+                    <span className="text-lg leading-none">{countryFlag(r.country)}</span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-sm font-medium text-gray-900">
+                        {r.country === 'unknown' ? t('admin.stats.unknown') : countryName(r.country, lang)}
+                        <span className="ml-1.5 text-xs font-normal text-gray-500">
+                          {r.tz} · {r.lang}
+                        </span>
+                      </span>
+                      <span className="block truncate text-xs text-gray-500">
+                        {r.provider || t('admin.stats.unknown')}
+                        {r.asn ? ` · AS${r.asn}` : ''}
+                      </span>
+                    </span>
+                    <span
+                      className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium text-white"
+                      style={{ background: verdictColor[r.verdict] }}
+                    >
+                      {verdictLabel(r.verdict)}
+                    </span>
+                    <span className="w-10 shrink-0 text-right text-xs text-gray-500">
+                      {r.visits}
+                    </span>
+                  </div>
+                ))}
               </div>
             )}
           </>

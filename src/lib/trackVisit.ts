@@ -1,8 +1,28 @@
-// Трекер визитов по странам: fire-and-forget POST на публичную Edge Function
-// track_visit (без JWT). Страна определяется на сервере по IP, IP не
-// сохраняется. Ошибки сети/сервера молча игнорируются — трекинг не должен
-// влиять на загрузку страницы.
+// Трекер визитов: fire-and-forget POST на публичную Edge Function track_visit
+// (без JWT). Страна и провайдер определяются на сервере по IP, IP не
+// сохраняется. Дополнительно отправляем часовой пояс и язык браузера — по ним
+// сервер отличает заходы через VPN от реальных посетителей (вердикт
+// user / suspect_vpn / bot). Ошибки сети/сервера молча игнорируются —
+// трекинг не должен влиять на загрузку страницы.
 import { config } from '../config';
+
+/** Часовой пояс браузера: 'Europe/Moscow'. Ошибка/недоступность → 'unknown' */
+function browserTimeZone(): string {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || 'unknown';
+  } catch {
+    return 'unknown';
+  }
+}
+
+/** Язык браузера: 'ru-RU'. Пусто → 'unknown' */
+function browserLang(): string {
+  try {
+    return navigator.language || 'unknown';
+  } catch {
+    return 'unknown';
+  }
+}
 
 export function trackVisit(): void {
   if (!config.supabaseUrl) return;
@@ -14,7 +34,12 @@ export function trackVisit(): void {
   fetch(`${config.supabaseUrl}/functions/v1/track_visit`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ page_path: pagePath, referrer }),
+    body: JSON.stringify({
+      page_path: pagePath,
+      referrer,
+      tz: browserTimeZone(),
+      lang: browserLang(),
+    }),
     // Не ждём ответа и не держим соединение ради трекинга
     keepalive: true,
   }).catch(() => {});

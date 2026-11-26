@@ -19,6 +19,8 @@ import type {
   VisitCountryRow,
   VisitCountryDay,
   VisitSourceRow,
+  VisitQualityRow,
+  VisitQualitySummaryRow,
   EventClickRow,
   EventClickCount,
   GalleryPhoto,
@@ -212,6 +214,10 @@ export interface DataApi {
   getEventClicksMap(days: number): Promise<EventClickCount[]>;
   /** Сводка источников переходов (RPC admin_visits_by_source, только админ) */
   getVisitsBySource(days: number): Promise<VisitSourceRow[]>;
+  /** Качество трафика по вердиктам: реальные/VPN/боты (только админ) */
+  getVisitsQuality(days: number): Promise<VisitQualitySummaryRow[]>;
+  /** Детализация качества: страна, пояс, язык, провайдер (только админ) */
+  getVisitsQualityRows(days: number, limit?: number): Promise<VisitQualityRow[]>;
 
   // --- История просмотров ---
   addHistory(eventId: string): Promise<void>;
@@ -1165,6 +1171,25 @@ class SupabaseApi implements DataApi {
     });
     if (error) throw error;
     return (data ?? []) as VisitCountryDay[];
+  }
+
+  /** Сводка качества трафика за период (RPC admin_visits_quality): сколько
+   *  визитов «реальных», сколько с подозрением на VPN и сколько ботов. */
+  async getVisitsQuality(days: number): Promise<VisitQualitySummaryRow[]> {
+    const { data, error } = await this.db.rpc('admin_visits_quality', { p_days: days });
+    if (error) throw error;
+    return (data ?? []) as VisitQualitySummaryRow[];
+  }
+
+  /** Детализация качества трафика (RPC admin_visits_quality_rows): топ
+   *  сочетаний страна/часовой пояс/язык/провайдер с вердиктом. */
+  async getVisitsQualityRows(days: number, limit = 50): Promise<VisitQualityRow[]> {
+    const { data, error } = await this.db.rpc('admin_visits_quality_rows', {
+      p_days: days,
+      p_limit: limit,
+    });
+    if (error) throw error;
+    return (data ?? []) as VisitQualityRow[];
   }
 
   async listArchived(): Promise<EventItem[]> {

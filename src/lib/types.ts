@@ -317,6 +317,27 @@ export interface VisitCountryDay {
   count: number;
 }
 
+/** Вердикт качества трафика: реальный посетитель / подозрение на VPN / бот */
+export type VisitVerdict = 'user' | 'suspect_vpn' | 'bot';
+
+/** Сводка качества трафика за период (RPC admin_visits_quality) */
+export interface VisitQualitySummaryRow {
+  verdict: VisitVerdict;
+  visits: number;
+}
+
+/** Детализация качества трафика (RPC admin_visits_quality_rows):
+ *  страна по IP, часовой пояс и язык браузера, ASN и провайдер, вердикт. */
+export interface VisitQualityRow {
+  country: string;
+  tz: string;
+  lang: string;
+  asn: number;
+  provider: string;
+  verdict: VisitVerdict;
+  visits: number;
+}
+
 /** Фото галереи организатора (таблица org_gallery) */
 export interface GalleryPhoto {
   id: string;

@@ -576,6 +576,13 @@ export default {
       noData: 'No data yet',
       byCountry: 'Visits by country',
       bySource: 'Traffic sources',
+      qualityTitle: 'Traffic quality: VPN and bots',
+      qualityHint:
+        'Estimated from three signals: country by IP, browser time zone and language, and provider (ASN). “Possible VPN” means a hosting/VPN provider or a home-country time zone with a foreign IP. A Russian tourist with the local time zone stays in “Real”. This is an estimate, not a verdict.',
+      qualityEmpty: 'No data yet — collection started on 26 Nov 2026; stats build up with new visits.',
+      verdict_user: 'Real',
+      verdict_suspect_vpn: 'Possible VPN',
+      verdict_bot: 'Bots',
       byClicks: 'Booking clicks',
       byClicksHint:
         'Clicks on the card button over 30 days: “Book a spot” opens the registration link, “Contact organizer” opens the organizer contacts. No personal data.',
@@ -617,7 +624,7 @@ export default {
         'When you register: email, password and role (user or organizer).',
         'For organizers additionally: Telegram, WhatsApp, phone, Instagram.',
         'When you submit an event: contacts, photos, name, description, price.',
-        'Technical data: the interface language you picked (kept in your browser) and anonymous visit statistics — country (derived from the IP address, which is not stored), referrer domain and landing page; daily aggregates only.',
+        'Technical data: the interface language you picked (kept in your browser) and anonymous visit statistics — country (derived from the IP address, which is not stored), referrer domain, landing page, plus browser time zone, browser language code and provider (ASN) used to estimate the share of VPN and bot visits; daily aggregates only.',
       ],
     },
     use: {
