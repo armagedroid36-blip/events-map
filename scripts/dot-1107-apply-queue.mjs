@@ -47,6 +47,7 @@ const QUEUE = [
   ['dot-1109', 'scripts/dot-1109-translation-dupe-fix.mjs', ['5f5b6f64', '524ed2da']],
   ['dot-1111', 'scripts/dot-1111-address-url-fix.mjs', ['bcbfd122']],
   ['dot-1112', 'scripts/dot-1112-address-entity-fix.mjs', ['89d6e890']],
+  ['dot-1113', 'scripts/dot-1113-title-space-fix.mjs', ['01c74dd1', '6a9931bd', 'e49c85fc']],
 ]
 
 const H = { apikey: KEY, Authorization: `Bearer ${KEY}`, 'Accept-Encoding': 'identity' }

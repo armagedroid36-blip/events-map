@@ -24,7 +24,7 @@ import { cardAddressBali } from './bali-address.mjs';
 import { cleanCurrency } from './currency.mjs';
 import { cleanStartTime } from './start-time-stub.mjs';
 import { cleanEndTime } from './end-time-guard.mjs';
-import { stripInvisible } from './text-safe.mjs';
+import { stripInvisible, cleanCardText } from './text-safe.mjs';
 import { megatixPinForAddress } from './megatix-venue-pins.mjs';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -339,7 +339,10 @@ async function main() {
     const action = siteAction({ existing, pageDate: start.date, today, horizon });
     if (action === 'skip') { skipped++; scanned++; continue; }
 
-    const title = decodeEntities(stripInvisible(String(ev.name || ''))).trim().slice(0, 200);
+    // Заголовок и описание — через общий cleanCardText: HTML-сущности, невидимый
+    // мусор и ДВОЙНЫЕ ПРОБЕЛЫ не должны доезжать до карты (класс 1113: «Pangolin
+    // Creative Workshop:  Plaster…» печаталось с двумя пробелами).
+    const title = cleanCardText(String(ev.name || '')).slice(0, 200);
     if (!title) { scanned++; continue; }
 
     const key = `${title.toLowerCase()}|${start.date}`;
@@ -380,7 +383,7 @@ async function main() {
     const startTime = cleanStartTime(start.time);
     const price = ldPrice(ev);
     const photo = ldImage(ev);
-    const desc = ev.description ? decodeEntities(stripInvisible(String(ev.description))).trim().slice(0, 3000) : null;
+    const desc = ev.description ? cleanCardText(String(ev.description)).slice(0, 3000) : null;
     // Своё описание Мегатикс почти никогда не отдаёт (у 149 живых карточек текст пустой), но в
     // JSON-LD есть площадка, адрес, организатор и время. Собираем из них служебную строку —
     // это НЕ выдумка (все поля со страницы источника), но она даёт судье и читателю контекст:
