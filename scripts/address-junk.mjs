@@ -96,6 +96,10 @@ export function isJunkAddress(raw) {
 export function stripAddressLabel(raw) {
   if (!raw) return '';
   let s = String(raw).trim();
+  // Внутри адреса бывает ссылка (карта/билеты): «… – Pafos Castle, https://maps.app.goo.gl/…» (кейс 1111, bcbfd122).
+  // Ссылка — не часть адреса, вырезаем её, а текстовую часть сохраняем (в отличие от правила JUNK, где ссылка = весь «адрес»).
+  s = s.replace(/(?:https?:\/\/|www\.|t\.me\/)\S*/giu, ' ');
+  s = s.replace(/\s{2,}/g, ' ');
   s = s.replace(/[.,;:!?\s❤🧡💛💚💙💜🤍🖤]+$/gu, '').trim();
   s = s.replace(LABEL, '').trim();
   s = s.replace(/[.,;:!?\s]+$/g, '').trim();
