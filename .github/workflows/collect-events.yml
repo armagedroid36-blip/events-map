@@ -135,3 +135,12 @@ jobs:
           SMTP_PORT: ${{ secrets.SMTP_PORT }}
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
+      - name: "Гейт базы: сбор не отработал вхолостую"
+        # Последний шаг. 27.11 прогон 46013725841 отчитался success при 169
+        # провалившихся вставках (402 egress) — тихий успех маскирует квоту и
+        # поломку ключей. Здесь прогон становится красным с причиной.
+        if: always()
+        run: node scripts/dot-db-gate.mjs
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
