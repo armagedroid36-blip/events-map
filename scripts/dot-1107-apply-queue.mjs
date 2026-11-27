@@ -49,6 +49,7 @@ const QUEUE = [
   ['dot-1112', 'scripts/dot-1112-address-entity-fix.mjs', ['89d6e890']],
   ['dot-1113', 'scripts/dot-1113-title-space-fix.mjs', ['01c74dd1', '6a9931bd', 'e49c85fc']],
   ['dot-1114', 'scripts/dot-1114-marina-city-fix.mjs', ['018d7128', '0f543525']],
+  ['dot-1118', 'scripts/dot-1118-recurring-marker-fix.mjs', ['debd119e', 'eb29e68a', '5781e87a', '5a4c1481', '036621f9']],
 ]
 
 const H = { apikey: KEY, Authorization: `Bearer ${KEY}`, 'Accept-Encoding': 'identity' }
