@@ -59,6 +59,22 @@ export function hasLoneSurrogate(str) {
 // часть эмодзи-последовательностей (🧘‍♀️), удаление развалит эмодзи.
 const INVISIBLE = /[\u200b\u200e\u200f\u2060\ufeff\u00ad]/g;
 const INVISIBLE_TEST = /[\u200b\u200e\u200f\u2060\ufeff\u00ad]/;
+const ENTITY = /&(?:#\d+|#x[0-9a-f]+|[a-z]+);/i;
+
+/** Раскодировать HTML-сущности: &#8217;, &#x27;, &amp;, &quot;, &nbsp; … */
+export function decodeHtmlEntities(str) {
+  const s = String(str ?? '');
+  if (!ENTITY.test(s)) return s;
+  return s
+    .replace(/&#x([0-9a-f]+);/gi, (m, h) => String.fromCharCode(parseInt(h, 16)))
+    .replace(/&#(\d+);/g, (m, d) => String.fromCharCode(parseInt(d, 10)))
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&quot;/gi, '"')
+    .replace(/&apos;/gi, "'")
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&amp;/gi, '&');
+}
 
 /** Убрать невидимые символы (эмодзи-последовательности не ломаются) */
 export function stripInvisible(str) {
@@ -75,7 +91,7 @@ export function squeezeSpaces(str) {
  * и двойных пробелов. Переносы строк сохраняем — ими размечена афиша.
  */
 export function cleanCardText(str) {
-  return squeezeSpaces(stripInvisible(str)).trim();
+  return squeezeSpaces(stripInvisible(decodeHtmlEntities(str))).trim();
 }
 
 /** Диагностика: есть ли в строке невидимый мусор */
