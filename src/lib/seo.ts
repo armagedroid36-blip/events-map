@@ -261,12 +261,11 @@ interface HeadMeta {
   /** null — og-теги удаляются; на обычных страницах их нет (как в index.html) */
   og: Record<string, string> | null;
   /**
-   * hreflang-пары парной страницы (RU↔EN). null/undefined — hreflang-теги
-   * удаляются (страница без пары: org, RU-событие без перевода, 404 и пр.).
-   * На EN-версиях пары ВКЛЮЧАЮТ и саму EN-ссылку? Нет: Google рекомендует
-   * каждой версии ссылаться на все версии, включая себя, поэтому обе версии
-   * несут полный список (ru + en + x-default); пре-рендер ставит на RU-версии
-   * en+x-default, а здесь SPA выставляет тот же набор для обеих.
+   * hreflang-аннотации страницы. Парная страница (RU↔EN) — полный набор
+   * (ru + en + x-default = /en/). Страница без пары (событие без перевода,
+   * RU-only ячейка) — две self-аннотации: язык её URL + x-default на неё же
+   * (как sitemap.xml и статика). null/undefined — тегов нет вовсе (404,
+   * маршрут вне списка, консолидированный дубль): старые теги удаляются.
    */
   hreflang: { hreflang: string; href: string }[] | null;
   /**
@@ -387,6 +386,21 @@ function apply(meta: HeadMeta): void {
   setOgTags(meta.og);
   setHreflang(meta.hreflang ?? null);
   setRobots(meta.robots ?? null);
+}
+
+/**
+ * hreflang НЕПАРНОЙ страницы (нет EN-версии): две self-аннотации — язык самого
+ * URL (ru для /event/…, en для /en/…) и x-default на тот же адрес. Ровно то,
+ * что sitemap.xml отдаёт у непарного <url> (seo-prerender.mjs, pairLinks) и что
+ * статика ставит на «эту неделю»/месячные страницы; без этого гидратация
+ * снимала статические теги и head расходился с картой.
+ */
+function hreflangSelf(url: string): { hreflang: string; href: string }[] {
+  const lang = url.startsWith(`${SITE_URL}/en/`) ? 'en' : 'ru';
+  return [
+    { hreflang: lang, href: url },
+    { hreflang: 'x-default', href: url },
+  ];
 }
 
 /** hreflang-пары пары (главная/город/статья/…): полный набор для обеих версий */
@@ -1277,15 +1291,18 @@ export function applyEventMeta(ev: EventItem, categories?: Category[]): void {
       'og:url': canonical,
       'og:image': image,
     },
-    // hreflang-пара только если у события есть обе версии (после Фазы 2);
-    // на алиасе — пара главной копии (обе аннотации ведут на её страницы)
+    // hreflang: пара — только если у события есть обе версии (после Фазы 2);
+    // на алиасе — пара главной копии (обе аннотации ведут на её страницы).
+    // Событие БЕЗ перевода — не null: две self-аннотации на canonical (язык
+    // URL + x-default), как в статике и sitemap.xml; иначе гидратация снимала
+    // бы статические теги и head расходился бы с картой.
     hreflang: alias
       ? alias.en
         ? hreflangPairsFor(alias.ru, alias.en)
-        : null
+        : hreflangSelf(canonical)
       : hasEn
         ? hreflangPairsFor(eventUrl(ev, false), eventUrl(ev, true))
-        : null,
+        : hreflangSelf(canonical),
   });
 }
 

@@ -4576,15 +4576,21 @@ function eventPageMetaFor(ev, lang, opts) {
     ogImage: image,
     jsonLd: eventJsonLd(ev, url, 'ru', image, mode),
     noindex,
-    ...(hasEn
-      ? {
-          hreflang: [
-            { hreflang: 'ru', href: url },
-            { hreflang: 'en', href: enUrl },
-            { hreflang: 'x-default', href: `${SITE_URL}/en/` },
-          ],
-        }
-      : {}),
+    // hreflang есть ВСЕГДА: у парного события 3 аннотации (ru/en + x-default
+    // на /en/), у события БЕЗ перевода — две self-аннотации (ru + x-default на
+    // собственный canonical), как в sitemap.xml (pairLinks, ветка «НЕПАРНАЯ
+    // страница») и как у RU-only ячеек. Иначе у непарного <url> в карте две
+    // xhtml:link, а в head — ни одной, и SPA снимал бы теги при гидратации.
+    hreflang: hasEn
+      ? [
+          { hreflang: 'ru', href: url },
+          { hreflang: 'en', href: enUrl },
+          { hreflang: 'x-default', href: `${SITE_URL}/en/` },
+        ]
+      : [
+          { hreflang: 'ru', href: url },
+          { hreflang: 'x-default', href: url },
+        ],
     bodySeo: eventSeoHtml(ev, url, 'ru', sibs, catLink, similar, Boolean(past), chrono, factsRu),
   };
 }
@@ -8164,13 +8170,21 @@ async function main() {
     // og:image и JSON-LD image — ОДИН и тот же ЖИВОЙ URL (resolveEventImages):
     // мёртвое фото (telesco.pe, 404, не image/*) → логотип сайта
     const evImage = eventImage(ev, imageMap);
+    // hreflang: у парного события 3 аннотации (ru/en + x-default на /en/),
+    // у события БЕЗ перевода — две self-аннотации (ru + x-default на себя).
+    // Иначе head расходился с sitemap.xml, где непарный <url> уже несёт две
+    // xhtml:link (см. pairLinks, ветка «НЕПАРНАЯ страница»), а страница — ноль;
+    // SPA при гидратации такие теги тоже ставит (src/lib/seo.ts, applyEventMeta).
     const hreflangRu = hasEn
       ? [
           { hreflang: 'ru', href: url },
           { hreflang: 'en', href: enUrl },
           { hreflang: 'x-default', href: enRoot },
         ]
-      : undefined;
+      : [
+          { hreflang: 'ru', href: url },
+          { hreflang: 'x-default', href: url },
+        ];
     const metaRu = {
       title,
       description,
@@ -8180,7 +8194,7 @@ async function main() {
       ogUrl: url,
       ogImage: evImage,
       jsonLd: eventJsonLd(ev, url, 'ru', evImage),
-      ...(hasEn ? { hreflang: hreflangRu } : {}),
+      hreflang: hreflangRu,
       bodySeo: eventSeoHtml(ev, url, 'ru', sibs, eventCategoryLink(ev, 'ru', cells), similarRu, false, null, factsRu),
     };
     writePage(activeBaseHtml, path, metaRu);
