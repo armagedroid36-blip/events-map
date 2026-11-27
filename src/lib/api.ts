@@ -287,10 +287,24 @@ export interface DataApi {
 const PHOTO_MAP: Record<string, string> = photoMapJson as Record<string, string>;
 const SITE_ORIGIN = (typeof config.siteUrl === 'string' ? config.siteUrl : '').replace(/\/+$/, '');
 
+/** Кэширующий прокси картинок (wsrv.nl, бесплатный).
+ *  Supabase Storage считается в egress на КАЖДЫЙ запрос файла, а краулеры и
+ *  боты дёргают карточки тысячами — квота 5 ГБ выгорала за считанные дни.
+ *  Через CDN файл забирается из Storage один раз, дальше отдаётся из кэша,
+ *  попутно ужимаясь до 800 px в webp. Внешние хосты (не Supabase) не трогаем. */
+const IMAGE_CDN = 'https://wsrv.nl/';
+const SUPABASE_STORAGE_RE = /^https?:\/\/[^/]+\.supabase\.co\/storage\/v1\/object\/public\//i;
+
+function viaImageCdn(url: string): string {
+  if (!SUPABASE_STORAGE_RE.test(url)) return url;
+  const params = [`url=${encodeURIComponent(url)}`, 'w=800', 'output=webp', 'q=78'];
+  return `${IMAGE_CDN}?${params.join('&')}`;
+}
+
 /** Публичный URL фото.
  *  Свои фото (bucket `photos`) отдаём статикой рядом с сайтом, если для них
- *  есть локальная копия; внешние URL (другие хосты) не трогаем — только
- *  возвращаем как есть. */
+ *  есть локальная копия; всё, что лежит в Supabase Storage, — через кэш-CDN;
+ *  внешние URL (другие хосты) не трогаем — только возвращаем как есть. */
 export function photoUrl(path: string): string {
   const src = String(path ?? '').trim();
   if (!src) return '';
@@ -298,8 +312,10 @@ export function photoUrl(path: string): string {
   if (/^(blob:|data:)/i.test(src)) return src;
   const local = PHOTO_MAP[src];
   if (local) return SITE_ORIGIN ? `${SITE_ORIGIN}/${local}` : `/${local}`;
-  if (/^https?:/i.test(src)) return src;
-  return `${config.supabaseUrl}/storage/v1/object/public/photos/${src}`;
+  const absolute = /^https?:/i.test(src)
+    ? src
+    : `${config.supabaseUrl}/storage/v1/object/public/photos/${src}`;
+  return viaImageCdn(absolute);
 }
 
 /**

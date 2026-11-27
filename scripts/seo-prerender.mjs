@@ -1010,13 +1010,24 @@ const PHOTO_MAP = (() => {
 const LOCAL_PHOTO_PREFIX = `${SITE_URL}/data/photos/`;
 
 /** photos[i] события: полный http(s)-URL — как есть; путь в bucket →
- *  storage-URL; при наличии локальной копии — статика сайта. */
+ *  storage-URL; при наличии локальной копии — статика сайта. Всё, что живёт
+ *  в Supabase Storage, отдаём через кэш-CDN (wsrv.nl): Storage считает egress
+ *  на каждый запрос, а краулеры дёргают og:image тысячами. */
+const IMAGE_CDN = 'https://wsrv.nl/';
+const SUPABASE_STORAGE_RE = /^https?:\/\/[^/]+\.supabase\.co\/storage\/v1\/object\/public\//i;
+
+function viaImageCdn(url) {
+  if (!SUPABASE_STORAGE_RE.test(url)) return url;
+  return `${IMAGE_CDN}?url=${encodeURIComponent(url)}&w=800&output=webp&q=78`;
+}
+
 function absPhoto(p) {
   const s = String(p ?? '').trim();
   if (!s) return '';
   const local = PHOTO_MAP[s];
   if (local) return `${SITE_URL}/${local}`;
-  return /^https?:\/\//i.test(s) ? s : `${SUPABASE_URL}/storage/v1/object/public/photos/${s}`;
+  const abs = /^https?:\/\//i.test(s) ? s : `${SUPABASE_URL}/storage/v1/object/public/photos/${s}`;
+  return viaImageCdn(abs);
 }
 
 /** Текст ошибки для лога сборки: блокировка по квоте — одной строкой, без
