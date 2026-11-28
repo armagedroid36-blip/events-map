@@ -166,6 +166,32 @@ export function snapDistrictLabel(city, lat, lng, snapKm = TOWN_SNAP_KM) {
   return city;
 }
 
+// Городок по ИМЕНИ площадки, когда источник назвал ОКРУГ.
+// Геометрия тут не спасает: Ayia Napa Marina лежит в 5.3 км от центра Ая-Напы
+// (порог TOWN_SNAP_KM = 3 км), поэтому snapDistrictLabel оставлял метку
+// «Фамагуста, Кипр», хотя имя площадки прямо называет городок (7 карточек
+// марины носили округ при 2 соседних «Ая-Напа», run 1121).
+// Текст — ТОЛЬКО адрес/имя площадки (название события может упоминать чужой город).
+const TOWN_NAME_ALIASES = [
+  ['Ая-Напа', /(?:ayia\s*napa|agia\s*napa|айя-напа|ая-напа)/iu],
+  ['Протарас', /(?:protaras|протарас)/iu],
+  ['Паралимни', /(?:paralimni|паралимни)/iu],
+  ['Полис', /(?:^|[^a-z])polis(?:[^a-z]|$)|(?:^|[^а-яё])полис(?:[^а-яё]|$)/iu],
+];
+
+export function townFromName(city, text) {
+  const key = String(city || '').replace(/,\s*кипр/gi, '').trim().toLowerCase();
+  if (key !== 'фамагуста' && key !== 'пафос') return city;
+  const district = districtOfCity(city);
+  const s = String(text || '');
+  for (const [name, re] of TOWN_NAME_ALIASES) {
+    if (name.toLowerCase() === key) continue;
+    if (districtOfCity(name) !== district) continue;
+    if (re.test(s)) return name;
+  }
+  return city;
+}
+
 // У ленты Cyprus Now поле venue.name иногда несёт не площадку, а ИМЯ ГОРОДА
 // («Limassol, Cypus» с опечаткой сайта, «Nicosia») — в адрес такая строка попадать
 // не должна: карточка получает адрес-латиницу вместо честного «<город>, Кипр».

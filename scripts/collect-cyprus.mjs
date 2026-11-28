@@ -15,7 +15,7 @@ import { createClient } from '@supabase/supabase-js';
 import { createHash } from 'node:crypto';
 import { extractCategory } from './category-llm.mjs';
 import { selectAll } from './db-rows.mjs';
-import { districtOf, districtNear, districtOfCity, cityForPoint, snapDistrictLabel, isCityOnlyVenue } from './cy-districts.mjs';
+import { districtOf, districtNear, districtOfCity, cityForPoint, snapDistrictLabel, isCityOnlyVenue, townFromName } from './cy-districts.mjs';
 import { buildVenueCityRegistry, cityForVenue } from './venue-city.mjs';
 import { cleanDescription } from './desc-junk.mjs';
 import { cleanCardText } from './text-safe.mjs';
@@ -980,6 +980,14 @@ async function collectCyprusNow(seen, budget, websites = new Set(), venueCities 
         console.log(`  [city по точке вместо округа] «${cityFinal}» -> «${citySnapped}»: ${title.slice(0, 50)}`);
         cityOut = citySnapped;
       }
+      // Геометрия не всегда достаёт: Ayia Napa Marina лежит в 5.3 км от центра Ая-Напы
+      // (порог 3 км), а имя площадки прямо называет городок. Реестр площадок тут тоже
+      // не арбитр: он голосует большинством, и 7 дефектных карточек перевешивают 2 верных.
+      const cityByName = townFromName(cityOut, `${venueName} ${venueAddr}`);
+      if (cityByName !== cityOut) {
+        console.log(`  [city по имени площадки] «${cityOut}» -> «${cityByName}»: ${title.slice(0, 50)}`);
+        cityOut = cityByName;
+      }
       const cyStart = cyHM(ev.start_at);
       const cyEnd = cyHM(ev.end_at);
       const cyEndDate = ev.end_at ? cyDate(ev.end_at) : null;
@@ -1207,7 +1215,10 @@ async function collectCyprusBz(seen, budget, websites = new Set(), bzPages = new
     const loc = ev.location || {};
     const addrLoc = loc.address?.addressLocality || '';
     const place = loc.name || '';
-    const bzCity = cityRu(addrLoc) || cityRu(`${place} ${url}`);
+    const bzCity = townFromName(
+      cityRu(addrLoc) || cityRu(`${place} ${url}`),
+      `${place} ${addrLoc} ${ev.url || pageUrl || ''}`,
+    );
     // Гео площадки: 1) geo в JSON-LD события, 2) страница площадки /ru/venue/<слаг>.
     // Без этого пин уезжал на центровую константу города (адрес площадку называет).
     const geo = loc.geo || {};
@@ -1329,7 +1340,10 @@ async function collectCyprusBzCities(seen, budget, bzPages = new Set()) {
         end_date: ev.endDate ? cyDate(ev.endDate) : null,
         start_time: cyHM(ev.startDate),
         end_time: cleanEndTime({ start_date: start, start_time: cyHM(ev.startDate), end_date: ev.endDate ? cyDate(ev.endDate) : null, end_time: cyHM(ev.endDate) }),
-        city: cityRu(locality) || cityRu(`${place} ${title}`) || cityRuName,
+        city: townFromName(
+          cityRu(locality) || cityRu(`${place} ${title}`) || cityRuName,
+          `${place} ${locality} ${ev.url || ''}`,
+        ),
         cityEn: locality || slug,
         venue: place,
         address: cardAddress([place, locality], `${cityRuName}, Кипр`),
