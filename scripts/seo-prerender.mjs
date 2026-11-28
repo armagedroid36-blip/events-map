@@ -5636,9 +5636,15 @@ function categorySeoHtml(cell, lang, cells) {
   // Полный список активных событий ячейки: своя дата ближайшего вхождения,
   // ссылка на карточку СВОЕГО языка (обе версии сгенерированы пре-рендером —
   // битых ссылок нет) и цена/«Бесплатно»/«Донат»
-  if (items.length) {
+  // Список витрины «Ближайшие события»: завершённые события ячейки отсекаем,
+  // а идущее многодневное печатаем интервалом. Без гейта блок заполняли
+  // прошедшие даты (28.11.2026: /bali/exhibition/ — «10 октября», /cyprus/festival/
+  // — «21 ноября», /bali/lecture/ — «27 ноября»), причём однодневная подпись
+  // скрывала, что выставка идёт до 29 ноября. Та же правка, что в citySeoHtml (1129).
+  const shown = items.filter(({ ev }) => isUpcomingOrOngoing(ev, TODAY_ISO));
+  if (shown.length) {
     lines.push(`  <h2>${en ? `Upcoming events: ${esc(catName)}` : `Ближайшие события: ${esc(catName)}`}</h2>`, '  <ul>');
-    for (const { ev, date } of items) {
+    for (const { ev, date } of shown) {
       const slug = eventSlug(ev, en ? 'en' : 'ru');
       const url = `${SITE_URL}${en ? '/en' : ''}/event/${ev.id}/${slug}/`;
       const name = en
@@ -5653,7 +5659,14 @@ function categorySeoHtml(cell, lang, cells) {
       else if (Boolean(ev.donation)) priceText = en ? 'Donation' : 'Донат';
       else if (price === 0) priceText = en ? 'Free' : 'Бесплатно';
       const parts = [];
-      if (date) {
+      // Идущее многодневное событие (начало в прошлом, конец в будущем) —
+      // интервалом: одна дата начала читается как «уже прошло».
+      const lastDay = typeof ev.end_date === 'string' ? ev.end_date.slice(0, 10) : '';
+      if (date && date.slice(0, 10) < TODAY_ISO && lastDay >= TODAY_ISO) {
+        parts.push(
+          `<time datetime="${esc(date)}">${esc(en ? enDate(date) : ruDate(date))}</time> – <time datetime="${esc(lastDay)}">${esc(en ? enDate(lastDay) : ruDate(lastDay))}</time>`,
+        );
+      } else if (date) {
         parts.push(
           `<time datetime="${esc(date)}">${esc(en ? enDate(date) : ruDate(date))}</time>`,
         );
