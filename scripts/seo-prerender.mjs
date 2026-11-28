@@ -1302,6 +1302,22 @@ function nextOccurrenceDate(ev, todayIso) {
   return first;
 }
 
+/**
+ * Событие имеет право стоять в витрине «Ближайшие события»: у него есть
+ * вхождение не раньше сегодня (разовое — start_date, серия — nextOccurrenceDate)
+ * ИЛИ оно ещё идёт (end_date >= сегодня). Без этого гейта блок заполняли
+ * ПРОШЕДШИЕ события: сортировка по дате ставит самые старые первыми, и на
+ * /cyprus/ 28.11.2026 все 8 позиций «Ближайшие события» были за 09–31 октября,
+ * те же даты уходили в ItemList JSON-LD. Расписание/архивные блоки это не
+ * касается — там прошедшие события законны.
+ */
+function isUpcomingOrOngoing(ev, todayIso) {
+  const occ = nextOccurrenceDate(ev, todayIso);
+  if (typeof occ === 'string' && occ.slice(0, 10) >= todayIso) return true;
+  const last = typeof ev.end_date === 'string' ? ev.end_date.slice(0, 10) : '';
+  return Boolean(last) && last >= todayIso;
+}
+
 /** Обрезка без разрыва суррогатной пары (эмодзи) */
 function cutSafe(s, max) {
   if (s.length <= max) return s;
@@ -7421,8 +7437,11 @@ async function main() {
           String(nextOccurrenceDate(b, TODAY_ISO)),
         ),
       );
-    const cityEvs = cityEvsAll.slice(0, MAX_CITY_EVENTS);
-    const cityEvsRest = cityEvsAll.slice(MAX_CITY_EVENTS, MAX_CITY_EVENTS + MAX_CITY_REST_EVENTS);
+    // Витрина «Ближайшие события»: только события с будущим вхождением или
+    // ещё идущие. Прошедшие остаются в базе/архивном блоке, но не здесь.
+    const cityUpcoming = cityEvsAll.filter((ev) => isUpcomingOrOngoing(ev, TODAY_ISO));
+    const cityEvs = cityUpcoming.slice(0, MAX_CITY_EVENTS);
+    const cityEvsRest = cityUpcoming.slice(MAX_CITY_EVENTS, MAX_CITY_EVENTS + MAX_CITY_REST_EVENTS);
     // JSON-LD городской страницы: CollectionPage + ItemList ближайших событий +
     // BreadcrumbList «Главная > Кипр > Афиша» + FAQPage (если есть faq)
     const cityLd = seo ? cityJsonLd(seo, cityEvs, c.path, 'ru') : null;
@@ -7480,8 +7499,9 @@ async function main() {
           String(nextOccurrenceDate(b, TODAY_ISO)),
         ),
       );
-    const cityEvs = cityEvsAll.slice(0, MAX_CITY_EVENTS);
-    const cityEvsRest = cityEvsAll.slice(MAX_CITY_EVENTS, MAX_CITY_EVENTS + MAX_CITY_REST_EVENTS);
+    const cityUpcomingEn = cityEvsAll.filter((ev) => isUpcomingOrOngoing(ev, TODAY_ISO));
+    const cityEvs = cityUpcomingEn.slice(0, MAX_CITY_EVENTS);
+    const cityEvsRest = cityUpcomingEn.slice(MAX_CITY_EVENTS, MAX_CITY_EVENTS + MAX_CITY_REST_EVENTS);
     const cityLdEn = seo ? cityJsonLd(seo, cityEvs, c.path, 'en') : null;
     writePage(baseHtml, `en/${c.path}`, {
       lang: 'en',
