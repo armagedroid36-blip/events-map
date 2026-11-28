@@ -48,8 +48,9 @@ const QUEUE = [
   ['dot-1111', 'scripts/dot-1111-address-url-fix.mjs', ['bcbfd122']],
   ['dot-1112', 'scripts/dot-1112-address-entity-fix.mjs', ['89d6e890']],
   ['dot-1113', 'scripts/dot-1113-title-space-fix.mjs', ['01c74dd1', '6a9931bd', 'e49c85fc']],
-  ['dot-1114', 'scripts/dot-1114-marina-city-fix.mjs', ['018d7128', '0f543525']],
+  ['dot-1114', 'scripts/dot-1114-marina-city-fix.mjs', ['018d7128', '0f543525', 'a5eca9bc', '04d3b262', '722dfea4', '41dd84b0', '6e4d3308']],
   ['dot-1118', 'scripts/dot-1118-recurring-marker-fix.mjs', ['debd119e', 'eb29e68a', '5781e87a', '5a4c1481', '036621f9']],
+  ['dot-1122', 'scripts/dot-1122-townname-city-fix.mjs', ['816c5a16', '1adc7ca3']],
 ]
 
 const H = { apikey: KEY, Authorization: `Bearer ${KEY}`, 'Accept-Encoding': 'identity' }
@@ -64,7 +65,7 @@ async function main() {
   console.log(`Очередь (${QUEUE.length}): ${QUEUE.map(q => q[0]).join(' -> ')}`)
   const ids = new Set(QUEUE.flatMap(q => q[2]))
   const sumIds = QUEUE.reduce((n, q) => n + q[2].length, 0)
-  console.log(`Целей: ${sumIds} в скриптах, ${ids.size} уникальных (2b39ece2 общая у 1100/1103; preflight dot-1105 ждёт 26/25)`)
+  console.log(`Целей: ${sumIds} в скриптах, ${ids.size} уникальных (2b39ece2 общая у 1100/1103; после 1122: 47/46)`)
   const missing = QUEUE.filter(q => !existsSync(q[1])).map(q => q[1])
   if (missing.length) { console.log(`НЕТ ФАЙЛОВ: ${missing.join(', ')}`); process.exit(4) }
 
