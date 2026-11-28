@@ -3114,7 +3114,11 @@ function archiveIndexable(ev) {
  */
 function activeLastmod(ev) {
   const iso = typeof ev.updated_at === 'string' ? ev.updated_at.slice(0, 10) : '';
-  return /^\d{4}-\d{2}-\d{2}$/.test(iso) && iso <= TODAY_ISO ? iso : TODAY_ISO;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(iso) && iso <= TODAY_ISO) return iso;
+  // Карточки list_active_event_cards не несут updated_at: без даты снимка
+  // все активные события объявлялись «изменёнными сегодня» каждую сборку.
+  if (SNAPSHOT_DATA_ISO && SNAPSHOT_DATA_ISO <= TODAY_ISO) return SNAPSHOT_DATA_ISO;
+  return TODAY_ISO;
 }
 
 /**
@@ -3204,13 +3208,18 @@ function archiveSnapshotEvents() {
  * карте и sitemap как предстоящие. 15.11.2026 так было 370 карточек — 740 URL.
  */
 const SNAPSHOT_FINISHED_PAST = [];
+/** Дата снимка (generated_at, YYYY-MM-DD) — потолок lastmod в аварийном режиме. */
+let SNAPSHOT_DATA_ISO = null;
 
 function snapshotFallbackEvents(reason) {
   if (String(process.env.SEO_SNAPSHOT_FALLBACK || '') !== '1') return null;
   const file = join(ROOT, 'public/data/events.json');
   let cards = null;
+  SNAPSHOT_DATA_ISO = null;
   try {
     const raw = JSON.parse(readFileSync(file, 'utf8'));
+    const gen = String(raw && !Array.isArray(raw) ? raw.generated_at || '' : '').slice(0, 10);
+    SNAPSHOT_DATA_ISO = /^\d{4}-\d{2}-\d{2}$/.test(gen) ? gen : null;
     cards = Array.isArray(raw) ? raw : raw?.cards;
   } catch {
     console.error(`seo-prerender: фолбэк снапшота недоступен (${file} не читается) — падаю как раньше.`);
@@ -3256,7 +3265,7 @@ function snapshotFallbackEvents(reason) {
   SNAPSHOT_FINISHED_PAST.push(...finished.map((c) => ({ ...c, status: 'archived' })));
   console.warn(
     `seo-prerender: БД недоступна (${logErr(reason)}) — активный набор взят из снимка: ${active.length} карточек ` +
-      `(снимок: переведено в архив ${finished.length}), английский/описания могут быть пустыми.`,
+      `(снимок от ${SNAPSHOT_DATA_ISO ?? 'дата неизвестна'}: переведено в архив ${finished.length}), английский/описания могут быть пустыми.`,
   );
   return active;
 }
