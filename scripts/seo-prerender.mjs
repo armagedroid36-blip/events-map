@@ -2420,7 +2420,15 @@ function citySeoHtml(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs = 
         priceText = 'Бесплатно';
       }
       const parts = [];
-      if (sd) parts.push(`<time datetime="${esc(sd)}">${esc(ruDate(sd))}</time>`);
+      // Многодневное событие, идущее СЕЙЧАС (начало в прошлом, конец в будущем),
+      // показываем интервалом: одна дата начала читается как «уже прошло».
+      // На /cyprus/ так стояли 8 из 8 позиций (МУРМУР кайрос 09.10–15.12 и др.).
+      const lastDay = typeof ev.end_date === 'string' ? ev.end_date.slice(0, 10) : '';
+      if (sd && sd.slice(0, 10) < TODAY_ISO && lastDay >= TODAY_ISO) {
+        parts.push(
+          `<time datetime="${esc(sd)}">${esc(ruDate(sd))}</time> – <time datetime="${esc(lastDay)}">${esc(ruDate(lastDay))}</time>`,
+        );
+      } else if (sd) parts.push(`<time datetime="${esc(sd)}">${esc(ruDate(sd))}</time>`);
       if (name) parts.push(`<a href="${esc(url)}">${esc(name)}</a>`);
       if (priceText) parts.push(`<span>${esc(priceText)}</span>`);
       lines.push(`    <li>${parts.join(' — ')}</li>`);
@@ -2728,7 +2736,14 @@ function citySeoHtmlEn(seo, evs, categoriesHtml = '', cityPathKey = '', restEvs 
         priceText = 'Free';
       }
       const parts = [];
-      if (sd) parts.push(`<time datetime="${esc(sd)}">${esc(enDate(sd))}</time>`);
+      // Ongoing multi-day event (started earlier, ends later): show the interval,
+      // a lone past start date reads as "already over". Mirrors the RU block.
+      const lastDay = typeof ev.end_date === 'string' ? ev.end_date.slice(0, 10) : '';
+      if (sd && sd.slice(0, 10) < TODAY_ISO && lastDay >= TODAY_ISO) {
+        parts.push(
+          `<time datetime="${esc(sd)}">${esc(enDate(sd))}</time> – <time datetime="${esc(lastDay)}">${esc(enDate(lastDay))}</time>`,
+        );
+      } else if (sd) parts.push(`<time datetime="${esc(sd)}">${esc(enDate(sd))}</time>`);
       if (name) parts.push(`<a href="${esc(url)}">${esc(name)}</a>`);
       if (priceText) parts.push(`<span>${esc(priceText)}</span>`);
       lines.push(`    <li>${parts.join(' — ')}</li>`);
